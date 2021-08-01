@@ -1,0 +1,793 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="fastmks__model_8hpp" kind="file" language="C++">
+    <compoundname>fastmks_model.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="fastmks_8hpp" local="yes">fastmks.hpp</includes>
+    <includes refid="kernel__traits_8hpp" local="no">mlpack/core/kernels/kernel_traits.hpp</includes>
+    <includes refid="linear__kernel_8hpp" local="no">mlpack/core/kernels/linear_kernel.hpp</includes>
+    <includes refid="polynomial__kernel_8hpp" local="no">mlpack/core/kernels/polynomial_kernel.hpp</includes>
+    <includes refid="cosine__distance_8hpp" local="no">mlpack/core/kernels/cosine_distance.hpp</includes>
+    <includes refid="gaussian__kernel_8hpp" local="no">mlpack/core/kernels/gaussian_kernel.hpp</includes>
+    <includes refid="epanechnikov__kernel_8hpp" local="no">mlpack/core/kernels/epanechnikov_kernel.hpp</includes>
+    <includes refid="hyperbolic__tangent__kernel_8hpp" local="no">mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</includes>
+    <includes refid="laplacian__kernel_8hpp" local="no">mlpack/core/kernels/laplacian_kernel.hpp</includes>
+    <includes refid="pspectrum__string__kernel_8hpp" local="no">mlpack/core/kernels/pspectrum_string_kernel.hpp</includes>
+    <includes refid="spherical__kernel_8hpp" local="no">mlpack/core/kernels/spherical_kernel.hpp</includes>
+    <includes refid="triangular__kernel_8hpp" local="no">mlpack/core/kernels/triangular_kernel.hpp</includes>
+    <includes local="yes">fastmks_model_impl.hpp</includes>
+    <incdepgraph>
+      <node id="47998">
+        <label>list</label>
+      </node>
+      <node id="48025">
+        <label>fastmks_impl.hpp</label>
+      </node>
+      <node id="47995">
+        <label>atomic</label>
+      </node>
+      <node id="47985">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47961">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="48044">
+        <label>fastmks_model_impl.hpp</label>
+      </node>
+      <node id="47997">
+        <label>iomanip</label>
+      </node>
+      <node id="48020">
+        <label>queue</label>
+      </node>
+      <node id="48027">
+        <label>mlpack/core/kernels/linear_kernel.hpp</label>
+        <link refid="linear__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="48037">
+        <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
+        <link refid="laplacian__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="48033">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="47970">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47971" relation="include">
+        </childnode>
+        <childnode refid="47973" relation="include">
+        </childnode>
+      </node>
+      <node id="47953">
+        <label>cstdint</label>
+      </node>
+      <node id="48035">
+        <label>epanechnikov_kernel_impl.hpp</label>
+      </node>
+      <node id="48026">
+        <label>mlpack/core/kernels/kernel_traits.hpp</label>
+        <link refid="kernel__traits_8hpp"/>
+      </node>
+      <node id="47962">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47969">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47947">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</label>
+        <link refid="fastmks__model_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48005" relation="include">
+        </childnode>
+        <childnode refid="48026" relation="include">
+        </childnode>
+        <childnode refid="48027" relation="include">
+        </childnode>
+        <childnode refid="48028" relation="include">
+        </childnode>
+        <childnode refid="48029" relation="include">
+        </childnode>
+        <childnode refid="48031" relation="include">
+        </childnode>
+        <childnode refid="48034" relation="include">
+        </childnode>
+        <childnode refid="48036" relation="include">
+        </childnode>
+        <childnode refid="48037" relation="include">
+        </childnode>
+        <childnode refid="48038" relation="include">
+        </childnode>
+        <childnode refid="48041" relation="include">
+        </childnode>
+        <childnode refid="48043" relation="include">
+        </childnode>
+        <childnode refid="48044" relation="include">
+        </childnode>
+      </node>
+      <node id="47992">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="48014">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="48041">
+        <label>mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="48042" relation="include">
+        </childnode>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="48036">
+        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
+        <link refid="hyperbolic__tangent__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="47982">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47949">
+        <label>cmath</label>
+      </node>
+      <node id="47968">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="48008">
+        <label>fastmks_stat.hpp</label>
+        <link refid="fastmks__stat_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48009" relation="include">
+        </childnode>
+      </node>
+      <node id="47957">
+        <label>stdexcept</label>
+      </node>
+      <node id="47977">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47962" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47963" relation="include">
+        </childnode>
+      </node>
+      <node id="48013">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="48030">
+        <label>cosine_distance_impl.hpp</label>
+      </node>
+      <node id="48007">
+        <label>ip_metric_impl.hpp</label>
+      </node>
+      <node id="48024">
+        <label>cover_tree/typedef.hpp</label>
+        <link refid="core_2tree_2cover__tree_2typedef_8hpp"/>
+        <childnode refid="48012" relation="include">
+        </childnode>
+      </node>
+      <node id="48005">
+        <label>fastmks.hpp</label>
+        <link refid="fastmks_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48006" relation="include">
+        </childnode>
+        <childnode refid="48008" relation="include">
+        </childnode>
+        <childnode refid="48010" relation="include">
+        </childnode>
+        <childnode refid="48020" relation="include">
+        </childnode>
+        <childnode refid="48025" relation="include">
+        </childnode>
+      </node>
+      <node id="48001">
+        <label>string</label>
+      </node>
+      <node id="47989">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47990" relation="include">
+        </childnode>
+        <childnode refid="47956" relation="include">
+        </childnode>
+      </node>
+      <node id="48029">
+        <label>mlpack/core/kernels/cosine_distance.hpp</label>
+        <link refid="cosine__distance_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48026" relation="include">
+        </childnode>
+        <childnode refid="48030" relation="include">
+        </childnode>
+      </node>
+      <node id="47999">
+        <label>map</label>
+      </node>
+      <node id="48021">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="47951">
+        <label>cfloat</label>
+      </node>
+      <node id="47981">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="48003">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="48019">
+        <label>cover_tree/dual_tree_traverser.hpp</label>
+        <link refid="cover__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48020" relation="include">
+        </childnode>
+        <childnode refid="48021" relation="include">
+        </childnode>
+      </node>
+      <node id="47965">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47988">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47989" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47972" relation="include">
+        </childnode>
+        <childnode refid="47990" relation="include">
+        </childnode>
+      </node>
+      <node id="47978">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="48034">
+        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
+        <link refid="epanechnikov__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48026" relation="include">
+        </childnode>
+        <childnode refid="48035" relation="include">
+        </childnode>
+      </node>
+      <node id="48012">
+        <label>cover_tree/cover_tree.hpp</label>
+        <link refid="cover__tree_2cover__tree_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48013" relation="include">
+        </childnode>
+        <childnode refid="48014" relation="include">
+        </childnode>
+        <childnode refid="48011" relation="include">
+        </childnode>
+        <childnode refid="48015" relation="include">
+        </childnode>
+        <childnode refid="48010" relation="include">
+        </childnode>
+      </node>
+      <node id="47976">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47962" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47963" relation="include">
+        </childnode>
+      </node>
+      <node id="47979">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47962" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47963" relation="include">
+        </childnode>
+      </node>
+      <node id="47967">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47987">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47963" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47975" relation="include">
+        </childnode>
+        <childnode refid="47984" relation="include">
+        </childnode>
+      </node>
+      <node id="47991">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47992" relation="include">
+        </childnode>
+      </node>
+      <node id="47993">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47948">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47949" relation="include">
+        </childnode>
+        <childnode refid="47950" relation="include">
+        </childnode>
+        <childnode refid="47951" relation="include">
+        </childnode>
+        <childnode refid="47952" relation="include">
+        </childnode>
+        <childnode refid="47953" relation="include">
+        </childnode>
+        <childnode refid="47954" relation="include">
+        </childnode>
+        <childnode refid="47955" relation="include">
+        </childnode>
+        <childnode refid="47956" relation="include">
+        </childnode>
+        <childnode refid="47957" relation="include">
+        </childnode>
+        <childnode refid="47958" relation="include">
+        </childnode>
+        <childnode refid="47959" relation="include">
+        </childnode>
+        <childnode refid="47960" relation="include">
+        </childnode>
+        <childnode refid="47961" relation="include">
+        </childnode>
+        <childnode refid="47962" relation="include">
+        </childnode>
+        <childnode refid="47963" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47966" relation="include">
+        </childnode>
+        <childnode refid="47967" relation="include">
+        </childnode>
+        <childnode refid="47968" relation="include">
+        </childnode>
+        <childnode refid="47969" relation="include">
+        </childnode>
+        <childnode refid="47970" relation="include">
+        </childnode>
+        <childnode refid="47974" relation="include">
+        </childnode>
+        <childnode refid="47975" relation="include">
+        </childnode>
+        <childnode refid="47976" relation="include">
+        </childnode>
+        <childnode refid="47977" relation="include">
+        </childnode>
+        <childnode refid="47978" relation="include">
+        </childnode>
+        <childnode refid="47979" relation="include">
+        </childnode>
+        <childnode refid="47980" relation="include">
+        </childnode>
+        <childnode refid="47986" relation="include">
+        </childnode>
+        <childnode refid="47987" relation="include">
+        </childnode>
+        <childnode refid="47984" relation="include">
+        </childnode>
+        <childnode refid="47988" relation="include">
+        </childnode>
+        <childnode refid="47991" relation="include">
+        </childnode>
+        <childnode refid="47993" relation="include">
+        </childnode>
+        <childnode refid="47994" relation="include">
+        </childnode>
+        <childnode refid="48003" relation="include">
+        </childnode>
+        <childnode refid="48004" relation="include">
+        </childnode>
+      </node>
+      <node id="48017">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48010">
+        <label>mlpack/core/tree/cover_tree.hpp</label>
+        <link refid="cover__tree_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48011" relation="include">
+        </childnode>
+        <childnode refid="48012" relation="include">
+        </childnode>
+        <childnode refid="48016" relation="include">
+        </childnode>
+        <childnode refid="48018" relation="include">
+        </childnode>
+        <childnode refid="48019" relation="include">
+        </childnode>
+        <childnode refid="48022" relation="include">
+        </childnode>
+        <childnode refid="48023" relation="include">
+        </childnode>
+        <childnode refid="48024" relation="include">
+        </childnode>
+      </node>
+      <node id="48031">
+        <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
+        <link refid="gaussian__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48032" relation="include">
+        </childnode>
+        <childnode refid="48026" relation="include">
+        </childnode>
+      </node>
+      <node id="47954">
+        <label>cstdio</label>
+      </node>
+      <node id="48009">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="47958">
+        <label>tuple</label>
+      </node>
+      <node id="47963">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47980">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47963" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47967" relation="include">
+        </childnode>
+        <childnode refid="47981" relation="include">
+        </childnode>
+        <childnode refid="47982" relation="include">
+        </childnode>
+        <childnode refid="47983" relation="include">
+        </childnode>
+        <childnode refid="47984" relation="include">
+        </childnode>
+      </node>
+      <node id="48011">
+        <label>cover_tree/first_point_is_root.hpp</label>
+        <link refid="first__point__is__root_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="48039">
+        <label>vector</label>
+      </node>
+      <node id="48016">
+        <label>cover_tree/single_tree_traverser.hpp</label>
+        <link refid="cover__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48012" relation="include">
+        </childnode>
+        <childnode refid="48017" relation="include">
+        </childnode>
+      </node>
+      <node id="47959">
+        <label>utility</label>
+      </node>
+      <node id="47983">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47974">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47971">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47972" relation="include">
+        </childnode>
+      </node>
+      <node id="48022">
+        <label>cover_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48015">
+        <label>cover_tree_impl.hpp</label>
+      </node>
+      <node id="48038">
+        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
+        <link refid="pspectrum__string__kernel_8hpp"/>
+        <childnode refid="47999" relation="include">
+        </childnode>
+        <childnode refid="48001" relation="include">
+        </childnode>
+        <childnode refid="48039" relation="include">
+        </childnode>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="47993" relation="include">
+        </childnode>
+        <childnode refid="48040" relation="include">
+        </childnode>
+      </node>
+      <node id="47994">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47995" relation="include">
+        </childnode>
+        <childnode refid="47996" relation="include">
+        </childnode>
+        <childnode refid="47997" relation="include">
+        </childnode>
+        <childnode refid="47998" relation="include">
+        </childnode>
+        <childnode refid="47999" relation="include">
+        </childnode>
+        <childnode refid="48000" relation="include">
+        </childnode>
+        <childnode refid="48001" relation="include">
+        </childnode>
+        <childnode refid="48002" relation="include">
+        </childnode>
+      </node>
+      <node id="47972">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47986">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47984" relation="include">
+        </childnode>
+        <childnode refid="47980" relation="include">
+        </childnode>
+        <childnode refid="47987" relation="include">
+        </childnode>
+      </node>
+      <node id="47955">
+        <label>cstdlib</label>
+      </node>
+      <node id="47950">
+        <label>cctype</label>
+      </node>
+      <node id="48028">
+        <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
+        <link refid="polynomial__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+      </node>
+      <node id="47973">
+        <label>unordered_map</label>
+      </node>
+      <node id="48018">
+        <label>cover_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="47952">
+        <label>climits</label>
+      </node>
+      <node id="48000">
+        <label>mutex</label>
+      </node>
+      <node id="47996">
+        <label>chrono</label>
+      </node>
+      <node id="48004">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="48042">
+        <label>boost/math/special_functions/gamma.hpp</label>
+      </node>
+      <node id="48006">
+        <label>mlpack/core/metrics/ip_metric.hpp</label>
+        <link refid="ip__metric_8hpp"/>
+        <childnode refid="48007" relation="include">
+        </childnode>
+      </node>
+      <node id="48002">
+        <label>thread</label>
+      </node>
+      <node id="47990">
+        <label>type_traits</label>
+      </node>
+      <node id="47966">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="48040">
+        <label>pspectrum_string_kernel_impl.hpp</label>
+      </node>
+      <node id="47960">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47984">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47962" relation="include">
+        </childnode>
+        <childnode refid="47963" relation="include">
+        </childnode>
+        <childnode refid="47964" relation="include">
+        </childnode>
+        <childnode refid="47965" relation="include">
+        </childnode>
+        <childnode refid="47985" relation="include">
+        </childnode>
+      </node>
+      <node id="48043">
+        <label>mlpack/core/kernels/triangular_kernel.hpp</label>
+        <link refid="triangular__kernel_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48032" relation="include">
+        </childnode>
+      </node>
+      <node id="47956">
+        <label>cstring</label>
+      </node>
+      <node id="47975">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47964">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="48032">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="47948" relation="include">
+        </childnode>
+        <childnode refid="48033" relation="include">
+        </childnode>
+      </node>
+      <node id="48023">
+        <label>cover_tree/traits.hpp</label>
+        <link refid="cover__tree_2traits_8hpp"/>
+        <childnode refid="48009" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1fastmks_1_1FastMKSModel" prot="public">mlpack::fastmks::FastMKSModel</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1fastmks">mlpack::fastmks</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+A utility struct to contain all the possible FastMKS models.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="fastmks_8hpp" kindref="compound">fastmks.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="kernel__traits_8hpp" kindref="compound">mlpack/core/kernels/kernel_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="linear__kernel_8hpp" kindref="compound">mlpack/core/kernels/linear_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="polynomial__kernel_8hpp" kindref="compound">mlpack/core/kernels/polynomial_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="cosine__distance_8hpp" kindref="compound">mlpack/core/kernels/cosine_distance.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gaussian__kernel_8hpp" kindref="compound">mlpack/core/kernels/gaussian_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="epanechnikov__kernel_8hpp" kindref="compound">mlpack/core/kernels/epanechnikov_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="hyperbolic__tangent__kernel_8hpp" kindref="compound">mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="laplacian__kernel_8hpp" kindref="compound">mlpack/core/kernels/laplacian_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="pspectrum__string__kernel_8hpp" kindref="compound">mlpack/core/kernels/pspectrum_string_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="spherical__kernel_8hpp" kindref="compound">mlpack/core/kernels/spherical_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="triangular__kernel_8hpp" kindref="compound">mlpack/core/kernels/triangular_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fastmks<sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="classmlpack_1_1fastmks_1_1FastMKSModel" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="38" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" kindref="member">KernelTypes</ref></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" kindref="member">LINEAR_KERNEL</ref>,</highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b" kindref="member">POLYNOMIAL_KERNEL</ref>,</highlight></codeline>
+<codeline lineno="42" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee" kindref="member">COSINE_DISTANCE</ref>,</highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13" kindref="member">GAUSSIAN_KERNEL</ref>,</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc" kindref="member">EPANECHNIKOV_KERNEL</ref>,</highlight></codeline>
+<codeline lineno="45" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a54d012af1c18f0d33fc7b76ee3d164fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a54d012af1c18f0d33fc7b76ee3d164fe" kindref="member">TRIANGULAR_KERNEL</ref>,</highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aa8b1a75b45fd61561787952bff37e591" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aa8b1a75b45fd61561787952bff37e591" kindref="member">HYPTAN_KERNEL</ref></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a785f40ed57385b87326e500c92e6e919" kindref="member">FastMKSModel</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kernelType<sp/>=<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" kindref="member">LINEAR_KERNEL</ref>);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a785f40ed57385b87326e500c92e6e919" kindref="member">FastMKSModel</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a785f40ed57385b87326e500c92e6e919" kindref="member">FastMKSModel</ref>(<ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" kindref="member">operator=</ref>(<ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a901e6c34f535118d384a4ae938a44f90" kindref="member">~FastMKSModel</ref>();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TKernelType&gt;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" kindref="member">BuildModel</ref>(arma::mat&amp;&amp;<sp/>referenceData,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TKernelType&amp;<sp/>kernel,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>singleMode,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>naive,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>base);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" kindref="member">Naive</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" kindref="member">Naive</ref>();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" kindref="member">SingleMode</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" kindref="member">SingleMode</ref>();</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaefce8a6d9804780c3ba76387743bfa1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaefce8a6d9804780c3ba76387743bfa1" kindref="member">KernelType</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernelType;<sp/>}</highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" kindref="member">KernelType</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernelType;<sp/>}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" kindref="member">Search</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>querySet,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>kernels,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>base);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" kindref="member">Search</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>kernels);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kernelType;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::LinearKernel&gt;</ref>*<sp/>linear;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::PolynomialKernel&gt;</ref>*<sp/>polynomial;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::CosineDistance&gt;</ref>*<sp/>cosine;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::GaussianKernel&gt;</ref>*<sp/>gaussian;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::EpanechnikovKernel&gt;</ref>*<sp/>epan;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::TriangularKernel&gt;</ref>*<sp/>triangular;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS&lt;kernel::HyperbolicTangentKernel&gt;</ref>*<sp/>hyptan;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>FastMKSType&gt;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" kindref="member">Search</ref>(FastMKSType&amp;<sp/>f,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>querySet,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>kernels,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>base);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>fastmks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;fastmks_model_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp"/>
+  </compounddef>
+</doxygen>

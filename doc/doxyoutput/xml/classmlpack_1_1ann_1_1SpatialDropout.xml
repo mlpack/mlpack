@@ -1,0 +1,512 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1SpatialDropout" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::SpatialDropout</compoundname>
+    <includes refid="spatial__dropout_8hpp" local="no">spatial_dropout.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1acc8b6b6879b002e34f544046de374ce8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t batchSize</definition>
+        <argsstring></argsstring>
+        <name>batchSize</name>
+        <briefdescription>
+<para>The number of images in the batch. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>If true dropout and scaling are disabled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a8dda1e8d72346e97f51bbf77e881c291" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputSize</definition>
+        <argsstring></argsstring>
+        <name>inputSize</name>
+        <briefdescription>
+<para>The number of pixels in each feature map. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1aaf90f77980b76177f25c4fb2acd9a7b2" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType mask</definition>
+        <argsstring></argsstring>
+        <name>mask</name>
+        <briefdescription>
+<para>Locally-stored mast object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1aa422b0077d0c570937a73aa5b8eb4440" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double ratio</definition>
+        <argsstring></argsstring>
+        <name>ratio</name>
+        <briefdescription>
+<para>The probability of each channel getting dropped. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool reset</definition>
+        <argsstring></argsstring>
+        <name>reset</name>
+        <briefdescription>
+<para>A boolean used to do some internal calculations once initially. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a80d402d10e8341004c0caf10133b80ab" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double scale</definition>
+        <argsstring></argsstring>
+        <name>scale</name>
+        <briefdescription>
+<para>The scale fraction. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1SpatialDropout_1a854352f53b148adc24983a58a1866d66" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The number of channels of each input image. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a9bcbfff9c317c54764d9043d9339bb63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SpatialDropout</definition>
+        <argsstring>()</argsstring>
+        <name>SpatialDropout</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a2713a35ecf6f9d9d750e9cbaaf293ca8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SpatialDropout</definition>
+        <argsstring>(const size_t size, const double ratio=0.5)</argsstring>
+        <name>SpatialDropout</name>
+        <param>
+          <type>const size_t</type>
+          <declname>size</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>ratio</declname>
+          <defval>0.5</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref> object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of channels of each input image. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ratio</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The probability of each channel getting dropped. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="59" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of the <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref> layer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="78" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of the <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref> layer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="68" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a0052f2d1427761ea25fb01a05d966a40" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Ratio</definition>
+        <argsstring>() const</argsstring>
+        <name>Ratio</name>
+        <briefdescription>
+<para>Get the probability value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a9ca65c8f62aa7b45b5b08899d83d2821" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Ratio</definition>
+        <argsstring>(const double r)</argsstring>
+        <name>Ratio</name>
+        <param>
+          <type>const double</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Modify the probability value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="107" bodyend="111"/>
+        <references refid="classmlpack_1_1ann_1_1SpatialDropout_1a65cba07328997659bec80b9879b15a51">SpatialDropout&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="117" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1SpatialDropout_1a9ca65c8f62aa7b45b5b08899d83d2821" compoundref="spatial__dropout_8hpp" startline="107" endline="111">SpatialDropout&lt; InputDataType, OutputDataType &gt;::Ratio</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a58f4b9e873b7c1c7d512bd9f7d1489d8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Size</definition>
+        <argsstring>() const</argsstring>
+        <name>Size</name>
+        <briefdescription>
+<para>Get the number of channels. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SpatialDropout_1a0d09cdf6f07a1dfbc752236a0c8576ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Size</definition>
+        <argsstring>()</argsstring>
+        <name>Size</name>
+        <briefdescription>
+<para>Modify the number of channels. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref> layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>For more information, refer to the following paper,</para><para><programlisting><codeline><highlight class="normal">@article{Tompson15,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Jonathan<sp/>Tompson,<sp/>Ross<sp/>Goroshin,<sp/>Arjun<sp/>Jain,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Yann<sp/>LeCun,<sp/>Christopher<sp/>Bregler},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Efficient<sp/>Object<sp/>Localization<sp/>Using<sp/>Convolutional<sp/>Networks},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/><sp/><sp/>=<sp/>{CoRR},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/><sp/><sp/><sp/>=<sp/>{abs/1411.4280},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2015},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1411.4280},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1411.4280},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/spatial_dropout.hpp" bodystart="48" bodyend="149"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1acc8b6b6879b002e34f544046de374ce8" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>batchSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a9f4103707f4d199ce5594d239b60443e" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a8dda1e8d72346e97f51bbf77e881c291" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>inputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1aaf90f77980b76177f25c4fb2acd9a7b2" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>mask</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a0052f2d1427761ea25fb01a05d966a40" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Ratio</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a9ca65c8f62aa7b45b5b08899d83d2821" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Ratio</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1aa422b0077d0c570937a73aa5b8eb4440" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>ratio</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a80d402d10e8341004c0caf10133b80ab" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>scale</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a854352f53b148adc24983a58a1866d66" prot="private" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>size</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a58f4b9e873b7c1c7d512bd9f7d1489d8" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Size</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a0d09cdf6f07a1dfbc752236a0c8576ba" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>Size</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a9bcbfff9c317c54764d9043d9339bb63" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>SpatialDropout</name></member>
+      <member refid="classmlpack_1_1ann_1_1SpatialDropout_1a2713a35ecf6f9d9d750e9cbaaf293ca8" prot="public" virt="non-virtual"><scope>mlpack::ann::SpatialDropout</scope><name>SpatialDropout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,510 @@
+\section{IO Class Reference}
+\label{classmlpack_1_1IO}\index{IO@{IO}}
+
+
+Parses the command line for parameters and holds user-\/specified parameters.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::map$<$ std\+::string, std\+::map$<$ std\+::string, void($\ast$)(\textbf{ util\+::\+Param\+Data} \&, const void $\ast$, void $\ast$)$>$ $>$ \textbf{ Function\+Map\+Type}
+\begin{DoxyCompactList}\small\item\em Map for functions and types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Add} (\textbf{ util\+::\+Param\+Data} \&\&d)
+\begin{DoxyCompactList}\small\item\em Adds a parameter to the hierarchy; use the P\+A\+R\+A\+M\+\_\+$\ast$() macros instead of this (i.\+e. \end{DoxyCompactList}\item 
+static std\+::map$<$ char, std\+::string $>$ \& \textbf{ Aliases} ()
+\begin{DoxyCompactList}\small\item\em Return a modifiable list of aliases that \doxyref{IO}{p.}{classmlpack_1_1IO} knows about. \end{DoxyCompactList}\item 
+static void \textbf{ Check\+Input\+Matrices} ()
+\begin{DoxyCompactList}\small\item\em Checks all input matrices for NaN and inf values, exits if found any. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\static void \textbf{ Check\+Input\+Matrix} (const T \&matrix, const std\+::string \&identifier)
+\begin{DoxyCompactList}\small\item\em Utility function for \doxyref{Check\+Input\+Matrices()}{p.}{classmlpack_1_1IO_a6686cc4e364afe1e9e63b6059fdfe4d4}. \end{DoxyCompactList}\item 
+static void \textbf{ Clear\+Settings} ()
+\begin{DoxyCompactList}\small\item\em Clear all of the settings, removing all parameters and function mappings. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\static T \& \textbf{ Get\+Param} (const std\+::string \&identifier)
+\begin{DoxyCompactList}\small\item\em Get the value of type T found while parsing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\static std\+::string \textbf{ Get\+Printable\+Param} (const std\+::string \&identifier)
+\begin{DoxyCompactList}\small\item\em Cast the given parameter of the given type to a short, printable std\+::string, for use in status messages. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\static T \& \textbf{ Get\+Raw\+Param} (const std\+::string \&identifier)
+\begin{DoxyCompactList}\small\item\em Get the raw value of the parameter before any processing that \doxyref{Get\+Param()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8} might normally do. \end{DoxyCompactList}\item 
+static \textbf{ IO} \& \textbf{ Get\+Singleton} ()
+\begin{DoxyCompactList}\small\item\em Retrieve the singleton. \end{DoxyCompactList}\item 
+static bool \textbf{ Has\+Param} (const std\+::string \&identifier)
+\begin{DoxyCompactList}\small\item\em See if the specified flag was found while parsing. \end{DoxyCompactList}\item 
+static void \textbf{ Make\+In\+Place\+Copy} (const std\+::string \&output\+Param\+Name, const std\+::string \&input\+Param\+Name)
+\begin{DoxyCompactList}\small\item\em Given two (matrix) parameters, ensure that the first is an in-\/place copy of the second. \end{DoxyCompactList}\item 
+static std\+::map$<$ std\+::string, \textbf{ util\+::\+Param\+Data} $>$ \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Return a modifiable list of parameters that \doxyref{IO}{p.}{classmlpack_1_1IO} knows about. \end{DoxyCompactList}\item 
+static std\+::string \textbf{ Program\+Name} ()
+\begin{DoxyCompactList}\small\item\em Get the program name as set by the B\+I\+N\+D\+I\+N\+G\+\_\+\+N\+A\+M\+E() macro. \end{DoxyCompactList}\item 
+static void \textbf{ Restore\+Settings} (const std\+::string \&name, const bool fatal=true)
+\begin{DoxyCompactList}\small\item\em Restore all of the parameters and function mappings of the given name, if they exist. \end{DoxyCompactList}\item 
+static void \textbf{ Set\+Passed} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Mark a particular parameter as passed. \end{DoxyCompactList}\item 
+static void \textbf{ Store\+Settings} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Take all parameters and function mappings and store them, under the given name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ did\+Parse}
+\begin{DoxyCompactList}\small\item\em True, if \doxyref{IO}{p.}{classmlpack_1_1IO} was used to parse command line options. \end{DoxyCompactList}\item 
+\textbf{ util\+::\+Binding\+Details} \textbf{ doc}
+\begin{DoxyCompactList}\small\item\em Holds the binding\+Details objects. \end{DoxyCompactList}\item 
+\textbf{ Function\+Map\+Type} \textbf{ function\+Map}
+\item 
+std\+::string \textbf{ program\+Name}
+\begin{DoxyCompactList}\small\item\em Holds the name of the program for --version. \end{DoxyCompactList}\item 
+\textbf{ Timers} \textbf{ timer}
+\begin{DoxyCompactList}\small\item\em Holds the timer objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Parses the command line for parameters and holds user-\/specified parameters. 
+
+The \doxyref{IO}{p.}{classmlpack_1_1IO} class is a subsystem by which parameters for machine learning methods can be specified and accessed. In conjunction with the macros P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+LE, P\+A\+R\+A\+M\+\_\+\+I\+NT, P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+NG, P\+A\+R\+A\+M\+\_\+\+F\+L\+AG, and others, this class aims to make user configurability of mlpack methods very easy. There are only three methods in \doxyref{IO}{p.}{classmlpack_1_1IO} that a user should need\+: I\+O\+::\+Parse\+Command\+Line(), \doxyref{I\+O\+::\+Get\+Param()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}, and \doxyref{I\+O\+::\+Has\+Param()}{p.}{classmlpack_1_1IO_a39eda1093ba2453f2b66d37153ac542c} (in addition to the P\+A\+R\+A\+M\+\_\+$\ast$() macros).\subsection{Adding parameters to a program}\label{classmlpack_1_1IO_addparam}
+
+\begin{DoxyCode}
+$ ./executable --bar=5
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+The = is optional; a space can also be used.
+\end{DoxyNote}
+A parameter is specified by using one of the following macros (this is not a complete list; see core/io/io.\+hpp)\+:
+
+
+\begin{DoxyItemize}
+\item P\+A\+R\+A\+M\+\_\+\+F\+L\+A\+G(\+I\+D, D\+E\+S\+C, A\+L\+I\+A\+S)
+\item P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E(\+I\+D, D\+E\+S\+C, A\+L\+I\+A\+S, D\+E\+F)
+\item P\+A\+R\+A\+M\+\_\+\+I\+N\+T(\+I\+D, D\+E\+S\+C, A\+L\+I\+A\+S, D\+E\+F)
+\item P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G(\+I\+D, D\+E\+S\+C, A\+L\+I\+A\+S, D\+E\+F)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Short description of the parameter (one/two sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter. \\
+\hline
+{\em D\+EF} & Default value of the parameter.\\
+\hline
+\end{DoxyParams}
+The flag (boolean) type automatically defaults to false; it is specified merely as a flag on the command line (no \textquotesingle{}=true\textquotesingle{} is required).
+
+Here is an example of a few parameters being defined; this is for the K\+NN binding (methods/neighbor\+\_\+search/knn\+\_\+main.\+cpp)\+:
+
+
+\begin{DoxyCode}
+PARAM\_STRING\_REQ(\textcolor{stringliteral}{"reference\_file"}, \textcolor{stringliteral}{"File containing the reference dataset."},
+    \textcolor{stringliteral}{"r"});
+PARAM\_STRING\_REQ(\textcolor{stringliteral}{"distances\_file"}, \textcolor{stringliteral}{"File to output distances into."}, \textcolor{stringliteral}{"d"});
+PARAM\_STRING\_REQ(\textcolor{stringliteral}{"neighbors\_file"}, \textcolor{stringliteral}{"File to output neighbors into."}, \textcolor{stringliteral}{"n"});
+PARAM\_INT\_REQ(\textcolor{stringliteral}{"k"}, \textcolor{stringliteral}{"Number of furthest neighbors to find."}, \textcolor{stringliteral}{"k"});
+PARAM\_STRING(\textcolor{stringliteral}{"query\_file"}, \textcolor{stringliteral}{"File containing query points (optional)."}, \textcolor{stringliteral}{"q"},
+    \textcolor{stringliteral}{""});
+PARAM\_INT(\textcolor{stringliteral}{"leaf\_size"}, \textcolor{stringliteral}{"Leaf size for tree building."}, \textcolor{stringliteral}{"l"}, 20);
+PARAM\_FLAG(\textcolor{stringliteral}{"naive"}, \textcolor{stringliteral}{"If true, O(n^2) naive mode is used for computation."},
+    \textcolor{stringliteral}{"N"});
+PARAM\_FLAG(\textcolor{stringliteral}{"single\_mode"}, \textcolor{stringliteral}{"If true, single-tree search is used (as opposed "}
+    \textcolor{stringliteral}{"to dual-tree search."}, \textcolor{stringliteral}{"s"});
+\end{DoxyCode}
+
+
+More documentation is available on the P\+A\+R\+A\+M\+\_\+$\ast$() macros in the documentation for core/io/io.\+hpp.\subsection{Documenting the program itself}\label{classmlpack_1_1IO_programinfo}
+In addition to allowing documentation for each individual parameter and module, the B\+I\+N\+D\+I\+N\+G\+\_\+\+N\+A\+M\+E() macro provides support for documenting the program\+Name, B\+I\+N\+D\+I\+N\+G\+\_\+\+S\+H\+O\+R\+T\+\_\+\+D\+E\+S\+C() macro provides support for documenting the short\+Description, B\+I\+N\+D\+I\+N\+G\+\_\+\+L\+O\+N\+G\+\_\+\+D\+E\+S\+C() macro provides support for documenting the long\+Description, the B\+I\+N\+D\+I\+N\+G\+\_\+\+E\+X\+A\+M\+P\+L\+E() macro provides support for documenting the example and the B\+I\+N\+D\+I\+N\+G\+\_\+\+S\+E\+E\+\_\+\+A\+L\+S\+O() macro provides support for documenting the see\+Also. There should only be one instance of the B\+I\+N\+D\+I\+N\+G\+\_\+\+N\+A\+M\+E(), B\+I\+N\+D\+I\+N\+G\+\_\+\+S\+H\+O\+R\+T\+\_\+\+D\+E\+S\+C() and B\+I\+N\+D\+I\+N\+G\+\_\+\+L\+O\+N\+G\+\_\+\+D\+E\+S\+C() macros and there can be multiple instance of B\+I\+N\+D\+I\+N\+G\+\_\+\+E\+X\+A\+M\+P\+L\+E() and B\+I\+N\+D\+I\+N\+G\+\_\+\+S\+E\+E\+\_\+\+A\+L\+S\+O() macro. Below is an example\+:
+
+
+\begin{DoxyCode}
+BINDING\_NAME(\textcolor{stringliteral}{"Maximum Variance Unfolding"});
+BINDING\_SHORT\_DESC(\textcolor{stringliteral}{"An implementation of Maximum Variance Unfolding"});
+BINDING\_LONG\_DESC( \textcolor{stringliteral}{"This program performs maximum "}
+   \textcolor{stringliteral}{"variance unfolding on the given dataset, writing a lower-dimensional "}
+   \textcolor{stringliteral}{"unfolded dataset to the given output file."});
+BINDING\_EXAMPLE(\textcolor{stringliteral}{"mvu"}, \textcolor{stringliteral}{"input"}, \textcolor{stringliteral}{"dataset"}, \textcolor{stringliteral}{"new\_dim"}, 5, \textcolor{stringliteral}{"output"}, \textcolor{stringliteral}{"output"});
+BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"Perceptron"}, \textcolor{stringliteral}{"#perceptron"});
+\end{DoxyCode}
+
+
+This description should be verbose, and explain to a non-\/expert user what the program does and how to use it. If relevant, paper citations should be included.\subsection{Parsing the command line with IO}\label{classmlpack_1_1IO_parseio}
+To have \doxyref{IO}{p.}{classmlpack_1_1IO} parse the command line at the beginning of code execution, only a call to Parse\+Command\+Line() is necessary\+:
+
+
+\begin{DoxyCode}
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char}** argv)
+\{
+  IO::ParseCommandLine(argc, argv);
+
+  ...
+\}
+\end{DoxyCode}
+
+
+\doxyref{IO}{p.}{classmlpack_1_1IO} provides --help and --info options which give nicely formatted documentation of each option; the documentation is generated from the D\+E\+SC arguments in the P\+A\+R\+A\+M\+\_\+$\ast$() macros.\subsection{Getting parameters with IO}\label{classmlpack_1_1IO_getparam}
+When the parameters have been defined, the next important thing is how to access them. For this, the \doxyref{Has\+Param()}{p.}{classmlpack_1_1IO_a39eda1093ba2453f2b66d37153ac542c} and \doxyref{Get\+Param()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8} methods are used. For instance, to see if the user passed the flag (boolean) \char`\"{}naive\char`\"{}\+:
+
+
+\begin{DoxyCode}
+\textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"naive"}))
+\{
+  Log::Info << \textcolor{stringliteral}{"Naive has been passed!"} << std::endl;
+\}
+\end{DoxyCode}
+
+
+To get the value of a parameter, such as a string, use Get\+Param\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{const} std::string filename = IO::GetParam<std::string>(\textcolor{stringliteral}{"filename"});
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+Options should only be defined in files which define {\ttfamily main()} (that is, main bindings). If options are defined elsewhere, they may be spuriously included into other bindings and confuse users. Similarly, if your binding has options which you did not define, it is probably because the option is defined somewhere else and included in your binding.
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Bug}
+\item[\textbf{ Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 172 of file io.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1IO_a5164306ed0dd7d34c35310f93fb02563}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Function\+Map\+Type@{Function\+Map\+Type}}
+\index{Function\+Map\+Type@{Function\+Map\+Type}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Function\+Map\+Type}
+{\footnotesize\ttfamily typedef std\+::map$<$std\+::string, std\+::map$<$std\+::string, void ($\ast$)(\textbf{ util\+::\+Param\+Data}\&, const void$\ast$, void$\ast$)$>$ $>$ \textbf{ Function\+Map\+Type}}
+
+
+
+Map for functions and types. 
+
+Use as function\+Map[\char`\"{}typename\char`\"{}][\char`\"{}function\+Name\char`\"{}]. 
+
+Definition at line 312 of file io.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1IO_adc908d81414046d89563fd0571d55cac}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Add@{Add}}
+\index{Add@{Add}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Add()}
+{\footnotesize\ttfamily static void Add (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&\&}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Adds a parameter to the hierarchy; use the P\+A\+R\+A\+M\+\_\+$\ast$() macros instead of this (i.\+e. 
+
+P\+A\+R\+A\+M\+\_\+\+I\+N\+T()).
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Utility structure holding parameter data. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a5be18c0eeb63369cb449da84dc3ea7ed}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Aliases@{Aliases}}
+\index{Aliases@{Aliases}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Aliases()}
+{\footnotesize\ttfamily static std\+::map$<$char, std\+::string$>$\& Aliases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return a modifiable list of aliases that \doxyref{IO}{p.}{classmlpack_1_1IO} knows about. 
+
+\mbox{\label{classmlpack_1_1IO_a6686cc4e364afe1e9e63b6059fdfe4d4}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Check\+Input\+Matrices@{Check\+Input\+Matrices}}
+\index{Check\+Input\+Matrices@{Check\+Input\+Matrices}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Check\+Input\+Matrices()}
+{\footnotesize\ttfamily static void Check\+Input\+Matrices (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Checks all input matrices for NaN and inf values, exits if found any. 
+
+\mbox{\label{classmlpack_1_1IO_a13e26de32fbf867cff10d99e6660a1ce}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Check\+Input\+Matrix@{Check\+Input\+Matrix}}
+\index{Check\+Input\+Matrix@{Check\+Input\+Matrix}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Check\+Input\+Matrix()}
+{\footnotesize\ttfamily static void Check\+Input\+Matrix (\begin{DoxyParamCaption}\item[{const T \&}]{matrix,  }\item[{const std\+::string \&}]{identifier }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Utility function for \doxyref{Check\+Input\+Matrices()}{p.}{classmlpack_1_1IO_a6686cc4e364afe1e9e63b6059fdfe4d4}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em matrix} & Matrix to check. \\
+\hline
+{\em identifier} & Name of the parameter in question. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a311c68c417bf994e4bf952dcce4a874d}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Clear\+Settings@{Clear\+Settings}}
+\index{Clear\+Settings@{Clear\+Settings}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Clear\+Settings()}
+{\footnotesize\ttfamily static void Clear\+Settings (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Clear all of the settings, removing all parameters and function mappings. 
+
+\mbox{\label{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Get\+Param@{Get\+Param}}
+\index{Get\+Param@{Get\+Param}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Get\+Param()}
+{\footnotesize\ttfamily static T\& Get\+Param (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{identifier }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the value of type T found while parsing. 
+
+You can set the value using this reference safely.
+
+
+\begin{DoxyParams}{Parameters}
+{\em identifier} & The name of the parameter in question. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a9273a321ef422a2aa57ee98f5b169632}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Get\+Printable\+Param@{Get\+Printable\+Param}}
+\index{Get\+Printable\+Param@{Get\+Printable\+Param}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Get\+Printable\+Param()}
+{\footnotesize\ttfamily static std\+::string Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{identifier }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Cast the given parameter of the given type to a short, printable std\+::string, for use in status messages. 
+
+Ideally the message returned here should be only a handful of characters, and certainly no longer than one line.
+
+
+\begin{DoxyParams}{Parameters}
+{\em identifier} & The name of the parameter in question. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_aa3080f329734511912ebe72f9ed30656}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Get\+Raw\+Param@{Get\+Raw\+Param}}
+\index{Get\+Raw\+Param@{Get\+Raw\+Param}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Get\+Raw\+Param()}
+{\footnotesize\ttfamily static T\& Get\+Raw\+Param (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{identifier }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the raw value of the parameter before any processing that \doxyref{Get\+Param()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8} might normally do. 
+
+So, e.\+g., for command-\/line programs, this does not perform any data loading or manipulation like \doxyref{Get\+Param()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8} does. So if you want to access a matrix or model (or similar) parameter before it is loaded, this is the method to use.
+
+
+\begin{DoxyParams}{Parameters}
+{\em identifier} & The name of the parameter in question. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_aacf8da2c1644e932b3cbd46703a3d889}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Get\+Singleton@{Get\+Singleton}}
+\index{Get\+Singleton@{Get\+Singleton}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Get\+Singleton()}
+{\footnotesize\ttfamily static \textbf{ IO}\& Get\+Singleton (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Retrieve the singleton. 
+
+As an end user, if you are just using the \doxyref{IO}{p.}{classmlpack_1_1IO} object, you should not need to use this function---the other static functions should be sufficient.
+
+In this case, the singleton is used to store data for the static methods, as there is no point in defining static methods only to have users call private instance methods.
+
+\begin{DoxyReturn}{Returns}
+The singleton instance for use in the static methods. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1IO_a39eda1093ba2453f2b66d37153ac542c}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Has\+Param@{Has\+Param}}
+\index{Has\+Param@{Has\+Param}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Has\+Param()}
+{\footnotesize\ttfamily static bool Has\+Param (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{identifier }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+See if the specified flag was found while parsing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em identifier} & The name of the parameter in question. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a0a4e362b05cd037fc620e27877f3bf4f}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Make\+In\+Place\+Copy@{Make\+In\+Place\+Copy}}
+\index{Make\+In\+Place\+Copy@{Make\+In\+Place\+Copy}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Make\+In\+Place\+Copy()}
+{\footnotesize\ttfamily static void Make\+In\+Place\+Copy (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{output\+Param\+Name,  }\item[{const std\+::string \&}]{input\+Param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Given two (matrix) parameters, ensure that the first is an in-\/place copy of the second. 
+
+This will generally do nothing (as the bindings already do this automatically), except for command-\/line bindings, where we need to ensure that the output filename is the same as the input filename.
+
+
+\begin{DoxyParams}{Parameters}
+{\em output\+Param\+Name} & Name of output (matrix) parameter. \\
+\hline
+{\em input\+Param\+Name} & Name of input (matrix) parameter. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a3eee2232cb321a8295fa908ba12868ad}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Parameters()}
+{\footnotesize\ttfamily static std\+::map$<$std\+::string, \textbf{ util\+::\+Param\+Data}$>$\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return a modifiable list of parameters that \doxyref{IO}{p.}{classmlpack_1_1IO} knows about. 
+
+\mbox{\label{classmlpack_1_1IO_a1025ff079f4aa3baecf036ab0bc32be5}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Program\+Name@{Program\+Name}}
+\index{Program\+Name@{Program\+Name}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Program\+Name()}
+{\footnotesize\ttfamily static std\+::string Program\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the program name as set by the B\+I\+N\+D\+I\+N\+G\+\_\+\+N\+A\+M\+E() macro. 
+
+\mbox{\label{classmlpack_1_1IO_a6de90cea213fa99eaa5d5f354fabfaa0}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Restore\+Settings@{Restore\+Settings}}
+\index{Restore\+Settings@{Restore\+Settings}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Restore\+Settings()}
+{\footnotesize\ttfamily static void Restore\+Settings (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{const bool}]{fatal = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Restore all of the parameters and function mappings of the given name, if they exist. 
+
+A std\+::invalid\+\_\+argument exception will be thrown if fatal is true and no settings with the given name have been stored (with \doxyref{Store\+Settings()}{p.}{classmlpack_1_1IO_ad30747ed34d1dcf57dad194ff8d09138}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of settings to restore. \\
+\hline
+{\em fatal} & Whether to throw an exception on an unknown name. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Set\+Passed@{Set\+Passed}}
+\index{Set\+Passed@{Set\+Passed}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Set\+Passed()}
+{\footnotesize\ttfamily static void Set\+Passed (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Mark a particular parameter as passed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of the parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::util\+::\+Set\+Input\+Param().
+
+\mbox{\label{classmlpack_1_1IO_ad30747ed34d1dcf57dad194ff8d09138}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!Store\+Settings@{Store\+Settings}}
+\index{Store\+Settings@{Store\+Settings}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{Store\+Settings()}
+{\footnotesize\ttfamily static void Store\+Settings (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Take all parameters and function mappings and store them, under the given name. 
+
+This can later be restored with \doxyref{Restore\+Settings()}{p.}{classmlpack_1_1IO_a6de90cea213fa99eaa5d5f354fabfaa0}. If settings have already been saved under the given name, they will be overwritten. This also clears the current parameters and function map.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of settings to save. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1IO_aba5a4e3036cfa1d1c55012097b0b50cc}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!did\+Parse@{did\+Parse}}
+\index{did\+Parse@{did\+Parse}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{did\+Parse}
+{\footnotesize\ttfamily bool did\+Parse}
+
+
+
+True, if \doxyref{IO}{p.}{classmlpack_1_1IO} was used to parse command line options. 
+
+
+
+Definition at line 322 of file io.\+hpp.
+
+\mbox{\label{classmlpack_1_1IO_aa22e2ce779d7df54dde6a4d7458ef1a0}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!doc@{doc}}
+\index{doc@{doc}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{doc}
+{\footnotesize\ttfamily \textbf{ util\+::\+Binding\+Details} doc}
+
+
+
+Holds the binding\+Details objects. 
+
+
+
+Definition at line 335 of file io.\+hpp.
+
+\mbox{\label{classmlpack_1_1IO_a1a6b843f1c06bc4c23630d76510b491e}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!function\+Map@{function\+Map}}
+\index{function\+Map@{function\+Map}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{function\+Map}
+{\footnotesize\ttfamily \textbf{ Function\+Map\+Type} function\+Map}
+
+
+
+Definition at line 313 of file io.\+hpp.
+
+\mbox{\label{classmlpack_1_1IO_a24d855d329269931b59bdf1b36706a88}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!program\+Name@{program\+Name}}
+\index{program\+Name@{program\+Name}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{program\+Name}
+{\footnotesize\ttfamily std\+::string program\+Name}
+
+
+
+Holds the name of the program for --version. 
+
+This is the true program name (argv[0]) not what is given in Binding\+Details. 
+
+Definition at line 326 of file io.\+hpp.
+
+\mbox{\label{classmlpack_1_1IO_aca4a039cfb9a63fbe2d98febc7ae337b}} 
+\index{mlpack\+::\+IO@{mlpack\+::\+IO}!timer@{timer}}
+\index{timer@{timer}!mlpack\+::\+IO@{mlpack\+::\+IO}}
+\subsubsection{timer}
+{\footnotesize\ttfamily \textbf{ Timers} timer}
+
+
+
+Holds the timer objects. 
+
+
+
+Definition at line 329 of file io.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ io.\+hpp}\end{DoxyCompactItemize}

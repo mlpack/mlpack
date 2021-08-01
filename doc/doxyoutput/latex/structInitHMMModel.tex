@@ -1,0 +1,156 @@
+\section{Init\+H\+M\+M\+Model Struct Reference}
+\label{structInitHMMModel}\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename H\+M\+M\+Type $>$ }\\static void \textbf{ Apply} (H\+M\+M\+Type \&hmm, vector$<$ mat $>$ $\ast$train\+Seq)
+\item 
+static void \textbf{ Create} (H\+MM$<$ Discrete\+Distribution $>$ \&hmm, vector$<$ mat $>$ \&train\+Seq, size\+\_\+t states, double tolerance=1e-\/05)
+\begin{DoxyCompactList}\small\item\em Helper function to create discrete H\+MM. \end{DoxyCompactList}\item 
+static void \textbf{ Create} (H\+MM$<$ Gaussian\+Distribution $>$ \&hmm, vector$<$ mat $>$ \&train\+Seq, size\+\_\+t states, double tolerance=1e-\/05)
+\item 
+static void \textbf{ Create} (H\+MM$<$ G\+MM $>$ \&hmm, vector$<$ mat $>$ \&train\+Seq, size\+\_\+t states, double tolerance=1e-\/05)
+\item 
+static void \textbf{ Create} (H\+MM$<$ Diagonal\+G\+MM $>$ \&hmm, vector$<$ mat $>$ \&train\+Seq, size\+\_\+t states, double tolerance=1e-\/05)
+\begin{DoxyCompactList}\small\item\em Helper function to create Diagonal G\+MM H\+MM. \end{DoxyCompactList}\item 
+static void \textbf{ Random\+Initialize} (vector$<$ Discrete\+Distribution $>$ \&e)
+\begin{DoxyCompactList}\small\item\em Helper function for discrete emission distributions. \end{DoxyCompactList}\item 
+static void \textbf{ Random\+Initialize} (vector$<$ Gaussian\+Distribution $>$ \&e)
+\item 
+static void \textbf{ Random\+Initialize} (vector$<$ G\+MM $>$ \&e)
+\item 
+static void \textbf{ Random\+Initialize} (vector$<$ Diagonal\+G\+MM $>$ \&e)
+\begin{DoxyCompactList}\small\item\em Helper function for diagonal G\+MM emission distributions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 21 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{structInitHMMModel_a3b7981fd17dd8132c10744e7d088c347}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Apply@{Apply}}
+\index{Apply@{Apply}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Apply()}
+{\footnotesize\ttfamily static void Apply (\begin{DoxyParamCaption}\item[{H\+M\+M\+Type \&}]{hmm,  }\item[{vector$<$ mat $>$ $\ast$}]{train\+Seq }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 24 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+
+
+References Create(), and Random\+Initialize().
+
+\mbox{\label{structInitHMMModel_a457b36f139f6a11e38f793ffb1276b38}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Create@{Create}}
+\index{Create@{Create}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Create()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily static void Create (\begin{DoxyParamCaption}\item[{H\+MM$<$ Discrete\+Distribution $>$ \&}]{hmm,  }\item[{vector$<$ mat $>$ \&}]{train\+Seq,  }\item[{size\+\_\+t}]{states,  }\item[{double}]{tolerance = {\ttfamily 1e-\/05} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Helper function to create discrete H\+MM. 
+
+
+
+Definition at line 37 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+
+
+Referenced by Apply().
+
+\mbox{\label{structInitHMMModel_ada660c2630ff663ac9002121e1e28b5e}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Create@{Create}}
+\index{Create@{Create}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Create()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily static void Create (\begin{DoxyParamCaption}\item[{H\+MM$<$ Gaussian\+Distribution $>$ \&}]{hmm,  }\item[{vector$<$ mat $>$ \&}]{train\+Seq,  }\item[{size\+\_\+t}]{states,  }\item[{double}]{tolerance = {\ttfamily 1e-\/05} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 58 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+\mbox{\label{structInitHMMModel_ad22d3a4f18404743629ee3157b071f90}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Create@{Create}}
+\index{Create@{Create}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Create()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily static void Create (\begin{DoxyParamCaption}\item[{H\+MM$<$ G\+MM $>$ \&}]{hmm,  }\item[{vector$<$ mat $>$ \&}]{train\+Seq,  }\item[{size\+\_\+t}]{states,  }\item[{double}]{tolerance = {\ttfamily 1e-\/05} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 82 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+\mbox{\label{structInitHMMModel_affcc1da5c656ea0f07fcc3e726e9cc1e}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Create@{Create}}
+\index{Create@{Create}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Create()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily static void Create (\begin{DoxyParamCaption}\item[{H\+MM$<$ Diagonal\+G\+MM $>$ \&}]{hmm,  }\item[{vector$<$ mat $>$ \&}]{train\+Seq,  }\item[{size\+\_\+t}]{states,  }\item[{double}]{tolerance = {\ttfamily 1e-\/05} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Helper function to create Diagonal G\+MM H\+MM. 
+
+
+
+Definition at line 109 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+\mbox{\label{structInitHMMModel_adb0345a19e57a6724118fd9edebd9422}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Random\+Initialize@{Random\+Initialize}}
+\index{Random\+Initialize@{Random\+Initialize}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Random\+Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily static void Random\+Initialize (\begin{DoxyParamCaption}\item[{vector$<$ Discrete\+Distribution $>$ \&}]{e }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Helper function for discrete emission distributions. 
+
+
+
+Definition at line 136 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+
+
+Referenced by Apply().
+
+\mbox{\label{structInitHMMModel_a2c484f94002baedf55ddaba775794c7a}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Random\+Initialize@{Random\+Initialize}}
+\index{Random\+Initialize@{Random\+Initialize}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Random\+Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily static void Random\+Initialize (\begin{DoxyParamCaption}\item[{vector$<$ Gaussian\+Distribution $>$ \&}]{e }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 145 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+\mbox{\label{structInitHMMModel_a09e5ab6763ae40ac05d1f149098dd805}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Random\+Initialize@{Random\+Initialize}}
+\index{Random\+Initialize@{Random\+Initialize}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Random\+Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily static void Random\+Initialize (\begin{DoxyParamCaption}\item[{vector$<$ G\+MM $>$ \&}]{e }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 157 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+\mbox{\label{structInitHMMModel_a743d931c6b5fb5aea3e957e0823e11f5}} 
+\index{Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}!Random\+Initialize@{Random\+Initialize}}
+\index{Random\+Initialize@{Random\+Initialize}!Init\+H\+M\+M\+Model@{Init\+H\+M\+M\+Model}}
+\subsubsection{Random\+Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily static void Random\+Initialize (\begin{DoxyParamCaption}\item[{vector$<$ Diagonal\+G\+MM $>$ \&}]{e }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Helper function for diagonal G\+MM emission distributions. 
+
+
+
+Definition at line 180 of file hmm\+\_\+test\+\_\+utils.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/tests/main\+\_\+tests/\textbf{ hmm\+\_\+test\+\_\+utils.\+hpp}\end{DoxyCompactItemize}

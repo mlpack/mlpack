@@ -1,0 +1,442 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1nca_1_1SoftmaxErrorFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::nca::SoftmaxErrorFunction</compoundname>
+    <includes refid="nca__softmax__error__function_8hpp" local="no">nca_softmax_error_function.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>MetricType</declname>
+        <defname>MetricType</defname>
+        <defval><ref refid="namespacemlpack_1_1metric_1a42614a1b47a4de6037e67742b94dd24d" kindref="member">metric::SquaredEuclideanDistance</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ac9ea7e1cbaa17f9793c6ff48e2fe07ed" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat dataset</definition>
+        <argsstring></argsstring>
+        <name>dataset</name>
+        <briefdescription>
+<para>The dataset. This is an alias until <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle()</ref> is called. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a3df500fc9433060964458f3645a5eaf6" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec denominators</definition>
+        <argsstring></argsstring>
+        <name>denominators</name>
+        <briefdescription>
+<para>Holds denominators for calculation of p_ij, for the non-separable <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ab894228d057b6613f600ba0d6ee7e68a" prot="private" static="no" mutable="no">
+        <type>arma::Row&lt; size_t &gt;</type>
+        <definition>arma::Row&lt;size_t&gt; labels</definition>
+        <argsstring></argsstring>
+        <name>labels</name>
+        <briefdescription>
+<para>Labels for each point in the dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is an alias until <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle()</ref> is called. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ab50f72175c0916114965e9a5b0731e4d" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat lastCoordinates</definition>
+        <argsstring></argsstring>
+        <name>lastCoordinates</name>
+        <briefdescription>
+<para>Last coordinates. Used for the non-separable <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" static="no" mutable="no">
+        <type>MetricType</type>
+        <definition>MetricType metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>The instantiated metric. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1abaf4c3fc19908e3439b4956793e290df" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <briefdescription>
+<para>Holds calculated p_i, for the non-separable <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a3ea0ad35696fadcedfdd10a0ec802007" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool precalculated</definition>
+        <argsstring></argsstring>
+        <name>precalculated</name>
+        <briefdescription>
+<para>False if nothing has ever been precalculated (only at construction time). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="155" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a0b0210ccfb7b85b79957dfce4558039a" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat stretchedDataset</definition>
+        <argsstring></argsstring>
+        <name>stretchedDataset</name>
+        <briefdescription>
+<para>Stretched dataset. Kept internal to avoid memory reallocations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1aed757d2c1bfdc680098a2544e3eae97e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SoftmaxErrorFunction</definition>
+        <argsstring>(const arma::mat &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, MetricType metric=MetricType())</argsstring>
+        <name>SoftmaxErrorFunction</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize with the given kernel; useful when the kernel has some state to store, which is set elsewhere. </para>        </briefdescription>
+        <detaileddescription>
+<para>If no kernel is given, an empty kernel is used; this way, you can call the constructor with no arguments. A reference to the dataset we will be optimizing over is also required.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix containing the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of class labels for each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated metric (optional). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="58" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;covariance)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>covariance</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the softmax function for the given covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the non-separable implementation, where the objective function is not decomposed into the sum of several objective functions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>covariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariance matrix of Mahalanobis distance. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a4229a84a3552879f556421f3084a8269" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;covariance, const size_t begin, const size_t batchSize=1)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>covariance</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the softmax objective function for the given covariance matrix on the given batch size from a given inital point of the dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the separable implementation, where the objective function is decomposed into the sum of many objective functions, and here, only one of those constituent objective functions is returned.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>covariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariance matrix of Mahalanobis distance. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the initial point to use for objective function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to use for objective function. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="88" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a595b81d2593c99409f31f524fe12bfcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const arma::mat</type>
+        <definition>const arma::mat GetInitialPoint</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInitialPoint</name>
+        <briefdescription>
+<para>Get the initial point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="126" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;covariance, arma::mat &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>covariance</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the softmax function for the given covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the non-separable implementation, where the objective function is not decomposed into the sum of several objective functions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>covariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariance matrix of Mahalanobis distance. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store the calculated gradient in. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="100" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8dc4cf443bea9b2edaef1d437b111ffe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;covariance, const size_t begin, GradType &amp;gradient, const size_t batchSize=1)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>covariance</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the softmax function for the given covariance matrix on the given batch size, from a given initial point of the dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the separable implementation, where the objective function is decomposed into the sum of many objective functions, and here, only one of those constituent objective functions is returned. The type of the gradient parameter is a template argument to allow the computation of a sparse gradient.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the gradient out-param. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>covariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariance matrix of Mahalanobis distance. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the initial point to use for objective function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to use for objective function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store the calculated gradient in. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="118" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumFunctions</definition>
+        <argsstring>() const</argsstring>
+        <name>NumFunctions</name>
+        <briefdescription>
+<para>Get the number of functions the objective function can be decomposed into. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is just the number of points in the dataset. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="65" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1afd0c251f476cda5cd0c6ffdc673c636d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Precalculate</definition>
+        <argsstring>(const arma::mat &amp;coordinates)</argsstring>
+        <name>Precalculate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>coordinates</declname>
+        </param>
+        <briefdescription>
+<para>Precalculate the denominators and numerators that will make up the p_ij, but only if the coordinates matrix is different than the last coordinates the Precalculate() method was run with. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is only called by the non-separable <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref>.</para><para>This will update last_coordinates_ and stretched_dataset_, and also calculate the p_i and denominators_ which are used in the calculation of p_i or p_ij. The calculation will be O((n * (n + 1)) / 2), which is not great.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>coordinates</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coordinates matrix to use for precalculation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="170" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The &quot;softmax&quot; stochastic neighbor assignment probability function. </para>    </briefdescription>
+    <detaileddescription>
+<para>The actual function is</para><para>p_ij = (exp(-|| A x_i - A x_j || ^ 2)) / (sum_{k != i} (exp(-|| A x_i - A x_k || ^ 2)))</para><para>where x_n represents a point and A is the current scaling matrix.</para><para>This class is more flexible than the original paper, allowing an arbitrary metric function to be used in place of || A x_i - A x_j ||^2, meaning that the squared Euclidean distance is not the only allowed metric for <ref refid="classmlpack_1_1nca_1_1NCA" kindref="compound">NCA</ref>. However, that is probably the best way to use this class.</para><para>In addition to the standard <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref> functions which mlpack optimizers use, overloads of <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" kindref="member">Evaluate()</ref> and <ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" kindref="member">Gradient()</ref> are given which only operate on one point in the dataset. This is useful for optimizers like stochastic gradient descent (see mlpack::optimization::SGD). </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp" bodystart="45" bodyend="171"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ac9ea7e1cbaa17f9793c6ff48e2fe07ed" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>dataset</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a3df500fc9433060964458f3645a5eaf6" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>denominators</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a7bf1f5613d393e7b885ed44660ca1069" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a4229a84a3552879f556421f3084a8269" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a595b81d2593c99409f31f524fe12bfcf" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>GetInitialPoint</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8464e351c740da7124aaa748e171ce4b" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a8dc4cf443bea9b2edaef1d437b111ffe" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ab894228d057b6613f600ba0d6ee7e68a" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>labels</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ab50f72175c0916114965e9a5b0731e4d" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>lastCoordinates</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>NumFunctions</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1abaf4c3fc19908e3439b4956793e290df" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>p</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1afd0c251f476cda5cd0c6ffdc673c636d" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Precalculate</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a3ea0ad35696fadcedfdd10a0ec802007" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>precalculated</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>Shuffle</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1aed757d2c1bfdc680098a2544e3eae97e" prot="public" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>SoftmaxErrorFunction</name></member>
+      <member refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction_1a0b0210ccfb7b85b79957dfce4558039a" prot="private" virt="non-virtual"><scope>mlpack::nca::SoftmaxErrorFunction</scope><name>stretchedDataset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

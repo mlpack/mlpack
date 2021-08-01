@@ -1,0 +1,99 @@
+.TH "LoadCSV" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LoadCSV \- Load the csv file\&.This class use boost::spirit to implement the parser, please refer to following link http://theboostcpplibraries.com/boost.spirit for quick review\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLoadCSV\fP (const std::string &file)"
+.br
+.RI "Construct the \fBLoadCSV\fP object on the given file\&. "
+.ti -1c
+.RI "template<typename T , typename MapPolicy > void \fBGetMatrixSize\fP (size_t &rows, size_t &cols, \fBDatasetMapper\fP< MapPolicy > &info)"
+.br
+.RI "Peek at the file to determine the number of rows and columns in the matrix, assuming a non-transposed matrix\&. "
+.ti -1c
+.RI "template<typename T , typename MapPolicy > void \fBGetTransposeMatrixSize\fP (size_t &rows, size_t &cols, \fBDatasetMapper\fP< MapPolicy > &info)"
+.br
+.RI "Peek at the file to determine the number of rows and columns in the matrix, assuming a transposed matrix\&. "
+.ti -1c
+.RI "template<typename T , typename PolicyType > void \fBLoad\fP (arma::Mat< T > &inout, \fBDatasetMapper\fP< PolicyType > &infoSet, const bool transpose=true)"
+.br
+.RI "Load the file into the given matrix with the given \fBDatasetMapper\fP object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Load the csv file\&.This class use boost::spirit to implement the parser, please refer to following link http://theboostcpplibraries.com/boost.spirit for quick review\&. 
+.PP
+Definition at line 36 of file load_csv\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLoadCSV\fP (const std::string & file)"
+
+.PP
+Construct the \fBLoadCSV\fP object on the given file\&. This will construct the rules necessary for loading and attempt to open the file\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void GetMatrixSize (size_t & rows, size_t & cols, \fBDatasetMapper\fP< MapPolicy > & info)\fC [inline]\fP"
+
+.PP
+Peek at the file to determine the number of rows and columns in the matrix, assuming a non-transposed matrix\&. This will also take a first pass over the data for \fBDatasetMapper\fP, if MapPolicy::NeedsFirstPass is true\&. The info object will be re-initialized with the correct dimensionality\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrows\fP Variable to be filled with the number of rows\&. 
+.br
+\fIcols\fP Variable to be filled with the number of columns\&. 
+.br
+\fIinfo\fP \fBDatasetMapper\fP object to use for first pass\&. 
+.RE
+.PP
+
+.PP
+Definition at line 78 of file load_csv\&.hpp\&.
+.SS "void GetTransposeMatrixSize (size_t & rows, size_t & cols, \fBDatasetMapper\fP< MapPolicy > & info)\fC [inline]\fP"
+
+.PP
+Peek at the file to determine the number of rows and columns in the matrix, assuming a transposed matrix\&. This will also take a first pass over the data for \fBDatasetMapper\fP, if MapPolicy::NeedsFirstPass is true\&. The info object will be re-initialized with the correct dimensionality\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrows\fP Variable to be filled with the number of rows\&. 
+.br
+\fIcols\fP Variable to be filled with the number of columns\&. 
+.br
+\fIinfo\fP \fBDatasetMapper\fP object to use for first pass\&. 
+.RE
+.PP
+
+.PP
+Definition at line 151 of file load_csv\&.hpp\&.
+.PP
+References DatasetMapper< PolicyType, InputType >::SetDimensionality()\&.
+.SS "void Load (arma::Mat< T > & inout, \fBDatasetMapper\fP< PolicyType > & infoSet, const bool transpose = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Load the file into the given matrix with the given \fBDatasetMapper\fP object\&. Throws exceptions on errors\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinout\fP Matrix to load into\&. 
+.br
+\fIinfoSet\fP \fBDatasetMapper\fP to use while loading\&. 
+.br
+\fItranspose\fP If true, the matrix should be transposed on loading (default)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 55 of file load_csv\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

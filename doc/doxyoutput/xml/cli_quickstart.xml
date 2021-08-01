@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="cli_quickstart" kind="page">
+    <compoundname>cli_quickstart</compoundname>
+    <title>mlpack command-line quickstart guide</title>
+    <detaileddescription>
+<sect1 id="cli_quickstart_1cli_quickstart_intro">
+<title>Introduction</title>
+<para>This page describes how you can quickly get started using mlpack from the command-line and gives a few examples of usage, and pointers to deeper documentation.</para><para>This quickstart guide is also available for <ref refid="python_quickstart" kindref="compound">Python</ref>, <ref refid="r_quickstart" kindref="compound">R</ref>, <ref refid="julia_quickstart" kindref="compound">Julia</ref> and <ref refid="go_quickstart" kindref="compound">Go</ref>.</para></sect1>
+<sect1 id="cli_quickstart_1cli_quickstart_install">
+<title>Installing mlpack</title>
+<para>Installing the mlpack is straightforward and can be done with your system&apos;s package manager.</para><para>For instance, for Ubuntu or Debian the command is simply</para><para><programlisting><codeline><highlight class="normal">sudo<sp/>apt-get<sp/>install<sp/>mlpack-bin</highlight></codeline>
+</programlisting></para><para>On Fedora or Red Hat:</para><para><programlisting><codeline><highlight class="normal">sudo<sp/>dnf<sp/>install<sp/>mlpack</highlight></codeline>
+</programlisting></para><para>If you use a different distribution, mlpack may be packaged under a different name. And if it is not packaged, you can use a Docker image from Dockerhub:</para><para><programlisting><codeline><highlight class="normal">docker<sp/>run<sp/>-it<sp/>mlpack/mlpack<sp/>/bin/bash</highlight></codeline>
+</programlisting></para><para>This Docker image has mlpack already built and installed.</para><para>If you prefer to build mlpack from scratch, see <ref refid="build" kindref="compound">Building mlpack From Source</ref>.</para></sect1>
+<sect1 id="cli_quickstart_1cli_quickstart_example">
+<title>Simple mlpack quickstart example</title>
+<para>As a really simple example of how to use mlpack from the command-line, let&apos;s do some simple classification on a subset of the standard machine learning <computeroutput>covertype</computeroutput> dataset. We&apos;ll first split the dataset into a training set and a testing set, then we&apos;ll train an mlpack random forest on the training data, and finally we&apos;ll print the accuracy of the random forest on the test dataset.</para><para>You can copy-paste this code directly into your shell to run it.</para><para><programlisting><codeline><highlight class="normal">#<sp/>Get<sp/>the<sp/>dataset<sp/>and<sp/>unpack<sp/>it.</highlight></codeline>
+<codeline><highlight class="normal">wget<sp/>https://www.mlpack.org/datasets/covertype-small.data.csv.gz</highlight></codeline>
+<codeline><highlight class="normal">wget<sp/>https://www.mlpack.org/datasets/covertype-small.labels.csv.gz</highlight></codeline>
+<codeline><highlight class="normal">gunzip<sp/>covertype-small.data.csv.gz<sp/>covertype-small.labels.csv.gz</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Split<sp/>the<sp/>dataset;<sp/>70%<sp/>into<sp/>a<sp/>training<sp/>set<sp/>and<sp/>30%<sp/>into<sp/>a<sp/>test<sp/>set.</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>Each<sp/>of<sp/>these<sp/>options<sp/>has<sp/>a<sp/>shorthand<sp/>single-character<sp/>option<sp/>but<sp/>here<sp/>we<sp/>type</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>it<sp/>all<sp/>out<sp/>for<sp/>clarity.</highlight></codeline>
+<codeline><highlight class="normal">mlpack_preprocess_split<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--input_file<sp/>covertype-small.data.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--input_labels_file<sp/>covertype-small.labels.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--training_file<sp/>covertype-small.train.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--training_labels_file<sp/>covertype-small.train.labels.csv<sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_file<sp/>covertype-small.test.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_labels_file<sp/>covertype-small.test.labels.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_ratio<sp/>0.3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Train<sp/>a<sp/>random<sp/>forest.</highlight></codeline>
+<codeline><highlight class="normal">mlpack_random_forest<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--training_file<sp/>covertype-small.train.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--labels_file<sp/>covertype-small.train.labels.csv<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--num_trees<sp/>10<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--minimum_leaf_size<sp/>3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--print_training_accuracy<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--output_model_file<sp/>rf-model.bin<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Now<sp/>predict<sp/>the<sp/>labels<sp/>of<sp/>the<sp/>test<sp/>points<sp/>and<sp/>print<sp/>the<sp/>accuracy.</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>Also,<sp/>save<sp/>the<sp/>test<sp/>set<sp/>predictions<sp/>to<sp/>the<sp/>file<sp/>&apos;predictions.csv&apos;.</highlight></codeline>
+<codeline><highlight class="normal">mlpack_random_forest<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--input_model_file<sp/>rf-model.bin<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_file<sp/>covertype-small.test.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_labels_file<sp/>covertype-small.test.labels.csv<sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--predictions_file<sp/>predictions.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+</programlisting></para><para>We can see by looking at the output that we achieve reasonably good accuracy on the test dataset (80%+). The file <computeroutput>predictions.csv</computeroutput> could also be used by other tools; for instance, we can easily calculate the number of points that were predicted incorrectly:</para><para><programlisting><codeline><highlight class="normal">$<sp/>diff<sp/>-U<sp/>0<sp/>predictions.csv<sp/>covertype-small.test.labels.csv<sp/>|<sp/>grep<sp/>&apos;^@@&apos;<sp/>|<sp/>wc<sp/>-l</highlight></codeline>
+</programlisting></para><para>It&apos;s easy to modify the code above to do more complex things, or to use different mlpack learners, or to interface with other machine learning toolkits.</para></sect1>
+<sect1 id="cli_quickstart_1cli_quickstart_whatelse">
+<title>What else does mlpack implement?</title>
+<para>The example above has only shown a little bit of the functionality of mlpack. Lots of other commands are available with different functionality. A full list of commands and full documentation for each can be found on the following page:</para><para><itemizedlist>
+<listitem><para><ulink url="https://mlpack.org/doc/mlpack-git/cli_documentation.html">CLI documentation</ulink></para></listitem></itemizedlist>
+</para><para>For more information on what mlpack does, see <ulink url="https://www.mlpack.org/">https://www.mlpack.org/</ulink>. Next, let&apos;s go through another example for providing movie recommendations with mlpack.</para></sect1>
+<sect1 id="cli_quickstart_1cli_quickstart_movierecs">
+<title>Using mlpack for movie recommendations</title>
+<para>In this example, we&apos;ll train a collaborative filtering model using mlpack&apos;s <computeroutput>mlpack_cf</computeroutput> program. We&apos;ll train this on the MovieLens dataset from <ulink url="https://grouplens.org/datasets/movielens/,">https://grouplens.org/datasets/movielens/,</ulink> and then we&apos;ll use the model that we train to give recommendations.</para><para>You can copy-paste this code directly into the command line to run it.</para><para><programlisting><codeline><highlight class="normal">wget<sp/>https://www.mlpack.org/datasets/ml-20m/ratings-only.csv.gz</highlight></codeline>
+<codeline><highlight class="normal">wget<sp/>https://www.mlpack.org/datasets/ml-20m/movies.csv.gz</highlight></codeline>
+<codeline><highlight class="normal">gunzip<sp/>ratings-only.csv.gz</highlight></codeline>
+<codeline><highlight class="normal">gunzip<sp/>movies.csv.gz</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Hold<sp/>out<sp/>10%<sp/>of<sp/>the<sp/>dataset<sp/>into<sp/>a<sp/>test<sp/>set<sp/>so<sp/>we<sp/>can<sp/>evaluate<sp/>performance.</highlight></codeline>
+<codeline><highlight class="normal">mlpack_preprocess_split<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--input_file<sp/>ratings-only.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--training_file<sp/>ratings-train.csv<sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_file<sp/>ratings-test.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_ratio<sp/>0.1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Train<sp/>the<sp/>model.<sp/><sp/>Change<sp/>the<sp/>rank<sp/>to<sp/>increase/decrease<sp/>the<sp/>complexity<sp/>of<sp/>the</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>model.</highlight></codeline>
+<codeline><highlight class="normal">mlpack_cf<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--training_file<sp/>ratings-train.csv<sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--test_file<sp/>ratings-test.csv<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--rank<sp/>10<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--algorithm<sp/>RegSVD<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--output_model_file<sp/>cf-model.bin<sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Now<sp/>query<sp/>the<sp/>5<sp/>top<sp/>movies<sp/>for<sp/>user<sp/>1.</highlight></codeline>
+<codeline><highlight class="normal">echo<sp/>&quot;1&quot;<sp/>&gt;<sp/>query.csv;</highlight></codeline>
+<codeline><highlight class="normal">mlpack_cf<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--input_model_file<sp/>cf-model.bin<sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--query_file<sp/>query.csv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--recommendations<sp/>10<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--output_file<sp/>recommendations.csv<sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>--verbose</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Get<sp/>the<sp/>names<sp/>of<sp/>the<sp/>movies<sp/>for<sp/>user<sp/>1.</highlight></codeline>
+<codeline><highlight class="normal">echo<sp/>&quot;Recommendations<sp/>for<sp/>user<sp/>1:&quot;</highlight></codeline>
+<codeline><highlight class="normal">for<sp/>i<sp/>in<sp/>`seq<sp/>1<sp/>10`;<sp/>do</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>item=`cat<sp/>recommendations.csv<sp/>|<sp/>awk<sp/>-F&apos;,&apos;<sp/>&apos;{<sp/>print<sp/>$&apos;$i&apos;<sp/>}&apos;`;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>head<sp/>-n<sp/>$(($item<sp/>+<sp/>2))<sp/>movies.csv<sp/>|<sp/>tail<sp/>-1<sp/>|<sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sed<sp/>&apos;s/^[^,]*,[^,]*,//&apos;<sp/>|<sp/>\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sed<sp/>&apos;s/\(.*\),.*$/\1/&apos;<sp/>|<sp/>sed<sp/>&apos;s/&quot;//g&apos;;</highlight></codeline>
+<codeline><highlight class="normal">done</highlight></codeline>
+</programlisting></para><para>Here is some example output, showing that user 1 seems to have good taste in movies:</para><para><programlisting><codeline><highlight class="normal">Recommendations<sp/>for<sp/>user<sp/>1:</highlight></codeline>
+<codeline><highlight class="normal">Casablanca<sp/>(1942)</highlight></codeline>
+<codeline><highlight class="normal">Pan&apos;s<sp/>Labyrinth<sp/>(Laberinto<sp/>del<sp/>fauno,<sp/>El)<sp/>(2006)</highlight></codeline>
+<codeline><highlight class="normal">Godfather,<sp/>The<sp/>(1972)</highlight></codeline>
+<codeline><highlight class="normal">Answer<sp/>This!<sp/>(2010)</highlight></codeline>
+<codeline><highlight class="normal">Life<sp/>Is<sp/>Beautiful<sp/>(La<sp/>Vita<sp/>è<sp/>bella)<sp/>(1997)</highlight></codeline>
+<codeline><highlight class="normal">Adventures<sp/>of<sp/>Tintin,<sp/>The<sp/>(2011)</highlight></codeline>
+<codeline><highlight class="normal">Dark<sp/>Knight,<sp/>The<sp/>(2008)</highlight></codeline>
+<codeline><highlight class="normal">Out<sp/>for<sp/>Justice<sp/>(1991)</highlight></codeline>
+<codeline><highlight class="normal">Dr.<sp/>Strangelove<sp/>or:<sp/>How<sp/>I<sp/>Learned<sp/>to<sp/>Stop<sp/>Worrying<sp/>and<sp/>Love<sp/>the<sp/>Bomb<sp/>(1964)</highlight></codeline>
+<codeline><highlight class="normal">Schindler&apos;s<sp/>List<sp/>(1993)</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="cli_quickstart_1cli_quickstart_nextsteps">
+<title>Next steps with mlpack</title>
+<para>Now that you have done some simple work with mlpack, you have seen how it can easily plug into a data science production workflow for the command line. A great thing to do next would be to look at more documentation for the mlpack command-line programs:</para><para><itemizedlist>
+<listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/cli_documentation.html">mlpack command-line program documentation</ulink></para></listitem></itemizedlist>
+</para><para>Also, mlpack is much more flexible from C++ and allows much greater functionality. So, more complicated tasks are possible if you are willing to write C++. To get started learning about mlpack in C++, the following resources might be helpful:</para><para><itemizedlist>
+<listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack C++ tutorials</ulink></para></listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack build and installation guide</ulink></para></listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple sample C++ mlpack programs</ulink></para></listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack Doxygen documentation homepage</ulink> </para></listitem></itemizedlist>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

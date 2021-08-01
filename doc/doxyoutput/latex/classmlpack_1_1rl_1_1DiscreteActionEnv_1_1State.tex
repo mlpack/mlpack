@@ -1,0 +1,123 @@
+\section{Discrete\+Action\+Env\+:\+:State Class Reference}
+\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State}\index{Discrete\+Action\+Env\+::\+State@{Discrete\+Action\+Env\+::\+State}}
+
+
+Implementation of state of the dummy environment.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Construct a state instance. \end{DoxyCompactList}\item 
+\textbf{ State} (const arma\+::colvec \&data)
+\begin{DoxyCompactList}\small\item\em Construct a state instance from given data. \end{DoxyCompactList}\item 
+arma\+::colvec \& \textbf{ Data} ()
+\begin{DoxyCompactList}\small\item\em Modify the internal representation of the state. \end{DoxyCompactList}\item 
+const arma\+::colvec \& \textbf{ Encode} () const
+\begin{DoxyCompactList}\small\item\em Encode the state to a column vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static size\+\_\+t \textbf{ dimension}
+\begin{DoxyCompactList}\small\item\em Dimension of the encoded state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of state of the dummy environment. 
+
+Definition at line 38 of file env\+\_\+type.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_a790355057d12e9c1ce7643551c16fecd}} 
+\index{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}!State@{State}}
+\index{State@{State}!mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}}
+\subsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance. 
+
+
+
+Definition at line 44 of file env\+\_\+type.\+hpp.
+
+
+
+Referenced by Discrete\+Action\+Env\+::\+Initial\+Sample(), and Continuous\+Action\+Env\+::\+Initial\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_a8bc7967f6d91a3c94f9b3f502297a926}} 
+\index{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}!State@{State}}
+\index{State@{State}!mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}}
+\subsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance from given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data for the state. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 52 of file env\+\_\+type.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_ad6a50c7b5fced2e931d9a4b4ff989ed6}} 
+\index{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}!Data@{Data}}
+\index{Data@{Data}!mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}}
+\subsubsection{Data()}
+{\footnotesize\ttfamily arma\+::colvec\& Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the internal representation of the state. 
+
+
+
+Definition at line 56 of file env\+\_\+type.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_a8c1a320788b55fad936455caf0acb62a}} 
+\index{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}}
+\subsubsection{Encode()}
+{\footnotesize\ttfamily const arma\+::colvec\& Encode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encode the state to a column vector. 
+
+
+
+Definition at line 59 of file env\+\_\+type.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_a389cd93f4e125d4369384464914be61f}} 
+\index{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}!dimension@{dimension}}
+\index{dimension@{dimension}!mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State@{mlpack\+::rl\+::\+Discrete\+Action\+Env\+::\+State}}
+\subsubsection{dimension}
+{\footnotesize\ttfamily size\+\_\+t dimension\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Dimension of the encoded state. 
+
+
+
+Definition at line 62 of file env\+\_\+type.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ env\+\_\+type.\+hpp}\end{DoxyCompactItemize}

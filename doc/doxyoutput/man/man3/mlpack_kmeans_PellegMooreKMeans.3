@@ -1,0 +1,120 @@
+.TH "PellegMooreKMeans< MetricType, MatType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PellegMooreKMeans< MetricType, MatType > \- An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means clustering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::KDTree\fP< MetricType, \fBPellegMooreKMeansStatistic\fP, MatType > \fBTreeType\fP"
+.br
+.RI "Convenience typedef for the tree\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPellegMooreKMeans\fP (const MatType &dataset, MetricType &metric)"
+.br
+.RI "Construct the \fBPellegMooreKMeans\fP object, which must construct a tree\&. "
+.ti -1c
+.RI "\fB~PellegMooreKMeans\fP ()"
+.br
+.RI "Delete the tree constructed by the \fBPellegMooreKMeans\fP object\&. "
+.ti -1c
+.RI "size_t \fBDistanceCalculations\fP () const"
+.br
+.RI "Return the number of distance calculations\&. "
+.ti -1c
+.RI "size_t & \fBDistanceCalculations\fP ()"
+.br
+.RI "Modify the number of distance calculations\&. "
+.ti -1c
+.RI "double \fBIterate\fP (const arma::mat &centroids, arma::mat &newCentroids, arma::Col< size_t > &counts)"
+.br
+.RI "Run a single iteration of the Pelleg-Moore blacklist algorithm, updating the given centroids into the newCentroids matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename MatType>
+.br
+class mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >"
+An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means clustering\&. 
+
+This algorithm builds a kd-tree on the data points and traverses it in order to determine the closest clusters to each point\&.
+.PP
+For more information on the algorithm, see
+.PP
+.PP
+.nf
+@inproceedings{pelleg1999accelerating,
+    title={Accelerating exact k-means algorithms with geometric reasoning},
+    author={Pelleg, Dan and Moore, Andrew W\&.},
+    booktitle={Proceedings of the Fifth ACM SIGKDD International Conference
+      on Knowledge Discovery and Data Mining (KDD '99)},
+pages={277--281},
+year={1999},
+organization={ACM}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 42 of file pelleg_moore_kmeans\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBtree::KDTree\fP<MetricType, \fBPellegMooreKMeansStatistic\fP, MatType> \fBTreeType\fP"
+
+.PP
+Convenience typedef for the tree\&. 
+.PP
+Definition at line 74 of file pelleg_moore_kmeans\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPellegMooreKMeans\fP (const MatType & dataset, MetricType & metric)"
+
+.PP
+Construct the \fBPellegMooreKMeans\fP object, which must construct a tree\&. 
+.SS "~\fBPellegMooreKMeans\fP ()"
+
+.PP
+Delete the tree constructed by the \fBPellegMooreKMeans\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t DistanceCalculations () const\fC [inline]\fP"
+
+.PP
+Return the number of distance calculations\&. 
+.PP
+Definition at line 68 of file pelleg_moore_kmeans\&.hpp\&.
+.SS "size_t& DistanceCalculations ()\fC [inline]\fP"
+
+.PP
+Modify the number of distance calculations\&. 
+.PP
+Definition at line 70 of file pelleg_moore_kmeans\&.hpp\&.
+.SS "double Iterate (const arma::mat & centroids, arma::mat & newCentroids, arma::Col< size_t > & counts)"
+
+.PP
+Run a single iteration of the Pelleg-Moore blacklist algorithm, updating the given centroids into the newCentroids matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcentroids\fP Current cluster centroids\&. 
+.br
+\fInewCentroids\fP New cluster centroids\&. 
+.br
+\fIcounts\fP Current counts, to be overwritten with new counts\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

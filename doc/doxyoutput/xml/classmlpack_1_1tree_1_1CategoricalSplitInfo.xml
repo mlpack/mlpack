@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1CategoricalSplitInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::CategoricalSplitInfo</compoundname>
+    <includes refid="categorical__split__info_8hpp" local="no">categorical_split_info.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1CategoricalSplitInfo_1ad287444a06299e946a7d16b47b0f656e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CategoricalSplitInfo</definition>
+        <argsstring>(const size_t)</argsstring>
+        <name>CategoricalSplitInfo</name>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1CategoricalSplitInfo_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object. (Nothing needs to be saved.) </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" bodystart="35" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1CategoricalSplitInfo_1ac1f5e439aa34731eafc789cdb2d6e09f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>static size_t CalculateDirection</definition>
+        <argsstring>(const eT &amp;value)</argsstring>
+        <name>CalculateDirection</name>
+        <param>
+          <type>const eT &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" bodystart="26" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" line="21" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/categorical_split_info.hpp" bodystart="20" bodyend="36"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1CategoricalSplitInfo_1ac1f5e439aa34731eafc789cdb2d6e09f" prot="public" virt="non-virtual"><scope>mlpack::tree::CategoricalSplitInfo</scope><name>CalculateDirection</name></member>
+      <member refid="classmlpack_1_1tree_1_1CategoricalSplitInfo_1ad287444a06299e946a7d16b47b0f656e" prot="public" virt="non-virtual"><scope>mlpack::tree::CategoricalSplitInfo</scope><name>CategoricalSplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1CategoricalSplitInfo_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::tree::CategoricalSplitInfo</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

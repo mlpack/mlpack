@@ -1,0 +1,108 @@
+\section{R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+:\+:Split\+Info Struct Reference}
+\label{structmlpack_1_1tree_1_1RPTreeMeanSplit_1_1SplitInfo}\index{R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Split\+Info@{R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Split\+Info}}
+
+
+An information about the partition.  
+
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Col$<$ \textbf{ Elem\+Type} $>$ \textbf{ direction}
+\begin{DoxyCompactList}\small\item\em The normal to the hyperplane that will split the node. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ \textbf{ Elem\+Type} $>$ \textbf{ mean}
+\begin{DoxyCompactList}\small\item\em The mean of some sampled points. \end{DoxyCompactList}\item 
+bool \textbf{ mean\+Split}
+\begin{DoxyCompactList}\small\item\em Indicates that we should use the mean split algorithm instead of the median split. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ split\+Val}
+\begin{DoxyCompactList}\small\item\em The value according to which the split will be performed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Bound\+Type, typename Mat\+Type = arma\+::mat$>$\newline
+struct mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Split\+Info}
+
+An information about the partition. 
+
+Definition at line 39 of file rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{structmlpack_1_1tree_1_1RPTreeMeanSplit_1_1SplitInfo_a620f4f39e225b65a841f34c53b94515f}} 
+\index{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}!direction@{direction}}
+\index{direction@{direction}!mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}}
+\subsubsection{direction}
+{\footnotesize\ttfamily arma\+::\+Col$<$\textbf{ Elem\+Type}$>$ direction}
+
+
+
+The normal to the hyperplane that will split the node. 
+
+
+
+Definition at line 42 of file rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp.
+
+
+
+Referenced by R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Assign\+To\+Left\+Node().
+
+\mbox{\label{structmlpack_1_1tree_1_1RPTreeMeanSplit_1_1SplitInfo_a12759ca9cb67acd78d9f84691d3dbca2}} 
+\index{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}!mean@{mean}}
+\index{mean@{mean}!mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}}
+\subsubsection{mean}
+{\footnotesize\ttfamily arma\+::\+Col$<$\textbf{ Elem\+Type}$>$ mean}
+
+
+
+The mean of some sampled points. 
+
+
+
+Definition at line 44 of file rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp.
+
+
+
+Referenced by R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Assign\+To\+Left\+Node().
+
+\mbox{\label{structmlpack_1_1tree_1_1RPTreeMeanSplit_1_1SplitInfo_a66c386fb84a207f57aace1b0b527780d}} 
+\index{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}!mean\+Split@{mean\+Split}}
+\index{mean\+Split@{mean\+Split}!mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}}
+\subsubsection{mean\+Split}
+{\footnotesize\ttfamily bool mean\+Split}
+
+
+
+Indicates that we should use the mean split algorithm instead of the median split. 
+
+
+
+Definition at line 49 of file rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp.
+
+
+
+Referenced by R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Assign\+To\+Left\+Node().
+
+\mbox{\label{structmlpack_1_1tree_1_1RPTreeMeanSplit_1_1SplitInfo_a0940adf91ff7f1747d68384a012683d3}} 
+\index{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}!split\+Val@{split\+Val}}
+\index{split\+Val@{split\+Val}!mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+R\+P\+Tree\+Mean\+Split\+::\+Split\+Info}}
+\subsubsection{split\+Val}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} split\+Val}
+
+
+
+The value according to which the split will be performed. 
+
+
+
+Definition at line 46 of file rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp.
+
+
+
+Referenced by R\+P\+Tree\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Assign\+To\+Left\+Node().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/\textbf{ rp\+\_\+tree\+\_\+mean\+\_\+split.\+hpp}\end{DoxyCompactItemize}

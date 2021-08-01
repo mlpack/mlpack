@@ -1,0 +1,524 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dual__tree__kmeans__statistic_8hpp" kind="file" language="C++">
+    <compoundname>dual_tree_kmeans_statistic.hpp</compoundname>
+    <includes refid="neighbor__search__stat_8hpp" local="no">mlpack/methods/neighbor_search/neighbor_search_stat.hpp</includes>
+    <includedby refid="dual__tree__kmeans_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</includedby>
+    <incdepgraph>
+      <node id="50618">
+        <label>list</label>
+      </node>
+      <node id="50615">
+        <label>atomic</label>
+      </node>
+      <node id="50605">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="50581">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="50617">
+        <label>iomanip</label>
+      </node>
+      <node id="50590">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="50591" relation="include">
+        </childnode>
+        <childnode refid="50593" relation="include">
+        </childnode>
+      </node>
+      <node id="50573">
+        <label>cstdint</label>
+      </node>
+      <node id="50582">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="50589">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="50612">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="50567">
+        <label>mlpack/methods/neighbor_search/neighbor_search_stat.hpp</label>
+        <link refid="neighbor__search__stat_8hpp"/>
+        <childnode refid="50568" relation="include">
+        </childnode>
+      </node>
+      <node id="50602">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="50566">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp</label>
+        <link refid="dual__tree__kmeans__statistic_8hpp"/>
+        <childnode refid="50567" relation="include">
+        </childnode>
+      </node>
+      <node id="50569">
+        <label>cmath</label>
+      </node>
+      <node id="50588">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="50577">
+        <label>stdexcept</label>
+      </node>
+      <node id="50597">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="50582" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50583" relation="include">
+        </childnode>
+      </node>
+      <node id="50621">
+        <label>string</label>
+      </node>
+      <node id="50609">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="50610" relation="include">
+        </childnode>
+        <childnode refid="50576" relation="include">
+        </childnode>
+      </node>
+      <node id="50619">
+        <label>map</label>
+      </node>
+      <node id="50571">
+        <label>cfloat</label>
+      </node>
+      <node id="50601">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="50623">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="50585">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="50608">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="50609" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50592" relation="include">
+        </childnode>
+        <childnode refid="50610" relation="include">
+        </childnode>
+      </node>
+      <node id="50598">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="50596">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="50582" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50583" relation="include">
+        </childnode>
+      </node>
+      <node id="50599">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="50582" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50583" relation="include">
+        </childnode>
+      </node>
+      <node id="50587">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="50607">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="50583" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50595" relation="include">
+        </childnode>
+        <childnode refid="50604" relation="include">
+        </childnode>
+      </node>
+      <node id="50611">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="50612" relation="include">
+        </childnode>
+      </node>
+      <node id="50613">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="50568">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="50569" relation="include">
+        </childnode>
+        <childnode refid="50570" relation="include">
+        </childnode>
+        <childnode refid="50571" relation="include">
+        </childnode>
+        <childnode refid="50572" relation="include">
+        </childnode>
+        <childnode refid="50573" relation="include">
+        </childnode>
+        <childnode refid="50574" relation="include">
+        </childnode>
+        <childnode refid="50575" relation="include">
+        </childnode>
+        <childnode refid="50576" relation="include">
+        </childnode>
+        <childnode refid="50577" relation="include">
+        </childnode>
+        <childnode refid="50578" relation="include">
+        </childnode>
+        <childnode refid="50579" relation="include">
+        </childnode>
+        <childnode refid="50580" relation="include">
+        </childnode>
+        <childnode refid="50581" relation="include">
+        </childnode>
+        <childnode refid="50582" relation="include">
+        </childnode>
+        <childnode refid="50583" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50586" relation="include">
+        </childnode>
+        <childnode refid="50587" relation="include">
+        </childnode>
+        <childnode refid="50588" relation="include">
+        </childnode>
+        <childnode refid="50589" relation="include">
+        </childnode>
+        <childnode refid="50590" relation="include">
+        </childnode>
+        <childnode refid="50594" relation="include">
+        </childnode>
+        <childnode refid="50595" relation="include">
+        </childnode>
+        <childnode refid="50596" relation="include">
+        </childnode>
+        <childnode refid="50597" relation="include">
+        </childnode>
+        <childnode refid="50598" relation="include">
+        </childnode>
+        <childnode refid="50599" relation="include">
+        </childnode>
+        <childnode refid="50600" relation="include">
+        </childnode>
+        <childnode refid="50606" relation="include">
+        </childnode>
+        <childnode refid="50607" relation="include">
+        </childnode>
+        <childnode refid="50604" relation="include">
+        </childnode>
+        <childnode refid="50608" relation="include">
+        </childnode>
+        <childnode refid="50611" relation="include">
+        </childnode>
+        <childnode refid="50613" relation="include">
+        </childnode>
+        <childnode refid="50614" relation="include">
+        </childnode>
+        <childnode refid="50623" relation="include">
+        </childnode>
+        <childnode refid="50624" relation="include">
+        </childnode>
+      </node>
+      <node id="50574">
+        <label>cstdio</label>
+      </node>
+      <node id="50578">
+        <label>tuple</label>
+      </node>
+      <node id="50583">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="50600">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="50583" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50587" relation="include">
+        </childnode>
+        <childnode refid="50601" relation="include">
+        </childnode>
+        <childnode refid="50602" relation="include">
+        </childnode>
+        <childnode refid="50603" relation="include">
+        </childnode>
+        <childnode refid="50604" relation="include">
+        </childnode>
+      </node>
+      <node id="50579">
+        <label>utility</label>
+      </node>
+      <node id="50603">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="50594">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="50591">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="50592" relation="include">
+        </childnode>
+      </node>
+      <node id="50614">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="50615" relation="include">
+        </childnode>
+        <childnode refid="50616" relation="include">
+        </childnode>
+        <childnode refid="50617" relation="include">
+        </childnode>
+        <childnode refid="50618" relation="include">
+        </childnode>
+        <childnode refid="50619" relation="include">
+        </childnode>
+        <childnode refid="50620" relation="include">
+        </childnode>
+        <childnode refid="50621" relation="include">
+        </childnode>
+        <childnode refid="50622" relation="include">
+        </childnode>
+      </node>
+      <node id="50592">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="50606">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="50604" relation="include">
+        </childnode>
+        <childnode refid="50600" relation="include">
+        </childnode>
+        <childnode refid="50607" relation="include">
+        </childnode>
+      </node>
+      <node id="50575">
+        <label>cstdlib</label>
+      </node>
+      <node id="50570">
+        <label>cctype</label>
+      </node>
+      <node id="50593">
+        <label>unordered_map</label>
+      </node>
+      <node id="50572">
+        <label>climits</label>
+      </node>
+      <node id="50620">
+        <label>mutex</label>
+      </node>
+      <node id="50616">
+        <label>chrono</label>
+      </node>
+      <node id="50624">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="50622">
+        <label>thread</label>
+      </node>
+      <node id="50610">
+        <label>type_traits</label>
+      </node>
+      <node id="50586">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="50580">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="50604">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="50582" relation="include">
+        </childnode>
+        <childnode refid="50583" relation="include">
+        </childnode>
+        <childnode refid="50584" relation="include">
+        </childnode>
+        <childnode refid="50585" relation="include">
+        </childnode>
+        <childnode refid="50605" relation="include">
+        </childnode>
+      </node>
+      <node id="50576">
+        <label>cstring</label>
+      </node>
+      <node id="50595">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="50584">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="50625">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp</label>
+        <link refid="dual__tree__kmeans__statistic_8hpp"/>
+        <childnode refid="50626" relation="include">
+        </childnode>
+      </node>
+      <node id="50626">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic" prot="public">mlpack::kmeans::DualTreeKMeansStatistic</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kmeans">mlpack::kmeans</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Statistic for dual-tree nearest neighbor search based k-means clustering.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_KMEANS_DTNN_STATISTIC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_KMEANS_DTNN_STATISTIC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="neighbor__search__stat_8hpp" kindref="compound">mlpack/methods/neighbor_search/neighbor_search_stat.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kmeans<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic" kindref="compound">DualTreeKMeansStatistic</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat" kindref="compound">neighbor::NeighborSearchStat</ref>&lt;neighbor::NearestNeighborSort&gt;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ae4bbc0cf4377a786c3b504f951ba7046" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ae4bbc0cf4377a786c3b504f951ba7046" kindref="member">DualTreeKMeansStatistic</ref>()<sp/>:</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>neighbor::<ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ae911ff9386cbf7f4b2f80b49baf65587" kindref="member">NeighborSearchStat</ref>&lt;neighbor::<ref refid="namespacemlpack_1_1neighbor_1af3f11fce33c041aa26b1c91107f71b0f" kindref="member">NearestNeighborSort</ref>&gt;(),</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>upperBound(DBL_MAX),</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lowerBound(DBL_MAX),</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>owner(size_t(-1)),</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>pruned(size_t(-1)),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticPruned(false),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticUpperBoundMovement(0.0),</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticLowerBoundMovement(0.0),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>centroid(),</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>trueParent(NULL)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Nothing<sp/>to<sp/>do.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad07d3f8a650ad69028309aa13787eb13" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad07d3f8a650ad69028309aa13787eb13" kindref="member">DualTreeKMeansStatistic</ref>(TreeType&amp;<sp/>node)<sp/>:</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>neighbor::<ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ae911ff9386cbf7f4b2f80b49baf65587" kindref="member">NeighborSearchStat</ref>&lt;neighbor::<ref refid="namespacemlpack_1_1neighbor_1af3f11fce33c041aa26b1c91107f71b0f" kindref="member">NearestNeighborSort</ref>&gt;(),</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>upperBound(DBL_MAX),</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lowerBound(DBL_MAX),</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>owner(size_t(-1)),</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>pruned(size_t(-1)),</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticPruned(false),</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticUpperBoundMovement(0.0),</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>staticLowerBoundMovement(0.0),</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>trueParent(node.Parent())</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Empirically<sp/>calculate<sp/>the<sp/>centroid.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>centroid.zeros(node.Dataset().n_rows);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>node.NumPoints();<sp/>++i)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Correct<sp/>handling<sp/>of<sp/>cover<sp/>tree:<sp/>don&apos;t<sp/>double-count<sp/>the<sp/>point<sp/>which</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>appears<sp/>in<sp/>the<sp/>children.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits&lt;TreeType&gt;::HasSelfChildren</ref><sp/>&amp;&amp;<sp/>i<sp/>==<sp/>0<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node.NumChildren()<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>centroid<sp/>+=<sp/>node.Dataset().col(node.Point(i));</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>node.NumChildren();<sp/>++i)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>centroid<sp/>+=<sp/>node.Child(i).NumDescendants()<sp/>*</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node.Child(i).Stat().Centroid();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>centroid<sp/>/=<sp/>node.NumDescendants();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Set<sp/>the<sp/>true<sp/>children<sp/>correctly.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>trueChildren.resize(node.NumChildren());</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>node.NumChildren();<sp/>++i)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>trueChildren[i]<sp/>=<sp/>&amp;node.Child(i);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a7b4b0b81a682ae9cb8d5279e149d0711" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a7b4b0b81a682ae9cb8d5279e149d0711" kindref="member">UpperBound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>upperBound;<sp/>}</highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8ca22dd7e7fef0daedaf688ff37b5d05" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8ca22dd7e7fef0daedaf688ff37b5d05" kindref="member">UpperBound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>upperBound;<sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa685759f5922c85cfd4324b013452acc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa685759f5922c85cfd4324b013452acc" kindref="member">LowerBound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lowerBound;<sp/>}</highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a07dfef5c510f360a388ea83388f6dc9e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a07dfef5c510f360a388ea83388f6dc9e" kindref="member">LowerBound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lowerBound;<sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8d1b09bb5ee8c048e57746774a6e502e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8d1b09bb5ee8c048e57746774a6e502e" kindref="member">Centroid</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>centroid;<sp/>}</highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a656ee900ec6d5a1548d3023d7df8bb9a" refkind="member"><highlight class="normal"><sp/><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a656ee900ec6d5a1548d3023d7df8bb9a" kindref="member">Centroid</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>centroid;<sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1add77f6a2ece7cc80c5a8865cbf650d39" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1add77f6a2ece7cc80c5a8865cbf650d39" kindref="member">Owner</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>owner;<sp/>}</highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ab6ffbf89c0e4cc471da490443889e991" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ab6ffbf89c0e4cc471da490443889e991" kindref="member">Owner</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>owner;<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a1c6359156768721a6cb316bd56f039c7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a1c6359156768721a6cb316bd56f039c7" kindref="member">Pruned</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pruned;<sp/>}</highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad46a79b6924140c2a85e7a54ad2afd1a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad46a79b6924140c2a85e7a54ad2afd1a" kindref="member">Pruned</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pruned;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a53c2228b52ce984497248a9f192ddaa2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a53c2228b52ce984497248a9f192ddaa2" kindref="member">StaticPruned</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticPruned;<sp/>}</highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2488b36c60e3ac332ee9e22e8d4d42dd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2488b36c60e3ac332ee9e22e8d4d42dd" kindref="member">StaticPruned</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticPruned;<sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aee9f5d1c2d148ee4f8487579e692fcd1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aee9f5d1c2d148ee4f8487579e692fcd1" kindref="member">StaticUpperBoundMovement</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticUpperBoundMovement;<sp/>}</highlight></codeline>
+<codeline lineno="94" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a379c0b1aeb4ef7c1ba3b6c4536d140d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a379c0b1aeb4ef7c1ba3b6c4536d140d5" kindref="member">StaticUpperBoundMovement</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticUpperBoundMovement;<sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2001cf08b014feb94371cc8b39152064" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2001cf08b014feb94371cc8b39152064" kindref="member">StaticLowerBoundMovement</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticLowerBoundMovement;<sp/>}</highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1abd65ad8192ec72ca0b349ba5ca323600" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1abd65ad8192ec72ca0b349ba5ca323600" kindref="member">StaticLowerBoundMovement</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>staticLowerBoundMovement;<sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a5d76088594ffa23921e04424ebbbbcc8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a5d76088594ffa23921e04424ebbbbcc8" kindref="member">TrueParent</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trueParent;<sp/>}</highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1afd9de4c738ef44724c26f353a5ff40b1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1afd9de4c738ef44724c26f353a5ff40b1" kindref="member">TrueParent</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trueParent;<sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3a834eb10b8b5c8ef0b77616579a4b9d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3a834eb10b8b5c8ef0b77616579a4b9d" kindref="member">TrueChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trueChildren[i];<sp/>}</highlight></codeline>
+<codeline lineno="103" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a9b84c63a2e48d222e5ffe1dc1ee2e11c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*&amp;<sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a9b84c63a2e48d222e5ffe1dc1ee2e11c" kindref="member">TrueChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trueChildren[i];<sp/>}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3868027cf542938adb12a4bb597ff53e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3868027cf542938adb12a4bb597ff53e" kindref="member">NumTrueChildren</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trueChildren.size();<sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperBound;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerBound;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>owner;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pruned;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>staticPruned;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>staticUpperBoundMovement;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>staticLowerBoundMovement;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>arma::vec<sp/>centroid;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>trueParent;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>std::vector&lt;void*&gt;<sp/>trueChildren;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kmeans</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp"/>
+  </compounddef>
+</doxygen>

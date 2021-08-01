@@ -1,0 +1,267 @@
+\section{E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$ Class Template Reference}
+\label{classmlpack_1_1gmm_1_1EMFit}\index{E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$@{E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$}}
+
+
+This class contains methods which can fit a \doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM} to observations using the EM algorithm.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ E\+M\+Fit} (const size\+\_\+t max\+Iterations=300, const double tolerance=1e-\/10, Initial\+Clustering\+Type clusterer=\+Initial\+Clustering\+Type(), Covariance\+Constraint\+Policy constraint=\+Covariance\+Constraint\+Policy())
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{E\+M\+Fit}{p.}{classmlpack_1_1gmm_1_1EMFit} object, optionally passing an Initial\+Clustering\+Type object (just in case it needs to store state). \end{DoxyCompactList}\item 
+const Initial\+Clustering\+Type \& \textbf{ Clusterer} () const
+\begin{DoxyCompactList}\small\item\em Get the clusterer. \end{DoxyCompactList}\item 
+Initial\+Clustering\+Type \& \textbf{ Clusterer} ()
+\begin{DoxyCompactList}\small\item\em Modify the clusterer. \end{DoxyCompactList}\item 
+const Covariance\+Constraint\+Policy \& \textbf{ Constraint} () const
+\begin{DoxyCompactList}\small\item\em Get the covariance constraint policy class. \end{DoxyCompactList}\item 
+Covariance\+Constraint\+Policy \& \textbf{ Constraint} ()
+\begin{DoxyCompactList}\small\item\em Modify the covariance constraint policy class. \end{DoxyCompactList}\item 
+void \textbf{ Estimate} (const arma\+::mat \&observations, std\+::vector$<$ Distribution $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)
+\begin{DoxyCompactList}\small\item\em Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm. \end{DoxyCompactList}\item 
+void \textbf{ Estimate} (const arma\+::mat \&observations, const arma\+::vec \&probabilities, std\+::vector$<$ Distribution $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)
+\begin{DoxyCompactList}\small\item\em Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm, taking into account the probabilities of each point being from this mixture. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Iterations} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations of the EM algorithm. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of iterations of the EM algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the fitter. \end{DoxyCompactList}\item 
+double \textbf{ Tolerance} () const
+\begin{DoxyCompactList}\small\item\em Get the tolerance for the convergence of the EM algorithm. \end{DoxyCompactList}\item 
+double \& \textbf{ Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance for the convergence of the EM algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Initial\+Clustering\+Type = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy = Positive\+Definite\+Constraint, typename Distribution = distribution\+::\+Gaussian\+Distribution$>$\newline
+class mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$}
+
+This class contains methods which can fit a \doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM} to observations using the EM algorithm. 
+
+It requires an initial clustering mechanism, which is by default the K\+Means algorithm. The clustering mechanism must implement the following method\+:
+
+
+\begin{DoxyItemize}
+\item void Cluster(const arma\+::mat\& observations, const size\+\_\+t clusters, arma\+::\+Row$<$size\+\_\+t$>$\& assignments);
+\end{DoxyItemize}
+
+This method should create \textquotesingle{}clusters\textquotesingle{} clusters, and return the assignment of each point to a cluster. 
+
+Definition at line 45 of file em\+\_\+fit.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a030d5debc5e91c51e0f72f64ff39f3de}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!E\+M\+Fit@{E\+M\+Fit}}
+\index{E\+M\+Fit@{E\+M\+Fit}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{E\+M\+Fit()}
+{\footnotesize\ttfamily \textbf{ E\+M\+Fit} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 300},  }\item[{const double}]{tolerance = {\ttfamily 1e-\/10},  }\item[{Initial\+Clustering\+Type}]{clusterer = {\ttfamily InitialClusteringType()},  }\item[{Covariance\+Constraint\+Policy}]{constraint = {\ttfamily CovarianceConstraintPolicy()} }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{E\+M\+Fit}{p.}{classmlpack_1_1gmm_1_1EMFit} object, optionally passing an Initial\+Clustering\+Type object (just in case it needs to store state). 
+
+Setting the maximum number of iterations to 0 means that the EM algorithm will iterate until convergence (with the given tolerance).
+
+The parameter force\+Positive controls whether or not the covariance matrices are checked for positive definiteness at each iteration. This could be a time-\/consuming task, so, if you know your data is well-\/behaved, you can set it to false and save some runtime.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Iterations} & Maximum number of iterations for EM. \\
+\hline
+{\em tolerance} & Log-\/likelihood tolerance required for convergence. \\
+\hline
+{\em clusterer} & Object which will perform the initial clustering. \\
+\hline
+{\em constraint} & Constraint policy of covariance. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a399ea7835ff966f467d13416046c7fa0}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Clusterer@{Clusterer}}
+\index{Clusterer@{Clusterer}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Clusterer()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Initial\+Clustering\+Type\& Clusterer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the clusterer. 
+
+
+
+Definition at line 111 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a79abb61d6e17dced3b7bffcec5a5a83a}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Clusterer@{Clusterer}}
+\index{Clusterer@{Clusterer}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Clusterer()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Initial\+Clustering\+Type\& Clusterer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the clusterer. 
+
+
+
+Definition at line 113 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a2abb870b3266e1ce64e43ed16f2537f6}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Constraint@{Constraint}}
+\index{Constraint@{Constraint}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Constraint()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Covariance\+Constraint\+Policy\& Constraint (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the covariance constraint policy class. 
+
+
+
+Definition at line 116 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a05ddd1b39294c15e05c8d922b336ee2f}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Constraint@{Constraint}}
+\index{Constraint@{Constraint}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Constraint()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Covariance\+Constraint\+Policy\& Constraint (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the covariance constraint policy class. 
+
+
+
+Definition at line 118 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a2a2f9c9c82f1e94ee7aad7d759193b97}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Estimate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Estimate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{observations,  }\item[{std\+::vector$<$ Distribution $>$ \&}]{dists,  }\item[{arma\+::vec \&}]{weights,  }\item[{const bool}]{use\+Initial\+Model = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm. 
+
+The size of the vectors (indicating the number of components) must already be set. Optionally, if use\+Initial\+Model is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the Initial\+Clustering\+Type\+::\+Cluster() option.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations to train on. \\
+\hline
+{\em dists} & Distributions to store model in. \\
+\hline
+{\em weights} & Vector to store a priori weights in. \\
+\hline
+{\em use\+Initial\+Model} & If true, the given model is used for the initial clustering. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_ac0f0d7036d31c3f590afd3ca9d061425}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Estimate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Estimate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{observations,  }\item[{const arma\+::vec \&}]{probabilities,  }\item[{std\+::vector$<$ Distribution $>$ \&}]{dists,  }\item[{arma\+::vec \&}]{weights,  }\item[{const bool}]{use\+Initial\+Model = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm, taking into account the probabilities of each point being from this mixture. 
+
+The size of the vectors (indicating the number of components) must already be set. Optionally, if use\+Initial\+Model is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the Initial\+Clustering\+Type\+::\+Cluster() option.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations to train on. \\
+\hline
+{\em probabilities} & Probability of each point being from this model. \\
+\hline
+{\em dists} & Distributions to store model in. \\
+\hline
+{\em weights} & Vector to store a priori weights in. \\
+\hline
+{\em use\+Initial\+Model} & If true, the given model is used for the initial clustering. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a420770944a5b0c7a852c4ec372c4a2d1}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Max\+Iterations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of iterations of the EM algorithm. 
+
+
+
+Definition at line 121 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_acda675ab4ab86b95c92bc33bc391a61b}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Max\+Iterations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum number of iterations of the EM algorithm. 
+
+
+
+Definition at line 123 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the fitter. 
+
+
+
+Referenced by E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$\+::\+Tolerance().
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a7b5af5c1a84c507cbaa7f999ea5a4fda}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Tolerance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Tolerance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the tolerance for the convergence of the EM algorithm. 
+
+
+
+Definition at line 126 of file em\+\_\+fit.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1EMFit_a3d9fac84af16250f5a3689692e8f2173}} 
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection{Tolerance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Tolerance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the tolerance for the convergence of the EM algorithm. 
+
+
+
+Definition at line 128 of file em\+\_\+fit.\+hpp.
+
+
+
+References E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy, Distribution $>$\+::serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/gmm/\textbf{ em\+\_\+fit.\+hpp}\end{DoxyCompactItemize}

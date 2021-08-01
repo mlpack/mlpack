@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d6a1e83a35c0777ddb5f306ab15ead95" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree/octree</compoundname>
+    <innerfile refid="octree_2dual__tree__traverser_8hpp">dual_tree_traverser.hpp</innerfile>
+    <innerfile refid="octree_2octree_8hpp">octree.hpp</innerfile>
+    <innerfile refid="octree_2single__tree__traverser_8hpp">single_tree_traverser.hpp</innerfile>
+    <innerfile refid="octree_2traits_8hpp">traits.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/"/>
+  </compounddef>
+</doxygen>

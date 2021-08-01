@@ -1,0 +1,157 @@
+.TH "HardShrink< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HardShrink< InputDataType, OutputDataType > \- Hard Shrink operator is defined as,\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHardShrink\fP (const double lambda=0\&.5)"
+.br
+.RI "Create \fBHardShrink\fP object using specified hyperparameter lambda\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &input, DataType &gy, DataType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "double const  & \fBLambda\fP () const"
+.br
+.RI "Get the hyperparameter lambda\&. "
+.ti -1c
+.RI "double & \fBLambda\fP ()"
+.br
+.RI "Modify the hyperparameter lambda\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::HardShrink< InputDataType, OutputDataType >"
+Hard Shrink operator is defined as,\&. 
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x & : x > lambda \\ x & : x < -lambda \\ 0 & : otherwise. \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > lambda \\ 1 & : x < -lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}
+.PP
+$\lambda$ is set to 0\&.5 by default\&. 
+.PP
+Definition at line 45 of file hardshrink\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBHardShrink\fP (const double lambda = \fC0\&.5\fP)"
+
+.PP
+Create \fBHardShrink\fP object using specified hyperparameter lambda\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlambda\fP Is calculated by multiplying the noise level sigma of the input(noisy image) and a coefficient 'a' which is one of the training parameters\&. Default value of lambda is 0\&.5\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const DataType & input, DataType & gy, DataType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation f(x)\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 88 of file hardshrink\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 90 of file hardshrink\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the Hard Shrink function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "double const& Lambda () const\fC [inline]\fP"
+
+.PP
+Get the hyperparameter lambda\&. 
+.PP
+Definition at line 93 of file hardshrink\&.hpp\&.
+.SS "double& Lambda ()\fC [inline]\fP"
+
+.PP
+Modify the hyperparameter lambda\&. 
+.PP
+Definition at line 95 of file hardshrink\&.hpp\&.
+.PP
+References HardShrink< InputDataType, OutputDataType >::serialize()\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 83 of file hardshrink\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 85 of file hardshrink\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by HardShrink< InputDataType, OutputDataType >::Lambda()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

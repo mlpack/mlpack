@@ -1,0 +1,68 @@
+\section{M\+SE Class Reference}
+\label{classmlpack_1_1cv_1_1MSE}\index{M\+SE@{M\+SE}}
+
+
+The Mean\+Squared\+Error is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename M\+L\+Algorithm , typename Data\+Type , typename Responses\+Type $>$ }\\static double \textbf{ Evaluate} (M\+L\+Algorithm \&model, const Data\+Type \&data, const Responses\+Type \&responses)
+\begin{DoxyCompactList}\small\item\em Run prediction and calculate the mean squared error. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Needs\+Minimization} = true
+\begin{DoxyCompactList}\small\item\em Information for hyper-\/parameter tuning code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Mean\+Squared\+Error is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items. 
+
+Definition at line 25 of file mse.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1MSE_a8df5d5ca0ff562cab8a12f07e4c7f06d}} 
+\index{mlpack\+::cv\+::\+M\+SE@{mlpack\+::cv\+::\+M\+SE}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::cv\+::\+M\+SE@{mlpack\+::cv\+::\+M\+SE}}
+\subsubsection{Evaluate()}
+{\footnotesize\ttfamily static double Evaluate (\begin{DoxyParamCaption}\item[{M\+L\+Algorithm \&}]{model,  }\item[{const Data\+Type \&}]{data,  }\item[{const Responses\+Type \&}]{responses }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Run prediction and calculate the mean squared error. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & A regression model. \\
+\hline
+{\em data} & Column-\/major data containing test items. \\
+\hline
+{\em responses} & Ground truth (correct) target values for the test items, should be either a row vector or a column-\/major matrix. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1MSE_a59117419810548f86c24651ffa3500d5}} 
+\index{mlpack\+::cv\+::\+M\+SE@{mlpack\+::cv\+::\+M\+SE}!Needs\+Minimization@{Needs\+Minimization}}
+\index{Needs\+Minimization@{Needs\+Minimization}!mlpack\+::cv\+::\+M\+SE@{mlpack\+::cv\+::\+M\+SE}}
+\subsubsection{Needs\+Minimization}
+{\footnotesize\ttfamily const bool Needs\+Minimization = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Information for hyper-\/parameter tuning code. 
+
+It indicates that we want to minimize the measurement. 
+
+Definition at line 45 of file mse.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cv/metrics/\textbf{ mse.\+hpp}\end{DoxyCompactItemize}

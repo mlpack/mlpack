@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1OrthogonalInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::OrthogonalInitialization</compoundname>
+    <includes refid="orthogonal__init_8hpp" local="no">orthogonal_init.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1ac7b389a0254ed87600f959a5f6d58ab0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gain</definition>
+        <argsstring></argsstring>
+        <name>gain</name>
+        <briefdescription>
+<para>The number used as gain. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1a817ae9d4d72deee10477cb6e79dc535a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>OrthogonalInitialization</definition>
+        <argsstring>(const double gain=1.0)</argsstring>
+        <name>OrthogonalInitialization</name>
+        <param>
+          <type>const double</type>
+          <declname>gain</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the orthogonal matrix initialization rule with the given gain. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gain</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The gain value. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="32" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="43" bodyend="50"/>
+        <referencedby refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" compoundref="orthogonal__init_8hpp" startline="78" endline="88">OrthogonalInitialization::Initialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="59" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W, const size_t rows, const size_t cols, const size_t slices)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>slices</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of slices. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="78" bodyend="88"/>
+        <references refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="orthogonal__init_8hpp" startline="43" endline="50">OrthogonalInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OrthogonalInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="97" bodyend="104"/>
+        <references refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="orthogonal__init_8hpp" startline="43" endline="50">OrthogonalInitialization::Initialize</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize the weight matrix with the orthogonal matrix initialization. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp" bodystart="24" bodyend="109"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1ac7b389a0254ed87600f959a5f6d58ab0" prot="private" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>gain</name></member>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a817ae9d4d72deee10477cb6e79dc535a" prot="public" virt="non-virtual"><scope>mlpack::ann::OrthogonalInitialization</scope><name>OrthogonalInitialization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

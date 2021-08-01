@@ -1,0 +1,198 @@
+\section{Combined\+Normalization$<$ Normalization\+Types $>$ Class Template Reference}
+\label{classmlpack_1_1cf_1_1CombinedNormalization}\index{Combined\+Normalization$<$ Normalization\+Types $>$@{Combined\+Normalization$<$ Normalization\+Types $>$}}
+
+
+This normalization class performs a sequence of normalization methods on raw ratings.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Tuple\+Type} = std\+::tuple$<$ Normalization\+Types... $>$
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Combined\+Normalization} ()
+\item 
+double \textbf{ Denormalize} (const size\+\_\+t user, const size\+\_\+t item, const double rating) const
+\begin{DoxyCompactList}\small\item\em Denormalize rating by calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} in each normalization object. \end{DoxyCompactList}\item 
+void \textbf{ Denormalize} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&combinations, arma\+::vec \&predictions) const
+\begin{DoxyCompactList}\small\item\em Denormalize rating by calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} in each normalization object. \end{DoxyCompactList}\item 
+const \textbf{ Tuple\+Type} \& \textbf{ Normalizations} () const
+\begin{DoxyCompactList}\small\item\em Return normalizations tuple. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Normalize} (Mat\+Type \&data)
+\begin{DoxyCompactList}\small\item\em Normalize the data by calling \doxyref{Normalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a47ac5da06a1301c0c72529184cc77a7e} in each normalization object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename... Normalization\+Types$>$\newline
+class mlpack\+::cf\+::\+Combined\+Normalization$<$ Normalization\+Types $>$}
+
+This normalization class performs a sequence of normalization methods on raw ratings. 
+
+An example of how to use \doxyref{Combined\+Normalization}{p.}{classmlpack_1_1cf_1_1CombinedNormalization} in CF is shown below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}
+\textcolor{comment}{// Users for whom recommendations are generated.}
+\textcolor{keyword}{extern} arma::Col<size\_t> users;
+arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}
+
+CFType<NMFPolicy,
+       CombinedNormalization<
+           OverallMeanNormalization,
+           UserMeanNormalization,
+           ItemMeanNormalization>> cf(data);
+
+\textcolor{comment}{// Generate 10 recommendations for all users.}
+cf.GetRecommendations(10, recommendations);
+\end{DoxyCode}
+ 
+
+Definition at line 44 of file combined\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a1e98d43da1ec47c76125e7782460aa2c}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Tuple\+Type@{Tuple\+Type}}
+\index{Tuple\+Type@{Tuple\+Type}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Tuple\+Type}
+{\footnotesize\ttfamily using \textbf{ Tuple\+Type} =  std\+::tuple$<$Normalization\+Types...$>$}
+
+
+
+Definition at line 47 of file combined\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a8fb4e3fa10e0ecf786c2b710175bb75b}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Combined\+Normalization@{Combined\+Normalization}}
+\index{Combined\+Normalization@{Combined\+Normalization}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Combined\+Normalization()}
+{\footnotesize\ttfamily \textbf{ Combined\+Normalization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 50 of file combined\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Denormalize (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{user,  }\item[{const size\+\_\+t}]{item,  }\item[{const double}]{rating }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize rating by calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} in each normalization object. 
+
+Note that the order of objects calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} should be the reversed order of objects calling \doxyref{Normalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a47ac5da06a1301c0c72529184cc77a7e}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em user} & User ID. \\
+\hline
+{\em item} & Item ID. \\
+\hline
+{\em rating} & Computed rating before denormalization. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file combined\+\_\+normalization.\+hpp.
+
+
+
+Referenced by Combined\+Normalization$<$ Normalization\+Types $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a93926452083f79197edc30f83476a40d}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Denormalize (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{combinations,  }\item[{arma\+::vec \&}]{predictions }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize rating by calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} in each normalization object. 
+
+Note that the order of objects calling \doxyref{Denormalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a27ffe74669d0dfd1c217728c369b35f9} should be the reversed order of objects calling \doxyref{Normalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a47ac5da06a1301c0c72529184cc77a7e}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em combinations} & User/\+Item combinations. \\
+\hline
+{\em predictions} & Predicted ratings for each user/item combination. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file combined\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a58a35d3ef1c11ee69753aa099513840e}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Normalizations@{Normalizations}}
+\index{Normalizations@{Normalizations}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Normalizations()}
+{\footnotesize\ttfamily const \textbf{ Tuple\+Type}\& Normalizations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return normalizations tuple. 
+
+
+
+Definition at line 96 of file combined\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a47ac5da06a1301c0c72529184cc77a7e}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{Normalize()}
+{\footnotesize\ttfamily void Normalize (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalize the data by calling \doxyref{Normalize()}{p.}{classmlpack_1_1cf_1_1CombinedNormalization_a47ac5da06a1301c0c72529184cc77a7e} in each normalization object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 58 of file combined\+\_\+normalization.\+hpp.
+
+
+
+Referenced by Combined\+Normalization$<$ Normalization\+Types $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1cf_1_1CombinedNormalization_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::cf\+::\+Combined\+Normalization@{mlpack\+::cf\+::\+Combined\+Normalization}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 105 of file combined\+\_\+normalization.\+hpp.
+
+
+
+References Combined\+Normalization$<$ Normalization\+Types $>$\+::\+Denormalize(), and Combined\+Normalization$<$ Normalization\+Types $>$\+::\+Normalize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/normalization/\textbf{ combined\+\_\+normalization.\+hpp}\end{DoxyCompactItemize}

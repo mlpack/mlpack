@@ -1,0 +1,166 @@
+.TH "Constant< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Constant< InputDataType, OutputDataType > \- Implementation of the constant layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBConstant\fP (const size_t outSize=0, const double scalar=0\&.0)"
+.br
+.RI "Create the \fBConstant\fP object that outputs a given constant scalar value given any input value\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &, const DataType &, DataType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "size_t \fBOutSize\fP () const"
+.br
+.RI "Get the output size\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get the size of the weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Constant< InputDataType, OutputDataType >"
+Implementation of the constant layer\&. 
+
+The constant layer outputs a given constant value given any input value\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file constant\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBConstant\fP (const size_t outSize = \fC0\fP, const double scalar = \fC0\&.0\fP)"
+
+.PP
+Create the \fBConstant\fP object that outputs a given constant scalar value given any input value\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutSize\fP The number of output units\&. 
+.br
+\fIscalar\fP The constant value used to create the constant output\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const DataType &, const DataType &, DataType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. The backward pass of the constant layer is returns always a zero output error matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fI*\fP (gy) The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 75 of file constant\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 77 of file constant\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network\&. The forward pass fills the output with the specified constant parameter\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 70 of file constant\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 72 of file constant\&.hpp\&.
+.SS "size_t OutSize () const\fC [inline]\fP"
+
+.PP
+Get the output size\&. 
+.PP
+Definition at line 80 of file constant\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by Constant< InputDataType, OutputDataType >::WeightSize()\&.
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the weights\&. 
+.PP
+Definition at line 83 of file constant\&.hpp\&.
+.PP
+References Constant< InputDataType, OutputDataType >::serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1util_1_1ShortDescription" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::util::ShortDescription</compoundname>
+    <includes refid="program__doc_8hpp" local="no">program_doc.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1util_1_1ShortDescription_1a545261b4da43cf273ee7e3022069095a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ShortDescription</definition>
+        <argsstring>(const std::string &amp;shortDescription)</argsstring>
+        <name>ShortDescription</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>shortDescription</declname>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="classmlpack_1_1util_1_1ShortDescription" kindref="compound">ShortDescription</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. A fatal error will be thrown if more than one is constructed.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>shortDescription</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A short two-sentence description of the binding, what it does, and what it is useful for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="43" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="32" bodyend="44"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1util_1_1ShortDescription_1a545261b4da43cf273ee7e3022069095a" prot="public" virt="non-virtual"><scope>mlpack::util::ShortDescription</scope><name>ShortDescription</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

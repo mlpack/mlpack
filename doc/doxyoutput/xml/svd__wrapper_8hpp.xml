@@ -1,0 +1,444 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="svd__wrapper_8hpp" kind="file" language="C++">
+    <compoundname>svd_wrapper.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">svd_wrapper_impl.hpp</includes>
+    <incdepgraph>
+      <node id="46547">
+        <label>list</label>
+      </node>
+      <node id="46544">
+        <label>atomic</label>
+      </node>
+      <node id="46534">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="46510">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="46546">
+        <label>iomanip</label>
+      </node>
+      <node id="46519">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="46520" relation="include">
+        </childnode>
+        <childnode refid="46522" relation="include">
+        </childnode>
+      </node>
+      <node id="46502">
+        <label>cstdint</label>
+      </node>
+      <node id="46511">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="46518">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="46541">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="46531">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="46498">
+        <label>cmath</label>
+      </node>
+      <node id="46517">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="46506">
+        <label>stdexcept</label>
+      </node>
+      <node id="46526">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="46511" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46512" relation="include">
+        </childnode>
+      </node>
+      <node id="46550">
+        <label>string</label>
+      </node>
+      <node id="46538">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="46539" relation="include">
+        </childnode>
+        <childnode refid="46505" relation="include">
+        </childnode>
+      </node>
+      <node id="46548">
+        <label>map</label>
+      </node>
+      <node id="46500">
+        <label>cfloat</label>
+      </node>
+      <node id="46530">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="46552">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="46514">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="46537">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="46538" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46521" relation="include">
+        </childnode>
+        <childnode refid="46539" relation="include">
+        </childnode>
+      </node>
+      <node id="46527">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="46496">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp</label>
+        <link refid="svd__wrapper_8hpp"/>
+        <childnode refid="46497" relation="include">
+        </childnode>
+        <childnode refid="46554" relation="include">
+        </childnode>
+      </node>
+      <node id="46525">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="46511" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46512" relation="include">
+        </childnode>
+      </node>
+      <node id="46528">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="46511" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46512" relation="include">
+        </childnode>
+      </node>
+      <node id="46516">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="46536">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="46512" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46524" relation="include">
+        </childnode>
+        <childnode refid="46533" relation="include">
+        </childnode>
+      </node>
+      <node id="46540">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46541" relation="include">
+        </childnode>
+      </node>
+      <node id="46542">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="46497">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="46498" relation="include">
+        </childnode>
+        <childnode refid="46499" relation="include">
+        </childnode>
+        <childnode refid="46500" relation="include">
+        </childnode>
+        <childnode refid="46501" relation="include">
+        </childnode>
+        <childnode refid="46502" relation="include">
+        </childnode>
+        <childnode refid="46503" relation="include">
+        </childnode>
+        <childnode refid="46504" relation="include">
+        </childnode>
+        <childnode refid="46505" relation="include">
+        </childnode>
+        <childnode refid="46506" relation="include">
+        </childnode>
+        <childnode refid="46507" relation="include">
+        </childnode>
+        <childnode refid="46508" relation="include">
+        </childnode>
+        <childnode refid="46509" relation="include">
+        </childnode>
+        <childnode refid="46510" relation="include">
+        </childnode>
+        <childnode refid="46511" relation="include">
+        </childnode>
+        <childnode refid="46512" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46515" relation="include">
+        </childnode>
+        <childnode refid="46516" relation="include">
+        </childnode>
+        <childnode refid="46517" relation="include">
+        </childnode>
+        <childnode refid="46518" relation="include">
+        </childnode>
+        <childnode refid="46519" relation="include">
+        </childnode>
+        <childnode refid="46523" relation="include">
+        </childnode>
+        <childnode refid="46524" relation="include">
+        </childnode>
+        <childnode refid="46525" relation="include">
+        </childnode>
+        <childnode refid="46526" relation="include">
+        </childnode>
+        <childnode refid="46527" relation="include">
+        </childnode>
+        <childnode refid="46528" relation="include">
+        </childnode>
+        <childnode refid="46529" relation="include">
+        </childnode>
+        <childnode refid="46535" relation="include">
+        </childnode>
+        <childnode refid="46536" relation="include">
+        </childnode>
+        <childnode refid="46533" relation="include">
+        </childnode>
+        <childnode refid="46537" relation="include">
+        </childnode>
+        <childnode refid="46540" relation="include">
+        </childnode>
+        <childnode refid="46542" relation="include">
+        </childnode>
+        <childnode refid="46543" relation="include">
+        </childnode>
+        <childnode refid="46552" relation="include">
+        </childnode>
+        <childnode refid="46553" relation="include">
+        </childnode>
+      </node>
+      <node id="46503">
+        <label>cstdio</label>
+      </node>
+      <node id="46507">
+        <label>tuple</label>
+      </node>
+      <node id="46512">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="46529">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="46512" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46516" relation="include">
+        </childnode>
+        <childnode refid="46530" relation="include">
+        </childnode>
+        <childnode refid="46531" relation="include">
+        </childnode>
+        <childnode refid="46532" relation="include">
+        </childnode>
+        <childnode refid="46533" relation="include">
+        </childnode>
+      </node>
+      <node id="46508">
+        <label>utility</label>
+      </node>
+      <node id="46532">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="46523">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="46520">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="46521" relation="include">
+        </childnode>
+      </node>
+      <node id="46543">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="46544" relation="include">
+        </childnode>
+        <childnode refid="46545" relation="include">
+        </childnode>
+        <childnode refid="46546" relation="include">
+        </childnode>
+        <childnode refid="46547" relation="include">
+        </childnode>
+        <childnode refid="46548" relation="include">
+        </childnode>
+        <childnode refid="46549" relation="include">
+        </childnode>
+        <childnode refid="46550" relation="include">
+        </childnode>
+        <childnode refid="46551" relation="include">
+        </childnode>
+      </node>
+      <node id="46521">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="46535">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="46533" relation="include">
+        </childnode>
+        <childnode refid="46529" relation="include">
+        </childnode>
+        <childnode refid="46536" relation="include">
+        </childnode>
+      </node>
+      <node id="46504">
+        <label>cstdlib</label>
+      </node>
+      <node id="46499">
+        <label>cctype</label>
+      </node>
+      <node id="46554">
+        <label>svd_wrapper_impl.hpp</label>
+      </node>
+      <node id="46522">
+        <label>unordered_map</label>
+      </node>
+      <node id="46501">
+        <label>climits</label>
+      </node>
+      <node id="46549">
+        <label>mutex</label>
+      </node>
+      <node id="46545">
+        <label>chrono</label>
+      </node>
+      <node id="46553">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="46551">
+        <label>thread</label>
+      </node>
+      <node id="46539">
+        <label>type_traits</label>
+      </node>
+      <node id="46515">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="46509">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="46533">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="46511" relation="include">
+        </childnode>
+        <childnode refid="46512" relation="include">
+        </childnode>
+        <childnode refid="46513" relation="include">
+        </childnode>
+        <childnode refid="46514" relation="include">
+        </childnode>
+        <childnode refid="46534" relation="include">
+        </childnode>
+      </node>
+      <node id="46505">
+        <label>cstring</label>
+      </node>
+      <node id="46524">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="46513">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1DummyClass" prot="public">mlpack::cf::DummyClass</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SVDWrapper" prot="public">mlpack::cf::SVDWrapper</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Sumedh Ghaisas</para></simplesect>
+Wrapper class for SVD factorizers used for Collaborative Filtering.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_SVDWRAPPER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_SVDWRAPPER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classmlpack_1_1cf_1_1DummyClass" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1DummyClass" kindref="compound">DummyClass</ref><sp/>{};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Factorizer<sp/>=<sp/>DummyClass&gt;</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1cf_1_1SVDWrapper" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1SVDWrapper" kindref="compound">SVDWrapper</ref></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>empty<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1cf_1_1SVDWrapper_1a062f6d1d0cbae52c35ee6cdc7c0e12e2" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1SVDWrapper_1a062f6d1d0cbae52c35ee6cdc7c0e12e2" kindref="member">SVDWrapper</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Factorizer&amp;<sp/>factorizer<sp/>=<sp/>Factorizer())<sp/>:</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>factorizer(factorizer)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Nothing<sp/>to<sp/>do<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Apply(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>V,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>W,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>sigma,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>H)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Apply(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>V,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>W,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>H)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>Factorizer<sp/>factorizer;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>SVDWrapper</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="namespacemlpack_1_1cf_1ac51532acca405aa7f171aca756d776f2" refkind="member"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1SVDWrapper" kindref="compound">SVDWrapper&lt;DummyClass&gt;</ref><sp/><ref refid="namespacemlpack_1_1cf_1ac51532acca405aa7f171aca756d776f2" kindref="member">ArmaSVDFactorizer</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="preprocessor">#include<sp/>&quot;svd_wrapper_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp"/>
+  </compounddef>
+</doxygen>

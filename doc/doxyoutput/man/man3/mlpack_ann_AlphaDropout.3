@@ -1,0 +1,241 @@
+.TH "AlphaDropout< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AlphaDropout< InputDataType, OutputDataType > \- The alpha - dropout layer is a regularizer that randomly with probability 'ratio' sets input values to alphaDash\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAlphaDropout\fP (const double ratio=0\&.5, const double alphaDash=\-alpha *lambda)"
+.br
+.RI "Create the Alpha_Dropout object using the specified ratio\&. "
+.ti -1c
+.RI "double \fBA\fP () const"
+.br
+.RI "Value to be multiplied with x for affine transformation\&. "
+.ti -1c
+.RI "double \fBAlphaDash\fP () const"
+.br
+.RI "Value of alphaDash\&. "
+.ti -1c
+.RI "double \fBB\fP () const"
+.br
+.RI "Value to be added to a*x for affine transformation\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of the alpha_dropout layer\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the detla\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "bool \fBDeterministic\fP () const"
+.br
+.RI "The value of the deterministic parameter\&. "
+.ti -1c
+.RI "bool & \fBDeterministic\fP ()"
+.br
+.RI "Modify the value of the deterministic parameter\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of the alpha_dropout layer\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBMask\fP () const"
+.br
+.RI "Get the mask\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "double \fBRatio\fP () const"
+.br
+.RI "The probability of setting a value to alphaDash\&. "
+.ti -1c
+.RI "void \fBRatio\fP (const double r)"
+.br
+.RI "Modify the probability of setting a value to alphaDash\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::AlphaDropout< InputDataType, OutputDataType >"
+The alpha - dropout layer is a regularizer that randomly with probability 'ratio' sets input values to alphaDash\&. 
+
+The alpha - dropout layer is mostly used for SELU activation function where successive layers don't have same mean and variance\&.
+.PP
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@article{Klambauer2017,
+  author  = {Gunter Klambauer and Thomas Unterthiner and
+             Andreas Mayr},
+  title   = {Self-Normalizing Neural Networks},
+  journal = {Advances in Neural Information Processing Systems},
+  year    = {2017},
+  url     = {https://arxiv\&.org/abs/1706\&.02515}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file alpha_dropout\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAlphaDropout\fP (const double ratio = \fC0\&.5\fP, const double alphaDash = \fC\-alpha *lambda\fP)"
+
+.PP
+Create the Alpha_Dropout object using the specified ratio\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIratio\fP The probability of setting a value to alphaDash\&. 
+.br
+\fIalphaDash\fP The dropout scaling parameter\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double A () const\fC [inline]\fP"
+
+.PP
+Value to be multiplied with x for affine transformation\&. 
+.PP
+Definition at line 102 of file alpha_dropout\&.hpp\&.
+.SS "double AlphaDash () const\fC [inline]\fP"
+
+.PP
+Value of alphaDash\&. 
+.PP
+Definition at line 108 of file alpha_dropout\&.hpp\&.
+.SS "double B () const\fC [inline]\fP"
+
+.PP
+Value to be added to a*x for affine transformation\&. 
+.PP
+Definition at line 105 of file alpha_dropout\&.hpp\&.
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of the alpha_dropout layer\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the detla\&. 
+.PP
+Definition at line 89 of file alpha_dropout\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 91 of file alpha_dropout\&.hpp\&.
+.SS "bool Deterministic () const\fC [inline]\fP"
+
+.PP
+The value of the deterministic parameter\&. 
+.PP
+Definition at line 94 of file alpha_dropout\&.hpp\&.
+.SS "bool& Deterministic ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 96 of file alpha_dropout\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of the alpha_dropout layer\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Mask () const\fC [inline]\fP"
+
+.PP
+Get the mask\&. 
+.PP
+Definition at line 111 of file alpha_dropout\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 84 of file alpha_dropout\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 86 of file alpha_dropout\&.hpp\&.
+.SS "double Ratio () const\fC [inline]\fP"
+
+.PP
+The probability of setting a value to alphaDash\&. 
+.PP
+Definition at line 99 of file alpha_dropout\&.hpp\&.
+.SS "void Ratio (const double r)\fC [inline]\fP"
+
+.PP
+Modify the probability of setting a value to alphaDash\&. As 'a' and 'b' depend on 'ratio', modify them as well\&. 
+.PP
+Definition at line 115 of file alpha_dropout\&.hpp\&.
+.PP
+References AlphaDropout< InputDataType, OutputDataType >::serialize()\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by AlphaDropout< InputDataType, OutputDataType >::Ratio()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,550 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="string__encoding_8hpp" kind="file" language="C++">
+    <compoundname>string_encoding.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="no">mlpack/core/boost_backport/boost_backport_string_view.hpp</includes>
+    <includes refid="string__encoding__dictionary_8hpp" local="no">mlpack/core/data/string_encoding_dictionary.hpp</includes>
+    <includes refid="policy__traits_8hpp" local="no">mlpack/core/data/string_encoding_policies/policy_traits.hpp</includes>
+    <includes local="no">vector</includes>
+    <includes local="yes">string_encoding_impl.hpp</includes>
+    <includedby refid="bag__of__words__encoding__policy_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp</includedby>
+    <includedby refid="dictionary__encoding__policy_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp</includedby>
+    <includedby refid="tf__idf__encoding__policy_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp</includedby>
+    <incdepgraph>
+      <node id="9166">
+        <label>list</label>
+      </node>
+      <node id="9163">
+        <label>atomic</label>
+      </node>
+      <node id="9153">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="9129">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="9165">
+        <label>iomanip</label>
+      </node>
+      <node id="9173">
+        <label>mlpack/core/boost_backport/boost_backport_string_view.hpp</label>
+      </node>
+      <node id="9177">
+        <label>mlpack/core/data/string_encoding_policies/policy_traits.hpp</label>
+        <link refid="policy__traits_8hpp"/>
+        <childnode refid="9116" relation="include">
+        </childnode>
+      </node>
+      <node id="9138">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="9139" relation="include">
+        </childnode>
+        <childnode refid="9141" relation="include">
+        </childnode>
+      </node>
+      <node id="9121">
+        <label>cstdint</label>
+      </node>
+      <node id="9130">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="9137">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="9160">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="9150">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="9117">
+        <label>cmath</label>
+      </node>
+      <node id="9136">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="9125">
+        <label>stdexcept</label>
+      </node>
+      <node id="9145">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="9130" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9131" relation="include">
+        </childnode>
+      </node>
+      <node id="9169">
+        <label>string</label>
+      </node>
+      <node id="9157">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="9158" relation="include">
+        </childnode>
+        <childnode refid="9124" relation="include">
+        </childnode>
+      </node>
+      <node id="9167">
+        <label>map</label>
+      </node>
+      <node id="9119">
+        <label>cfloat</label>
+      </node>
+      <node id="9149">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="9171">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="9133">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="9156">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="9157" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9140" relation="include">
+        </childnode>
+        <childnode refid="9158" relation="include">
+        </childnode>
+      </node>
+      <node id="9146">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="9144">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="9130" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9131" relation="include">
+        </childnode>
+      </node>
+      <node id="9147">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="9130" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9131" relation="include">
+        </childnode>
+      </node>
+      <node id="9135">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="9155">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="9131" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9143" relation="include">
+        </childnode>
+        <childnode refid="9152" relation="include">
+        </childnode>
+      </node>
+      <node id="9159">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="9160" relation="include">
+        </childnode>
+      </node>
+      <node id="9161">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="9116">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="9117" relation="include">
+        </childnode>
+        <childnode refid="9118" relation="include">
+        </childnode>
+        <childnode refid="9119" relation="include">
+        </childnode>
+        <childnode refid="9120" relation="include">
+        </childnode>
+        <childnode refid="9121" relation="include">
+        </childnode>
+        <childnode refid="9122" relation="include">
+        </childnode>
+        <childnode refid="9123" relation="include">
+        </childnode>
+        <childnode refid="9124" relation="include">
+        </childnode>
+        <childnode refid="9125" relation="include">
+        </childnode>
+        <childnode refid="9126" relation="include">
+        </childnode>
+        <childnode refid="9127" relation="include">
+        </childnode>
+        <childnode refid="9128" relation="include">
+        </childnode>
+        <childnode refid="9129" relation="include">
+        </childnode>
+        <childnode refid="9130" relation="include">
+        </childnode>
+        <childnode refid="9131" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9134" relation="include">
+        </childnode>
+        <childnode refid="9135" relation="include">
+        </childnode>
+        <childnode refid="9136" relation="include">
+        </childnode>
+        <childnode refid="9137" relation="include">
+        </childnode>
+        <childnode refid="9138" relation="include">
+        </childnode>
+        <childnode refid="9142" relation="include">
+        </childnode>
+        <childnode refid="9143" relation="include">
+        </childnode>
+        <childnode refid="9144" relation="include">
+        </childnode>
+        <childnode refid="9145" relation="include">
+        </childnode>
+        <childnode refid="9146" relation="include">
+        </childnode>
+        <childnode refid="9147" relation="include">
+        </childnode>
+        <childnode refid="9148" relation="include">
+        </childnode>
+        <childnode refid="9154" relation="include">
+        </childnode>
+        <childnode refid="9155" relation="include">
+        </childnode>
+        <childnode refid="9152" relation="include">
+        </childnode>
+        <childnode refid="9156" relation="include">
+        </childnode>
+        <childnode refid="9159" relation="include">
+        </childnode>
+        <childnode refid="9161" relation="include">
+        </childnode>
+        <childnode refid="9162" relation="include">
+        </childnode>
+        <childnode refid="9171" relation="include">
+        </childnode>
+        <childnode refid="9172" relation="include">
+        </childnode>
+      </node>
+      <node id="9122">
+        <label>cstdio</label>
+      </node>
+      <node id="9126">
+        <label>tuple</label>
+      </node>
+      <node id="9131">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="9115">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp</label>
+        <link refid="string__encoding_8hpp"/>
+        <childnode refid="9116" relation="include">
+        </childnode>
+        <childnode refid="9173" relation="include">
+        </childnode>
+        <childnode refid="9174" relation="include">
+        </childnode>
+        <childnode refid="9177" relation="include">
+        </childnode>
+        <childnode refid="9178" relation="include">
+        </childnode>
+        <childnode refid="9179" relation="include">
+        </childnode>
+      </node>
+      <node id="9148">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="9131" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9135" relation="include">
+        </childnode>
+        <childnode refid="9149" relation="include">
+        </childnode>
+        <childnode refid="9150" relation="include">
+        </childnode>
+        <childnode refid="9151" relation="include">
+        </childnode>
+        <childnode refid="9152" relation="include">
+        </childnode>
+      </node>
+      <node id="9179">
+        <label>string_encoding_impl.hpp</label>
+      </node>
+      <node id="9178">
+        <label>vector</label>
+      </node>
+      <node id="9127">
+        <label>utility</label>
+      </node>
+      <node id="9176">
+        <label>array</label>
+      </node>
+      <node id="9151">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="9142">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="9139">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="9140" relation="include">
+        </childnode>
+      </node>
+      <node id="9162">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="9163" relation="include">
+        </childnode>
+        <childnode refid="9164" relation="include">
+        </childnode>
+        <childnode refid="9165" relation="include">
+        </childnode>
+        <childnode refid="9166" relation="include">
+        </childnode>
+        <childnode refid="9167" relation="include">
+        </childnode>
+        <childnode refid="9168" relation="include">
+        </childnode>
+        <childnode refid="9169" relation="include">
+        </childnode>
+        <childnode refid="9170" relation="include">
+        </childnode>
+      </node>
+      <node id="9140">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="9154">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="9152" relation="include">
+        </childnode>
+        <childnode refid="9148" relation="include">
+        </childnode>
+        <childnode refid="9155" relation="include">
+        </childnode>
+      </node>
+      <node id="9123">
+        <label>cstdlib</label>
+      </node>
+      <node id="9118">
+        <label>cctype</label>
+      </node>
+      <node id="9175">
+        <label>deque</label>
+      </node>
+      <node id="9141">
+        <label>unordered_map</label>
+      </node>
+      <node id="9120">
+        <label>climits</label>
+      </node>
+      <node id="9168">
+        <label>mutex</label>
+      </node>
+      <node id="9164">
+        <label>chrono</label>
+      </node>
+      <node id="9172">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="9170">
+        <label>thread</label>
+      </node>
+      <node id="9174">
+        <label>mlpack/core/data/string_encoding_dictionary.hpp</label>
+        <link refid="string__encoding__dictionary_8hpp"/>
+        <childnode refid="9116" relation="include">
+        </childnode>
+        <childnode refid="9173" relation="include">
+        </childnode>
+        <childnode refid="9141" relation="include">
+        </childnode>
+        <childnode refid="9175" relation="include">
+        </childnode>
+        <childnode refid="9176" relation="include">
+        </childnode>
+      </node>
+      <node id="9158">
+        <label>type_traits</label>
+      </node>
+      <node id="9134">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="9128">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="9152">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="9130" relation="include">
+        </childnode>
+        <childnode refid="9131" relation="include">
+        </childnode>
+        <childnode refid="9132" relation="include">
+        </childnode>
+        <childnode refid="9133" relation="include">
+        </childnode>
+        <childnode refid="9153" relation="include">
+        </childnode>
+      </node>
+      <node id="9124">
+        <label>cstring</label>
+      </node>
+      <node id="9143">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="9132">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="9182">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp</label>
+        <link refid="dictionary__encoding__policy_8hpp"/>
+      </node>
+      <node id="9180">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp</label>
+        <link refid="string__encoding_8hpp"/>
+        <childnode refid="9181" relation="include">
+        </childnode>
+        <childnode refid="9182" relation="include">
+        </childnode>
+        <childnode refid="9183" relation="include">
+        </childnode>
+      </node>
+      <node id="9183">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp</label>
+        <link refid="tf__idf__encoding__policy_8hpp"/>
+      </node>
+      <node id="9181">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp</label>
+        <link refid="bag__of__words__encoding__policy_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1StringEncoding" prot="public">mlpack::data::StringEncoding</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Jeffin Sam </para></simplesect>
+<simplesect kind="author"><para>Mikhail Lozhnikov</para></simplesect>
+Definition of the StringEncoding class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_STRING_ENCODING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_STRING_ENCODING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mlpack/core/boost_backport/boost_backport_string_view.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="string__encoding__dictionary_8hpp" kindref="compound">mlpack/core/data/string_encoding_dictionary.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="policy__traits_8hpp" kindref="compound">mlpack/core/data/string_encoding_policies/policy_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EncodingPolicyType,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DictionaryType&gt;</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1data_1_1StringEncoding" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>...<sp/>ArgTypes&gt;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" kindref="member">StringEncoding</ref>(ArgTypes&amp;&amp;<sp/>...<sp/>args);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" kindref="member">StringEncoding</ref>(EncodingPolicyType<sp/>encodingPolicy);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" kindref="member">StringEncoding</ref>(StringEncoding&amp;);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" kindref="member">StringEncoding</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StringEncoding&amp;);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>StringEncoding&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a65bb5577416cf451d1bd2e88d7bb77f4" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StringEncoding&amp;)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" kindref="member">StringEncoding</ref>(StringEncoding&amp;&amp;);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>StringEncoding&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a65bb5577416cf451d1bd2e88d7bb77f4" kindref="member">operator=</ref>(StringEncoding&amp;&amp;)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TokenizerType&gt;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a09334684a4bb6a10a48b149bbc5c35e1" kindref="member">CreateMap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TokenizerType&amp;<sp/>tokenizer);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1aa71d36872f416feaa853788a7a7a7ef8" kindref="member">Clear</ref>();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TokenizerType&gt;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a6170e90e6359284924d3cbf2acdbf75f" kindref="member">Encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutputType&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TokenizerType&amp;<sp/>tokenizer);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="classmlpack_1_1data_1_1StringEncoding_1aadfe9ead3a6d93ceb91fb8b69ae75aff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryType&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1aadfe9ead3a6d93ceb91fb8b69ae75aff" kindref="member">Dictionary</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dictionary;<sp/>}</highlight></codeline>
+<codeline lineno="126" refid="classmlpack_1_1data_1_1StringEncoding_1a7e13f2329a9be7393a4e147e200fe9f0" refkind="member"><highlight class="normal"><sp/><sp/>DictionaryType&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a7e13f2329a9be7393a4e147e200fe9f0" kindref="member">Dictionary</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dictionary;<sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="classmlpack_1_1data_1_1StringEncoding_1a123b735db5cf6ef4bf38b6a0b925fa3d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>EncodingPolicyType&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a123b735db5cf6ef4bf38b6a0b925fa3d" kindref="member">EncodingPolicy</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>encodingPolicy;<sp/>}</highlight></codeline>
+<codeline lineno="131" refid="classmlpack_1_1data_1_1StringEncoding_1a966fb1ddae12f03d28700d7520d9a625" refkind="member"><highlight class="normal"><sp/><sp/>EncodingPolicyType&amp;<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a966fb1ddae12f03d28700d7520d9a625" kindref="member">EncodingPolicy</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>encodingPolicy;<sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TokenizerType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PolicyType&gt;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EncodeHelper(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OutputType&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TokenizerType&amp;<sp/>tokenizer,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PolicyType&amp;<sp/>policy);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TokenizerType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PolicyType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>EncodeHelper(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;std::vector&lt;ElemType&gt;&gt;&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TokenizerType&amp;<sp/>tokenizer,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PolicyType&amp;<sp/>policy,</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;<ref refid="structmlpack_1_1data_1_1StringEncodingPolicyTraits" kindref="compound">StringEncodingPolicyTraits</ref>&lt;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PolicyType&gt;::onePassEncoding&gt;::type*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>EncodingPolicyType<sp/>encodingPolicy;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/>DictionaryType<sp/>dictionary;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;string_encoding_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp"/>
+  </compounddef>
+</doxygen>

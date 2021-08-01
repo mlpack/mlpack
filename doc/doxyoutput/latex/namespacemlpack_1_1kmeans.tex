@@ -1,0 +1,143 @@
+\section{mlpack\+:\+:kmeans Namespace Reference}
+\label{namespacemlpack_1_1kmeans}\index{mlpack\+::kmeans@{mlpack\+::kmeans}}
+
+
+K-\/\+Means clustering.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Dual\+Tree\+K\+Means}
+\begin{DoxyCompactList}\small\item\em An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset. \end{DoxyCompactList}\item 
+class \textbf{ Dual\+Tree\+K\+Means\+Rules}
+\item 
+class \textbf{ Dual\+Tree\+K\+Means\+Statistic}
+\item 
+class \textbf{ Elkan\+K\+Means}
+\item 
+class \textbf{ Hamerly\+K\+Means}
+\item 
+class \textbf{ K\+Means}
+\begin{DoxyCompactList}\small\item\em This class implements K-\/\+Means clustering, using a variety of possible implementations of Lloyd\textquotesingle{}s algorithm. \end{DoxyCompactList}\item 
+class \textbf{ Max\+Variance\+New\+Cluster}
+\begin{DoxyCompactList}\small\item\em When an empty cluster is detected, this class takes the point furthest from the centroid of the cluster with maximum variance as a new cluster. \end{DoxyCompactList}\item 
+class \textbf{ Naive\+K\+Means}
+\begin{DoxyCompactList}\small\item\em This is an implementation of a single iteration of Lloyd\textquotesingle{}s algorithm for k-\/means. \end{DoxyCompactList}\item 
+class \textbf{ Pelleg\+Moore\+K\+Means}
+\begin{DoxyCompactList}\small\item\em An implementation of Pelleg-\/\+Moore\textquotesingle{}s \textquotesingle{}blacklist\textquotesingle{} algorithm for k-\/means clustering. \end{DoxyCompactList}\item 
+class \textbf{ Pelleg\+Moore\+K\+Means\+Rules}
+\begin{DoxyCompactList}\small\item\em The rules class for the single-\/tree Pelleg-\/\+Moore kd-\/tree traversal for k-\/means clustering. \end{DoxyCompactList}\item 
+class \textbf{ Pelleg\+Moore\+K\+Means\+Statistic}
+\begin{DoxyCompactList}\small\item\em A statistic for trees which holds the blacklist for Pelleg-\/\+Moore k-\/means clustering (which represents the clusters that cannot possibly own any points in a node). \end{DoxyCompactList}\item 
+class \textbf{ Random\+Partition}
+\begin{DoxyCompactList}\small\item\em A very simple partitioner which partitions the data randomly into the number of desired clusters. \end{DoxyCompactList}\item 
+class \textbf{ Refined\+Start}
+\begin{DoxyCompactList}\small\item\em A refined approach for choosing initial points for k-\/means clustering. \end{DoxyCompactList}\item 
+class \textbf{ Sample\+Initialization}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\using \textbf{ Cover\+Tree\+Dual\+Tree\+K\+Means} = \textbf{ Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, \textbf{ tree\+::\+Standard\+Cover\+Tree} $>$
+\begin{DoxyCompactList}\small\item\em A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the cover tree type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\using \textbf{ Default\+Dual\+Tree\+K\+Means} = \textbf{ Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$
+\begin{DoxyCompactList}\small\item\em A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the default tree type (a kd-\/tree). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void \textbf{ Hide\+Child} (Tree\+Type \&node, const size\+\_\+t child, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ !\textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for hiding children. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void \textbf{ Hide\+Child} (Tree\+Type \&node, const size\+\_\+t child, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for hiding children. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void \textbf{ Restore\+Children} (Tree\+Type \&node, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!\textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for restoring children to a non-\/binary tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void \textbf{ Restore\+Children} (Tree\+Type \&node, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for restoring children to a binary tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+K-\/\+Means clustering. 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\label{namespacemlpack_1_1kmeans_a050f8eba1b8d0c72e990a9ee3b7ed775}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Cover\+Tree\+Dual\+Tree\+K\+Means@{Cover\+Tree\+Dual\+Tree\+K\+Means}}
+\index{Cover\+Tree\+Dual\+Tree\+K\+Means@{Cover\+Tree\+Dual\+Tree\+K\+Means}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Cover\+Tree\+Dual\+Tree\+K\+Means}
+{\footnotesize\ttfamily using \textbf{ Cover\+Tree\+Dual\+Tree\+K\+Means} =  \textbf{ Dual\+Tree\+K\+Means}$<$Metric\+Type, Mat\+Type, \textbf{ tree\+::\+Standard\+Cover\+Tree}$>$}
+
+
+
+A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the cover tree type. 
+
+
+
+Definition at line 170 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1kmeans_a3d8c82eb428be782996066d70afc122b}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Default\+Dual\+Tree\+K\+Means@{Default\+Dual\+Tree\+K\+Means}}
+\index{Default\+Dual\+Tree\+K\+Means@{Default\+Dual\+Tree\+K\+Means}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Default\+Dual\+Tree\+K\+Means}
+{\footnotesize\ttfamily using \textbf{ Default\+Dual\+Tree\+K\+Means} =  \textbf{ Dual\+Tree\+K\+Means}$<$Metric\+Type, Mat\+Type$>$}
+
+
+
+A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the default tree type (a kd-\/tree). 
+
+
+
+Definition at line 164 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1kmeans_ae824715a9723b95291ede5396d7ec48a}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Hide\+Child@{Hide\+Child}}
+\index{Hide\+Child@{Hide\+Child}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Hide\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::kmeans\+::\+Hide\+Child (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{node,  }\item[{const size\+\_\+t}]{child,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ !\textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$}]{junk = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Utility function for hiding children. 
+
+This actually does something, and is called if the tree is not a binary tree. 
+
+Referenced by Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::\+Distance\+Calculations().
+
+\mbox{\label{namespacemlpack_1_1kmeans_ad50ab0e1083d84c7f78a79f2bdaec558}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Hide\+Child@{Hide\+Child}}
+\index{Hide\+Child@{Hide\+Child}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Hide\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::kmeans\+::\+Hide\+Child (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{node,  }\item[{const size\+\_\+t}]{child,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$}]{junk = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Utility function for hiding children. 
+
+This is called when the tree is a binary tree, and does nothing, because we don\textquotesingle{}t hide binary children in this way. \mbox{\label{namespacemlpack_1_1kmeans_ab8a2dc63dd61b947e7b90e03d31d64c0}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Restore\+Children@{Restore\+Children}}
+\index{Restore\+Children@{Restore\+Children}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Restore\+Children()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::kmeans\+::\+Restore\+Children (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{node,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!\textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$}]{junk = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Utility function for restoring children to a non-\/binary tree. 
+
+
+
+Referenced by Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::\+Distance\+Calculations().
+
+\mbox{\label{namespacemlpack_1_1kmeans_aef92bb2544a815fc97f3c79070e5d3c0}} 
+\index{mlpack\+::kmeans@{mlpack\+::kmeans}!Restore\+Children@{Restore\+Children}}
+\index{Restore\+Children@{Restore\+Children}!mlpack\+::kmeans@{mlpack\+::kmeans}}
+\subsubsection{Restore\+Children()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::kmeans\+::\+Restore\+Children (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{node,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ tree\+::\+Tree\+Traits}$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$}]{junk = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Utility function for restoring children to a binary tree. 
+

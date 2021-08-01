@@ -1,0 +1,497 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="nca_8hpp" kind="file" language="C++">
+    <compoundname>nca.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="lmetric_8hpp" local="no">mlpack/core/metrics/lmetric.hpp</includes>
+    <includes local="no">ensmallen.hpp</includes>
+    <includes refid="nca__softmax__error__function_8hpp" local="yes">nca_softmax_error_function.hpp</includes>
+    <includes local="yes">nca_impl.hpp</includes>
+    <incdepgraph>
+      <node id="52433">
+        <label>list</label>
+      </node>
+      <node id="52430">
+        <label>atomic</label>
+      </node>
+      <node id="52420">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="52396">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="52432">
+        <label>iomanip</label>
+      </node>
+      <node id="52441">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="52405">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="52406" relation="include">
+        </childnode>
+        <childnode refid="52408" relation="include">
+        </childnode>
+      </node>
+      <node id="52388">
+        <label>cstdint</label>
+      </node>
+      <node id="52397">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="52404">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="52427">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="52417">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="52384">
+        <label>cmath</label>
+      </node>
+      <node id="52403">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="52392">
+        <label>stdexcept</label>
+      </node>
+      <node id="52412">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="52397" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52398" relation="include">
+        </childnode>
+      </node>
+      <node id="52436">
+        <label>string</label>
+      </node>
+      <node id="52424">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="52425" relation="include">
+        </childnode>
+        <childnode refid="52391" relation="include">
+        </childnode>
+      </node>
+      <node id="52434">
+        <label>map</label>
+      </node>
+      <node id="52447">
+        <label>nca_impl.hpp</label>
+      </node>
+      <node id="52386">
+        <label>cfloat</label>
+      </node>
+      <node id="52416">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="52438">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="52400">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="52423">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="52424" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52407" relation="include">
+        </childnode>
+        <childnode refid="52425" relation="include">
+        </childnode>
+      </node>
+      <node id="52413">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52444">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="52411">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="52397" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52398" relation="include">
+        </childnode>
+      </node>
+      <node id="52414">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="52397" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52398" relation="include">
+        </childnode>
+      </node>
+      <node id="52402">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="52422">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="52398" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52410" relation="include">
+        </childnode>
+        <childnode refid="52419" relation="include">
+        </childnode>
+      </node>
+      <node id="52426">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="52427" relation="include">
+        </childnode>
+      </node>
+      <node id="52428">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="52383">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="52384" relation="include">
+        </childnode>
+        <childnode refid="52385" relation="include">
+        </childnode>
+        <childnode refid="52386" relation="include">
+        </childnode>
+        <childnode refid="52387" relation="include">
+        </childnode>
+        <childnode refid="52388" relation="include">
+        </childnode>
+        <childnode refid="52389" relation="include">
+        </childnode>
+        <childnode refid="52390" relation="include">
+        </childnode>
+        <childnode refid="52391" relation="include">
+        </childnode>
+        <childnode refid="52392" relation="include">
+        </childnode>
+        <childnode refid="52393" relation="include">
+        </childnode>
+        <childnode refid="52394" relation="include">
+        </childnode>
+        <childnode refid="52395" relation="include">
+        </childnode>
+        <childnode refid="52396" relation="include">
+        </childnode>
+        <childnode refid="52397" relation="include">
+        </childnode>
+        <childnode refid="52398" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52401" relation="include">
+        </childnode>
+        <childnode refid="52402" relation="include">
+        </childnode>
+        <childnode refid="52403" relation="include">
+        </childnode>
+        <childnode refid="52404" relation="include">
+        </childnode>
+        <childnode refid="52405" relation="include">
+        </childnode>
+        <childnode refid="52409" relation="include">
+        </childnode>
+        <childnode refid="52410" relation="include">
+        </childnode>
+        <childnode refid="52411" relation="include">
+        </childnode>
+        <childnode refid="52412" relation="include">
+        </childnode>
+        <childnode refid="52413" relation="include">
+        </childnode>
+        <childnode refid="52414" relation="include">
+        </childnode>
+        <childnode refid="52415" relation="include">
+        </childnode>
+        <childnode refid="52421" relation="include">
+        </childnode>
+        <childnode refid="52422" relation="include">
+        </childnode>
+        <childnode refid="52419" relation="include">
+        </childnode>
+        <childnode refid="52423" relation="include">
+        </childnode>
+        <childnode refid="52426" relation="include">
+        </childnode>
+        <childnode refid="52428" relation="include">
+        </childnode>
+        <childnode refid="52429" relation="include">
+        </childnode>
+        <childnode refid="52438" relation="include">
+        </childnode>
+        <childnode refid="52439" relation="include">
+        </childnode>
+      </node>
+      <node id="52389">
+        <label>cstdio</label>
+      </node>
+      <node id="52393">
+        <label>tuple</label>
+      </node>
+      <node id="52398">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="52415">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="52398" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52402" relation="include">
+        </childnode>
+        <childnode refid="52416" relation="include">
+        </childnode>
+        <childnode refid="52417" relation="include">
+        </childnode>
+        <childnode refid="52418" relation="include">
+        </childnode>
+        <childnode refid="52419" relation="include">
+        </childnode>
+      </node>
+      <node id="52443">
+        <label>nca_softmax_error_function.hpp</label>
+        <link refid="nca__softmax__error__function_8hpp"/>
+        <childnode refid="52383" relation="include">
+        </childnode>
+        <childnode refid="52440" relation="include">
+        </childnode>
+        <childnode refid="52444" relation="include">
+        </childnode>
+        <childnode refid="52445" relation="include">
+        </childnode>
+        <childnode refid="52446" relation="include">
+        </childnode>
+      </node>
+      <node id="52394">
+        <label>utility</label>
+      </node>
+      <node id="52418">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="52409">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="52446">
+        <label>nca_softmax_error_function_impl.hpp</label>
+      </node>
+      <node id="52406">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="52407" relation="include">
+        </childnode>
+      </node>
+      <node id="52445">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="52383" relation="include">
+        </childnode>
+      </node>
+      <node id="52429">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="52430" relation="include">
+        </childnode>
+        <childnode refid="52431" relation="include">
+        </childnode>
+        <childnode refid="52432" relation="include">
+        </childnode>
+        <childnode refid="52433" relation="include">
+        </childnode>
+        <childnode refid="52434" relation="include">
+        </childnode>
+        <childnode refid="52435" relation="include">
+        </childnode>
+        <childnode refid="52436" relation="include">
+        </childnode>
+        <childnode refid="52437" relation="include">
+        </childnode>
+      </node>
+      <node id="52407">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="52421">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="52419" relation="include">
+        </childnode>
+        <childnode refid="52415" relation="include">
+        </childnode>
+        <childnode refid="52422" relation="include">
+        </childnode>
+      </node>
+      <node id="52390">
+        <label>cstdlib</label>
+      </node>
+      <node id="52385">
+        <label>cctype</label>
+      </node>
+      <node id="52408">
+        <label>unordered_map</label>
+      </node>
+      <node id="52387">
+        <label>climits</label>
+      </node>
+      <node id="52435">
+        <label>mutex</label>
+      </node>
+      <node id="52431">
+        <label>chrono</label>
+      </node>
+      <node id="52439">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="52437">
+        <label>thread</label>
+      </node>
+      <node id="52425">
+        <label>type_traits</label>
+      </node>
+      <node id="52401">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="52395">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="52419">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="52397" relation="include">
+        </childnode>
+        <childnode refid="52398" relation="include">
+        </childnode>
+        <childnode refid="52399" relation="include">
+        </childnode>
+        <childnode refid="52400" relation="include">
+        </childnode>
+        <childnode refid="52420" relation="include">
+        </childnode>
+      </node>
+      <node id="52391">
+        <label>cstring</label>
+      </node>
+      <node id="52410">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="52442">
+        <label>ensmallen.hpp</label>
+      </node>
+      <node id="52399">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="52440">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="52383" relation="include">
+        </childnode>
+        <childnode refid="52441" relation="include">
+        </childnode>
+      </node>
+      <node id="52382">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp</label>
+        <link refid="nca_8hpp"/>
+        <childnode refid="52383" relation="include">
+        </childnode>
+        <childnode refid="52440" relation="include">
+        </childnode>
+        <childnode refid="52442" relation="include">
+        </childnode>
+        <childnode refid="52443" relation="include">
+        </childnode>
+        <childnode refid="52447" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1nca_1_1NCA" prot="public">mlpack::nca::NCA</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1nca">mlpack::nca</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Declaration of NCA class (Neighborhood Components Analysis).</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NCA_NCA_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NCA_NCA_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lmetric_8hpp" kindref="compound">mlpack/core/metrics/lmetric.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ensmallen.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nca__softmax__error__function_8hpp" kindref="compound">nca_softmax_error_function.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="22" refid="namespacemlpack_1_1nca" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">nca<sp/><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType<sp/>=<sp/><ref refid="namespacemlpack_1_1metric_1a42614a1b47a4de6037e67742b94dd24d" kindref="member">metric::SquaredEuclideanDistance</ref>,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OptimizerType<sp/>=<sp/>ens::StandardSGD&gt;</highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1nca_1_1NCA" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1nca_1_1NCA" kindref="compound">NCA</ref></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1nca_1_1NCA_1a8a7a5b0fbf5a82acaf0e316944998f63" kindref="member">NCA</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>MetricType<sp/>metric<sp/>=<sp/>MetricType());</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>CallbackTypes&gt;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nca_1_1NCA_1a55126379a6e9673a59546f4e446e9ada" kindref="member">LearnDistance</ref>(arma::mat&amp;<sp/>outputMatrix,<sp/>CallbackTypes&amp;&amp;...<sp/>callbacks);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="classmlpack_1_1nca_1_1NCA_1aff320b9a86b77a150e630c01d5888273" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1nca_1_1NCA_1aff320b9a86b77a150e630c01d5888273" kindref="member">Dataset</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dataset;<sp/>}</highlight></codeline>
+<codeline lineno="83" refid="classmlpack_1_1nca_1_1NCA_1ae68718a757e9635f87377fd3935ca20d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1nca_1_1NCA_1ae68718a757e9635f87377fd3935ca20d" kindref="member">Labels</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>labels;<sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1nca_1_1NCA_1a3bdf808beacdb2f464caa78076a23a0a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>OptimizerType&amp;<sp/><ref refid="classmlpack_1_1nca_1_1NCA_1a3bdf808beacdb2f464caa78076a23a0a" kindref="member">Optimizer</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>optimizer;<sp/>}</highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1nca_1_1NCA_1a213f61b8936eadf8a162e45b4c6188d0" refkind="member"><highlight class="normal"><sp/><sp/>OptimizerType&amp;<sp/><ref refid="classmlpack_1_1nca_1_1NCA_1a213f61b8936eadf8a162e45b4c6188d0" kindref="member">Optimizer</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>optimizer;<sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>MetricType<sp/>metric;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction" kindref="compound">SoftmaxErrorFunction&lt;MetricType&gt;</ref><sp/>errorFunction;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>OptimizerType<sp/>optimizer;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>nca</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>the<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nca_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp"/>
+  </compounddef>
+</doxygen>

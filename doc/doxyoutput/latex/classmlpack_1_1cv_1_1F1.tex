@@ -1,0 +1,90 @@
+\section{F1$<$ AS, Positive\+Class $>$ Class Template Reference}
+\label{classmlpack_1_1cv_1_1F1}\index{F1$<$ A\+S, Positive\+Class $>$@{F1$<$ A\+S, Positive\+Class $>$}}
+
+
+\doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} is a metric of performance for classification algorithms that for binary classification is equal to $ 2 * precision * recall / (precision + recall) $.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename M\+L\+Algorithm , typename Data\+Type $>$ }\\static double \textbf{ Evaluate} (M\+L\+Algorithm \&model, const Data\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels)
+\begin{DoxyCompactList}\small\item\em Run classification and calculate \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Needs\+Minimization} = false
+\begin{DoxyCompactList}\small\item\em Information for hyper-\/parameter tuning code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$Average\+Strategy AS, size\+\_\+t Positive\+Class = 1$>$\newline
+class mlpack\+::cv\+::\+F1$<$ A\+S, Positive\+Class $>$}
+
+\doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} is a metric of performance for classification algorithms that for binary classification is equal to $ 2 * precision * recall / (precision + recall) $. 
+
+For multiclass classification the \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} metric can be used with the following strategies for averaging.
+\begin{DoxyEnumerate}
+\item Micro. The result is calculated by the above formula, but microaveraged precision and microaveraged recall are used.
+\item Macro. \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} is calculated for each class (with values used for calculation of macroaveraged precision and macroaveraged recall), and then the \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} values are averaged.
+\end{DoxyEnumerate}
+
+In the case of multiclass classification it is assumed that there are instances of every label from 0 to max(labels) among input data points.
+
+The returned value for \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} will be zero if both precision and recall turn out to be zeros.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em AS} & An average strategy. \\
+\hline
+{\em Positive\+Class} & In the case of binary classification (AS = Binary) positives are assumed to have labels equal to this value. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 45 of file f1.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1F1_a77b6a9eb952b01bfc5c0d854da700465}} 
+\index{mlpack\+::cv\+::\+F1@{mlpack\+::cv\+::\+F1}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::cv\+::\+F1@{mlpack\+::cv\+::\+F1}}
+\subsubsection{Evaluate()}
+{\footnotesize\ttfamily static double Evaluate (\begin{DoxyParamCaption}\item[{M\+L\+Algorithm \&}]{model,  }\item[{const Data\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Run classification and calculate \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & A classification model. \\
+\hline
+{\em data} & Column-\/major data containing test items. \\
+\hline
+{\em labels} & Ground truth (correct) labels for the test items. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1F1_a59117419810548f86c24651ffa3500d5}} 
+\index{mlpack\+::cv\+::\+F1@{mlpack\+::cv\+::\+F1}!Needs\+Minimization@{Needs\+Minimization}}
+\index{Needs\+Minimization@{Needs\+Minimization}!mlpack\+::cv\+::\+F1@{mlpack\+::cv\+::\+F1}}
+\subsubsection{Needs\+Minimization}
+{\footnotesize\ttfamily const bool Needs\+Minimization = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Information for hyper-\/parameter tuning code. 
+
+It indicates that we want to maximize the metric. 
+
+Definition at line 64 of file f1.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cv/metrics/\textbf{ f1.\+hpp}\end{DoxyCompactItemize}

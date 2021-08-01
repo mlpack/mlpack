@@ -1,0 +1,13 @@
+.. _exhale_function_nbc__main_8cpp_1a54b5201c987380659280bb77a970c666:
+
+Function BINDING_SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class " "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1" "NaiveBayesClassifier.html")
+=========================================================================================================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_naive_bayes_nbc_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: BINDING_SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class " "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1" "NaiveBayesClassifier.html")

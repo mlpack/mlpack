@@ -1,0 +1,43 @@
+.TH "is_cereal_archive_saving< Archive >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+is_cereal_archive_saving< Archive >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static constexpr bool \fBvalue\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename Archive>
+.br
+struct cereal::is_cereal_archive_saving< Archive >"
+
+.PP
+Definition at line 28 of file is_saving\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "constexpr bool value\fC [static]\fP"
+\fBInitial value:\fP
+.PP
+.nf
+= std::is_same<Archive,
+      cereal::BinaryOutputArchive>::value ||
+
+      std::is_same<Archive, cereal::JSONOutputArchive>::value ||
+
+      std::is_same<Archive, cereal::XMLOutputArchive>::value
+.fi
+.PP
+Definition at line 32 of file is_saving\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

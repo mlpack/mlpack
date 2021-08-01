@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structIsVector" kind="struct" language="C++" prot="public">
+    <compoundname>IsVector</compoundname>
+    <includes refid="arma__traits_8hpp" local="no">arma_traits.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename VecType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structIsVector_1a11ddd051208250c32dc4985abcafa86d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/arma_traits.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/arma_traits.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>If value == true, then VecType is some sort of Armadillo vector or subview. </para>    </briefdescription>
+    <detaileddescription>
+<para>You might use this struct like this:</para><para><programlisting><codeline><highlight class="normal">//<sp/>Only<sp/>accepts<sp/>VecTypes<sp/>that<sp/>are<sp/>actually<sp/>Armadillo<sp/>vector<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>VecType&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Function(const<sp/>VecType&amp;<sp/>argumentA,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>typename<sp/>std::enable_if_t&lt;IsVector&lt;VecType&gt;::value&gt;*<sp/>=<sp/>0);</highlight></codeline>
+</programlisting></para><para>The use of the enable_if_t object allows the compiler to instantiate Function() only if VecType is one of the Armadillo vector types. It has a default argument because it isn&apos;t meant to be used in either the function call or the function body. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/arma_traits.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/arma_traits.hpp" bodystart="35" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structIsVector_1a11ddd051208250c32dc4985abcafa86d" prot="public" virt="non-virtual"><scope>IsVector</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

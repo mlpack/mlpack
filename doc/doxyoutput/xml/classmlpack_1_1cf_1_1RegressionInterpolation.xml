@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1cf_1_1RegressionInterpolation" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::RegressionInterpolation</compoundname>
+    <includes refid="regression__interpolation_8hpp" local="no">regression_interpolation.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1RegressionInterpolation_1ad6f5f3e8457aa629bc79333c35fdce11" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat</type>
+        <definition>arma::sp_mat a</definition>
+        <argsstring></argsstring>
+        <name>a</name>
+        <briefdescription>
+<para>Cached coefficients used in linear equations to compute weights. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1RegressionInterpolation_1a9abf45882bf6fd621bc3f5fa4984ac7b" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat</type>
+        <definition>arma::sp_mat b</definition>
+        <argsstring></argsstring>
+        <name>b</name>
+        <briefdescription>
+<para>Cached constant terms used in linear equations to compute weights. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1RegressionInterpolation_1ac0b62722b41c25d0c9631cb18b5e5fef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RegressionInterpolation</definition>
+        <argsstring>()</argsstring>
+        <name>RegressionInterpolation</name>
+        <briefdescription>
+<para>Empty Constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="62" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="62" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1RegressionInterpolation_1a500c9f3d07130aee68724cfd50dce11e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RegressionInterpolation</definition>
+        <argsstring>(const arma::sp_mat &amp;cleanedData)</argsstring>
+        <name>RegressionInterpolation</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>cleanedData</declname>
+        </param>
+        <briefdescription>
+<para>Use cleanedData to perform necessary preprocessing. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cleanedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sparse rating matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="69" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1RegressionInterpolation_1ac1e5284cad449c49a0b5e026c5a795a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VectorType</type>
+          </param>
+          <param>
+            <type>typename DecompositionPolicy</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void GetWeights</definition>
+        <argsstring>(VectorType &amp;&amp;weights, const DecompositionPolicy &amp;decomposition, const size_t queryUser, const arma::Col&lt; size_t &gt; &amp;neighbors, const arma::vec &amp;, const arma::sp_mat &amp;cleanedData)</argsstring>
+        <name>GetWeights</name>
+        <param>
+          <type>VectorType &amp;&amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const DecompositionPolicy &amp;</type>
+          <declname>decomposition</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>queryUser</declname>
+        </param>
+        <param>
+          <type>const arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+        </param>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>cleanedData</declname>
+        </param>
+        <briefdescription>
+<para>The regression-based interpolation problem can be solved by a linear system of equations. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method first calculates the coefficients and constant terms for the equations and then solve the equations. The solution of the linear system of equations is the resulting interpolation weights (the first parameter). After getting the weights, CF algorithm multiplies each neighbor&apos;s rating by its corresponding weight and sums them to get predicted rating.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting interpolation weights. The size of weights should be set to the number of neighbors before calling <ref refid="classmlpack_1_1cf_1_1RegressionInterpolation_1ac1e5284cad449c49a0b5e026c5a795a7" kindref="member">GetWeights()</ref>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>decomposition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Decomposition object. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>queryUser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Queried user. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Neighbors of queried user. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(similarities) Similarities between query user and neighbors. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cleanedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sparse rating matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="95" bodyend="176"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of regression-based interpolation method. </para>    </briefdescription>
+    <detaileddescription>
+<para>Predicting a user&apos;s rating <formula id="149">$ r_{iu} $</formula> by it&apos;s neighbors&apos; ratings can be regarded as solving linear regression of <formula id="149">$ r_{iu} $</formula> on <formula id="150">$ r_{iv} $</formula>, where v are u&apos;s neighbors.</para><para>An example of how to use <ref refid="classmlpack_1_1cf_1_1RegressionInterpolation" kindref="compound">RegressionInterpolation</ref> in CF is shown below:</para><para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>data<sp/>is<sp/>a<sp/>(user,<sp/>item,<sp/>rating)<sp/>table.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Users<sp/>for<sp/>whom<sp/>recommendations<sp/>are<sp/>generated.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Col&lt;size_t&gt;<sp/>users;</highlight></codeline>
+<codeline><highlight class="normal">arma::Mat&lt;size_t&gt;<sp/>recommendations;<sp/>//<sp/>Resulting<sp/>recommendations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">CFType&lt;&gt;<sp/>cf(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Generate<sp/>10<sp/>recommendations<sp/>for<sp/>all<sp/>users.</highlight></codeline>
+<codeline><highlight class="normal">cf.template<sp/>GetRecommendations&lt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>EuclideanSearch,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>RegressionInterpolation&gt;(10,<sp/>recommendations);</highlight></codeline>
+</programlisting></para><para>For more information, see the following paper.</para><para><programlisting><codeline><highlight class="normal">@inproceedings{bell2007improved,</highlight></codeline>
+<codeline><highlight class="normal"><sp/>title={Improved<sp/>neighborhood-based<sp/>collaborative<sp/>filtering},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>author={Bell,<sp/>Robert<sp/>M<sp/>and<sp/>Koren,<sp/>Yehuda},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>booktitle={KDD<sp/>cup<sp/>and<sp/>workshop<sp/>at<sp/>the<sp/>13th<sp/>ACM<sp/>SIGKDD<sp/>international</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>conference<sp/>on<sp/>knowledge<sp/>discovery<sp/>and<sp/>data<sp/>mining},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>pages={7--14},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>year={2007},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>organization={Citeseer}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" line="57" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp" bodystart="56" bodyend="183"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1RegressionInterpolation_1ad6f5f3e8457aa629bc79333c35fdce11" prot="private" virt="non-virtual"><scope>mlpack::cf::RegressionInterpolation</scope><name>a</name></member>
+      <member refid="classmlpack_1_1cf_1_1RegressionInterpolation_1a9abf45882bf6fd621bc3f5fa4984ac7b" prot="private" virt="non-virtual"><scope>mlpack::cf::RegressionInterpolation</scope><name>b</name></member>
+      <member refid="classmlpack_1_1cf_1_1RegressionInterpolation_1ac1e5284cad449c49a0b5e026c5a795a7" prot="public" virt="non-virtual"><scope>mlpack::cf::RegressionInterpolation</scope><name>GetWeights</name></member>
+      <member refid="classmlpack_1_1cf_1_1RegressionInterpolation_1ac0b62722b41c25d0c9631cb18b5e5fef" prot="public" virt="non-virtual"><scope>mlpack::cf::RegressionInterpolation</scope><name>RegressionInterpolation</name></member>
+      <member refid="classmlpack_1_1cf_1_1RegressionInterpolation_1a500c9f3d07130aee68724cfd50dce11e" prot="public" virt="non-virtual"><scope>mlpack::cf::RegressionInterpolation</scope><name>RegressionInterpolation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

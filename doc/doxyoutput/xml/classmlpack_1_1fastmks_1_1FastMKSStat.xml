@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1fastmks_1_1FastMKSStat" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::fastmks::FastMKSStat</compoundname>
+    <includes refid="fastmks__stat_8hpp" local="no">fastmks_stat.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a7694744cdc068cb065fc8e6bf659d2b3" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double bound</definition>
+        <argsstring></argsstring>
+        <name>bound</name>
+        <briefdescription>
+<para>The bound for pruning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a0387fe8c8c4864ba55106721193264d7" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lastKernel</definition>
+        <argsstring></argsstring>
+        <name>lastKernel</name>
+        <briefdescription>
+<para>The last kernel evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a37e0e166e5a746fc80d72ebbde0104b3" prot="private" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* lastKernelNode</definition>
+        <argsstring></argsstring>
+        <name>lastKernelNode</name>
+        <briefdescription>
+<para>The node corresponding to the last kernel evaluation. </para>        </briefdescription>
+        <detaileddescription>
+<para>This has to be void otherwise we get recursive template arguments. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSStat_1ac37e19ed17b20491a0f1b508cf5fcc90" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double selfKernel</definition>
+        <argsstring></argsstring>
+        <name>selfKernel</name>
+        <briefdescription>
+<para>The self-kernel evaluation: sqrt(K(centroid, centroid)). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a4b735ae05f53c60fdebe6c290948f7a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>FastMKSStat</definition>
+        <argsstring>()</argsstring>
+        <name>FastMKSStat</name>
+        <briefdescription>
+<para>Default initialization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="31" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a6ef665db9fa464e43659b7428b6ca7b7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>FastMKSStat</definition>
+        <argsstring>(const TreeType &amp;node)</argsstring>
+        <name>FastMKSStat</name>
+        <param>
+          <type>const TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Initialize this statistic for the given tree node. </para>        </briefdescription>
+        <detaileddescription>
+<para>The TreeType&apos;s metric better be IPMetric with some kernel type (that is, Metric().Kernel() must exist).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node that this statistic is built for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="46" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1abe1eb75f967ca19571a77a1e90faa0ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Bound</definition>
+        <argsstring>() const</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Get the bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a421b6e4a396e0c1057e297e39a7d1b8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Bound</definition>
+        <argsstring>()</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Modify the bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a1c098b3cbf382af0167e214f1b1793df" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LastKernel</definition>
+        <argsstring>() const</argsstring>
+        <name>LastKernel</name>
+        <briefdescription>
+<para>Get the last kernel evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1ab4475c8138fb5064f96d8bb5f495c394" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LastKernel</definition>
+        <argsstring>()</argsstring>
+        <name>LastKernel</name>
+        <briefdescription>
+<para>Modify the last kernel evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a9762f381f4cfed4daeab756766174441" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* LastKernelNode</definition>
+        <argsstring>() const</argsstring>
+        <name>LastKernelNode</name>
+        <briefdescription>
+<para>Get the address of the node corresponding to the last distance evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1acafc003034f6b7b4308743647714ca11" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *&amp;</type>
+        <definition>void*&amp; LastKernelNode</definition>
+        <argsstring>()</argsstring>
+        <name>LastKernelNode</name>
+        <briefdescription>
+<para>Modify the address of the node corresponding to the last distance evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a4391eb3baa79e9ea32b148a478360926" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double SelfKernel</definition>
+        <argsstring>() const</argsstring>
+        <name>SelfKernel</name>
+        <briefdescription>
+<para>Get the self-kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a795f26be6663bd4d5a27a6f303035c04" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; SelfKernel</definition>
+        <argsstring>()</argsstring>
+        <name>SelfKernel</name>
+        <briefdescription>
+<para>Modify the self-kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSStat_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the statistic. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="103" bodyend="114"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The statistic used in trees with <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para>This stores both the bound and the self-kernels for each node in the tree. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp" bodystart="25" bodyend="129"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a7694744cdc068cb065fc8e6bf659d2b3" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>bound</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1abe1eb75f967ca19571a77a1e90faa0ad" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a421b6e4a396e0c1057e297e39a7d1b8b" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4b735ae05f53c60fdebe6c290948f7a1" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>FastMKSStat</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a6ef665db9fa464e43659b7428b6ca7b7" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>FastMKSStat</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a1c098b3cbf382af0167e214f1b1793df" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>LastKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1ab4475c8138fb5064f96d8bb5f495c394" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>LastKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a0387fe8c8c4864ba55106721193264d7" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>lastKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a9762f381f4cfed4daeab756766174441" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>LastKernelNode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1acafc003034f6b7b4308743647714ca11" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>LastKernelNode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a37e0e166e5a746fc80d72ebbde0104b3" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>lastKernelNode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1ac37e19ed17b20491a0f1b508cf5fcc90" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>selfKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4391eb3baa79e9ea32b148a478360926" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>SelfKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a795f26be6663bd4d5a27a6f303035c04" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>SelfKernel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSStat</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

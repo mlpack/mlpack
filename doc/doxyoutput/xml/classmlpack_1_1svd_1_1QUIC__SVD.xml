@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1svd_1_1QUIC__SVD" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svd::QUIC_SVD</compoundname>
+    <includes refid="quic__svd_8hpp" local="no">quic_svd.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1QUIC__SVD_1abc4c9bbd11fa647c8e2f3c3034c6bf2e" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat basis</definition>
+        <argsstring></argsstring>
+        <name>basis</name>
+        <briefdescription>
+<para>Subspace basis of the input dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1QUIC__SVD_1a513b486f0725823790c22399f0c054a8" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; dataset</definition>
+        <argsstring></argsstring>
+        <name>dataset</name>
+        <briefdescription>
+<para>Matrix for which cosine tree is constructed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1QUIC__SVD_1afc9e4cc0d239c3577ed2bdfaf8015c30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>QUIC_SVD</definition>
+        <argsstring>(const arma::mat &amp;dataset, arma::mat &amp;u, arma::mat &amp;v, arma::mat &amp;sigma, const double epsilon=0.03, const double delta=0.1)</argsstring>
+        <name>QUIC_SVD</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>sigma</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>0.03</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+          <defval>0.1</defval>
+        </param>
+        <briefdescription>
+<para>Constructor which implements the QUIC-SVD algorithm. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function calls the CosineTree constructor to create a subspace basis, where the original matrix&apos;s projection has minimum reconstruction error. The constructor then uses the <ref refid="classmlpack_1_1svd_1_1QUIC__SVD_1a07a627ca0943a4fbd483466d89b0c8e5" kindref="member">ExtractSVD()</ref> function to calculate the SVD of the original dataset in that subspace.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix for which SVD is calculated. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sigma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal matrix of singular values. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error tolerance fraction for calculated subspace. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cumulative probability for Monte Carlo error lower bound. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" line="70" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1QUIC__SVD_1a07a627ca0943a4fbd483466d89b0c8e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ExtractSVD</definition>
+        <argsstring>(arma::mat &amp;u, arma::mat &amp;v, arma::mat &amp;sigma)</argsstring>
+        <name>ExtractSVD</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>sigma</declname>
+        </param>
+        <briefdescription>
+<para>This function uses the vector subspace created using a cosine tree to calculate an approximate SVD of the original matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sigma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal matrix of singular values. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" line="85" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>QUIC-SVD is a matrix factorization technique, which operates in a subspace such that A&apos;s approximation in that subspace has minimum error(A being the data matrix). </para>    </briefdescription>
+    <detaileddescription>
+<para>The subspace is constructed using a cosine tree, which ensures minimum representative rank(and thus a fast running time). It follows a splitting policy based on Length-squared(LS) sampling and constructs the child nodes based on the absolute cosines of the remaining points relative to the pivot. The centroids of the points in the child nodes are added to the subspace span in each step. Each node is then placed into a queue prioritized by its residual error. The subspace approximation error of A after each step is calculated using a Monte Carlo estimate. If the error is below a certain threshold, the method proceeds to calculate the Singular Value Decomposition in the obtained subspace. Otherwise, the same procedure is repeated until we obtain a subspace of sufficiently low error. Technical details can be found in the following paper:</para><para><ulink url="http://www.cc.gatech.edu/~isbell/papers/isbell-quicsvd-nips-2008.pdf">http://www.cc.gatech.edu/~isbell/papers/isbell-quicsvd-nips-2008.pdf</ulink></para><para>An example of how to use the interface is shown below:</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>data;<sp/>//<sp/>Data<sp/>matrix.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">const<sp/>double<sp/>epsilon<sp/>=<sp/>0.01;<sp/>//<sp/>Relative<sp/>error<sp/>limit<sp/>of<sp/>data<sp/>in<sp/>subspace.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>double<sp/>delta<sp/>=<sp/>0.1<sp/>//<sp/>Lower<sp/>error<sp/>bound<sp/>for<sp/>Monte<sp/>Carlo<sp/>estimate.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>u,<sp/>v,<sp/>sigma;<sp/>//<sp/>Matrices<sp/>for<sp/>the<sp/>factors.<sp/>data<sp/>=<sp/>u<sp/>*<sp/>sigma<sp/>*<sp/>v.t()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Get<sp/>the<sp/>factorization<sp/>in<sp/>the<sp/>constructor.</highlight></codeline>
+<codeline><highlight class="normal">QUIC_SVD(data,<sp/>u,<sp/>v,<sp/>sigma,<sp/>epsilon,<sp/>delta);</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp" bodystart="53" bodyend="92"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svd_1_1QUIC__SVD_1abc4c9bbd11fa647c8e2f3c3034c6bf2e" prot="private" virt="non-virtual"><scope>mlpack::svd::QUIC_SVD</scope><name>basis</name></member>
+      <member refid="classmlpack_1_1svd_1_1QUIC__SVD_1a513b486f0725823790c22399f0c054a8" prot="private" virt="non-virtual"><scope>mlpack::svd::QUIC_SVD</scope><name>dataset</name></member>
+      <member refid="classmlpack_1_1svd_1_1QUIC__SVD_1a07a627ca0943a4fbd483466d89b0c8e5" prot="public" virt="non-virtual"><scope>mlpack::svd::QUIC_SVD</scope><name>ExtractSVD</name></member>
+      <member refid="classmlpack_1_1svd_1_1QUIC__SVD_1afc9e4cc0d239c3577ed2bdfaf8015c30" prot="public" virt="non-virtual"><scope>mlpack::svd::QUIC_SVD</scope><name>QUIC_SVD</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,209 @@
+\section{A\+MF$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1amf_1_1AMF}\index{A\+M\+F$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$@{A\+M\+F$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$}}
+
+
+This class implements \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (alternating matrix factorization) on the given matrix V.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ A\+MF} (const Termination\+Policy\+Type \&termination\+Policy=Termination\+Policy\+Type(), const Initialization\+Rule\+Type \&initialize\+Rule=Initialization\+Rule\+Type(), const Update\+Rule\+Type \&update=Update\+Rule\+Type())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} object and (optionally) set the parameters which \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} will run with. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\double \textbf{ Apply} (const Mat\+Type \&V, const size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em Apply Alternating Matrix Factorization to the provided matrix. \end{DoxyCompactList}\item 
+const Initialization\+Rule\+Type \& \textbf{ Initialize\+Rule} () const
+\begin{DoxyCompactList}\small\item\em Access the initialization rule. \end{DoxyCompactList}\item 
+Initialization\+Rule\+Type \& \textbf{ Initialize\+Rule} ()
+\begin{DoxyCompactList}\small\item\em Modify the initialization rule. \end{DoxyCompactList}\item 
+const Termination\+Policy\+Type \& \textbf{ Termination\+Policy} () const
+\begin{DoxyCompactList}\small\item\em Access the termination policy. \end{DoxyCompactList}\item 
+Termination\+Policy\+Type \& \textbf{ Termination\+Policy} ()
+\begin{DoxyCompactList}\small\item\em Modify the termination policy. \end{DoxyCompactList}\item 
+const Update\+Rule\+Type \& \textbf{ Update} () const
+\begin{DoxyCompactList}\small\item\em Access the update rule. \end{DoxyCompactList}\item 
+Update\+Rule\+Type \& \textbf{ Update} ()
+\begin{DoxyCompactList}\small\item\em Modify the update rule. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Termination\+Policy\+Type = Simple\+Residue\+Termination, typename Initialization\+Rule\+Type = Random\+Acol\+Initialization$<$$>$, typename Update\+Rule\+Type = N\+M\+F\+Multiplicative\+Distance\+Update$>$\newline
+class mlpack\+::amf\+::\+A\+M\+F$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$}
+
+This class implements \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (alternating matrix factorization) on the given matrix V. 
+
+Alternating matrix factorization decomposes V in the form $ V \approx WH $ where W is called the basis matrix and H is called the encoding matrix. V is taken to be of size n x m and the obtained W is n x r and H is r x m. The size r is called the rank of the factorization.
+
+The implementation requires three template types; the first contains the policy used to determine when the algorithm has converged; the second contains the initialization rule for the W and H matrix; the last contains the update rule to be used during each iteration. This templatization allows the user to try various update rules, initialization rules, and termination policies (including ones not supplied with mlpack) for factorization. By default, the template parameters to \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} implement non-\/negative matrix factorization with the multiplicative distance update.
+
+A simple example of how to run \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (or N\+MF) is shown below.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat V; \textcolor{comment}{// Matrix that we want to perform LMF on.}
+\textcolor{keywordtype}{size\_t} r = 10; \textcolor{comment}{// Rank of decomposition}
+arma::mat W; \textcolor{comment}{// Basis matrix}
+arma::mat H; \textcolor{comment}{// Encoding matrix}
+
+AMF<> amf; \textcolor{comment}{// Default options: NMF with multiplicative distance update rules.}
+amf.Apply(V, r, W, H);
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Termination\+Policy} & The policy to use for determining when the factorization has converged. \\
+\hline
+{\em Initialization\+Rule} & The initialization rule for initializing W and H matrix. \\
+\hline
+{\em Update\+Rule} & The update rule for calculating W and H matrix at each iteration.\\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{N\+M\+F\+Multiplicative\+Distance\+Update}{p.}{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate}, \doxyref{Simple\+Residue\+Termination}{p.}{classmlpack_1_1amf_1_1SimpleResidueTermination} 
+\end{DoxySeeAlso}
+
+
+Definition at line 78 of file amf.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1AMF_aa79bd7ca717d85ef36baa40a1ea4319a}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!A\+MF@{A\+MF}}
+\index{A\+MF@{A\+MF}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{A\+M\+F()}
+{\footnotesize\ttfamily \textbf{ A\+MF} (\begin{DoxyParamCaption}\item[{const Termination\+Policy\+Type \&}]{termination\+Policy = {\ttfamily TerminationPolicyType()},  }\item[{const Initialization\+Rule\+Type \&}]{initialize\+Rule = {\ttfamily InitializationRuleType()},  }\item[{const Update\+Rule\+Type \&}]{update = {\ttfamily UpdateRuleType()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} object and (optionally) set the parameters which \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} will run with. 
+
+The minimum residue refers to the root mean square of the difference between two subsequent iterations of the product W $\ast$ H. A low residue indicates that subsequent iterations are not producing much change in W and H. Once the residue goes below the specified minimum residue, the algorithm terminates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em initialize\+Rule} & Optional instantiated Initialization\+Rule object for initializing the W and H matrices. \\
+\hline
+{\em update} & Optional instantiated Update\+Rule object; this parameter is useful when the update rule for the W and H vector has state that it needs to store (i.\+e. H\+Update() and W\+Update() are not static functions). \\
+\hline
+{\em termination\+Policy} & Optional instantiated Termination\+Policy object. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1AMF_a535d2642e3234fbd1ebc6840b061c4da}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Apply()}
+{\footnotesize\ttfamily double Apply (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const size\+\_\+t}]{r,  }\item[{arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption})}
+
+
+
+Apply Alternating Matrix Factorization to the provided matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be output. \\
+\hline
+{\em H} & Encoding matrix to output. \\
+\hline
+{\em r} & Rank r of the factorization. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by N\+M\+F\+Policy\+::\+Apply(), Batch\+S\+V\+D\+Policy\+::\+Apply(), S\+V\+D\+Complete\+Policy\+::\+Apply(), and S\+V\+D\+Incomplete\+Policy\+::\+Apply().
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_ae36ae1d0d07bb71d6ad4aa3919de674b}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Initialize\+Rule@{Initialize\+Rule}}
+\index{Initialize\+Rule@{Initialize\+Rule}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Initialize\+Rule()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Initialization\+Rule\+Type\& Initialize\+Rule (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access the initialization rule. 
+
+
+
+Definition at line 122 of file amf.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_ad4c0a310565e914c01e6beb9f9427567}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Initialize\+Rule@{Initialize\+Rule}}
+\index{Initialize\+Rule@{Initialize\+Rule}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Initialize\+Rule()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Initialization\+Rule\+Type\& Initialize\+Rule (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initialization rule. 
+
+
+
+Definition at line 125 of file amf.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_ad905ffaf32e6780a28664a060d23e6b8}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Termination\+Policy@{Termination\+Policy}}
+\index{Termination\+Policy@{Termination\+Policy}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Termination\+Policy()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Termination\+Policy\+Type\& Termination\+Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access the termination policy. 
+
+
+
+Definition at line 116 of file amf.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_ae0b13308816da802c64d704544a7af71}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Termination\+Policy@{Termination\+Policy}}
+\index{Termination\+Policy@{Termination\+Policy}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Termination\+Policy()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Termination\+Policy\+Type\& Termination\+Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the termination policy. 
+
+
+
+Definition at line 119 of file amf.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_ad51a399acff576b3da541487d6a76417}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Update@{Update}}
+\index{Update@{Update}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Update()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Update\+Rule\+Type\& Update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access the update rule. 
+
+
+
+Definition at line 128 of file amf.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1AMF_a3e8cca59296dfb97e73f5c07924ed644}} 
+\index{mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}!Update@{Update}}
+\index{Update@{Update}!mlpack\+::amf\+::\+A\+MF@{mlpack\+::amf\+::\+A\+MF}}
+\subsubsection{Update()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Update\+Rule\+Type\& Update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the update rule. 
+
+
+
+Definition at line 130 of file amf.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/amf/\textbf{ amf.\+hpp}\end{DoxyCompactItemize}

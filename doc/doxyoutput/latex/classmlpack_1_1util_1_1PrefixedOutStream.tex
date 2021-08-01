@@ -1,0 +1,358 @@
+\section{Prefixed\+Out\+Stream Class Reference}
+\label{classmlpack_1_1util_1_1PrefixedOutStream}\index{Prefixed\+Out\+Stream@{Prefixed\+Out\+Stream}}
+
+
+Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Prefixed\+Out\+Stream} (std\+::ostream \&\textbf{ destination}, const char $\ast$prefix, bool \textbf{ ignore\+Input}=false, bool fatal=false, bool \textbf{ backtrace}=true)
+\begin{DoxyCompactList}\small\item\em Set up the \doxyref{Prefixed\+Out\+Stream}{p.}{classmlpack_1_1util_1_1PrefixedOutStream}. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (bool val)
+\begin{DoxyCompactList}\small\item\em Write a bool to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (short val)
+\begin{DoxyCompactList}\small\item\em Write a short to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (unsigned short val)
+\begin{DoxyCompactList}\small\item\em Write an unsigned short to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (int val)
+\begin{DoxyCompactList}\small\item\em Write an int to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (unsigned int val)
+\begin{DoxyCompactList}\small\item\em Write an unsigned int to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (long val)
+\begin{DoxyCompactList}\small\item\em Write a long to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (unsigned long val)
+\begin{DoxyCompactList}\small\item\em Write an unsigned long to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (float val)
+\begin{DoxyCompactList}\small\item\em Write a float to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (double val)
+\begin{DoxyCompactList}\small\item\em Write a double to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (long double val)
+\begin{DoxyCompactList}\small\item\em Write a long double to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (void $\ast$val)
+\begin{DoxyCompactList}\small\item\em Write a void pointer to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (const char $\ast$str)
+\begin{DoxyCompactList}\small\item\em Write a character array to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (std\+::string \&str)
+\begin{DoxyCompactList}\small\item\em Write a string to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (std\+::streambuf $\ast$sb)
+\begin{DoxyCompactList}\small\item\em Write a streambuf to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (std\+::ostream \&($\ast$pf)(std\+::ostream \&))
+\begin{DoxyCompactList}\small\item\em Write an ostream manipulator function to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (std\+::ios \&($\ast$pf)(std\+::ios \&))
+\begin{DoxyCompactList}\small\item\em Write an ios manipulator function to the stream. \end{DoxyCompactList}\item 
+\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (std\+::ios\+\_\+base \&($\ast$pf)(std\+::ios\+\_\+base \&))
+\begin{DoxyCompactList}\small\item\em Write an ios\+\_\+base manipulator function to the stream. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\textbf{ Prefixed\+Out\+Stream} \& \textbf{ operator$<$$<$} (const T \&s)
+\begin{DoxyCompactList}\small\item\em Write anything else to the stream. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ backtrace}
+\begin{DoxyCompactList}\small\item\em If true, on a fatal error, a backtrace will be printed if H\+A\+S\+\_\+\+B\+F\+D\+\_\+\+DL is defined. \end{DoxyCompactList}\item 
+std\+::ostream \& \textbf{ destination}
+\begin{DoxyCompactList}\small\item\em The output stream that all data is to be sent to; example\+: M\+L\+P\+A\+C\+K\+\_\+\+C\+O\+U\+T\+\_\+\+S\+T\+R\+E\+AM. \end{DoxyCompactList}\item 
+bool \textbf{ ignore\+Input}
+\begin{DoxyCompactList}\small\item\em Discards input, prints nothing if true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr. 
+
+The prefix is specified in the constructor (as well as the destination ostream). A newline must be passed to the stream, and then the prefix will be prepended to the next line. For example,
+
+
+\begin{DoxyCode}
+PrefixedOutStream outstr(MLPACK_COUT_STREAM, \textcolor{stringliteral}{"[TEST] "});
+outstr << \textcolor{stringliteral}{"Hello world I like "} << 7.5;
+outstr << \textcolor{stringliteral}{"...Continue"} << std::endl;
+outstr << \textcolor{stringliteral}{"After the CR\(\backslash\)n"} << std::endl;
+\end{DoxyCode}
+
+
+would give, on M\+L\+P\+A\+C\+K\+\_\+\+C\+O\+U\+T\+\_\+\+S\+T\+R\+E\+AM,
+
+
+\begin{DoxyCode}
+[TEST] Hello world I like 7.5...Continue
+[TEST] After the CR
+[TEST]
+\end{DoxyCode}
+
+
+These objects are used for the mlpack\+::\+Log levels (D\+E\+B\+UG, I\+N\+FO, W\+A\+RN, and F\+A\+T\+AL). 
+
+Definition at line 46 of file prefixedoutstream.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a700972d87f6b85809b694bc1f747936d}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!Prefixed\+Out\+Stream@{Prefixed\+Out\+Stream}}
+\index{Prefixed\+Out\+Stream@{Prefixed\+Out\+Stream}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{Prefixed\+Out\+Stream()}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream} (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{destination,  }\item[{const char $\ast$}]{prefix,  }\item[{bool}]{ignore\+Input = {\ttfamily false},  }\item[{bool}]{fatal = {\ttfamily false},  }\item[{bool}]{backtrace = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set up the \doxyref{Prefixed\+Out\+Stream}{p.}{classmlpack_1_1util_1_1PrefixedOutStream}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em destination} & ostream which receives output from this object. \\
+\hline
+{\em prefix} & The prefix to prepend to each line. \\
+\hline
+{\em ignore\+Input} & If true, the stream will not be printed. \\
+\hline
+{\em fatal} & If true, a std\+::runtime\+\_\+error exception is thrown after printing a newline. \\
+\hline
+{\em backtrace} & If true, attempt to print a backtrace (will only be done if H\+A\+S\+\_\+\+B\+F\+D\+\_\+\+DL is defined). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 60 of file prefixedoutstream.\+hpp.
+
+
+
+References Prefixed\+Out\+Stream\+::operator$<$$<$().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a2e080b843aa4bacfbd35f8152ff5e4c2}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [1/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{bool}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a bool to the stream. 
+
+
+
+Referenced by Prefixed\+Out\+Stream\+::\+Prefixed\+Out\+Stream().
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a32ccfab2ff69c827167f675e258196d6}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [2/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{short}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a short to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_abeffd78f8bc91a764cd0f79368e5df3d}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [3/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{unsigned short}]{val }\end{DoxyParamCaption})}
+
+
+
+Write an unsigned short to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a3caf57a15becc3c7215187b171e72cbb}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [4/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{int}]{val }\end{DoxyParamCaption})}
+
+
+
+Write an int to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a0b8375fac9adc8b60966e90d36f12628}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [5/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{unsigned int}]{val }\end{DoxyParamCaption})}
+
+
+
+Write an unsigned int to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_aec0c7b4a4626ce1ccc2f9d6807ad8873}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [6/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{long}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a long to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a87aea94a2111d73f2135b209284ad09c}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [7/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{unsigned long}]{val }\end{DoxyParamCaption})}
+
+
+
+Write an unsigned long to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_ab5991d0cfe0dfac7c5a0ddfa6718f6e6}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [8/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{float}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a float to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a6846902e8083855767d9d1d832648ee8}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [9/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{double}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a double to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a2544e470c5774888ac78cf9decaf9cad}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [10/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{long double}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a long double to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a2393eb367323f75e4779c6a00e6aaca6}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [11/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{void $\ast$}]{val }\end{DoxyParamCaption})}
+
+
+
+Write a void pointer to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_afcd1a0321471c0ba68756cc53d4331d1}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [12/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{const char $\ast$}]{str }\end{DoxyParamCaption})}
+
+
+
+Write a character array to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_ab52d83d3b935eedc8b519c2a685a4af9}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [13/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::string \&}]{str }\end{DoxyParamCaption})}
+
+
+
+Write a string to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a0efdab0fa7c63ecc9237e62b3710f319}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [14/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::streambuf $\ast$}]{sb }\end{DoxyParamCaption})}
+
+
+
+Write a streambuf to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_ad80054a80a360882d40cee6dbc514c45}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [15/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&($\ast$)(std\+::ostream \&)}]{pf }\end{DoxyParamCaption})}
+
+
+
+Write an ostream manipulator function to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a5dfbb702a279df59b0dbccd6e48a4398}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [16/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ios \&($\ast$)(std\+::ios \&)}]{pf }\end{DoxyParamCaption})}
+
+
+
+Write an ios manipulator function to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_af1419b2934a872a0eeb744e692565d28}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [17/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ios\+\_\+base \&($\ast$)(std\+::ios\+\_\+base \&)}]{pf }\end{DoxyParamCaption})}
+
+
+
+Write an ios\+\_\+base manipulator function to the stream. 
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_afee2fee4a49e8b0248cb392e517c6656}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{operator$<$$<$()\hspace{0.1cm}{\footnotesize\ttfamily [18/18]}}
+{\footnotesize\ttfamily \textbf{ Prefixed\+Out\+Stream}\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{const T \&}]{s }\end{DoxyParamCaption})}
+
+
+
+Write anything else to the stream. 
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_abb536618767706a6154fb1f159122eb2}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!backtrace@{backtrace}}
+\index{backtrace@{backtrace}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{backtrace}
+{\footnotesize\ttfamily bool backtrace}
+
+
+
+If true, on a fatal error, a backtrace will be printed if H\+A\+S\+\_\+\+B\+F\+D\+\_\+\+DL is defined. 
+
+
+
+Definition at line 123 of file prefixedoutstream.\+hpp.
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_a2defe63eb7e6955facd67869f63692c8}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!destination@{destination}}
+\index{destination@{destination}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{destination}
+{\footnotesize\ttfamily std\+::ostream\& destination}
+
+
+
+The output stream that all data is to be sent to; example\+: M\+L\+P\+A\+C\+K\+\_\+\+C\+O\+U\+T\+\_\+\+S\+T\+R\+E\+AM. 
+
+
+
+Definition at line 116 of file prefixedoutstream.\+hpp.
+
+\mbox{\label{classmlpack_1_1util_1_1PrefixedOutStream_afd382e0526bef760552ccae39559116a}} 
+\index{mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}!ignore\+Input@{ignore\+Input}}
+\index{ignore\+Input@{ignore\+Input}!mlpack\+::util\+::\+Prefixed\+Out\+Stream@{mlpack\+::util\+::\+Prefixed\+Out\+Stream}}
+\subsubsection{ignore\+Input}
+{\footnotesize\ttfamily bool ignore\+Input}
+
+
+
+Discards input, prints nothing if true. 
+
+
+
+Definition at line 119 of file prefixedoutstream.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ prefixedoutstream.\+hpp}\end{DoxyCompactItemize}

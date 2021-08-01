@@ -1,0 +1,525 @@
+\section{Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1MultiheadAttention}\index{Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$@{Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$}}
+
+
+Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Multihead\+Attention} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\textbf{ Multihead\+Attention} (const size\+\_\+t tgt\+Seq\+Len, const size\+\_\+t src\+Seq\+Len, const size\+\_\+t embed\+Dim, const size\+\_\+t num\+Heads)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Multihead\+Attention}{p.}{classmlpack_1_1ann_1_1MultiheadAttention} object using the specified modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Attention\+Mask} () const
+\begin{DoxyCompactList}\small\item\em Get the two dimensional Attention Mask. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Attention\+Mask} ()
+\begin{DoxyCompactList}\small\item\em Modify the two dimensional Attention Mask. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Embed\+Dim} () const
+\begin{DoxyCompactList}\small\item\em Get the embedding dimension. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Embed\+Dim} ()
+\begin{DoxyCompactList}\small\item\em Modify the embedding dimension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient using the output delta and the input activation. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\item 
+Output\+Data\+Type const  \& \textbf{ Key\+Padding\+Mask} () const
+\begin{DoxyCompactList}\small\item\em Get Key \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} Mask. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Key\+Padding\+Mask} ()
+\begin{DoxyCompactList}\small\item\em Modify the Key \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} Mask. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Heads} () const
+\begin{DoxyCompactList}\small\item\em Get the number of attention heads. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Heads} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of attention heads. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\begin{DoxyCompactList}\small\item\em Reset the layer parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Src\+Seq\+Len} () const
+\begin{DoxyCompactList}\small\item\em Get the source sequence length. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Src\+Seq\+Len} ()
+\begin{DoxyCompactList}\small\item\em Modify the source sequence length. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Tgt\+Seq\+Len} () const
+\begin{DoxyCompactList}\small\item\em Get the target sequence length. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Tgt\+Seq\+Len} ()
+\begin{DoxyCompactList}\small\item\em Modify the target sequence length. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename Regularizer\+Type = No\+Regularizer$>$\newline
+class mlpack\+::ann\+::\+Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$}
+
+Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions. 
+
+With a single attention head, averaging inhibits this. [arxiv.\+org\+:1706.\+03762v5]
+
+The \doxyref{Multihead\+Attention}{p.}{classmlpack_1_1ann_1_1MultiheadAttention} class takes concatenated form of query, key and value. The query, key and value are concatenated into single matrix and fed to the Forward function as input.
+
+The query, key and value are matrices of shapes {\ttfamily (embed\+Dim $\ast$ tgt\+Seq\+Len, batch\+Size)}, {\ttfamily (embed\+Dim $\ast$ src\+Seq\+Len, batch\+Size)} and {\ttfamily (embed\+Dim $\ast$ src\+Seq\+Len, batch\+Size)} respectively. The output is a matrix of shape {\ttfamily (embed\+Dim $\ast$ tgt\+Seq\+Len, batch\+Size)}. The embeddings are stored consequently.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Regularizer\+Type} & Type of the regularizer to be used. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 123 of file layer\+\_\+types.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a89e14f85a9e6aadadb8957a2d584dad3}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Multihead\+Attention@{Multihead\+Attention}}
+\index{Multihead\+Attention@{Multihead\+Attention}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Multihead\+Attention()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Multihead\+Attention} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Default constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_aafa325315a5c882251a0203e22fa2278}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Multihead\+Attention@{Multihead\+Attention}}
+\index{Multihead\+Attention@{Multihead\+Attention}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Multihead\+Attention()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Multihead\+Attention} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{tgt\+Seq\+Len,  }\item[{const size\+\_\+t}]{src\+Seq\+Len,  }\item[{const size\+\_\+t}]{embed\+Dim,  }\item[{const size\+\_\+t}]{num\+Heads }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Multihead\+Attention}{p.}{classmlpack_1_1ann_1_1MultiheadAttention} object using the specified modules. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tgt\+Seq\+Len} & Target sequence length. \\
+\hline
+{\em src\+Seq\+Len} & Source sequence length. \\
+\hline
+{\em embed\+Dim} & Total dimension of the model. \\
+\hline
+{\em num\+Heads} & Number of parallel attention heads. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a89e570724e353838afd7e6a5bf9ff56c}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Attention\+Mask@{Attention\+Mask}}
+\index{Attention\+Mask@{Attention\+Mask}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Attention\+Mask()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Attention\+Mask (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the two dimensional Attention Mask. 
+
+
+
+Definition at line 153 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a522e4242ea373d4ceae12bd644a304a1}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Attention\+Mask@{Attention\+Mask}}
+\index{Attention\+Mask@{Attention\+Mask}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Attention\+Mask()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Attention\+Mask (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the two dimensional Attention Mask. 
+
+
+
+Definition at line 155 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 168 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 170 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_acecd447ab68e6adb9e08fc90c2626d7f}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Embed\+Dim@{Embed\+Dim}}
+\index{Embed\+Dim@{Embed\+Dim}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Embed\+Dim()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Embed\+Dim (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the embedding dimension. 
+
+
+
+Definition at line 143 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_aa3ae45e06e75b0ccbc2ef9a17af2a7e3}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Embed\+Dim@{Embed\+Dim}}
+\index{Embed\+Dim@{Embed\+Dim}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Embed\+Dim()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Embed\+Dim (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the embedding dimension. 
+
+
+
+Definition at line 145 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The query matrix. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_aaf577db350e2130754490d8486fba215}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+
+
+Calculate the gradient using the output delta and the input activation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input data used for evaluating specified function. \\
+\hline
+{\em error} & The calculated error. \\
+\hline
+{\em gradient} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 173 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a19abce4739c3b0b658b612537e21956a}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 175 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a13ab93f234244a68f6ade76287284447}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Input\+Shape@{Input\+Shape}}
+\index{Input\+Shape@{Input\+Shape}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Input\+Shape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 182 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a0fd1f2b59697e938c99921a7409fe199}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Key\+Padding\+Mask@{Key\+Padding\+Mask}}
+\index{Key\+Padding\+Mask@{Key\+Padding\+Mask}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Key\+Padding\+Mask()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Key\+Padding\+Mask (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Key \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} Mask. 
+
+
+
+Definition at line 158 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a8d09888b345cc0b543f8e45097b44450}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Key\+Padding\+Mask@{Key\+Padding\+Mask}}
+\index{Key\+Padding\+Mask@{Key\+Padding\+Mask}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Key\+Padding\+Mask()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Key\+Padding\+Mask (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the Key \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} Mask. 
+
+
+
+Definition at line 160 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a2a690c9f566cc397042a132e537d0c72}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Num\+Heads@{Num\+Heads}}
+\index{Num\+Heads@{Num\+Heads}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Num\+Heads()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Heads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of attention heads. 
+
+
+
+Definition at line 148 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a5e4369c6d0a545d2e846a542bcbf6eb0}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Num\+Heads@{Num\+Heads}}
+\index{Num\+Heads@{Num\+Heads}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Num\+Heads()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Heads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of attention heads. 
+
+
+
+Definition at line 150 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 163 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 165 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_aa530552c7ef915c952fbacc77b965c90}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 178 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 180 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Reset the layer parameters. 
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$\+::\+Weight\+Size().
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_ae7ebd738697b221b93c9c52a9051778b}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Src\+Seq\+Len@{Src\+Seq\+Len}}
+\index{Src\+Seq\+Len@{Src\+Seq\+Len}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Src\+Seq\+Len()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Src\+Seq\+Len (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the source sequence length. 
+
+
+
+Definition at line 138 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a7a98480061115277dad0da34cf1a0fc6}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Src\+Seq\+Len@{Src\+Seq\+Len}}
+\index{Src\+Seq\+Len@{Src\+Seq\+Len}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Src\+Seq\+Len()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Src\+Seq\+Len (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the source sequence length. 
+
+
+
+Definition at line 140 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a31cae0a519246c1e5bb0157d8483c934}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Tgt\+Seq\+Len@{Tgt\+Seq\+Len}}
+\index{Tgt\+Seq\+Len@{Tgt\+Seq\+Len}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Tgt\+Seq\+Len()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Tgt\+Seq\+Len (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the target sequence length. 
+
+
+
+Definition at line 133 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a02b04b97b89fd1512b0b4af39630dae4}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Tgt\+Seq\+Len@{Tgt\+Seq\+Len}}
+\index{Tgt\+Seq\+Len@{Tgt\+Seq\+Len}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Tgt\+Seq\+Len()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Tgt\+Seq\+Len (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the target sequence length. 
+
+
+
+Definition at line 135 of file multihead\+\_\+attention.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiheadAttention_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}!Weight\+Size@{Weight\+Size}}
+\index{Weight\+Size@{Weight\+Size}!mlpack\+::ann\+::\+Multihead\+Attention@{mlpack\+::ann\+::\+Multihead\+Attention}}
+\subsubsection{Weight\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weights. 
+
+
+
+Definition at line 124 of file multihead\+\_\+attention.\+hpp.
+
+
+
+References Multihead\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$\+::serialize().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ multihead\+\_\+attention.\+hpp}\end{DoxyCompactItemize}

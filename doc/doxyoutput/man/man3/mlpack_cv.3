@@ -1,0 +1,162 @@
+.TH "mlpack::cv" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::cv
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAccuracy\fP"
+.br
+.RI "The \fBAccuracy\fP is a metric of performance for classification algorithms that is equal to a proportion of correctly labeled test items among all ones for given test items\&. "
+.ti -1c
+.RI "class \fBCVBase\fP"
+.br
+.RI "An auxiliary class for cross-validation\&. "
+.ti -1c
+.RI "class \fBF1\fP"
+.br
+.RI "\fBF1\fP is a metric of performance for classification algorithms that for binary classification is equal to $ 2 * precision * recall / (precision + recall) $\&. "
+.ti -1c
+.RI "class \fBKFoldCV\fP"
+.br
+.RI "The class \fBKFoldCV\fP implements k-fold cross-validation for regression and classification algorithms\&. "
+.ti -1c
+.RI "class \fBMetaInfoExtractor\fP"
+.br
+.RI "\fBMetaInfoExtractor\fP is a tool for extracting meta information about a given machine learning algorithm\&. "
+.ti -1c
+.RI "class \fBMSE\fP"
+.br
+.RI "The MeanSquaredError is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items\&. "
+.ti -1c
+.RI "struct \fBNotFoundMethodForm\fP"
+.br
+.ti -1c
+.RI "class \fBPrecision\fP"
+.br
+.RI "\fBPrecision\fP is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively\&. "
+.ti -1c
+.RI "class \fBR2Score\fP"
+.br
+.RI "The R2 Score is a metric of performance for regression algorithms that represents the proportion of variance (here y) that has been explained by the independent variables in the model\&. "
+.ti -1c
+.RI "class \fBRecall\fP"
+.br
+.RI "\fBRecall\fP is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fn) $, where $ tp $ and $ fn $ are the numbers of true positives and false negatives respectively\&. "
+.ti -1c
+.RI "struct \fBSelectMethodForm\fP"
+.br
+.RI "A type function that selects a right method form\&. "
+.ti -1c
+.RI "struct \fBSelectMethodForm< MLAlgorithm >\fP"
+.br
+.ti -1c
+.RI "struct \fBSelectMethodForm< MLAlgorithm, HasMethodForm, HMFs\&.\&.\&. >\fP"
+.br
+.ti -1c
+.RI "class \fBSilhouetteScore\fP"
+.br
+.RI "The Silhouette Score is a metric of performance for clustering that represents the quality of clusters made as a result\&. "
+.ti -1c
+.RI "class \fBSimpleCV\fP"
+.br
+.RI "\fBSimpleCV\fP splits data into two sets - training and validation sets - and then runs training on the training set and evaluates performance on the validation set\&. "
+.ti -1c
+.RI "struct \fBTrainForm\fP"
+.br
+.RI "A wrapper struct for holding a Train form\&. "
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, void, false, false >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, void, false, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, void, true, false >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, void, true, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, WT, false, false >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, WT, false, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, WT, true, false >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainForm< MT, PT, WT, true, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainFormBase4\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainFormBase5\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainFormBase6\fP"
+.br
+.ti -1c
+.RI "struct \fBTrainFormBase7\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBAverageStrategy\fP { \fBBinary\fP, \fBMicro\fP, \fBMacro\fP }
+.RI "This enum declares possible strategies for averaging that can be used in some metrics like precision, recall, and F1\&. ""
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename DataType , typename Metric > DataType \fBPairwiseDistances\fP (const DataType &data, const Metric &metric)"
+.br
+.RI "Pairwise distance of the given data\&. "
+.in -1c
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBAverageStrategy\fP"
+
+.PP
+This enum declares possible strategies for averaging that can be used in some metrics like precision, recall, and \fBF1\fP\&. The 'Binary' strategy means binary classification is going to be used, and there is no need to average\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIBinary \fP\fP
+.TP
+\fB\fIMicro \fP\fP
+.TP
+\fB\fIMacro \fP\fP
+.PP
+Definition at line 25 of file average_strategy\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "DataType mlpack::cv::PairwiseDistances (const DataType & data, const Metric & metric)"
+
+.PP
+Pairwise distance of the given data\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Column-major matrix\&. 
+.br
+\fImetric\fP Distance metric to be used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file facilities\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

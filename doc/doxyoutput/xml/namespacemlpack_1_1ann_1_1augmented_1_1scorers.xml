@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1ann_1_1augmented_1_1scorers" kind="namespace" language="C++">
+    <compoundname>mlpack::ann::augmented::scorers</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1_1augmented_1_1scorers_1a8149c0eeefec32160667c4ef35108073" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double mlpack::ann::augmented::scorers::SequencePrecision</definition>
+        <argsstring>(arma::field&lt; MatType &gt; trueOutputs, arma::field&lt; MatType &gt; predOutputs, double tol=1e-4)</argsstring>
+        <name>SequencePrecision</name>
+        <param>
+          <type>arma::field&lt; MatType &gt;</type>
+          <declname>trueOutputs</declname>
+        </param>
+        <param>
+          <type>arma::field&lt; MatType &gt;</type>
+          <declname>predOutputs</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>tol</declname>
+          <defval>1e-4</defval>
+        </param>
+        <briefdescription>
+<para>Function that computes the sequences precision (number of correct sequences / number of sequences) of model&apos;s answer against ground truth answer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>trueOutputs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ground truth sequences. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predOutputs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequences predicted by model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum absolute difference value which is considered as a model failure. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/score.hpp" line="34" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/score.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,275 @@
+\section{K\+Fold\+CV$<$ M\+L\+Algorithm, Metric, Mat\+Type, Predictions\+Type, Weights\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1cv_1_1KFoldCV}\index{K\+Fold\+C\+V$<$ M\+L\+Algorithm, Metric, Mat\+Type, Predictions\+Type, Weights\+Type $>$@{K\+Fold\+C\+V$<$ M\+L\+Algorithm, Metric, Mat\+Type, Predictions\+Type, Weights\+Type $>$}}
+
+
+The class \doxyref{K\+Fold\+CV}{p.}{classmlpack_1_1cv_1_1KFoldCV} implements k-\/fold cross-\/validation for regression and classification algorithms.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const Predictions\+Type \&ys, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for regression algorithms and for binary classification algorithms. \end{DoxyCompactList}\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const Predictions\+Type \&ys, const size\+\_\+t num\+Classes, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for multiclass classification algorithms. \end{DoxyCompactList}\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, const Predictions\+Type \&ys, const size\+\_\+t num\+Classes, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for multiclass classification algorithms that can take a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter. \end{DoxyCompactList}\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const Predictions\+Type \&ys, const Weights\+Type \&weights, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for regression and binary classification algorithms that support weighted learning. \end{DoxyCompactList}\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const Predictions\+Type \&ys, const size\+\_\+t num\+Classes, const Weights\+Type \&weights, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for multiclass classification algorithms that support weighted learning. \end{DoxyCompactList}\item 
+\textbf{ K\+Fold\+CV} (const size\+\_\+t k, const Mat\+Type \&xs, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, const Predictions\+Type \&ys, const size\+\_\+t num\+Classes, const Weights\+Type \&weights, const bool shuffle=true)
+\begin{DoxyCompactList}\small\item\em This constructor can be used for multiclass classification algorithms that can take a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter and support weighted learning. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... M\+L\+Algorithm\+Args$>$ }\\double \textbf{ Evaluate} (const M\+L\+Algorithm\+Args \&...args)
+\begin{DoxyCompactList}\small\item\em Run k-\/fold cross-\/validation. \end{DoxyCompactList}\item 
+M\+L\+Algorithm \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Access and modify a model from the last run of k-\/fold cross-\/validation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$bool Enabled = !\+Base\+::\+M\+I\+E\+::\+Supports\+Weights, typename  = typename std\+::enable\+\_\+if$<$\+Enabled$>$\+::type$>$ }\\void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$bool Enabled = Base\+::\+M\+I\+E\+::\+Supports\+Weights, typename  = typename std\+::enable\+\_\+if$<$\+Enabled$>$\+::type, typename  = void$>$ }\\void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename M\+L\+Algorithm, typename Metric, typename Mat\+Type = arma\+::mat, typename Predictions\+Type = typename Meta\+Info\+Extractor$<$\+M\+L\+Algorithm, Mat\+Type$>$\+::\+Predictions\+Type, typename Weights\+Type = typename Meta\+Info\+Extractor$<$\+M\+L\+Algorithm, Mat\+Type,                 Predictions\+Type$>$\+::\+Weights\+Type$>$\newline
+class mlpack\+::cv\+::\+K\+Fold\+C\+V$<$ M\+L\+Algorithm, Metric, Mat\+Type, Predictions\+Type, Weights\+Type $>$}
+
+The class \doxyref{K\+Fold\+CV}{p.}{classmlpack_1_1cv_1_1KFoldCV} implements k-\/fold cross-\/validation for regression and classification algorithms. 
+
+To construct a \doxyref{K\+Fold\+CV}{p.}{classmlpack_1_1cv_1_1KFoldCV} object you need to pass the k parameter and arguments that specify data. For example, you can run 10-\/fold cross-\/validation for Softmax\+Regression in the following way.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// 100-point 5-dimensional random dataset.}
+arma::mat data = arma::randu<arma::mat>(5, 100);
+\textcolor{comment}{// Random labels in the [0, 4] interval.}
+arma::Row<size\_t> labels =
+    arma::randi<arma::Row<size\_t>>(100, arma::distr\_param(0, 4));
+\textcolor{keywordtype}{size\_t} numClasses = 5;
+
+KFoldCV<SoftmaxRegression<>, Accuracy> cv(10, data, labels, numClasses);
+
+\textcolor{keywordtype}{double} lambda = 0.1;
+\textcolor{keywordtype}{double} softmaxAccuracy = cv.Evaluate(lambda);
+\end{DoxyCode}
+
+
+Before calling {\ttfamily \doxyref{Evaluate()}{p.}{classmlpack_1_1cv_1_1KFoldCV_a8e36d1ae2b8ec5f99d5d4a914a532c80}}, it is possible to shuffle the data by calling the {\ttfamily \doxyref{Shuffle()}{p.}{classmlpack_1_1cv_1_1KFoldCV_ad49f0c8d4d6c2d7e7465963145a3f636}} function. Shuffling is performed at construction time if the parameter {\ttfamily shuffle} is set to {\ttfamily true} in the constructor.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em M\+L\+Algorithm} & A machine learning algorithm. \\
+\hline
+{\em Metric} & A metric to assess the quality of a trained model. \\
+\hline
+{\em Mat\+Type} & The type of data. \\
+\hline
+{\em Predictions\+Type} & The type of predictions (should be passed when the predictions type is a template parameter in Train methods of M\+L\+Algorithm). \\
+\hline
+{\em Weights\+Type} & The type of weights (should be passed when weighted learning is supported, and the weights type is a template parameter in Train methods of M\+L\+Algorithm). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 65 of file k\+\_\+fold\+\_\+cv.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a7968536f97e0123e2af12bdbbae08d9d}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for regression algorithms and for binary classification algorithms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em ys} & Predictions (labels for classification algorithms and responses for regression algorithms) for each data point. \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_af0d5cf1c60beda485a47d8d5346d47fe}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for multiclass classification algorithms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em ys} & Labels for each data point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a76c8773b44f4abc851e38c2238442f42}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for multiclass classification algorithms that can take a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em ys} & Labels for each data point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a6cf7957f89dfe39161e0c3538c971f2a}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const Weights\+Type \&}]{weights,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for regression and binary classification algorithms that support weighted learning. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em ys} & Predictions (labels for classification algorithms and responses for regression algorithms) for each data point. \\
+\hline
+{\em weights} & Observation weights (for boosting). \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a162cb1dd4f7ff1b59840c22f9c28a007}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const Weights\+Type \&}]{weights,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for multiclass classification algorithms that support weighted learning. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em ys} & Labels for each data point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & Observation weights (for boosting). \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_afb092e7c2b582406b3254f2edb0902a4}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!K\+Fold\+CV@{K\+Fold\+CV}}
+\index{K\+Fold\+CV@{K\+Fold\+CV}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{K\+Fold\+C\+V()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily \textbf{ K\+Fold\+CV} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{const Mat\+Type \&}]{xs,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const Weights\+Type \&}]{weights,  }\item[{const bool}]{shuffle = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This constructor can be used for multiclass classification algorithms that can take a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter and support weighted learning. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of folds (should be at least 2). \\
+\hline
+{\em xs} & Data points to cross-\/validate on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em ys} & Labels for each data point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & Observation weights (for boosting). \\
+\hline
+{\em shuffle} & Whether or not to shuffle the data during construction. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a8e36d1ae2b8ec5f99d5d4a914a532c80}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{Evaluate()}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const M\+L\+Algorithm\+Args \&...}]{args }\end{DoxyParamCaption})}
+
+
+
+Run k-\/fold cross-\/validation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & Arguments for M\+L\+Algorithm (in addition to the passed ones in the constructor). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_ab89814a92c5627562bbc60fb788f978a}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!Model@{Model}}
+\index{Model@{Model}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{Model()}
+{\footnotesize\ttfamily M\+L\+Algorithm\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Access and modify a model from the last run of k-\/fold cross-\/validation. 
+
+\mbox{\label{classmlpack_1_1cv_1_1KFoldCV_ad49f0c8d4d6c2d7e7465963145a3f636}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{Shuffle()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the data. 
+
+This overload is called if weights are not supported by the model type. \mbox{\label{classmlpack_1_1cv_1_1KFoldCV_a95da99cde3b1d083683f5e4870263bc5}} 
+\index{mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!mlpack\+::cv\+::\+K\+Fold\+CV@{mlpack\+::cv\+::\+K\+Fold\+CV}}
+\subsubsection{Shuffle()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the data. 
+
+This overload is called if weights are supported by the model type. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cv/\textbf{ k\+\_\+fold\+\_\+cv.\+hpp}\end{DoxyCompactItemize}

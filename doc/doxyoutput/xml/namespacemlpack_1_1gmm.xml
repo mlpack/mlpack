@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1gmm" kind="namespace" language="C++">
+    <compoundname>mlpack::gmm</compoundname>
+    <innerclass refid="classmlpack_1_1gmm_1_1DiagonalConstraint" prot="public">mlpack::gmm::DiagonalConstraint</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1DiagonalGMM" prot="public">mlpack::gmm::DiagonalGMM</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1EigenvalueRatioConstraint" prot="public">mlpack::gmm::EigenvalueRatioConstraint</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1EMFit" prot="public">mlpack::gmm::EMFit</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1GMM" prot="public">mlpack::gmm::GMM</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1NoConstraint" prot="public">mlpack::gmm::NoConstraint</innerclass>
+    <innerclass refid="classmlpack_1_1gmm_1_1PositiveDefiniteConstraint" prot="public">mlpack::gmm::PositiveDefiniteConstraint</innerclass>
+    <briefdescription>
+<para>Gaussian Mixture Models. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/diagonal_constraint.hpp" line="18" column="1"/>
+  </compounddef>
+</doxygen>

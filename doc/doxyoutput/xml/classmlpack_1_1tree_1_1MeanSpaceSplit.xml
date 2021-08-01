@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1MeanSpaceSplit" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::MeanSpaceSplit</compoundname>
+    <includes refid="mean__space__split_8hpp" local="no">mean_space_split.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MeanSpaceSplit_1a055fe300d8af558a4d1d1097373740ed" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename HyperplaneType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool SplitSpace</definition>
+        <argsstring>(const typename HyperplaneType::BoundType &amp;bound, const MatType &amp;data, const arma::Col&lt; size_t &gt; &amp;points, HyperplaneType &amp;hyp)</argsstring>
+        <name>SplitSpace</name>
+        <param>
+          <type>const typename HyperplaneType::BoundType &amp;</type>
+          <declname>bound</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>points</declname>
+        </param>
+        <param>
+          <type>HyperplaneType &amp;</type>
+          <declname>hyp</declname>
+        </param>
+        <briefdescription>
+<para>Create a splitting hyperplane considering the mean of the values in a certain projection. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bound</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bound used for this node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset used by the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>points</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of indexes of points to be considered. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hyp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting splitting hyperplane. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Flag to determine if split is possible. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/space_split/mean_space_split.hpp" line="37" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/space_split/mean_space_split.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/space_split/mean_space_split.hpp" bodystart="23" bodyend="42"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1MeanSpaceSplit_1a055fe300d8af558a4d1d1097373740ed" prot="public" virt="non-virtual"><scope>mlpack::tree::MeanSpaceSplit</scope><name>SplitSpace</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

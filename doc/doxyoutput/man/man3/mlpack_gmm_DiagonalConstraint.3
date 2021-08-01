@@ -1,0 +1,54 @@
+.TH "DiagonalConstraint" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DiagonalConstraint \- Force a covariance matrix to be diagonal\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBApplyConstraint\fP (arma::mat &covariance)"
+.br
+.RI "Force a covariance matrix to be diagonal\&. "
+.ti -1c
+.RI "static void \fBApplyConstraint\fP (arma::vec &diagCovariance)"
+.br
+.RI "Apply the diagonal constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-10\&. "
+.ti -1c
+.RI "template<typename Archive > static void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the constraint (which holds nothing, so, nothing to do)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Force a covariance matrix to be diagonal\&. 
+.PP
+Definition at line 23 of file diagonal_constraint\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void ApplyConstraint (arma::mat & covariance)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Force a covariance matrix to be diagonal\&. 
+.PP
+Definition at line 27 of file diagonal_constraint\&.hpp\&.
+.SS "static void ApplyConstraint (arma::vec & diagCovariance)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Apply the diagonal constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-10\&. 
+.PP
+Definition at line 38 of file diagonal_constraint\&.hpp\&.
+.SS "static void serialize (Archive &, const uint32_t)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Serialize the constraint (which holds nothing, so, nothing to do)\&. 
+.PP
+Definition at line 47 of file diagonal_constraint\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

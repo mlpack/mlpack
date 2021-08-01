@@ -1,0 +1,65 @@
+\section{K\+Means\+Selection$<$ Clustering\+Type, max\+Iterations $>$ Class Template Reference}
+\label{classmlpack_1_1kernel_1_1KMeansSelection}\index{K\+Means\+Selection$<$ Clustering\+Type, max\+Iterations $>$@{K\+Means\+Selection$<$ Clustering\+Type, max\+Iterations $>$}}
+
+
+Implementation of the kmeans sampling scheme.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static const arma\+::mat $\ast$ \textbf{ Select} (const arma\+::mat \&data, const size\+\_\+t m)
+\begin{DoxyCompactList}\small\item\em Use the K-\/\+Means clustering method to select the specified number of points in the dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Clustering\+Type = kmeans\+::\+K\+Means$<$$>$, size\+\_\+t max\+Iterations = 5$>$\newline
+class mlpack\+::kernel\+::\+K\+Means\+Selection$<$ Clustering\+Type, max\+Iterations $>$}
+
+Implementation of the kmeans sampling scheme. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Clustering\+Type} & Type of clustering. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations allowed before giving up. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 29 of file kmeans\+\_\+selection.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1KMeansSelection_a0449697ae86a5d2ed893572da8695c7f}} 
+\index{mlpack\+::kernel\+::\+K\+Means\+Selection@{mlpack\+::kernel\+::\+K\+Means\+Selection}!Select@{Select}}
+\index{Select@{Select}!mlpack\+::kernel\+::\+K\+Means\+Selection@{mlpack\+::kernel\+::\+K\+Means\+Selection}}
+\subsubsection{Select()}
+{\footnotesize\ttfamily static const arma\+::mat$\ast$ Select (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{m }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Use the K-\/\+Means clustering method to select the specified number of points in the dataset. 
+
+You are responsible for deleting the returned matrix!
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to sample from. \\
+\hline
+{\em m} & Number of points to select. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Matrix pointer in which centroids are stored. 
+\end{DoxyReturn}
+
+
+Definition at line 40 of file kmeans\+\_\+selection.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/nystroem\+\_\+method/\textbf{ kmeans\+\_\+selection.\+hpp}\end{DoxyCompactItemize}

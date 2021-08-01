@@ -1,0 +1,546 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="lcc_8hpp" kind="file" language="C++">
+    <compoundname>lcc.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="lars_8hpp" local="no">mlpack/methods/lars/lars.hpp</includes>
+    <includes refid="nothing__initializer_8hpp" local="yes">../sparse_coding/nothing_initializer.hpp</includes>
+    <includes refid="data__dependent__random__initializer_8hpp" local="yes">../sparse_coding/data_dependent_random_initializer.hpp</includes>
+    <includes refid="random__initializer_8hpp" local="yes">../sparse_coding/random_initializer.hpp</includes>
+    <includes local="yes">lcc_impl.hpp</includes>
+    <incdepgraph>
+      <node id="51926">
+        <label>list</label>
+      </node>
+      <node id="51923">
+        <label>atomic</label>
+      </node>
+      <node id="51913">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="51889">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="51925">
+        <label>iomanip</label>
+      </node>
+      <node id="51936">
+        <label>../sparse_coding/data_dependent_random_initializer.hpp</label>
+        <link refid="data__dependent__random__initializer_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+        <childnode refid="51937" relation="include">
+        </childnode>
+      </node>
+      <node id="51875">
+        <label>/home/aakash/mlpack/src/mlpack/methods/local_coordinate_coding/lcc.hpp</label>
+        <link refid="lcc_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+        <childnode refid="51933" relation="include">
+        </childnode>
+        <childnode refid="51935" relation="include">
+        </childnode>
+        <childnode refid="51936" relation="include">
+        </childnode>
+        <childnode refid="51940" relation="include">
+        </childnode>
+        <childnode refid="51941" relation="include">
+        </childnode>
+      </node>
+      <node id="51898">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="51899" relation="include">
+        </childnode>
+        <childnode refid="51901" relation="include">
+        </childnode>
+      </node>
+      <node id="51881">
+        <label>cstdint</label>
+      </node>
+      <node id="51890">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="51897">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="51933">
+        <label>mlpack/methods/lars/lars.hpp</label>
+        <link refid="lars_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+        <childnode refid="51934" relation="include">
+        </childnode>
+      </node>
+      <node id="51938">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="51920">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="51910">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="51877">
+        <label>cmath</label>
+      </node>
+      <node id="51896">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="51885">
+        <label>stdexcept</label>
+      </node>
+      <node id="51905">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="51890" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51891" relation="include">
+        </childnode>
+      </node>
+      <node id="51929">
+        <label>string</label>
+      </node>
+      <node id="51917">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="51918" relation="include">
+        </childnode>
+        <childnode refid="51884" relation="include">
+        </childnode>
+      </node>
+      <node id="51927">
+        <label>map</label>
+      </node>
+      <node id="51940">
+        <label>../sparse_coding/random_initializer.hpp</label>
+        <link refid="random__initializer_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+      </node>
+      <node id="51879">
+        <label>cfloat</label>
+      </node>
+      <node id="51909">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51941">
+        <label>lcc_impl.hpp</label>
+      </node>
+      <node id="51931">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="51893">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="51916">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="51917" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51900" relation="include">
+        </childnode>
+        <childnode refid="51918" relation="include">
+        </childnode>
+      </node>
+      <node id="51906">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="51904">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="51890" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51891" relation="include">
+        </childnode>
+      </node>
+      <node id="51907">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="51890" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51891" relation="include">
+        </childnode>
+      </node>
+      <node id="51895">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="51915">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="51891" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51903" relation="include">
+        </childnode>
+        <childnode refid="51912" relation="include">
+        </childnode>
+      </node>
+      <node id="51919">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="51920" relation="include">
+        </childnode>
+      </node>
+      <node id="51921">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="51876">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="51877" relation="include">
+        </childnode>
+        <childnode refid="51878" relation="include">
+        </childnode>
+        <childnode refid="51879" relation="include">
+        </childnode>
+        <childnode refid="51880" relation="include">
+        </childnode>
+        <childnode refid="51881" relation="include">
+        </childnode>
+        <childnode refid="51882" relation="include">
+        </childnode>
+        <childnode refid="51883" relation="include">
+        </childnode>
+        <childnode refid="51884" relation="include">
+        </childnode>
+        <childnode refid="51885" relation="include">
+        </childnode>
+        <childnode refid="51886" relation="include">
+        </childnode>
+        <childnode refid="51887" relation="include">
+        </childnode>
+        <childnode refid="51888" relation="include">
+        </childnode>
+        <childnode refid="51889" relation="include">
+        </childnode>
+        <childnode refid="51890" relation="include">
+        </childnode>
+        <childnode refid="51891" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51894" relation="include">
+        </childnode>
+        <childnode refid="51895" relation="include">
+        </childnode>
+        <childnode refid="51896" relation="include">
+        </childnode>
+        <childnode refid="51897" relation="include">
+        </childnode>
+        <childnode refid="51898" relation="include">
+        </childnode>
+        <childnode refid="51902" relation="include">
+        </childnode>
+        <childnode refid="51903" relation="include">
+        </childnode>
+        <childnode refid="51904" relation="include">
+        </childnode>
+        <childnode refid="51905" relation="include">
+        </childnode>
+        <childnode refid="51906" relation="include">
+        </childnode>
+        <childnode refid="51907" relation="include">
+        </childnode>
+        <childnode refid="51908" relation="include">
+        </childnode>
+        <childnode refid="51914" relation="include">
+        </childnode>
+        <childnode refid="51915" relation="include">
+        </childnode>
+        <childnode refid="51912" relation="include">
+        </childnode>
+        <childnode refid="51916" relation="include">
+        </childnode>
+        <childnode refid="51919" relation="include">
+        </childnode>
+        <childnode refid="51921" relation="include">
+        </childnode>
+        <childnode refid="51922" relation="include">
+        </childnode>
+        <childnode refid="51931" relation="include">
+        </childnode>
+        <childnode refid="51932" relation="include">
+        </childnode>
+      </node>
+      <node id="51939">
+        <label>random</label>
+      </node>
+      <node id="51882">
+        <label>cstdio</label>
+      </node>
+      <node id="51886">
+        <label>tuple</label>
+      </node>
+      <node id="51891">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="51908">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="51891" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51895" relation="include">
+        </childnode>
+        <childnode refid="51909" relation="include">
+        </childnode>
+        <childnode refid="51910" relation="include">
+        </childnode>
+        <childnode refid="51911" relation="include">
+        </childnode>
+        <childnode refid="51912" relation="include">
+        </childnode>
+      </node>
+      <node id="51937">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+        <childnode refid="51938" relation="include">
+        </childnode>
+        <childnode refid="51939" relation="include">
+        </childnode>
+      </node>
+      <node id="51887">
+        <label>utility</label>
+      </node>
+      <node id="51911">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="51902">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="51934">
+        <label>lars_impl.hpp</label>
+      </node>
+      <node id="51899">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="51900" relation="include">
+        </childnode>
+      </node>
+      <node id="51935">
+        <label>../sparse_coding/nothing_initializer.hpp</label>
+        <link refid="nothing__initializer_8hpp"/>
+        <childnode refid="51876" relation="include">
+        </childnode>
+      </node>
+      <node id="51922">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="51923" relation="include">
+        </childnode>
+        <childnode refid="51924" relation="include">
+        </childnode>
+        <childnode refid="51925" relation="include">
+        </childnode>
+        <childnode refid="51926" relation="include">
+        </childnode>
+        <childnode refid="51927" relation="include">
+        </childnode>
+        <childnode refid="51928" relation="include">
+        </childnode>
+        <childnode refid="51929" relation="include">
+        </childnode>
+        <childnode refid="51930" relation="include">
+        </childnode>
+      </node>
+      <node id="51900">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="51914">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="51912" relation="include">
+        </childnode>
+        <childnode refid="51908" relation="include">
+        </childnode>
+        <childnode refid="51915" relation="include">
+        </childnode>
+      </node>
+      <node id="51883">
+        <label>cstdlib</label>
+      </node>
+      <node id="51878">
+        <label>cctype</label>
+      </node>
+      <node id="51901">
+        <label>unordered_map</label>
+      </node>
+      <node id="51880">
+        <label>climits</label>
+      </node>
+      <node id="51928">
+        <label>mutex</label>
+      </node>
+      <node id="51924">
+        <label>chrono</label>
+      </node>
+      <node id="51932">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="51930">
+        <label>thread</label>
+      </node>
+      <node id="51918">
+        <label>type_traits</label>
+      </node>
+      <node id="51894">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="51888">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="51912">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="51890" relation="include">
+        </childnode>
+        <childnode refid="51891" relation="include">
+        </childnode>
+        <childnode refid="51892" relation="include">
+        </childnode>
+        <childnode refid="51893" relation="include">
+        </childnode>
+        <childnode refid="51913" relation="include">
+        </childnode>
+      </node>
+      <node id="51884">
+        <label>cstring</label>
+      </node>
+      <node id="51903">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="51892">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding" prot="public">mlpack::lcc::LocalCoordinateCoding</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1lcc">mlpack::lcc</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Nishant Mehta</para></simplesect>
+Definition of the LocalCoordinateCoding class, which performs the Local Coordinate Coding algorithm.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lars_8hpp" kindref="compound">mlpack/methods/lars/lars.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>three<sp/>simple<sp/>dictionary<sp/>initializers<sp/>from<sp/>sparse<sp/>coding.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../sparse_coding/nothing_initializer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../sparse_coding/data_dependent_random_initializer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../sparse_coding/random_initializer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="25" refid="namespacemlpack_1_1lcc" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">lcc<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding" kindref="compound">LocalCoordinateCoding</ref></highlight></codeline>
+<codeline lineno="80"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DictionaryInitializer<sp/>=</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer" kindref="compound">sparse_coding::DataDependentRandomInitializer</ref></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>&gt;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a15b0241f026927b7cfdf007d97cf6548" kindref="member">LocalCoordinateCoding</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>atoms,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>0.01,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryInitializer&amp;<sp/>initializer<sp/>=</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DictionaryInitializer());</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a15b0241f026927b7cfdf007d97cf6548" kindref="member">LocalCoordinateCoding</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>atoms<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.0,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>0.01);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DictionaryInitializer<sp/>=</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer" kindref="compound">sparse_coding::DataDependentRandomInitializer</ref></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/>&gt;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a69503a211de26a7b35e7e7867cf20246" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryInitializer&amp;<sp/>initializer<sp/>=</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DictionaryInitializer());</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a4b2741b0e146d6eb6a09e30f228ea309" kindref="member">Encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,<sp/>arma::mat&amp;<sp/>codes);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a7c8eaa20c6d04664f81f262e480b9f63" kindref="member">OptimizeDictionary</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>codes,</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::uvec&amp;<sp/>adjacencies);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1aced0f8934c63965a4553f21487ef4c8e" kindref="member">Objective</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>codes,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::uvec&amp;<sp/>adjacencies)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1ac1a924c2cc0b117283fc8aba76a92a07" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1ac1a924c2cc0b117283fc8aba76a92a07" kindref="member">Atoms</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>atoms;<sp/>}</highlight></codeline>
+<codeline lineno="184" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a30a05b58ad809476c03aba6df5970b52" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a30a05b58ad809476c03aba6df5970b52" kindref="member">Atoms</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>atoms;<sp/>}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a29bceb0b46c45a45594c9feb0e743171" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a29bceb0b46c45a45594c9feb0e743171" kindref="member">Dictionary</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dictionary;<sp/>}</highlight></codeline>
+<codeline lineno="189" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a3146526cfc85ff339121972d67c73f62" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a3146526cfc85ff339121972d67c73f62" kindref="member">Dictionary</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dictionary;<sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="194" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="199" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a7b5af5c1a84c507cbaa7f999ea5a4fda" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a7b5af5c1a84c507cbaa7f999ea5a4fda" kindref="member">Tolerance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="204" refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a3d9fac84af16250f5a3689692e8f2173" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a3d9fac84af16250f5a3689692e8f2173" kindref="member">Tolerance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>atoms;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/>arma::mat<sp/>dictionary;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>lcc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;lcc_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/local_coordinate_coding/lcc.hpp"/>
+  </compounddef>
+</doxygen>

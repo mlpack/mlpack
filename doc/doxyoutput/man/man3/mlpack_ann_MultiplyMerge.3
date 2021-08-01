@@ -1,0 +1,267 @@
+.TH "MultiplyMerge< InputDataType, OutputDataType, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MultiplyMerge< InputDataType, OutputDataType, CustomLayers > \- Implementation of the \fBMultiplyMerge\fP module class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMultiplyMerge\fP (const bool model=false, const bool run=true)"
+.br
+.RI "Create the \fBMultiplyMerge\fP object using the specified parameters\&. "
+.ti -1c
+.RI "\fBMultiplyMerge\fP (const \fBMultiplyMerge\fP &layer)"
+.br
+.RI "Copy Constructor\&. "
+.ti -1c
+.RI "\fBMultiplyMerge\fP (\fBMultiplyMerge\fP &&layer)"
+.br
+.RI "Move Constructor\&. "
+.ti -1c
+.RI "\fB~MultiplyMerge\fP ()"
+.br
+.RI "Destructor to release allocated memory\&. "
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f, using the results from the feed forward pass\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &gradient)"
+.br
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP< CustomLayers\&.\&.\&. > > & \fBModel\fP ()"
+.br
+.RI "Return the model modules\&. "
+.ti -1c
+.RI "\fBMultiplyMerge\fP & \fBoperator=\fP (const \fBMultiplyMerge\fP &layer)"
+.br
+.RI "Copy assignment operator\&. "
+.ti -1c
+.RI "\fBMultiplyMerge\fP & \fBoperator=\fP (\fBMultiplyMerge\fP &&layer)"
+.br
+.RI "Move assignment operator\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get the size of the weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat, typename\&.\&.\&. CustomLayers>
+.br
+class mlpack::ann::MultiplyMerge< InputDataType, OutputDataType, CustomLayers >"
+Implementation of the \fBMultiplyMerge\fP module class\&. 
+
+The \fBMultiplyMerge\fP class multiplies the output of various modules element-wise\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fICustomLayers\fP Additional custom layers that can be added\&. 
+.RE
+.PP
+
+.PP
+Definition at line 205 of file layer_types\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMultiplyMerge\fP (const bool model = \fCfalse\fP, const bool run = \fCtrue\fP)"
+
+.PP
+Create the \fBMultiplyMerge\fP object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP Expose all the network modules\&. 
+.br
+\fIrun\fP Call the Forward/Backward method before the output is merged\&. 
+.RE
+.PP
+
+.SS "\fBMultiplyMerge\fP (const \fBMultiplyMerge\fP< InputDataType, OutputDataType, CustomLayers > & layer)"
+
+.PP
+Copy Constructor\&. 
+.SS "\fBMultiplyMerge\fP (\fBMultiplyMerge\fP< InputDataType, OutputDataType, CustomLayers > && layer)"
+
+.PP
+Move Constructor\&. 
+.SS "~\fBMultiplyMerge\fP ()"
+
+.PP
+Destructor to release allocated memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void \fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 110 of file multiply_merge\&.hpp\&.
+.SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
+
+.PP
+Definition at line 117 of file multiply_merge\&.hpp\&.
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f, using the results from the feed forward pass\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 125 of file multiply_merge\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 127 of file multiply_merge\&.hpp\&.
+.SS "void Forward (const InputType &, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > & gradient)"
+
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 130 of file multiply_merge\&.hpp\&.
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 132 of file multiply_merge\&.hpp\&.
+.SS "std::vector<\fBLayerTypes\fP<CustomLayers\&.\&.\&.> >& Model ()\fC [inline]\fP"
+
+.PP
+Return the model modules\&. 
+.PP
+Definition at line 135 of file multiply_merge\&.hpp\&.
+.SS "\fBMultiplyMerge\fP& operator= (const \fBMultiplyMerge\fP< InputDataType, OutputDataType, CustomLayers > & layer)"
+
+.PP
+Copy assignment operator\&. 
+.SS "\fBMultiplyMerge\fP& operator= (\fBMultiplyMerge\fP< InputDataType, OutputDataType, CustomLayers > && layer)"
+
+.PP
+Move assignment operator\&. 
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 120 of file multiply_merge\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 122 of file multiply_merge\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 146 of file multiply_merge\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 148 of file multiply_merge\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by MultiplyMerge< InputDataType, OutputDataType, CustomLayers >::WeightSize()\&.
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the weights\&. 
+.PP
+Definition at line 151 of file multiply_merge\&.hpp\&.
+.PP
+References MultiplyMerge< InputDataType, OutputDataType, CustomLayers >::serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

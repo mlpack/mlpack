@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kernel_1_1OrderedSelection" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kernel::OrderedSelection</compoundname>
+    <includes refid="ordered__selection_8hpp" local="no">ordered_selection.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1OrderedSelection_1a12e96f27b338680c246f78d86d8046c2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::Col&lt; size_t &gt;</type>
+        <definition>static const arma::Col&lt;size_t&gt; Select</definition>
+        <argsstring>(const arma::mat &amp;, const size_t m)</argsstring>
+        <name>Select</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>Select the specified number of points in the dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(data) Dataset to sample from. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to select. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Indices of selected points from the dataset. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/ordered_selection.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/ordered_selection.hpp" bodystart="32" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/ordered_selection.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/ordered_selection.hpp" bodystart="22" bodyend="38"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kernel_1_1OrderedSelection_1a12e96f27b338680c246f78d86d8046c2" prot="public" virt="non-virtual"><scope>mlpack::kernel::OrderedSelection</scope><name>Select</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

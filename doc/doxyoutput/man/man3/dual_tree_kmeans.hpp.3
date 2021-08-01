@@ -1,0 +1,77 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBDualTreeKMeans< MetricType, MatType, TreeType >\fP"
+.br
+.RI "An algorithm for an exact Lloyd iteration which simply uses dual-tree nearest-neighbor search to find the nearest centroid for each point in the dataset\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::kmeans\fP"
+.br
+.RI "K-Means clustering\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBCoverTreeDualTreeKMeans\fP = DualTreeKMeans< MetricType, MatType, tree::StandardCoverTree >"
+.br
+.RI "A template typedef for the \fBDualTreeKMeans\fP algorithm with the cover tree type\&. "
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBDefaultDualTreeKMeans\fP = DualTreeKMeans< MetricType, MatType >"
+.br
+.RI "A template typedef for the \fBDualTreeKMeans\fP algorithm with the default tree type (a kd-tree)\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > void \fBHideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< !tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "Utility function for hiding children\&. "
+.ti -1c
+.RI "template<typename TreeType > void \fBHideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "Utility function for hiding children\&. "
+.ti -1c
+.RI "template<typename TreeType > void \fBRestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP<!tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "Utility function for restoring children to a non-binary tree\&. "
+.ti -1c
+.RI "template<typename TreeType > void \fBRestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP< tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "Utility function for restoring children to a binary tree\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+An implementation of a Lloyd iteration which uses dual-tree nearest neighbor search as a black box\&. The conditions under which this will perform best are probably limited to the case where k is close to the number of points in the dataset, and the number of iterations of the k-means algorithm will be few\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBdual_tree_kmeans\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

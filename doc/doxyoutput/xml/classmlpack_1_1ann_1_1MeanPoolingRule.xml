@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1MeanPoolingRule" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::MeanPoolingRule</compoundname>
+    <includes refid="glimpse_8hpp" local="no">glimpse.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanPoolingRule_1af8f244d24fed0fa902eee94b0ace7df0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Pooling</definition>
+        <argsstring>(const MatType &amp;input)</argsstring>
+        <name>Pooling</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="52" bodyend="55"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Glimpse_1a13ab93f234244a68f6ade76287284447" compoundref="glimpse_8hpp" startline="186" endline="189">Glimpse&lt; InputDataType, OutputDataType &gt;::InputShape</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanPoolingRule_1a6987ba7a159efff2732b4af9ba83f97a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Unpooling</definition>
+        <argsstring>(const MatType &amp;input, const double value, MatType &amp;output)</argsstring>
+        <name>Unpooling</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="65" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="65" bodyend="71"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Glimpse_1a13ab93f234244a68f6ade76287284447" compoundref="glimpse_8hpp" startline="186" endline="189">Glimpse&lt; InputDataType, OutputDataType &gt;::InputShape</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="43" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1MeanPoolingRule_1af8f244d24fed0fa902eee94b0ace7df0" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanPoolingRule</scope><name>Pooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanPoolingRule_1a6987ba7a159efff2732b4af9ba83f97a" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanPoolingRule</scope><name>Unpooling</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

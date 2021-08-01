@@ -1,0 +1,139 @@
+\section{R\+Plus\+Plus\+Tree\+Split\+Policy Class Reference}
+\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy}\index{R\+Plus\+Plus\+Tree\+Split\+Policy@{R\+Plus\+Plus\+Tree\+Split\+Policy}}
+
+
+The \doxyref{R\+Plus\+Plus\+Tree\+Split\+Policy}{p.}{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy} helps to determine the subtree into which we should insert a child of an intermediate node that is being split.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static const \textbf{ bound\+::\+H\+Rect\+Bound}$<$ \textbf{ metric\+::\+Euclidean\+Distance}, typename Tree\+Type\+::\+Elem\+Type $>$ \& \textbf{ Bound} (const Tree\+Type \&node)
+\begin{DoxyCompactList}\small\item\em Return the maximum bounding rectangle of the node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static int \textbf{ Get\+Split\+Policy} (const Tree\+Type \&child, const size\+\_\+t axis, const typename Tree\+Type\+::\+Elem\+Type cut)
+\begin{DoxyCompactList}\small\item\em This method returns Split\+Required if a child of an intermediate node should be split, Assign\+To\+First\+Tree if the child should be inserted to the first subtree, Assign\+To\+Second\+Tree if the child should be inserted to the second subtree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \textbf{ Assign\+To\+First\+Tree} = 1
+\begin{DoxyCompactList}\small\item\em Indicate that the child should be inserted to the first subtree. \end{DoxyCompactList}\item 
+static const int \textbf{ Assign\+To\+Second\+Tree} = 2
+\begin{DoxyCompactList}\small\item\em Indicate that the child should be inserted to the second subtree. \end{DoxyCompactList}\item 
+static const int \textbf{ Split\+Required} = 0
+\begin{DoxyCompactList}\small\item\em Indicate that the child should be split. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \doxyref{R\+Plus\+Plus\+Tree\+Split\+Policy}{p.}{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy} helps to determine the subtree into which we should insert a child of an intermediate node that is being split. 
+
+This class is designed for the R++ tree. 
+
+Definition at line 25 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_afd835b7b784750db9c6bbc9289f55487}} 
+\index{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}}
+\subsubsection{Bound()}
+{\footnotesize\ttfamily static const \textbf{ bound\+::\+H\+Rect\+Bound}$<$\textbf{ metric\+::\+Euclidean\+Distance}, typename Tree\+Type\+::\+Elem\+Type$>$\& Bound (\begin{DoxyParamCaption}\item[{const Tree\+Type \&}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the maximum bounding rectangle of the node. 
+
+This method should always return the bound that is used for the decision-\/making in \doxyref{Get\+Split\+Policy()}{p.}{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_aa8d74fc3324e4183a7a0c99e95d2d470}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node whose bound is requested. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 70 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_aa8d74fc3324e4183a7a0c99e95d2d470}} 
+\index{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}!Get\+Split\+Policy@{Get\+Split\+Policy}}
+\index{Get\+Split\+Policy@{Get\+Split\+Policy}!mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}}
+\subsubsection{Get\+Split\+Policy()}
+{\footnotesize\ttfamily static int Get\+Split\+Policy (\begin{DoxyParamCaption}\item[{const Tree\+Type \&}]{child,  }\item[{const size\+\_\+t}]{axis,  }\item[{const typename Tree\+Type\+::\+Elem\+Type}]{cut }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+This method returns Split\+Required if a child of an intermediate node should be split, Assign\+To\+First\+Tree if the child should be inserted to the first subtree, Assign\+To\+Second\+Tree if the child should be inserted to the second subtree. 
+
+The method makes desicion according to the maximum bounding rectangle of the child, the axis along which the intermediate node is being split and the coordinate at which the node is being split.
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & A child of the node that is being split. \\
+\hline
+{\em axis} & The axis along which the node is being split. \\
+\hline
+{\em cut} & The coordinate at which the node is being split. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 48 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+
+
+References R\+Plus\+Plus\+Tree\+Split\+Policy\+::\+Split\+Required.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_a06e682716125ba8800b1564e081a5b88}} 
+\index{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}!Assign\+To\+First\+Tree@{Assign\+To\+First\+Tree}}
+\index{Assign\+To\+First\+Tree@{Assign\+To\+First\+Tree}!mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}}
+\subsubsection{Assign\+To\+First\+Tree}
+{\footnotesize\ttfamily const int Assign\+To\+First\+Tree = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Indicate that the child should be inserted to the first subtree. 
+
+
+
+Definition at line 31 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_a938757b5562c9ede857f1553951cc7c4}} 
+\index{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}!Assign\+To\+Second\+Tree@{Assign\+To\+Second\+Tree}}
+\index{Assign\+To\+Second\+Tree@{Assign\+To\+Second\+Tree}!mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}}
+\subsubsection{Assign\+To\+Second\+Tree}
+{\footnotesize\ttfamily const int Assign\+To\+Second\+Tree = 2\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Indicate that the child should be inserted to the second subtree. 
+
+
+
+Definition at line 33 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy_a1f06fe4b73569f8cff1a5b466afb328c}} 
+\index{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}!Split\+Required@{Split\+Required}}
+\index{Split\+Required@{Split\+Required}!mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy@{mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree\+Split\+Policy}}
+\subsubsection{Split\+Required}
+{\footnotesize\ttfamily const int Split\+Required = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Indicate that the child should be split. 
+
+
+
+Definition at line 29 of file r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp.
+
+
+
+Referenced by R\+Plus\+Plus\+Tree\+Split\+Policy\+::\+Get\+Split\+Policy().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ r\+\_\+plus\+\_\+plus\+\_\+tree\+\_\+split\+\_\+policy.\+hpp}\end{DoxyCompactItemize}

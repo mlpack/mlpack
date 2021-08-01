@@ -1,0 +1,618 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1Reparametrization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Reparametrization</compoundname>
+    <includes refid="layer__types_8hpp" local="no">layer_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a9424343761f8c4f4c1afe8f5b6bf471b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double beta</definition>
+        <argsstring></argsstring>
+        <name>beta</name>
+        <briefdescription>
+<para>The beta hyperparameter for constrained variational frameworks. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="167" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a72f3a29cab7aa5dfd1177e476daa36bf" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gaussianSample</definition>
+        <argsstring></argsstring>
+        <name>gaussianSample</name>
+        <briefdescription>
+<para>Locally-stored current gaussian sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a02b32862ef344aa5ad40c4226d1b985c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool includeKl</definition>
+        <argsstring></argsstring>
+        <name>includeKl</name>
+        <briefdescription>
+<para>If false, KL error will not be included in Backward function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1ad5328e63a39d65399c926a3f02f31744" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t latentSize</definition>
+        <argsstring></argsstring>
+        <name>latentSize</name>
+        <briefdescription>
+<para>Locally-stored number of output units. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a05d0dbf8b1fbdcbd5c42a2803100a87f" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Locally-stored current mean. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="186" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a327f772de832acb88c18501f1260365f" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType preStdDev</definition>
+        <argsstring></argsstring>
+        <name>preStdDev</name>
+        <briefdescription>
+<para>Locally-stored pre standard deviation. </para>        </briefdescription>
+        <detaileddescription>
+<para>After softplus activation gives standard deviation. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1ac9593853867019a63000497adbebb445" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType stdDev</definition>
+        <argsstring></argsstring>
+        <name>stdDev</name>
+        <briefdescription>
+<para>Locally-stored current standard deviation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Reparametrization_1a5cb6ea6d29576d59b77f5724be8c7836" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool stochastic</definition>
+        <argsstring></argsstring>
+        <name>stochastic</name>
+        <briefdescription>
+<para>If false, sample will be constant. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a832fbcfd05acf9e46e104c51db19588f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Reparametrization</definition>
+        <argsstring>()</argsstring>
+        <name>Reparametrization</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a4a8caf58b20566b71a6a9782211b8121" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Reparametrization</definition>
+        <argsstring>(const size_t latentSize, const bool stochastic=true, const bool includeKl=true, const double beta=1)</argsstring>
+        <name>Reparametrization</name>
+        <param>
+          <type>const size_t</type>
+          <declname>latentSize</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>stochastic</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>includeKl</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>beta</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> layer object using the specified sample vector size. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>latentSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of output latent units. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stochastic</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether we want random sample or constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>includeKl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether we want to include KL loss in backward function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>beta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The beta (hyper)parameter for beta-VAE mentioned above. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="70" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a4eaa387debbde852c4d784cc84764ca9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Reparametrization</definition>
+        <argsstring>(const Reparametrization &amp;layer)</argsstring>
+        <name>Reparametrization</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy Constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="76" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a3394d24a1c604b51a7cde3ede5554af9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Reparametrization</definition>
+        <argsstring>(Reparametrization &amp;&amp;layer)</argsstring>
+        <name>Reparametrization</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Move Constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="79" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="107" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1ad1b9206255af52171cb88dfb7c326576" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Beta</definition>
+        <argsstring>() const</argsstring>
+        <name>Beta</name>
+        <briefdescription>
+<para>Get the value of the beta hyperparameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="143" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="119" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="95" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1aa00a2f9218830aaa49f635ad7925d3dc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IncludeKL</definition>
+        <argsstring>() const</argsstring>
+        <name>IncludeKL</name>
+        <briefdescription>
+<para>Get the value of the includeKl parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="140" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="145" bodyend="148"/>
+        <references refid="classmlpack_1_1ann_1_1Reparametrization_1a65cba07328997659bec80b9879b15a51">Reparametrization&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a97c2b4c73f25bb50e148d8e4febeda24" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Loss</definition>
+        <argsstring>()</argsstring>
+        <name>Loss</name>
+        <briefdescription>
+<para>Get the KL divergence with standard normal. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="127" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1aa5adae8ce8541d66621702dafd5031c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;</type>
+        <definition>Reparametrization&amp; operator=</definition>
+        <argsstring>(const Reparametrization &amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="82" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1aa6b3334aa4e5b95e293b0c3af2c83964" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;</type>
+        <definition>Reparametrization&amp; operator=</definition>
+        <argsstring>(Reparametrization &amp;&amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="85" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="112" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="114" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a004c01f91ccd1863b8df0ab76ab4aa6a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; OutputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputSize</name>
+        <briefdescription>
+<para>Get the output size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a419dbf849d95d9955d055a2e6ba321d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputSize</definition>
+        <argsstring>()</argsstring>
+        <name>OutputSize</name>
+        <briefdescription>
+<para>Modify the output size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="154" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Reparametrization_1a13ab93f234244a68f6ade76287284447" compoundref="reparametrization_8hpp" startline="145" endline="148">Reparametrization&lt; InputDataType, OutputDataType &gt;::InputShape</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Reparametrization_1ae0147f929967eaddb678cf7d07115d3c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Stochastic</definition>
+        <argsstring>() const</argsstring>
+        <name>Stochastic</name>
+        <briefdescription>
+<para>Get the value of the stochastic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" line="137" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp" bodystart="137" bodyend="137"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref> layer class. </para>    </briefdescription>
+    <detaileddescription>
+<para>This layer samples from the given parameters of a normal distribution.</para><para>This class also supports beta-VAE, a state-of-the-art framework for automated discovery of interpretable factorised latent representations from raw image data in a completely unsupervised manner.</para><para>For more information, refer the following paper.</para><para><programlisting><codeline><highlight class="normal">@article{ICLR2017,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{beta-VAE:<sp/>Learning<sp/>basic<sp/>visual<sp/>concepts<sp/>with<sp/>a<sp/>constrained</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>variational<sp/>framework},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Irina<sp/>Higgins,<sp/>Loic<sp/>Matthey,<sp/>Arka<sp/>Pal,<sp/>Christopher<sp/>Burgess,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Xavier<sp/>Glorot,<sp/>Matthew<sp/>Botvinick,<sp/>Shakir<sp/>Mohamed<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Alexander<sp/>Lerchner<sp/>|<sp/>Google<sp/>DeepMind},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{2017<sp/>International<sp/>Conference<sp/>on<sp/>Learning<sp/>Representations(ICLR)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2017},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/>=<sp/>{https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="128" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1ad1b9206255af52171cb88dfb7c326576" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Beta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a9424343761f8c4f4c1afe8f5b6bf471b" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>beta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a72f3a29cab7aa5dfd1177e476daa36bf" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>gaussianSample</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1aa00a2f9218830aaa49f635ad7925d3dc" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>IncludeKL</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a02b32862ef344aa5ad40c4226d1b985c" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>includeKl</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1ad5328e63a39d65399c926a3f02f31744" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>latentSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a97c2b4c73f25bb50e148d8e4febeda24" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Loss</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a05d0dbf8b1fbdcbd5c42a2803100a87f" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1aa5adae8ce8541d66621702dafd5031c2" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1aa6b3334aa4e5b95e293b0c3af2c83964" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a004c01f91ccd1863b8df0ab76ab4aa6a" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>OutputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a419dbf849d95d9955d055a2e6ba321d2" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>OutputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a327f772de832acb88c18501f1260365f" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>preStdDev</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a832fbcfd05acf9e46e104c51db19588f" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Reparametrization</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a4a8caf58b20566b71a6a9782211b8121" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Reparametrization</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a4eaa387debbde852c4d784cc84764ca9" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Reparametrization</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a3394d24a1c604b51a7cde3ede5554af9" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Reparametrization</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1ac9593853867019a63000497adbebb445" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>stdDev</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1ae0147f929967eaddb678cf7d07115d3c" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Stochastic</name></member>
+      <member refid="classmlpack_1_1ann_1_1Reparametrization_1a5cb6ea6d29576d59b77f5724be8c7836" prot="private" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>stochastic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,850 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="kmeans__selection_8hpp" kind="file" language="C++">
+    <compoundname>kmeans_selection.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="kmeans_8hpp" local="no">mlpack/methods/kmeans/kmeans.hpp</includes>
+    <includedby refid="kernel__pca_2kernel__rules_2nystroem__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp</includedby>
+    <includedby refid="nystroem__method_2nystroem__method_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/nystroem_method/nystroem_method.hpp</includedby>
+    <incdepgraph>
+      <node id="53182">
+        <label>list</label>
+      </node>
+      <node id="53239">
+        <label>breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53231">
+        <label>binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53228" relation="include">
+        </childnode>
+        <childnode refid="53232" relation="include">
+        </childnode>
+      </node>
+      <node id="53241">
+        <label>binary_space_tree/traits.hpp</label>
+        <link refid="binary__space__tree_2traits_8hpp"/>
+        <childnode refid="53242" relation="include">
+        </childnode>
+        <childnode refid="53206" relation="include">
+        </childnode>
+      </node>
+      <node id="53179">
+        <label>atomic</label>
+      </node>
+      <node id="53169">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="53145">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="53181">
+        <label>iomanip</label>
+      </node>
+      <node id="53238">
+        <label>queue</label>
+      </node>
+      <node id="53203">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="53216">
+        <label>binary_space_tree/mean_split.hpp</label>
+        <link refid="mean__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53214" relation="include">
+        </childnode>
+        <childnode refid="53217" relation="include">
+        </childnode>
+      </node>
+      <node id="53191">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="53154">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="53155" relation="include">
+        </childnode>
+        <childnode refid="53157" relation="include">
+        </childnode>
+      </node>
+      <node id="53137">
+        <label>cstdint</label>
+      </node>
+      <node id="53146">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="53153">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="53240">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53194">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="53217">
+        <label>mean_split_impl.hpp</label>
+      </node>
+      <node id="53176">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="53208">
+        <label>hollow_ball_bound.hpp</label>
+        <link refid="hollow__ball__bound_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53203" relation="include">
+        </childnode>
+        <childnode refid="53209" relation="include">
+        </childnode>
+      </node>
+      <node id="53229">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="53224">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="53166">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="53133">
+        <label>cmath</label>
+      </node>
+      <node id="53201">
+        <label>bounds.hpp</label>
+        <link refid="bounds_8hpp"/>
+        <childnode refid="53202" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53203" relation="include">
+        </childnode>
+        <childnode refid="53204" relation="include">
+        </childnode>
+        <childnode refid="53206" relation="include">
+        </childnode>
+        <childnode refid="53208" relation="include">
+        </childnode>
+        <childnode refid="53210" relation="include">
+        </childnode>
+      </node>
+      <node id="53152">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="53141">
+        <label>stdexcept</label>
+      </node>
+      <node id="53234">
+        <label>binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53228" relation="include">
+        </childnode>
+        <childnode refid="53235" relation="include">
+        </childnode>
+      </node>
+      <node id="53161">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="53146" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53147" relation="include">
+        </childnode>
+      </node>
+      <node id="53199">
+        <label>naive_kmeans_impl.hpp</label>
+      </node>
+      <node id="53202">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="53185">
+        <label>string</label>
+      </node>
+      <node id="53220">
+        <label>binary_space_tree/rp_tree_max_split.hpp</label>
+        <link refid="rp__tree__max__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53214" relation="include">
+        </childnode>
+        <childnode refid="53221" relation="include">
+        </childnode>
+      </node>
+      <node id="53215">
+        <label>midpoint_split_impl.hpp</label>
+      </node>
+      <node id="53173">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="53174" relation="include">
+        </childnode>
+        <childnode refid="53140" relation="include">
+        </childnode>
+      </node>
+      <node id="53183">
+        <label>map</label>
+      </node>
+      <node id="53235">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53223">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53224" relation="include">
+        </childnode>
+      </node>
+      <node id="53197">
+        <label>max_variance_new_cluster_impl.hpp</label>
+      </node>
+      <node id="53135">
+        <label>cfloat</label>
+      </node>
+      <node id="53165">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="53187">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="53149">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="53172">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="53173" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53156" relation="include">
+        </childnode>
+        <childnode refid="53174" relation="include">
+        </childnode>
+      </node>
+      <node id="53162">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="53160">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="53146" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53147" relation="include">
+        </childnode>
+      </node>
+      <node id="53163">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="53146" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53147" relation="include">
+        </childnode>
+      </node>
+      <node id="53230">
+        <label>binary_space_tree_impl.hpp</label>
+      </node>
+      <node id="53151">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="53171">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="53147" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53159" relation="include">
+        </childnode>
+        <childnode refid="53168" relation="include">
+        </childnode>
+      </node>
+      <node id="53175">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="53176" relation="include">
+        </childnode>
+      </node>
+      <node id="53236">
+        <label>binary_space_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53177">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="53132">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="53133" relation="include">
+        </childnode>
+        <childnode refid="53134" relation="include">
+        </childnode>
+        <childnode refid="53135" relation="include">
+        </childnode>
+        <childnode refid="53136" relation="include">
+        </childnode>
+        <childnode refid="53137" relation="include">
+        </childnode>
+        <childnode refid="53138" relation="include">
+        </childnode>
+        <childnode refid="53139" relation="include">
+        </childnode>
+        <childnode refid="53140" relation="include">
+        </childnode>
+        <childnode refid="53141" relation="include">
+        </childnode>
+        <childnode refid="53142" relation="include">
+        </childnode>
+        <childnode refid="53143" relation="include">
+        </childnode>
+        <childnode refid="53144" relation="include">
+        </childnode>
+        <childnode refid="53145" relation="include">
+        </childnode>
+        <childnode refid="53146" relation="include">
+        </childnode>
+        <childnode refid="53147" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53150" relation="include">
+        </childnode>
+        <childnode refid="53151" relation="include">
+        </childnode>
+        <childnode refid="53152" relation="include">
+        </childnode>
+        <childnode refid="53153" relation="include">
+        </childnode>
+        <childnode refid="53154" relation="include">
+        </childnode>
+        <childnode refid="53158" relation="include">
+        </childnode>
+        <childnode refid="53159" relation="include">
+        </childnode>
+        <childnode refid="53160" relation="include">
+        </childnode>
+        <childnode refid="53161" relation="include">
+        </childnode>
+        <childnode refid="53162" relation="include">
+        </childnode>
+        <childnode refid="53163" relation="include">
+        </childnode>
+        <childnode refid="53164" relation="include">
+        </childnode>
+        <childnode refid="53170" relation="include">
+        </childnode>
+        <childnode refid="53171" relation="include">
+        </childnode>
+        <childnode refid="53168" relation="include">
+        </childnode>
+        <childnode refid="53172" relation="include">
+        </childnode>
+        <childnode refid="53175" relation="include">
+        </childnode>
+        <childnode refid="53177" relation="include">
+        </childnode>
+        <childnode refid="53178" relation="include">
+        </childnode>
+        <childnode refid="53187" relation="include">
+        </childnode>
+        <childnode refid="53188" relation="include">
+        </childnode>
+      </node>
+      <node id="53232">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53213">
+        <label>binary_space_tree/midpoint_split.hpp</label>
+        <link refid="midpoint__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53214" relation="include">
+        </childnode>
+        <childnode refid="53215" relation="include">
+        </childnode>
+      </node>
+      <node id="53195">
+        <label>random</label>
+      </node>
+      <node id="53207">
+        <label>ballbound_impl.hpp</label>
+      </node>
+      <node id="53233">
+        <label>binary_space_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="53138">
+        <label>cstdio</label>
+      </node>
+      <node id="53211">
+        <label>address.hpp</label>
+        <link refid="address_8hpp"/>
+      </node>
+      <node id="53242">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="53142">
+        <label>tuple</label>
+      </node>
+      <node id="53147">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="53226">
+        <label>binary_space_tree/ub_tree_split.hpp</label>
+        <link refid="ub__tree__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53211" relation="include">
+        </childnode>
+        <childnode refid="53227" relation="include">
+        </childnode>
+      </node>
+      <node id="53164">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="53147" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53151" relation="include">
+        </childnode>
+        <childnode refid="53165" relation="include">
+        </childnode>
+        <childnode refid="53166" relation="include">
+        </childnode>
+        <childnode refid="53167" relation="include">
+        </childnode>
+        <childnode refid="53168" relation="include">
+        </childnode>
+      </node>
+      <node id="53228">
+        <label>binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53229" relation="include">
+        </childnode>
+        <childnode refid="53213" relation="include">
+        </childnode>
+        <childnode refid="53230" relation="include">
+        </childnode>
+        <childnode refid="53200" relation="include">
+        </childnode>
+      </node>
+      <node id="53204">
+        <label>hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53202" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53203" relation="include">
+        </childnode>
+        <childnode refid="53205" relation="include">
+        </childnode>
+      </node>
+      <node id="53225">
+        <label>rp_tree_mean_split_impl.hpp</label>
+      </node>
+      <node id="53196">
+        <label>max_variance_new_cluster.hpp</label>
+        <link refid="max__variance__new__cluster_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53197" relation="include">
+        </childnode>
+      </node>
+      <node id="53244">
+        <label>kmeans_impl.hpp</label>
+      </node>
+      <node id="53193">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53194" relation="include">
+        </childnode>
+        <childnode refid="53195" relation="include">
+        </childnode>
+      </node>
+      <node id="53143">
+        <label>utility</label>
+      </node>
+      <node id="53167">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="53158">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="53200">
+        <label>mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53201" relation="include">
+        </childnode>
+        <childnode refid="53213" relation="include">
+        </childnode>
+        <childnode refid="53216" relation="include">
+        </childnode>
+        <childnode refid="53218" relation="include">
+        </childnode>
+        <childnode refid="53220" relation="include">
+        </childnode>
+        <childnode refid="53222" relation="include">
+        </childnode>
+        <childnode refid="53226" relation="include">
+        </childnode>
+        <childnode refid="53228" relation="include">
+        </childnode>
+        <childnode refid="53231" relation="include">
+        </childnode>
+        <childnode refid="53233" relation="include">
+        </childnode>
+        <childnode refid="53234" relation="include">
+        </childnode>
+        <childnode refid="53236" relation="include">
+        </childnode>
+        <childnode refid="53237" relation="include">
+        </childnode>
+        <childnode refid="53240" relation="include">
+        </childnode>
+        <childnode refid="53241" relation="include">
+        </childnode>
+        <childnode refid="53243" relation="include">
+        </childnode>
+      </node>
+      <node id="53155">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="53156" relation="include">
+        </childnode>
+      </node>
+      <node id="53178">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="53179" relation="include">
+        </childnode>
+        <childnode refid="53180" relation="include">
+        </childnode>
+        <childnode refid="53181" relation="include">
+        </childnode>
+        <childnode refid="53182" relation="include">
+        </childnode>
+        <childnode refid="53183" relation="include">
+        </childnode>
+        <childnode refid="53184" relation="include">
+        </childnode>
+        <childnode refid="53185" relation="include">
+        </childnode>
+        <childnode refid="53186" relation="include">
+        </childnode>
+      </node>
+      <node id="53156">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="53170">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="53168" relation="include">
+        </childnode>
+        <childnode refid="53164" relation="include">
+        </childnode>
+        <childnode refid="53171" relation="include">
+        </childnode>
+      </node>
+      <node id="53139">
+        <label>cstdlib</label>
+      </node>
+      <node id="53134">
+        <label>cctype</label>
+      </node>
+      <node id="53157">
+        <label>unordered_map</label>
+      </node>
+      <node id="53189">
+        <label>mlpack/methods/kmeans/kmeans.hpp</label>
+        <link refid="kmeans_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53192" relation="include">
+        </childnode>
+        <childnode refid="53196" relation="include">
+        </childnode>
+        <childnode refid="53198" relation="include">
+        </childnode>
+        <childnode refid="53200" relation="include">
+        </childnode>
+        <childnode refid="53244" relation="include">
+        </childnode>
+      </node>
+      <node id="53192">
+        <label>sample_initialization.hpp</label>
+        <link refid="sample__initialization_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53193" relation="include">
+        </childnode>
+      </node>
+      <node id="53136">
+        <label>climits</label>
+      </node>
+      <node id="53184">
+        <label>mutex</label>
+      </node>
+      <node id="53180">
+        <label>chrono</label>
+      </node>
+      <node id="53205">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="53131">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp</label>
+        <link refid="kmeans__selection_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53189" relation="include">
+        </childnode>
+      </node>
+      <node id="53188">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="53222">
+        <label>binary_space_tree/rp_tree_mean_split.hpp</label>
+        <link refid="rp__tree__mean__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53220" relation="include">
+        </childnode>
+        <childnode refid="53214" relation="include">
+        </childnode>
+        <childnode refid="53223" relation="include">
+        </childnode>
+        <childnode refid="53225" relation="include">
+        </childnode>
+      </node>
+      <node id="53219">
+        <label>vantage_point_split_impl.hpp</label>
+      </node>
+      <node id="53186">
+        <label>thread</label>
+      </node>
+      <node id="53206">
+        <label>ballbound.hpp</label>
+        <link refid="ballbound_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53203" relation="include">
+        </childnode>
+        <childnode refid="53207" relation="include">
+        </childnode>
+      </node>
+      <node id="53221">
+        <label>rp_tree_max_split_impl.hpp</label>
+      </node>
+      <node id="53214">
+        <label>mlpack/core/tree/perform_split.hpp</label>
+        <link refid="perform__split_8hpp"/>
+      </node>
+      <node id="53198">
+        <label>naive_kmeans.hpp</label>
+        <link refid="naive__kmeans_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53199" relation="include">
+        </childnode>
+      </node>
+      <node id="53174">
+        <label>type_traits</label>
+      </node>
+      <node id="53237">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53238" relation="include">
+        </childnode>
+        <childnode refid="53200" relation="include">
+        </childnode>
+        <childnode refid="53239" relation="include">
+        </childnode>
+      </node>
+      <node id="53150">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="53243">
+        <label>binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="53200" relation="include">
+        </childnode>
+      </node>
+      <node id="53144">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="53168">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="53146" relation="include">
+        </childnode>
+        <childnode refid="53147" relation="include">
+        </childnode>
+        <childnode refid="53148" relation="include">
+        </childnode>
+        <childnode refid="53149" relation="include">
+        </childnode>
+        <childnode refid="53169" relation="include">
+        </childnode>
+      </node>
+      <node id="53209">
+        <label>hollow_ball_bound_impl.hpp</label>
+      </node>
+      <node id="53140">
+        <label>cstring</label>
+      </node>
+      <node id="53159">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="53212">
+        <label>cellbound_impl.hpp</label>
+      </node>
+      <node id="53227">
+        <label>ub_tree_split_impl.hpp</label>
+      </node>
+      <node id="53210">
+        <label>cellbound.hpp</label>
+        <link refid="cellbound_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53202" relation="include">
+        </childnode>
+        <childnode refid="53190" relation="include">
+        </childnode>
+        <childnode refid="53203" relation="include">
+        </childnode>
+        <childnode refid="53211" relation="include">
+        </childnode>
+        <childnode refid="53212" relation="include">
+        </childnode>
+      </node>
+      <node id="53148">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="53190">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53191" relation="include">
+        </childnode>
+      </node>
+      <node id="53218">
+        <label>binary_space_tree/vantage_point_split.hpp</label>
+        <link refid="vantage__point__split_8hpp"/>
+        <childnode refid="53132" relation="include">
+        </childnode>
+        <childnode refid="53214" relation="include">
+        </childnode>
+        <childnode refid="53193" relation="include">
+        </childnode>
+        <childnode refid="53219" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="53247">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/nystroem_method.hpp</label>
+        <link refid="nystroem__method_2nystroem__method_8hpp"/>
+        <childnode refid="53246" relation="include">
+        </childnode>
+      </node>
+      <node id="53245">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp</label>
+        <link refid="kmeans__selection_8hpp"/>
+        <childnode refid="53246" relation="include">
+        </childnode>
+        <childnode refid="53247" relation="include">
+        </childnode>
+      </node>
+      <node id="53246">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp</label>
+        <link refid="kernel__pca_2kernel__rules_2nystroem__method_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1kernel_1_1KMeansSelection" prot="public">mlpack::kernel::KMeansSelection</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kernel">mlpack::kernel</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Use the centroids of the K-Means clustering method for use in the Nystroem method of kernel matrix approximation.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NYSTROEM_METHOD_KMEANS_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="kmeans_8hpp" kindref="compound">mlpack/methods/kmeans/kmeans.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kernel<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ClusteringType<sp/>=<sp/>kmeans::KMeans&lt;&gt;,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>5&gt;</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1kernel_1_1KMeansSelection" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kernel_1_1KMeansSelection" kindref="compound">KMeansSelection</ref></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1kernel_1_1KMeansSelection_1a0449697ae86a5d2ed893572da8695c7f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>arma::mat*<sp/><ref refid="classmlpack_1_1kernel_1_1KMeansSelection_1a0449697ae86a5d2ed893572da8695c7f" kindref="member">Select</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat*<sp/>centroids<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>arma::mat;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Perform<sp/>the<sp/>K-Means<sp/>clustering<sp/>method.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>ClusteringType<sp/>kmeans(maxIterations);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>kmeans.Cluster(data,<sp/>m,<sp/>assignments,<sp/>*centroids);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>centroids;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kernel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp"/>
+  </compounddef>
+</doxygen>

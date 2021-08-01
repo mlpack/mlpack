@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1ann_1_1augmented" kind="namespace" language="C++">
+    <compoundname>mlpack::ann::augmented</compoundname>
+    <innernamespace refid="namespacemlpack_1_1ann_1_1augmented_1_1scorers">mlpack::ann::augmented::scorers</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann_1_1augmented_1_1tasks">mlpack::ann::augmented::tasks</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/add.hpp" line="22" column="1"/>
+  </compounddef>
+</doxygen>

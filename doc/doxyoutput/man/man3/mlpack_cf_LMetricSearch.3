@@ -1,0 +1,105 @@
+.TH "LMetricSearch< TPower >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LMetricSearch< TPower > \- Nearest neighbor search with L_p distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBNeighborSearchType\fP = \fBneighbor::NeighborSearch\fP< \fBneighbor::NearestNeighborSort\fP, \fBmetric::LMetric\fP< TPower, true > >"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLMetricSearch\fP (const arma::mat &referenceSet)"
+.br
+.ti -1c
+.RI "void \fBSearch\fP (const arma::mat &query, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &similarities)"
+.br
+.RI "Given a set of query points, find the nearest k neighbors, and return similarites\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<int TPower>
+.br
+class mlpack::cf::LMetricSearch< TPower >"
+Nearest neighbor search with L_p distance\&. 
+
+An example of how to use \fBLMetricSearch\fP in CF is shown below:
+.PP
+.PP
+.nf
+extern arma::mat data; // data is a (user, item, rating) table\&.
+// Users for whom recommendations are generated\&.
+extern arma::Col<size_t> users;
+arma::Mat<size_t> recommendations; // Resulting recommendations\&.
+
+CFType<> cf(data);
+
+// Generate 10 recommendations for all users\&.
+cf\&.template GetRecommendations<LMetricSearch<2>>(10, recommendations);
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITPower\fP Power of metric\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file lmetric_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBNeighborSearchType\fP =  \fBneighbor::NeighborSearch\fP< \fBneighbor::NearestNeighborSort\fP, \fBmetric::LMetric\fP<TPower, true> >"
+
+.PP
+Definition at line 47 of file lmetric_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLMetricSearch\fP (const arma::mat & referenceSet)\fC [inline]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file lmetric_search\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Search (const arma::mat & query, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & similarities)\fC [inline]\fP"
+
+.PP
+Given a set of query points, find the nearest k neighbors, and return similarites\&. Similarities are non-negative and no larger thant one\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquery\fP A set of query points\&. 
+.br
+\fIk\fP Number of neighbors to search\&. 
+.br
+\fIneighbors\fP Nearest neighbors\&. 
+.br
+\fIsimilarities\fP Similarities between query point and its neighbors\&. 
+.RE
+.PP
+
+.PP
+Definition at line 64 of file lmetric_search\&.hpp\&.
+.PP
+References NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Search()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

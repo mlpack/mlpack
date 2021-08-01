@@ -1,0 +1,147 @@
+
+.. _namespace_mlpack__bindings__cli:
+
+Namespace mlpack::bindings::cli
+===============================
+
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+
+
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classmlpack_1_1bindings_1_1cli_1_1CLIOption`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a1db4f0e56e92c25cc4268f4819bc6094`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a9b71dd17bb9d34652a4b43854268a4ca`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ad29f7dfa91036ce6c0b0b115fe0c121f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1aff8902ca484671b81af2f5f42a7cede9`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a55aef8a48db69a51b2fd1846cc37869c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a16c8a80e23cfb701cf516d998f87bc96`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ad00ccdec5d071ac723980013eed32bb0`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a359ad475d834750fae812d1bd43616a1`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a0fc778ae232da485216b407b20fff403`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a5f081ca01123f56a6a958ec611f025bd`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a30e2e8dd1e103aefc6dbbdb6883fb56f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a91bb236fcaa8017c3947eb4654721af1`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a8ef363346975e31371737c2cd0babf19`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a3206ef59e5d3594d87993230bc841ff2`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ab95e39339701c7ad40bb9a5b963cc0e6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a32eb7aa8288341a0ad5e86974c3cb578`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1af41aed94be4a1e36fd3035b0203dfd50`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a726c5d77c671ac29538ae715eeb3711c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a35bd64a7aba8290da5890e058e574126`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a4ca0dda1c3242be33a2df4bf6eea244f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a721c6e1129eeaa6f2680e44d3b77622b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a65cbd524fa46ac7794166033fe768058`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a575ecf5e4eeac882629795e6b8d6ddb1`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ab37bb9dc5535195505d0e315e9f0e710`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1aa1d971b97237d5e65801a9bdd580d5a1`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a1e08906907fd1c3fc430f38a6505d061`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ad73b9c6b706021bdc48aa50093ba622d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a0de8fc36c7d3cf6f1de56575d5f051b3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a6ec412d46ebdb3a562e7c0c320266795`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ab53a9f009bcfbcbdba6fad0740b29818`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a7e1143ed855d19f032aaa8ddf9509269`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a4af0435d1e849593bfc92207e6bd35f7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a5dedb0628597055a81e92c4d3183252e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1aeba3f0b60dc774b6c910a1056ab51a7d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ab5cc02558b44764c63ab9f3933b5799c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a88b5ef349b349cccced5a9aab99aebe5`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a908de0eb0d234dfd05f6ffd87ae24529`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a16195f95f25f2e509c8cccbce52a4deb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ae4b6a0a5223e027696a24dc61350c653`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ac64f8a790e82ba58a13eda3227ce14b5`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1aae7c332a39af5d11ff2ccfe36918a9e8`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ac7a0c5c5d23498f1677898eba2c57942`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a8ab11ab73071ec0432e656e9d6a922ea`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a46c26fbc865f5aa6bcd23d58014eb638`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ae595c11b747d9672427693f45872f912`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a399b457336a1e6dc98fa62162d78c97f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a5930dee85295f63edddd93ce3370d6db`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ab2ccd550e94deccfc11c86e56fbd60aa`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a2bd1cb05ac19052e82c5b55accb87675`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a9c3c589b8bebbe0b7282c3e0ba9610e5`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a5b25ce48ee5b0afa8814da748fdbf5b6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1affd752b3cc291dff5449e4234e96a9d3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a7bec1000dc11054deb0938ae3cad5d4e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1ade027ee38723eb0d1897502fdb76a239`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a91e9173c2229c660c39a414e0e0a0607`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1aab304ac19d1e7e55b52c0f3875e67edf`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a4219256294452b9ec65efc8a03d5e224`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1abc3f31c87ba14c2c66761361b9192f92`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a88610ef05073988cd29e1ac4a37f5481`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1cli_1a61f79718ab4568bf8a4b263d2f822675`

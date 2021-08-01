@@ -1,0 +1,504 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="linear__svm__function_8hpp" kind="file" language="C++">
+    <compoundname>linear_svm_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">linear_svm_function_impl.hpp</includes>
+    <includedby refid="linear__svm_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp</includedby>
+    <incdepgraph>
+      <node id="51489">
+        <label>list</label>
+      </node>
+      <node id="51486">
+        <label>atomic</label>
+      </node>
+      <node id="51476">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="51452">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="51488">
+        <label>iomanip</label>
+      </node>
+      <node id="51461">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="51462" relation="include">
+        </childnode>
+        <childnode refid="51464" relation="include">
+        </childnode>
+      </node>
+      <node id="51444">
+        <label>cstdint</label>
+      </node>
+      <node id="51453">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="51460">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="51483">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="51473">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="51440">
+        <label>cmath</label>
+      </node>
+      <node id="51459">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="51448">
+        <label>stdexcept</label>
+      </node>
+      <node id="51468">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="51453" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51454" relation="include">
+        </childnode>
+      </node>
+      <node id="51492">
+        <label>string</label>
+      </node>
+      <node id="51480">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="51481" relation="include">
+        </childnode>
+        <childnode refid="51447" relation="include">
+        </childnode>
+      </node>
+      <node id="51490">
+        <label>map</label>
+      </node>
+      <node id="51442">
+        <label>cfloat</label>
+      </node>
+      <node id="51472">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51494">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="51456">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="51479">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="51480" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51463" relation="include">
+        </childnode>
+        <childnode refid="51481" relation="include">
+        </childnode>
+      </node>
+      <node id="51469">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="51438">
+        <label>/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp</label>
+        <link refid="linear__svm__function_8hpp"/>
+        <childnode refid="51439" relation="include">
+        </childnode>
+        <childnode refid="51496" relation="include">
+        </childnode>
+      </node>
+      <node id="51467">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="51453" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51454" relation="include">
+        </childnode>
+      </node>
+      <node id="51470">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="51453" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51454" relation="include">
+        </childnode>
+      </node>
+      <node id="51458">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="51478">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="51454" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51466" relation="include">
+        </childnode>
+        <childnode refid="51475" relation="include">
+        </childnode>
+      </node>
+      <node id="51482">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="51483" relation="include">
+        </childnode>
+      </node>
+      <node id="51484">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="51439">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="51440" relation="include">
+        </childnode>
+        <childnode refid="51441" relation="include">
+        </childnode>
+        <childnode refid="51442" relation="include">
+        </childnode>
+        <childnode refid="51443" relation="include">
+        </childnode>
+        <childnode refid="51444" relation="include">
+        </childnode>
+        <childnode refid="51445" relation="include">
+        </childnode>
+        <childnode refid="51446" relation="include">
+        </childnode>
+        <childnode refid="51447" relation="include">
+        </childnode>
+        <childnode refid="51448" relation="include">
+        </childnode>
+        <childnode refid="51449" relation="include">
+        </childnode>
+        <childnode refid="51450" relation="include">
+        </childnode>
+        <childnode refid="51451" relation="include">
+        </childnode>
+        <childnode refid="51452" relation="include">
+        </childnode>
+        <childnode refid="51453" relation="include">
+        </childnode>
+        <childnode refid="51454" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51457" relation="include">
+        </childnode>
+        <childnode refid="51458" relation="include">
+        </childnode>
+        <childnode refid="51459" relation="include">
+        </childnode>
+        <childnode refid="51460" relation="include">
+        </childnode>
+        <childnode refid="51461" relation="include">
+        </childnode>
+        <childnode refid="51465" relation="include">
+        </childnode>
+        <childnode refid="51466" relation="include">
+        </childnode>
+        <childnode refid="51467" relation="include">
+        </childnode>
+        <childnode refid="51468" relation="include">
+        </childnode>
+        <childnode refid="51469" relation="include">
+        </childnode>
+        <childnode refid="51470" relation="include">
+        </childnode>
+        <childnode refid="51471" relation="include">
+        </childnode>
+        <childnode refid="51477" relation="include">
+        </childnode>
+        <childnode refid="51478" relation="include">
+        </childnode>
+        <childnode refid="51475" relation="include">
+        </childnode>
+        <childnode refid="51479" relation="include">
+        </childnode>
+        <childnode refid="51482" relation="include">
+        </childnode>
+        <childnode refid="51484" relation="include">
+        </childnode>
+        <childnode refid="51485" relation="include">
+        </childnode>
+        <childnode refid="51494" relation="include">
+        </childnode>
+        <childnode refid="51495" relation="include">
+        </childnode>
+      </node>
+      <node id="51445">
+        <label>cstdio</label>
+      </node>
+      <node id="51449">
+        <label>tuple</label>
+      </node>
+      <node id="51454">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="51471">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="51454" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51458" relation="include">
+        </childnode>
+        <childnode refid="51472" relation="include">
+        </childnode>
+        <childnode refid="51473" relation="include">
+        </childnode>
+        <childnode refid="51474" relation="include">
+        </childnode>
+        <childnode refid="51475" relation="include">
+        </childnode>
+      </node>
+      <node id="51450">
+        <label>utility</label>
+      </node>
+      <node id="51474">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="51465">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="51462">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="51463" relation="include">
+        </childnode>
+      </node>
+      <node id="51485">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="51486" relation="include">
+        </childnode>
+        <childnode refid="51487" relation="include">
+        </childnode>
+        <childnode refid="51488" relation="include">
+        </childnode>
+        <childnode refid="51489" relation="include">
+        </childnode>
+        <childnode refid="51490" relation="include">
+        </childnode>
+        <childnode refid="51491" relation="include">
+        </childnode>
+        <childnode refid="51492" relation="include">
+        </childnode>
+        <childnode refid="51493" relation="include">
+        </childnode>
+      </node>
+      <node id="51463">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="51477">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="51475" relation="include">
+        </childnode>
+        <childnode refid="51471" relation="include">
+        </childnode>
+        <childnode refid="51478" relation="include">
+        </childnode>
+      </node>
+      <node id="51446">
+        <label>cstdlib</label>
+      </node>
+      <node id="51441">
+        <label>cctype</label>
+      </node>
+      <node id="51464">
+        <label>unordered_map</label>
+      </node>
+      <node id="51443">
+        <label>climits</label>
+      </node>
+      <node id="51491">
+        <label>mutex</label>
+      </node>
+      <node id="51487">
+        <label>chrono</label>
+      </node>
+      <node id="51495">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="51496">
+        <label>linear_svm_function_impl.hpp</label>
+      </node>
+      <node id="51493">
+        <label>thread</label>
+      </node>
+      <node id="51481">
+        <label>type_traits</label>
+      </node>
+      <node id="51457">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="51451">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="51475">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="51453" relation="include">
+        </childnode>
+        <childnode refid="51454" relation="include">
+        </childnode>
+        <childnode refid="51455" relation="include">
+        </childnode>
+        <childnode refid="51456" relation="include">
+        </childnode>
+        <childnode refid="51476" relation="include">
+        </childnode>
+      </node>
+      <node id="51447">
+        <label>cstring</label>
+      </node>
+      <node id="51466">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="51455">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="51497">
+        <label>/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp</label>
+        <link refid="linear__svm__function_8hpp"/>
+        <childnode refid="51498" relation="include">
+        </childnode>
+      </node>
+      <node id="51498">
+        <label>/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp</label>
+        <link refid="linear__svm_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1svm_1_1LinearSVMFunction" prot="public">mlpack::svm::LinearSVMFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1svm">mlpack::svm</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Shikhar Bhardwaj </para></simplesect>
+<simplesect kind="author"><para>Ayush Chamoli</para></simplesect>
+Implementation of the hinge loss function for training a linear SVM with the parallel SGD algorithm.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">svm<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1svm_1_1LinearSVMFunction" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction" kindref="compound">LinearSVMFunction</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1af445da901fbdbaf4a6624eb7c59a219f" kindref="member">LinearSVMFunction</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.0001,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delta<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1af39490b2ae62f54b6a4c25a3d92ab0ce" kindref="member">InitializeWeights</ref>(arma::mat&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>featureSize,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1afb090fbee5f880dd69edde4cdd0797cd" kindref="member">GetGroundTruthMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::sp_mat&amp;<sp/>groundTruth);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1ca0efaedbc2e7e7542c89901cdcf2ee" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1ca0efaedbc2e7e7542c89901cdcf2ee" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstId,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a306147f4dffda5b0972a12de487ece8e" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a306147f4dffda5b0972a12de487ece8e" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstId,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" kindref="member">EvaluateWithGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" kindref="member">EvaluateWithGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstId,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a380e98a13444e16f7cd2984e23b32e2e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a380e98a13444e16f7cd2984e23b32e2e" kindref="member">InitialPoint</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialPoint;<sp/>}</highlight></codeline>
+<codeline lineno="163" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ab1582fd207a6b9a400cf27c710c5af06" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ab1582fd207a6b9a400cf27c710c5af06" kindref="member">InitialPoint</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialPoint;<sp/>}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a63f50b704711fa3661dc1ae565f51811" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::sp_mat&amp;<sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a63f50b704711fa3661dc1ae565f51811" kindref="member">Dataset</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dataset;<sp/>}</highlight></codeline>
+<codeline lineno="168" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ae7b442671b21a94780f17a6624e1f31d" refkind="member"><highlight class="normal"><sp/><sp/>arma::sp_mat&amp;<sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ae7b442671b21a94780f17a6624e1f31d" kindref="member">Dataset</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dataset;<sp/>}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="173" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a2878e0828ecdc1d486b0f43a81f95059" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a2878e0828ecdc1d486b0f43a81f95059" kindref="member">FitIntercept</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fitIntercept;<sp/>}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" kindref="member">NumFunctions</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/>arma::mat<sp/>initialPoint;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>arma::sp_mat<sp/>groundTruth;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>MatType<sp/>dataset;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delta;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>svm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;linear_svm_function_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp"/>
+  </compounddef>
+</doxygen>

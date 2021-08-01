@@ -1,0 +1,129 @@
+.TH "GaussianInitialization" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GaussianInitialization \- This class is used to initialize weigth matrix with a gaussian\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGaussianInitialization\fP (const double mean=0, const double variance=1)"
+.br
+.RI "Initialize the gaussian with the given mean and variance\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "Initialize the elements weight matrix using a Gaussian Distribution\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W)"
+.br
+.RI "Initialize the elements weight matrix using a Gaussian Distribution\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "Initialize randomly the elements of the specified weight 3rd order tensor\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W)"
+.br
+.RI "Initialize randomly the elements of the specified weight 3rd order tensor\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is used to initialize weigth matrix with a gaussian\&. 
+.PP
+Definition at line 28 of file gaussian_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGaussianInitialization\fP (const double mean = \fC0\fP, const double variance = \fC1\fP)\fC [inline]\fP"
+
+.PP
+Initialize the gaussian with the given mean and variance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImean\fP Mean of the gaussian\&. 
+.br
+\fIvariance\fP Variance of the gaussian\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file gaussian_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize the elements weight matrix using a Gaussian Distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 51 of file gaussian_init\&.hpp\&.
+.PP
+References mlpack::math::RandNormal()\&.
+.PP
+Referenced by GlorotInitializationType< Uniform >::Initialize()\&.
+.SS "void Initialize (arma::Mat< eT > & W)\fC [inline]\fP"
+
+.PP
+Initialize the elements weight matrix using a Gaussian Distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file gaussian_init\&.hpp\&.
+.PP
+References mlpack::math::RandNormal()\&.
+.SS "void Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight 3rd order tensor\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.br
+\fIslices\fP Number of slices\&. 
+.RE
+.PP
+
+.PP
+Definition at line 84 of file gaussian_init\&.hpp\&.
+.SS "void Initialize (arma::Cube< eT > & W)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight 3rd order tensor\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.RE
+.PP
+
+.PP
+Definition at line 102 of file gaussian_init\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

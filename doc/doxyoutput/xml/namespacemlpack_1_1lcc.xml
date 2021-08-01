@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1lcc" kind="namespace" language="C++">
+    <compoundname>mlpack::lcc</compoundname>
+    <innerclass refid="classmlpack_1_1lcc_1_1LocalCoordinateCoding" prot="public">mlpack::lcc::LocalCoordinateCoding</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/local_coordinate_coding/lcc.hpp" line="25" column="1"/>
+  </compounddef>
+</doxygen>

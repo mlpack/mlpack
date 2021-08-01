@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::Octree::DualTreeTraverser</compoundname>
+    <includes refid="octree_2dual__tree__traverser_8hpp" local="no">dual_tree_traverser.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename StatisticType</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a7cf657e78a5184a927d51c2898910346" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numBaseCases</definition>
+        <argsstring></argsstring>
+        <name>numBaseCases</name>
+        <briefdescription>
+<para>The number of times a base case was calculated. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="70" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ae3cc7436bacc3143d78bb743c7b4aa85" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numPrunes</definition>
+        <argsstring></argsstring>
+        <name>numPrunes</name>
+        <briefdescription>
+<para>The number of prunes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="64" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1aed0c4e2e94b8eba03a7a48bbd219a07c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numScores</definition>
+        <argsstring></argsstring>
+        <name>numScores</name>
+        <briefdescription>
+<para>The number of times a node was scored. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1aaeb34a49eebebc3a8eabcf1ec151cf69" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numVisited</definition>
+        <argsstring></argsstring>
+        <name>numVisited</name>
+        <briefdescription>
+<para>The number of visited node combinations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="66" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a4b32da53facc7d5c2ddf39b9d7dcf166" prot="private" static="no" mutable="no">
+        <type>RuleType &amp;</type>
+        <definition>RuleType&amp; rule</definition>
+        <argsstring></argsstring>
+        <name>rule</name>
+        <briefdescription>
+<para>The rule type to use. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ac7c6a15e56eed961e911ae44c7dff340" prot="private" static="no" mutable="no">
+        <type>RuleType::TraversalInfoType</type>
+        <definition>RuleType::TraversalInfoType traversalInfo</definition>
+        <argsstring></argsstring>
+        <name>traversalInfo</name>
+        <briefdescription>
+<para>Traversal information, held in the class so that it isn&apos;t continually being reallocated. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1abd4227fd4d7e7f3e1090233443cc265e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DualTreeTraverser</definition>
+        <argsstring>(RuleType &amp;rule)</argsstring>
+        <name>DualTreeTraverser</name>
+        <param>
+          <type>RuleType &amp;</type>
+          <declname>rule</declname>
+        </param>
+        <briefdescription>
+<para>Instantiate the given dual-tree traverser with the given rule set. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="31" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1afc2a1471e0354570c99c25473d32433e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumBaseCases</definition>
+        <argsstring>() const</argsstring>
+        <name>NumBaseCases</name>
+        <briefdescription>
+<para>Get the number of times a base case was computed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="55" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="55" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a56b8f525584ea0bf262fa6e413fe3672" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumBaseCases</definition>
+        <argsstring>()</argsstring>
+        <name>NumBaseCases</name>
+        <briefdescription>
+<para>Modify the number of times a base case was computed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="57" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="57" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumPrunes</definition>
+        <argsstring>() const</argsstring>
+        <name>NumPrunes</name>
+        <briefdescription>
+<para>Get the number of pruned nodes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="40" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1adf887190e9d9024ff244503e4aaf0732" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumPrunes</definition>
+        <argsstring>()</argsstring>
+        <name>NumPrunes</name>
+        <briefdescription>
+<para>Modify the number of pruned nodes (i.e. to reset it). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a9adf9744b1b9b4d74e0da6570010e63e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumScores</definition>
+        <argsstring>() const</argsstring>
+        <name>NumScores</name>
+        <briefdescription>
+<para>Get the number of times a node was scored. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a3c4c3ca7affdd40cc224370b87417125" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumScores</definition>
+        <argsstring>()</argsstring>
+        <name>NumScores</name>
+        <briefdescription>
+<para>Modify the number of times a node was scored. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a6a5a81524ab8e6506495bdfb2f42fb2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumVisited</definition>
+        <argsstring>() const</argsstring>
+        <name>NumVisited</name>
+        <briefdescription>
+<para>Get the number of visited node combinations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1abeccb3bfbdc9239858b54e186cd3b37e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumVistied</definition>
+        <argsstring>()</argsstring>
+        <name>NumVistied</name>
+        <briefdescription>
+<para>Modify the number of visited node combinations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="47" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ab4a6e08644fedca8d9a2cf0e7a2a237c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Traverse</definition>
+        <argsstring>(Octree &amp;queryNode, Octree &amp;referenceNode)</argsstring>
+        <name>Traverse</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref> &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref> &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Traverse the two trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>This does not reset the statistics of the traversals (it just adds to them). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="37" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A dual-tree traverser; see dual_tree_traverser.hpp. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp" bodystart="25" bodyend="75"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1abd4227fd4d7e7f3e1090233443cc265e" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>DualTreeTraverser</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a7cf657e78a5184a927d51c2898910346" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>numBaseCases</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1afc2a1471e0354570c99c25473d32433e" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumBaseCases</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a56b8f525584ea0bf262fa6e413fe3672" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumBaseCases</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ae3cc7436bacc3143d78bb743c7b4aa85" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>numPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1adf887190e9d9024ff244503e4aaf0732" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1aed0c4e2e94b8eba03a7a48bbd219a07c" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>numScores</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a9adf9744b1b9b4d74e0da6570010e63e" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumScores</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a3c4c3ca7affdd40cc224370b87417125" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumScores</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a6a5a81524ab8e6506495bdfb2f42fb2f" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumVisited</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1aaeb34a49eebebc3a8eabcf1ec151cf69" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>numVisited</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1abeccb3bfbdc9239858b54e186cd3b37e" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>NumVistied</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1a4b32da53facc7d5c2ddf39b9d7dcf166" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>rule</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ac7c6a15e56eed961e911ae44c7dff340" prot="private" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>traversalInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_1ab4a6e08644fedca8d9a2cf0e7a2a237c" prot="public" virt="non-virtual"><scope>mlpack::tree::Octree::DualTreeTraverser</scope><name>Traverse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1svm" kind="namespace" language="C++">
+    <compoundname>mlpack::svm</compoundname>
+    <innerclass refid="classmlpack_1_1svm_1_1LinearSVM" prot="public">mlpack::svm::LinearSVM</innerclass>
+    <innerclass refid="classmlpack_1_1svm_1_1LinearSVMFunction" prot="public">mlpack::svm::LinearSVMFunction</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

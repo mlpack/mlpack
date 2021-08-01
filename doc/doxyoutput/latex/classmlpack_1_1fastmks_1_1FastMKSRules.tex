@@ -1,0 +1,308 @@
+\section{Fast\+M\+K\+S\+Rules$<$ Kernel\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1fastmks_1_1FastMKSRules}\index{Fast\+M\+K\+S\+Rules$<$ Kernel\+Type, Tree\+Type $>$@{Fast\+M\+K\+S\+Rules$<$ Kernel\+Type, Tree\+Type $>$}}
+
+
+The \doxyref{Fast\+M\+K\+S\+Rules}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules} class is a template helper class used by \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} class when performing exact max-\/kernel search.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ \textbf{ Traversal\+Info\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Fast\+M\+K\+S\+Rules} (const typename Tree\+Type\+::\+Mat \&reference\+Set, const typename Tree\+Type\+::\+Mat \&query\+Set, const size\+\_\+t k, Kernel\+Type \&kernel)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Fast\+M\+K\+S\+Rules}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules} object. \end{DoxyCompactList}\item 
+double \textbf{ Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\begin{DoxyCompactList}\small\item\em Compute the base case (kernel value) between two points. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times \doxyref{Base\+Case()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_abac50f780bb5e1bc12dd0d16d850cacc} was called. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times \doxyref{Base\+Case()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_abac50f780bb5e1bc12dd0d16d850cacc} was called. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Results} (arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&products)
+\begin{DoxyCompactList}\small\item\em Store the list of candidates for each query point in the given matrices. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Minimum\+Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum number of base cases we need to perform to have acceptable results. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score) const
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Scores} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} was called. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} was called. \end{DoxyCompactList}\item 
+const \textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} () const
+\item 
+\textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Kernel\+Type, typename Tree\+Type$>$\newline
+class mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules$<$ Kernel\+Type, Tree\+Type $>$}
+
+The \doxyref{Fast\+M\+K\+S\+Rules}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules} class is a template helper class used by \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} class when performing exact max-\/kernel search. 
+
+For each point in the query dataset, it keeps track of the k best candidates in the reference dataset.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Kernel\+Type} & Type of kernel to run \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} with. \\
+\hline
+{\em Tree\+Type} & Type of tree to run \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} with; it must satisfy the Tree\+Type policy A\+PI. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 34 of file fastmks\+\_\+rules.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_ab5f079db10d0a6813eefeb1115e894cb}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Traversal\+Info\+Type@{Traversal\+Info\+Type}}
+\index{Traversal\+Info\+Type@{Traversal\+Info\+Type}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Traversal\+Info\+Type}
+{\footnotesize\ttfamily typedef \textbf{ tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ \textbf{ Traversal\+Info\+Type}}
+
+
+
+Definition at line 122 of file fastmks\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_aef348931ec8b852e6bdfd93ae99f45fe}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Fast\+M\+K\+S\+Rules@{Fast\+M\+K\+S\+Rules}}
+\index{Fast\+M\+K\+S\+Rules@{Fast\+M\+K\+S\+Rules}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Fast\+M\+K\+S\+Rules()}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Rules} (\begin{DoxyParamCaption}\item[{const typename Tree\+Type\+::\+Mat \&}]{reference\+Set,  }\item[{const typename Tree\+Type\+::\+Mat \&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{Kernel\+Type \&}]{kernel }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Fast\+M\+K\+S\+Rules}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules} object. 
+
+This is usually done from within the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} class at search time.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em query\+Set} & Set of query data. \\
+\hline
+{\em k} & Number of candidates to search for. \\
+\hline
+{\em kernel} & Kernel to run \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} with. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_abac50f780bb5e1bc12dd0d16d850cacc}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Base\+Case()}
+{\footnotesize\ttfamily double Base\+Case (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{const size\+\_\+t}]{reference\+Index }\end{DoxyParamCaption})}
+
+
+
+Compute the base case (kernel value) between two points. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a3f4bd5d0aa64ea090796725f7755287d}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times \doxyref{Base\+Case()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_abac50f780bb5e1bc12dd0d16d850cacc} was called. 
+
+
+
+Definition at line 113 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_ab93e60b3671ebddbe95a890f1e1b2768}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times \doxyref{Base\+Case()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_abac50f780bb5e1bc12dd0d16d850cacc} was called. 
+
+
+
+Definition at line 115 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_aa6f7caaccb12c9c5000c45860cbf546b}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Get\+Results@{Get\+Results}}
+\index{Get\+Results@{Get\+Results}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Get\+Results()}
+{\footnotesize\ttfamily void Get\+Results (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices,  }\item[{arma\+::mat \&}]{products }\end{DoxyParamCaption})}
+
+
+
+Store the list of candidates for each query point in the given matrices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em indices} & Matrix storing lists of candidate for each query point. \\
+\hline
+{\em products} & Matrix storing kernel value for each candidate. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a469f61784f9cce8f2574c23823405768}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Minimum\+Base\+Cases@{Minimum\+Base\+Cases}}
+\index{Minimum\+Base\+Cases@{Minimum\+Base\+Cases}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Minimum\+Base\+Cases()}
+{\footnotesize\ttfamily size\+\_\+t Minimum\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the minimum number of base cases we need to perform to have acceptable results. 
+
+
+
+Definition at line 129 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_ae0ad46f30e80aadc5bc476d46886540f}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption}) const}
+
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that a node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} (or \doxyref{Rescore()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_ae0ad46f30e80aadc5bc476d46886540f}). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a536e5a7cbce35b9be7443775d32e11f5}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption}) const}
+
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that a node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to be recursed into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to be recursed into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} (or \doxyref{Rescore()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_ae0ad46f30e80aadc5bc476d46886540f}). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate to be recursed into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a05b142945ef94221b628a75961f48b02}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to be recursed into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a4d1e40c0bf406280a237ca1b487e3c62}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} was called. 
+
+
+
+Definition at line 118 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a8c3486626c1d3c0a10cdb27a8faa198f}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times \doxyref{Score()}{p.}{classmlpack_1_1fastmks_1_1FastMKSRules_a53d373b7aeee359b0e686f823c602b1c} was called. 
+
+
+
+Definition at line 120 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_ab5c6f4ae7c3b71b808403a7b7454f26f}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 124 of file fastmks\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSRules_a4027bb90e756a4520d55978459c7f83e}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 125 of file fastmks\+\_\+rules.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/fastmks/\textbf{ fastmks\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

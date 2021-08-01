@@ -1,0 +1,145 @@
+.TH "FastMKSStat" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+FastMKSStat \- The statistic used in trees with \fBFastMKS\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFastMKSStat\fP ()"
+.br
+.RI "Default initialization\&. "
+.ti -1c
+.RI "template<typename TreeType > \fBFastMKSStat\fP (const TreeType &node)"
+.br
+.RI "Initialize this statistic for the given tree node\&. "
+.ti -1c
+.RI "double \fBBound\fP () const"
+.br
+.RI "Get the bound\&. "
+.ti -1c
+.RI "double & \fBBound\fP ()"
+.br
+.RI "Modify the bound\&. "
+.ti -1c
+.RI "double \fBLastKernel\fP () const"
+.br
+.RI "Get the last kernel evaluation\&. "
+.ti -1c
+.RI "double & \fBLastKernel\fP ()"
+.br
+.RI "Modify the last kernel evaluation\&. "
+.ti -1c
+.RI "void * \fBLastKernelNode\fP () const"
+.br
+.RI "Get the address of the node corresponding to the last distance evaluation\&. "
+.ti -1c
+.RI "void *& \fBLastKernelNode\fP ()"
+.br
+.RI "Modify the address of the node corresponding to the last distance evaluation\&. "
+.ti -1c
+.RI "double \fBSelfKernel\fP () const"
+.br
+.RI "Get the self-kernel\&. "
+.ti -1c
+.RI "double & \fBSelfKernel\fP ()"
+.br
+.RI "Modify the self-kernel\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the statistic\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The statistic used in trees with \fBFastMKS\fP\&. 
+
+This stores both the bound and the self-kernels for each node in the tree\&. 
+.PP
+Definition at line 25 of file fastmks_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBFastMKSStat\fP ()\fC [inline]\fP"
+
+.PP
+Default initialization\&. 
+.PP
+Definition at line 31 of file fastmks_stat\&.hpp\&.
+.SS "\fBFastMKSStat\fP (const TreeType & node)\fC [inline]\fP"
+
+.PP
+Initialize this statistic for the given tree node\&. The TreeType's metric better be IPMetric with some kernel type (that is, Metric()\&.Kernel() must exist)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP Node that this statistic is built for\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file fastmks_stat\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double Bound () const\fC [inline]\fP"
+
+.PP
+Get the bound\&. 
+.PP
+Definition at line 86 of file fastmks_stat\&.hpp\&.
+.SS "double& Bound ()\fC [inline]\fP"
+
+.PP
+Modify the bound\&. 
+.PP
+Definition at line 88 of file fastmks_stat\&.hpp\&.
+.SS "double LastKernel () const\fC [inline]\fP"
+
+.PP
+Get the last kernel evaluation\&. 
+.PP
+Definition at line 91 of file fastmks_stat\&.hpp\&.
+.SS "double& LastKernel ()\fC [inline]\fP"
+
+.PP
+Modify the last kernel evaluation\&. 
+.PP
+Definition at line 93 of file fastmks_stat\&.hpp\&.
+.SS "void* LastKernelNode () const\fC [inline]\fP"
+
+.PP
+Get the address of the node corresponding to the last distance evaluation\&. 
+.PP
+Definition at line 96 of file fastmks_stat\&.hpp\&.
+.SS "void*& LastKernelNode ()\fC [inline]\fP"
+
+.PP
+Modify the address of the node corresponding to the last distance evaluation\&. 
+.PP
+Definition at line 99 of file fastmks_stat\&.hpp\&.
+.SS "double SelfKernel () const\fC [inline]\fP"
+
+.PP
+Get the self-kernel\&. 
+.PP
+Definition at line 81 of file fastmks_stat\&.hpp\&.
+.SS "double& SelfKernel ()\fC [inline]\fP"
+
+.PP
+Modify the self-kernel\&. 
+.PP
+Definition at line 83 of file fastmks_stat\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the statistic\&. 
+.PP
+Definition at line 103 of file fastmks_stat\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

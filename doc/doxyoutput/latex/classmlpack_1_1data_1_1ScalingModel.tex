@@ -1,0 +1,252 @@
+\section{Scaling\+Model Class Reference}
+\label{classmlpack_1_1data_1_1ScalingModel}\index{Scaling\+Model@{Scaling\+Model}}
+
+
+The model to save to disk.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Scaler\+Types} \{ \newline
+\textbf{ S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER}, 
+\newline
+\textbf{ M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER}, 
+\newline
+\textbf{ M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}, 
+\newline
+\textbf{ M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER}, 
+\newline
+\textbf{ P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}, 
+\newline
+\textbf{ Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Scaling\+Model} (const int minvalue=0, const int maxvalue=1, double epsilonvalue=0.\+00005)
+\begin{DoxyCompactList}\small\item\em Create an object. \end{DoxyCompactList}\item 
+\textbf{ Scaling\+Model} (const \textbf{ Scaling\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ Scaling\+Model} (\textbf{ Scaling\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Scaling\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean up memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Fit} (const Mat\+Type \&input)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Inverse\+Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\item 
+\textbf{ Scaling\+Model} \& \textbf{ operator=} (const \textbf{ Scaling\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ Scaling\+Model} \& \textbf{ operator=} (\textbf{ Scaling\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Scaler\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the Scaler type. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Scaler\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the Scaler type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Transform to scale features. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The model to save to disk. 
+
+Definition at line 29 of file scaling\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61a}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaler\+Types@{Scaler\+Types}}
+\index{Scaler\+Types@{Scaler\+Types}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaler\+Types}
+{\footnotesize\ttfamily enum \textbf{ Scaler\+Types}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER@{S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER@{S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aaf3958251d0a323f9c7e7be825f45fea3}} 
+S\+T\+A\+N\+D\+A\+R\+D\+\_\+\+S\+C\+A\+L\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER@{M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER@{M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aacd057d65724388f7000841c20a5117e7}} 
+M\+I\+N\+\_\+\+M\+A\+X\+\_\+\+S\+C\+A\+L\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aa7e47421bd07d4c338e4b18ea2fc2fbb1}} 
+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER@{M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER@{M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aa13eb221292a3f6bd89d337a1d442ba74}} 
+M\+A\+X\+\_\+\+A\+B\+S\+\_\+\+S\+C\+A\+L\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG@{P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG@{P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aa5a4a72fe18a74ab2c5d39c4708d7856d}} 
+P\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG@{Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG@{Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG}}}\mbox{\label{classmlpack_1_1data_1_1ScalingModel_abd1f5884bbfcd36c9a457c486948e61aadd962d999e13dfa387f694312a861884}} 
+Z\+C\+A\+\_\+\+W\+H\+I\+T\+E\+N\+I\+NG&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 32 of file scaling\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a319c16d01f9e898f2f73be16579d5a37}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaling\+Model@{Scaling\+Model}}
+\index{Scaling\+Model@{Scaling\+Model}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaling\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Scaling\+Model} (\begin{DoxyParamCaption}\item[{const int}]{minvalue = {\ttfamily 0},  }\item[{const int}]{maxvalue = {\ttfamily 1},  }\item[{double}]{epsilonvalue = {\ttfamily 0.00005} }\end{DoxyParamCaption})}
+
+
+
+Create an object. 
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a2d8ba33a483cddaa20ceae51d8dda9f6}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaling\+Model@{Scaling\+Model}}
+\index{Scaling\+Model@{Scaling\+Model}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaling\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Scaling\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ Scaling\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_ae2fb6662a2bc9e8bb9d840fa07fe8b99}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaling\+Model@{Scaling\+Model}}
+\index{Scaling\+Model@{Scaling\+Model}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaling\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Scaling\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ Scaling\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a9c9524e53b7e2f96b86949f8043456cf}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!````~Scaling\+Model@{$\sim$\+Scaling\+Model}}
+\index{````~Scaling\+Model@{$\sim$\+Scaling\+Model}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{$\sim$\+Scaling\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ Scaling\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean up memory. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a0b68c1a39a21e56e10f5b9250b056244}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Fit@{Fit}}
+\index{Fit@{Fit}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Fit()}
+{\footnotesize\ttfamily void Fit (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input }\end{DoxyParamCaption})}
+
+
+
+Referenced by Scaling\+Model\+::\+Scaler\+Type().
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_afb0e67c6fbf5a527f63469bbbf07066c}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Inverse\+Transform@{Inverse\+Transform}}
+\index{Inverse\+Transform@{Inverse\+Transform}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Inverse\+Transform()}
+{\footnotesize\ttfamily void Inverse\+Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Referenced by Scaling\+Model\+::\+Scaler\+Type().
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a11764f089157e2faaa25cba55edca715}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Scaling\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Scaling\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy assignment operator. 
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a2407be90e6b717d733f6995b552b1479}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Scaling\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Scaling\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move assignment operator. 
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a090514bf9e1175f882e9ba0b048f066d}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaler\+Type@{Scaler\+Type}}
+\index{Scaler\+Type@{Scaler\+Type}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaler\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Scaler\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Scaler type. 
+
+
+
+Definition at line 75 of file scaling\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a206c74eb6072e7958c36313f5d67fa4f}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Scaler\+Type@{Scaler\+Type}}
+\index{Scaler\+Type@{Scaler\+Type}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Scaler\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Scaler\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the Scaler type. 
+
+
+
+Definition at line 77 of file scaling\+\_\+model.\+hpp.
+
+
+
+References Scaling\+Model\+::\+Fit(), Scaling\+Model\+::\+Inverse\+Transform(), and Scaling\+Model\+::\+Transform().
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the model. 
+
+
+
+Definition at line 93 of file scaling\+\_\+model.\+hpp.
+
+
+
+References C\+E\+R\+E\+A\+L\+\_\+\+P\+O\+I\+N\+T\+ER.
+
+\mbox{\label{classmlpack_1_1data_1_1ScalingModel_a7bc470a1e097f5b0aaf2396691432b3f}} 
+\index{mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}!Transform@{Transform}}
+\index{Transform@{Transform}!mlpack\+::data\+::\+Scaling\+Model@{mlpack\+::data\+::\+Scaling\+Model}}
+\subsubsection{Transform()}
+{\footnotesize\ttfamily void Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Transform to scale features. 
+
+
+
+Referenced by Scaling\+Model\+::\+Scaler\+Type().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/preprocess/\textbf{ scaling\+\_\+model.\+hpp}\end{DoxyCompactItemize}

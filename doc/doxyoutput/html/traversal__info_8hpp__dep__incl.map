@@ -1,0 +1,27 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" name="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp">
+<area shape="rect" id="node2" href="$dtb__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/emst/dtb_rules.hpp" alt="" coords="118,117,269,173"/>
+<area shape="rect" id="node3" href="$fastmks__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/fastmks/fastmks_rules.hpp" alt="" coords="293,117,477,173"/>
+<area shape="rect" id="node4" href="$kde__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/kde/kde_rules.hpp" alt="" coords="502,117,653,173"/>
+<area shape="rect" id="node5" href="$dual__tree__kmeans__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/kmeans/dual_tree_kmeans\l_rules.hpp" alt="" coords="677,109,859,180"/>
+<area shape="rect" id="node6" href="$neighbor__search__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/neighbor_search/neighbor\l_search_rules.hpp" alt="" coords="883,109,1058,180"/>
+<area shape="rect" id="node25" href="$range__search__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/range_search/range_search\l_rules.hpp" alt="" coords="1083,109,1269,180"/>
+<area shape="rect" id="node26" href="$ra__search__rules_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/rann/ra_search_rules.hpp" alt="" coords="1294,117,1466,173"/>
+<area shape="rect" id="node7" href="$neighbor__search_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/neighbor_search/neighbor\l_search.hpp" alt="" coords="883,228,1058,299"/>
+<area shape="rect" id="node8" href="$cf_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/cf.hpp" alt="" coords="293,465,443,521"/>
+<area shape="rect" id="node16" href="$cosine__search_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/neighbor_search_policies\l/cosine_search.hpp" alt="" coords="235,347,421,417"/>
+<area shape="rect" id="node17" href="$lmetric__search_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/neighbor_search_policies\l/lmetric_search.hpp" alt="" coords="445,347,632,417"/>
+<area shape="rect" id="node18" href="$pearson__search_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/neighbor_search_policies\l/pearson_search.hpp" alt="" coords="656,347,843,417"/>
+<area shape="rect" id="node19" href="$dual__tree__kmeans_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/kmeans/dual_tree_kmeans.hpp" alt="" coords="867,354,1074,410"/>
+<area shape="rect" id="node20" href="$constraints_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/lmnn/constraints.hpp" alt="" coords="1098,354,1249,410"/>
+<area shape="rect" id="node23" href="$methods_2neighbor__search_2typedef_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/neighbor_search/typedef.hpp" alt="" coords="1273,354,1466,410"/>
+<area shape="rect" id="node24" href="$ns__model_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/neighbor_search/ns_model.hpp" alt="" coords="1490,354,1697,410"/>
+<area shape="rect" id="node9" href="$bias__svd_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/bias_svd/bias_svd.hpp" alt="" coords="14,577,173,633"/>
+<area shape="rect" id="node11" href="$cf__model_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/cf_model.hpp" alt="" coords="197,577,347,633"/>
+<area shape="rect" id="node12" href="$regularized__svd_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/regularized_svd/regularized\l_svd.hpp" alt="" coords="372,569,556,640"/>
+<area shape="rect" id="node14" href="$svdplusplus_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/svdplusplus/svdplusplus.hpp" alt="" coords="581,577,774,633"/>
+<area shape="rect" id="node10" href="$bias__svd__method_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/decomposition_policies\l/bias_svd_method.hpp" alt="" coords="5,688,181,759"/>
+<area shape="rect" id="node13" href="$regularized__svd__method_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/decomposition_policies\l/regularized_svd_method.hpp" alt="" coords="368,688,560,759"/>
+<area shape="rect" id="node15" href="$svdplusplus__method_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/cf/decomposition_policies\l/svdplusplus_method.hpp" alt="" coords="589,688,765,759"/>
+<area shape="rect" id="node21" href="$lmnn__function_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/lmnn/lmnn_function.hpp" alt="" coords="1091,465,1255,521"/>
+<area shape="rect" id="node22" href="$lmnn_8hpp.html" title="/home/aakash/mlpack\l/src/mlpack/methods\l/lmnn/lmnn.hpp" alt="" coords="1098,577,1249,633"/>
+</map>

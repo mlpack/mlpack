@@ -1,0 +1,66 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/metrics/lmetric.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/metrics/lmetric.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBLMetric< TPower, TTakeRoot >\fP"
+.br
+.RI "The L_p metric for arbitrary integer p, with an option to take the root\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::metric\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef LMetric< INT_MAX, false > \fBChebyshevDistance\fP"
+.br
+.RI "The L-infinity distance\&. "
+.ti -1c
+.RI "typedef LMetric< 2, true > \fBEuclideanDistance\fP"
+.br
+.RI "The Euclidean (L2) distance\&. "
+.ti -1c
+.RI "typedef LMetric< 1, false > \fBManhattanDistance\fP"
+.br
+.RI "The Manhattan (L1) distance\&. "
+.ti -1c
+.RI "typedef LMetric< 2, false > \fBSquaredEuclideanDistance\fP"
+.br
+.RI "The squared Euclidean (L2) distance\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Generalized L-metric, allowing both squared distances to be returned as well as non-squared distances\&. The squared distances are faster to compute\&.
+.PP
+This also gives several convenience typedefs for commonly used L-metrics\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBlmetric\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

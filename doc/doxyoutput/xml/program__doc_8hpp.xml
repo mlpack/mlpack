@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="program__doc_8hpp" kind="file" language="C++">
+    <compoundname>program_doc.hpp</compoundname>
+    <includedby refid="binding__details_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp</includedby>
+    <includedby refid="io_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/util/io.hpp</includedby>
+    <invincdepgraph>
+      <node id="20949">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="20912">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="20911">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="20941">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="20942" relation="include">
+        </childnode>
+        <childnode refid="20943" relation="include">
+        </childnode>
+      </node>
+      <node id="20938">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="20918">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="20913">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="20903">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp</label>
+        <link refid="program__doc_8hpp"/>
+        <childnode refid="20904" relation="include">
+        </childnode>
+        <childnode refid="20905" relation="include">
+        </childnode>
+      </node>
+      <node id="20928">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="20929" relation="include">
+        </childnode>
+        <childnode refid="20930" relation="include">
+        </childnode>
+        <childnode refid="20934" relation="include">
+        </childnode>
+        <childnode refid="20935" relation="include">
+        </childnode>
+        <childnode refid="20931" relation="include">
+        </childnode>
+        <childnode refid="20932" relation="include">
+        </childnode>
+        <childnode refid="20933" relation="include">
+        </childnode>
+        <childnode refid="20936" relation="include">
+        </childnode>
+      </node>
+      <node id="20906">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="20907" relation="include">
+        </childnode>
+        <childnode refid="20912" relation="include">
+        </childnode>
+        <childnode refid="20913" relation="include">
+        </childnode>
+        <childnode refid="20914" relation="include">
+        </childnode>
+        <childnode refid="20915" relation="include">
+        </childnode>
+        <childnode refid="20916" relation="include">
+        </childnode>
+        <childnode refid="20917" relation="include">
+        </childnode>
+        <childnode refid="20918" relation="include">
+        </childnode>
+        <childnode refid="20919" relation="include">
+        </childnode>
+        <childnode refid="20920" relation="include">
+        </childnode>
+        <childnode refid="20921" relation="include">
+        </childnode>
+        <childnode refid="20922" relation="include">
+        </childnode>
+        <childnode refid="20923" relation="include">
+        </childnode>
+        <childnode refid="20925" relation="include">
+        </childnode>
+        <childnode refid="20926" relation="include">
+        </childnode>
+        <childnode refid="20927" relation="include">
+        </childnode>
+        <childnode refid="20934" relation="include">
+        </childnode>
+        <childnode refid="20937" relation="include">
+        </childnode>
+        <childnode refid="20938" relation="include">
+        </childnode>
+        <childnode refid="20939" relation="include">
+        </childnode>
+        <childnode refid="20940" relation="include">
+        </childnode>
+        <childnode refid="20944" relation="include">
+        </childnode>
+        <childnode refid="20945" relation="include">
+        </childnode>
+        <childnode refid="20946" relation="include">
+        </childnode>
+        <childnode refid="20947" relation="include">
+        </childnode>
+        <childnode refid="20948" relation="include">
+        </childnode>
+        <childnode refid="20949" relation="include">
+        </childnode>
+        <childnode refid="20950" relation="include">
+        </childnode>
+        <childnode refid="20951" relation="include">
+        </childnode>
+      </node>
+      <node id="20921">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="20906" relation="include">
+        </childnode>
+      </node>
+      <node id="20927">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="20928" relation="include">
+        </childnode>
+      </node>
+      <node id="20946">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="20942">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="20937">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="20935">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="20931">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="20914">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="20904">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp</label>
+        <link refid="binding__details_8hpp"/>
+        <childnode refid="20905" relation="include">
+        </childnode>
+      </node>
+      <node id="20939">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="20948">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="20924">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="20911" relation="include">
+        </childnode>
+      </node>
+      <node id="20943">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="20908">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="20909" relation="include">
+        </childnode>
+        <childnode refid="20910" relation="include">
+        </childnode>
+      </node>
+      <node id="20920">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="20950">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="20949" relation="include">
+        </childnode>
+      </node>
+      <node id="20916">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="20909">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="20929">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="20951">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="20934">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="20936">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="20944">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="20915">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="20930">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="20926" relation="include">
+        </childnode>
+        <childnode refid="20931" relation="include">
+        </childnode>
+        <childnode refid="20932" relation="include">
+        </childnode>
+        <childnode refid="20933" relation="include">
+        </childnode>
+      </node>
+      <node id="20922">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="20932">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="20917">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="20945">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="20926">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="20925">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="20907">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="20908" relation="include">
+        </childnode>
+        <childnode refid="20909" relation="include">
+        </childnode>
+        <childnode refid="20910" relation="include">
+        </childnode>
+        <childnode refid="20911" relation="include">
+        </childnode>
+      </node>
+      <node id="20933">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="20910">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="20940">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="20941" relation="include">
+        </childnode>
+      </node>
+      <node id="20947">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="20919">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="20905">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="20906" relation="include">
+        </childnode>
+      </node>
+      <node id="20923">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="20924" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1util_1_1Example" prot="public">mlpack::util::Example</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1LongDescription" prot="public">mlpack::util::LongDescription</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1ProgramName" prot="public">mlpack::util::ProgramName</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1SeeAlso" prot="public">mlpack::util::SeeAlso</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1ShortDescription" prot="public">mlpack::util::ShortDescription</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1util">mlpack::util</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Yashwant Singh Parihar </para></simplesect>
+<simplesect kind="author"><para>Matthew Amidon</para></simplesect>
+Implementation of mutiple classes that store information related to a binding. The classes register themselves with IO when constructed.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_UTIL_PROGRAM_DOC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_UTIL_PROGRAM_DOC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">util<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="classmlpack_1_1util_1_1ProgramName" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1util_1_1ProgramName" kindref="compound">ProgramName</ref></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1util_1_1ProgramName_1ae9799839096792e9fe742e17f46a12c6" kindref="member">ProgramName</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>programName);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1util_1_1ShortDescription" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1util_1_1ShortDescription" kindref="compound">ShortDescription</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1util_1_1ShortDescription" kindref="compound">ShortDescription</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>shortDescription);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1util_1_1LongDescription" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1util_1_1LongDescription" kindref="compound">LongDescription</ref></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1util_1_1LongDescription" kindref="compound">LongDescription</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::function&lt;std::string()&gt;&amp;<sp/>longDescription);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1util_1_1Example" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1util_1_1Example" kindref="compound">Example</ref></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1util_1_1Example" kindref="compound">Example</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::function&lt;std::string()&gt;&amp;<sp/>example);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1util_1_1SeeAlso" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1util_1_1SeeAlso" kindref="compound">SeeAlso</ref></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1util_1_1SeeAlso" kindref="compound">SeeAlso</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>description,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>link);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>util</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp"/>
+  </compounddef>
+</doxygen>

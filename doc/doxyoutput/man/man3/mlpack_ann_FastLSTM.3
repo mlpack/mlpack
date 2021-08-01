@@ -1,0 +1,347 @@
+.TH "FastLSTM< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+FastLSTM< InputDataType, OutputDataType > \- An implementation of a faster version of the Fast \fBLSTM\fP network layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef OutputDataType::elem_type \fBElemType\fP"
+.br
+.ti -1c
+.RI "typedef InputDataType::elem_type \fBInputElemType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFastLSTM\fP ()"
+.br
+.RI "Create the Fast \fBLSTM\fP object\&. "
+.ti -1c
+.RI "\fBFastLSTM\fP (const \fBFastLSTM\fP &layer)"
+.br
+.RI "Copy Constructor\&. "
+.ti -1c
+.RI "\fBFastLSTM\fP (\fBFastLSTM\fP &&layer)"
+.br
+.RI "Move Constructor\&. "
+.ti -1c
+.RI "\fBFastLSTM\fP (const size_t inSize, const size_t outSize, const size_t rho=std::numeric_limits< size_t >::max())"
+.br
+.RI "Create the Fast \fBLSTM\fP layer object using the specified parameters\&. "
+.ti -1c
+.RI "template<typename InputType , typename ErrorType , typename GradientType > void \fBBackward\fP (const InputType &input, const ErrorType &gy, GradientType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "template<typename InputType , typename ErrorType , typename GradientType > void \fBGradient\fP (const InputType &input, const ErrorType &error, GradientType &gradient)"
+.br
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.RI "Get the shape of the input\&. "
+.ti -1c
+.RI "size_t \fBInSize\fP () const"
+.br
+.RI "Get the number of input units\&. "
+.ti -1c
+.RI "\fBFastLSTM\fP & \fBoperator=\fP (const \fBFastLSTM\fP &layer)"
+.br
+.RI "Copy assignment operator\&. "
+.ti -1c
+.RI "\fBFastLSTM\fP & \fBoperator=\fP (\fBFastLSTM\fP &&layer)"
+.br
+.RI "Move assignment operator\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "size_t \fBOutSize\fP () const"
+.br
+.RI "Get the number of output units\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.ti -1c
+.RI "void \fBResetCell\fP (const size_t size)"
+.br
+.ti -1c
+.RI "size_t \fBRho\fP () const"
+.br
+.RI "Get the maximum number of steps to backpropagate through time (BPTT)\&. "
+.ti -1c
+.RI "size_t & \fBRho\fP ()"
+.br
+.RI "Modify the maximum number of steps to backpropagate through time (BPTT)\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get the size of the weight matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::FastLSTM< InputDataType, OutputDataType >"
+An implementation of a faster version of the Fast \fBLSTM\fP network layer\&. 
+
+Basically by combining the calculation of the input, forget, output gates and hidden state in a single step\&. The standard formula changes as follows:
+.PP
+\begin{eqnarray} i &=& sigmoid(W \cdot x + W \cdot h + b) \\ f &=& sigmoid(W \cdot x + W \cdot h + b) \\ z &=& tanh(W \cdot x + W \cdot h + b) \\ c &=& f \cdot c + i \cdot z \\ o &=& sigmoid(W \cdot x + W \cdot h + b) \\ h &=& o \cdot tanh(c) \end{eqnarray}.PP
+Note that \fBFastLSTM\fP network layer does not use peephole connections between the cell and gates\&.
+.PP
+Note also that if a \fBFastLSTM\fP layer is desired as the first layer of a neural network, an IdentityLayer should be added to the network as the first layer, and then the \fBFastLSTM\fP layer should be added\&.
+.PP
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@article{Hochreiter1997,
+  author  = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
+  title   = {Long Short-term Memory},
+  journal = {Neural Comput\&.},
+  year    = {1997},
+  url     = {https://www\&.bioinf\&.jku\&.at/publications/older/2604\&.pdf}
+}
+.fi
+.PP
+.PP
+\fBSee also:\fP
+.RS 4
+\fBLSTM\fP for a standard implementation of the \fBLSTM\fP layer\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file fast_lstm\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef OutputDataType::elem_type \fBElemType\fP"
+
+.PP
+Definition at line 71 of file fast_lstm\&.hpp\&.
+.SS "typedef InputDataType::elem_type \fBInputElemType\fP"
+
+.PP
+Definition at line 70 of file fast_lstm\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBFastLSTM\fP ()"
+
+.PP
+Create the Fast \fBLSTM\fP object\&. 
+.SS "\fBFastLSTM\fP (const \fBFastLSTM\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Copy Constructor\&. 
+.SS "\fBFastLSTM\fP (\fBFastLSTM\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Move Constructor\&. 
+.SS "\fBFastLSTM\fP (const size_t inSize, const size_t outSize, const size_t rho = \fCstd::numeric_limits< size_t >::max()\fP)"
+
+.PP
+Create the Fast \fBLSTM\fP layer object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinSize\fP The number of input units\&. 
+.br
+\fIoutSize\fP The number of output units\&. 
+.br
+\fIrho\fP Maximum number of steps to backpropagate through time (BPTT)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const InputType & input, const ErrorType & gy, GradientType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 164 of file fast_lstm\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 166 of file fast_lstm\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "void Gradient (const InputType & input, const ErrorType & error, GradientType & gradient)"
+
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 169 of file fast_lstm\&.hpp\&.
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 171 of file fast_lstm\&.hpp\&.
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Get the shape of the input\&. 
+.PP
+Definition at line 186 of file fast_lstm\&.hpp\&.
+.PP
+References FastLSTM< InputDataType, OutputDataType >::serialize()\&.
+.SS "size_t InSize () const\fC [inline]\fP"
+
+.PP
+Get the number of input units\&. 
+.PP
+Definition at line 174 of file fast_lstm\&.hpp\&.
+.SS "\fBFastLSTM\fP& operator= (const \fBFastLSTM\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Copy assignment operator\&. 
+.SS "\fBFastLSTM\fP& operator= (\fBFastLSTM\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Move assignment operator\&. 
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 159 of file fast_lstm\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 161 of file fast_lstm\&.hpp\&.
+.SS "size_t OutSize () const\fC [inline]\fP"
+
+.PP
+Get the number of output units\&. 
+.PP
+Definition at line 177 of file fast_lstm\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 154 of file fast_lstm\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 156 of file fast_lstm\&.hpp\&.
+.SS "void Reset ()"
+
+.SS "void ResetCell (const size_t size)"
+
+.SS "size_t Rho () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of steps to backpropagate through time (BPTT)\&. 
+.PP
+Definition at line 149 of file fast_lstm\&.hpp\&.
+.SS "size_t& Rho ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of steps to backpropagate through time (BPTT)\&. 
+.PP
+Definition at line 151 of file fast_lstm\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by FastLSTM< InputDataType, OutputDataType >::InputShape()\&.
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the weight matrix\&. 
+.PP
+Definition at line 180 of file fast_lstm\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

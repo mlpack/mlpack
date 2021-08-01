@@ -1,0 +1,119 @@
+\section{Cauchy\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1CauchyKernel}\index{Cauchy\+Kernel@{Cauchy\+Kernel}}
+
+
+The Cauchy kernel.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Cauchy\+Kernel} (double bandwidth=1.\+0)
+\begin{DoxyCompactList}\small\item\em Construct the Cauchy kernel; by default, the bandwidth is 1.\+0. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Evaluation of the Cauchy kernel. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Cauchy kernel. 
+
+Given two vector $ x $, $ y $, and a bandwidth $ \sigma $ (set in the constructor),
+
+\[ K(x, y) = \frac{1}{1 + (\frac{|| x - y ||}{\sigma})^2}. \]
+
+For more details, see the following published paper\+:
+
+
+\begin{DoxyCode}
+@inproceedings\{Basak2008,
+  title=\{A least square kernel machine with box constraints\},
+  author=\{Basak, Jayanta\},
+  booktitle=\{Pattern Recognition, 2008. ICPR 2008. 19th International
+      Conference on\},
+  pages=\{1--4\},
+  year=\{2008\},
+  organization=\{IEEE\}
+\}
+\end{DoxyCode}
+ 
+
+Definition at line 44 of file cauchy\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1CauchyKernel_a928140be61e55757b48e7e02b1719400}} 
+\index{mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}!Cauchy\+Kernel@{Cauchy\+Kernel}}
+\index{Cauchy\+Kernel@{Cauchy\+Kernel}!mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}}
+\subsubsection{Cauchy\+Kernel()}
+{\footnotesize\ttfamily \textbf{ Cauchy\+Kernel} (\begin{DoxyParamCaption}\item[{double}]{bandwidth = {\ttfamily 1.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the Cauchy kernel; by default, the bandwidth is 1.\+0. 
+
+
+
+Definition at line 50 of file cauchy\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1CauchyKernel_a7bc3cfc0ee3750ba84ee4dc7f62994ae}} 
+\index{mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}}
+\subsubsection{Evaluate()}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Evaluation of the Cauchy kernel. 
+
+This could be generalized to use any distance metric, not the Euclidean distance, but for now, the Euclidean distance is used.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (arma\+::vec, arma\+::sp\+\_\+vec). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec, arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b). 
+\end{DoxyReturn}
+
+
+Definition at line 65 of file cauchy\+\_\+kernel.\+hpp.
+
+
+
+References L\+Metric$<$ T\+Power, T\+Take\+Root $>$\+::\+Evaluate().
+
+\mbox{\label{classmlpack_1_1kernel_1_1CauchyKernel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::kernel\+::\+Cauchy\+Kernel@{mlpack\+::kernel\+::\+Cauchy\+Kernel}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the kernel. 
+
+
+
+Definition at line 75 of file cauchy\+\_\+kernel.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/kernels/\textbf{ cauchy\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

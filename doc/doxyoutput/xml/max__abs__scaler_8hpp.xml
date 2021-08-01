@@ -1,0 +1,471 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="max__abs__scaler_8hpp" kind="file" language="C++">
+    <compoundname>max_abs_scaler.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="scaling__model_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</includedby>
+    <incdepgraph>
+      <node id="8737">
+        <label>list</label>
+      </node>
+      <node id="8734">
+        <label>atomic</label>
+      </node>
+      <node id="8686">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp</label>
+        <link refid="max__abs__scaler_8hpp"/>
+        <childnode refid="8687" relation="include">
+        </childnode>
+      </node>
+      <node id="8724">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="8700">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="8736">
+        <label>iomanip</label>
+      </node>
+      <node id="8709">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="8710" relation="include">
+        </childnode>
+        <childnode refid="8712" relation="include">
+        </childnode>
+      </node>
+      <node id="8692">
+        <label>cstdint</label>
+      </node>
+      <node id="8701">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="8708">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="8731">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="8721">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="8688">
+        <label>cmath</label>
+      </node>
+      <node id="8707">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="8696">
+        <label>stdexcept</label>
+      </node>
+      <node id="8716">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="8701" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8702" relation="include">
+        </childnode>
+      </node>
+      <node id="8740">
+        <label>string</label>
+      </node>
+      <node id="8728">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="8729" relation="include">
+        </childnode>
+        <childnode refid="8695" relation="include">
+        </childnode>
+      </node>
+      <node id="8738">
+        <label>map</label>
+      </node>
+      <node id="8690">
+        <label>cfloat</label>
+      </node>
+      <node id="8720">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="8742">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="8704">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="8727">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="8728" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8711" relation="include">
+        </childnode>
+        <childnode refid="8729" relation="include">
+        </childnode>
+      </node>
+      <node id="8717">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="8715">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="8701" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8702" relation="include">
+        </childnode>
+      </node>
+      <node id="8718">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="8701" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8702" relation="include">
+        </childnode>
+      </node>
+      <node id="8706">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="8726">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="8702" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8714" relation="include">
+        </childnode>
+        <childnode refid="8723" relation="include">
+        </childnode>
+      </node>
+      <node id="8730">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="8731" relation="include">
+        </childnode>
+      </node>
+      <node id="8732">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="8687">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="8688" relation="include">
+        </childnode>
+        <childnode refid="8689" relation="include">
+        </childnode>
+        <childnode refid="8690" relation="include">
+        </childnode>
+        <childnode refid="8691" relation="include">
+        </childnode>
+        <childnode refid="8692" relation="include">
+        </childnode>
+        <childnode refid="8693" relation="include">
+        </childnode>
+        <childnode refid="8694" relation="include">
+        </childnode>
+        <childnode refid="8695" relation="include">
+        </childnode>
+        <childnode refid="8696" relation="include">
+        </childnode>
+        <childnode refid="8697" relation="include">
+        </childnode>
+        <childnode refid="8698" relation="include">
+        </childnode>
+        <childnode refid="8699" relation="include">
+        </childnode>
+        <childnode refid="8700" relation="include">
+        </childnode>
+        <childnode refid="8701" relation="include">
+        </childnode>
+        <childnode refid="8702" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8705" relation="include">
+        </childnode>
+        <childnode refid="8706" relation="include">
+        </childnode>
+        <childnode refid="8707" relation="include">
+        </childnode>
+        <childnode refid="8708" relation="include">
+        </childnode>
+        <childnode refid="8709" relation="include">
+        </childnode>
+        <childnode refid="8713" relation="include">
+        </childnode>
+        <childnode refid="8714" relation="include">
+        </childnode>
+        <childnode refid="8715" relation="include">
+        </childnode>
+        <childnode refid="8716" relation="include">
+        </childnode>
+        <childnode refid="8717" relation="include">
+        </childnode>
+        <childnode refid="8718" relation="include">
+        </childnode>
+        <childnode refid="8719" relation="include">
+        </childnode>
+        <childnode refid="8725" relation="include">
+        </childnode>
+        <childnode refid="8726" relation="include">
+        </childnode>
+        <childnode refid="8723" relation="include">
+        </childnode>
+        <childnode refid="8727" relation="include">
+        </childnode>
+        <childnode refid="8730" relation="include">
+        </childnode>
+        <childnode refid="8732" relation="include">
+        </childnode>
+        <childnode refid="8733" relation="include">
+        </childnode>
+        <childnode refid="8742" relation="include">
+        </childnode>
+        <childnode refid="8743" relation="include">
+        </childnode>
+      </node>
+      <node id="8693">
+        <label>cstdio</label>
+      </node>
+      <node id="8697">
+        <label>tuple</label>
+      </node>
+      <node id="8702">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="8719">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="8702" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8706" relation="include">
+        </childnode>
+        <childnode refid="8720" relation="include">
+        </childnode>
+        <childnode refid="8721" relation="include">
+        </childnode>
+        <childnode refid="8722" relation="include">
+        </childnode>
+        <childnode refid="8723" relation="include">
+        </childnode>
+      </node>
+      <node id="8698">
+        <label>utility</label>
+      </node>
+      <node id="8722">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="8713">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="8710">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="8711" relation="include">
+        </childnode>
+      </node>
+      <node id="8733">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="8734" relation="include">
+        </childnode>
+        <childnode refid="8735" relation="include">
+        </childnode>
+        <childnode refid="8736" relation="include">
+        </childnode>
+        <childnode refid="8737" relation="include">
+        </childnode>
+        <childnode refid="8738" relation="include">
+        </childnode>
+        <childnode refid="8739" relation="include">
+        </childnode>
+        <childnode refid="8740" relation="include">
+        </childnode>
+        <childnode refid="8741" relation="include">
+        </childnode>
+      </node>
+      <node id="8711">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="8725">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="8723" relation="include">
+        </childnode>
+        <childnode refid="8719" relation="include">
+        </childnode>
+        <childnode refid="8726" relation="include">
+        </childnode>
+      </node>
+      <node id="8694">
+        <label>cstdlib</label>
+      </node>
+      <node id="8689">
+        <label>cctype</label>
+      </node>
+      <node id="8712">
+        <label>unordered_map</label>
+      </node>
+      <node id="8691">
+        <label>climits</label>
+      </node>
+      <node id="8739">
+        <label>mutex</label>
+      </node>
+      <node id="8735">
+        <label>chrono</label>
+      </node>
+      <node id="8743">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="8741">
+        <label>thread</label>
+      </node>
+      <node id="8729">
+        <label>type_traits</label>
+      </node>
+      <node id="8705">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="8699">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="8723">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="8701" relation="include">
+        </childnode>
+        <childnode refid="8702" relation="include">
+        </childnode>
+        <childnode refid="8703" relation="include">
+        </childnode>
+        <childnode refid="8704" relation="include">
+        </childnode>
+        <childnode refid="8724" relation="include">
+        </childnode>
+      </node>
+      <node id="8695">
+        <label>cstring</label>
+      </node>
+      <node id="8714">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="8703">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8744">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp</label>
+        <link refid="max__abs__scaler_8hpp"/>
+        <childnode refid="8745" relation="include">
+        </childnode>
+      </node>
+      <node id="8745">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1MaxAbsScaler" prot="public">mlpack::data::MaxAbsScaler</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Jeffin Sam</para></simplesect>
+MaxAbsScaler class to scale features.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_MAX_ABS_SCALE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_MAX_ABS_SCALE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1data_1_1MaxAbsScaler" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1MaxAbsScaler" kindref="compound">MaxAbsScaler</ref></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1data_1_1MaxAbsScaler_1a0b68c1a39a21e56e10f5b9250b056244" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1a0b68c1a39a21e56e10f5b9250b056244" kindref="member">Fit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>itemMin<sp/>=<sp/>arma::min(input,<sp/>1);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>itemMax<sp/>=<sp/>arma::max(input,<sp/>1);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>scale<sp/>=<sp/>arma::max(arma::abs(itemMin),<sp/>arma::abs(itemMax));</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handling<sp/>zeros<sp/>in<sp/>scale<sp/>vector.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>scale.for_each([](arma::vec::elem_type&amp;<sp/>val)<sp/>{<sp/>val<sp/>=</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(val<sp/>==<sp/>0)<sp/>?<sp/>1<sp/>:<sp/>val;<sp/>});</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1data_1_1MaxAbsScaler_1a7bc470a1e097f5b0aaf2396691432b3f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1a7bc470a1e097f5b0aaf2396691432b3f" kindref="member">Transform</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input,<sp/>MatType&amp;<sp/>output)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(scale.is_empty())</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Call<sp/>Fit()<sp/>before<sp/>Transform(),<sp/>please&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/>refer<sp/>to<sp/>the<sp/>documentation.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>output.copy_size(input);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>input.each_col()<sp/>/<sp/>scale;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1data_1_1MaxAbsScaler_1afb0e67c6fbf5a527f63469bbbf07066c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1afb0e67c6fbf5a527f63469bbbf07066c" kindref="member">InverseTransform</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input,<sp/>MatType&amp;<sp/>output)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>output.copy_size(input);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>input.each_col()<sp/>%<sp/>scale;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1data_1_1MaxAbsScaler_1ae9ae591f227874f238c38d4cf070c6c8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1ae9ae591f227874f238c38d4cf070c6c8" kindref="member">ItemMin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>itemMin;<sp/>}</highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" kindref="member">ItemMax</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>itemMax;<sp/>}</highlight></codeline>
+<codeline lineno="101" refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5adcafebd2c229793e57b7268c90a0fe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5adcafebd2c229793e57b7268c90a0fe" kindref="member">Scale</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scale;<sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="104" refid="classmlpack_1_1data_1_1MaxAbsScaler_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1MaxAbsScaler_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(itemMin));</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(itemMax));</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(scale));</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Vector<sp/>which<sp/>holds<sp/>minimum<sp/>of<sp/>each<sp/>feature.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>arma::vec<sp/>itemMin;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Vector<sp/>which<sp/>holds<sp/>maximum<sp/>of<sp/>each<sp/>feature.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>arma::vec<sp/>itemMax;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Vector<sp/>which<sp/>is<sp/>used<sp/>to<sp/>scale<sp/>up<sp/>each<sp/>feature.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>arma::vec<sp/>scale;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>MaxAbsScaler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp"/>
+  </compounddef>
+</doxygen>

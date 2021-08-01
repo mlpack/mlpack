@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1util_1_1IsStdVector_3_01std_1_1vector_3_01T_00_01A_01_4_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::util::IsStdVector&lt; std::vector&lt; T, A &gt; &gt;</compoundname>
+    <includes refid="is__std__vector_8hpp" local="no">is_std_vector.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>typename A</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1IsStdVector_3_01std_1_1vector_3_01T_00_01A_01_4_01_4_1a11ddd051208250c32dc4985abcafa86d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/is_std_vector.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/is_std_vector.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Metaprogramming structure for vector detection. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/is_std_vector.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/is_std_vector.hpp" bodystart="27" bodyend="27"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1util_1_1IsStdVector_3_01std_1_1vector_3_01T_00_01A_01_4_01_4_1a11ddd051208250c32dc4985abcafa86d" prot="public" virt="non-virtual"><scope>mlpack::util::IsStdVector&lt; std::vector&lt; T, A &gt; &gt;</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,513 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="fastmks__stat_8hpp" kind="file" language="C++">
+    <compoundname>fastmks_stat.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="tree__traits_8hpp" local="no">mlpack/core/tree/tree_traits.hpp</includes>
+    <includedby refid="fastmks_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp</includedby>
+    <incdepgraph>
+      <node id="48176">
+        <label>list</label>
+      </node>
+      <node id="48173">
+        <label>atomic</label>
+      </node>
+      <node id="48163">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="48139">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="48175">
+        <label>iomanip</label>
+      </node>
+      <node id="48148">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="48149" relation="include">
+        </childnode>
+        <childnode refid="48151" relation="include">
+        </childnode>
+      </node>
+      <node id="48131">
+        <label>cstdint</label>
+      </node>
+      <node id="48140">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="48147">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="48170">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="48160">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="48127">
+        <label>cmath</label>
+      </node>
+      <node id="48146">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="48125">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp</label>
+        <link refid="fastmks__stat_8hpp"/>
+        <childnode refid="48126" relation="include">
+        </childnode>
+        <childnode refid="48183" relation="include">
+        </childnode>
+      </node>
+      <node id="48135">
+        <label>stdexcept</label>
+      </node>
+      <node id="48155">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="48140" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48141" relation="include">
+        </childnode>
+      </node>
+      <node id="48179">
+        <label>string</label>
+      </node>
+      <node id="48167">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="48168" relation="include">
+        </childnode>
+        <childnode refid="48134" relation="include">
+        </childnode>
+      </node>
+      <node id="48177">
+        <label>map</label>
+      </node>
+      <node id="48129">
+        <label>cfloat</label>
+      </node>
+      <node id="48159">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="48181">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="48143">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="48166">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="48167" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48150" relation="include">
+        </childnode>
+        <childnode refid="48168" relation="include">
+        </childnode>
+      </node>
+      <node id="48156">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="48154">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="48140" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48141" relation="include">
+        </childnode>
+      </node>
+      <node id="48157">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="48140" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48141" relation="include">
+        </childnode>
+      </node>
+      <node id="48145">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="48165">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="48141" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48153" relation="include">
+        </childnode>
+        <childnode refid="48162" relation="include">
+        </childnode>
+      </node>
+      <node id="48169">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="48170" relation="include">
+        </childnode>
+      </node>
+      <node id="48171">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="48126">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="48127" relation="include">
+        </childnode>
+        <childnode refid="48128" relation="include">
+        </childnode>
+        <childnode refid="48129" relation="include">
+        </childnode>
+        <childnode refid="48130" relation="include">
+        </childnode>
+        <childnode refid="48131" relation="include">
+        </childnode>
+        <childnode refid="48132" relation="include">
+        </childnode>
+        <childnode refid="48133" relation="include">
+        </childnode>
+        <childnode refid="48134" relation="include">
+        </childnode>
+        <childnode refid="48135" relation="include">
+        </childnode>
+        <childnode refid="48136" relation="include">
+        </childnode>
+        <childnode refid="48137" relation="include">
+        </childnode>
+        <childnode refid="48138" relation="include">
+        </childnode>
+        <childnode refid="48139" relation="include">
+        </childnode>
+        <childnode refid="48140" relation="include">
+        </childnode>
+        <childnode refid="48141" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48144" relation="include">
+        </childnode>
+        <childnode refid="48145" relation="include">
+        </childnode>
+        <childnode refid="48146" relation="include">
+        </childnode>
+        <childnode refid="48147" relation="include">
+        </childnode>
+        <childnode refid="48148" relation="include">
+        </childnode>
+        <childnode refid="48152" relation="include">
+        </childnode>
+        <childnode refid="48153" relation="include">
+        </childnode>
+        <childnode refid="48154" relation="include">
+        </childnode>
+        <childnode refid="48155" relation="include">
+        </childnode>
+        <childnode refid="48156" relation="include">
+        </childnode>
+        <childnode refid="48157" relation="include">
+        </childnode>
+        <childnode refid="48158" relation="include">
+        </childnode>
+        <childnode refid="48164" relation="include">
+        </childnode>
+        <childnode refid="48165" relation="include">
+        </childnode>
+        <childnode refid="48162" relation="include">
+        </childnode>
+        <childnode refid="48166" relation="include">
+        </childnode>
+        <childnode refid="48169" relation="include">
+        </childnode>
+        <childnode refid="48171" relation="include">
+        </childnode>
+        <childnode refid="48172" relation="include">
+        </childnode>
+        <childnode refid="48181" relation="include">
+        </childnode>
+        <childnode refid="48182" relation="include">
+        </childnode>
+      </node>
+      <node id="48132">
+        <label>cstdio</label>
+      </node>
+      <node id="48183">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="48136">
+        <label>tuple</label>
+      </node>
+      <node id="48141">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="48158">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="48141" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48145" relation="include">
+        </childnode>
+        <childnode refid="48159" relation="include">
+        </childnode>
+        <childnode refid="48160" relation="include">
+        </childnode>
+        <childnode refid="48161" relation="include">
+        </childnode>
+        <childnode refid="48162" relation="include">
+        </childnode>
+      </node>
+      <node id="48137">
+        <label>utility</label>
+      </node>
+      <node id="48161">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="48152">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="48149">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="48150" relation="include">
+        </childnode>
+      </node>
+      <node id="48172">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="48173" relation="include">
+        </childnode>
+        <childnode refid="48174" relation="include">
+        </childnode>
+        <childnode refid="48175" relation="include">
+        </childnode>
+        <childnode refid="48176" relation="include">
+        </childnode>
+        <childnode refid="48177" relation="include">
+        </childnode>
+        <childnode refid="48178" relation="include">
+        </childnode>
+        <childnode refid="48179" relation="include">
+        </childnode>
+        <childnode refid="48180" relation="include">
+        </childnode>
+      </node>
+      <node id="48150">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="48164">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="48162" relation="include">
+        </childnode>
+        <childnode refid="48158" relation="include">
+        </childnode>
+        <childnode refid="48165" relation="include">
+        </childnode>
+      </node>
+      <node id="48133">
+        <label>cstdlib</label>
+      </node>
+      <node id="48128">
+        <label>cctype</label>
+      </node>
+      <node id="48151">
+        <label>unordered_map</label>
+      </node>
+      <node id="48130">
+        <label>climits</label>
+      </node>
+      <node id="48178">
+        <label>mutex</label>
+      </node>
+      <node id="48174">
+        <label>chrono</label>
+      </node>
+      <node id="48182">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="48180">
+        <label>thread</label>
+      </node>
+      <node id="48168">
+        <label>type_traits</label>
+      </node>
+      <node id="48144">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="48138">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="48162">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="48140" relation="include">
+        </childnode>
+        <childnode refid="48141" relation="include">
+        </childnode>
+        <childnode refid="48142" relation="include">
+        </childnode>
+        <childnode refid="48143" relation="include">
+        </childnode>
+        <childnode refid="48163" relation="include">
+        </childnode>
+      </node>
+      <node id="48134">
+        <label>cstring</label>
+      </node>
+      <node id="48153">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="48142">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="48186">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</label>
+        <link refid="fastmks__model_8hpp"/>
+      </node>
+      <node id="48184">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp</label>
+        <link refid="fastmks__stat_8hpp"/>
+        <childnode refid="48185" relation="include">
+        </childnode>
+      </node>
+      <node id="48185">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp</label>
+        <link refid="fastmks_8hpp"/>
+        <childnode refid="48186" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1fastmks_1_1FastMKSStat" prot="public">mlpack::fastmks::FastMKSStat</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1fastmks">mlpack::fastmks</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+The statistic used in trees with FastMKS.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_STAT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="tree__traits_8hpp" kindref="compound">mlpack/core/tree/tree_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fastmks<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classmlpack_1_1fastmks_1_1FastMKSStat" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat" kindref="compound">FastMKSStat</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4b735ae05f53c60fdebe6c290948f7a1" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4b735ae05f53c60fdebe6c290948f7a1" kindref="member">FastMKSStat</ref>()<sp/>:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>bound(-DBL_MAX),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>selfKernel(0.0),</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernel(0.0),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernelNode(NULL)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a6ef665db9fa464e43659b7428b6ca7b7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a6ef665db9fa464e43659b7428b6ca7b7" kindref="member">FastMKSStat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType&amp;<sp/>node)<sp/>:</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>bound(-DBL_MAX),</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernel(0.0),</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernelNode(NULL)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>we<sp/>have<sp/>to<sp/>calculate<sp/>the<sp/>centroid?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits&lt;TreeType&gt;::FirstPointIsCentroid</ref>)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>this<sp/>type<sp/>of<sp/>tree<sp/>has<sp/>self-children,<sp/>then<sp/>maybe<sp/>the<sp/>evaluation<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>already<sp/>done.<sp/><sp/>These<sp/>statistics<sp/>are<sp/>built<sp/>bottom-up,<sp/>so<sp/>the<sp/>child<sp/>stat</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>should<sp/>already<sp/>be<sp/>done.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((<ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits&lt;TreeType&gt;::HasSelfChildren</ref>)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(node.NumChildren()<sp/>&gt;<sp/>0)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(node.Point(0)<sp/>==<sp/>node.Child(0).Point(0)))</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>selfKernel<sp/>=<sp/>node.Child(0).Stat().SelfKernel();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>selfKernel<sp/>=<sp/>sqrt(node.Metric().Kernel().Evaluate(</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node.Dataset().col(node.Point(0)),</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node.Dataset().col(node.Point(0))));</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>centroid.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec<sp/>center;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>node.Center(center);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>selfKernel<sp/>=<sp/>sqrt(node.Metric().Kernel().Evaluate(center,<sp/>center));</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4391eb3baa79e9ea32b148a478360926" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a4391eb3baa79e9ea32b148a478360926" kindref="member">SelfKernel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>selfKernel;<sp/>}</highlight></codeline>
+<codeline lineno="83" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a795f26be6663bd4d5a27a6f303035c04" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a795f26be6663bd4d5a27a6f303035c04" kindref="member">SelfKernel</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>selfKernel;<sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1abe1eb75f967ca19571a77a1e90faa0ad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1abe1eb75f967ca19571a77a1e90faa0ad" kindref="member">Bound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a421b6e4a396e0c1057e297e39a7d1b8b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a421b6e4a396e0c1057e297e39a7d1b8b" kindref="member">Bound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a1c098b3cbf382af0167e214f1b1793df" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a1c098b3cbf382af0167e214f1b1793df" kindref="member">LastKernel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lastKernel;<sp/>}</highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1ab4475c8138fb5064f96d8bb5f495c394" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1ab4475c8138fb5064f96d8bb5f495c394" kindref="member">LastKernel</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lastKernel;<sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a9762f381f4cfed4daeab756766174441" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a9762f381f4cfed4daeab756766174441" kindref="member">LastKernelNode</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lastKernelNode;<sp/>}</highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1acafc003034f6b7b4308743647714ca11" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1acafc003034f6b7b4308743647714ca11" kindref="member">LastKernelNode</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lastKernelNode;<sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="103" refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSStat_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(bound));</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(selfKernel));</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Void<sp/>out<sp/>last<sp/>kernel<sp/>information<sp/>on<sp/>load.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(cereal::is_loading&lt;Archive&gt;())</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernel<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lastKernelNode<sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bound;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>selfKernel;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lastKernel;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>lastKernelNode;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>fastmks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp"/>
+  </compounddef>
+</doxygen>

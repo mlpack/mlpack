@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_92fef07ccd725ea5b5efef3c585f82fc" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/kmeans</compoundname>
+    <innerfile refid="dual__tree__kmeans_8hpp">dual_tree_kmeans.hpp</innerfile>
+    <innerfile refid="dual__tree__kmeans__rules_8hpp">dual_tree_kmeans_rules.hpp</innerfile>
+    <innerfile refid="dual__tree__kmeans__statistic_8hpp">dual_tree_kmeans_statistic.hpp</innerfile>
+    <innerfile refid="elkan__kmeans_8hpp">elkan_kmeans.hpp</innerfile>
+    <innerfile refid="hamerly__kmeans_8hpp">hamerly_kmeans.hpp</innerfile>
+    <innerfile refid="kmeans_8hpp">kmeans.hpp</innerfile>
+    <innerfile refid="kmeans__plus__plus__initialization_8hpp">kmeans_plus_plus_initialization.hpp</innerfile>
+    <innerfile refid="max__variance__new__cluster_8hpp">max_variance_new_cluster.hpp</innerfile>
+    <innerfile refid="naive__kmeans_8hpp">naive_kmeans.hpp</innerfile>
+    <innerfile refid="pelleg__moore__kmeans_8hpp">pelleg_moore_kmeans.hpp</innerfile>
+    <innerfile refid="pelleg__moore__kmeans__rules_8hpp">pelleg_moore_kmeans_rules.hpp</innerfile>
+    <innerfile refid="pelleg__moore__kmeans__statistic_8hpp">pelleg_moore_kmeans_statistic.hpp</innerfile>
+    <innerfile refid="random__partition_8hpp">random_partition.hpp</innerfile>
+    <innerfile refid="refined__start_8hpp">refined_start.hpp</innerfile>
+    <innerfile refid="sample__initialization_8hpp">sample_initialization.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/"/>
+  </compounddef>
+</doxygen>

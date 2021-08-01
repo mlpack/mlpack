@@ -1,0 +1,767 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1TfIdfEncodingPolicy" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::TfIdfEncodingPolicy</compoundname>
+    <includes refid="tf__idf__encoding__policy_8hpp" local="no">tf_idf_encoding_policy.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" prot="public" static="no">
+        <name>TfTypes</name>
+        <enumvalue id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497a98ad0e8750ae10ad556ed7a62affb452" prot="public">
+          <name>BINARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc" prot="public">
+          <name>RAW_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497ae4a6b916c2b2d80dbdb92d83b0500d64" prot="public">
+          <name>TERM_FREQUENCY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497add81d4ff18ee485ff5cd1dbb7284c47c" prot="public">
+          <name>SUBLINEAR_TF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enum class used to identify the type of the term frequency statistics. </para>        </briefdescription>
+        <detaileddescription>
+<para>The present implementation supports the following types: BINARY Term frequency equals 1 if the row contains the encoded token and 0 otherwise. RAW_COUNT Term frequency equals the number of times when the encoded token occurs in the row. TERM_FREQUENCY Term frequency equals the number of times when the encoded token occurs in the row divided by the total number of tokens in the row. SUBLINEAR_TF Term frequency equals <formula id="25">$ 1 + log(rawCount), $</formula> where rawCount is equal to the number of times when the encoded token occurs in the row. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="53" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af4db599b1be891b597be24d264bf1288" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; size_t &gt;</type>
+        <definition>std::vector&lt;size_t&gt; linesSizes</definition>
+        <argsstring></argsstring>
+        <name>linesSizes</name>
+        <briefdescription>
+<para>Used to store the number of tokens in each line. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="330" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9f206cc212f104060df665874730293" prot="private" static="no" mutable="no">
+        <type>std::unordered_map&lt; size_t, size_t &gt;</type>
+        <definition>std::unordered_map&lt;size_t, size_t&gt; numContainingStrings</definition>
+        <argsstring></argsstring>
+        <name>numContainingStrings</name>
+        <briefdescription>
+<para>Used to store the number of strings which contain a token depending on the given token. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="328" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ae4181374d37c714f334726c829453ac7" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool smoothIdf</definition>
+        <argsstring></argsstring>
+        <name>smoothIdf</name>
+        <briefdescription>
+<para>Indicates whether the idf scheme is smooth or not. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="334" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="334" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac93a8c075ab89a6980f2d51f71aa7758" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref></type>
+        <definition>TfTypes tfType</definition>
+        <argsstring></argsstring>
+        <name>tfType</name>
+        <briefdescription>
+<para>Type of the term frequency scheme. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="332" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac2675a154a08d775d111b23f2bb1ca1c" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::unordered_map&lt; size_t, size_t &gt; &gt;</type>
+        <definition>std::vector&lt;std::unordered_map&lt;size_t, size_t&gt; &gt; tokensFrequences</definition>
+        <argsstring></argsstring>
+        <name>tokensFrequences</name>
+        <briefdescription>
+<para>Used to store the total number of tokens for each line. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="323" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="323" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TfIdfEncodingPolicy</definition>
+        <argsstring>(const TfTypes tfType=TfTypes::RAW_COUNT, const bool smoothIdf=true)</argsstring>
+        <name>TfIdfEncodingPolicy</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref></type>
+          <declname>tfType</declname>
+          <defval><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc" kindref="member">TfTypes::RAW_COUNT</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>smoothIdf</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Construct this using the term frequency type and the inverse document frequency type. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tfType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the term frequency statistics. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>smoothIdf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Used to indicate whether to use smooth idf or not. If idf is smooth it&apos;s calculated by the following formula: <formula id="26">$ idf(T) = \log \frac{1 + N}{1 + df(T)} + 1, $</formula> where <formula id="27">$ N $</formula> is the total number of strings in the document, <formula id="28">$ T $</formula> is the current encoded token, <formula id="29">$ df(T) $</formula> equals the number of strings which contain the token. If idf isn&apos;t smooth then the following rule applies: <formula id="30">$ idf(T) = \log \frac{N}{df(T)} + 1. $</formula> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="75" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="75" bodyend="79"/>
+        <referencedby refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a65cba07328997659bec80b9879b15a51" compoundref="tf__idf__encoding__policy_8hpp" startline="260" endline="264">TfIdfEncodingPolicy::serialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a03bdaf094410d559836b5359538a0969" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Encode</definition>
+        <argsstring>(MatType &amp;output, const size_t value, const size_t line, const size_t)</argsstring>
+        <name>Encode</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <briefdescription>
+<para>The function performs the TfIdf encoding algorithm i.e. </para>        </briefdescription>
+        <detaileddescription>
+<para>it writes the encoded token to the output. The encoder writes data in the column-major order.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The output matrix type.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results (sp_mat or mat). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The encoded token. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line number at which the encoding is performed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(index) The token index in the line. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="148" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9397eba09af69a9324e459bfda52706" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Encode</definition>
+        <argsstring>(std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;output, const size_t value, const size_t line, const size_t)</argsstring>
+        <name>Encode</name>
+        <param>
+          <type>std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <briefdescription>
+<para>The function performs the TfIdf encoding algorithm i.e. </para>        </briefdescription>
+        <detaileddescription>
+<para>it writes the encoded token to the output. The encoder writes data in the row-major order.</para><para>Overloaded function to accept vector&lt;vector&lt;ElemType&gt;&gt; as the output type.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ElemType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output values.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The encoded token. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line number at which the encoding is performed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(index) The token index in the line. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="180" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9eb9be1df25db8022278d09cc6184e52" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; size_t &gt; &amp;</type>
+        <definition>const std::vector&lt;size_t&gt;&amp; LinesSizes</definition>
+        <argsstring>() const</argsstring>
+        <name>LinesSizes</name>
+        <briefdescription>
+<para>Return the lines sizes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="242" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a0d1ae8522e5b79e9d6948c525978bf21" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; size_t &gt; &amp;</type>
+        <definition>std::vector&lt;size_t&gt;&amp; LinesSizes</definition>
+        <argsstring>()</argsstring>
+        <name>LinesSizes</name>
+        <briefdescription>
+<para>Modify the lines sizes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="244" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a6a30fb7ebe89eff5005693c1494faa9b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::unordered_map&lt; size_t, size_t &gt; &amp;</type>
+        <definition>const std::unordered_map&lt;size_t, size_t&gt;&amp; NumContainingStrings</definition>
+        <argsstring>() const</argsstring>
+        <name>NumContainingStrings</name>
+        <briefdescription>
+<para>Get the number of containing strings depending on the given token. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="230" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="230" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ad17a5b987cd720225c6eb891b5185748" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::unordered_map&lt; size_t, size_t &gt; &amp;</type>
+        <definition>std::unordered_map&lt;size_t, size_t&gt;&amp; NumContainingStrings</definition>
+        <argsstring>()</argsstring>
+        <name>NumContainingStrings</name>
+        <briefdescription>
+<para>Modify the number of containing strings depending on the given token. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="236" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="236" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a306d7db4143a8fc05c5a9ff550362414" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void PreprocessToken</definition>
+        <argsstring>(const size_t line, const size_t, const size_t value)</argsstring>
+        <name>PreprocessToken</name>
+        <param>
+          <type>const size_t</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="202" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Clear the necessary internal variables. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="84" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the class to the given archive. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="260" bodyend="264"/>
+        <references refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497a98ad0e8750ae10ad556ed7a62affb452">TfIdfEncodingPolicy::BINARY</references>
+        <references refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc">TfIdfEncodingPolicy::RAW_COUNT</references>
+        <references refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497add81d4ff18ee485ff5cd1dbb7284c47c">TfIdfEncodingPolicy::SUBLINEAR_TF</references>
+        <references refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497ae4a6b916c2b2d80dbdb92d83b0500d64">TfIdfEncodingPolicy::TERM_FREQUENCY</references>
+        <references refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" compoundref="tf__idf__encoding__policy_8hpp" startline="75" endline="79">TfIdfEncodingPolicy::TfIdfEncodingPolicy</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a888a84e90e38265bf460bacf545ee85c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SmoothIdf</definition>
+        <argsstring>() const</argsstring>
+        <name>SmoothIdf</name>
+        <briefdescription>
+<para>Determine the idf algorithm type (whether it&apos;s smooth or not). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="252" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="252" bodyend="252"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5f69d3b7af4afaacc72d5f6ad6f2f35f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; SmoothIdf</definition>
+        <argsstring>()</argsstring>
+        <name>SmoothIdf</name>
+        <briefdescription>
+<para>Modify the idf algorithm type (whether it&apos;s smooth or not). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="254" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9ae26149291cb921852ffe5abbf4ca15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref></type>
+        <definition>TfTypes TfType</definition>
+        <argsstring>() const</argsstring>
+        <name>TfType</name>
+        <briefdescription>
+<para>Return the term frequency type. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="247" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="247" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1acd741559ad8ff165f251dd4e1cf8ac61" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref> &amp;</type>
+        <definition>TfTypes&amp; TfType</definition>
+        <argsstring>()</argsstring>
+        <name>TfType</name>
+        <briefdescription>
+<para>Modify the term frequency type. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="249" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="249" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1afc6375981a9925ca23df9671fa473fd0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; std::unordered_map&lt; size_t, size_t &gt; &gt; &amp;</type>
+        <definition>const std::vector&lt;std::unordered_map&lt;size_t, size_t&gt; &gt;&amp; TokensFrequences</definition>
+        <argsstring>() const</argsstring>
+        <name>TokensFrequences</name>
+        <briefdescription>
+<para>Return token frequencies. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="222" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="222" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a31e3c3de7dbe3012c83a012bf765a335" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; std::unordered_map&lt; size_t, size_t &gt; &gt; &amp;</type>
+        <definition>std::vector&lt;std::unordered_map&lt;size_t, size_t&gt; &gt;&amp; TokensFrequences</definition>
+        <argsstring>()</argsstring>
+        <name>TokensFrequences</name>
+        <briefdescription>
+<para>Modify token frequencies. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="224" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="224" bodyend="227"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a4e2c846435f9d535401110a83555d2ca" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void InitMatrix</definition>
+        <argsstring>(MatType &amp;output, const size_t datasetSize, const size_t, const size_t dictionarySize)</argsstring>
+        <name>InitMatrix</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>datasetSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dictionarySize</declname>
+        </param>
+        <briefdescription>
+<para>The function initializes the output matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>The encoder writes data in the row-major order.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The output matrix type.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results (sp_mat or mat). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of strings in the input dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(maxNumTokens) The maximum number of tokens in the strings of the input dataset (not used). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dictionarySize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the dictionary. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="104" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a44833b2c5967e5805ddfd5e0abbbd981" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void InitMatrix</definition>
+        <argsstring>(std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;output, const size_t datasetSize, const size_t, const size_t dictionarySize)</argsstring>
+        <name>InitMatrix</name>
+        <param>
+          <type>std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>datasetSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dictionarySize</declname>
+        </param>
+        <briefdescription>
+<para>The function initializes the output matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>The encoder writes data in the row-major order.</para><para>Overloaded function to save the result in vector&lt;vector&lt;ElemType&gt;&gt;.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ElemType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output values.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of strings in the input dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(maxNumTokens) The maximum number of tokens in the strings of the input dataset (not used). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dictionarySize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the dictionary. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="127" bodyend="133"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a872f3a14b34948a4d3fc44e01586c944" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ValueType</type>
+          </param>
+        </templateparamlist>
+        <type>ValueType</type>
+        <definition>ValueType InverseDocumentFrequency</definition>
+        <argsstring>(const size_t totalNumLines, const size_t numOccurrences)</argsstring>
+        <name>InverseDocumentFrequency</name>
+        <param>
+          <type>const size_t</type>
+          <declname>totalNumLines</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numOccurrences</declname>
+        </param>
+        <briefdescription>
+<para>The function calculates the inverse document frequency statistics. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ValueType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the returned value.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>totalNumLines</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The total number of strings in the input dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numOccurrences</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of strings in the input dataset which contain the current token. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="306" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="306" bodyend="319"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5d7ceaf44e2c5287aba9cb5be6c5133f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ValueType</type>
+          </param>
+        </templateparamlist>
+        <type>ValueType</type>
+        <definition>ValueType TermFrequency</definition>
+        <argsstring>(const size_t numOccurrences, const size_t numTokens)</argsstring>
+        <name>TermFrequency</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numOccurrences</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTokens</declname>
+        </param>
+        <briefdescription>
+<para>The function calculates the term frequency statistics. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ValueType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the returned value.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numOccurrences</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of the given token occurrences in the line. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The total number of tokens in the line. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="277" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="277" bodyend="294"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Definition of the <ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy" kindref="compound">TfIdfEncodingPolicy</ref> class. </para>    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy" kindref="compound">TfIdfEncodingPolicy</ref> is used as a helper class for <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref>.</para><para>Tf-idf is a weighting scheme that takes into account the importance of encoded tokens. The tf-idf statistics is equal to term frequency (tf) multiplied by inverse document frequency (idf). The encoder assigns the corresponding tf-idf value to each token. The order in which the tokens are labeled is defined by the dictionary used by the <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> class. The encoder writes data either in the column-major order or in the row-major order depending on the output data type. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp" bodystart="35" bodyend="335"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a03bdaf094410d559836b5359538a0969" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9397eba09af69a9324e459bfda52706" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a4e2c846435f9d535401110a83555d2ca" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>InitMatrix</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a44833b2c5967e5805ddfd5e0abbbd981" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>InitMatrix</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a872f3a14b34948a4d3fc44e01586c944" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>InverseDocumentFrequency</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af4db599b1be891b597be24d264bf1288" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>linesSizes</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9eb9be1df25db8022278d09cc6184e52" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>LinesSizes</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a0d1ae8522e5b79e9d6948c525978bf21" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>LinesSizes</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9f206cc212f104060df665874730293" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>numContainingStrings</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a6a30fb7ebe89eff5005693c1494faa9b" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>NumContainingStrings</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ad17a5b987cd720225c6eb891b5185748" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>NumContainingStrings</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a306d7db4143a8fc05c5a9ff550362414" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>PreprocessToken</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a888a84e90e38265bf460bacf545ee85c" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>SmoothIdf</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5f69d3b7af4afaacc72d5f6ad6f2f35f" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>SmoothIdf</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ae4181374d37c714f334726c829453ac7" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>smoothIdf</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5d7ceaf44e2c5287aba9cb5be6c5133f" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TermFrequency</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TfIdfEncodingPolicy</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9ae26149291cb921852ffe5abbf4ca15" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TfType</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1acd741559ad8ff165f251dd4e1cf8ac61" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TfType</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac93a8c075ab89a6980f2d51f71aa7758" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>tfType</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TfTypes</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac2675a154a08d775d111b23f2bb1ca1c" prot="private" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>tokensFrequences</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1afc6375981a9925ca23df9671fa473fd0" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TokensFrequences</name></member>
+      <member refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a31e3c3de7dbe3012c83a012bf765a335" prot="public" virt="non-virtual"><scope>mlpack::data::TfIdfEncodingPolicy</scope><name>TokensFrequences</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

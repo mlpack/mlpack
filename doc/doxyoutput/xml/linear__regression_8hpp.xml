@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="linear__regression_8hpp" kind="file" language="C++">
+    <compoundname>linear_regression.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="51367">
+        <label>list</label>
+      </node>
+      <node id="51364">
+        <label>atomic</label>
+      </node>
+      <node id="51316">
+        <label>/home/aakash/mlpack/src/mlpack/methods/linear_regression/linear_regression.hpp</label>
+        <link refid="linear__regression_8hpp"/>
+        <childnode refid="51317" relation="include">
+        </childnode>
+      </node>
+      <node id="51354">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="51330">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="51366">
+        <label>iomanip</label>
+      </node>
+      <node id="51339">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="51340" relation="include">
+        </childnode>
+        <childnode refid="51342" relation="include">
+        </childnode>
+      </node>
+      <node id="51322">
+        <label>cstdint</label>
+      </node>
+      <node id="51331">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="51338">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="51361">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="51351">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="51318">
+        <label>cmath</label>
+      </node>
+      <node id="51337">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="51326">
+        <label>stdexcept</label>
+      </node>
+      <node id="51346">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="51331" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51332" relation="include">
+        </childnode>
+      </node>
+      <node id="51370">
+        <label>string</label>
+      </node>
+      <node id="51358">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="51359" relation="include">
+        </childnode>
+        <childnode refid="51325" relation="include">
+        </childnode>
+      </node>
+      <node id="51368">
+        <label>map</label>
+      </node>
+      <node id="51320">
+        <label>cfloat</label>
+      </node>
+      <node id="51350">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51372">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="51334">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="51357">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="51358" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51341" relation="include">
+        </childnode>
+        <childnode refid="51359" relation="include">
+        </childnode>
+      </node>
+      <node id="51347">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="51345">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="51331" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51332" relation="include">
+        </childnode>
+      </node>
+      <node id="51348">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="51331" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51332" relation="include">
+        </childnode>
+      </node>
+      <node id="51336">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="51356">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="51332" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51344" relation="include">
+        </childnode>
+        <childnode refid="51353" relation="include">
+        </childnode>
+      </node>
+      <node id="51360">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="51361" relation="include">
+        </childnode>
+      </node>
+      <node id="51362">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="51317">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="51318" relation="include">
+        </childnode>
+        <childnode refid="51319" relation="include">
+        </childnode>
+        <childnode refid="51320" relation="include">
+        </childnode>
+        <childnode refid="51321" relation="include">
+        </childnode>
+        <childnode refid="51322" relation="include">
+        </childnode>
+        <childnode refid="51323" relation="include">
+        </childnode>
+        <childnode refid="51324" relation="include">
+        </childnode>
+        <childnode refid="51325" relation="include">
+        </childnode>
+        <childnode refid="51326" relation="include">
+        </childnode>
+        <childnode refid="51327" relation="include">
+        </childnode>
+        <childnode refid="51328" relation="include">
+        </childnode>
+        <childnode refid="51329" relation="include">
+        </childnode>
+        <childnode refid="51330" relation="include">
+        </childnode>
+        <childnode refid="51331" relation="include">
+        </childnode>
+        <childnode refid="51332" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51335" relation="include">
+        </childnode>
+        <childnode refid="51336" relation="include">
+        </childnode>
+        <childnode refid="51337" relation="include">
+        </childnode>
+        <childnode refid="51338" relation="include">
+        </childnode>
+        <childnode refid="51339" relation="include">
+        </childnode>
+        <childnode refid="51343" relation="include">
+        </childnode>
+        <childnode refid="51344" relation="include">
+        </childnode>
+        <childnode refid="51345" relation="include">
+        </childnode>
+        <childnode refid="51346" relation="include">
+        </childnode>
+        <childnode refid="51347" relation="include">
+        </childnode>
+        <childnode refid="51348" relation="include">
+        </childnode>
+        <childnode refid="51349" relation="include">
+        </childnode>
+        <childnode refid="51355" relation="include">
+        </childnode>
+        <childnode refid="51356" relation="include">
+        </childnode>
+        <childnode refid="51353" relation="include">
+        </childnode>
+        <childnode refid="51357" relation="include">
+        </childnode>
+        <childnode refid="51360" relation="include">
+        </childnode>
+        <childnode refid="51362" relation="include">
+        </childnode>
+        <childnode refid="51363" relation="include">
+        </childnode>
+        <childnode refid="51372" relation="include">
+        </childnode>
+        <childnode refid="51373" relation="include">
+        </childnode>
+      </node>
+      <node id="51323">
+        <label>cstdio</label>
+      </node>
+      <node id="51327">
+        <label>tuple</label>
+      </node>
+      <node id="51332">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="51349">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="51332" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51336" relation="include">
+        </childnode>
+        <childnode refid="51350" relation="include">
+        </childnode>
+        <childnode refid="51351" relation="include">
+        </childnode>
+        <childnode refid="51352" relation="include">
+        </childnode>
+        <childnode refid="51353" relation="include">
+        </childnode>
+      </node>
+      <node id="51328">
+        <label>utility</label>
+      </node>
+      <node id="51352">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="51343">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="51340">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="51341" relation="include">
+        </childnode>
+      </node>
+      <node id="51363">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="51364" relation="include">
+        </childnode>
+        <childnode refid="51365" relation="include">
+        </childnode>
+        <childnode refid="51366" relation="include">
+        </childnode>
+        <childnode refid="51367" relation="include">
+        </childnode>
+        <childnode refid="51368" relation="include">
+        </childnode>
+        <childnode refid="51369" relation="include">
+        </childnode>
+        <childnode refid="51370" relation="include">
+        </childnode>
+        <childnode refid="51371" relation="include">
+        </childnode>
+      </node>
+      <node id="51341">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="51355">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="51353" relation="include">
+        </childnode>
+        <childnode refid="51349" relation="include">
+        </childnode>
+        <childnode refid="51356" relation="include">
+        </childnode>
+      </node>
+      <node id="51324">
+        <label>cstdlib</label>
+      </node>
+      <node id="51319">
+        <label>cctype</label>
+      </node>
+      <node id="51342">
+        <label>unordered_map</label>
+      </node>
+      <node id="51321">
+        <label>climits</label>
+      </node>
+      <node id="51369">
+        <label>mutex</label>
+      </node>
+      <node id="51365">
+        <label>chrono</label>
+      </node>
+      <node id="51373">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="51371">
+        <label>thread</label>
+      </node>
+      <node id="51359">
+        <label>type_traits</label>
+      </node>
+      <node id="51335">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="51329">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="51353">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="51331" relation="include">
+        </childnode>
+        <childnode refid="51332" relation="include">
+        </childnode>
+        <childnode refid="51333" relation="include">
+        </childnode>
+        <childnode refid="51334" relation="include">
+        </childnode>
+        <childnode refid="51354" relation="include">
+        </childnode>
+      </node>
+      <node id="51325">
+        <label>cstring</label>
+      </node>
+      <node id="51344">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="51333">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1regression_1_1LinearRegression" prot="public">mlpack::regression::LinearRegression</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1regression">mlpack::regression</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>James Cline </para></simplesect>
+<simplesect kind="author"><para>Michael Fox</para></simplesect>
+Simple least-squares linear regression.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">regression<sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1regression_1_1LinearRegression" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1regression_1_1LinearRegression" kindref="compound">LinearRegression</ref></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a33f04840f1f440c8ab14254ce127cf9f" kindref="member">LinearRegression</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>predictors,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>intercept<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a33f04840f1f440c8ab14254ce127cf9f" kindref="member">LinearRegression</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>predictors,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>intercept<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1regression_1_1LinearRegression_1a33f04840f1f440c8ab14254ce127cf9f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a33f04840f1f440c8ab14254ce127cf9f" kindref="member">LinearRegression</ref>()<sp/>:<sp/>lambda(0.0),<sp/>intercept(true)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a593683fefbb596f9b7f6347d0be5a562" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>predictors,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>intercept<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a593683fefbb596f9b7f6347d0be5a562" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>predictors,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>intercept<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a71e5e21b1d92756979b32face7b3c573" kindref="member">Predict</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>points,<sp/>arma::rowvec&amp;<sp/>predictions)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1ad1b012d8c3cad8c6a155b715cb32a134" kindref="member">ComputeError</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>points,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="classmlpack_1_1regression_1_1LinearRegression_1a6a67e9b83bb8f0ea6122efcc5f75927c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a6a67e9b83bb8f0ea6122efcc5f75927c" kindref="member">Parameters</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="129" refid="classmlpack_1_1regression_1_1LinearRegression_1a6c16a2172d1b0486c8677bba4c5a3ff1" refkind="member"><highlight class="normal"><sp/><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a6c16a2172d1b0486c8677bba4c5a3ff1" kindref="member">Parameters</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="classmlpack_1_1regression_1_1LinearRegression_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="134" refid="classmlpack_1_1regression_1_1LinearRegression_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="classmlpack_1_1regression_1_1LinearRegression_1aa755a6a1366c3ba88bb0f8543127ccea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1aa755a6a1366c3ba88bb0f8543127ccea" kindref="member">Intercept</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>intercept;<sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1regression_1_1LinearRegression_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LinearRegression_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(parameters));</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(lambda));</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(intercept));</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/>arma::vec<sp/>parameters;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>intercept;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_LINEAR_REGRESSION_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_regression/linear_regression.hpp"/>
+  </compounddef>
+</doxygen>

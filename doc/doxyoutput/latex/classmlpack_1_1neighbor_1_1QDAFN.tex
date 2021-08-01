@@ -1,0 +1,161 @@
+\section{Q\+D\+A\+FN$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1QDAFN}\index{Q\+D\+A\+F\+N$<$ Mat\+Type $>$@{Q\+D\+A\+F\+N$<$ Mat\+Type $>$}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Q\+D\+A\+FN} (const size\+\_\+t l, const size\+\_\+t m)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} object but do not train it. \end{DoxyCompactList}\item 
+\textbf{ Q\+D\+A\+FN} (const Mat\+Type \&reference\+Set, const size\+\_\+t l, const size\+\_\+t m)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} object with the given reference set (this is the set that will be searched). \end{DoxyCompactList}\item 
+const Mat\+Type \& \textbf{ Candidate\+Set} (const size\+\_\+t t) const
+\begin{DoxyCompactList}\small\item\em Get the candidate set for the given projection table. \end{DoxyCompactList}\item 
+Mat\+Type \& \textbf{ Candidate\+Set} (const size\+\_\+t t)
+\begin{DoxyCompactList}\small\item\em Modify the candidate set for the given projection table. Careful! \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Projections} () const
+\begin{DoxyCompactList}\small\item\em Get the number of projections. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Search for the k furthest neighbors of the given query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const Mat\+Type \&reference\+Set, const size\+\_\+t l=0, const size\+\_\+t m=0)
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} model on the given reference set, optionally setting new parameters for the number of projections/tables (l) and the number of elements stored for each projection/table (m). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::neighbor\+::\+Q\+D\+A\+F\+N$<$ Mat\+Type $>$}
+
+
+
+Definition at line 34 of file qdafn.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a4776f610347419ede2b9f2c3197cf662}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Q\+D\+A\+FN@{Q\+D\+A\+FN}}
+\index{Q\+D\+A\+FN@{Q\+D\+A\+FN}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Q\+D\+A\+F\+N()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Q\+D\+A\+FN} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{l,  }\item[{const size\+\_\+t}]{m }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} object but do not train it. 
+
+Be sure to call \doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1QDAFN_a025c46810d0d83a17834f3f8364b479e} before calling \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1QDAFN_a0de302ca0602fe721ac01f073d5e630f}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a019fd45b08dfa9494b54a45ee41a2fb1}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Q\+D\+A\+FN@{Q\+D\+A\+FN}}
+\index{Q\+D\+A\+FN@{Q\+D\+A\+FN}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Q\+D\+A\+F\+N()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Q\+D\+A\+FN} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{reference\+Set,  }\item[{const size\+\_\+t}]{l,  }\item[{const size\+\_\+t}]{m }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} object with the given reference set (this is the set that will be searched). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a9d1760e2d90f9adcd1349c313e397b5e}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Candidate\+Set@{Candidate\+Set}}
+\index{Candidate\+Set@{Candidate\+Set}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Candidate\+Set()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Mat\+Type\& Candidate\+Set (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the candidate set for the given projection table. 
+
+
+
+Definition at line 90 of file qdafn.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a958b1a642bdb58840b4fd77de9e29609}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Candidate\+Set@{Candidate\+Set}}
+\index{Candidate\+Set@{Candidate\+Set}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Candidate\+Set()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Mat\+Type\& Candidate\+Set (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the candidate set for the given projection table. Careful! 
+
+
+
+Definition at line 92 of file qdafn.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a1781bad06c46fac9a519e8cbc66c7758}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Num\+Projections@{Num\+Projections}}
+\index{Num\+Projections@{Num\+Projections}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Num\+Projections()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Projections (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of projections. 
+
+
+
+Definition at line 87 of file qdafn.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a0de302ca0602fe721ac01f073d5e630f}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Search()}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Search for the k furthest neighbors of the given query set. 
+
+(The query set can contain just one point, that is okay.) The results will be stored in the given neighbors and distances matrices, in the same format as the mlpack \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} and \doxyref{L\+S\+H\+Search}{p.}{classmlpack_1_1neighbor_1_1LSHSearch} classes. \mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1QDAFN_a025c46810d0d83a17834f3f8364b479e}} 
+\index{mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Q\+D\+A\+FN@{mlpack\+::neighbor\+::\+Q\+D\+A\+FN}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{reference\+Set,  }\item[{const size\+\_\+t}]{l = {\ttfamily 0},  }\item[{const size\+\_\+t}]{m = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Train the \doxyref{Q\+D\+A\+FN}{p.}{classmlpack_1_1neighbor_1_1QDAFN} model on the given reference set, optionally setting new parameters for the number of projections/tables (l) and the number of elements stored for each projection/table (m). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Reference set to train on. \\
+\hline
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/approx\+\_\+kfn/\textbf{ qdafn.\+hpp}\end{DoxyCompactItemize}

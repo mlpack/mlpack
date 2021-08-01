@@ -1,0 +1,99 @@
+\section{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+:\+:Spill\+Single\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillSingleTreeTraverser}\index{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Single\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$@{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Single\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}}
+
+
+A generic single-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__single__tree__traverser_8hpp} for implementation.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Spill\+Single\+Tree\+Traverser} (Rule\+Type \&rule)
+\begin{DoxyCompactList}\small\item\em Instantiate the single tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Prunes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of prunes. \end{DoxyCompactList}\item 
+void \textbf{ Traverse} (const size\+\_\+t query\+Index, \textbf{ Spill\+Tree} \&reference\+Node, const bool brute\+Force=false)
+\begin{DoxyCompactList}\small\item\em Traverse the tree with the given point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$\newline
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$\newline
+class mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Single\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}
+
+A generic single-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__single__tree__traverser_8hpp} for implementation. 
+
+The Defeatist template parameter determines if the traverser must do defeatist search on overlapping nodes. 
+
+Definition at line 34 of file spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillSingleTreeTraverser_a74e7db225438592da913e2ff22d79db4}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}!Spill\+Single\+Tree\+Traverser@{Spill\+Single\+Tree\+Traverser}}
+\index{Spill\+Single\+Tree\+Traverser@{Spill\+Single\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}}
+\subsubsection{Spill\+Single\+Tree\+Traverser()}
+{\footnotesize\ttfamily \textbf{ Spill\+Single\+Tree\+Traverser} (\begin{DoxyParamCaption}\item[{Rule\+Type \&}]{rule }\end{DoxyParamCaption})}
+
+
+
+Instantiate the single tree traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillSingleTreeTraverser_ac2f6072011ee31a0a32f62e2a105a347}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}}
+\subsubsection{Num\+Prunes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of prunes. 
+
+
+
+Definition at line 57 of file spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillSingleTreeTraverser_adf887190e9d9024ff244503e4aaf0732}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}}
+\subsubsection{Num\+Prunes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of prunes. 
+
+
+
+Definition at line 59 of file spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillSingleTreeTraverser_ae494b4bbc6658210a5733d0ae58cbc49}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Single\+Tree\+Traverser}}
+\subsubsection{Traverse()}
+{\footnotesize\ttfamily void Traverse (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{\textbf{ Spill\+Tree} \&}]{reference\+Node,  }\item[{const bool}]{brute\+Force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Traverse the tree with the given point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & The index of the point in the query set which is being used as the query point. \\
+\hline
+{\em reference\+Node} & The tree node to be traversed. \\
+\hline
+{\em brute\+Force} & If true, then do a brute-\/force search on the reference node instead of traversing any further. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/spill\+\_\+tree/\textbf{ spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

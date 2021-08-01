@@ -1,0 +1,57 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBGlorotInitializationType< Uniform >\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the Glorot Initialization method\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "Artificial Neural Network\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "using \fBGlorotInitialization\fP = GlorotInitializationType< false >"
+.br
+.RI "GlorotInitialization uses uniform distribution\&. "
+.ti -1c
+.RI "using \fBXavierInitialization\fP = GlorotInitializationType< true >"
+.br
+.RI "XavierInitilization is the popular name for this method\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Prabhat Sharma
+.RE
+.PP
+Definition and implementation of the Glorot initialization method\&. This initialization rule initialize the weights to maintain activation variances and back-propagated gradients variance as one moves up or down the network\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBglorot_init\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

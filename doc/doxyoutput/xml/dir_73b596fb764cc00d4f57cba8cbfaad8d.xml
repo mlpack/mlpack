@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_73b596fb764cc00d4f57cba8cbfaad8d" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies</compoundname>
+    <innerfile refid="batch__svd__method_8hpp">batch_svd_method.hpp</innerfile>
+    <innerfile refid="bias__svd__method_8hpp">bias_svd_method.hpp</innerfile>
+    <innerfile refid="nmf__method_8hpp">nmf_method.hpp</innerfile>
+    <innerfile refid="cf_2decomposition__policies_2randomized__svd__method_8hpp">randomized_svd_method.hpp</innerfile>
+    <innerfile refid="regularized__svd__method_8hpp">regularized_svd_method.hpp</innerfile>
+    <innerfile refid="svd__complete__method_8hpp">svd_complete_method.hpp</innerfile>
+    <innerfile refid="svd__incomplete__method_8hpp">svd_incomplete_method.hpp</innerfile>
+    <innerfile refid="svdplusplus__method_8hpp">svdplusplus_method.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/"/>
+  </compounddef>
+</doxygen>

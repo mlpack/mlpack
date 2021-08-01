@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_47f18cd886ddfd9fe2e9eded46d048f4" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree/cosine_tree</compoundname>
+    <innerfile refid="cosine__tree_8hpp">cosine_tree.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/cosine_tree/"/>
+  </compounddef>
+</doxygen>

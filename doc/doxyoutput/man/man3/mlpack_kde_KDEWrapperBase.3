@@ -1,0 +1,212 @@
+.TH "KDEWrapperBase" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+KDEWrapperBase \- \fBKDEWrapperBase\fP is a base wrapper class for holding all \fBKDE\fP types supported by \fBKDEModel\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBKDEWrapperBase\fP ()"
+.br
+.RI "Create the \fBKDEWrapperBase\fP object\&. "
+.ti -1c
+.RI "virtual \fB~KDEWrapperBase\fP ()"
+.br
+.RI "Destruct the \fBKDEWrapperBase\fP (nothing to do)\&. "
+.ti -1c
+.RI "virtual void \fBAbsoluteError\fP (const double absError)=0"
+.br
+.RI "Modify the absolute error tolerance\&. "
+.ti -1c
+.RI "virtual void \fBBandwidth\fP (const double bw)=0"
+.br
+.RI "Modify the bandwidth of the kernel\&. "
+.ti -1c
+.RI "virtual \fBKDEWrapperBase\fP * \fBClone\fP () const =0"
+.br
+.RI "Create a new \fBKDEWrapperBase\fP that is the same as this one\&. "
+.ti -1c
+.RI "virtual void \fBEvaluate\fP (arma::mat &&querySet, arma::vec &estimates)=0"
+.br
+.RI "Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. "
+.ti -1c
+.RI "virtual void \fBEvaluate\fP (arma::vec &estimates)=0"
+.br
+.RI "Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. "
+.ti -1c
+.RI "virtual void \fBMCBreakCoef\fP (const double breakCoef)=0"
+.br
+.RI "Modify the Monte Carlo break coefficient\&. "
+.ti -1c
+.RI "virtual void \fBMCEntryCoef\fP (const double entryCoef)=0"
+.br
+.RI "Modify the Monte Carlo entry coefficient\&. "
+.ti -1c
+.RI "virtual size_t \fBMCInitialSampleSize\fP () const =0"
+.br
+.RI "Get the Monte Carlo sample size\&. "
+.ti -1c
+.RI "virtual size_t & \fBMCInitialSampleSize\fP ()=0"
+.br
+.RI "Modify the Monte Carlo sample size\&. "
+.ti -1c
+.RI "virtual void \fBMCProb\fP (const double mcProb)=0"
+.br
+.RI "Modify the Monte Carlo probability\&. "
+.ti -1c
+.RI "virtual \fBKDEMode\fP \fBMode\fP () const =0"
+.br
+.RI "Get the search mode\&. "
+.ti -1c
+.RI "virtual \fBKDEMode\fP & \fBMode\fP ()=0"
+.br
+.RI "Modify the search mode\&. "
+.ti -1c
+.RI "virtual bool \fBMonteCarlo\fP () const =0"
+.br
+.RI "Get whether Monte Carlo search is being used\&. "
+.ti -1c
+.RI "virtual bool & \fBMonteCarlo\fP ()=0"
+.br
+.RI "Modify whether Monte Carlo search is being used\&. "
+.ti -1c
+.RI "virtual void \fBRelativeError\fP (const double relError)=0"
+.br
+.RI "Modify the relative error tolerance\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet)=0"
+.br
+.RI "Train the model (build the tree)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBKDEWrapperBase\fP is a base wrapper class for holding all \fBKDE\fP types supported by \fBKDEModel\fP\&. 
+
+All \fBKDE\fP type wrappers inheirt from this class, allowing a simple interface via inheritance for all the different types we want to support\&. 
+.PP
+Definition at line 71 of file kde_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBKDEWrapperBase\fP ()\fC [inline]\fP"
+
+.PP
+Create the \fBKDEWrapperBase\fP object\&. The base class does not hold anything, so this constructor does nothing\&. 
+.PP
+Definition at line 76 of file kde_model\&.hpp\&.
+.SS "virtual ~\fBKDEWrapperBase\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Destruct the \fBKDEWrapperBase\fP (nothing to do)\&. 
+.PP
+Definition at line 83 of file kde_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual void AbsoluteError (const double absError)\fC [pure virtual]\fP"
+
+.PP
+Modify the absolute error tolerance\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void Bandwidth (const double bw)\fC [pure virtual]\fP"
+
+.PP
+Modify the bandwidth of the kernel\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual \fBKDEWrapperBase\fP* Clone () const\fC [pure virtual]\fP"
+
+.PP
+Create a new \fBKDEWrapperBase\fP that is the same as this one\&. This function will properly handle polymorphism\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void Evaluate (arma::mat && querySet, arma::vec & estimates)\fC [pure virtual]\fP"
+
+.PP
+Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void Evaluate (arma::vec & estimates)\fC [pure virtual]\fP"
+
+.PP
+Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void MCBreakCoef (const double breakCoef)\fC [pure virtual]\fP"
+
+.PP
+Modify the Monte Carlo break coefficient\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void MCEntryCoef (const double entryCoef)\fC [pure virtual]\fP"
+
+.PP
+Modify the Monte Carlo entry coefficient\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual size_t MCInitialSampleSize () const\fC [pure virtual]\fP"
+
+.PP
+Get the Monte Carlo sample size\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual size_t& MCInitialSampleSize ()\fC [pure virtual]\fP"
+
+.PP
+Modify the Monte Carlo sample size\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void MCProb (const double mcProb)\fC [pure virtual]\fP"
+
+.PP
+Modify the Monte Carlo probability\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual \fBKDEMode\fP Mode () const\fC [pure virtual]\fP"
+
+.PP
+Get the search mode\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.PP
+Referenced by KDEModel::Mode()\&.
+.SS "virtual \fBKDEMode\fP& Mode ()\fC [pure virtual]\fP"
+
+.PP
+Modify the search mode\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual bool MonteCarlo () const\fC [pure virtual]\fP"
+
+.PP
+Get whether Monte Carlo search is being used\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual bool& MonteCarlo ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether Monte Carlo search is being used\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void RelativeError (const double relError)\fC [pure virtual]\fP"
+
+.PP
+Modify the relative error tolerance\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+.SS "virtual void Train (arma::mat && referenceSet)\fC [pure virtual]\fP"
+
+.PP
+Train the model (build the tree)\&. 
+.PP
+Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

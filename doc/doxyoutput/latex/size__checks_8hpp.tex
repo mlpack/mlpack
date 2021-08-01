@@ -1,0 +1,39 @@
+\section{/home/aakash/mlpack/src/mlpack/core/util/size\+\_\+checks.hpp File Reference}
+\label{size__checks_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/util/size\+\_\+checks.\+hpp@{/home/aakash/mlpack/src/mlpack/core/util/size\+\_\+checks.\+hpp}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{size__checks_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::util}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Data\+Type , typename Dim\+Type $>$ }\\void \textbf{ Check\+Same\+Dimensionality} (const Data\+Type \&data, const Dim\+Type \&dimension, const std\+::string \&caller\+Description, const std\+::string \&add\+Info=\char`\"{}dataset\char`\"{})
+\begin{DoxyCompactList}\small\item\em Check for if the given dataset dimension matches with the model\textquotesingle{}s. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Check\+Same\+Dimensionality} (const Data\+Type \&data, const size\+\_\+t \&dimension, const std\+::string \&caller\+Description, const std\+::string \&add\+Info=\char`\"{}dataset\char`\"{})
+\begin{DoxyCompactList}\small\item\em An overload of \doxyref{Check\+Same\+Dimensionality()}{p.}{namespacemlpack_1_1util_ad3edb223b2cb9147f26f1f7e6cd84874} where the dimension to be checked is known second param is unsigned long int. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type , typename Labels\+Type $>$ }\\void \textbf{ Check\+Same\+Sizes} (const Data\+Type \&data, const Labels\+Type \&label, const std\+::string \&caller\+Description, const std\+::string \&add\+Info=\char`\"{}labels\char`\"{})
+\begin{DoxyCompactList}\small\item\em Check for if the given data points \& labels have same size. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Check\+Same\+Sizes} (const Data\+Type \&data, const size\+\_\+t \&size, const std\+::string \&caller\+Description, const std\+::string \&add\+Info=\char`\"{}labels\char`\"{})
+\begin{DoxyCompactList}\small\item\em An overload of \doxyref{Check\+Same\+Sizes()}{p.}{namespacemlpack_1_1util_a45a020ff6df656fc4948ffe17e4cec6e} where the size to be checked is known previously. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Kirill Mishchenko 
+
+Bisakh Mondal
+\end{DoxyAuthor}
+Utility for checking same size \& same dimensionality.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

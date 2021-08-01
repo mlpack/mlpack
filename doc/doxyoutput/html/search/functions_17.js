@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['xtreeauxiliaryinformation',['XTreeAuxiliaryInformation',['../classmlpack_1_1tree_1_1XTreeAuxiliaryInformation.html#a447af4206e6531d05a33c781605df5a6',1,'mlpack::tree::XTreeAuxiliaryInformation::XTreeAuxiliaryInformation()'],['../classmlpack_1_1tree_1_1XTreeAuxiliaryInformation.html#ac3c8313c6ccc921ddaebb5a27c9874fb',1,'mlpack::tree::XTreeAuxiliaryInformation::XTreeAuxiliaryInformation(const TreeType *node)'],['../classmlpack_1_1tree_1_1XTreeAuxiliaryInformation.html#a885b27a78236f6feea431a7eb365777d',1,'mlpack::tree::XTreeAuxiliaryInformation::XTreeAuxiliaryInformation(const XTreeAuxiliaryInformation &amp;other, TreeType *=NULL, bool=true)'],['../classmlpack_1_1tree_1_1XTreeAuxiliaryInformation.html#a5e9948e2da6e3bc0ab99f0d10a2f4b44',1,'mlpack::tree::XTreeAuxiliaryInformation::XTreeAuxiliaryInformation(XTreeAuxiliaryInformation &amp;&amp;other)']]]
+];

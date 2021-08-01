@@ -1,0 +1,86 @@
+.TH "/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class FunctionType > double \fBCheckGradient\fP (FunctionType &function, const double eps=1e\-7)"
+.br
+.ti -1c
+.RI "template<class FunctionType > double \fBCheckRegularizerGradient\fP (FunctionType &function, const double eps=1e\-7)"
+.br
+.ti -1c
+.RI "template<typename ModuleType > double \fBCustomJacobianTest\fP (ModuleType &module, arma::mat &input, const double perturbation=1e\-6)"
+.br
+.ti -1c
+.RI "template<typename ModuleType > double \fBJacobianPerformanceTest\fP (ModuleType &module, arma::mat &input, arma::mat &target, const double eps=1e\-6)"
+.br
+.ti -1c
+.RI "template<typename ModuleType > double \fBJacobianTest\fP (ModuleType &module, arma::mat &input, const double minValue=\-2, const double maxValue=\-1, const double perturbation=1e\-6)"
+.br
+.ti -1c
+.RI "template<class T > void \fBResetFunction\fP (T &layer, typename std::enable_if< HasResetCheck< T, void(T::*)()>::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<class T > void \fBResetFunction\fP (T &, typename std::enable_if<!HasResetCheck< T, void(T::*)()>::value >::type *=0)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+This file includes some useful functions for ann tests\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBann_test_tools\&.hpp\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "double CheckGradient (FunctionType & function, const double eps = \fC1e\-7\fP)"
+
+.PP
+Definition at line 188 of file ann_test_tools\&.hpp\&.
+.SS "double CheckRegularizerGradient (FunctionType & function, const double eps = \fC1e\-7\fP)"
+
+.PP
+Definition at line 223 of file ann_test_tools\&.hpp\&.
+.SS "double CustomJacobianTest (ModuleType & module, arma::mat & input, const double perturbation = \fC1e\-6\fP)"
+
+.PP
+Definition at line 105 of file ann_test_tools\&.hpp\&.
+.PP
+References ResetFunction()\&.
+.SS "double JacobianPerformanceTest (ModuleType & module, arma::mat & input, arma::mat & target, const double eps = \fC1e\-6\fP)"
+
+.PP
+Definition at line 155 of file ann_test_tools\&.hpp\&.
+.SS "double JacobianTest (ModuleType & module, arma::mat & input, const double minValue = \fC\-2\fP, const double maxValue = \fC\-1\fP, const double perturbation = \fC1e\-6\fP)"
+
+.PP
+Definition at line 40 of file ann_test_tools\&.hpp\&.
+.PP
+References RandomInitialization::Initialize(), and ResetFunction()\&.
+.SS "void ResetFunction (T & layer, typename std::enable_if< HasResetCheck< T, void(T::*)()>::value >::type * = \fC0\fP)"
+
+.PP
+Definition at line 22 of file ann_test_tools\&.hpp\&.
+.PP
+Referenced by CustomJacobianTest(), and JacobianTest()\&.
+.SS "void ResetFunction (T &, typename std::enable_if<!HasResetCheck< T, void(T::*)()>::value >::type * = \fC0\fP)"
+
+.PP
+Definition at line 30 of file ann_test_tools\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

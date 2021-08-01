@@ -1,0 +1,456 @@
+\section{Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1NoisyLinear}\index{Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} layer class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Noisy\+Linear} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} object. \end{DoxyCompactList}\item 
+\textbf{ Noisy\+Linear} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} layer object using the specified number of units. \end{DoxyCompactList}\item 
+\textbf{ Noisy\+Linear} (const \textbf{ Noisy\+Linear} \&)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ Noisy\+Linear} (\textbf{ Noisy\+Linear} \&\&)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Bias} ()
+\begin{DoxyCompactList}\small\item\em Modify the bias weights of the layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the input size. \end{DoxyCompactList}\item 
+\textbf{ Noisy\+Linear} \& \textbf{ operator=} (const \textbf{ Noisy\+Linear} \&layer)
+\begin{DoxyCompactList}\small\item\em Operator= copy constructor. \end{DoxyCompactList}\item 
+\textbf{ Noisy\+Linear} \& \textbf{ operator=} (\textbf{ Noisy\+Linear} \&\&layer)
+\begin{DoxyCompactList}\small\item\em Operator= move constructor. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\item 
+void \textbf{ Reset\+Noise} ()
+\item 
+void \textbf{ Reset\+Parameters} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get size of weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} layer class. 
+
+It represents a single layer of a neural network, with parametric noise added to its weights.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 103 of file layer\+\_\+types.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a82340eaf3b3c2b9b9c2d11c59a52af58}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Noisy\+Linear@{Noisy\+Linear}}
+\index{Noisy\+Linear@{Noisy\+Linear}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Noisy\+Linear()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a4d66ed04b0c8eb5bf15e13c37cbcb8d3}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Noisy\+Linear@{Noisy\+Linear}}
+\index{Noisy\+Linear@{Noisy\+Linear}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Noisy\+Linear()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Noisy\+Linear}{p.}{classmlpack_1_1ann_1_1NoisyLinear} layer object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a2ffbe531257885dd9f38332c14002854}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Noisy\+Linear@{Noisy\+Linear}}
+\index{Noisy\+Linear@{Noisy\+Linear}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Noisy\+Linear()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear} (\begin{DoxyParamCaption}\item[{const \textbf{ Noisy\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a5e9c398b597efafbc21476a4d6f2cbe3}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Noisy\+Linear@{Noisy\+Linear}}
+\index{Noisy\+Linear@{Noisy\+Linear}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Noisy\+Linear()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear} (\begin{DoxyParamCaption}\item[{\textbf{ Noisy\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{ }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a398f0702633d5ba7afe6057d25f4b78c}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Bias@{Bias}}
+\index{Bias@{Bias}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Bias()}
+{\footnotesize\ttfamily arma\+::mat\& Bias (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bias weights of the layer. 
+
+
+
+Definition at line 149 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 127 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 129 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_aaf577db350e2130754490d8486fba215}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 138 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a19abce4739c3b0b658b612537e21956a}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 140 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_aaffd593b3ab627f8b5aae2a1f53634b0}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 117 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 119 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a13ab93f234244a68f6ade76287284447}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Input\+Shape@{Input\+Shape}}
+\index{Input\+Shape@{Input\+Shape}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Input\+Shape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 143 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Input\+Size@{Input\+Size}}
+\index{Input\+Size@{Input\+Size}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Input\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input size. 
+
+
+
+Definition at line 132 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a867bb2c884e68df5c02b0f57e33c416b}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Noisy\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Operator= copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_af7ff5011111871fff8576a53b9b43293}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Noisy\+Linear}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Noisy\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Operator= move constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 122 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 124 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Output\+Size@{Output\+Size}}
+\index{Output\+Size@{Output\+Size}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Output\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 135 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_aa530552c7ef915c952fbacc77b965c90}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 112 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 114 of file noisylinear.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a13df76c46bb1caaacde3c67531e52382}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Reset\+Noise@{Reset\+Noise}}
+\index{Reset\+Noise@{Reset\+Noise}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Reset\+Noise()}
+{\footnotesize\ttfamily void Reset\+Noise (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a7178038c3cb8d247eadb94cd2058c432}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Reset\+Parameters@{Reset\+Parameters}}
+\index{Reset\+Parameters@{Reset\+Parameters}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Reset\+Parameters()}
+{\footnotesize\ttfamily void Reset\+Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Weight\+Size().
+
+\mbox{\label{classmlpack_1_1ann_1_1NoisyLinear_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}!Weight\+Size@{Weight\+Size}}
+\index{Weight\+Size@{Weight\+Size}!mlpack\+::ann\+::\+Noisy\+Linear@{mlpack\+::ann\+::\+Noisy\+Linear}}
+\subsubsection{Weight\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get size of weights. 
+
+
+
+Definition at line 152 of file noisylinear.\+hpp.
+
+
+
+References Noisy\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ noisylinear.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1NegativeLogLikelihood" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::NegativeLogLikelihood</compoundname>
+    <includes refid="negative__log__likelihood_8hpp" local="no">negative_log_likelihood.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a2c1eb2b08ec47b7097d4100d5241cb14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NegativeLogLikelihood</definition>
+        <argsstring>()</argsstring>
+        <name>NegativeLogLikelihood</name>
+        <briefdescription>
+<para>Create the NegativeLogLikelihoodLayer object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="41" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+          <param>
+            <type>typename LossType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target, LossType &amp;loss)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>LossType &amp;</type>
+          <declname>loss</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network. </para>        </briefdescription>
+        <detaileddescription>
+<para>The negative log likelihood layer expects that the input contains log-probabilities for each class. The layer also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector, that contains the class index in the range between 1 and the number of classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>loss</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="68" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="85" bodyend="85"/>
+        <references refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb">NegativeLogLikelihood&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ab3640059898ea76c13709b8099316fe8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+        </templateparamlist>
+        <type>PredictionType::elem_type</type>
+        <definition>PredictionType::elem_type Forward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the Negative log likelihood. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>iprediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector, that contains the class index in the range between 1 and the number of classes. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a1506936601ddae886088d2804623ca4b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="73" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="75" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="80" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NegativeLogLikelihood_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="91" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ad6601342d560219ce951d554e69e5e87" compoundref="negative__log__likelihood_8hpp" startline="85" endline="85">NegativeLogLikelihood&lt; InputDataType, OutputDataType &gt;::Delta</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the negative log likelihood layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>The negative log likelihood layer expectes that the input contains log-probabilities for each class. The layer also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp" bodystart="35" bodyend="102"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1ab3640059898ea76c13709b8099316fe8" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a1506936601ddae886088d2804623ca4b" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a2c1eb2b08ec47b7097d4100d5241cb14" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>NegativeLogLikelihood</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::ann::NegativeLogLikelihood</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

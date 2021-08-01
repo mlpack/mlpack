@@ -1,0 +1,21 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/data/save.hpp" name="/home/aakash/mlpack/src/mlpack/core/data/save.hpp">
+<area shape="rect" id="node5" href="$format_8hpp.html" title="format.hpp" alt="" coords="4334,109,4418,136"/>
+<area shape="rect" id="node6" href="$image__info_8hpp.html" title="image_info.hpp" alt="" coords="1797,109,1907,136"/>
+<area shape="rect" id="node7" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="1621,259,1757,285"/>
+<area shape="rect" id="node48" href="$extension_8hpp.html" title="extension.hpp" alt="" coords="1727,184,1830,211"/>
+<area shape="rect" id="node19" href="$arma__traits_8hpp.html" title="mlpack/core/util/arma\l_traits.hpp" alt="" coords="697,341,844,382"/>
+<area shape="rect" id="node28" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="2358,341,2498,382"/>
+<area shape="rect" id="node33" href="$is__loading_8hpp.html" title="mlpack/core/cereal\l/is_loading.hpp" alt="" coords="323,527,455,568"/>
+<area shape="rect" id="node34" href="$is__saving_8hpp.html" title="mlpack/core/cereal\l/is_saving.hpp" alt="" coords="479,527,611,568"/>
+<area shape="rect" id="node36" href="$array__wrapper_8hpp.html" title="mlpack/core/cereal\l/array_wrapper.hpp" alt="" coords="636,527,769,568"/>
+<area shape="rect" id="node37" href="$pointer__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_variant_wrapper.hpp" alt="" coords="1172,437,1361,479"/>
+<area shape="rect" id="node40" href="$pointer__wrapper_8hpp.html" title="pointer_wrapper.hpp" alt="" coords="1412,534,1551,561"/>
+<area shape="rect" id="node41" href="$pointer__vector__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_vector_variant\l_wrapper.hpp" alt="" coords="1396,333,1551,389"/>
+<area shape="rect" id="node42" href="$pointer__vector__wrapper_8hpp.html" title="pointer_vector_wrapper.hpp" alt="" coords="1497,445,1679,471"/>
+<area shape="rect" id="node43" href="$has__serialize_8hpp.html" title="mlpack/core/data/has\l_serialize.hpp" alt="" coords="1828,437,1975,479"/>
+<area shape="rect" id="node44" href="$arma__config__check_8hpp.html" title="mlpack/core/util/arma\l_config_check.hpp" alt="" coords="2896,341,3043,382"/>
+<area shape="rect" id="node45" href="$timers_8hpp.html" title="mlpack/core/util/timers.hpp" alt="" coords="3633,348,3812,375"/>
+<area shape="rect" id="node46" href="$deprecated_8hpp.html" title="mlpack/core/util/deprecated.hpp" alt="" coords="3067,348,3274,375"/>
+<area shape="rect" id="node47" href="$size__checks_8hpp.html" title="mlpack/core/util/size\l_checks.hpp" alt="" coords="3298,341,3441,382"/>
+<area shape="rect" id="node29" href="$pair__associative__container_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="2238,445,2439,471"/>
+</map>

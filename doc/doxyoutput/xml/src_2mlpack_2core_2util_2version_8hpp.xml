@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="src_2mlpack_2core_2util_2version_8hpp" kind="file" language="C++">
+    <compoundname>version.hpp</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="io_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/util/io.hpp</includedby>
+    <incdepgraph>
+      <node id="22478">
+        <label>string</label>
+      </node>
+      <node id="22477">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/version.hpp</label>
+        <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
+        <childnode refid="22478" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="22524">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="22487">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="22486">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="22516">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="22517" relation="include">
+        </childnode>
+        <childnode refid="22518" relation="include">
+        </childnode>
+      </node>
+      <node id="22513">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="22493">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="22488">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="22503">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="22504" relation="include">
+        </childnode>
+        <childnode refid="22505" relation="include">
+        </childnode>
+        <childnode refid="22509" relation="include">
+        </childnode>
+        <childnode refid="22510" relation="include">
+        </childnode>
+        <childnode refid="22506" relation="include">
+        </childnode>
+        <childnode refid="22507" relation="include">
+        </childnode>
+        <childnode refid="22508" relation="include">
+        </childnode>
+        <childnode refid="22511" relation="include">
+        </childnode>
+      </node>
+      <node id="22481">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="22482" relation="include">
+        </childnode>
+        <childnode refid="22487" relation="include">
+        </childnode>
+        <childnode refid="22488" relation="include">
+        </childnode>
+        <childnode refid="22489" relation="include">
+        </childnode>
+        <childnode refid="22490" relation="include">
+        </childnode>
+        <childnode refid="22491" relation="include">
+        </childnode>
+        <childnode refid="22492" relation="include">
+        </childnode>
+        <childnode refid="22493" relation="include">
+        </childnode>
+        <childnode refid="22494" relation="include">
+        </childnode>
+        <childnode refid="22495" relation="include">
+        </childnode>
+        <childnode refid="22496" relation="include">
+        </childnode>
+        <childnode refid="22497" relation="include">
+        </childnode>
+        <childnode refid="22498" relation="include">
+        </childnode>
+        <childnode refid="22500" relation="include">
+        </childnode>
+        <childnode refid="22501" relation="include">
+        </childnode>
+        <childnode refid="22502" relation="include">
+        </childnode>
+        <childnode refid="22509" relation="include">
+        </childnode>
+        <childnode refid="22512" relation="include">
+        </childnode>
+        <childnode refid="22513" relation="include">
+        </childnode>
+        <childnode refid="22514" relation="include">
+        </childnode>
+        <childnode refid="22515" relation="include">
+        </childnode>
+        <childnode refid="22519" relation="include">
+        </childnode>
+        <childnode refid="22520" relation="include">
+        </childnode>
+        <childnode refid="22521" relation="include">
+        </childnode>
+        <childnode refid="22522" relation="include">
+        </childnode>
+        <childnode refid="22523" relation="include">
+        </childnode>
+        <childnode refid="22524" relation="include">
+        </childnode>
+        <childnode refid="22525" relation="include">
+        </childnode>
+        <childnode refid="22526" relation="include">
+        </childnode>
+      </node>
+      <node id="22496">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="22481" relation="include">
+        </childnode>
+      </node>
+      <node id="22502">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="22503" relation="include">
+        </childnode>
+      </node>
+      <node id="22521">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="22517">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="22512">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="22510">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="22506">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="22489">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="22514">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="22523">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="22499">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="22486" relation="include">
+        </childnode>
+      </node>
+      <node id="22518">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="22483">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="22484" relation="include">
+        </childnode>
+        <childnode refid="22485" relation="include">
+        </childnode>
+      </node>
+      <node id="22495">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="22525">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="22524" relation="include">
+        </childnode>
+      </node>
+      <node id="22491">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="22484">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="22504">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="22526">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="22509">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="22511">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="22479">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/version.hpp</label>
+        <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
+        <childnode refid="22480" relation="include">
+        </childnode>
+      </node>
+      <node id="22519">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="22490">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="22505">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="22501" relation="include">
+        </childnode>
+        <childnode refid="22506" relation="include">
+        </childnode>
+        <childnode refid="22507" relation="include">
+        </childnode>
+        <childnode refid="22508" relation="include">
+        </childnode>
+      </node>
+      <node id="22497">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="22507">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="22492">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="22520">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="22501">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="22500">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="22482">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="22483" relation="include">
+        </childnode>
+        <childnode refid="22484" relation="include">
+        </childnode>
+        <childnode refid="22485" relation="include">
+        </childnode>
+        <childnode refid="22486" relation="include">
+        </childnode>
+      </node>
+      <node id="22508">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="22485">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="22515">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="22516" relation="include">
+        </childnode>
+      </node>
+      <node id="22522">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="22494">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="22480">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="22481" relation="include">
+        </childnode>
+      </node>
+      <node id="22498">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="22499" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1util">mlpack::util</innernamespace>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="src_2mlpack_2core_2util_2version_8hpp_1a567633158089daf2701fa92e4a61412d" prot="public" static="no">
+        <name>MLPACK_VERSION_MAJOR</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" line="19" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="src_2mlpack_2core_2util_2version_8hpp_1af78b6f6b98b2da5018980e12d3f6a071" prot="public" static="no">
+        <name>MLPACK_VERSION_MINOR</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" line="20" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="src_2mlpack_2core_2util_2version_8hpp_1a15e1dc931a5bfb5a7d389aea99df4972" prot="public" static="no">
+        <name>MLPACK_VERSION_PATCH</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" line="21" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/version.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+The current version of mlpack, available as macros and as a string.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_UTIL_VERSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_UTIL_VERSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>version<sp/>of<sp/>mlpack.<sp/><sp/>If<sp/>this<sp/>is<sp/>a<sp/>git<sp/>repository,<sp/>this<sp/>will<sp/>be<sp/>a<sp/>version</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>with<sp/>higher<sp/>number<sp/>than<sp/>the<sp/>most<sp/>recent<sp/>release.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="src_2mlpack_2core_2util_2version_8hpp_1a567633158089daf2701fa92e4a61412d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_VERSION_MAJOR<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="src_2mlpack_2core_2util_2version_8hpp_1af78b6f6b98b2da5018980e12d3f6a071" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_VERSION_MINOR<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="src_2mlpack_2core_2util_2version_8hpp_1a15e1dc931a5bfb5a7d389aea99df4972" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_VERSION_PATCH<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>name<sp/>of<sp/>the<sp/>version<sp/>(for<sp/>use<sp/>by<sp/>--version).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">util<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1util_1a5463728499ca94746d779a6863df5c20" kindref="member">GetVersion</ref>();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>util</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/version.hpp"/>
+  </compounddef>
+</doxygen>

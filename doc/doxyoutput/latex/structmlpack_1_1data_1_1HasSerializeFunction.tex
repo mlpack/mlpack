@@ -1,0 +1,70 @@
+\section{Has\+Serialize\+Function$<$ T $>$ Struct Template Reference}
+\label{structmlpack_1_1data_1_1HasSerializeFunction}\index{Has\+Serialize\+Function$<$ T $>$@{Has\+Serialize\+Function$<$ T $>$}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename C $>$ }\\using \textbf{ Non\+Static\+Serialize} = void(C\+::$\ast$)(cereal\+::\+X\+M\+L\+Output\+Archive \&, const uint32\+\_\+t version)
+\item 
+{\footnotesize template$<$typename $>$ }\\using \textbf{ Static\+Serialize} = void($\ast$)(cereal\+::\+X\+M\+L\+Output\+Archive \&, const uint32\+\_\+t version)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ value}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+struct mlpack\+::data\+::\+Has\+Serialize\+Function$<$ T $>$}
+
+
+
+Definition at line 32 of file has\+\_\+serialize.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{structmlpack_1_1data_1_1HasSerializeFunction_aae165da8d6b21c90f92c6a5743ef2a34}} 
+\index{mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}!Non\+Static\+Serialize@{Non\+Static\+Serialize}}
+\index{Non\+Static\+Serialize@{Non\+Static\+Serialize}!mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}}
+\subsubsection{Non\+Static\+Serialize}
+{\footnotesize\ttfamily using \textbf{ Non\+Static\+Serialize} =  void(C\+::$\ast$)(cereal\+::\+X\+M\+L\+Output\+Archive\&, const uint32\+\_\+t version)}
+
+
+
+Definition at line 36 of file has\+\_\+serialize.\+hpp.
+
+\mbox{\label{structmlpack_1_1data_1_1HasSerializeFunction_a4d5a24efca8a97af89629fb4f9ad2835}} 
+\index{mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}!Static\+Serialize@{Static\+Serialize}}
+\index{Static\+Serialize@{Static\+Serialize}!mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}}
+\subsubsection{Static\+Serialize}
+{\footnotesize\ttfamily using \textbf{ Static\+Serialize} =  void($\ast$)(cereal\+::\+X\+M\+L\+Output\+Archive\&, const uint32\+\_\+t version)}
+
+
+
+Definition at line 40 of file has\+\_\+serialize.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{structmlpack_1_1data_1_1HasSerializeFunction_a11ddd051208250c32dc4985abcafa86d}} 
+\index{mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}!value@{value}}
+\index{value@{value}!mlpack\+::data\+::\+Has\+Serialize\+Function@{mlpack\+::data\+::\+Has\+Serialize\+Function}}
+\subsubsection{value}
+{\footnotesize\ttfamily const bool value\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= HasSerializeCheck<T, NonStaticSerialize>::value ||
+                            HasSerializeCheck<T, StaticSerialize>::value
+\end{DoxyCode}
+
+
+Definition at line 42 of file has\+\_\+serialize.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/\textbf{ has\+\_\+serialize.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,163 @@
+.TH "CReLU< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CReLU< InputDataType, OutputDataType > \- A concatenated ReLU has two outputs, one ReLU and one negative ReLU, concatenated together\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCReLU\fP ()"
+.br
+.RI "Create the \fBCReLU\fP object\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &input, const DataType &gy, DataType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get size of weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::CReLU< InputDataType, OutputDataType >"
+A concatenated ReLU has two outputs, one ReLU and one negative ReLU, concatenated together\&. 
+
+In other words, for positive x it produces [x, 0], and for negative x it produces [0, x]\&. Because it has two outputs, \fBCReLU\fP doubles the output dimension\&.
+.PP
+Note: The \fBCReLU\fP doubles the output size\&.
+.PP
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@inproceedings{ICML2016,
+  title  = {Understanding and Improving Convolutional Neural Networks
+            via Concatenated Rectified Linear Units},
+  author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
+  year   = {2016},
+  url    = {https://arxiv\&.org/abs/1603\&.05201}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file c_relu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCReLU\fP ()"
+
+.PP
+Create the \fBCReLU\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const DataType & input, const DataType & gy, DataType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 87 of file c_relu\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 89 of file c_relu\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. Works only for 2D Tensors\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 82 of file c_relu\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 84 of file c_relu\&.hpp\&.
+.SS "void serialize (Archive &, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by CReLU< InputDataType, OutputDataType >::WeightSize()\&.
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get size of weights\&. 
+.PP
+Definition at line 92 of file c_relu\&.hpp\&.
+.PP
+References CReLU< InputDataType, OutputDataType >::serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

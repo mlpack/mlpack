@@ -1,0 +1,60 @@
+.TH "/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBLogisticRegressionTestData\fP (arma::mat &data, arma::mat &testData, arma::mat &shuffledData, arma::Row< size_t > &responses, arma::Row< size_t > &testResponses, arma::Row< size_t > &shuffledResponses)"
+.br
+.RI "Create the data for the a logistic regression test\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+This file provides some useful test function methods\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBtest_function_tools\&.hpp\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "void LogisticRegressionTestData (arma::mat & data, arma::mat & testData, arma::mat & shuffledData, arma::Row< size_t > & responses, arma::Row< size_t > & testResponses, arma::Row< size_t > & shuffledResponses)\fC [inline]\fP"
+
+.PP
+Create the data for the a logistic regression test\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Matrix object to store the data into\&. 
+.br
+\fItestData\fP Matrix object to store the test data into\&. 
+.br
+\fIshuffledData\fP Matrix object to store the shuffled data into\&. 
+.br
+\fIresponses\fP Matrix object to store the overall responses into\&. 
+.br
+\fItestResponses\fP Matrix object to store the test responses into\&. 
+.br
+\fIshuffledResponses\fP Matrix object to store the shuffled responses into\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file test_function_tools\&.hpp\&.
+.PP
+References GaussianDistribution::Random()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

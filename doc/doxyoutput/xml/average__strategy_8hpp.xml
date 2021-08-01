@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="average__strategy_8hpp" kind="file" language="C++">
+    <compoundname>average_strategy.hpp</compoundname>
+    <includedby refid="f1_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</includedby>
+    <includedby refid="precision_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</includedby>
+    <includedby refid="recall_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</includedby>
+    <invincdepgraph>
+      <node id="5242">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="5240">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="5239">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/average_strategy.hpp</label>
+        <link refid="average__strategy_8hpp"/>
+        <childnode refid="5240" relation="include">
+        </childnode>
+        <childnode refid="5241" relation="include">
+        </childnode>
+        <childnode refid="5242" relation="include">
+        </childnode>
+      </node>
+      <node id="5241">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cv">mlpack::cv</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Kirill Mishchenko</para></simplesect>
+Strategies for averaging.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_CV_METRICS_AVERAGE_STRATEGY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_CV_METRICS_AVERAGE_STRATEGY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cv<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" refkind="member"><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" kindref="member">AverageStrategy</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27" refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae27b0860dfa490c46dd387b06d21a04b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae27b0860dfa490c46dd387b06d21a04b" kindref="member">Binary</ref>,</highlight></codeline>
+<codeline lineno="28" refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae919d9c95f0fd4a08f3c94e13a3f8a9f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae919d9c95f0fd4a08f3c94e13a3f8a9f" kindref="member">Micro</ref>,</highlight></codeline>
+<codeline lineno="29" refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06a74c916f3663a0877600e8ebec7f7fe5e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06a74c916f3663a0877600e8ebec7f7fe5e" kindref="member">Macro</ref></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cv</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/average_strategy.hpp"/>
+  </compounddef>
+</doxygen>

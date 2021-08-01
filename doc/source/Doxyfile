@@ -86,16 +86,24 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../../src/mlpack \
-                         ../guide \
-                         ../tutorials \
-                         ../policies
+			 ../guide \
+			 ../tutorials \
+			 ../policies \
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.txt
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
-EXCLUDE_PATTERNS       = */build/* \
+EXCLUDE_PATTERNS       = *bindings* \
+			 *parameter_type.hpp \
+			 *rectangle_tree.hpp \
+			 *kill_empty_clusters.hpp \
+			 *allow_empty_clusters.hpp \
+			 *range.hpp \
+			 *regression_distribution.hpp \
+			 *log.hpp \
+			 */build/* \
                          */test/* \
                          */arma_extend/* \
                          */boost_backport/* \
@@ -108,7 +116,10 @@ EXCLUDE_PATTERNS       = */build/* \
                          *_test.cpp \
                          *CLI11.hpp \
                          */tests/catch.hpp \
-                         */boost/serialization/*
+                         */boost/serialization/* \
+			 */parse_command_line.hpp \
+			 */mlpack_main.hpp \
+			 *param.hpp \
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -219,7 +230,7 @@ INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
 PREDEFINED             =
 EXPAND_AS_DEFINED      =
-SKIP_FUNCTION_MACROS   = YES
+SKIP_FUNCTION_MACROS   = NO
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------

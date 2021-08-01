@@ -1,0 +1,235 @@
+.TH "SimpleResidueTermination" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SimpleResidueTermination \- This class implements a simple residue-based termination policy\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSimpleResidueTermination\fP (const double \fBminResidue\fP=1e\-5, const size_t maxIterations=10000)"
+.br
+.RI "Construct the \fBSimpleResidueTermination\fP object with the given minimum residue (or the default) and the given maximum number of iterations (or the default)\&. "
+.ti -1c
+.RI "const double & \fBIndex\fP () const"
+.br
+.RI "Get current value of residue\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &V)"
+.br
+.RI "Initializes the termination policy before stating the factorization\&. "
+.ti -1c
+.RI "bool \fBIsConverged\fP (arma::mat &W, arma::mat &H)"
+.br
+.RI "Check if termination criterion is met\&. "
+.ti -1c
+.RI "const size_t & \fBIteration\fP () const"
+.br
+.RI "Get current iteration count\&. "
+.ti -1c
+.RI "const size_t & \fBMaxIterations\fP () const"
+.br
+.RI "Access max iteration count\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.ti -1c
+.RI "const double & \fBMinResidue\fP () const"
+.br
+.RI "Access minimum residue value\&. "
+.ti -1c
+.RI "double & \fBMinResidue\fP ()"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBiteration\fP"
+.br
+.RI "current iteration count "
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "iteration threshold "
+.ti -1c
+.RI "double \fBminResidue\fP"
+.br
+.RI "residue threshold "
+.ti -1c
+.RI "size_t \fBnm\fP"
+.br
+.ti -1c
+.RI "double \fBnormOld\fP"
+.br
+.RI "norm of previous iteration "
+.ti -1c
+.RI "double \fBresidue\fP"
+.br
+.RI "current value of residue "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class implements a simple residue-based termination policy\&. 
+
+The termination decision depends on two factors: the value of the residue (the difference between the norm of WH this iteration and the previous iteration), and the number of iterations\&. If the current value of residue drops below the threshold or the number of iterations goes above the iteration limit, \fBIsConverged()\fP will return true\&. This class is meant for use with the \fBAMF\fP (alternating matrix factorization) class\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBAMF\fP 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file simple_residue_termination\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSimpleResidueTermination\fP (const double minResidue = \fC1e\-5\fP, const size_t maxIterations = \fC10000\fP)\fC [inline]\fP"
+
+.PP
+Construct the \fBSimpleResidueTermination\fP object with the given minimum residue (or the default) and the given maximum number of iterations (or the default)\&. 0 indicates no iteration limit\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIminResidue\fP Minimum residue for termination\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file simple_residue_termination\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const double& Index () const\fC [inline]\fP"
+
+.PP
+Get current value of residue\&. 
+.PP
+Definition at line 98 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::residue\&.
+.SS "void Initialize (const MatType & V)\fC [inline]\fP"
+
+.PP
+Initializes the termination policy before stating the factorization\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix being factorized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::iteration, SimpleResidueTermination::nm, SimpleResidueTermination::normOld, and SimpleResidueTermination::residue\&.
+.SS "bool IsConverged (arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Check if termination criterion is met\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Basis matrix of output\&. 
+.br
+\fIH\fP Encoding matrix of output\&. 
+.RE
+.PP
+
+.PP
+Definition at line 76 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::iteration, SimpleResidueTermination::maxIterations, SimpleResidueTermination::minResidue, SimpleResidueTermination::normOld, and SimpleResidueTermination::residue\&.
+.SS "const size_t& Iteration () const\fC [inline]\fP"
+
+.PP
+Get current iteration count\&. 
+.PP
+Definition at line 101 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::iteration\&.
+.SS "const size_t& MaxIterations () const\fC [inline]\fP"
+
+.PP
+Access max iteration count\&. 
+.PP
+Definition at line 104 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::maxIterations\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Definition at line 105 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::maxIterations\&.
+.SS "const double& MinResidue () const\fC [inline]\fP"
+
+.PP
+Access minimum residue value\&. 
+.PP
+Definition at line 108 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::minResidue\&.
+.SS "double& MinResidue ()\fC [inline]\fP"
+
+.PP
+Definition at line 109 of file simple_residue_termination\&.hpp\&.
+.PP
+References SimpleResidueTermination::minResidue\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t iteration"
+
+.PP
+current iteration count 
+.PP
+Definition at line 120 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::Initialize(), SimpleResidueTermination::IsConverged(), and SimpleResidueTermination::Iteration()\&.
+.SS "size_t maxIterations"
+
+.PP
+iteration threshold 
+.PP
+Definition at line 115 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::IsConverged(), and SimpleResidueTermination::MaxIterations()\&.
+.SS "double minResidue"
+
+.PP
+residue threshold 
+.PP
+Definition at line 113 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::IsConverged(), and SimpleResidueTermination::MinResidue()\&.
+.SS "size_t nm"
+
+.PP
+Definition at line 124 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::Initialize()\&.
+.SS "double normOld"
+
+.PP
+norm of previous iteration 
+.PP
+Definition at line 122 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::Initialize(), and SimpleResidueTermination::IsConverged()\&.
+.SS "double residue"
+
+.PP
+current value of residue 
+.PP
+Definition at line 118 of file simple_residue_termination\&.hpp\&.
+.PP
+Referenced by SimpleResidueTermination::Index(), SimpleResidueTermination::Initialize(), and SimpleResidueTermination::IsConverged()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

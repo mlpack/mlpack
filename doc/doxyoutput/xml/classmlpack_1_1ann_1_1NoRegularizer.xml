@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1NoRegularizer" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::NoRegularizer</compoundname>
+    <includes refid="no__regularizer_8hpp" local="no">no_regularizer.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NoRegularizer_1af051bc2ec900cb278d6117c91afd2191" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NoRegularizer</definition>
+        <argsstring>()</argsstring>
+        <name>NoRegularizer</name>
+        <briefdescription>
+<para>Create the regularizer object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NoRegularizer_1ab577092faded6300cb7704691d23fd87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Evaluate</definition>
+        <argsstring>(const MatType &amp;, MatType &amp;)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+        </param>
+        <briefdescription>
+<para>Calculate the gradient for regularization. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of weight matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(weight) The weight matrix to be regularized. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(gradient) The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" bodystart="43" bodyend="46"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1NoRegularizer" kindref="compound">NoRegularizer</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para>This does not add any regularization to the weights. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/no_regularizer.hpp" bodystart="24" bodyend="47"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1NoRegularizer_1ab577092faded6300cb7704691d23fd87" prot="public" virt="non-virtual"><scope>mlpack::ann::NoRegularizer</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1ann_1_1NoRegularizer_1af051bc2ec900cb278d6117c91afd2191" prot="public" virt="non-virtual"><scope>mlpack::ann::NoRegularizer</scope><name>NoRegularizer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

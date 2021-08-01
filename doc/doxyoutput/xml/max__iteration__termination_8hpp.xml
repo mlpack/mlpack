@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="max__iteration__termination_8hpp" kind="file" language="C++">
+    <compoundname>max_iteration_termination.hpp</compoundname>
+    <includedby refid="batch__svd__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp</includedby>
+    <includedby refid="nmf__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/nmf_method.hpp</includedby>
+    <includedby refid="svd__complete__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</includedby>
+    <includedby refid="svd__incomplete__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</includedby>
+    <invincdepgraph>
+      <node id="23454">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="23456">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="23453">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="23451">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="23452" relation="include">
+        </childnode>
+        <childnode refid="23454" relation="include">
+        </childnode>
+        <childnode refid="23455" relation="include">
+        </childnode>
+        <childnode refid="23457" relation="include">
+        </childnode>
+      </node>
+      <node id="23457">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="23458" relation="include">
+        </childnode>
+      </node>
+      <node id="23460">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</label>
+        <link refid="svd__incomplete__method_8hpp"/>
+      </node>
+      <node id="23449">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp</label>
+        <link refid="batch__svd__method_8hpp"/>
+      </node>
+      <node id="23452">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="23453" relation="include">
+        </childnode>
+      </node>
+      <node id="23458">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="23455">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="23456" relation="include">
+        </childnode>
+      </node>
+      <node id="23448">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp</label>
+        <link refid="max__iteration__termination_8hpp"/>
+        <childnode refid="23449" relation="include">
+        </childnode>
+        <childnode refid="23450" relation="include">
+        </childnode>
+        <childnode refid="23459" relation="include">
+        </childnode>
+        <childnode refid="23460" relation="include">
+        </childnode>
+      </node>
+      <node id="23459">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</label>
+        <link refid="svd__complete__method_8hpp"/>
+      </node>
+      <node id="23450">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
+        <link refid="nmf__method_8hpp"/>
+        <childnode refid="23451" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1amf_1_1MaxIterationTermination" prot="public">mlpack::amf::MaxIterationTermination</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1amf">mlpack::amf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+A termination policy which only terminates when the maximum number of iterations is reached.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_AMF_TERMINATION_POLICIES_MAX_ITERATION_TERMINATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_AMF_TERMINATION_POLICIES_MAX_ITERATION_TERMINATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">amf<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1amf_1_1MaxIterationTermination" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination" kindref="compound">MaxIterationTermination</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a98cfff3b4dc8dcf4679050651517114b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a98cfff3b4dc8dcf4679050651517114b" kindref="member">MaxIterationTermination</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations)<sp/>:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxIterations(maxIterations),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>iteration(0)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maxIterations<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Warn<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MaxIterationTermination::MaxIterationTermination():<sp/>given<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;number<sp/>of<sp/>iterations<sp/>is<sp/>0,<sp/>so<sp/>algorithm<sp/>will<sp/>never<sp/>terminate!&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a24e5b85350a8b4b867486aa24334fa35" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a24e5b85350a8b4b867486aa24334fa35" kindref="member">Initialize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/></highlight><highlight class="comment">/*<sp/>V<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a1541d81ce59ddf02e5a970de45e01ecf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a1541d81ce59ddf02e5a970de45e01ecf" kindref="member">IsConverged</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>H<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>W<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>true<sp/>if<sp/>we<sp/>have<sp/>performed<sp/>the<sp/>correct<sp/>number<sp/>of<sp/>iterations.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(++iteration<sp/>&gt;=<sp/>maxIterations);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af9bd9c065fa0b8e0da8c57b0ab46b870" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af9bd9c065fa0b8e0da8c57b0ab46b870" kindref="member">Index</ref>()</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(iteration<sp/>&gt;<sp/>maxIterations)<sp/>?<sp/>0<sp/>:<sp/>maxIterations<sp/>-<sp/>iteration;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a8d03065ad6cf9b1807c9deb70ed63185" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a8d03065ad6cf9b1807c9deb70ed63185" kindref="member">Iteration</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>iteration;<sp/>}</highlight></codeline>
+<codeline lineno="68" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af74970d9e7d271359c2423a3f786853b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af74970d9e7d271359c2423a3f786853b" kindref="member">Iteration</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>iteration;<sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="73" refid="classmlpack_1_1amf_1_1MaxIterationTermination_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1MaxIterationTermination_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>iteration;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>amf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp"/>
+  </compounddef>
+</doxygen>

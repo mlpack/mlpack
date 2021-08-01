@@ -1,0 +1,395 @@
+\section{Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1PixelShuffle}\index{Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Pixel\+Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} object. \end{DoxyCompactList}\item 
+\textbf{ Pixel\+Shuffle} (const size\+\_\+t upscale\+Factor, const size\+\_\+t height, const size\+\_\+t width, const size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Channels} () const
+\begin{DoxyCompactList}\small\item\em Get the number of input channels. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Channels} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of input channels. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the input image height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the input image height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the input image width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the input image width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Channels} () const
+\begin{DoxyCompactList}\small\item\em Get the number of output channels. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the output image height. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the output image width. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Upscale\+Factor} () const
+\begin{DoxyCompactList}\small\item\em Get the upscale factor. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Upscale\+Factor} ()
+\begin{DoxyCompactList}\small\item\em Modify the upscale factor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer. 
+
+For more information, refer to the following paper,
+
+
+\begin{DoxyCode}
+@article\{Shi16,
+  author    = \{Wenzhe Shi, Jose Caballero,Ferenc Huszár, Johannes Totz,
+              Andrew P. Aitken, Rob Bishop, Daniel Rueckert, Zehan Wang\},
+  title     = \{Real-Time Single Image and Video Super-Resolution Using an
+              Efficient Sub-Pixel Convolutional Neural Network\},
+  journal   = \{CoRR\},
+  volume    = \{abs/1609.05158\},
+  year      = \{2016\},
+  url       = \{https:\textcolor{comment}{//arxiv.org/abs/1609.05158\},}
+  eprint    = \{1609.05158\},
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 49 of file pixel\+\_\+shuffle.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a0f7353f73460bf5a490768a22105a3bf}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Pixel\+Shuffle@{Pixel\+Shuffle}}
+\index{Pixel\+Shuffle@{Pixel\+Shuffle}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Pixel\+Shuffle()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Pixel\+Shuffle} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_ada1a658041eb75a1f4d77fcb40d604d5}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Pixel\+Shuffle@{Pixel\+Shuffle}}
+\index{Pixel\+Shuffle@{Pixel\+Shuffle}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Pixel\+Shuffle()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Pixel\+Shuffle} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{upscale\+Factor,  }\item[{const size\+\_\+t}]{height,  }\item[{const size\+\_\+t}]{width,  }\item[{const size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} object using the specified parameters. 
+
+The number of input channels should be an integral multiple of the square of the upscale factor.
+
+
+\begin{DoxyParams}{Parameters}
+{\em upscale\+Factor} & The scaling factor for Pixel Shuffle. \\
+\hline
+{\em height} & The height of each input image. \\
+\hline
+{\em width} & The width of each input image. \\
+\hline
+{\em size} & The number of channels of each input image. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a78dbad83871f43db1975e45a9a69c376}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 97 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 99 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of the \doxyref{Pixel\+Shuffle}{p.}{classmlpack_1_1ann_1_1PixelShuffle} layer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_ae19d2ae537a3897277f8b66f5e27f0a1}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Channels@{Input\+Channels}}
+\index{Input\+Channels@{Input\+Channels}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Channels()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Channels (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of input channels. 
+
+
+
+Definition at line 120 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a8414286892d75f63293d257a7fde37d5}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Channels@{Input\+Channels}}
+\index{Input\+Channels@{Input\+Channels}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Channels()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Channels (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of input channels. 
+
+
+
+Definition at line 123 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_ac34354aab4ed6f9145908b19eade6a24}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input image height. 
+
+
+
+Definition at line 108 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_aefbba724eec397a928d5460bb209a360}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input image height. 
+
+
+
+Definition at line 111 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a432efdff77411903044ae87ec3aec70f}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input image width. 
+
+
+
+Definition at line 114 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a238e9d308df611a9300a4ca6756fef4d}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Input\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input image width. 
+
+
+
+Definition at line 117 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a1890d5841c36fb959a47b2389bb45955}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Output\+Channels@{Output\+Channels}}
+\index{Output\+Channels@{Output\+Channels}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Output\+Channels()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Channels (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of output channels. 
+
+
+
+Definition at line 132 of file pixel\+\_\+shuffle.\+hpp.
+
+
+
+References Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a96a6294ed9ca8d24be9bb5eb53db7f25}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Output\+Height@{Output\+Height}}
+\index{Output\+Height@{Output\+Height}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Output\+Height()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output image height. 
+
+
+
+Definition at line 126 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 92 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 94 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_aa2b647f9e029826314b4f572fe96878d}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Output\+Width@{Output\+Width}}
+\index{Output\+Width@{Output\+Width}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Output\+Width()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output image width. 
+
+
+
+Definition at line 129 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_af0dd9205158ccf7bcfcd8ff81f79c927}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const unsigned}]{int }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Pixel\+Shuffle$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Channels().
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_acc782bae08f532369a073e60b8cf2894}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Upscale\+Factor@{Upscale\+Factor}}
+\index{Upscale\+Factor@{Upscale\+Factor}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Upscale\+Factor()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Upscale\+Factor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the upscale factor. 
+
+
+
+Definition at line 102 of file pixel\+\_\+shuffle.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PixelShuffle_a57e852c6adee1e556e3886cda2f34913}} 
+\index{mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}!Upscale\+Factor@{Upscale\+Factor}}
+\index{Upscale\+Factor@{Upscale\+Factor}!mlpack\+::ann\+::\+Pixel\+Shuffle@{mlpack\+::ann\+::\+Pixel\+Shuffle}}
+\subsubsection{Upscale\+Factor()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Upscale\+Factor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the upscale factor. 
+
+
+
+Definition at line 105 of file pixel\+\_\+shuffle.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ pixel\+\_\+shuffle.\+hpp}\end{DoxyCompactItemize}

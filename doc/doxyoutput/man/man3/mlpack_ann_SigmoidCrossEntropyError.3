@@ -1,0 +1,132 @@
+.TH "SigmoidCrossEntropyError< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SigmoidCrossEntropyError< InputDataType, OutputDataType > \- The \fBSigmoidCrossEntropyError\fP performance function measures the network's performance according to the cross-entropy function between the input and target distributions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSigmoidCrossEntropyError\fP ()"
+.br
+.RI "Create the \fBSigmoidCrossEntropyError\fP object\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType , typename LossType > void \fBBackward\fP (const PredictionType &prediction, const TargetType &target, LossType &loss)"
+.br
+.RI "Ordinary feed backward pass of a neural network\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType > PredictionType::elem_type \fBForward\fP (const PredictionType &prediction, const TargetType &target)"
+.br
+.RI "Computes the Sigmoid CrossEntropy Error functions\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::SigmoidCrossEntropyError< InputDataType, OutputDataType >"
+The \fBSigmoidCrossEntropyError\fP performance function measures the network's performance according to the cross-entropy function between the input and target distributions\&. 
+
+This function calculates the cross entropy given the real values instead of providing the sigmoid activations\&. The function uses this equivalent formulation: $max(x, 0) - x * z + \log(1 + e^{-|x|})$ where x = input and z = target\&.
+.PP
+For more information, see the following paper\&.
+.PP
+.PP
+.nf
+@article{Janocha2017
+  title   = {On Loss Functions for Deep Neural Networks in Classification},
+  author  = {Katarzyna Janocha, Wojciech Marian Czarnecki},
+  url     = {http://arxiv\&.org/abs/1702\&.05659},
+  journal = {CoRR},
+  eprint  = {arXiv:1702\&.05659},
+  year    = {2017}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file sigmoid_cross_entropy_error\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSigmoidCrossEntropyError\fP ()"
+
+.PP
+Create the \fBSigmoidCrossEntropyError\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const PredictionType & prediction, const TargetType & target, LossType & loss)\fC [inline]\fP"
+
+.PP
+Ordinary feed backward pass of a neural network\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIprediction\fP Predictions used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP The target vector\&. 
+.br
+\fIloss\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "PredictionType::elem_type Forward (const PredictionType & prediction, const TargetType & target)\fC [inline]\fP"
+
+.PP
+Computes the Sigmoid CrossEntropy Error functions\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIprediction\fP Predictions used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP The target vector\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 86 of file sigmoid_cross_entropy_error\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 88 of file sigmoid_cross_entropy_error\&.hpp\&.
+.PP
+References SigmoidCrossEntropyError< InputDataType, OutputDataType >::serialize()\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by SigmoidCrossEntropyError< InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

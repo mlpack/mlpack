@@ -1,0 +1,13 @@
+.. _exhale_function_cf__main_8cpp_1aa52b01621260856552b4f1cf5cc27582:
+
+Function BINDING_SHORT_DESC("An implementation of several collaborative filtering (CF) techniques for " "recommender systems. This can be used to train a new CF, or use an" " existing CF model to compute recommendations.")
+==============================================================================================================================================================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_cf_cf_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: BINDING_SHORT_DESC("An implementation of several collaborative filtering (CF) techniques for " "recommender systems. This can be used to train a new CF, or use an" " existing CF model to compute recommendations.")

@@ -1,0 +1,305 @@
+.TH "Sequential< InputDataType, OutputDataType, Residual, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Sequential< InputDataType, OutputDataType, Residual, CustomLayers > \- Implementation of the \fBSequential\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSequential\fP (const bool model=true)"
+.br
+.RI "Create the \fBSequential\fP object using the specified parameters\&. "
+.ti -1c
+.RI "\fBSequential\fP (const bool model, const bool ownsLayers)"
+.br
+.RI "Create the \fBSequential\fP object using the specified parameters\&. "
+.ti -1c
+.RI "\fBSequential\fP (const \fBSequential\fP &layer)"
+.br
+.RI "Copy constructor\&. "
+.ti -1c
+.RI "\fB~Sequential\fP ()"
+.br
+.RI "Destroy the \fBSequential\fP object\&. "
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "arma::mat const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "arma::mat & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &)"
+.br
+.ti -1c
+.RI "arma::mat const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "arma::mat & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "arma::mat const  & \fBInputParameter\fP () const"
+.br
+.RI "Get the input parameter\&. "
+.ti -1c
+.RI "arma::mat & \fBInputParameter\fP ()"
+.br
+.RI "Modify the input parameter\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP< CustomLayers\&.\&.\&. > > & \fBModel\fP ()"
+.br
+.RI "Return the model modules\&. "
+.ti -1c
+.RI "\fBSequential\fP & \fBoperator=\fP (const \fBSequential\fP &layer)"
+.br
+.RI "Copy assignment operator\&. "
+.ti -1c
+.RI "arma::mat const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "arma::mat & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const"
+.br
+.RI "Return the initial point for the optimization\&. "
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "Modify the initial point for the optimization\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat, bool Residual = false, typename\&.\&.\&. CustomLayers>
+.br
+class mlpack::ann::Sequential< InputDataType, OutputDataType, Residual, CustomLayers >"
+Implementation of the \fBSequential\fP class\&. 
+
+The sequential class works as a feed-forward fully connected network container which plugs various layers together\&.
+.PP
+This class can also be used as a container for a residual block\&. In that case, the sizes of the input and output matrices of this class should be equal\&. A typedef has been added for use as a Residual<> class\&.
+.PP
+For more information, refer the following paper\&.
+.PP
+.PP
+.nf
+@article{He15,
+  author    = {Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun},
+  title     = {Deep Residual Learning for Image Recognition},
+  year      = {2015},
+  url       = {https://arxiv\&.org/abs/1512\&.03385},
+  eprint    = {1512\&.03385},
+}
+.fi
+.PP
+.PP
+Note: If this class is used as the first layer of a network, it should be preceded by IdentityLayer<>\&.
+.PP
+Note: This class should at least have two layers for a call to its \fBGradient()\fP function\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIResidual\fP If true, use the object as a Residual block\&. 
+.RE
+.PP
+
+.PP
+Definition at line 141 of file layer_types\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSequential\fP (const bool model = \fCtrue\fP)"
+
+.PP
+Create the \fBSequential\fP object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP Expose the all network modules\&. 
+.RE
+.PP
+
+.SS "\fBSequential\fP (const bool model, const bool ownsLayers)"
+
+.PP
+Create the \fBSequential\fP object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP Expose all the network modules\&. 
+.br
+\fIownsLayers\fP If true, then this module will delete its layers when deallocated\&. 
+.RE
+.PP
+
+.SS "\fBSequential\fP (const \fBSequential\fP< InputDataType, OutputDataType, \fBResidual\fP, CustomLayers > & layer)"
+
+.PP
+Copy constructor\&. 
+.SS "~\fBSequential\fP ()"
+
+.PP
+Destroy the \fBSequential\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void \fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 143 of file sequential\&.hpp\&.
+.PP
+Referenced by DuelingDQN< OutputLayerType, InitType, CompleteNetworkType, FeatureNetworkType, AdvantageNetworkType, ValueNetworkType >::DuelingDQN()\&.
+.SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
+
+.PP
+Definition at line 150 of file sequential\&.hpp\&.
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "arma::mat const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 179 of file sequential\&.hpp\&.
+.SS "arma::mat& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 181 of file sequential\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > &)"
+
+.SS "arma::mat const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 184 of file sequential\&.hpp\&.
+.SS "arma::mat& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 186 of file sequential\&.hpp\&.
+.PP
+References Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::InputShape(), and Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::serialize()\&.
+.SS "arma::mat const& InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 169 of file sequential\&.hpp\&.
+.SS "arma::mat& InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 171 of file sequential\&.hpp\&.
+.SS "size_t InputShape () const"
+
+.PP
+Referenced by Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::Gradient()\&.
+.SS "std::vector<\fBLayerTypes\fP<CustomLayers\&.\&.\&.> >& Model ()\fC [inline]\fP"
+
+.PP
+Return the model modules\&. 
+.PP
+Definition at line 153 of file sequential\&.hpp\&.
+.SS "\fBSequential\fP& operator= (const \fBSequential\fP< InputDataType, OutputDataType, \fBResidual\fP, CustomLayers > & layer)"
+
+.PP
+Copy assignment operator\&. 
+.SS "arma::mat const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 174 of file sequential\&.hpp\&.
+.SS "arma::mat& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 176 of file sequential\&.hpp\&.
+.SS "const arma::mat& Parameters () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 164 of file sequential\&.hpp\&.
+.SS "arma::mat& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the initial point for the optimization\&. 
+.PP
+Definition at line 166 of file sequential\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::Gradient()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

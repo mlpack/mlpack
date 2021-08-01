@@ -1,0 +1,43 @@
+\section{/home/aakash/mlpack/src/mlpack/core/cereal/pair\+\_\+associative\+\_\+container.hpp File Reference}
+\label{pair__associative__container_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/cereal/pair\+\_\+associative\+\_\+container.\+hpp@{/home/aakash/mlpack/src/mlpack/core/cereal/pair\+\_\+associative\+\_\+container.\+hpp}}
+
+
+This file is backported from cereal 1.\+3 to support the serialization of objects of type associative containers (std\+::map, std\+::pair, etc.)  
+
+
+Include dependency graph for pair\+\_\+associative\+\_\+container.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{pair__associative__container_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pair__associative__container_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ cereal}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Archive , template$<$ typename... $>$ class Map, typename... Args, typename  = typename Map$<$\+Args...$>$\+::mapped\+\_\+type$>$ }\\void \textbf{ C\+E\+R\+E\+A\+L\+\_\+\+L\+O\+A\+D\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+N\+A\+ME} (Archive \&ar, Map$<$ Args... $>$ \&map)
+\begin{DoxyCompactList}\small\item\em Loading for std-\/like pair associative containers. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Archive , template$<$ typename... $>$ class Map, typename... Args, typename  = typename Map$<$\+Args...$>$\+::mapped\+\_\+type$>$ }\\void \textbf{ C\+E\+R\+E\+A\+L\+\_\+\+S\+A\+V\+E\+\_\+\+F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+N\+A\+ME} (Archive \&ar, Map$<$ Args... $>$ const \&map)
+\begin{DoxyCompactList}\small\item\em Saving for std-\/like pair associative containers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file is backported from cereal 1.\+3 to support the serialization of objects of type associative containers (std\+::map, std\+::pair, etc.) 
+
+This file add the support for serialization of containers for any version of cereal starting from 1.\+1.\+2 that is required by Ubuntu 16.\+04
+
+Support for the Pair\+Associative\+Container refinement of the Associative\+Container concept. 

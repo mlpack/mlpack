@@ -1,0 +1,131 @@
+.TH "StandardScaler" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+StandardScaler \- A simple Standard Scaler class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > void \fBFit\fP (const MatType &input)"
+.br
+.RI "Function to fit features, to find out the min max and scale\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInverseTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function to retrieve original dataset\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemMean\fP () const"
+.br
+.RI "Get the mean row vector\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemStdDev\fP () const"
+.br
+.RI "Get the standard deviation row vector\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function to scale features\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A simple Standard Scaler class\&. 
+
+Given an input dataset this class helps you to Standardize features by removing the mean and scaling to unit variance\&.
+.PP
+[z = (x - u) / s]
+.PP
+where u is the mean of the training samples and s is the standard deviation of the training samples\&.
+.PP
+.PP
+.nf
+arma::mat input;
+Load("train\&.csv", input);
+arma::mat output;
+
+// Fit the features\&.
+StandardScaler scale;
+scale\&.Fit(input)
+
+// Scale the features\&.
+scale\&.Transform(input, output);
+
+// Retransform the input\&.
+scale\&.InverseTransform(output, input);
+.fi
+.PP
+ 
+.PP
+Definition at line 47 of file standard_scaler\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Fit (const MatType & input)\fC [inline]\fP"
+
+.PP
+Function to fit features, to find out the min max and scale\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Dataset to fit\&. 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file standard_scaler\&.hpp\&.
+.SS "void InverseTransform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function to retrieve original dataset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Scaled dataset\&. 
+.br
+\fIoutput\fP Output matrix with original Dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 90 of file standard_scaler\&.hpp\&.
+.SS "const arma::vec& ItemMean () const\fC [inline]\fP"
+
+.PP
+Get the mean row vector\&. 
+.PP
+Definition at line 97 of file standard_scaler\&.hpp\&.
+.SS "const arma::vec& ItemStdDev () const\fC [inline]\fP"
+
+.PP
+Get the standard deviation row vector\&. 
+.PP
+Definition at line 99 of file standard_scaler\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Definition at line 102 of file standard_scaler\&.hpp\&.
+.SS "void Transform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function to scale features\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Dataset to scale features\&. 
+.br
+\fIoutput\fP Output matrix with scaled features\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file standard_scaler\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

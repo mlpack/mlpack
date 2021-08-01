@@ -1,0 +1,567 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1DatasetMapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::DatasetMapper</compoundname>
+    <includes refid="dataset__mapper_8hpp" local="no">dataset_mapper.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>PolicyType</declname>
+        <defname>PolicyType</defname>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>InputType</declname>
+        <defname>InputType</defname>
+        <defval>std::string</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1DatasetMapper_1ad01d77d0550e2e297235b47e7c0eb62d" prot="private" static="no">
+        <type>typename std::unordered_map&lt; InputType, typename PolicyType::MappedType &gt;</type>
+        <definition>using ForwardMapType =  typename std::unordered_map&lt;InputType, typename PolicyType::MappedType&gt;</definition>
+        <argsstring></argsstring>
+        <name>ForwardMapType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1DatasetMapper_1ad2c6ad552a8daa57adf444b2eb235cfa" prot="private" static="no">
+        <type>std::unordered_map&lt; size_t, std::pair&lt; ForwardMapType, ReverseMapType &gt; &gt;</type>
+        <definition>using MapType =  std::unordered_map&lt;size_t, std::pair&lt;ForwardMapType, ReverseMapType&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>MapType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1DatasetMapper_1ac731e8583ad71283b922e3f1035fa9d7" prot="private" static="no">
+        <type>std::unordered_map&lt; typename PolicyType::MappedType, std::vector&lt; InputType &gt; &gt;</type>
+        <definition>using ReverseMapType =  std::unordered_map&lt;typename PolicyType::MappedType, std::vector&lt;InputType&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>ReverseMapType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1DatasetMapper_1a7ee4b500986175017c5ab130747b9a91" prot="private" static="no" mutable="no">
+        <type>MapType</type>
+        <definition>MapType maps</definition>
+        <argsstring></argsstring>
+        <name>maps</name>
+        <briefdescription>
+<para>maps object stores string and numerical pairs. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="188" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="188" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1DatasetMapper_1ac436814a5daafd0018ae6bb4ed34d0a4" prot="private" static="no" mutable="no">
+        <type>PolicyType</type>
+        <definition>PolicyType policy</definition>
+        <argsstring></argsstring>
+        <name>policy</name>
+        <briefdescription>
+<para>policy object tells dataset mapper how the categorical values should be </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1DatasetMapper_1a607b18e65a5e1c0dadf777bbc1110a7a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref> &gt;</type>
+        <definition>std::vector&lt;Datatype&gt; types</definition>
+        <argsstring></argsstring>
+        <name>types</name>
+        <briefdescription>
+<para>Types of each dimension. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a1cb8ca1e3f05d484a311ac538ad6d875" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DatasetMapper</definition>
+        <argsstring>(const size_t dimensionality=0)</argsstring>
+        <name>DatasetMapper</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object with the given dimensionality. </para>        </briefdescription>
+        <detaileddescription>
+<para>Note that the dimensionality cannot be changed later; you will have to create a new <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="49" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a12082e154904a4a0e6451d7ff7df8335" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DatasetMapper</definition>
+        <argsstring>(PolicyType &amp;policy, const size_t dimensionality=0)</argsstring>
+        <name>DatasetMapper</name>
+        <param>
+          <type>PolicyType &amp;</type>
+          <declname>policy</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object with the given policy and dimensionality. </para>        </briefdescription>
+        <detaileddescription>
+<para>Note that the dimensionality cannot be changed later; you will have to create a new <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object. Policy can be modified by the modifier. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="56" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Get the dimensionality of the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object (that is, how many dimensions it has information for). </para>        </briefdescription>
+        <detaileddescription>
+<para>If this object was created by a call to <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref>, then the dimensionality will be the same as the number of rows (dimensions) in the dataset. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="148" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1abc9d3b17fb4bc99d9dc00052658c19b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void MapFirstPass</definition>
+        <argsstring>(const InputType &amp;input, const size_t dimension)</argsstring>
+        <name>MapFirstPass</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Preprocessing: during a first pass of the data, pass the input on to the MapPolicy if they are needed. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input to map. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension to map for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1aa262641cb3ba3a0b2583c37e2863ab49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T MapString</definition>
+        <argsstring>(const InputType &amp;input, const size_t dimension)</argsstring>
+        <name>MapString</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Given the input and the dimension to which it belongs, return its numeric mapping. </para>        </briefdescription>
+        <detaileddescription>
+<para>If no mapping yet exists, the input is added to the list of mappings for the given dimension. The dimension parameter refers to the index of the dimension of the string (i.e. the row in the dataset).</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Numeric type to map to (int/double/float/etc.). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input to find/create mapping for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the dimension of the string. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="87" column="1"/>
+        <referencedby refid="mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6" compoundref="mock__categorical__data_8hpp" startline="20" endline="114">MockCategoricalData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1ab7507726fd159ae4c23491f8ca4fdb7e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumMappings</definition>
+        <argsstring>(const size_t dimension) const</argsstring>
+        <name>NumMappings</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of mappings for a particular dimension. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the dimension is numeric, then this will return 0. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="140" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a54dbddcef3e4710b4ebccaa5ae449db3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t NumUnmappings</definition>
+        <argsstring>(const T value, const size_t dimension) const</argsstring>
+        <name>NumUnmappings</name>
+        <param>
+          <type>const T</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of possible unmappings for a string in a given dimension. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="117" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a04e9dd2c0ef71ea0e2cb126233652bfa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const PolicyType &amp;</type>
+        <definition>const PolicyType&amp; Policy</definition>
+        <argsstring>() const</argsstring>
+        <name>Policy</name>
+        <briefdescription>
+<para>Return the policy of the mapper. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="161" column="1"/>
+        <referencedby refid="classmlpack_1_1data_1_1DatasetMapper_1a65cba07328997659bec80b9879b15a51" compoundref="dataset__mapper_8hpp" startline="154" endline="158">DatasetMapper&lt; mlpack::data::IncrementPolicy, double &gt;::serialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a1ef80c7b0a3fb5468b9d920fef109d36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PolicyType &amp;</type>
+        <definition>PolicyType&amp; Policy</definition>
+        <argsstring>()</argsstring>
+        <name>Policy</name>
+        <briefdescription>
+<para>Modify the policy of the mapper (be careful!). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="164" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a3c99829fefb852602b7daa0bd5e32c1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Policy</definition>
+        <argsstring>(PolicyType &amp;&amp;policy)</argsstring>
+        <name>Policy</name>
+        <param>
+          <type>PolicyType &amp;&amp;</type>
+          <declname>policy</declname>
+        </param>
+        <briefdescription>
+<para>Modify (Replace) the policy of the mapper with a new policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="166" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the dataset information. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="154" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1ae0e1d3459cf5bee5e688beaadf9a4f04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SetDimensionality</definition>
+        <argsstring>(const size_t dimensionality)</argsstring>
+        <name>SetDimensionality</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+        </param>
+        <briefdescription>
+<para>Set the dimensionality of an existing <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>This resets all mappings (but not the PolicyType).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dimensionality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New dimensionality. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="64" column="1"/>
+        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" compoundref="load__csv_8hpp" startline="151" endline="205">LoadCSV::GetTransposeMatrixSize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1af46c276f8b3c130454e23447bcb959e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref></type>
+        <definition>Datatype Type</definition>
+        <argsstring>(const size_t dimension) const</argsstring>
+        <name>Type</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Return the type of a given dimension (numeric or categorical). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="132" column="1"/>
+        <referencedby refid="mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6" compoundref="mock__categorical__data_8hpp" startline="20" endline="114">MockCategoricalData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a1283ad10b330a96190ef575e7a471827" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref> &amp;</type>
+        <definition>Datatype&amp; Type</definition>
+        <argsstring>(const size_t dimension)</argsstring>
+        <name>Type</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Modify the type of a given dimension (be careful!). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="134" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1aa7aa43366cbb80bb5c65b1114ff1191e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>const InputType &amp;</type>
+        <definition>const InputType&amp; UnmapString</definition>
+        <argsstring>(const T value, const size_t dimension, const size_t unmappingIndex=0) const</argsstring>
+        <name>UnmapString</name>
+        <param>
+          <type>const T</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>unmappingIndex</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the input that corresponds to a given value in a given dimension. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the value is not a valid mapping in the given dimension, a std::invalid_argument is thrown. Note that this does not remove the mapping.</para><para>If the mapping is non-unique (i.e. many strings can map to the same value), then you can pass a different value for unmappingIndex to get a different string that maps to the given value. unmappingIndex should be in the range from 0 to (NumUnmappings(value, dimension) - 1).</para><para>If the mapping is unique (which it is for DatasetInfo), then the unmappingIndex parameter can be left as the default.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mapped value for input. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension to unmap string from. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>unmappingIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of non-unique unmapping (optional). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="109" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a5fedd8c234794cdaf148319c28c28e2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PolicyType::MappedType</type>
+        <definition>PolicyType::MappedType UnmapValue</definition>
+        <argsstring>(const InputType &amp;input, const size_t dimension)</argsstring>
+        <name>UnmapValue</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Return the value that corresponds to a given input in a given dimension. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the value is not a valid mapping in the given dimension, a std::invalid_argument is thrown. Note that this does not remove the mapping.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mapped input for value. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension to unmap input from. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="128" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Auxiliary information for a dataset, including mappings to/from strings (or other types) and the datatype of each dimension. </para>    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> objects are optionally produced by <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">data::Load()</ref>, and store the type of each dimension (Datatype::numeric or Datatype::categorical) as well as mappings from strings to unsigned integers and vice versa.</para><para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> objects can also map from arbitrary types; the type to map from can be specified with the InputType template parameter. By default, the InputType parameter is std::string.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>PolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mapping policy used to specify <ref refid="classmlpack_1_1data_1_1DatasetMapper_1aa262641cb3ba3a0b2583c37e2863ab49" kindref="member">MapString()</ref>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>InputType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of input to be mapped. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="715">
+        <label>DatasetMapper&lt; mlpack::data::IncrementPolicy, double &gt;</label>
+        <link refid="classmlpack_1_1data_1_1DatasetMapper"/>
+        <childnode refid="714" relation="template-instance">
+          <edgelabel>&lt; mlpack::data::IncrementPolicy, double &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="714">
+        <label>DatasetMapper&lt; PolicyType, InputType &gt;</label>
+        <link refid="classmlpack_1_1data_1_1DatasetMapper"/>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" bodystart="41" bodyend="193"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a1cb8ca1e3f05d484a311ac538ad6d875" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>DatasetMapper</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a12082e154904a4a0e6451d7ff7df8335" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>DatasetMapper</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ad01d77d0550e2e297235b47e7c0eb62d" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>ForwardMapType</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1abc9d3b17fb4bc99d9dc00052658c19b1" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>MapFirstPass</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a7ee4b500986175017c5ab130747b9a91" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>maps</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1aa262641cb3ba3a0b2583c37e2863ab49" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>MapString</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ad2c6ad552a8daa57adf444b2eb235cfa" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>MapType</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ab7507726fd159ae4c23491f8ca4fdb7e" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>NumMappings</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a54dbddcef3e4710b4ebccaa5ae449db3" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>NumUnmappings</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a04e9dd2c0ef71ea0e2cb126233652bfa" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Policy</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a1ef80c7b0a3fb5468b9d920fef109d36" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Policy</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a3c99829fefb852602b7daa0bd5e32c1a" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Policy</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ac436814a5daafd0018ae6bb4ed34d0a4" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>policy</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ac731e8583ad71283b922e3f1035fa9d7" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>ReverseMapType</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1ae0e1d3459cf5bee5e688beaadf9a4f04" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>SetDimensionality</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1af46c276f8b3c130454e23447bcb959e4" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Type</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a1283ad10b330a96190ef575e7a471827" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>Type</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a607b18e65a5e1c0dadf777bbc1110a7a" prot="private" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>types</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1aa7aa43366cbb80bb5c65b1114ff1191e" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>UnmapString</name></member>
+      <member refid="classmlpack_1_1data_1_1DatasetMapper_1a5fedd8c234794cdaf148319c28c28e2e" prot="public" virt="non-virtual"><scope>mlpack::data::DatasetMapper</scope><name>UnmapValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

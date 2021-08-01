@@ -1,0 +1,458 @@
+\section{Tf\+Idf\+Encoding\+Policy Class Reference}
+\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy}\index{Tf\+Idf\+Encoding\+Policy@{Tf\+Idf\+Encoding\+Policy}}
+
+
+Definition of the \doxyref{Tf\+Idf\+Encoding\+Policy}{p.}{classmlpack_1_1data_1_1TfIdfEncodingPolicy} class.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Tf\+Types} \{ \newline
+\textbf{ B\+I\+N\+A\+RY}, 
+\newline
+\textbf{ R\+A\+W\+\_\+\+C\+O\+U\+NT}, 
+\newline
+\textbf{ T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY}, 
+\newline
+\textbf{ S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF}
+ \}\begin{DoxyCompactList}\small\item\em Enum class used to identify the type of the term frequency statistics. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Tf\+Idf\+Encoding\+Policy} (const \textbf{ Tf\+Types} tf\+Type=\textbf{ Tf\+Types\+::\+R\+A\+W\+\_\+\+C\+O\+U\+NT}, const bool smooth\+Idf=true)
+\begin{DoxyCompactList}\small\item\em Construct this using the term frequency type and the inverse document frequency type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Encode} (Mat\+Type \&output, const size\+\_\+t value, const size\+\_\+t line, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em The function performs the Tf\+Idf encoding algorithm i.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\void \textbf{ Encode} (std\+::vector$<$ std\+::vector$<$ Elem\+Type $>$$>$ \&output, const size\+\_\+t value, const size\+\_\+t line, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em The function performs the Tf\+Idf encoding algorithm i.\+e. \end{DoxyCompactList}\item 
+const std\+::vector$<$ size\+\_\+t $>$ \& \textbf{ Lines\+Sizes} () const
+\begin{DoxyCompactList}\small\item\em Return the lines sizes. \end{DoxyCompactList}\item 
+std\+::vector$<$ size\+\_\+t $>$ \& \textbf{ Lines\+Sizes} ()
+\begin{DoxyCompactList}\small\item\em Modify the lines sizes. \end{DoxyCompactList}\item 
+const std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ \& \textbf{ Num\+Containing\+Strings} () const
+\begin{DoxyCompactList}\small\item\em Get the number of containing strings depending on the given token. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ \& \textbf{ Num\+Containing\+Strings} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of containing strings depending on the given token. \end{DoxyCompactList}\item 
+void \textbf{ Preprocess\+Token} (const size\+\_\+t line, const size\+\_\+t, const size\+\_\+t value)
+\item 
+void \textbf{ Reset} ()
+\begin{DoxyCompactList}\small\item\em Clear the necessary internal variables. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the class to the given archive. \end{DoxyCompactList}\item 
+bool \textbf{ Smooth\+Idf} () const
+\begin{DoxyCompactList}\small\item\em Determine the idf algorithm type (whether it\textquotesingle{}s smooth or not). \end{DoxyCompactList}\item 
+bool \& \textbf{ Smooth\+Idf} ()
+\begin{DoxyCompactList}\small\item\em Modify the idf algorithm type (whether it\textquotesingle{}s smooth or not). \end{DoxyCompactList}\item 
+\textbf{ Tf\+Types} \textbf{ Tf\+Type} () const
+\begin{DoxyCompactList}\small\item\em Return the term frequency type. \end{DoxyCompactList}\item 
+\textbf{ Tf\+Types} \& \textbf{ Tf\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the term frequency type. \end{DoxyCompactList}\item 
+const std\+::vector$<$ std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ $>$ \& \textbf{ Tokens\+Frequences} () const
+\begin{DoxyCompactList}\small\item\em Return token frequencies. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::unordered\+\_\+map$<$ size\+\_\+t, size\+\_\+t $>$ $>$ \& \textbf{ Tokens\+Frequences} ()
+\begin{DoxyCompactList}\small\item\em Modify token frequencies. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ Init\+Matrix} (Mat\+Type \&output, const size\+\_\+t dataset\+Size, const size\+\_\+t, const size\+\_\+t dictionary\+Size)
+\begin{DoxyCompactList}\small\item\em The function initializes the output matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\static void \textbf{ Init\+Matrix} (std\+::vector$<$ std\+::vector$<$ Elem\+Type $>$$>$ \&output, const size\+\_\+t dataset\+Size, const size\+\_\+t, const size\+\_\+t dictionary\+Size)
+\begin{DoxyCompactList}\small\item\em The function initializes the output matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Definition of the \doxyref{Tf\+Idf\+Encoding\+Policy}{p.}{classmlpack_1_1data_1_1TfIdfEncodingPolicy} class. 
+
+\doxyref{Tf\+Idf\+Encoding\+Policy}{p.}{classmlpack_1_1data_1_1TfIdfEncodingPolicy} is used as a helper class for \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding}.
+
+Tf-\/idf is a weighting scheme that takes into account the importance of encoded tokens. The tf-\/idf statistics is equal to term frequency (tf) multiplied by inverse document frequency (idf). The encoder assigns the corresponding tf-\/idf value to each token. The order in which the tokens are labeled is defined by the dictionary used by the \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding} class. The encoder writes data either in the column-\/major order or in the row-\/major order depending on the output data type. 
+
+Definition at line 35 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ab8d85d42d950e086c7c311e29a68d497}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tf\+Types@{Tf\+Types}}
+\index{Tf\+Types@{Tf\+Types}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tf\+Types}
+{\footnotesize\ttfamily enum \textbf{ Tf\+Types}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Enum class used to identify the type of the term frequency statistics. 
+
+The present implementation supports the following types\+: B\+I\+N\+A\+RY Term frequency equals 1 if the row contains the encoded token and 0 otherwise. R\+A\+W\+\_\+\+C\+O\+U\+NT Term frequency equals the number of times when the encoded token occurs in the row. T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY Term frequency equals the number of times when the encoded token occurs in the row divided by the total number of tokens in the row. S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF Term frequency equals $ 1 + log(rawCount), $ where raw\+Count is equal to the number of times when the encoded token occurs in the row. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+I\+N\+A\+RY@{B\+I\+N\+A\+RY}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!B\+I\+N\+A\+RY@{B\+I\+N\+A\+RY}}}\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ab8d85d42d950e086c7c311e29a68d497a98ad0e8750ae10ad556ed7a62affb452}} 
+B\+I\+N\+A\+RY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+A\+W\+\_\+\+C\+O\+U\+NT@{R\+A\+W\+\_\+\+C\+O\+U\+NT}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!R\+A\+W\+\_\+\+C\+O\+U\+NT@{R\+A\+W\+\_\+\+C\+O\+U\+NT}}}\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc}} 
+R\+A\+W\+\_\+\+C\+O\+U\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY@{T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY@{T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY}}}\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ab8d85d42d950e086c7c311e29a68d497ae4a6b916c2b2d80dbdb92d83b0500d64}} 
+T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF@{S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF@{S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF}}}\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ab8d85d42d950e086c7c311e29a68d497add81d4ff18ee485ff5cd1dbb7284c47c}} 
+S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 53 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_af15adf81c95183f8da9af1a0c86f86c6}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tf\+Idf\+Encoding\+Policy@{Tf\+Idf\+Encoding\+Policy}}
+\index{Tf\+Idf\+Encoding\+Policy@{Tf\+Idf\+Encoding\+Policy}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tf\+Idf\+Encoding\+Policy()}
+{\footnotesize\ttfamily \textbf{ Tf\+Idf\+Encoding\+Policy} (\begin{DoxyParamCaption}\item[{const \textbf{ Tf\+Types}}]{tf\+Type = {\ttfamily \textbf{ Tf\+Types\+::\+R\+A\+W\+\_\+\+C\+O\+U\+NT}},  }\item[{const bool}]{smooth\+Idf = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct this using the term frequency type and the inverse document frequency type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tf\+Type} & Type of the term frequency statistics. \\
+\hline
+{\em smooth\+Idf} & Used to indicate whether to use smooth idf or not. If idf is smooth it\textquotesingle{}s calculated by the following formula\+: $ idf(T) = \log \frac{1 + N}{1 + df(T)} + 1, $ where $ N $ is the total number of strings in the document, $ T $ is the current encoded token, $ df(T) $ equals the number of strings which contain the token. If idf isn\textquotesingle{}t smooth then the following rule applies\+: $ idf(T) = \log \frac{N}{df(T)} + 1. $ \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 75 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+Referenced by Tf\+Idf\+Encoding\+Policy\+::serialize().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a03bdaf094410d559836b5359538a0969}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Encode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Encode (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{output,  }\item[{const size\+\_\+t}]{value,  }\item[{const size\+\_\+t}]{line,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function performs the Tf\+Idf encoding algorithm i.\+e. 
+
+it writes the encoded token to the output. The encoder writes data in the column-\/major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The output matrix type.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results (sp\+\_\+mat or mat). \\
+\hline
+{\em value} & The encoded token. \\
+\hline
+{\em line} & The line number at which the encoding is performed. \\
+\hline
+{\em $\ast$} & (index) The token index in the line. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 148 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ac9397eba09af69a9324e459bfda52706}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Encode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Encode (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ Elem\+Type $>$$>$ \&}]{output,  }\item[{const size\+\_\+t}]{value,  }\item[{const size\+\_\+t}]{line,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function performs the Tf\+Idf encoding algorithm i.\+e. 
+
+it writes the encoded token to the output. The encoder writes data in the row-\/major order.
+
+Overloaded function to accept vector$<$vector$<$\+Elem\+Type$>$$>$ as the output type.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Elem\+Type} & Type of the output values.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results. \\
+\hline
+{\em value} & The encoded token. \\
+\hline
+{\em line} & The line number at which the encoding is performed. \\
+\hline
+{\em $\ast$} & (index) The token index in the line. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 180 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a4e2c846435f9d535401110a83555d2ca}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Init\+Matrix@{Init\+Matrix}}
+\index{Init\+Matrix@{Init\+Matrix}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Init\+Matrix()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static void Init\+Matrix (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{output,  }\item[{const size\+\_\+t}]{dataset\+Size,  }\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{dictionary\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function initializes the output matrix. 
+
+The encoder writes data in the row-\/major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The output matrix type.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results (sp\+\_\+mat or mat). \\
+\hline
+{\em dataset\+Size} & The number of strings in the input dataset. \\
+\hline
+{\em $\ast$} & (max\+Num\+Tokens) The maximum number of tokens in the strings of the input dataset (not used). \\
+\hline
+{\em dictionary\+Size} & The size of the dictionary. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 104 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a44833b2c5967e5805ddfd5e0abbbd981}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Init\+Matrix@{Init\+Matrix}}
+\index{Init\+Matrix@{Init\+Matrix}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Init\+Matrix()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Init\+Matrix (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ Elem\+Type $>$$>$ \&}]{output,  }\item[{const size\+\_\+t}]{dataset\+Size,  }\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{dictionary\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function initializes the output matrix. 
+
+The encoder writes data in the row-\/major order.
+
+Overloaded function to save the result in vector$<$vector$<$\+Elem\+Type$>$$>$.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Elem\+Type} & Type of the output values.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results. \\
+\hline
+{\em dataset\+Size} & The number of strings in the input dataset. \\
+\hline
+{\em $\ast$} & (max\+Num\+Tokens) The maximum number of tokens in the strings of the input dataset (not used). \\
+\hline
+{\em dictionary\+Size} & The size of the dictionary. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 127 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a9eb9be1df25db8022278d09cc6184e52}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Lines\+Sizes@{Lines\+Sizes}}
+\index{Lines\+Sizes@{Lines\+Sizes}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Lines\+Sizes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const std\+::vector$<$size\+\_\+t$>$\& Lines\+Sizes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the lines sizes. 
+
+
+
+Definition at line 242 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a0d1ae8522e5b79e9d6948c525978bf21}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Lines\+Sizes@{Lines\+Sizes}}
+\index{Lines\+Sizes@{Lines\+Sizes}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Lines\+Sizes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::vector$<$size\+\_\+t$>$\& Lines\+Sizes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the lines sizes. 
+
+
+
+Definition at line 244 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a6a30fb7ebe89eff5005693c1494faa9b}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Num\+Containing\+Strings@{Num\+Containing\+Strings}}
+\index{Num\+Containing\+Strings@{Num\+Containing\+Strings}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Num\+Containing\+Strings()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const std\+::unordered\+\_\+map$<$size\+\_\+t, size\+\_\+t$>$\& Num\+Containing\+Strings (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of containing strings depending on the given token. 
+
+
+
+Definition at line 230 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_ad17a5b987cd720225c6eb891b5185748}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Num\+Containing\+Strings@{Num\+Containing\+Strings}}
+\index{Num\+Containing\+Strings@{Num\+Containing\+Strings}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Num\+Containing\+Strings()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+map$<$size\+\_\+t, size\+\_\+t$>$\& Num\+Containing\+Strings (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of containing strings depending on the given token. 
+
+
+
+Definition at line 236 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a306d7db4143a8fc05c5a9ff550362414}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Preprocess\+Token@{Preprocess\+Token}}
+\index{Preprocess\+Token@{Preprocess\+Token}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Preprocess\+Token()}
+{\footnotesize\ttfamily void Preprocess\+Token (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{line,  }\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 202 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clear the necessary internal variables. 
+
+
+
+Definition at line 84 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the class to the given archive. 
+
+
+
+Definition at line 260 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+References Tf\+Idf\+Encoding\+Policy\+::\+B\+I\+N\+A\+RY, Tf\+Idf\+Encoding\+Policy\+::\+R\+A\+W\+\_\+\+C\+O\+U\+NT, Tf\+Idf\+Encoding\+Policy\+::\+S\+U\+B\+L\+I\+N\+E\+A\+R\+\_\+\+TF, Tf\+Idf\+Encoding\+Policy\+::\+T\+E\+R\+M\+\_\+\+F\+R\+E\+Q\+U\+E\+N\+CY, and Tf\+Idf\+Encoding\+Policy\+::\+Tf\+Idf\+Encoding\+Policy().
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a888a84e90e38265bf460bacf545ee85c}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Smooth\+Idf@{Smooth\+Idf}}
+\index{Smooth\+Idf@{Smooth\+Idf}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Smooth\+Idf()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Smooth\+Idf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determine the idf algorithm type (whether it\textquotesingle{}s smooth or not). 
+
+
+
+Definition at line 252 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a5f69d3b7af4afaacc72d5f6ad6f2f35f}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Smooth\+Idf@{Smooth\+Idf}}
+\index{Smooth\+Idf@{Smooth\+Idf}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Smooth\+Idf()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Smooth\+Idf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the idf algorithm type (whether it\textquotesingle{}s smooth or not). 
+
+
+
+Definition at line 254 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a9ae26149291cb921852ffe5abbf4ca15}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tf\+Type@{Tf\+Type}}
+\index{Tf\+Type@{Tf\+Type}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tf\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Tf\+Types} Tf\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the term frequency type. 
+
+
+
+Definition at line 247 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_acd741559ad8ff165f251dd4e1cf8ac61}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tf\+Type@{Tf\+Type}}
+\index{Tf\+Type@{Tf\+Type}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tf\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Tf\+Types}\& Tf\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the term frequency type. 
+
+
+
+Definition at line 249 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_afc6375981a9925ca23df9671fa473fd0}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tokens\+Frequences@{Tokens\+Frequences}}
+\index{Tokens\+Frequences@{Tokens\+Frequences}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tokens\+Frequences()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const std\+::vector$<$std\+::unordered\+\_\+map$<$size\+\_\+t, size\+\_\+t$>$ $>$\& Tokens\+Frequences (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return token frequencies. 
+
+
+
+Definition at line 222 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1TfIdfEncodingPolicy_a31e3c3de7dbe3012c83a012bf765a335}} 
+\index{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}!Tokens\+Frequences@{Tokens\+Frequences}}
+\index{Tokens\+Frequences@{Tokens\+Frequences}!mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy@{mlpack\+::data\+::\+Tf\+Idf\+Encoding\+Policy}}
+\subsubsection{Tokens\+Frequences()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::unordered\+\_\+map$<$size\+\_\+t, size\+\_\+t$>$ $>$\& Tokens\+Frequences (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify token frequencies. 
+
+
+
+Definition at line 224 of file tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/string\+\_\+encoding\+\_\+policies/\textbf{ tf\+\_\+idf\+\_\+encoding\+\_\+policy.\+hpp}\end{DoxyCompactItemize}

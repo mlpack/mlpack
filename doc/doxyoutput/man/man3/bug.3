@@ -1,0 +1,10 @@
+.TH "bug" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+bugBug List 
+ \- 
+.IP "\fBClass \fBIO\fP \fP" 1c
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.PP
+

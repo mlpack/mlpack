@@ -1,0 +1,491 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1perceptron_1_1Perceptron" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::perceptron::Perceptron</compoundname>
+    <includes refid="perceptron_8hpp" local="no">perceptron.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename LearnPolicy</type>
+        <defval><ref refid="classmlpack_1_1perceptron_1_1SimpleWeightUpdate" kindref="compound">SimpleWeightUpdate</ref></defval>
+      </param>
+      <param>
+        <type>typename WeightInitializationPolicy</type>
+        <defval><ref refid="classmlpack_1_1perceptron_1_1ZeroInitialization" kindref="compound">ZeroInitialization</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1perceptron_1_1Perceptron_1a9c44a8f4165455d12216973b3639af05" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec biases</definition>
+        <argsstring></argsstring>
+        <name>biases</name>
+        <briefdescription>
+<para>The biases for each class. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1perceptron_1_1Perceptron_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>The maximum number of iterations during training. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1perceptron_1_1Perceptron_1a4e4df16d0050ceaedb630f0d80a585f1" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Stores the weights for each of the input class labels. </para>        </briefdescription>
+        <detaileddescription>
+<para>Each column corresponds to the weights for one class label, and each row corresponds to the weights for one dimension of the input data. The biases are held in a separate vector. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1afb05a42d7d7f430b1243af7b45eff050" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Perceptron</definition>
+        <argsstring>(const size_t numClasses=0, const size_t dimensionality=0, const size_t maxIterations=1000)</argsstring>
+        <name>Perceptron</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+<para>Constructor: create the perceptron with the given number of classes and initialize the weight matrix, but do not perform any training. </para>        </briefdescription>
+        <detaileddescription>
+<para>(Call the <ref refid="classmlpack_1_1perceptron_1_1Perceptron_1a949c54b4d4873f2ad0aaef9ca9572a7a" kindref="member">Train()</ref> function to perform training.)</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimensionality of the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of iterations for the perceptron learning algorithm. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="49" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a9c07dd0448fb853fa3a27a3c6e45a7b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Perceptron</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const size_t maxIterations=1000)</argsstring>
+        <name>Perceptron</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+<para>Constructor: constructs the perceptron by building the weights matrix, which is later used in classification. </para>        </briefdescription>
+        <detaileddescription>
+<para>The number of classes should be specified separately, and the labels vector should contain values in the range [0, numClasses - 1]. The <ref refid="namespacemlpack_1_1data_1a664b3fa5243889e2aed47ee750f840ed" kindref="member">data::NormalizeLabels()</ref> function can be used if the labels vector does not contain values in the required range.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input, training data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of iterations for the perceptron learning algorithm. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="66" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1af848be7d79b355aabd033029e9dda539" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Perceptron</definition>
+        <argsstring>(const Perceptron &amp;other, const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;instanceWeights)</argsstring>
+        <name>Perceptron</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1perceptron_1_1Perceptron" kindref="compound">Perceptron</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>instanceWeights</declname>
+        </param>
+        <briefdescription>
+<para>Alternate constructor which copies parameters from an already initiated perceptron. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The other initiated <ref refid="classmlpack_1_1perceptron_1_1Perceptron" kindref="compound">Perceptron</ref> object from which we copy the values from. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data on which to train this <ref refid="classmlpack_1_1perceptron_1_1Perceptron" kindref="compound">Perceptron</ref> object on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The labels of data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>instanceWeights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight vector to use while training. For boosting purposes. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="83" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1ab0de0c2cd97b7ec0c19098b50cb769ee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Biases</definition>
+        <argsstring>() const</argsstring>
+        <name>Biases</name>
+        <briefdescription>
+<para>Get the biases. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1ab6edaa6e34b69382b776ad80a70508a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec &amp;</type>
+        <definition>arma::vec&amp; Biases</definition>
+        <argsstring>()</argsstring>
+        <name>Biases</name>
+        <briefdescription>
+<para>Modify the biases. You had better know what you are doing! </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="141" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a407f9c281dab80fffd49251d3907838d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;test, arma::Row&lt; size_t &gt; &amp;predictedLabels)</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>test</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictedLabels</declname>
+        </param>
+        <briefdescription>
+<para>Classification function. </para>        </briefdescription>
+        <detaileddescription>
+<para>After training, use the weights matrix to classify test, and put the predicted classes in predictedLabels.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>test</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Testing data or data to classify. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictedLabels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store the predicted classes after classifying test. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="117" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the maximum number of iterations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="126" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Modify the maximum number of iterations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumClasses</definition>
+        <argsstring>() const</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Get the number of classes this perceptron has been trained for. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the perceptron. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="123" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a949c54b4d4873f2ad0aaef9ca9572a7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;instanceWeights=arma::rowvec())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>instanceWeights</declname>
+          <defval>arma::rowvec()</defval>
+        </param>
+        <briefdescription>
+<para>Train the perceptron on the given data for up to the maximum number of iterations (specified in the constructor or through <ref refid="classmlpack_1_1perceptron_1_1Perceptron_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations()</ref>). </para>        </briefdescription>
+        <detaileddescription>
+<para>A single iteration corresponds to a single pass through the data, so if you want to pass through the dataset only once, set <ref refid="classmlpack_1_1perceptron_1_1Perceptron_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations()</ref> to 1.</para><para>This training does not reset the model weights, so you can call <ref refid="classmlpack_1_1perceptron_1_1Perceptron_1a949c54b4d4873f2ad0aaef9ca9572a7a" kindref="member">Train()</ref> on multiple datasets sequentially.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset on which training should be performed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>instanceWeights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cost matrix. Stores the cost of mispredicting instances. This is useful for boosting. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="104" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1a3b90705a96848b77f63e61a664293a18" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Weights</definition>
+        <argsstring>() const</argsstring>
+        <name>Weights</name>
+        <briefdescription>
+<para>Get the weight matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1Perceptron_1adb90a12c4180f2bb283f4a8820f26f9f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Weights</definition>
+        <argsstring>()</argsstring>
+        <name>Weights</name>
+        <briefdescription>
+<para>Modify the weight matrix. You had better know what you are doing! </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements a simple perceptron (i.e., a single layer neural network). </para>    </briefdescription>
+    <detaileddescription>
+<para>It converges if the supplied training dataset is linearly separable.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>LearnPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options of <ref refid="classmlpack_1_1perceptron_1_1SimpleWeightUpdate" kindref="compound">SimpleWeightUpdate</ref> and GradientDescent. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>WeightInitializationPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Option of <ref refid="classmlpack_1_1perceptron_1_1ZeroInitialization" kindref="compound">ZeroInitialization</ref> and <ref refid="classmlpack_1_1perceptron_1_1RandomInitialization" kindref="compound">RandomInitialization</ref>. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/perceptron.hpp" bodystart="36" bodyend="157"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a9c44a8f4165455d12216973b3639af05" prot="private" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>biases</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1ab0de0c2cd97b7ec0c19098b50cb769ee" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Biases</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1ab6edaa6e34b69382b776ad80a70508a7" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Biases</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a407f9c281dab80fffd49251d3907838d" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1afb05a42d7d7f430b1243af7b45eff050" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Perceptron</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a9c07dd0448fb853fa3a27a3c6e45a7b0" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Perceptron</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1af848be7d79b355aabd033029e9dda539" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Perceptron</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a949c54b4d4873f2ad0aaef9ca9572a7a" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a3b90705a96848b77f63e61a664293a18" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Weights</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1adb90a12c4180f2bb283f4a8820f26f9f" prot="public" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>Weights</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1Perceptron_1a4e4df16d0050ceaedb630f0d80a585f1" prot="private" virt="non-virtual"><scope>mlpack::perceptron::Perceptron</scope><name>weights</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

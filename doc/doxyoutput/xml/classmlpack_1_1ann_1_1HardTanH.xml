@@ -1,0 +1,376 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1HardTanH" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::HardTanH</compoundname>
+    <includes refid="hard__tanh_8hpp" local="no">hard_tanh.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1HardTanH_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1HardTanH_1a9c7fcf975523463cda9c389c922cdc77" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double maxValue</definition>
+        <argsstring></argsstring>
+        <name>maxValue</name>
+        <briefdescription>
+<para>Maximum value for the <ref refid="classmlpack_1_1ann_1_1HardTanH" kindref="compound">HardTanH</ref> function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1HardTanH_1abae371f2789ffea2db93789e4f1e11a4" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double minValue</definition>
+        <argsstring></argsstring>
+        <name>minValue</name>
+        <briefdescription>
+<para>Minimum value for the <ref refid="classmlpack_1_1ann_1_1HardTanH" kindref="compound">HardTanH</ref> function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1HardTanH_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a100d6ec0add89f1443eb3a5c5497a82b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HardTanH</definition>
+        <argsstring>(const double maxValue=1, const double minValue=-1)</argsstring>
+        <name>HardTanH</name>
+        <param>
+          <type>const double</type>
+          <declname>maxValue</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minValue</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1HardTanH" kindref="compound">HardTanH</ref> object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>The range of the linear region can be adjusted by specifying the maxValue and minValue. Default (maxValue = 1, minValue = -1).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>maxValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range of the linear region maximum value. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range of the linear region minimum value. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1aef8c56f1f8624bd006afec8b3bcda9d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const DataType &amp;input, const DataType &amp;gy, DataType &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="82" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a09440df0a90bdcc766e56e097d91205b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const InputType &amp;input, OutputType &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="70" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a623a4714a5eebaa93e608d60dcf06e27" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double const  &amp;</type>
+        <definition>double const&amp; MaxValue</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxValue</name>
+        <briefdescription>
+<para>Get the maximum value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1afb2395e0938ffd53260ec80fe4a3fd29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MaxValue</definition>
+        <argsstring>()</argsstring>
+        <name>MaxValue</name>
+        <briefdescription>
+<para>Modify the maximum value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a4704bc5118b3361e1fee1fec6cf29090" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double const  &amp;</type>
+        <definition>double const&amp; MinValue</definition>
+        <argsstring>() const</argsstring>
+        <name>MinValue</name>
+        <briefdescription>
+<para>Get the minimum value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a3f44631970deafe05a5c6d3de3f71da0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MinValue</definition>
+        <argsstring>()</argsstring>
+        <name>MinValue</name>
+        <briefdescription>
+<para>Modify the minimum value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="104" bodyend="104"/>
+        <references refid="classmlpack_1_1ann_1_1HardTanH_1a65cba07328997659bec80b9879b15a51">HardTanH&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HardTanH_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="110" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1HardTanH_1a3f44631970deafe05a5c6d3de3f71da0" compoundref="hard__tanh_8hpp" startline="104" endline="104">HardTanH&lt; InputDataType, OutputDataType &gt;::MinValue</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The Hard Tanh activation function, defined by. </para>    </briefdescription>
+    <detaileddescription>
+<para><formula id="116">\begin{eqnarray*} f(x) &amp;=&amp; \left\{ \begin{array}{lr} max &amp; : x &gt; maxValue \\ min &amp; : x \le minValue \\ x &amp; : otherwise \end{array} \right. \\ f&apos;(x) &amp;=&amp; \left\{ \begin{array}{lr} 0 &amp; : x &gt; maxValue \\ 0 &amp; : x \le minValue \\ 1 &amp; : otherwise \end{array} \right. \end{eqnarray*}</formula></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/hard_tanh.hpp" bodystart="49" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1aef8c56f1f8624bd006afec8b3bcda9d6" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a09440df0a90bdcc766e56e097d91205b" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a100d6ec0add89f1443eb3a5c5497a82b" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>HardTanH</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a623a4714a5eebaa93e608d60dcf06e27" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>MaxValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1afb2395e0938ffd53260ec80fe4a3fd29" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>MaxValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a9c7fcf975523463cda9c389c922cdc77" prot="private" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>maxValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1abae371f2789ffea2db93789e4f1e11a4" prot="private" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>minValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a4704bc5118b3361e1fee1fec6cf29090" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>MinValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a3f44631970deafe05a5c6d3de3f71da0" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>MinValue</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1HardTanH_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::HardTanH</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

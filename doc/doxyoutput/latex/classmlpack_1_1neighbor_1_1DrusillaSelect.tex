@@ -1,0 +1,194 @@
+\section{Drusilla\+Select$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1DrusillaSelect}\index{Drusilla\+Select$<$ Mat\+Type $>$@{Drusilla\+Select$<$ Mat\+Type $>$}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Drusilla\+Select} (const Mat\+Type \&reference\+Set, const size\+\_\+t l, const size\+\_\+t m)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Drusilla\+Select}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect} object with the given reference set (this is the set that will be searched). \end{DoxyCompactList}\item 
+\textbf{ Drusilla\+Select} (const size\+\_\+t l, const size\+\_\+t m)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Drusilla\+Select}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect} object with no given reference set. \end{DoxyCompactList}\item 
+const arma\+::\+Col$<$ size\+\_\+t $>$ \& \textbf{ Candidate\+Indices} () const
+\begin{DoxyCompactList}\small\item\em Access the indices of points in the candidate set. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ \& \textbf{ Candidate\+Indices} ()
+\begin{DoxyCompactList}\small\item\em Modify the indices of points in the candidate set. Be careful! \end{DoxyCompactList}\item 
+const Mat\+Type \& \textbf{ Candidate\+Set} () const
+\begin{DoxyCompactList}\small\item\em Access the candidate set. \end{DoxyCompactList}\item 
+Mat\+Type \& \textbf{ Candidate\+Set} ()
+\begin{DoxyCompactList}\small\item\em Modify the candidate set. Be careful! \end{DoxyCompactList}\item 
+void \textbf{ Search} (const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Search for the k furthest neighbors of the given query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const Mat\+Type \&reference\+Set, const size\+\_\+t l=0, const size\+\_\+t m=0)
+\begin{DoxyCompactList}\small\item\em Build the set of candidate points on the given reference set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::neighbor\+::\+Drusilla\+Select$<$ Mat\+Type $>$}
+
+
+
+Definition at line 39 of file drusilla\+\_\+select.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a931acc3840813009282618fd3662095b}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Drusilla\+Select@{Drusilla\+Select}}
+\index{Drusilla\+Select@{Drusilla\+Select}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Drusilla\+Select()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Drusilla\+Select} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{reference\+Set,  }\item[{const size\+\_\+t}]{l,  }\item[{const size\+\_\+t}]{m }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Drusilla\+Select}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect} object with the given reference set (this is the set that will be searched). 
+
+The resulting set of candidate points that will be searched at query time will have size l$\ast$m.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_aa31837a47c20b53368e14197d539b117}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Drusilla\+Select@{Drusilla\+Select}}
+\index{Drusilla\+Select@{Drusilla\+Select}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Drusilla\+Select()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Drusilla\+Select} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{l,  }\item[{const size\+\_\+t}]{m }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Drusilla\+Select}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect} object with no given reference set. 
+
+Be sure to call \doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect_a025c46810d0d83a17834f3f8364b479e} before calling \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1DrusillaSelect_a0de302ca0602fe721ac01f073d5e630f}!
+
+
+\begin{DoxyParams}{Parameters}
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a8f731f4411463adc6f832f01b2e3ed0e}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Candidate\+Indices@{Candidate\+Indices}}
+\index{Candidate\+Indices@{Candidate\+Indices}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Candidate\+Indices()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const arma\+::\+Col$<$size\+\_\+t$>$\& Candidate\+Indices (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access the indices of points in the candidate set. 
+
+
+
+Definition at line 108 of file drusilla\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_aaeca8006c7a43b883d03d8536e4ca6c8}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Candidate\+Indices@{Candidate\+Indices}}
+\index{Candidate\+Indices@{Candidate\+Indices}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Candidate\+Indices()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::\+Col$<$size\+\_\+t$>$\& Candidate\+Indices (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the indices of points in the candidate set. Be careful! 
+
+
+
+Definition at line 110 of file drusilla\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a732d6e65465fb0d76366c3f2f33f4249}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Candidate\+Set@{Candidate\+Set}}
+\index{Candidate\+Set@{Candidate\+Set}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Candidate\+Set()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Mat\+Type\& Candidate\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access the candidate set. 
+
+
+
+Definition at line 103 of file drusilla\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_afbf24e2ff42bbe6f3223fd50275d13b0}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Candidate\+Set@{Candidate\+Set}}
+\index{Candidate\+Set@{Candidate\+Set}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Candidate\+Set()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Mat\+Type\& Candidate\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the candidate set. Be careful! 
+
+
+
+Definition at line 105 of file drusilla\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a0de302ca0602fe721ac01f073d5e630f}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Search()}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Search for the k furthest neighbors of the given query set. 
+
+(The query set can contain just one point\+: that is okay.) The results will be stored in the given neighbors and distances matrices, in the same format as the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} and \doxyref{L\+S\+H\+Search}{p.}{classmlpack_1_1neighbor_1_1LSHSearch} classes. That is, each column in the neighbors and distances matrices will refer to a single query point, and the k\textquotesingle{}th row in that column will refer to the k\textquotesingle{}th candidate neighbor or distance for that query point.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set of query points to search. \\
+\hline
+{\em k} & Number of furthest neighbors to search for. \\
+\hline
+{\em neighbors} & Matrix to store resulting neighbors in. \\
+\hline
+{\em distances} & Matrix to store resulting distances in. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1DrusillaSelect_a025c46810d0d83a17834f3f8364b479e}} 
+\index{mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Drusilla\+Select@{mlpack\+::neighbor\+::\+Drusilla\+Select}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{reference\+Set,  }\item[{const size\+\_\+t}]{l = {\ttfamily 0},  }\item[{const size\+\_\+t}]{m = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Build the set of candidate points on the given reference set. 
+
+If l and m are left unspecified, then the values set in the constructor will be used instead.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set to extract candidate points from. \\
+\hline
+{\em l} & Number of projections. \\
+\hline
+{\em m} & Number of elements to store for each projection. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/approx\+\_\+kfn/\textbf{ drusilla\+\_\+select.\+hpp}\end{DoxyCompactItemize}

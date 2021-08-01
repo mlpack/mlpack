@@ -1,0 +1,76 @@
+.TH "GiniGain" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GiniGain \- The Gini gain, a measure of set purity usable as a fitness function (FitnessFunction) for decision trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<bool UseWeights, typename RowType , typename WeightVecType > static double \fBEvaluate\fP (const RowType &labels, const size_t numClasses, const WeightVecType &weights)"
+.br
+.RI "Evaluate the Gini impurity on the given set of labels\&. "
+.ti -1c
+.RI "template<bool UseWeights, typename CountType > static double \fBEvaluatePtr\fP (const CountType *counts, const size_t countLength, const CountType totalCount)"
+.br
+.RI "Evaluate the Gini impurity given a vector of class weight counts\&. "
+.ti -1c
+.RI "static double \fBRange\fP (const size_t numClasses)"
+.br
+.RI "Return the range of the Gini impurity for the given number of classes\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The Gini gain, a measure of set purity usable as a fitness function (FitnessFunction) for decision trees\&. 
+
+This is the exact same thing as the well-known Gini impurity, but negated---since the decision tree will be trying to maximize gain (and the Gini impurity would need to be minimized)\&. 
+.PP
+Definition at line 27 of file gini_gain\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (const RowType & labels, const size_t numClasses, const WeightVecType & weights)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Evaluate the Gini impurity on the given set of labels\&. RowType should be an Armadillo vector that holds size_t objects\&.
+.PP
+Note that it is possible that due to floating-point representation issues, it is possible that the gain returned can be very slightly greater than 0! Thus, if you are checking for a perfect fit, be sure to use 'gain >= 0\&.0' not 'gain == 0\&.0'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Set of labels to evaluate Gini impurity on\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIweights\fP Weight of labels\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file gini_gain\&.hpp\&.
+.SS "static double EvaluatePtr (const CountType * counts, const size_t countLength, const CountType totalCount)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Evaluate the Gini impurity given a vector of class weight counts\&. 
+.PP
+Definition at line 34 of file gini_gain\&.hpp\&.
+.SS "static double Range (const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the range of the Gini impurity for the given number of classes\&. (That is, the difference between the maximum possible value and the minimum possible value\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 203 of file gini_gain\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,58 @@
+\section{Data\+Dependent\+Random\+Initializer Class Reference}
+\label{classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer}\index{Data\+Dependent\+Random\+Initializer@{Data\+Dependent\+Random\+Initializer}}
+
+
+A data-\/dependent random dictionary initializer for \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Initialize} (const arma\+::mat \&data, const size\+\_\+t atoms, arma\+::mat \&dictionary)
+\begin{DoxyCompactList}\small\item\em Initialize the dictionary by adding together three random observations from the data, and then normalizing the atom. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A data-\/dependent random dictionary initializer for \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}. 
+
+This creates random dictionary atoms by adding three random observations from the data together, and then normalizing the atom. 
+
+Definition at line 26 of file data\+\_\+dependent\+\_\+random\+\_\+initializer.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer_adea2ca6a95e9508c74ae836538ce4be8}} 
+\index{mlpack\+::sparse\+\_\+coding\+::\+Data\+Dependent\+Random\+Initializer@{mlpack\+::sparse\+\_\+coding\+::\+Data\+Dependent\+Random\+Initializer}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::sparse\+\_\+coding\+::\+Data\+Dependent\+Random\+Initializer@{mlpack\+::sparse\+\_\+coding\+::\+Data\+Dependent\+Random\+Initializer}}
+\subsubsection{Initialize()}
+{\footnotesize\ttfamily static void Initialize (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{atoms,  }\item[{arma\+::mat \&}]{dictionary }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Initialize the dictionary by adding together three random observations from the data, and then normalizing the atom. 
+
+This implementation is simple enough to be included with the definition.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to initialize the dictionary with. \\
+\hline
+{\em atoms} & Number of atoms in dictionary. \\
+\hline
+{\em dictionary} & Dictionary to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file data\+\_\+dependent\+\_\+random\+\_\+initializer.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Rand\+Int().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/sparse\+\_\+coding/\textbf{ data\+\_\+dependent\+\_\+random\+\_\+initializer.\+hpp}\end{DoxyCompactItemize}

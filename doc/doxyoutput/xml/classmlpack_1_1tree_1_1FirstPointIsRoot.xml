@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1FirstPointIsRoot" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::FirstPointIsRoot</compoundname>
+    <includes refid="first__point__is__root_8hpp" local="no">first_point_is_root.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1FirstPointIsRoot_1adffa07e18bd77e43cd8a1c196620f304" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>static size_t ChooseRoot</definition>
+        <argsstring>(const MatType &amp;)</argsstring>
+        <name>ChooseRoot</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <briefdescription>
+<para>Return the point to be used as the root point of the cover tree. </para>        </briefdescription>
+        <detaileddescription>
+<para>This just returns 0. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/first_point_is_root.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/first_point_is_root.hpp" bodystart="37" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is meant to be used as a choice for the policy class RootPointPolicy of the <ref refid="classmlpack_1_1tree_1_1CoverTree" kindref="compound">CoverTree</ref> class. </para>    </briefdescription>
+    <detaileddescription>
+<para>This policy determines which point is used for the root node of the cover tree. This particular implementation simply chooses the first point in the dataset as the root. A more complex implementation might choose, for instance, the point with least maximum distance to other points (the closest to the &quot;middle&quot;). </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/first_point_is_root.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/first_point_is_root.hpp" bodystart="29" bodyend="38"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1FirstPointIsRoot_1adffa07e18bd77e43cd8a1c196620f304" prot="public" virt="non-virtual"><scope>mlpack::tree::FirstPointIsRoot</scope><name>ChooseRoot</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</compoundname>
+    <basecompoundref refid="structmlpack_1_1cv_1_1TrainFormBase5" prot="public" virt="non-virtual">TrainFormBase5&lt; PT, WT, const MT &amp;, const PT &amp;, const WT &amp;&gt;</basecompoundref>
+    <includes refid="meta__info__extractor_8hpp" local="no">meta_info_extractor.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MT</type>
+      </param>
+      <param>
+        <type>typename PT</type>
+      </param>
+      <param>
+        <type>typename WT</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="661">
+        <label>TrainFormBase5&lt; PT, WT, const MT &amp;, const PT &amp;, const WT &amp;&gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase5"/>
+        <childnode refid="662" relation="template-instance">
+          <edgelabel>&lt; PT, WT, const MT &amp;, const PT &amp;, const WT &amp;&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="662">
+        <label>TrainFormBase5&lt; PT, WT, T1, T2, T3 &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase5"/>
+      </node>
+      <node id="660">
+        <label>TrainForm&lt; MT, PT, WT, false, false &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4"/>
+        <childnode refid="661" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="664">
+        <label>TrainFormBase5&lt; PT, WT, const MT &amp;, const PT &amp;, const WT &amp;&gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase5"/>
+        <childnode refid="665" relation="template-instance">
+          <edgelabel>&lt; PT, WT, const MT &amp;, const PT &amp;, const WT &amp;&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="665">
+        <label>TrainFormBase5&lt; PT, WT, T1, T2, T3 &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase5"/>
+      </node>
+      <node id="663">
+        <label>TrainForm&lt; MT, PT, WT, false, false &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4"/>
+        <childnode refid="664" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="108" bodyend="109"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase5_1adacbdda6f41a542559105d6e48d1cfc2" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</scope><name>MinNumberOfAdditionalArgs</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase5_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</scope><name>PredictionsType</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase5_1aafe4d92b3375aba15ef2942c225e81b0" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</scope><name>Type</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase5_1aecfc3bfd62796ddd9feb857c898cefa8" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</scope><name>WeightsType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

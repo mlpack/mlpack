@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_64bc63d1017c5e75bed2c1b83e1d3fb2" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules</compoundname>
+    <innerfile refid="border__modes_8hpp">border_modes.hpp</innerfile>
+    <innerfile refid="fft__convolution_8hpp">fft_convolution.hpp</innerfile>
+    <innerfile refid="naive__convolution_8hpp">naive_convolution.hpp</innerfile>
+    <innerfile refid="svd__convolution_8hpp">svd_convolution.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/"/>
+  </compounddef>
+</doxygen>

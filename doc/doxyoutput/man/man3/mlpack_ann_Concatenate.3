@@ -1,0 +1,207 @@
+.TH "Concatenate< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Concatenate< InputDataType, OutputDataType > \- Implementation of the \fBConcatenate\fP module class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBConcatenate\fP ()"
+.br
+.RI "Create the \fBConcatenate\fP object using the specified number of output units\&. "
+.ti -1c
+.RI "\fBConcatenate\fP (const \fBConcatenate\fP &layer)"
+.br
+.RI "Copy constructor\&. "
+.ti -1c
+.RI "\fBConcatenate\fP (\fBConcatenate\fP &&layer)"
+.br
+.RI "Move constructor\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBConcat\fP () const"
+.br
+.RI "Get the concat matrix\&. "
+.ti -1c
+.RI "OutputDataType & \fBConcat\fP ()"
+.br
+.RI "Modify the concat\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "\fBConcatenate\fP & \fBoperator=\fP (const \fBConcatenate\fP &layer)"
+.br
+.RI "Operator= copy constructor\&. "
+.ti -1c
+.RI "\fBConcatenate\fP & \fBoperator=\fP (\fBConcatenate\fP &&layer)"
+.br
+.RI "Operator= move constructor\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Concatenate< InputDataType, OutputDataType >"
+Implementation of the \fBConcatenate\fP module class\&. 
+
+The \fBConcatenate\fP module concatenates a constant given matrix to the incoming data\&. Note: Users need to use the \fBConcat()\fP function to provide the concat matrix\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file concatenate\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBConcatenate\fP ()"
+
+.PP
+Create the \fBConcatenate\fP object using the specified number of output units\&. 
+.SS "\fBConcatenate\fP (const \fBConcatenate\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Copy constructor\&. 
+.SS "\fBConcatenate\fP (\fBConcatenate\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Move constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& \fBConcat\fP () const\fC [inline]\fP"
+
+.PP
+Get the concat matrix\&. 
+.PP
+Definition at line 96 of file concatenate\&.hpp\&.
+.SS "OutputDataType& \fBConcat\fP ()\fC [inline]\fP"
+
+.PP
+Modify the concat\&. 
+.PP
+Definition at line 98 of file concatenate\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 91 of file concatenate\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 93 of file concatenate\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "\fBConcatenate\fP& operator= (const \fBConcatenate\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Operator= copy constructor\&. 
+.SS "\fBConcatenate\fP& operator= (\fBConcatenate\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Operator= move constructor\&. 
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 86 of file concatenate\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 88 of file concatenate\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 81 of file concatenate\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 83 of file concatenate\&.hpp\&.
+.SS "void serialize (Archive &, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the layer\&. 
+.PP
+Definition at line 104 of file concatenate\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

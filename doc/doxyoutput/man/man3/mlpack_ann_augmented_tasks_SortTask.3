@@ -1,0 +1,102 @@
+.TH "SortTask" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SortTask \- Generator of instances of the sequence sort task\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSortTask\fP (const size_t maxLength, const size_t bitLen, bool addSeparator=false)"
+.br
+.RI "Creates an instance of the sequence sort task\&. "
+.ti -1c
+.RI "void \fBGenerate\fP (arma::field< arma::mat > &input, arma::field< arma::mat > &labels, const size_t batchSize, bool fixedLength=false) const"
+.br
+.RI "Generate dataset of a given size\&. "
+.ti -1c
+.RI "void \fBGenerate\fP (arma::mat &input, arma::mat &labels, const size_t batchSize) const"
+.br
+.RI "Generate dataset of a given size and store it in arma::mat object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Generator of instances of the sequence sort task\&. 
+
+The parameters are:
+.IP "\(bu" 2
+maximum sequence length;
+.IP "\(bu" 2
+binary length of sequence elements\&.
+.PP
+.PP
+Generated datasets are compliant with mlpack format - every dataset element is shaped as a vector of length (binary length) * (sequence length)\&.
+.PP
+Example of generated dataset (sequence length = 3, binary length = 2):
+.IP "\(bu" 2
+Input sequences: [1,1,0,0,0,1] (three numbers in the sequence are 11, 00, and 01)
+.IP "\(bu" 2
+Output sequences: [0,0,0,1,1,1] (00, 01, 11 - reordering of the numbers above in the ascending order) 
+.PP
+
+.PP
+Definition at line 41 of file sort\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSortTask\fP (const size_t maxLength, const size_t bitLen, bool addSeparator = \fCfalse\fP)"
+
+.PP
+Creates an instance of the sequence sort task\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxLength\fP Maximum length of the number sequence\&. 
+.br
+\fIbitLen\fP Binary length of sorted numbers\&. 
+.br
+\fIaddSeparator\fP Flag indicating whether generator should emit separating symbol after input sequence\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Generate (arma::field< arma::mat > & input, arma::field< arma::mat > & labels, const size_t batchSize, bool fixedLength = \fCfalse\fP) const"
+
+.PP
+Generate dataset of a given size\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The variable to store input sequences\&. 
+.br
+\fIlabels\fP The variable to store output sequences\&. 
+.br
+\fIbatchSize\fP The dataset size\&. 
+.br
+\fIfixedLength\fP Flag indicating whether generator should emit sequences of pairwise equal length\&. 
+.RE
+.PP
+
+.SS "void Generate (arma::mat & input, arma::mat & labels, const size_t batchSize) const"
+
+.PP
+Generate dataset of a given size and store it in arma::mat object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The variable to store input sequences\&. 
+.br
+\fIlabels\fP The variable to store output sequences\&. 
+.br
+\fIbatchSize\fP The dataset size\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

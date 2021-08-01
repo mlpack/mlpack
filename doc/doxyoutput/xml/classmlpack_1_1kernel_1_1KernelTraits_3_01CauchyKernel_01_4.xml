@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kernel_1_1KernelTraits_3_01CauchyKernel_01_4" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kernel::KernelTraits&lt; CauchyKernel &gt;</compoundname>
+    <includes refid="cauchy__kernel_8hpp" local="no">cauchy_kernel.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kernel_1_1KernelTraits_3_01CauchyKernel_01_4_1a213c74e1e7c01890b64c8b9e88f8c0dc" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsNormalized</definition>
+        <argsstring></argsstring>
+        <name>IsNormalized</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>The Cauchy kernel is normalized: K(x, x) = 1 for all x. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/cauchy_kernel.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/cauchy_kernel.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Kernel traits for the Cauchy kernel. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/kernels/cauchy_kernel.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/cauchy_kernel.hpp" bodystart="87" bodyend="92"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kernel_1_1KernelTraits_3_01CauchyKernel_01_4_1a213c74e1e7c01890b64c8b9e88f8c0dc" prot="public" virt="non-virtual"><scope>mlpack::kernel::KernelTraits&lt; CauchyKernel &gt;</scope><name>IsNormalized</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,442 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="earth__mover__distance_8hpp" kind="file" language="C++">
+    <compoundname>earth_mover_distance.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">earth_mover_distance_impl.hpp</includes>
+    <incdepgraph>
+      <node id="39276">
+        <label>list</label>
+      </node>
+      <node id="39273">
+        <label>atomic</label>
+      </node>
+      <node id="39263">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="39239">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="39275">
+        <label>iomanip</label>
+      </node>
+      <node id="39225">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/earth_mover_distance.hpp</label>
+        <link refid="earth__mover__distance_8hpp"/>
+        <childnode refid="39226" relation="include">
+        </childnode>
+        <childnode refid="39283" relation="include">
+        </childnode>
+      </node>
+      <node id="39248">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="39249" relation="include">
+        </childnode>
+        <childnode refid="39251" relation="include">
+        </childnode>
+      </node>
+      <node id="39231">
+        <label>cstdint</label>
+      </node>
+      <node id="39240">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="39247">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="39270">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="39260">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="39227">
+        <label>cmath</label>
+      </node>
+      <node id="39246">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="39235">
+        <label>stdexcept</label>
+      </node>
+      <node id="39255">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="39240" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39241" relation="include">
+        </childnode>
+      </node>
+      <node id="39279">
+        <label>string</label>
+      </node>
+      <node id="39267">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="39268" relation="include">
+        </childnode>
+        <childnode refid="39234" relation="include">
+        </childnode>
+      </node>
+      <node id="39277">
+        <label>map</label>
+      </node>
+      <node id="39229">
+        <label>cfloat</label>
+      </node>
+      <node id="39259">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="39281">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="39243">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="39266">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="39267" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39250" relation="include">
+        </childnode>
+        <childnode refid="39268" relation="include">
+        </childnode>
+      </node>
+      <node id="39256">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="39254">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="39240" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39241" relation="include">
+        </childnode>
+      </node>
+      <node id="39257">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="39240" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39241" relation="include">
+        </childnode>
+      </node>
+      <node id="39245">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="39265">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="39241" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39253" relation="include">
+        </childnode>
+        <childnode refid="39262" relation="include">
+        </childnode>
+      </node>
+      <node id="39269">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="39270" relation="include">
+        </childnode>
+      </node>
+      <node id="39271">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="39226">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="39227" relation="include">
+        </childnode>
+        <childnode refid="39228" relation="include">
+        </childnode>
+        <childnode refid="39229" relation="include">
+        </childnode>
+        <childnode refid="39230" relation="include">
+        </childnode>
+        <childnode refid="39231" relation="include">
+        </childnode>
+        <childnode refid="39232" relation="include">
+        </childnode>
+        <childnode refid="39233" relation="include">
+        </childnode>
+        <childnode refid="39234" relation="include">
+        </childnode>
+        <childnode refid="39235" relation="include">
+        </childnode>
+        <childnode refid="39236" relation="include">
+        </childnode>
+        <childnode refid="39237" relation="include">
+        </childnode>
+        <childnode refid="39238" relation="include">
+        </childnode>
+        <childnode refid="39239" relation="include">
+        </childnode>
+        <childnode refid="39240" relation="include">
+        </childnode>
+        <childnode refid="39241" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39244" relation="include">
+        </childnode>
+        <childnode refid="39245" relation="include">
+        </childnode>
+        <childnode refid="39246" relation="include">
+        </childnode>
+        <childnode refid="39247" relation="include">
+        </childnode>
+        <childnode refid="39248" relation="include">
+        </childnode>
+        <childnode refid="39252" relation="include">
+        </childnode>
+        <childnode refid="39253" relation="include">
+        </childnode>
+        <childnode refid="39254" relation="include">
+        </childnode>
+        <childnode refid="39255" relation="include">
+        </childnode>
+        <childnode refid="39256" relation="include">
+        </childnode>
+        <childnode refid="39257" relation="include">
+        </childnode>
+        <childnode refid="39258" relation="include">
+        </childnode>
+        <childnode refid="39264" relation="include">
+        </childnode>
+        <childnode refid="39265" relation="include">
+        </childnode>
+        <childnode refid="39262" relation="include">
+        </childnode>
+        <childnode refid="39266" relation="include">
+        </childnode>
+        <childnode refid="39269" relation="include">
+        </childnode>
+        <childnode refid="39271" relation="include">
+        </childnode>
+        <childnode refid="39272" relation="include">
+        </childnode>
+        <childnode refid="39281" relation="include">
+        </childnode>
+        <childnode refid="39282" relation="include">
+        </childnode>
+      </node>
+      <node id="39283">
+        <label>earth_mover_distance_impl.hpp</label>
+      </node>
+      <node id="39232">
+        <label>cstdio</label>
+      </node>
+      <node id="39236">
+        <label>tuple</label>
+      </node>
+      <node id="39241">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="39258">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="39241" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39245" relation="include">
+        </childnode>
+        <childnode refid="39259" relation="include">
+        </childnode>
+        <childnode refid="39260" relation="include">
+        </childnode>
+        <childnode refid="39261" relation="include">
+        </childnode>
+        <childnode refid="39262" relation="include">
+        </childnode>
+      </node>
+      <node id="39237">
+        <label>utility</label>
+      </node>
+      <node id="39261">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="39252">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="39249">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="39250" relation="include">
+        </childnode>
+      </node>
+      <node id="39272">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="39273" relation="include">
+        </childnode>
+        <childnode refid="39274" relation="include">
+        </childnode>
+        <childnode refid="39275" relation="include">
+        </childnode>
+        <childnode refid="39276" relation="include">
+        </childnode>
+        <childnode refid="39277" relation="include">
+        </childnode>
+        <childnode refid="39278" relation="include">
+        </childnode>
+        <childnode refid="39279" relation="include">
+        </childnode>
+        <childnode refid="39280" relation="include">
+        </childnode>
+      </node>
+      <node id="39250">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="39264">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="39262" relation="include">
+        </childnode>
+        <childnode refid="39258" relation="include">
+        </childnode>
+        <childnode refid="39265" relation="include">
+        </childnode>
+      </node>
+      <node id="39233">
+        <label>cstdlib</label>
+      </node>
+      <node id="39228">
+        <label>cctype</label>
+      </node>
+      <node id="39251">
+        <label>unordered_map</label>
+      </node>
+      <node id="39230">
+        <label>climits</label>
+      </node>
+      <node id="39278">
+        <label>mutex</label>
+      </node>
+      <node id="39274">
+        <label>chrono</label>
+      </node>
+      <node id="39282">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="39280">
+        <label>thread</label>
+      </node>
+      <node id="39268">
+        <label>type_traits</label>
+      </node>
+      <node id="39244">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="39238">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="39262">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="39240" relation="include">
+        </childnode>
+        <childnode refid="39241" relation="include">
+        </childnode>
+        <childnode refid="39242" relation="include">
+        </childnode>
+        <childnode refid="39243" relation="include">
+        </childnode>
+        <childnode refid="39263" relation="include">
+        </childnode>
+      </node>
+      <node id="39234">
+        <label>cstring</label>
+      </node>
+      <node id="39253">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="39242">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1EarthMoverDistance" prot="public">mlpack::ann::EarthMoverDistance</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Shikhar Jaiswal</para></simplesect>
+Definition of the earth mover distance function.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputDataType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputDataType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1ann_1_1EarthMoverDistance" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance" kindref="compound">EarthMoverDistance</ref></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1af1f3f11888dd09b53421a84bc4828b8c" kindref="member">EarthMoverDistance</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType&gt;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType::elem_type<sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1ab3640059898ea76c13709b8099316fe8" kindref="member">Forward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LossType&gt;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1add41dbaf358dc099750dc6064cb7e0d7" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LossType&amp;<sp/>loss);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="classmlpack_1_1ann_1_1EarthMoverDistance_1a8bae962cc603d1cab8d80ec78f8d505d" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1a8bae962cc603d1cab8d80ec78f8d505d" kindref="member">OutputParameter</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="68" refid="classmlpack_1_1ann_1_1EarthMoverDistance_1a21d5f745f02c709625a4ee0907f004a5" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1a21d5f745f02c709625a4ee0907f004a5" kindref="member">OutputParameter</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1EarthMoverDistance_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>outputParameter;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>EarthMoverDistance</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;earth_mover_distance_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/earth_mover_distance.hpp"/>
+  </compounddef>
+</doxygen>

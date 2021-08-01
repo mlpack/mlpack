@@ -1,0 +1,515 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1PoissonNLLLoss" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::PoissonNLLLoss</compoundname>
+    <includes refid="poisson__nll__loss_8hpp" local="no">poisson_nll_loss.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1aabe97e6fc917ec8950db0b0187f07479" prot="private" static="no" mutable="no">
+        <type>InputDataType::elem_type</type>
+        <definition>InputDataType::elem_type eps</definition>
+        <argsstring></argsstring>
+        <name>eps</name>
+        <briefdescription>
+<para>eps is a small value required to prevent 0 in logarithms and denominators. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="155" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a19f31d9744c12503a9cbdaa1fd3a9848" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool full</definition>
+        <argsstring></argsstring>
+        <name>full</name>
+        <briefdescription>
+<para>Boolean value that determines whether to include Stirling&apos;s. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ada97f533aa788e1c2bba4a18ee64bf39" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool logInput</definition>
+        <argsstring></argsstring>
+        <name>logInput</name>
+        <briefdescription>
+<para>Boolean value that tells if logits are given as input. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a847445b85c86eaac587af2a0f40d17e9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Boolean value that tells if mean of the total loss has to be taken. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a5865e4aed39aa2b2bab1dc3986c17bad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PoissonNLLLoss</definition>
+        <argsstring>(const bool logInput=true, const bool full=false, const typename InputDataType::elem_type eps=1e-08, const bool mean=true)</argsstring>
+        <name>PoissonNLLLoss</name>
+        <param>
+          <type>const bool</type>
+          <declname>logInput</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>full</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const typename InputDataType::elem_type</type>
+          <declname>eps</declname>
+          <defval>1e-08</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>mean</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1PoissonNLLLoss" kindref="compound">PoissonNLLLoss</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>logInput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true the loss is computed as <formula id="130">$ \exp(input) - target \cdot input $</formula>, if false then the loss is <formula id="131">$ input - target \cdot \log(input + eps) $</formula>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>full</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean value that determines whether to include Stirling&apos;s approximation term. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A small value to prevent 0 in denominators and logarithms. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When true, mean loss is computed otherwise total loss. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="50" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+          <param>
+            <type>typename LossType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target, LossType &amp;loss)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>LossType &amp;</type>
+          <declname>loss</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Poisson Negative Log Likelihood loss function expects the input for each class. It expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector, that contains the class index in the range between 1 and the number of classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>loss</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="80" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab05635563f993b63975c8b908c2d7ee0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType::elem_type</type>
+        <definition>InputDataType::elem_type Eps</definition>
+        <argsstring>() const</argsstring>
+        <name>Eps</name>
+        <briefdescription>
+<para>Get the value of eps. </para>        </briefdescription>
+        <detaileddescription>
+<para>eps is a small value required to prevent 0 in logarithms and denominators. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a69f7617ebeb301d9bef61a7a0be364c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType::elem_type &amp;</type>
+        <definition>InputDataType::elem_type&amp; Eps</definition>
+        <argsstring>()</argsstring>
+        <name>Eps</name>
+        <briefdescription>
+<para>Modify the value of eps. </para>        </briefdescription>
+        <detaileddescription>
+<para>eps is a small value required to prevent 0 in logarithms and denominators. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a7861d7a6b25939cdfef5bac8cbc92925" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+        </templateparamlist>
+        <type>InputDataType::elem_type</type>
+        <definition>InputDataType::elem_type Forward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the Poisson negative log likelihood Loss. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector, that contains the class index in the range between 1 and the number of classes. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ac98e449411de44d49685058319efc65e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Full</definition>
+        <argsstring>() const</argsstring>
+        <name>Full</name>
+        <briefdescription>
+<para>Get the value of full. </para>        </briefdescription>
+        <detaileddescription>
+<para>full is a boolean value that determines whether to include Stirling&apos;s approximation term. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1adfe203f7f5637e67ec07731c514cde34" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Full</definition>
+        <argsstring>()</argsstring>
+        <name>Full</name>
+        <briefdescription>
+<para>Modify the value of full. </para>        </briefdescription>
+        <detaileddescription>
+<para>full is a boolean value that determines whether to include Stirling&apos;s approximation term. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a1506936601ddae886088d2804623ca4b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a9267f964724129e144495c74e942651c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool LogInput</definition>
+        <argsstring>() const</argsstring>
+        <name>LogInput</name>
+        <briefdescription>
+<para>Get the value of logInput. </para>        </briefdescription>
+        <detaileddescription>
+<para>logInput is a boolean value that tells if logits are given as input. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ae62d8090ee6dba2ecfc81eee0976c0e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; LogInput</definition>
+        <argsstring>()</argsstring>
+        <name>LogInput</name>
+        <briefdescription>
+<para>Modify the value of logInput. </para>        </briefdescription>
+        <detaileddescription>
+<para>logInput is a boolean value that tells if logits are given as input. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab3fece30ee983f7dc98302bacde75efe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Mean</definition>
+        <argsstring>() const</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Get the value of mean. </para>        </briefdescription>
+        <detaileddescription>
+<para>It&apos;s a boolean value that tells if mean of the total loss has to be taken. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab9d30d78fb30a243c70e8dd27a88bf49" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Mean</definition>
+        <argsstring>()</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Modify the value of mean. </para>        </briefdescription>
+        <detaileddescription>
+<para>It&apos;s a boolean value that tells if mean of the total loss has to be taken. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="120" bodyend="120"/>
+        <references refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a65cba07328997659bec80b9879b15a51">PoissonNLLLoss&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="126" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab9d30d78fb30a243c70e8dd27a88bf49" compoundref="poisson__nll__loss_8hpp" startline="120" endline="120">PoissonNLLLoss&lt; InputDataType, OutputDataType &gt;::Mean</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PoissonNLLLoss_1aa518c171cfae15a79d8519763cfc7958" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void CheckProbs</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;probs)</argsstring>
+        <name>CheckProbs</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>probs</declname>
+        </param>
+        <briefdescription>
+<para>Check if the probabilities lie in the range [0, 1]. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="131" bodyend="139"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the Poisson negative log likelihood loss. </para>    </briefdescription>
+    <detaileddescription>
+<para>This loss function expects input for each class. It also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp" bodystart="36" bodyend="159"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1aa518c171cfae15a79d8519763cfc7958" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>CheckProbs</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1aabe97e6fc917ec8950db0b0187f07479" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab05635563f993b63975c8b908c2d7ee0" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a69f7617ebeb301d9bef61a7a0be364c0" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a7861d7a6b25939cdfef5bac8cbc92925" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a19f31d9744c12503a9cbdaa1fd3a9848" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>full</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ac98e449411de44d49685058319efc65e" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Full</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1adfe203f7f5637e67ec07731c514cde34" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Full</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a1506936601ddae886088d2804623ca4b" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a9267f964724129e144495c74e942651c" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>LogInput</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ae62d8090ee6dba2ecfc81eee0976c0e1" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>LogInput</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ada97f533aa788e1c2bba4a18ee64bf39" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>logInput</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab3fece30ee983f7dc98302bacde75efe" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1ab9d30d78fb30a243c70e8dd27a88bf49" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a847445b85c86eaac587af2a0f40d17e9" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a5865e4aed39aa2b2bab1dc3986c17bad" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>PoissonNLLLoss</name></member>
+      <member refid="classmlpack_1_1ann_1_1PoissonNLLLoss_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::PoissonNLLLoss</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

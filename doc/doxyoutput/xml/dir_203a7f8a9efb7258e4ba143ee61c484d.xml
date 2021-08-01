@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_203a7f8a9efb7258e4ba143ee61c484d" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/tests</compoundname>
+    <innerdir refid="dir_9b9b1e5031378e19eee8e87fed05a7c8">/home/aakash/mlpack/src/mlpack/tests/main_tests</innerdir>
+    <innerfile refid="ann__test__tools_8hpp">ann_test_tools.hpp</innerfile>
+    <innerfile refid="custom__layer_8hpp">custom_layer.hpp</innerfile>
+    <innerfile refid="mock__categorical__data_8hpp">mock_categorical_data.hpp</innerfile>
+    <innerfile refid="serialization_8hpp">serialization.hpp</innerfile>
+    <innerfile refid="test__catch__tools_8hpp">test_catch_tools.hpp</innerfile>
+    <innerfile refid="test__function__tools_8hpp">test_function_tools.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/"/>
+  </compounddef>
+</doxygen>

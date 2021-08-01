@@ -1,0 +1,60 @@
+.TH "BinaryNumericSplitInfo< ObservationType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BinaryNumericSplitInfo< ObservationType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBinaryNumericSplitInfo\fP ()"
+.br
+.ti -1c
+.RI "\fBBinaryNumericSplitInfo\fP (const ObservationType &splitPoint)"
+.br
+.ti -1c
+.RI "template<typename eT > size_t \fBCalculateDirection\fP (const eT &value) const"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the split (save/load the split points)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ObservationType = double>
+.br
+class mlpack::tree::BinaryNumericSplitInfo< ObservationType >"
+
+.PP
+Definition at line 22 of file binary_numeric_split_info\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBinaryNumericSplitInfo\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 25 of file binary_numeric_split_info\&.hpp\&.
+.SS "\fBBinaryNumericSplitInfo\fP (const ObservationType & splitPoint)\fC [inline]\fP"
+
+.PP
+Definition at line 26 of file binary_numeric_split_info\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t CalculateDirection (const eT & value) const\fC [inline]\fP"
+
+.PP
+Definition at line 30 of file binary_numeric_split_info\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the split (save/load the split points)\&. 
+.PP
+Definition at line 37 of file binary_numeric_split_info\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

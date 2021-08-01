@@ -1,0 +1,765 @@
+\section{Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1HoeffdingTree}\index{Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$@{Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$}}
+
+
+The \doxyref{Hoeffding\+Tree}{p.}{classmlpack_1_1tree_1_1HoeffdingTree} object represents all of the necessary information for a Hoeffding-\/bound-\/based decision tree.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Categorical\+Split\+Type$<$ Fitness\+Function $>$ \textbf{ Categorical\+Split}
+\begin{DoxyCompactList}\small\item\em Allow access to the categorical split type. \end{DoxyCompactList}\item 
+typedef Numeric\+Split\+Type$<$ Fitness\+Function $>$ \textbf{ Numeric\+Split}
+\begin{DoxyCompactList}\small\item\em Allow access to the numeric split type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\\textbf{ Hoeffding\+Tree} (const Mat\+Type \&data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const bool batch\+Training=true, const double success\+Probability=0.\+95, const size\+\_\+t max\+Samples=0, const size\+\_\+t check\+Interval=100, const size\+\_\+t min\+Samples=100, const Categorical\+Split\+Type$<$ Fitness\+Function $>$ \&categorical\+Split\+In=Categorical\+Split\+Type$<$ Fitness\+Function $>$(0, 0), const Numeric\+Split\+Type$<$ Fitness\+Function $>$ \&numeric\+Split\+In=Numeric\+Split\+Type$<$ Fitness\+Function $>$(0))
+\begin{DoxyCompactList}\small\item\em Construct the Hoeffding tree with the given parameters and given training data. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} (const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, const size\+\_\+t num\+Classes, const double success\+Probability=0.\+95, const size\+\_\+t max\+Samples=0, const size\+\_\+t check\+Interval=100, const size\+\_\+t min\+Samples=100, const Categorical\+Split\+Type$<$ Fitness\+Function $>$ \&categorical\+Split\+In=Categorical\+Split\+Type$<$ Fitness\+Function $>$(0, 0), const Numeric\+Split\+Type$<$ Fitness\+Function $>$ \&numeric\+Split\+In=Numeric\+Split\+Type$<$ Fitness\+Function $>$(0), std\+::unordered\+\_\+map$<$ size\+\_\+t, std\+::pair$<$ size\+\_\+t, size\+\_\+t $>$$>$ $\ast$dimension\+Mappings=N\+U\+LL, const bool copy\+Dataset\+Info=true)
+\begin{DoxyCompactList}\small\item\em Construct the Hoeffding tree with the given parameters, but training on no data. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Construct a Hoeffding tree with no data and no information. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} (const \textbf{ Hoeffding\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy another tree (warning\+: this will duplicate the tree entirely, and may use a lot of memory. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} (\textbf{ Hoeffding\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move another tree. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Hoeffding\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Clean up memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Calculate\+Direction} (const Vec\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Check\+Interval} () const
+\begin{DoxyCompactList}\small\item\em Get the number of samples before a split check is performed. \end{DoxyCompactList}\item 
+void \textbf{ Check\+Interval} (const size\+\_\+t check\+Interval)
+\begin{DoxyCompactList}\small\item\em Modify the number of samples before a split check is performed. \end{DoxyCompactList}\item 
+const \textbf{ Hoeffding\+Tree} \& \textbf{ Child} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get a child. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} \& \textbf{ Child} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify a child. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Classify} (const Vec\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Classify the given point, using this node and the entire (sub)tree beneath it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void \textbf{ Classify} (const Vec\+Type \&point, size\+\_\+t \&prediction, double \&probability) const
+\begin{DoxyCompactList}\small\item\em Classify the given point and also return an estimate of the probability that the prediction is correct. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions) const
+\begin{DoxyCompactList}\small\item\em Classify the given points, using this node and the entire (sub)tree beneath it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions, arma\+::rowvec \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Classify the given points, using this node and the entire (sub)tree beneath it. \end{DoxyCompactList}\item 
+void \textbf{ Create\+Children} ()
+\begin{DoxyCompactList}\small\item\em Given that this node should split, create the children. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Majority\+Class} () const
+\begin{DoxyCompactList}\small\item\em Get the majority class. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Majority\+Class} ()
+\begin{DoxyCompactList}\small\item\em Modify the majority class. \end{DoxyCompactList}\item 
+double \textbf{ Majority\+Probability} () const
+\begin{DoxyCompactList}\small\item\em Get the probability of the majority class (based on training samples). \end{DoxyCompactList}\item 
+double \& \textbf{ Majority\+Probability} ()
+\begin{DoxyCompactList}\small\item\em Modify the probability of the majority class. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Samples} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of samples before a split is forced. \end{DoxyCompactList}\item 
+void \textbf{ Max\+Samples} (const size\+\_\+t max\+Samples)
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of samples before a split is forced. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Min\+Samples} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum number of samples for a split. \end{DoxyCompactList}\item 
+void \textbf{ Min\+Samples} (const size\+\_\+t min\+Samples)
+\begin{DoxyCompactList}\small\item\em Modify the minimum number of samples for a split. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Get the number of children. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Descendants} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the Hoeffding Tree. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} \& \textbf{ operator=} (const \textbf{ Hoeffding\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ Hoeffding\+Tree} \& \textbf{ operator=} (\textbf{ Hoeffding\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the split. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Split\+Check} ()
+\begin{DoxyCompactList}\small\item\em Check if a split would satisfy the conditions of the Hoeffding bound with the node\textquotesingle{}s specified success probability. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Split\+Dimension} () const
+\begin{DoxyCompactList}\small\item\em Get the splitting dimension (size\+\_\+t(-\/1) if no split). \end{DoxyCompactList}\item 
+double \textbf{ Success\+Probability} () const
+\begin{DoxyCompactList}\small\item\em Get the confidence required for a split. \end{DoxyCompactList}\item 
+void \textbf{ Success\+Probability} (const double success\+Probability)
+\begin{DoxyCompactList}\small\item\em Modify the confidence required for a split. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Train} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const bool batch\+Training=true, const bool reset\+Tree=false, const size\+\_\+t num\+Classes=0)
+\begin{DoxyCompactList}\small\item\em Train on a set of points, either in streaming mode or in batch mode, with the given labels. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Train} (const Mat\+Type \&data, const \textbf{ data\+::\+Dataset\+Info} \&info, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const bool batch\+Training=true, const size\+\_\+t num\+Classes=0)
+\begin{DoxyCompactList}\small\item\em Train on a set of points, either in streaming mode or in batch mode, with the given labels and the given {\ttfamily Dataset\+Info}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void \textbf{ Train} (const Vec\+Type \&point, const size\+\_\+t label)
+\begin{DoxyCompactList}\small\item\em Train on a single point in streaming mode, with the given label. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Fitness\+Function = Gini\+Impurity, template$<$ typename $>$ class Numeric\+Split\+Type = Hoeffding\+Double\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = Hoeffding\+Categorical\+Split$>$\newline
+class mlpack\+::tree\+::\+Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$}
+
+The \doxyref{Hoeffding\+Tree}{p.}{classmlpack_1_1tree_1_1HoeffdingTree} object represents all of the necessary information for a Hoeffding-\/bound-\/based decision tree. 
+
+This class is able to train on samples in streaming settings and batch settings, and perform splits based on the Hoeffding bound. The Hoeffding tree (also known as the \char`\"{}very fast decision
+tree\char`\"{} -- V\+F\+DT) is described in the following paper\+:
+
+
+\begin{DoxyCode}
+@inproceedings\{domingos2000mining,
+    title=\{\{Mining High-Speed Data Streams\}\},
+    author=\{Domingos, P. and Hulten, G.\},
+    year=\{2000\},
+    booktitle=\{Proceedings of the Sixth ACM SIGKDD International Conference
+        on Knowledge Discovery and Data Mining (KDD \textcolor{stringliteral}{'00)\},}
+\textcolor{stringliteral}{    pages=\{71--80\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+The class is modular, and takes three template parameters. The first, Fitness\+Function, is the fitness function that should be used to determine whether a split is beneficial; examples might be \doxyref{Gini\+Impurity}{p.}{classmlpack_1_1tree_1_1GiniImpurity} or \doxyref{Hoeffding\+Information\+Gain}{p.}{classmlpack_1_1tree_1_1HoeffdingInformationGain}. The Numeric\+Split\+Type determines how numeric attributes are handled, and the Categorical\+Split\+Type determines how categorical attributes are handled. As far as the actual splitting goes, the meat of the splitting procedure will be contained in those two classes.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Fitness\+Function} & Fitness function to use. \\
+\hline
+{\em Numeric\+Split\+Type} & Technique for splitting numeric features. \\
+\hline
+{\em Categorical\+Split\+Type} & Technique for splitting categorical features. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 61 of file hoeffding\+\_\+tree.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_ac6a633f57efba5e2893f58ee9ad549d1}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Categorical\+Split@{Categorical\+Split}}
+\index{Categorical\+Split@{Categorical\+Split}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Categorical\+Split}
+{\footnotesize\ttfamily typedef Categorical\+Split\+Type$<$Fitness\+Function$>$ \textbf{ Categorical\+Split}}
+
+
+
+Allow access to the categorical split type. 
+
+
+
+Definition at line 67 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_aaa2e2873f405118872db87975cce0124}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Numeric\+Split@{Numeric\+Split}}
+\index{Numeric\+Split@{Numeric\+Split}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Numeric\+Split}
+{\footnotesize\ttfamily typedef Numeric\+Split\+Type$<$Fitness\+Function$>$ \textbf{ Numeric\+Split}}
+
+
+
+Allow access to the numeric split type. 
+
+
+
+Definition at line 65 of file hoeffding\+\_\+tree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a43b1e1ab502bb20ac8a23e85f21b467a}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Hoeffding\+Tree@{Hoeffding\+Tree}}
+\index{Hoeffding\+Tree@{Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Hoeffding\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{batch\+Training = {\ttfamily true},  }\item[{const double}]{success\+Probability = {\ttfamily 0.95},  }\item[{const size\+\_\+t}]{max\+Samples = {\ttfamily 0},  }\item[{const size\+\_\+t}]{check\+Interval = {\ttfamily 100},  }\item[{const size\+\_\+t}]{min\+Samples = {\ttfamily 100},  }\item[{const Categorical\+Split\+Type$<$ Fitness\+Function $>$ \&}]{categorical\+Split\+In = {\ttfamily CategoricalSplitType$<$~FitnessFunction~$>$(0,~0)},  }\item[{const Numeric\+Split\+Type$<$ Fitness\+Function $>$ \&}]{numeric\+Split\+In = {\ttfamily NumericSplitType$<$~FitnessFunction~$>$(0)} }\end{DoxyParamCaption})}
+
+
+
+Construct the Hoeffding tree with the given parameters and given training data. 
+
+The tree may be trained either in batch mode (which looks at all points before splitting, and propagates these points to the created children for further training), or in streaming mode, where each point is only considered once. (In general, batch mode will give better-\/performing trees, but will have higher memory and runtime costs for the same dataset.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Information on the dataset (types of each feature). \\
+\hline
+{\em labels} & Labels of each point in the dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em batch\+Training} & Whether or not to train in batch. \\
+\hline
+{\em success\+Probability} & Probability of success required in Hoeffding bounds before a split can happen. \\
+\hline
+{\em max\+Samples} & Maximum number of samples before a split is forced (0 never forces a split); ignored in batch training mode. \\
+\hline
+{\em check\+Interval} & Number of samples required before each split; ignored in batch training mode. \\
+\hline
+{\em min\+Samples} & If the node has seen this many points or fewer, no split will be allowed. \\
+\hline
+{\em categorical\+Split\+In} & Optional instantiated categorical split object. \\
+\hline
+{\em numeric\+Split\+In} & Optional instantiated numeric split object. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_af4bbb88c28be3e248120193a31549013}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Hoeffding\+Tree@{Hoeffding\+Tree}}
+\index{Hoeffding\+Tree@{Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Hoeffding\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const double}]{success\+Probability = {\ttfamily 0.95},  }\item[{const size\+\_\+t}]{max\+Samples = {\ttfamily 0},  }\item[{const size\+\_\+t}]{check\+Interval = {\ttfamily 100},  }\item[{const size\+\_\+t}]{min\+Samples = {\ttfamily 100},  }\item[{const Categorical\+Split\+Type$<$ Fitness\+Function $>$ \&}]{categorical\+Split\+In = {\ttfamily CategoricalSplitType$<$~FitnessFunction~$>$(0,~0)},  }\item[{const Numeric\+Split\+Type$<$ Fitness\+Function $>$ \&}]{numeric\+Split\+In = {\ttfamily NumericSplitType$<$~FitnessFunction~$>$(0)},  }\item[{std\+::unordered\+\_\+map$<$ size\+\_\+t, std\+::pair$<$ size\+\_\+t, size\+\_\+t $>$$>$ $\ast$}]{dimension\+Mappings = {\ttfamily NULL},  }\item[{const bool}]{copy\+Dataset\+Info = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Construct the Hoeffding tree with the given parameters, but training on no data. 
+
+The dimension\+Mappings parameter is only used if it is desired that this node does not create its own dimension\+Mappings object (for instance, if this is a child of another node in the tree).
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em dataset\+Info} & Information on the dataset (types of each feature). \\
+\hline
+{\em success\+Probability} & Probability of success required in Hoeffding bound before a split can happen. \\
+\hline
+{\em max\+Samples} & Maximum number of samples before a split is forced. \\
+\hline
+{\em check\+Interval} & Number of samples required before each split check. \\
+\hline
+{\em min\+Samples} & If the node has seen this many points or fewer, no split will be allowed. \\
+\hline
+{\em dimension\+Mappings} & Mappings from dimension indices to positions in numeric and categorical split vectors. If left N\+U\+LL, a new one will be created. \\
+\hline
+{\em copy\+Dataset\+Info} & If true, then a copy of the dataset\+Info will be made. \\
+\hline
+{\em categorical\+Split\+In} & Optional instantiated categorical split object. \\
+\hline
+{\em numeric\+Split\+In} & Optional instantiated numeric split object. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_aac1ba531eabbb50e0c340880c6c4e7de}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Hoeffding\+Tree@{Hoeffding\+Tree}}
+\index{Hoeffding\+Tree@{Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Hoeffding\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Construct a Hoeffding tree with no data and no information. 
+
+Be sure to call \doxyref{Train()}{p.}{classmlpack_1_1tree_1_1HoeffdingTree_a3e179af081a7fa6ea02e48025c7671f4} before trying to use the tree. \mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a51f7c3eafb07107e8a52d61d37a89e38}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Hoeffding\+Tree@{Hoeffding\+Tree}}
+\index{Hoeffding\+Tree@{Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Hoeffding\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Hoeffding\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy another tree (warning\+: this will duplicate the tree entirely, and may use a lot of memory. 
+
+Make sure it\textquotesingle{}s what you want before you do it).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a40f11320c02bdd2f37d1a8ef0579f683}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Hoeffding\+Tree@{Hoeffding\+Tree}}
+\index{Hoeffding\+Tree@{Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Hoeffding\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Hoeffding\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move another tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to move. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a2e454de523755b8d31ccf2cc58d76039}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!````~Hoeffding\+Tree@{$\sim$\+Hoeffding\+Tree}}
+\index{````~Hoeffding\+Tree@{$\sim$\+Hoeffding\+Tree}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{$\sim$\+Hoeffding\+Tree()}
+{\footnotesize\ttfamily $\sim$\textbf{ Hoeffding\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean up memory. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a9a3cc06b52728325bd6402f7175f28e5}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Calculate\+Direction@{Calculate\+Direction}}
+\index{Calculate\+Direction@{Calculate\+Direction}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Calculate\+Direction()}
+{\footnotesize\ttfamily size\+\_\+t Calculate\+Direction (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. 
+
+This method is primarily used by the \doxyref{Classify()}{p.}{classmlpack_1_1tree_1_1HoeffdingTree_aa610310b354b7badd88041ca07883569} function, but it can be used in a standalone sense too.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Check\+Interval().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a2655285daed526882041f78ef006d76d}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Check\+Interval@{Check\+Interval}}
+\index{Check\+Interval@{Check\+Interval}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Check\+Interval()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Check\+Interval (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of samples before a split check is performed. 
+
+
+
+Definition at line 284 of file hoeffding\+\_\+tree.\+hpp.
+
+
+
+References Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Calculate\+Direction(), Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Classify(), Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Create\+Children(), Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Num\+Descendants(), and Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a8557df308cade77f57d8ffbe48f72869}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Check\+Interval@{Check\+Interval}}
+\index{Check\+Interval@{Check\+Interval}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Check\+Interval()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Check\+Interval (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{check\+Interval }\end{DoxyParamCaption})}
+
+
+
+Modify the number of samples before a split check is performed. 
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a99e81a5c647c0c5c32c1f9f90a158d8b}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Child@{Child}}
+\index{Child@{Child}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Hoeffding\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a child. 
+
+
+
+Definition at line 264 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_ac862eca4b9417c16131284709c45ab53}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Child@{Child}}
+\index{Child@{Child}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify a child. 
+
+
+
+Definition at line 266 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_aa610310b354b7badd88041ca07883569}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily size\+\_\+t Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point, using this node and the entire (sub)tree beneath it. 
+
+The predicted label is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Predicted label of point. 
+\end{DoxyReturn}
+
+
+Referenced by Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Check\+Interval().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a8f2a86d2cdc57fc6a940c704b0f9241e}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{size\+\_\+t \&}]{prediction,  }\item[{double \&}]{probability }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point and also return an estimate of the probability that the prediction is correct. 
+
+(This estimate is simply the probability that a training point was from the majority class in the leaf that this point binned to.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+{\em prediction} & Predicted label of point. \\
+\hline
+{\em probability} & An estimate of the probability that the prediction is correct. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_abd3c3812715d2e249e47476782d8e95e}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points, using this node and the entire (sub)tree beneath it. 
+
+The predicted labels for each point are returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Points to classify. \\
+\hline
+{\em predictions} & Predicted labels for each point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a238674a53fcb905ca88e21e2e48a44e3}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions,  }\item[{arma\+::rowvec \&}]{probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points, using this node and the entire (sub)tree beneath it. 
+
+The predicted labels for each point are returned, as well as an estimate of the probability that the prediction is correct for each point. This estimate is simply the \doxyref{Majority\+Probability()}{p.}{classmlpack_1_1tree_1_1HoeffdingTree_aa2bbbde0090c614316d5c8bf88ac69ce} for the leaf that each point bins to.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Points to classify. \\
+\hline
+{\em predictions} & Predicted labels for each point. \\
+\hline
+{\em probabilities} & Probability estimates for each predicted label. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_aa97b2f77f4c7888a38b2aadc7ff7b286}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Create\+Children@{Create\+Children}}
+\index{Create\+Children@{Create\+Children}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Create\+Children()}
+{\footnotesize\ttfamily void Create\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Given that this node should split, create the children. 
+
+
+
+Referenced by Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Check\+Interval().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a2fbf818eb68075c92655a22904b7ee1a}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Majority\+Class@{Majority\+Class}}
+\index{Majority\+Class@{Majority\+Class}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Majority\+Class()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Majority\+Class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the majority class. 
+
+
+
+Definition at line 251 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_ae199c935b2978454a2775a5dae0bd7d8}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Majority\+Class@{Majority\+Class}}
+\index{Majority\+Class@{Majority\+Class}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Majority\+Class()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Majority\+Class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the majority class. 
+
+
+
+Definition at line 253 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a68e5f5a4d8c6194482a83440619be83b}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Majority\+Probability@{Majority\+Probability}}
+\index{Majority\+Probability@{Majority\+Probability}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Majority\+Probability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Majority\+Probability (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the probability of the majority class (based on training samples). 
+
+
+
+Definition at line 256 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_aa2bbbde0090c614316d5c8bf88ac69ce}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Majority\+Probability@{Majority\+Probability}}
+\index{Majority\+Probability@{Majority\+Probability}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Majority\+Probability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Majority\+Probability (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the probability of the majority class. 
+
+
+
+Definition at line 258 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a521a83a74375f482507d99c913300386}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Max\+Samples@{Max\+Samples}}
+\index{Max\+Samples@{Max\+Samples}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Max\+Samples()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Samples (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of samples before a split is forced. 
+
+
+
+Definition at line 279 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a72b5944dab9b0345e4f1f1f192e05d02}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Max\+Samples@{Max\+Samples}}
+\index{Max\+Samples@{Max\+Samples}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Max\+Samples()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Max\+Samples (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Samples }\end{DoxyParamCaption})}
+
+
+
+Modify the maximum number of samples before a split is forced. 
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_afc8cf684935878c953b8adaeae5d8b01}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Min\+Samples@{Min\+Samples}}
+\index{Min\+Samples@{Min\+Samples}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Min\+Samples()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Min\+Samples (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the minimum number of samples for a split. 
+
+
+
+Definition at line 274 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a29326784daa0e93a1273270cdd51f74e}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Min\+Samples@{Min\+Samples}}
+\index{Min\+Samples@{Min\+Samples}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Min\+Samples()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Min\+Samples (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{min\+Samples }\end{DoxyParamCaption})}
+
+
+
+Modify the minimum number of samples for a split. 
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Num\+Children@{Num\+Children}}
+\index{Num\+Children@{Num\+Children}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Num\+Children()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of children. 
+
+
+
+Definition at line 261 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a2a85eb34222f1fc073940e8c89274e81}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Num\+Descendants@{Num\+Descendants}}
+\index{Num\+Descendants@{Num\+Descendants}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Num\+Descendants()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Descendants (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the size of the Hoeffding Tree. 
+
+
+
+Referenced by Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Check\+Interval().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_af74b457da6b4b83725776bb4873f8257}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Hoeffding\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy assignment operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a980e69d16150271c73161ea7f1abaac7}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Hoeffding\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Hoeffding\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move assignment operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to move. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the split. 
+
+
+
+Referenced by Hoeffding\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type $>$\+::\+Check\+Interval().
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a8f65d2bc3361efb913b6e169b3994a60}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Split\+Check@{Split\+Check}}
+\index{Split\+Check@{Split\+Check}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Split\+Check()}
+{\footnotesize\ttfamily size\+\_\+t Split\+Check (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Check if a split would satisfy the conditions of the Hoeffding bound with the node\textquotesingle{}s specified success probability. 
+
+If so, the number of children that would be created is returned. If not, 0 is returned. \mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a92f55f07c1a09552ef79c8d8b9484af5}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Split\+Dimension@{Split\+Dimension}}
+\index{Split\+Dimension@{Split\+Dimension}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Split\+Dimension()}
+{\footnotesize\ttfamily size\+\_\+t Split\+Dimension (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the splitting dimension (size\+\_\+t(-\/1) if no split). 
+
+
+
+Definition at line 248 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_ae74313c4769005a25f7b2ef1749d88f1}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Success\+Probability@{Success\+Probability}}
+\index{Success\+Probability@{Success\+Probability}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Success\+Probability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Success\+Probability (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the confidence required for a split. 
+
+
+
+Definition at line 269 of file hoeffding\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a46af26c161b31299eb574796ed2b00cc}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Success\+Probability@{Success\+Probability}}
+\index{Success\+Probability@{Success\+Probability}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Success\+Probability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Success\+Probability (\begin{DoxyParamCaption}\item[{const double}]{success\+Probability }\end{DoxyParamCaption})}
+
+
+
+Modify the confidence required for a split. 
+
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a3e179af081a7fa6ea02e48025c7671f4}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const bool}]{batch\+Training = {\ttfamily true},  }\item[{const bool}]{reset\+Tree = {\ttfamily false},  }\item[{const size\+\_\+t}]{num\+Classes = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Train on a set of points, either in streaming mode or in batch mode, with the given labels. 
+
+If {\ttfamily reset\+Tree} is set to {\ttfamily true}, then reset the state of the tree to an empty tree before training.
+
+Note that the tree will be automatically reset if the dimensionality of {\ttfamily data} does not match the dimensionality that the tree was currently trained with. The tree will also be reset if {\ttfamily num\+Classes} is passed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data points to train on. \\
+\hline
+{\em labels} & Labels of data points. \\
+\hline
+{\em batch\+Training} & If true, perform training in batch. \\
+\hline
+{\em reset\+Tree} & If true, reset the tree to an empty tree before training. \\
+\hline
+{\em num\+Classes} & The number of classes in {\ttfamily labels}. Passing this will reset the tree. If not given and {\ttfamily reset\+Tree} is {\ttfamily true}, then the number of classes will be computed from {\ttfamily labels}. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a0b50e004f98e381503fb1a989291c694}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{info,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const bool}]{batch\+Training = {\ttfamily true},  }\item[{const size\+\_\+t}]{num\+Classes = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Train on a set of points, either in streaming mode or in batch mode, with the given labels and the given {\ttfamily Dataset\+Info}. 
+
+This will reset the tree. This only needs to be called when the {\ttfamily Dataset\+Info} has changed---if you are training incrementally but have already passed the Dataset\+Info once, use the overload of {\ttfamily \doxyref{Train()}{p.}{classmlpack_1_1tree_1_1HoeffdingTree_a3e179af081a7fa6ea02e48025c7671f4}} that does not take a {\ttfamily Dataset\+Info} and make sure {\ttfamily reset\+Tree} is set to {\ttfamily false}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data points to train on. \\
+\hline
+{\em info} & Dataset\+Info object with information about each dimension. \\
+\hline
+{\em labels} & Labels of data points. \\
+\hline
+{\em batch\+Training} & If true, perform training in batch. \\
+\hline
+{\em num\+Classes} & Number of classes in {\ttfamily labels}. If not specified, it is computed from {\ttfamily labels}. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1HoeffdingTree_a4be1a071b03a017654ecced62e354e02}} 
+\index{mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::tree\+::\+Hoeffding\+Tree@{mlpack\+::tree\+::\+Hoeffding\+Tree}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{const size\+\_\+t}]{label }\end{DoxyParamCaption})}
+
+
+
+Train on a single point in streaming mode, with the given label. 
+
+The tree will not be reset before training.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to train on. \\
+\hline
+{\em label} & Label of point to train on. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/hoeffding\+\_\+trees/\textbf{ hoeffding\+\_\+tree.\+hpp}\end{DoxyCompactItemize}

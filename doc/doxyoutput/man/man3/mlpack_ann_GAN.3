@@ -1,0 +1,508 @@
+.TH "GAN< Model, InitializationRuleType, Noise, PolicyType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GAN< Model, InitializationRuleType, Noise, PolicyType > \- The implementation of the standard \fBGAN\fP module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGAN\fP (Model generator, Model discriminator, InitializationRuleType &initializeRule, Noise &noiseFunction, const size_t noiseDim, const size_t batchSize, const size_t generatorUpdateStep, const size_t preTrainSize, const double multiplier, const double clippingParameter=0\&.01, const double lambda=10\&.0)"
+.br
+.RI "Constructor for \fBGAN\fP class\&. "
+.ti -1c
+.RI "\fBGAN\fP (const \fBGAN\fP &)"
+.br
+.RI "Copy constructor\&. "
+.ti -1c
+.RI "\fBGAN\fP (\fBGAN\fP &&)"
+.br
+.RI "Move constructor\&. "
+.ti -1c
+.RI "const Model & \fBDiscriminator\fP () const"
+.br
+.RI "Return the discriminator of the \fBGAN\fP\&. "
+.ti -1c
+.RI "Model & \fBDiscriminator\fP ()"
+.br
+.RI "Modify the discriminator of the \fBGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBStandardGAN\fP >::value||std::is_same< Policy, \fBDCGAN\fP >::value, double >::type \fBEvaluate\fP (const arma::mat &parameters, const size_t i, const size_t batchSize)"
+.br
+.RI "Evaluate function for the Standard \fBGAN\fP and \fBDCGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGAN\fP >::value, double >::type \fBEvaluate\fP (const arma::mat &parameters, const size_t i, const size_t batchSize)"
+.br
+.RI "Evaluate function for the \fBWGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGANGP\fP >::value, double >::type \fBEvaluate\fP (const arma::mat &parameters, const size_t i, const size_t batchSize)"
+.br
+.RI "Evaluate function for the WGAN-GP\&. "
+.ti -1c
+.RI "template<typename GradType , typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBStandardGAN\fP >::value||std::is_same< Policy, \fBDCGAN\fP >::value, double >::type \fBEvaluateWithGradient\fP (const arma::mat &parameters, const size_t i, GradType &gradient, const size_t batchSize)"
+.br
+.RI "EvaluateWithGradient function for the Standard \fBGAN\fP and \fBDCGAN\fP\&. "
+.ti -1c
+.RI "template<typename GradType , typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGAN\fP >::value, double >::type \fBEvaluateWithGradient\fP (const arma::mat &parameters, const size_t i, GradType &gradient, const size_t batchSize)"
+.br
+.RI "EvaluateWithGradient function for the \fBWGAN\fP\&. "
+.ti -1c
+.RI "template<typename GradType , typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGANGP\fP >::value, double >::type \fBEvaluateWithGradient\fP (const arma::mat &parameters, const size_t i, GradType &gradient, const size_t batchSize)"
+.br
+.RI "EvaluateWithGradient function for the WGAN-GP\&. "
+.ti -1c
+.RI "void \fBForward\fP (const arma::mat &input)"
+.br
+.RI "This function does a forward pass through the \fBGAN\fP network\&. "
+.ti -1c
+.RI "const Model & \fBGenerator\fP () const"
+.br
+.RI "Return the generator of the \fBGAN\fP\&. "
+.ti -1c
+.RI "Model & \fBGenerator\fP ()"
+.br
+.RI "Modify the generator of the \fBGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBStandardGAN\fP >::value||std::is_same< Policy, \fBDCGAN\fP >::value, void >::type \fBGradient\fP (const arma::mat &parameters, const size_t i, arma::mat &gradient, const size_t batchSize)"
+.br
+.RI "Gradient function for Standard \fBGAN\fP and \fBDCGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGAN\fP >::value, void >::type \fBGradient\fP (const arma::mat &parameters, const size_t i, arma::mat &gradient, const size_t batchSize)"
+.br
+.RI "Gradient function for \fBWGAN\fP\&. "
+.ti -1c
+.RI "template<typename Policy  = PolicyType> std::enable_if< std::is_same< Policy, \fBWGANGP\fP >::value, void >::type \fBGradient\fP (const arma::mat &parameters, const size_t i, arma::mat &gradient, const size_t batchSize)"
+.br
+.RI "Gradient function for WGAN-GP\&. "
+.ti -1c
+.RI "size_t \fBNumFunctions\fP () const"
+.br
+.RI "Return the number of separable functions (the number of predictor points)\&. "
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const"
+.br
+.RI "Return the parameters of the network\&. "
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters of the network\&. "
+.ti -1c
+.RI "void \fBPredict\fP (arma::mat input, arma::mat &output)"
+.br
+.RI "This function predicts the output of the network on the given input\&. "
+.ti -1c
+.RI "const arma::mat & \fBPredictors\fP () const"
+.br
+.RI "Get the matrix of data points (predictors)\&. "
+.ti -1c
+.RI "arma::mat & \fBPredictors\fP ()"
+.br
+.RI "Modify the matrix of data points (predictors)\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.ti -1c
+.RI "void \fBResetData\fP (arma::mat trainData)"
+.br
+.RI "Initialize the generator, discriminator and weights of the model for training\&. "
+.ti -1c
+.RI "const arma::mat & \fBResponses\fP () const"
+.br
+.RI "Get the matrix of responses to the input data points\&. "
+.ti -1c
+.RI "arma::mat & \fBResponses\fP ()"
+.br
+.RI "Modify the matrix of responses to the input data points\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the model\&. "
+.ti -1c
+.RI "void \fBShuffle\fP ()"
+.br
+.RI "Shuffle the order of function visitation\&. "
+.ti -1c
+.RI "template<typename OptimizerType , typename\&.\&.\&. CallbackTypes> double \fBTrain\fP (arma::mat trainData, OptimizerType &Optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Train function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename Model, typename InitializationRuleType, typename Noise, typename PolicyType = StandardGAN>
+.br
+class mlpack::ann::GAN< Model, InitializationRuleType, Noise, PolicyType >"
+The implementation of the standard \fBGAN\fP module\&. 
+
+Generative Adversarial Networks (GANs) are a class of artificial intelligence algorithms used in unsupervised machine learning, implemented by a system of two neural networks contesting with each other in a zero-sum game framework\&. This technique can generate photographs that look at least superficially authentic to human observers, having many realistic characteristics\&. GANs have been used in Text-to-Image Synthesis, Medical Drug Discovery, High Resolution Imagery Generation, Neural Machine Translation and so on\&.
+.PP
+For more information, see the following paper:
+.PP
+.PP
+.nf
+@article{Goodfellow14,
+  author    = {Ian J\&. Goodfellow, Jean Pouget-Abadi, Mehdi Mirza, Bing Xu,
+               David Warde-Farley, Sherjil Ozair, Aaron Courville and
+               Yoshua Bengio},
+  title     = {Generative Adversarial Nets},
+  year      = {2014},
+  url       = {http://arxiv\&.org/abs/1406\&.2661},
+  eprint    = {1406\&.2661},
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIModel\fP The class type of Generator and Discriminator\&. 
+.br
+\fIInitializationRuleType\fP Type of Initializer\&. 
+.br
+\fINoise\fP The noise function to use\&. 
+.br
+\fIPolicyType\fP The \fBGAN\fP variant to be used (\fBGAN\fP, \fBDCGAN\fP, \fBWGAN\fP or \fBWGANGP\fP)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file gan\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGAN\fP (Model generator, Model discriminator, InitializationRuleType & initializeRule, Noise & noiseFunction, const size_t noiseDim, const size_t batchSize, const size_t generatorUpdateStep, const size_t preTrainSize, const double multiplier, const double clippingParameter = \fC0\&.01\fP, const double lambda = \fC10\&.0\fP)"
+
+.PP
+Constructor for \fBGAN\fP class\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgenerator\fP Generator network\&. 
+.br
+\fIdiscriminator\fP Discriminator network\&. 
+.br
+\fIinitializeRule\fP Initialization rule to use for initializing parameters\&. 
+.br
+\fInoiseFunction\fP Function to be used for generating noise\&. 
+.br
+\fInoiseDim\fP Dimension of noise vector to be created\&. 
+.br
+\fIbatchSize\fP Batch size to be used for training\&. 
+.br
+\fIgeneratorUpdateStep\fP Number of steps to train Discriminator before updating Generator\&. 
+.br
+\fIpreTrainSize\fP Number of pre-training steps of Discriminator\&. 
+.br
+\fImultiplier\fP Ratio of learning rate of Discriminator to the Generator\&. 
+.br
+\fIclippingParameter\fP Weight range for enforcing Lipschitz constraint\&. 
+.br
+\fIlambda\fP Parameter for setting the gradient penalty\&. 
+.RE
+.PP
+
+.SS "\fBGAN\fP (const \fBGAN\fP< Model, InitializationRuleType, Noise, PolicyType > &)"
+
+.PP
+Copy constructor\&. 
+.SS "\fBGAN\fP (\fBGAN\fP< Model, InitializationRuleType, Noise, PolicyType > &&)"
+
+.PP
+Move constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "const Model& Discriminator () const\fC [inline]\fP"
+
+.PP
+Return the discriminator of the \fBGAN\fP\&. 
+.PP
+Definition at line 312 of file gan\&.hpp\&.
+.SS "Model& Discriminator ()\fC [inline]\fP"
+
+.PP
+Modify the discriminator of the \fBGAN\fP\&. 
+.PP
+Definition at line 314 of file gan\&.hpp\&.
+.SS "std::enable_if<std::is_same<Policy, \fBStandardGAN\fP>::value || std::is_same<Policy, \fBDCGAN\fP>::value, double>::type Evaluate (const arma::mat & parameters, const size_t i, const size_t batchSize)"
+
+.PP
+Evaluate function for the Standard \fBGAN\fP and \fBDCGAN\fP\&. This function gives the performance of the Standard \fBGAN\fP or \fBDCGAN\fP on the current input\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGAN\fP>::value, double>::type Evaluate (const arma::mat & parameters, const size_t i, const size_t batchSize)"
+
+.PP
+Evaluate function for the \fBWGAN\fP\&. This function gives the performance of the \fBWGAN\fP on the current input\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGANGP\fP>::value, double>::type Evaluate (const arma::mat & parameters, const size_t i, const size_t batchSize)"
+
+.PP
+Evaluate function for the WGAN-GP\&. This function gives the performance of the WGAN-GP on the current input\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBStandardGAN\fP>::value || std::is_same<Policy, \fBDCGAN\fP>::value, double>::type EvaluateWithGradient (const arma::mat & parameters, const size_t i, GradType & gradient, const size_t batchSize)"
+
+.PP
+EvaluateWithGradient function for the Standard \fBGAN\fP and \fBDCGAN\fP\&. This function gives the performance of the Standard \fBGAN\fP or \fBDCGAN\fP on the current input, while updating Gradients\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGAN\fP>::value, double>::type EvaluateWithGradient (const arma::mat & parameters, const size_t i, GradType & gradient, const size_t batchSize)"
+
+.PP
+EvaluateWithGradient function for the \fBWGAN\fP\&. This function gives the performance of the \fBWGAN\fP on the current input, while updating Gradients\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGANGP\fP>::value, double>::type EvaluateWithGradient (const arma::mat & parameters, const size_t i, GradType & gradient, const size_t batchSize)"
+
+.PP
+EvaluateWithGradient function for the WGAN-GP\&. This function gives the performance of the WGAN-GP on the current input, while updating Gradients\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the network\&. 
+.br
+\fIi\fP Index of the current input\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "void Forward (const arma::mat & input)"
+
+.PP
+This function does a forward pass through the \fBGAN\fP network\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Sampled noise\&. 
+.RE
+.PP
+
+.SS "const Model& Generator () const\fC [inline]\fP"
+
+.PP
+Return the generator of the \fBGAN\fP\&. 
+.PP
+Definition at line 308 of file gan\&.hpp\&.
+.SS "Model& Generator ()\fC [inline]\fP"
+
+.PP
+Modify the generator of the \fBGAN\fP\&. 
+.PP
+Definition at line 310 of file gan\&.hpp\&.
+.SS "std::enable_if<std::is_same<Policy, \fBStandardGAN\fP>::value || std::is_same<Policy, \fBDCGAN\fP>::value, void>::type Gradient (const arma::mat & parameters, const size_t i, arma::mat & gradient, const size_t batchSize)"
+
+.PP
+Gradient function for Standard \fBGAN\fP and \fBDCGAN\fP\&. This function passes the gradient based on which network is being trained, i\&.e\&., Generator or Discriminator\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP present parameters of the network\&. 
+.br
+\fIi\fP Index of the predictors\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGAN\fP>::value, void>::type Gradient (const arma::mat & parameters, const size_t i, arma::mat & gradient, const size_t batchSize)"
+
+.PP
+Gradient function for \fBWGAN\fP\&. This function passes the gradient based on which network is being trained, i\&.e\&., Generator or Discriminator\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP present parameters of the network\&. 
+.br
+\fIi\fP Index of the predictors\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "std::enable_if<std::is_same<Policy, \fBWGANGP\fP>::value, void>::type Gradient (const arma::mat & parameters, const size_t i, arma::mat & gradient, const size_t batchSize)"
+
+.PP
+Gradient function for WGAN-GP\&. This function passes the gradient based on which network is being trained, i\&.e\&., Generator or Discriminator\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP present parameters of the network\&. 
+.br
+\fIi\fP Index of the predictors\&. 
+.br
+\fIgradient\fP Variable to store the present gradient\&. 
+.br
+\fIbatchSize\fP Variable to store the present number of inputs\&. 
+.RE
+.PP
+
+.SS "size_t NumFunctions () const\fC [inline]\fP"
+
+.PP
+Return the number of separable functions (the number of predictor points)\&. 
+.PP
+Definition at line 317 of file gan\&.hpp\&.
+.SS "const arma::mat& Parameters () const\fC [inline]\fP"
+
+.PP
+Return the parameters of the network\&. 
+.PP
+Definition at line 303 of file gan\&.hpp\&.
+.SS "arma::mat& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters of the network\&. 
+.PP
+Definition at line 305 of file gan\&.hpp\&.
+.SS "void Predict (arma::mat input, arma::mat & output)"
+
+.PP
+This function predicts the output of the network on the given input\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The input of the Generator network\&. 
+.br
+\fIoutput\fP Result of the Discriminator network\&. 
+.RE
+.PP
+
+.SS "const arma::mat& Predictors () const\fC [inline]\fP"
+
+.PP
+Get the matrix of data points (predictors)\&. 
+.PP
+Definition at line 325 of file gan\&.hpp\&.
+.SS "arma::mat& Predictors ()\fC [inline]\fP"
+
+.PP
+Modify the matrix of data points (predictors)\&. 
+.PP
+Definition at line 327 of file gan\&.hpp\&.
+.PP
+References GAN< Model, InitializationRuleType, Noise, PolicyType >::serialize()\&.
+.SS "void Reset ()"
+
+.SS "void ResetData (arma::mat trainData)"
+
+.PP
+Initialize the generator, discriminator and weights of the model for training\&. This function won't actually trigger training process\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItrainData\fP The data points of real distribution\&. 
+.RE
+.PP
+
+.SS "const arma::mat& Responses () const\fC [inline]\fP"
+
+.PP
+Get the matrix of responses to the input data points\&. 
+.PP
+Definition at line 320 of file gan\&.hpp\&.
+.SS "arma::mat& Responses ()\fC [inline]\fP"
+
+.PP
+Modify the matrix of responses to the input data points\&. 
+.PP
+Definition at line 322 of file gan\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the model\&. 
+.PP
+Referenced by GAN< Model, InitializationRuleType, Noise, PolicyType >::Predictors()\&.
+.SS "void Shuffle ()"
+
+.PP
+Shuffle the order of function visitation\&. This may be called by the optimizer\&. 
+.SS "double Train (arma::mat trainData, OptimizerType & Optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Train function\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.br
+\fICallbackTypes\fP Types of Callback functions\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fItrainData\fP The data points of real distribution\&. 
+.br
+\fIOptimizer\fP Instantiated optimizer used to train the model\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The final objective of the trained model (NaN or Inf on error)\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,180 @@
+\section{Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Softmin}\index{Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Softmin}{p.}{classmlpack_1_1ann_1_1Softmin} layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Softmin} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Softmin}{p.}{classmlpack_1_1ann_1_1Softmin} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Softmin}{p.}{classmlpack_1_1ann_1_1Softmin} layer. 
+
+The \doxyref{Softmin}{p.}{classmlpack_1_1ann_1_1Softmin} function takes as a input a vector of K real numbers, rescaling them so that the elements of the K-\/dimensional output vector lie in the range [0, 1] and sum to 1.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 35 of file softmin.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a526c6fc3a6deccc1b0f26459c40c6f01}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Softmin@{Softmin}}
+\index{Softmin@{Softmin}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Softmin()}
+{\footnotesize\ttfamily \textbf{ Softmin} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Softmin}{p.}{classmlpack_1_1ann_1_1Softmin} object. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a78dbad83871f43db1975e45a9a69c376}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_aa02f12f0f3e5fea14c9fecf889b3103a}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 73 of file softmin.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a6201406598916738050e1b6caedea03b}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 75 of file softmin.\+hpp.
+
+
+
+References Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 68 of file softmin.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 70 of file softmin.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Softmin_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Softmin@{mlpack\+::ann\+::\+Softmin}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Softmin$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ softmin.\+hpp}\end{DoxyCompactItemize}

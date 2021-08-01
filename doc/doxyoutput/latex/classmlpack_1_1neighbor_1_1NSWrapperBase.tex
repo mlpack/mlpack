@@ -1,0 +1,248 @@
+\section{N\+S\+Wrapper\+Base Class Reference}
+\label{classmlpack_1_1neighbor_1_1NSWrapperBase}\index{N\+S\+Wrapper\+Base@{N\+S\+Wrapper\+Base}}
+
+
+\doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} is a base wrapper class for holding all \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types supported by \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}.  
+
+
+
+
+Inheritance diagram for N\+S\+Wrapper\+Base\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1neighbor_1_1NSWrapperBase__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ N\+S\+Wrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} object. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+N\+S\+Wrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Destruct the \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} (nothing to do). \end{DoxyCompactList}\item 
+virtual \textbf{ N\+S\+Wrapper\+Base} $\ast$ \textbf{ Clone} () const =0
+\begin{DoxyCompactList}\small\item\em Create a new \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} that is the same as this one. \end{DoxyCompactList}\item 
+virtual const arma\+::mat \& \textbf{ Dataset} () const =0
+\begin{DoxyCompactList}\small\item\em Return a reference to the dataset. \end{DoxyCompactList}\item 
+virtual double \textbf{ Epsilon} () const =0
+\begin{DoxyCompactList}\small\item\em Get the approximation parameter epsilon. \end{DoxyCompactList}\item 
+virtual double \& \textbf{ Epsilon} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the approximation parameter epsilon. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, const size\+\_\+t leaf\+Size, const double rho)=0
+\begin{DoxyCompactList}\small\item\em Perform bichromatic neighbor search (i.\+e. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)=0
+\begin{DoxyCompactList}\small\item\em Perform monochromatic neighbor search (i.\+e. \end{DoxyCompactList}\item 
+virtual \textbf{ Neighbor\+Search\+Mode} \textbf{ Search\+Mode} () const =0
+\begin{DoxyCompactList}\small\item\em Get the search mode. \end{DoxyCompactList}\item 
+virtual \textbf{ Neighbor\+Search\+Mode} \& \textbf{ Search\+Mode} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the search modem. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const double tau, const double rho)=0
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model with the given parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} is a base wrapper class for holding all \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types supported by \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+All \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support. 
+
+Definition at line 35 of file ns\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_afe3cd9a0f215a7de10b6d31cbfc33dca}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!N\+S\+Wrapper\+Base@{N\+S\+Wrapper\+Base}}
+\index{N\+S\+Wrapper\+Base@{N\+S\+Wrapper\+Base}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{N\+S\+Wrapper\+Base()}
+{\footnotesize\ttfamily \textbf{ N\+S\+Wrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} object. 
+
+The base class does not hold anything, so this constructor does not do anything. 
+
+Definition at line 40 of file ns\+\_\+model.\+hpp.
+
+
+
+References N\+S\+Wrapper\+Base\+::\+Clone().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a62d0554213b6a374ac784bd040c4377d}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!````~N\+S\+Wrapper\+Base@{$\sim$\+N\+S\+Wrapper\+Base}}
+\index{````~N\+S\+Wrapper\+Base@{$\sim$\+N\+S\+Wrapper\+Base}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{$\sim$\+N\+S\+Wrapper\+Base()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ N\+S\+Wrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destruct the \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} (nothing to do). 
+
+
+
+Definition at line 47 of file ns\+\_\+model.\+hpp.
+
+
+
+References N\+S\+Wrapper\+Base\+::\+Dataset(), N\+S\+Wrapper\+Base\+::\+Epsilon(), N\+S\+Wrapper\+Base\+::\+Search(), N\+S\+Wrapper\+Base\+::\+Search\+Mode(), and N\+S\+Wrapper\+Base\+::\+Train().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a56b413b249512d2cd48e40ec69eda9cf}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Clone@{Clone}}
+\index{Clone@{Clone}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ N\+S\+Wrapper\+Base}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Create a new \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} that is the same as this one. 
+
+This function will properly handle polymorphism. 
+
+Implemented in \textbf{ Spill\+N\+S\+Wrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a09080a653d528fcd34bb630ea566badb}, \textbf{ Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a1ada05f817cfde693b0ce9cb758f8e4d}, \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a99ca7e011f7ab92c5ba440bc1304536d}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a99ca7e011f7ab92c5ba440bc1304536d}.
+
+
+
+Referenced by N\+S\+Wrapper\+Base\+::\+N\+S\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a2effd31755e4ae5f85e14ed94e7fab8e}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Dataset()}
+{\footnotesize\ttfamily virtual const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Return a reference to the dataset. 
+
+
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_aff320b9a86b77a150e630c01d5888273}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_aff320b9a86b77a150e630c01d5888273}.
+
+
+
+Referenced by N\+S\+Wrapper\+Base\+::$\sim$\+N\+S\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a9bd0afbec99b28bbc273e297ec9fe352}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual double Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the approximation parameter epsilon. 
+
+
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_af6d960193bb5db37e51416e12bf720de}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_af6d960193bb5db37e51416e12bf720de}.
+
+
+
+Referenced by N\+S\+Model$<$ Sort\+Policy $>$\+::\+Rho(), and N\+S\+Wrapper\+Base\+::$\sim$\+N\+S\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a68739e281bac3db475e5423fbbca8081}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual double\& Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the approximation parameter epsilon. 
+
+
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_ab6a080993b32456443eced5df2f8b9b9}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_ab6a080993b32456443eced5df2f8b9b9}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a9e7389351073f295e1aee942dbd7942a}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const double}]{rho }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform bichromatic neighbor search (i.\+e. 
+
+search with a separate query set). 
+
+Implemented in \textbf{ Spill\+N\+S\+Wrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a7f3908cf84625e816aac3b8ae78d302f}, \textbf{ Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a4aef4b9e215d07dbc33e97f5ff574ab2}, \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a1f033e50f5a14937123de77cb439fcb5}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a1f033e50f5a14937123de77cb439fcb5}.
+
+
+
+Referenced by Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Clone(), Spill\+N\+S\+Wrapper$<$ Sort\+Policy $>$\+::\+Clone(), N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$\+::\+Epsilon(), N\+S\+Model$<$ Sort\+Policy $>$\+::\+Random\+Basis(), and N\+S\+Wrapper\+Base\+::$\sim$\+N\+S\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a98ca743413f49d02f39ecb99184443d4}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform monochromatic neighbor search (i.\+e. 
+
+use the reference set as the query set). 
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_aeb3fa1fab8680898b6326556ea81a55b}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_aeb3fa1fab8680898b6326556ea81a55b}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_ac565d27ec3cd6370688baf14efed6556}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Search\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual \textbf{ Neighbor\+Search\+Mode} Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the search mode. 
+
+
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a23cdc4b734a3dc41722aaded92244fd4}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a23cdc4b734a3dc41722aaded92244fd4}.
+
+
+
+Referenced by N\+S\+Wrapper\+Base\+::$\sim$\+N\+S\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_ad405b5a3c8c8a828941afefd3826b49d}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Search\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual \textbf{ Neighbor\+Search\+Mode}\& Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the search modem. 
+
+
+
+Implemented in \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a6071cc412821cb4ce4364fbc2a0a8533}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a6071cc412821cb4ce4364fbc2a0a8533}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapperBase_a870763190dedf5ec0d9a2118f742a517}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base@{mlpack\+::neighbor\+::\+N\+S\+Wrapper\+Base}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const double}]{tau,  }\item[{const double}]{rho }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Train the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model with the given parameters. 
+
+
+
+Implemented in \textbf{ Spill\+N\+S\+Wrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a0bfff11e794dd6c4c7323cd204c67378}, \textbf{ Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_af1b6a13a041581bdb250c303a2736c7c}, \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_ae4fcf39ad7ed7dca39fe8bd00fd76082}, and \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_ae4fcf39ad7ed7dca39fe8bd00fd76082}.
+
+
+
+Referenced by Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Clone(), Spill\+N\+S\+Wrapper$<$ Sort\+Policy $>$\+::\+Clone(), N\+S\+Wrapper$<$ Sort\+Policy, tree\+::\+S\+P\+Tree, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, tree\+::\+S\+P\+Tree$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$\+::\+Epsilon(), and N\+S\+Wrapper\+Base\+::$\sim$\+N\+S\+Wrapper\+Base().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_1d65ca8da19f261ef402f02c2090e4b8" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/neighbor_search</compoundname>
+    <innerdir refid="dir_4b741b852c0cf24d06d11b492e004d31">/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies</innerdir>
+    <innerfile refid="neighbor__search_8hpp">neighbor_search.hpp</innerfile>
+    <innerfile refid="neighbor__search__rules_8hpp">neighbor_search_rules.hpp</innerfile>
+    <innerfile refid="neighbor__search__stat_8hpp">neighbor_search_stat.hpp</innerfile>
+    <innerfile refid="ns__model_8hpp">ns_model.hpp</innerfile>
+    <innerfile refid="methods_2neighbor__search_2typedef_8hpp">typedef.hpp</innerfile>
+    <innerfile refid="unmap_8hpp">unmap.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/"/>
+  </compounddef>
+</doxygen>

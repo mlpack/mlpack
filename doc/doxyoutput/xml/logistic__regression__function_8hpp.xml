@@ -1,0 +1,505 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="logistic__regression__function_8hpp" kind="file" language="C++">
+    <compoundname>logistic_regression_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="make__alias_8hpp" local="no">mlpack/core/math/make_alias.hpp</includes>
+    <includes refid="shuffle__data_8hpp" local="no">mlpack/core/math/shuffle_data.hpp</includes>
+    <includes local="yes">logistic_regression_function_impl.hpp</includes>
+    <includedby refid="logistic__regression_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression.hpp</includedby>
+    <incdepgraph>
+      <node id="52060">
+        <label>list</label>
+      </node>
+      <node id="52057">
+        <label>atomic</label>
+      </node>
+      <node id="52047">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="52023">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="52059">
+        <label>iomanip</label>
+      </node>
+      <node id="52032">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="52033" relation="include">
+        </childnode>
+        <childnode refid="52035" relation="include">
+        </childnode>
+      </node>
+      <node id="52015">
+        <label>cstdint</label>
+      </node>
+      <node id="52024">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="52031">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="52054">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="52044">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="52011">
+        <label>cmath</label>
+      </node>
+      <node id="52030">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="52019">
+        <label>stdexcept</label>
+      </node>
+      <node id="52039">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="52024" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52025" relation="include">
+        </childnode>
+      </node>
+      <node id="52063">
+        <label>string</label>
+      </node>
+      <node id="52051">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="52052" relation="include">
+        </childnode>
+        <childnode refid="52018" relation="include">
+        </childnode>
+      </node>
+      <node id="52061">
+        <label>map</label>
+      </node>
+      <node id="52013">
+        <label>cfloat</label>
+      </node>
+      <node id="52043">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="52065">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="52027">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="52050">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="52051" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52034" relation="include">
+        </childnode>
+        <childnode refid="52052" relation="include">
+        </childnode>
+      </node>
+      <node id="52040">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52067">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="52038">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="52024" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52025" relation="include">
+        </childnode>
+      </node>
+      <node id="52041">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="52024" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52025" relation="include">
+        </childnode>
+      </node>
+      <node id="52029">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="52049">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="52025" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52037" relation="include">
+        </childnode>
+        <childnode refid="52046" relation="include">
+        </childnode>
+      </node>
+      <node id="52053">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="52054" relation="include">
+        </childnode>
+      </node>
+      <node id="52055">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="52010">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="52011" relation="include">
+        </childnode>
+        <childnode refid="52012" relation="include">
+        </childnode>
+        <childnode refid="52013" relation="include">
+        </childnode>
+        <childnode refid="52014" relation="include">
+        </childnode>
+        <childnode refid="52015" relation="include">
+        </childnode>
+        <childnode refid="52016" relation="include">
+        </childnode>
+        <childnode refid="52017" relation="include">
+        </childnode>
+        <childnode refid="52018" relation="include">
+        </childnode>
+        <childnode refid="52019" relation="include">
+        </childnode>
+        <childnode refid="52020" relation="include">
+        </childnode>
+        <childnode refid="52021" relation="include">
+        </childnode>
+        <childnode refid="52022" relation="include">
+        </childnode>
+        <childnode refid="52023" relation="include">
+        </childnode>
+        <childnode refid="52024" relation="include">
+        </childnode>
+        <childnode refid="52025" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52028" relation="include">
+        </childnode>
+        <childnode refid="52029" relation="include">
+        </childnode>
+        <childnode refid="52030" relation="include">
+        </childnode>
+        <childnode refid="52031" relation="include">
+        </childnode>
+        <childnode refid="52032" relation="include">
+        </childnode>
+        <childnode refid="52036" relation="include">
+        </childnode>
+        <childnode refid="52037" relation="include">
+        </childnode>
+        <childnode refid="52038" relation="include">
+        </childnode>
+        <childnode refid="52039" relation="include">
+        </childnode>
+        <childnode refid="52040" relation="include">
+        </childnode>
+        <childnode refid="52041" relation="include">
+        </childnode>
+        <childnode refid="52042" relation="include">
+        </childnode>
+        <childnode refid="52048" relation="include">
+        </childnode>
+        <childnode refid="52049" relation="include">
+        </childnode>
+        <childnode refid="52046" relation="include">
+        </childnode>
+        <childnode refid="52050" relation="include">
+        </childnode>
+        <childnode refid="52053" relation="include">
+        </childnode>
+        <childnode refid="52055" relation="include">
+        </childnode>
+        <childnode refid="52056" relation="include">
+        </childnode>
+        <childnode refid="52065" relation="include">
+        </childnode>
+        <childnode refid="52066" relation="include">
+        </childnode>
+      </node>
+      <node id="52016">
+        <label>cstdio</label>
+      </node>
+      <node id="52069">
+        <label>logistic_regression_function_impl.hpp</label>
+      </node>
+      <node id="52020">
+        <label>tuple</label>
+      </node>
+      <node id="52025">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="52042">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="52025" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52029" relation="include">
+        </childnode>
+        <childnode refid="52043" relation="include">
+        </childnode>
+        <childnode refid="52044" relation="include">
+        </childnode>
+        <childnode refid="52045" relation="include">
+        </childnode>
+        <childnode refid="52046" relation="include">
+        </childnode>
+      </node>
+      <node id="52021">
+        <label>utility</label>
+      </node>
+      <node id="52045">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="52036">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="52033">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="52034" relation="include">
+        </childnode>
+      </node>
+      <node id="52068">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="52010" relation="include">
+        </childnode>
+      </node>
+      <node id="52056">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="52057" relation="include">
+        </childnode>
+        <childnode refid="52058" relation="include">
+        </childnode>
+        <childnode refid="52059" relation="include">
+        </childnode>
+        <childnode refid="52060" relation="include">
+        </childnode>
+        <childnode refid="52061" relation="include">
+        </childnode>
+        <childnode refid="52062" relation="include">
+        </childnode>
+        <childnode refid="52063" relation="include">
+        </childnode>
+        <childnode refid="52064" relation="include">
+        </childnode>
+      </node>
+      <node id="52034">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="52048">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="52046" relation="include">
+        </childnode>
+        <childnode refid="52042" relation="include">
+        </childnode>
+        <childnode refid="52049" relation="include">
+        </childnode>
+      </node>
+      <node id="52017">
+        <label>cstdlib</label>
+      </node>
+      <node id="52012">
+        <label>cctype</label>
+      </node>
+      <node id="52035">
+        <label>unordered_map</label>
+      </node>
+      <node id="52014">
+        <label>climits</label>
+      </node>
+      <node id="52062">
+        <label>mutex</label>
+      </node>
+      <node id="52058">
+        <label>chrono</label>
+      </node>
+      <node id="52009">
+        <label>/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression_function.hpp</label>
+        <link refid="logistic__regression__function_8hpp"/>
+        <childnode refid="52010" relation="include">
+        </childnode>
+        <childnode refid="52067" relation="include">
+        </childnode>
+        <childnode refid="52068" relation="include">
+        </childnode>
+        <childnode refid="52069" relation="include">
+        </childnode>
+      </node>
+      <node id="52066">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="52064">
+        <label>thread</label>
+      </node>
+      <node id="52052">
+        <label>type_traits</label>
+      </node>
+      <node id="52028">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="52022">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="52046">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="52024" relation="include">
+        </childnode>
+        <childnode refid="52025" relation="include">
+        </childnode>
+        <childnode refid="52026" relation="include">
+        </childnode>
+        <childnode refid="52027" relation="include">
+        </childnode>
+        <childnode refid="52047" relation="include">
+        </childnode>
+      </node>
+      <node id="52018">
+        <label>cstring</label>
+      </node>
+      <node id="52037">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="52026">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="52072">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="52071">
+        <label>/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression.hpp</label>
+        <link refid="logistic__regression_8hpp"/>
+        <childnode refid="52072" relation="include">
+        </childnode>
+      </node>
+      <node id="52070">
+        <label>/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression_function.hpp</label>
+        <link refid="logistic__regression__function_8hpp"/>
+        <childnode refid="52071" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1regression_1_1LogisticRegressionFunction" prot="public">mlpack::regression::LogisticRegressionFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1regression">mlpack::regression</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Sumedh Ghaisas</para></simplesect>
+Implementation of the logistic regression function, which is meant to be optimized by a separate optimizer class that takes LogisticRegressionFunction as its FunctionType class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="make__alias_8hpp" kindref="compound">mlpack/core/math/make_alias.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="shuffle__data_8hpp" kindref="compound">mlpack/core/math/shuffle_data.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">regression<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="30" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction" kindref="compound">LogisticRegressionFunction</ref></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a765a1a86d5e7265054f6944fc49f00a5" kindref="member">LogisticRegressionFunction</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>predictors,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1aedf1f261c4ef819f2b24abcc8ebae412" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1aedf1f261c4ef819f2b24abcc8ebae412" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1af17881eecaf6b595d92c50f513b83803" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1af17881eecaf6b595d92c50f513b83803" kindref="member">Predictors</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>predictors;<sp/>}</highlight></codeline>
+<codeline lineno="52" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a99080f78992e0002dd030a9ed23b435c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a99080f78992e0002dd030a9ed23b435c" kindref="member">Responses</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>responses;<sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle</ref>();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,<sp/>arma::mat&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1aebc7a3602e18648021b93c1d725fef9c" kindref="member">PartialGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::sp_mat&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" kindref="member">EvaluateWithGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GradType&gt;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" kindref="member">EvaluateWithGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GradType&amp;<sp/>gradient,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" kindref="member">NumFunctions</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>predictors.n_cols;<sp/>}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a351704783f122196cf5dc7fb408b8522" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1LogisticRegressionFunction_1a351704783f122196cf5dc7fb408b8522" kindref="member">NumFeatures</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>predictors.n_rows<sp/>+<sp/>1;<sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>MatType<sp/>predictors;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>arma::Row&lt;size_t&gt;<sp/>responses;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logistic_regression_function_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression_function.hpp"/>
+  </compounddef>
+</doxygen>

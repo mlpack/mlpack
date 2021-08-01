@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structcereal_1_1load__visitor" kind="struct" language="C++" prot="public">
+    <compoundname>cereal::load_visitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; void &gt;</basecompoundref>
+    <includes refid="pointer__variant__wrapper_8hpp" local="no">pointer_variant_wrapper.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structcereal_1_1load__visitor_1ae67bead4545632528f854b076f0b00b4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+          <param>
+            <type>typename VariantType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void load</definition>
+        <argsstring>(Archive &amp;ar, VariantType &amp;variant)</argsstring>
+        <name>load</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>VariantType &amp;</type>
+          <declname>variant</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" bodystart="89" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="structcereal_1_1load__visitor_1aea1281669a5d8765e002bfd8ef845be7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+          <param>
+            <type>typename VariantType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void load_impl</definition>
+        <argsstring>(Archive &amp;ar, VariantType &amp;variant, std::true_type)</argsstring>
+        <name>load_impl</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>VariantType &amp;</type>
+          <declname>variant</declname>
+        </param>
+        <param>
+          <type>std::true_type</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" line="71" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" bodystart="71" bodyend="77"/>
+        <references refid="structcereal_1_1save__visitor_1a35bf67c5eb3a02c7ca3d0db5bebd4e11" compoundref="pointer__variant__wrapper_8hpp" startline="64">save_visitor&lt; Archive &gt;::ar</references>
+        <references refid="pointer__wrapper_8hpp_1a58a300268ba9c6215a8ab2075a4dc675" compoundref="pointer__wrapper_8hpp" startline="96">CEREAL_POINTER</references>
+      </memberdef>
+      <memberdef kind="function" id="structcereal_1_1load__visitor_1a55a8cf45de73b30212662c1710614572" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+          <param>
+            <type>typename VariantType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void load_impl</definition>
+        <argsstring>(Archive &amp;ar, VariantType &amp;value, std::false_type)</argsstring>
+        <name>load_impl</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>VariantType &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>std::false_type</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" line="80" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" bodystart="80" bodyend="86"/>
+        <references refid="structcereal_1_1save__visitor_1a35bf67c5eb3a02c7ca3d0db5bebd4e11" compoundref="pointer__variant__wrapper_8hpp" startline="64">save_visitor&lt; Archive &gt;::ar</references>
+        <references refid="namespacecereal_1a45bbfc5cc5f47d0c1fcf9aaa1e613610" compoundref="pointer__variant__wrapper_8hpp" startline="42" endline="45">cereal::make_pointer_variant</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="6">
+        <label>load_visitor&lt; T &gt;</label>
+        <link refid="structcereal_1_1load__visitor"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="8">
+        <label>load_visitor&lt; T &gt;</label>
+        <link refid="structcereal_1_1load__visitor"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" bodystart="68" bodyend="96"/>
+    <listofallmembers>
+      <member refid="structcereal_1_1load__visitor_1ae67bead4545632528f854b076f0b00b4" prot="public" virt="non-virtual"><scope>cereal::load_visitor</scope><name>load</name></member>
+      <member refid="structcereal_1_1load__visitor_1aea1281669a5d8765e002bfd8ef845be7" prot="public" virt="non-virtual"><scope>cereal::load_visitor</scope><name>load_impl</name></member>
+      <member refid="structcereal_1_1load__visitor_1a55a8cf45de73b30212662c1710614572" prot="public" virt="non-virtual"><scope>cereal::load_visitor</scope><name>load_impl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

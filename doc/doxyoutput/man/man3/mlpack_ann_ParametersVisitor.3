@@ -1,0 +1,49 @@
+.TH "ParametersVisitor" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ParametersVisitor \- \fBParametersVisitor\fP exposes the parameters set of the given module and stores the parameters set into the given matrix\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBParametersVisitor\fP (arma::mat &parameters)"
+.br
+.RI "Store the parameters set into the given parameters matrix\&. "
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Set the parameters set\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBParametersVisitor\fP exposes the parameters set of the given module and stores the parameters set into the given matrix\&. 
+.PP
+Definition at line 28 of file parameters_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBParametersVisitor\fP (arma::mat & parameters)"
+
+.PP
+Store the parameters set into the given parameters matrix\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void operator() (LayerType * layer) const"
+
+.PP
+Set the parameters set\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

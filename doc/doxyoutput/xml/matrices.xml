@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="matrices" kind="page">
+    <compoundname>matrices</compoundname>
+    <title>Matrices in mlpack</title>
+    <detaileddescription>
+<sect1 id="matrices_1matintro">
+<title>Introduction</title>
+<para>mlpack uses Armadillo matrices for matrix support. Armadillo is a fast C++ matrix library which makes use of advanced template techniques to provide the fastest possible matrix operations.</para><para>Documentation on Armadillo can be found on their website:</para><para><ulink url="http://arma.sourceforge.net/docs.html">http://arma.sourceforge.net/docs.html</ulink></para><para>Nonetheless, there are a few further caveats for mlpack Armadillo usage.</para></sect1>
+<sect1 id="matrices_1format">
+<title>Column-major Matrices</title>
+<para>Armadillo matrices are stored in a column-major format; this means that on disk, each column is located in contiguous memory.</para><para>This means that, for the vast majority of machine learning methods, it is faster to store observations as columns and dimensions as rows. This is counter to most standard machine learning texts!</para><para>Major implications of this are for linear algebra. For instance, the covariance of a matrix is typically</para><para><formula id="175">\[ C = X^T X \]</formula></para><para>but for a column-wise matrix, it is</para><para><formula id="176">\[ C = X X^T \]</formula></para><para>and this is very important to keep in mind! If your mlpack code is not working, this may be a factor in why.</para></sect1>
+<sect1 id="matrices_1loading">
+<title>Loading Matrices</title>
+<para>mlpack provides a <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">data::Save()</ref> function, which should be used instead of Armadillo&apos;s loading and saving functions.</para><para>Most machine learning data is stored in row-major format; a CSV, for example, will generally have one observation per line and each column will correspond to a dimension.</para><para>The <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">data::Save()</ref> functions transpose the matrix upon loading, meaning that the following CSV:</para><para><programlisting><codeline><highlight class="normal">$<sp/>cat<sp/>data.csv</highlight></codeline>
+<codeline><highlight class="normal">3,3,3,3,0</highlight></codeline>
+<codeline><highlight class="normal">3,4,4,3,0</highlight></codeline>
+<codeline><highlight class="normal">3,4,4,3,0</highlight></codeline>
+<codeline><highlight class="normal">3,3,4,3,0</highlight></codeline>
+<codeline><highlight class="normal">3,6,4,3,0</highlight></codeline>
+<codeline><highlight class="normal">2,4,4,3,0</highlight></codeline>
+<codeline><highlight class="normal">2,4,4,1,0</highlight></codeline>
+<codeline><highlight class="normal">3,3,3,2,0</highlight></codeline>
+<codeline><highlight class="normal">3,4,4,2,0</highlight></codeline>
+<codeline><highlight class="normal">3,4,4,2,0</highlight></codeline>
+<codeline><highlight class="normal">3,3,4,2,0</highlight></codeline>
+<codeline><highlight class="normal">3,6,4,2,0</highlight></codeline>
+<codeline><highlight class="normal">2,4,4,2,0</highlight></codeline>
+</programlisting></para><para>is actually loaded with 5 rows and 13 columns, not 13 rows and 5 columns like the CSV is written. More information on mlpack&apos;s loading functionality can be found in <ref refid="formatdoc" kindref="compound">File formats and loading data in mlpack</ref>.</para><para>This is important to remember! </para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

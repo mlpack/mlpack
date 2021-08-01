@@ -1,0 +1,58 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/util/size_checks.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/util/size_checks.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::util\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename DataType , typename DimType > void \fBCheckSameDimensionality\fP (const DataType &data, const DimType &dimension, const std::string &callerDescription, const std::string &addInfo='dataset')"
+.br
+.RI "Check for if the given dataset dimension matches with the model's\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBCheckSameDimensionality\fP (const DataType &data, const size_t &dimension, const std::string &callerDescription, const std::string &addInfo='dataset')"
+.br
+.RI "An overload of \fBCheckSameDimensionality()\fP where the dimension to be checked is known second param is unsigned long int\&. "
+.ti -1c
+.RI "template<typename DataType , typename LabelsType > void \fBCheckSameSizes\fP (const DataType &data, const LabelsType &label, const std::string &callerDescription, const std::string &addInfo='labels')"
+.br
+.RI "Check for if the given data points & labels have same size\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBCheckSameSizes\fP (const DataType &data, const size_t &size, const std::string &callerDescription, const std::string &addInfo='labels')"
+.br
+.RI "An overload of \fBCheckSameSizes()\fP where the size to be checked is known previously\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Kirill Mishchenko 
+.PP
+Bisakh Mondal
+.RE
+.PP
+Utility for checking same size & same dimensionality\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBsize_checks\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

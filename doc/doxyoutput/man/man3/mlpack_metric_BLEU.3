@@ -1,0 +1,199 @@
+.TH "BLEU< ElemType, PrecisionType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BLEU< ElemType, PrecisionType > \- \fBBLEU\fP, or the Bilingual Evaluation Understudy, is an algorithm for evaluating the quality of text which has been machine translated from one natural language to another\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBLEU\fP (const size_t maxOrder=4)"
+.br
+.RI "Create an instance of \fBBLEU\fP class\&. "
+.ti -1c
+.RI "ElemType \fBBLEUScore\fP () const"
+.br
+.RI "Get the \fBBLEU\fP Score\&. "
+.ti -1c
+.RI "ElemType \fBBrevityPenalty\fP () const"
+.br
+.RI "Get the brevity penalty\&. "
+.ti -1c
+.RI "template<typename ReferenceCorpusType , typename TranslationCorpusType > ElemType \fBEvaluate\fP (const ReferenceCorpusType &referenceCorpus, const TranslationCorpusType &translationCorpus, const bool smooth=false)"
+.br
+.RI "Computes the \fBBLEU\fP Score\&. "
+.ti -1c
+.RI "size_t \fBMaxOrder\fP () const"
+.br
+.RI "Get the value of maximum length of tokens in n-grams\&. "
+.ti -1c
+.RI "size_t & \fBMaxOrder\fP ()"
+.br
+.RI "Modify the value of maximum length of tokens in n-grams\&. "
+.ti -1c
+.RI "PrecisionType const  & \fBPrecisions\fP () const"
+.br
+.RI "Get the precisions for corresponding order\&. "
+.ti -1c
+.RI "ElemType \fBRatio\fP () const"
+.br
+.RI "Get the ratio of translation to reference length ratio\&. "
+.ti -1c
+.RI "size_t \fBReferenceLength\fP () const"
+.br
+.RI "Get the value of reference length\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the metric\&. "
+.ti -1c
+.RI "size_t \fBTranslationLength\fP () const"
+.br
+.RI "Get the value of translation length\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ElemType = float, typename PrecisionType = std::vector<ElemType>>
+.br
+class mlpack::metric::BLEU< ElemType, PrecisionType >"
+\fBBLEU\fP, or the Bilingual Evaluation Understudy, is an algorithm for evaluating the quality of text which has been machine translated from one natural language to another\&. 
+
+It can also be used to evaluate text generated for a suite of natural language processing tasks\&.
+.PP
+The \fBBLEU\fP score is calculated using the following formula:
+.PP
+\begin{eqnarray*} \text{B} &=& bp \cdot \exp \left(\sum_{n=1}^{N} w \log p_n \right) \\ \text{where,} \\ bp &=& \text{brevity penalty} = \begin{cases} 1 & \text{if ratio} > 1 \\ \exp \left(1-\frac{1}{ratio}\right) & \text{otherwise} \end{cases} \\ p_n &=& \text{modified precision for n-gram,} \\ w &=& \frac {1}{maxOrder}, \\ ratio &=& \text{translation to reference length ratio,} \\ maxOrder &=& \text{maximum length of tokens in n-grams.} \end{eqnarray*}.PP
+The value of \fBBLEU\fP Score lies in between 0 and 1\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIElemType\fP Type of the quantities in \fBBLEU\fP, e\&.g\&. (long double, double, float)\&. 
+.br
+\fIPrecisionType\fP Container type for precision for corresponding order\&. e\&.g\&. (std::vector<float>, std::vector<double>, or any such boost or armadillo container)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file bleu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBLEU\fP (const size_t maxOrder = \fC4\fP)"
+
+.PP
+Create an instance of \fBBLEU\fP class\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxOrder\fP The maximum length of tokens in n-grams\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "ElemType BLEUScore () const\fC [inline]\fP"
+
+.PP
+Get the \fBBLEU\fP Score\&. 
+.PP
+Definition at line 113 of file bleu\&.hpp\&.
+.SS "ElemType BrevityPenalty () const\fC [inline]\fP"
+
+.PP
+Get the brevity penalty\&. 
+.PP
+Definition at line 116 of file bleu\&.hpp\&.
+.SS "ElemType Evaluate (const ReferenceCorpusType & referenceCorpus, const TranslationCorpusType & translationCorpus, const bool smooth = \fCfalse\fP)"
+
+.PP
+Computes the \fBBLEU\fP Score\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIReferenceCorpusType\fP Type of reference corpus\&. 
+.br
+\fITranslationCorpusType\fP Type of translation corpus\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceCorpus\fP It is an array of various references or documents\&. So, the $ referenceCorpus = \{reference_1, reference_2, \ldots \} $ and each reference is an array of paragraphs\&. So, $ reference_i = \{paragraph_1, paragraph_2, \ldots \} $ and then each paragraph is an array of tokenized words/string\&. Like, $ paragraph_i = \{word_1, word_2, \ldots \} $\&. For ex\&. 
+.PP
+.nf
+refCorpus = {{{"this", "is", "paragraph", "1", "from", "document", "1"},
+              {"this", "is", "paragraph", "2", "from", "document", "1"}},
+
+             {{"this", "is", "paragraph", "1", "from", "document", "2"},
+              {"this", "is", "paragraph", "2", "from", "document", "2"}}}
+
+.fi
+.PP
+ 
+.br
+\fItranslationCorpus\fP It is an array of paragraphs which has been machine translated or generated for any natural language processing task\&. Like, $ translationCorpus = \{paragraph_1, paragraph_2, \ldots \} $\&. And then, each paragraph is an array of words\&. The ith paragraph from the corpus is $ paragraph_i = \{word_1, word_2, \ldots \} $\&. For ex\&. 
+.PP
+.nf
+transCorpus = {{"this", "is", "generated", "paragraph", "1"},
+               {"this", "is", "generated", "paragraph", "2"}}
+
+.fi
+.PP
+ 
+.br
+\fIsmooth\fP Whether or not to apply Lin et al\&. 2004 smoothing\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The Evaluate method returns the \fBBLEU\fP Score\&. This method also calculates other \fBBLEU\fP metrics (brevity penalty, translation length, reference length, ratio and precisions) which can be accessed by their corresponding accessor methods\&. 
+.RE
+.PP
+
+.SS "size_t MaxOrder () const\fC [inline]\fP"
+
+.PP
+Get the value of maximum length of tokens in n-grams\&. 
+.PP
+Definition at line 108 of file bleu\&.hpp\&.
+.SS "size_t& MaxOrder ()\fC [inline]\fP"
+
+.PP
+Modify the value of maximum length of tokens in n-grams\&. 
+.PP
+Definition at line 110 of file bleu\&.hpp\&.
+.SS "PrecisionType const& Precisions () const\fC [inline]\fP"
+
+.PP
+Get the precisions for corresponding order\&. 
+.PP
+Definition at line 128 of file bleu\&.hpp\&.
+.SS "ElemType Ratio () const\fC [inline]\fP"
+
+.PP
+Get the ratio of translation to reference length ratio\&. 
+.PP
+Definition at line 125 of file bleu\&.hpp\&.
+.SS "size_t ReferenceLength () const\fC [inline]\fP"
+
+.PP
+Get the value of reference length\&. 
+.PP
+Definition at line 122 of file bleu\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the metric\&. 
+.SS "size_t TranslationLength () const\fC [inline]\fP"
+
+.PP
+Get the value of translation length\&. 
+.PP
+Definition at line 119 of file bleu\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1Timers" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::Timers</compoundname>
+    <includes refid="timers_8hpp" local="no">timers.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1Timers_1a844d73cf5e9a445a5794486cd1d4f84e" prot="private" static="no" mutable="no">
+        <type>std::atomic&lt; bool &gt;</type>
+        <definition>std::atomic&lt;bool&gt; enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+<para>Whether or not timing is enabled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Timers_1aee3cef16972b747ab2b966bbe71dda7a" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::chrono::microseconds &gt;</type>
+        <definition>std::map&lt;std::string, std::chrono::microseconds&gt; timers</definition>
+        <argsstring></argsstring>
+        <name>timers</name>
+        <briefdescription>
+<para>A map of all the timers that are being tracked. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Timers_1ace7c6722d6db149cafd87d9a42c52f83" prot="private" static="no" mutable="no">
+        <type>std::mutex</type>
+        <definition>std::mutex timersMutex</definition>
+        <argsstring></argsstring>
+        <name>timersMutex</name>
+        <briefdescription>
+<para>A mutex for modifying the timers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Timers_1a990855c65dc45d9c0cd9f2ad26e99e4c" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::thread::id, std::map&lt; std::string, std::chrono::high_resolution_clock::time_point &gt; &gt;</type>
+        <definition>std::map&lt;std::thread::id, std::map&lt;std::string, std::chrono::high_resolution_clock::time_point&gt; &gt; timerStartTime</definition>
+        <argsstring></argsstring>
+        <name>timerStartTime</name>
+        <briefdescription>
+<para>A map for the starting values of the timers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Timers</definition>
+        <argsstring>()</argsstring>
+        <name>Timers</name>
+        <briefdescription>
+<para>Default to disabled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1aa3cc415a3ec6ca7701bbe063fb2d0bd7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::atomic&lt; bool &gt; &amp;</type>
+        <definition>std::atomic&lt;bool&gt;&amp; Enabled</definition>
+        <argsstring>()</argsstring>
+        <name>Enabled</name>
+        <briefdescription>
+<para>Modify whether or not timing is enabled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="167" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1a93235b4e93d1b61b95fba2db144145f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Enabled</definition>
+        <argsstring>() const</argsstring>
+        <name>Enabled</name>
+        <briefdescription>
+<para>Get whether or not timing is enabled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1a9d077721f6811724906de9eb5d50857d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::map&lt; std::string, std::chrono::microseconds &gt;</type>
+        <definition>std::map&lt;std::string, std::chrono::microseconds&gt; GetAllTimers</definition>
+        <argsstring>()</argsstring>
+        <name>GetAllTimers</name>
+        <briefdescription>
+<para>Returns a copy of all the timers used via this interface. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="107" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1abee29197294057d68793ee6cbd6eb64e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool GetState</definition>
+        <argsstring>(const std::string &amp;timerName, const std::thread::id &amp;threadId=std::thread::id())</argsstring>
+        <name>GetState</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>timerName</declname>
+        </param>
+        <param>
+          <type>const std::thread::id &amp;</type>
+          <declname>threadId</declname>
+          <defval>std::thread::id()</defval>
+        </param>
+        <briefdescription>
+<para>Returns state of the given timer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the timer in question. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>threadId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the thread accessing the timer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="158" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1aebb641bd9122477aa9a61e72b373e8cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::chrono::microseconds</type>
+        <definition>std::chrono::microseconds GetTimer</definition>
+        <argsstring>(const std::string &amp;timerName)</argsstring>
+        <name>GetTimer</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>timerName</declname>
+        </param>
+        <briefdescription>
+<para>Returns a copy of the timer specified. </para>        </briefdescription>
+        <detaileddescription>
+<para>This contains the sum of the timing results for timers that have been stopped with this name.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the timer in question. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="121" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1add57a3f90480a934a9791e95cf587784" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void PrintTimer</definition>
+        <argsstring>(const std::string &amp;timerName)</argsstring>
+        <name>PrintTimer</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>timerName</declname>
+        </param>
+        <briefdescription>
+<para>Prints the specified timer. </para>        </briefdescription>
+        <detaileddescription>
+<para>If it took longer than a minute to complete the timer will be displayed in days, hours, and minutes as well.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the timer in question. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="129" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Reset the timers. </para>        </briefdescription>
+        <detaileddescription>
+<para>This stops all running timers and removes them. Whether or not timing is enabled will not be changed. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="113" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1aecdbec86306efca51ab08ac2a42bbbf5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StartTimer</definition>
+        <argsstring>(const std::string &amp;timerName, const std::thread::id &amp;threadId=std::thread::id())</argsstring>
+        <name>StartTimer</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>timerName</declname>
+        </param>
+        <param>
+          <type>const std::thread::id &amp;</type>
+          <declname>threadId</declname>
+          <defval>std::thread::id()</defval>
+        </param>
+        <briefdescription>
+<para>Initializes a timer, available like a normal value specified on the command line. </para>        </briefdescription>
+        <detaileddescription>
+<para><ref refid="classmlpack_1_1Timers" kindref="compound">Timers</ref> are of type timeval. If a timer is started, then stopped, then re-started, then stopped, the final timer value will be the length of both runs of the timer.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the timer in question. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>threadId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the thread accessing the timer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="140" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1a48757b28836456b14aa2f1c31dacbd71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StopAllTimers</definition>
+        <argsstring>()</argsstring>
+        <name>StopAllTimers</name>
+        <briefdescription>
+<para>Stop all timers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="164" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timers_1a7a63f768cade147188d0198906624309" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StopTimer</definition>
+        <argsstring>(const std::string &amp;timerName, const std::thread::id &amp;threadId=std::thread::id())</argsstring>
+        <name>StopTimer</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>timerName</declname>
+        </param>
+        <param>
+          <type>const std::thread::id &amp;</type>
+          <declname>threadId</declname>
+          <defval>std::thread::id()</defval>
+        </param>
+        <briefdescription>
+<para>Halts the timer, and replaces its value with the delta time from its start. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the timer in question. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>threadId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the thread accessing the timer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="149" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="98" bodyend="182"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1Timers_1a844d73cf5e9a445a5794486cd1d4f84e" prot="private" virt="non-virtual"><scope>mlpack::Timers</scope><name>enabled</name></member>
+      <member refid="classmlpack_1_1Timers_1aa3cc415a3ec6ca7701bbe063fb2d0bd7" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>Enabled</name></member>
+      <member refid="classmlpack_1_1Timers_1a93235b4e93d1b61b95fba2db144145f6" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>Enabled</name></member>
+      <member refid="classmlpack_1_1Timers_1a9d077721f6811724906de9eb5d50857d" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>GetAllTimers</name></member>
+      <member refid="classmlpack_1_1Timers_1abee29197294057d68793ee6cbd6eb64e" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>GetState</name></member>
+      <member refid="classmlpack_1_1Timers_1aebb641bd9122477aa9a61e72b373e8cf" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>GetTimer</name></member>
+      <member refid="classmlpack_1_1Timers_1add57a3f90480a934a9791e95cf587784" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>PrintTimer</name></member>
+      <member refid="classmlpack_1_1Timers_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1Timers_1aecdbec86306efca51ab08ac2a42bbbf5" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>StartTimer</name></member>
+      <member refid="classmlpack_1_1Timers_1a48757b28836456b14aa2f1c31dacbd71" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>StopAllTimers</name></member>
+      <member refid="classmlpack_1_1Timers_1a7a63f768cade147188d0198906624309" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>StopTimer</name></member>
+      <member refid="classmlpack_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" prot="public" virt="non-virtual"><scope>mlpack::Timers</scope><name>Timers</name></member>
+      <member refid="classmlpack_1_1Timers_1aee3cef16972b747ab2b966bbe71dda7a" prot="private" virt="non-virtual"><scope>mlpack::Timers</scope><name>timers</name></member>
+      <member refid="classmlpack_1_1Timers_1ace7c6722d6db149cafd87d9a42c52f83" prot="private" virt="non-virtual"><scope>mlpack::Timers</scope><name>timersMutex</name></member>
+      <member refid="classmlpack_1_1Timers_1a990855c65dc45d9c0cd9f2ad26e99e4c" prot="private" virt="non-virtual"><scope>mlpack::Timers</scope><name>timerStartTime</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

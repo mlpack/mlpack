@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_7919cd971787b4fc956a50aa3613ed0a" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree</compoundname>
+    <innerfile refid="discrete__hilbert__value_8hpp">discrete_hilbert_value.hpp</innerfile>
+    <innerfile refid="rectangle__tree_2dual__tree__traverser_8hpp">dual_tree_traverser.hpp</innerfile>
+    <innerfile refid="hilbert__r__tree__auxiliary__information_8hpp">hilbert_r_tree_auxiliary_information.hpp</innerfile>
+    <innerfile refid="hilbert__r__tree__descent__heuristic_8hpp">hilbert_r_tree_descent_heuristic.hpp</innerfile>
+    <innerfile refid="hilbert__r__tree__split_8hpp">hilbert_r_tree_split.hpp</innerfile>
+    <innerfile refid="minimal__coverage__sweep_8hpp">minimal_coverage_sweep.hpp</innerfile>
+    <innerfile refid="minimal__splits__number__sweep_8hpp">minimal_splits_number_sweep.hpp</innerfile>
+    <innerfile refid="no__auxiliary__information_8hpp">no_auxiliary_information.hpp</innerfile>
+    <innerfile refid="r__plus__plus__tree__auxiliary__information_8hpp">r_plus_plus_tree_auxiliary_information.hpp</innerfile>
+    <innerfile refid="r__plus__plus__tree__descent__heuristic_8hpp">r_plus_plus_tree_descent_heuristic.hpp</innerfile>
+    <innerfile refid="r__plus__plus__tree__split__policy_8hpp">r_plus_plus_tree_split_policy.hpp</innerfile>
+    <innerfile refid="r__plus__tree__descent__heuristic_8hpp">r_plus_tree_descent_heuristic.hpp</innerfile>
+    <innerfile refid="r__plus__tree__split_8hpp">r_plus_tree_split.hpp</innerfile>
+    <innerfile refid="r__plus__tree__split__policy_8hpp">r_plus_tree_split_policy.hpp</innerfile>
+    <innerfile refid="r__star__tree__descent__heuristic_8hpp">r_star_tree_descent_heuristic.hpp</innerfile>
+    <innerfile refid="r__star__tree__split_8hpp">r_star_tree_split.hpp</innerfile>
+    <innerfile refid="r__tree__descent__heuristic_8hpp">r_tree_descent_heuristic.hpp</innerfile>
+    <innerfile refid="r__tree__split_8hpp">r_tree_split.hpp</innerfile>
+    <innerfile refid="rectangle__tree_2single__tree__traverser_8hpp">single_tree_traverser.hpp</innerfile>
+    <innerfile refid="rectangle__tree_2traits_8hpp">traits.hpp</innerfile>
+    <innerfile refid="core_2tree_2rectangle__tree_2typedef_8hpp">typedef.hpp</innerfile>
+    <innerfile refid="x__tree__auxiliary__information_8hpp">x_tree_auxiliary_information.hpp</innerfile>
+    <innerfile refid="x__tree__split_8hpp">x_tree_split.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/"/>
+  </compounddef>
+</doxygen>

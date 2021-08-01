@@ -1,0 +1,59 @@
+.TH "MSE" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MSE \- The MeanSquaredError is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MLAlgorithm , typename DataType , typename ResponsesType > static double \fBEvaluate\fP (MLAlgorithm &model, const DataType &data, const ResponsesType &responses)"
+.br
+.RI "Run prediction and calculate the mean squared error\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsMinimization\fP = true"
+.br
+.RI "Information for hyper-parameter tuning code\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The MeanSquaredError is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items\&. 
+.PP
+Definition at line 25 of file mse\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (MLAlgorithm & model, const DataType & data, const ResponsesType & responses)\fC [static]\fP"
+
+.PP
+Run prediction and calculate the mean squared error\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP A regression model\&. 
+.br
+\fIdata\fP Column-major data containing test items\&. 
+.br
+\fIresponses\fP Ground truth (correct) target values for the test items, should be either a row vector or a column-major matrix\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool NeedsMinimization = true\fC [static]\fP"
+
+.PP
+Information for hyper-parameter tuning code\&. It indicates that we want to minimize the measurement\&. 
+.PP
+Definition at line 45 of file mse\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

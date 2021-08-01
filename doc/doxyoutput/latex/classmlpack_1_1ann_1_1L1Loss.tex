@@ -1,0 +1,181 @@
+\section{L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1L1Loss}\index{L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The L1 loss is a loss function that measures the mean absolute error (M\+AE) between each element in the input x and target y.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ L1\+Loss} (const bool mean=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{L1\+Loss}{p.}{classmlpack_1_1ann_1_1L1Loss} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type , typename Loss\+Type $>$ }\\void \textbf{ Backward} (const Prediction\+Type \&prediction, const Target\+Type \&target, Loss\+Type \&loss)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type $>$ }\\Prediction\+Type\+::elem\+\_\+type \textbf{ Forward} (const Prediction\+Type \&prediction, const Target\+Type \&target)
+\begin{DoxyCompactList}\small\item\em Computes the L1 Loss function. \end{DoxyCompactList}\item 
+bool \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the value of reduction type. \end{DoxyCompactList}\item 
+bool \& \textbf{ Mean} ()
+\begin{DoxyCompactList}\small\item\em Set the value of reduction type. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The L1 loss is a loss function that measures the mean absolute error (M\+AE) between each element in the input x and target y. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 33 of file l1\+\_\+loss.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_a81d99073e4914ffecd3d988342fae068}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!L1\+Loss@{L1\+Loss}}
+\index{L1\+Loss@{L1\+Loss}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{L1\+Loss()}
+{\footnotesize\ttfamily \textbf{ L1\+Loss} (\begin{DoxyParamCaption}\item[{const bool}]{mean = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{L1\+Loss}{p.}{classmlpack_1_1ann_1_1L1Loss} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mean} & Reduction type. If true, it returns the mean of the loss. Else, it returns the sum. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_add41dbaf358dc099750dc6064cb7e0d7}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target,  }\item[{Loss\+Type \&}]{loss }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+{\em loss} & The calculated error. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_ab3640059898ea76c13709b8099316fe8}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily Prediction\+Type\+::elem\+\_\+type Forward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target }\end{DoxyParamCaption})}
+
+
+
+Computes the L1 Loss function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_ab3fece30ee983f7dc98302bacde75efe}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Mean@{Mean}}
+\index{Mean@{Mean}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of reduction type. 
+
+
+
+Definition at line 74 of file l1\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_ab9d30d78fb30a243c70e8dd27a88bf49}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Mean@{Mean}}
+\index{Mean@{Mean}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the value of reduction type. 
+
+
+
+Definition at line 76 of file l1\+\_\+loss.\+hpp.
+
+
+
+References L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 69 of file l1\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 71 of file l1\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1L1Loss_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+L1\+Loss@{mlpack\+::ann\+::\+L1\+Loss}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by L1\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Mean().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/loss\+\_\+functions/\textbf{ l1\+\_\+loss.\+hpp}\end{DoxyCompactItemize}

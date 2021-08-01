@@ -1,0 +1,170 @@
+\section{Const\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1ConstInitialization}\index{Const\+Initialization@{Const\+Initialization}}
+
+
+This class is used to initialize weight matrix with constant values.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Const\+Initialization} (const double init\+Val=0)
+\begin{DoxyCompactList}\small\item\em Create the Constant\+Initialization object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight (3rd order tensor). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight (3rd order tensor). \end{DoxyCompactList}\item 
+double const  \& \textbf{ Init\+Value} () const
+\begin{DoxyCompactList}\small\item\em Get the initialization value. \end{DoxyCompactList}\item 
+double \& \textbf{ init\+Value} ()
+\begin{DoxyCompactList}\small\item\em Modify the initialization value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is used to initialize weight matrix with constant values. 
+
+Definition at line 25 of file const\+\_\+init.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_ac235c11e6009ac9fc7418e772113c5b0}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Const\+Initialization@{Const\+Initialization}}
+\index{Const\+Initialization@{Const\+Initialization}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Const\+Initialization()}
+{\footnotesize\ttfamily \textbf{ Const\+Initialization} (\begin{DoxyParamCaption}\item[{const double}]{init\+Val = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the Constant\+Initialization object. 
+
+
+
+Definition at line 31 of file const\+\_\+init.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_a5cfe472251a41fffd45b170bb0d3c1bd}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 42 of file const\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_af2d770912321b8b9ca7b03ab98f735c0}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file const\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_a40a2b6466bdba0f6aab4eb92b6e65934}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols,  }\item[{const size\+\_\+t}]{slices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight (3rd order tensor). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+{\em slices} & Number of slices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 73 of file const\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_ae2f3e6d570824a160b687ff9f734f83c}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight (3rd order tensor). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 90 of file const\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_a5d3c69bca294328f8ee408de931ba6de}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!Init\+Value@{Init\+Value}}
+\index{Init\+Value@{Init\+Value}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{Init\+Value()}
+{\footnotesize\ttfamily double const\& Init\+Value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the initialization value. 
+
+
+
+Definition at line 99 of file const\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ConstInitialization_a49a1b2ccd67469246ceaabc154c836d5}} 
+\index{mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}!init\+Value@{init\+Value}}
+\index{init\+Value@{init\+Value}!mlpack\+::ann\+::\+Const\+Initialization@{mlpack\+::ann\+::\+Const\+Initialization}}
+\subsubsection{init\+Value()}
+{\footnotesize\ttfamily double\& init\+Value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initialization value. 
+
+
+
+Definition at line 101 of file const\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/\textbf{ const\+\_\+init.\+hpp}\end{DoxyCompactItemize}

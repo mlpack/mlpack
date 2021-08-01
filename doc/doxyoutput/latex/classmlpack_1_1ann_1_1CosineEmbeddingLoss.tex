@@ -1,0 +1,315 @@
+\section{Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss}\index{Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Cosine Embedding Loss function is used for measuring whether two inputs are similar or dissimilar, using the cosine distance, and is typically used for learning nonlinear embeddings or semi-\/supervised learning.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Cosine\+Embedding\+Loss} (const double margin=0.\+0, const bool similarity=true, const bool take\+Mean=false)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Cosine\+Embedding\+Loss}{p.}{classmlpack_1_1ann_1_1CosineEmbeddingLoss} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type , typename Loss\+Type $>$ }\\void \textbf{ Backward} (const Prediction\+Type \&prediction, const Target\+Type \&target, Loss\+Type \&loss)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type $>$ }\\Prediction\+Type\+::elem\+\_\+type \textbf{ Forward} (const Prediction\+Type \&prediction, const Target\+Type \&target)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+double \textbf{ Margin} () const
+\begin{DoxyCompactList}\small\item\em Get the value of margin. \end{DoxyCompactList}\item 
+double \& \textbf{ Margin} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of take\+Mean. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+bool \textbf{ Similarity} () const
+\begin{DoxyCompactList}\small\item\em Get the value of similarity hyperparameter. \end{DoxyCompactList}\item 
+bool \& \textbf{ Similarity} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of take\+Mean. \end{DoxyCompactList}\item 
+bool \textbf{ Take\+Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the value of take\+Mean. \end{DoxyCompactList}\item 
+bool \& \textbf{ Take\+Mean} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of take\+Mean. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Cosine Embedding Loss function is used for measuring whether two inputs are similar or dissimilar, using the cosine distance, and is typically used for learning nonlinear embeddings or semi-\/supervised learning. 
+
+\begin{eqnarray*} f(x) = 1 - cos(x1, x2) , for y = 1 f(x) = max(0, cos(x1, x2) - margin) , for y = -1 \end{eqnarray*}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 39 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a389938029e28bfa778819692fbb5f844}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Cosine\+Embedding\+Loss@{Cosine\+Embedding\+Loss}}
+\index{Cosine\+Embedding\+Loss@{Cosine\+Embedding\+Loss}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Cosine\+Embedding\+Loss()}
+{\footnotesize\ttfamily \textbf{ Cosine\+Embedding\+Loss} (\begin{DoxyParamCaption}\item[{const double}]{margin = {\ttfamily 0.0},  }\item[{const bool}]{similarity = {\ttfamily true},  }\item[{const bool}]{take\+Mean = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Cosine\+Embedding\+Loss}{p.}{classmlpack_1_1ann_1_1CosineEmbeddingLoss} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em margin} & Increases cosine distance in case of dissimilarity. Refer definition of cosine-\/embedding-\/loss above. \\
+\hline
+{\em similarity} & Determines whether to use similarity or dissimilarity for comparision. \\
+\hline
+{\em take\+Mean} & Boolean variable to specify whether to take mean or not. Specifies reduction method i.\+e. sum or mean corresponding to 0 and 1 respectively. Default value = 0. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_add41dbaf358dc099750dc6064cb7e0d7}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target,  }\item[{Loss\+Type \&}]{loss }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+{\em loss} & The calculated error. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ae7c8eba5764f021cd93e30efe638e63c}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 92 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 94 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ab3640059898ea76c13709b8099316fe8}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily Prediction\+Type\+::elem\+\_\+type Forward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a1506936601ddae886088d2804623ca4b}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 82 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 84 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ac29c2c851ff367f45f9ec075352c5b83}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Margin@{Margin}}
+\index{Margin@{Margin}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Margin()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Margin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of margin. 
+
+
+
+Definition at line 102 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ab8c4d252f686cdc9c5972df28e65dcab}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Margin@{Margin}}
+\index{Margin@{Margin}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Margin()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Margin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of take\+Mean. 
+
+
+
+Definition at line 104 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 87 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 89 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Similarity().
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a92a76558ba5229079e8cb7c377f4cf67}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Similarity@{Similarity}}
+\index{Similarity@{Similarity}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Similarity()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Similarity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of similarity hyperparameter. 
+
+
+
+Definition at line 107 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a1e4d965a9c5f106922cbbeb52ba2111d}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Similarity@{Similarity}}
+\index{Similarity@{Similarity}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Similarity()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Similarity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of take\+Mean. 
+
+
+
+Definition at line 109 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+
+
+References Cosine\+Embedding\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_ab1afafdad2b04d3378dce6f13c9968a2}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Take\+Mean@{Take\+Mean}}
+\index{Take\+Mean@{Take\+Mean}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Take\+Mean()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Take\+Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of take\+Mean. 
+
+
+
+Definition at line 97 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CosineEmbeddingLoss_a6523d960bcd088ba1e86fbe2e095a79b}} 
+\index{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}!Take\+Mean@{Take\+Mean}}
+\index{Take\+Mean@{Take\+Mean}!mlpack\+::ann\+::\+Cosine\+Embedding\+Loss@{mlpack\+::ann\+::\+Cosine\+Embedding\+Loss}}
+\subsubsection{Take\+Mean()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Take\+Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of take\+Mean. 
+
+
+
+Definition at line 99 of file cosine\+\_\+embedding\+\_\+loss.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/loss\+\_\+functions/\textbf{ cosine\+\_\+embedding\+\_\+loss.\+hpp}\end{DoxyCompactItemize}

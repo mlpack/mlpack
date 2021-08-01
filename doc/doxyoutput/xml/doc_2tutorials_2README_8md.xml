@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="doc_2tutorials_2README_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Tutorials</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Tutorials<sp/>for<sp/>mlpack<sp/>can<sp/>be<sp/>found<sp/>[here<sp/>:<sp/>mlpack<sp/>tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html).</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>General<sp/>mlpack<sp/>tutorials</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">These<sp/>tutorials<sp/>introduce<sp/>the<sp/>basic<sp/>concepts<sp/>of<sp/>working<sp/>with<sp/>mlpack,<sp/>aimed<sp/>at<sp/>developers<sp/>who<sp/>want<sp/>to<sp/>use<sp/>and<sp/>contribute<sp/>to<sp/>mlpack<sp/>but<sp/>are<sp/>not<sp/>sure<sp/>where<sp/>to<sp/>start.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>[Building<sp/>mlpack<sp/>from<sp/>source](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[File<sp/>Formats<sp/>in<sp/>mlpack](https://www.mlpack.org/doc/mlpack-git/doxygen/formatdoc.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Matrices<sp/>in<sp/>mlpack](https://www.mlpack.org/doc/mlpack-git/doxygen/matrices.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[mlpack<sp/>input<sp/>and<sp/>output](https://www.mlpack.org/doc/mlpack-git/doxygen/iodoc.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[mlpack<sp/>timers](https://www.mlpack.org/doc/mlpack-git/doxygen/timer.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Simple<sp/>sample<sp/>mlpack<sp/>programs](https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html)</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Method-specific<sp/>tutorials</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">These<sp/>tutorials<sp/>introduce<sp/>the<sp/>various<sp/>methods<sp/>mlpack<sp/>offers,<sp/>aimed<sp/>at<sp/>users<sp/>who<sp/>want<sp/>to<sp/>get<sp/>started<sp/>quickly.<sp/>These<sp/>tutorials<sp/>start<sp/>with<sp/>simple<sp/>examples<sp/>and<sp/>progress<sp/>to<sp/>complex,<sp/>extensible<sp/>uses.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>[NeighborSearch<sp/>tutorial<sp/>(mlpack_knn<sp/>/<sp/>mlpack_kfn)](https://www.mlpack.org/doc/mlpack-git/doxygen/nstutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[LinearRegression<sp/>tutorial<sp/>(mlpack_linear_regression)](https://www.mlpack.org/doc/mlpack-git/doxygen/lrtutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[RangeSearch<sp/>tutorial<sp/>(mlpack_range_search)](https://www.mlpack.org/doc/mlpack-git/doxygen/rstutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Density<sp/>Estimation<sp/>Trees<sp/>tutorial<sp/>(mlpack_det)](https://www.mlpack.org/doc/mlpack-git/doxygen/dettutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[K-Means<sp/>tutorial<sp/>(mlpack_kmeans)](https://www.mlpack.org/doc/mlpack-git/doxygen/kmtutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[FastMKS<sp/>tutorial<sp/>(mlpack_fastmks)](https://www.mlpack.org/doc/mlpack-git/doxygen/fmkstutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Euclidean<sp/>Minimum<sp/>Spanning<sp/>Trees<sp/>tutorial<sp/>(mlpack_emst)](https://www.mlpack.org/doc/mlpack-git/doxygen/emst_tutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Alternating<sp/>Matrix<sp/>Factorization<sp/>Tutorial](https://www.mlpack.org/doc/mlpack-git/doxygen/amftutorial.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[Collaborative<sp/>Filtering<sp/>Tutorial](https://www.mlpack.org/doc/mlpack-git/doxygen/cftutorial.html)</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Policy<sp/>Class<sp/>Documentation</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">mlpack<sp/>uses<sp/>templates<sp/>to<sp/>achieve<sp/>its<sp/>genericity<sp/>and<sp/>flexibility.<sp/>Some<sp/>of<sp/>the<sp/>template<sp/>types<sp/>used<sp/>by<sp/>mlpack<sp/>are<sp/>common<sp/>across<sp/>multiple<sp/>machine<sp/>learning<sp/>algorithms.<sp/>The<sp/>links<sp/>below<sp/>provide<sp/>documentation<sp/>for<sp/>some<sp/>of<sp/>these<sp/>common<sp/>types.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>[The<sp/>MetricType<sp/>policy<sp/>in<sp/>mlpack](https://www.mlpack.org/doc/mlpack-git/doxygen/metrics.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[The<sp/>KernelType<sp/>policy<sp/>in<sp/>mlpack](https://www.mlpack.org/doc/mlpack-git/doxygen/kernels.html)</highlight></codeline>
+<codeline><highlight class="normal">*<sp/>[The<sp/>TreeType<sp/>policy<sp/>in<sp/>mlpack](https://www.mlpack.org/doc/mlpack-git/doxygen/trees.html)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/doc/tutorials/README.md"/>
+  </compounddef>
+</doxygen>

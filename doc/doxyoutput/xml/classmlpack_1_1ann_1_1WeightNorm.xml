@@ -1,0 +1,664 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1WeightNorm" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::WeightNorm</compoundname>
+    <includes refid="layer__types_8hpp" local="no">layer_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>CustomLayers</declname>
+        <defname>CustomLayers</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1ad2c492e7b11d259725e10cd6aff49ee1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t biasWeightSize</definition>
+        <argsstring></argsstring>
+        <name>biasWeightSize</name>
+        <briefdescription>
+<para>Locally-stored number of bias elements in the weights of wrapped layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeleteVisitor" kindref="compound">DeleteVisitor</ref></type>
+        <definition>DeleteVisitor deleteVisitor</definition>
+        <argsstring></argsstring>
+        <name>deleteVisitor</name>
+        <briefdescription>
+<para>Locally-stored delete visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref></type>
+        <definition>DeltaVisitor deltaVisitor</definition>
+        <argsstring></argsstring>
+        <name>deltaVisitor</name>
+        <briefdescription>
+<para>Locally-stored delta visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1ae8504367d7027be8319476e5dd12257c" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType layerGradients</definition>
+        <argsstring></argsstring>
+        <name>layerGradients</name>
+        <briefdescription>
+<para>Locally-stored gradients of wrappedLayer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="193" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1aabe0d3abaeb90cc075185df70c266569" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType layerWeights</definition>
+        <argsstring></argsstring>
+        <name>layerWeights</name>
+        <briefdescription>
+<para>Locally-stored weights of wrappedLayer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="196" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a91d4fa74c494998fc4b293ef51b134fd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t layerWeightSize</definition>
+        <argsstring></argsstring>
+        <name>layerWeightSize</name>
+        <briefdescription>
+<para>Locally stored number of elements in the weights of wrapped layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref></type>
+        <definition>OutputParameterVisitor outputParameterVisitor</definition>
+        <argsstring></argsstring>
+        <name>outputParameterVisitor</name>
+        <briefdescription>
+<para>Locally-stored output parameter visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="172" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1af66d8a7f7a2a8b54158e3702f429ae9f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1ResetVisitor" kindref="compound">ResetVisitor</ref></type>
+        <definition>ResetVisitor resetVisitor</definition>
+        <argsstring></argsstring>
+        <name>resetVisitor</name>
+        <briefdescription>
+<para>Locally-stored reset visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a7d29f9d38b39d86ceef41077b14ba010" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType scalarParameter</definition>
+        <argsstring></argsstring>
+        <name>scalarParameter</name>
+        <briefdescription>
+<para>Locally-stored scalar parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a6563cb0fcd74b897b526d6efea1600dc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType vectorParameter</definition>
+        <argsstring></argsstring>
+        <name>vectorParameter</name>
+        <briefdescription>
+<para>Locally-stored parameter vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="187" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a625937d2a4a808227ad16ea09908d8cd" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1WeightSizeVisitor" kindref="compound">WeightSizeVisitor</ref></type>
+        <definition>WeightSizeVisitor weightSizeVisitor</definition>
+        <argsstring></argsstring>
+        <name>weightSizeVisitor</name>
+        <briefdescription>
+<para>Locally-stored weight size visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="190" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a4cd2dfda55f546eb6b54084d5d362fba" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <definition>LayerTypes&lt;CustomLayers...&gt; wrappedLayer</definition>
+        <argsstring></argsstring>
+        <name>wrappedLayer</name>
+        <briefdescription>
+<para>Locally-stored wrapped layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a02a0e3125b71703e2bbd9f7c4a885f48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>WeightNorm</definition>
+        <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer=LayerTypes&lt; CustomLayers... &gt;())</argsstring>
+        <name>WeightNorm</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <declname>layer</declname>
+          <defval><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;()</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref> layer object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>layer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The layer whose weights are needed to be normalized. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="69" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a7a39b4b1598f10f975e148d58591af59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~WeightNorm</definition>
+        <argsstring>()</argsstring>
+        <name>~WeightNorm</name>
+        <briefdescription>
+<para>Destructor to release allocated memory. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="72" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Backward pass through the layer. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function calls the <ref refid="classmlpack_1_1ann_1_1WeightNorm_1a78dbad83871f43db1975e45a9a69c376" kindref="member">Backward()</ref> function of the wrapped layer.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input activations. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="100" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Forward pass of the <ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref> layer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Calculates the weights of the wrapped layer from the parameter vector v and the scalar parameter g. It then calulates the output of the wrapped layer from the calculated weights.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data for the layer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activations. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="89" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the gradient using the output delta, input activations and the weights of the wrapped layer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input activations. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="113" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a9a889774509f2391dfd9b68e7c6a67aa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; const  &amp;</type>
+        <definition>LayerTypes&lt;CustomLayers...&gt; const&amp; Layer</definition>
+        <argsstring>()</argsstring>
+        <name>Layer</name>
+        <briefdescription>
+<para>Get the wrapped layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="138" bodyend="138"/>
+        <references refid="classmlpack_1_1ann_1_1WeightNorm_1a65cba07328997659bec80b9879b15a51">WeightNorm&lt; InputDataType, OutputDataType, CustomLayers &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="133" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="135" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Reset the layer parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="77" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="144" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1WeightNorm_1a9a889774509f2391dfd9b68e7c6a67aa" compoundref="weight__norm_8hpp" startline="138" endline="138">WeightNorm&lt; InputDataType, OutputDataType, CustomLayers &gt;::Layer</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a5b9e938db8ecc6f890598b6a616fe5a8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResetGradients</definition>
+        <argsstring>(arma::mat &amp;gradient)</argsstring>
+        <name>ResetGradients</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Reset the gradient for all modules that implement the Gradient function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="175" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Declaration of the <ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref> layer class. </para>    </briefdescription>
+    <detaileddescription>
+<para>The layer reparameterizes the weight vectors in a neural network, decoupling the length of those weight vectors from their direction. This reparameterization does not introduce any dependencies between the examples in a mini-batch.</para><para>This class will be a wrapper around existing layers. It will just modify the calculation and updation of weights of the layer.</para><para>For more information, refer to the following paper,</para><para><programlisting><codeline><highlight class="normal">@inproceedings{Salimans2016WeightNorm,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/>=<sp/>{Weight<sp/>Normalization:<sp/>A<sp/>Simple<sp/>Reparameterization<sp/>to<sp/>Accelerate</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Training<sp/>of<sp/>Deep<sp/>Neural<sp/>Networks},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/>=<sp/>{Tim<sp/>Salimans,<sp/>Diederik<sp/>P.<sp/>Kingma},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle<sp/>=<sp/>{Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>2016},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{2016},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/>=<sp/>{https://arxiv.org/abs/1602.07868},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>CustomLayers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Additional custom layers that can be added. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="211" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="211" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1ad2c492e7b11d259725e10cd6aff49ee1" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>biasWeightSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>deleteVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>deltaVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1aaf577db350e2130754490d8486fba215" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a9a889774509f2391dfd9b68e7c6a67aa" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Layer</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1ae8504367d7027be8319476e5dd12257c" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>layerGradients</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1aabe0d3abaeb90cc075185df70c266569" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>layerWeights</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a91d4fa74c494998fc4b293ef51b134fd" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>layerWeightSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>outputParameterVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a5b9e938db8ecc6f890598b6a616fe5a8" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>ResetGradients</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1af66d8a7f7a2a8b54158e3702f429ae9f" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>resetVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a7d29f9d38b39d86ceef41077b14ba010" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>scalarParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a6563cb0fcd74b897b526d6efea1600dc" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>vectorParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a02a0e3125b71703e2bbd9f7c4a885f48" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>WeightNorm</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>weights</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a625937d2a4a808227ad16ea09908d8cd" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>weightSizeVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a4cd2dfda55f546eb6b54084d5d362fba" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>wrappedLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1WeightNorm_1a7a39b4b1598f10f975e148d58591af59" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>~WeightNorm</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

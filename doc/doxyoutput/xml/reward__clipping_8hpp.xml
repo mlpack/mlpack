@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="reward__clipping_8hpp" kind="file" language="C++">
+    <compoundname>reward_clipping.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="clamp_8hpp" local="no">mlpack/core/math/clamp.hpp</includes>
+    <incdepgraph>
+      <node id="55995">
+        <label>list</label>
+      </node>
+      <node id="55992">
+        <label>atomic</label>
+      </node>
+      <node id="55982">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="55958">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="55994">
+        <label>iomanip</label>
+      </node>
+      <node id="56005">
+        <label>float.h</label>
+      </node>
+      <node id="55967">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="55968" relation="include">
+        </childnode>
+        <childnode refid="55970" relation="include">
+        </childnode>
+      </node>
+      <node id="55950">
+        <label>cstdint</label>
+      </node>
+      <node id="55959">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="55966">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="56003">
+        <label>stdlib.h</label>
+      </node>
+      <node id="55989">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="55979">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="55946">
+        <label>cmath</label>
+      </node>
+      <node id="55965">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="55954">
+        <label>stdexcept</label>
+      </node>
+      <node id="55974">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="55959" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55960" relation="include">
+        </childnode>
+      </node>
+      <node id="55998">
+        <label>string</label>
+      </node>
+      <node id="55986">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="55987" relation="include">
+        </childnode>
+        <childnode refid="55953" relation="include">
+        </childnode>
+      </node>
+      <node id="55996">
+        <label>map</label>
+      </node>
+      <node id="55948">
+        <label>cfloat</label>
+      </node>
+      <node id="55978">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="56000">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="55962">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="55985">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="55986" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55969" relation="include">
+        </childnode>
+        <childnode refid="55987" relation="include">
+        </childnode>
+      </node>
+      <node id="55975">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="55973">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="55959" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55960" relation="include">
+        </childnode>
+      </node>
+      <node id="55976">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="55959" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55960" relation="include">
+        </childnode>
+      </node>
+      <node id="55964">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="55984">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="55960" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55972" relation="include">
+        </childnode>
+        <childnode refid="55981" relation="include">
+        </childnode>
+      </node>
+      <node id="55988">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="55989" relation="include">
+        </childnode>
+      </node>
+      <node id="55990">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="55945">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="55946" relation="include">
+        </childnode>
+        <childnode refid="55947" relation="include">
+        </childnode>
+        <childnode refid="55948" relation="include">
+        </childnode>
+        <childnode refid="55949" relation="include">
+        </childnode>
+        <childnode refid="55950" relation="include">
+        </childnode>
+        <childnode refid="55951" relation="include">
+        </childnode>
+        <childnode refid="55952" relation="include">
+        </childnode>
+        <childnode refid="55953" relation="include">
+        </childnode>
+        <childnode refid="55954" relation="include">
+        </childnode>
+        <childnode refid="55955" relation="include">
+        </childnode>
+        <childnode refid="55956" relation="include">
+        </childnode>
+        <childnode refid="55957" relation="include">
+        </childnode>
+        <childnode refid="55958" relation="include">
+        </childnode>
+        <childnode refid="55959" relation="include">
+        </childnode>
+        <childnode refid="55960" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55963" relation="include">
+        </childnode>
+        <childnode refid="55964" relation="include">
+        </childnode>
+        <childnode refid="55965" relation="include">
+        </childnode>
+        <childnode refid="55966" relation="include">
+        </childnode>
+        <childnode refid="55967" relation="include">
+        </childnode>
+        <childnode refid="55971" relation="include">
+        </childnode>
+        <childnode refid="55972" relation="include">
+        </childnode>
+        <childnode refid="55973" relation="include">
+        </childnode>
+        <childnode refid="55974" relation="include">
+        </childnode>
+        <childnode refid="55975" relation="include">
+        </childnode>
+        <childnode refid="55976" relation="include">
+        </childnode>
+        <childnode refid="55977" relation="include">
+        </childnode>
+        <childnode refid="55983" relation="include">
+        </childnode>
+        <childnode refid="55984" relation="include">
+        </childnode>
+        <childnode refid="55981" relation="include">
+        </childnode>
+        <childnode refid="55985" relation="include">
+        </childnode>
+        <childnode refid="55988" relation="include">
+        </childnode>
+        <childnode refid="55990" relation="include">
+        </childnode>
+        <childnode refid="55991" relation="include">
+        </childnode>
+        <childnode refid="56000" relation="include">
+        </childnode>
+        <childnode refid="56001" relation="include">
+        </childnode>
+      </node>
+      <node id="55951">
+        <label>cstdio</label>
+      </node>
+      <node id="55955">
+        <label>tuple</label>
+      </node>
+      <node id="55960">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="55977">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="55960" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55964" relation="include">
+        </childnode>
+        <childnode refid="55978" relation="include">
+        </childnode>
+        <childnode refid="55979" relation="include">
+        </childnode>
+        <childnode refid="55980" relation="include">
+        </childnode>
+        <childnode refid="55981" relation="include">
+        </childnode>
+      </node>
+      <node id="56002">
+        <label>mlpack/core/math/clamp.hpp</label>
+        <link refid="clamp_8hpp"/>
+        <childnode refid="56003" relation="include">
+        </childnode>
+        <childnode refid="56004" relation="include">
+        </childnode>
+        <childnode refid="56005" relation="include">
+        </childnode>
+      </node>
+      <node id="55956">
+        <label>utility</label>
+      </node>
+      <node id="55980">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="55971">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="55968">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="55969" relation="include">
+        </childnode>
+      </node>
+      <node id="55991">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="55992" relation="include">
+        </childnode>
+        <childnode refid="55993" relation="include">
+        </childnode>
+        <childnode refid="55994" relation="include">
+        </childnode>
+        <childnode refid="55995" relation="include">
+        </childnode>
+        <childnode refid="55996" relation="include">
+        </childnode>
+        <childnode refid="55997" relation="include">
+        </childnode>
+        <childnode refid="55998" relation="include">
+        </childnode>
+        <childnode refid="55999" relation="include">
+        </childnode>
+      </node>
+      <node id="55969">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="55983">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="55981" relation="include">
+        </childnode>
+        <childnode refid="55977" relation="include">
+        </childnode>
+        <childnode refid="55984" relation="include">
+        </childnode>
+      </node>
+      <node id="56004">
+        <label>math.h</label>
+      </node>
+      <node id="55952">
+        <label>cstdlib</label>
+      </node>
+      <node id="55947">
+        <label>cctype</label>
+      </node>
+      <node id="55970">
+        <label>unordered_map</label>
+      </node>
+      <node id="55949">
+        <label>climits</label>
+      </node>
+      <node id="55997">
+        <label>mutex</label>
+      </node>
+      <node id="55993">
+        <label>chrono</label>
+      </node>
+      <node id="56001">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="55999">
+        <label>thread</label>
+      </node>
+      <node id="55987">
+        <label>type_traits</label>
+      </node>
+      <node id="55963">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="55957">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="55981">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="55959" relation="include">
+        </childnode>
+        <childnode refid="55960" relation="include">
+        </childnode>
+        <childnode refid="55961" relation="include">
+        </childnode>
+        <childnode refid="55962" relation="include">
+        </childnode>
+        <childnode refid="55982" relation="include">
+        </childnode>
+      </node>
+      <node id="55953">
+        <label>cstring</label>
+      </node>
+      <node id="55972">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="55961">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="55944">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp</label>
+        <link refid="reward__clipping_8hpp"/>
+        <childnode refid="55945" relation="include">
+        </childnode>
+        <childnode refid="56002" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1RewardClipping" prot="public">mlpack::rl::RewardClipping</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Shashank Shekhar</para></simplesect>
+Reward clipping wrapper for RL environments.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="clamp_8hpp" kindref="compound">mlpack/core/math/clamp.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType&gt;</highlight></codeline>
+<codeline lineno="30" refid="classmlpack_1_1rl_1_1RewardClipping" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1RewardClipping" kindref="compound">RewardClipping</ref></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34" refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType::State;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" kindref="member">Action</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType::Action;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1rl_1_1RewardClipping_1a97f34a1179082c279260959eff023e1f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a97f34a1179082c279260959eff023e1f" kindref="member">RewardClipping</ref>(EnvironmentType&amp;<sp/>environment,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minReward<sp/>=<sp/>-1.0,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxReward<sp/>=<sp/>1.0)<sp/>:</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>environment(environment),</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>minReward(minReward),</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>maxReward(maxReward)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Nothing<sp/>to<sp/>do<sp/>here</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1rl_1_1RewardClipping_1aa9f537249fa0c1e62b38197996ab4c6a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1aa9f537249fa0c1e62b38197996ab4c6a" kindref="member">InitialSample</ref>()</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>environment.InitialSample();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="classmlpack_1_1rl_1_1RewardClipping_1a7fd056133dfd315e4bf45c408f99326f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a7fd056133dfd315e4bf45c408f99326f" kindref="member">IsTerminal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref>&amp;<sp/>state)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="75"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>environment.IsTerminal(state);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" kindref="member">Action</ref>&amp;<sp/>action,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref>&amp;<sp/>nextState)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Get<sp/>original<sp/>unclipped<sp/>reward<sp/>from<sp/>base<sp/>environment.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>unclippedReward<sp/>=<sp/><sp/>environment.Sample(state,<sp/>action,<sp/>nextState);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Clip<sp/>rewards<sp/>according<sp/>to<sp/>the<sp/>min<sp/>and<sp/>max<sp/>limit<sp/>and<sp/>return.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" kindref="member">math::ClampRange</ref>(unclippedReward,<sp/>minReward,<sp/>maxReward);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="classmlpack_1_1rl_1_1RewardClipping_1af2bb860eaefeaa62a40f5cf940793704" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1af2bb860eaefeaa62a40f5cf940793704" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" kindref="member">Action</ref>&amp;<sp/>action)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref><sp/>nextState;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(state,<sp/>action,<sp/>nextState);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="classmlpack_1_1rl_1_1RewardClipping_1a18f14a98092c29dd41d3e1cbc2c52159" refkind="member"><highlight class="normal"><sp/><sp/>EnvironmentType&amp;<sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a18f14a98092c29dd41d3e1cbc2c52159" kindref="member">Environment</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>environment;<sp/>}</highlight></codeline>
+<codeline lineno="115" refid="classmlpack_1_1rl_1_1RewardClipping_1a59cc43eb892c46ea7c50e18fb78b9172" refkind="member"><highlight class="normal"><sp/><sp/>EnvironmentType&amp;<sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a59cc43eb892c46ea7c50e18fb78b9172" kindref="member">Environment</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>environment;<sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="classmlpack_1_1rl_1_1RewardClipping_1ac054a2c9e0295beac8c7a4fabe68e563" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1ac054a2c9e0295beac8c7a4fabe68e563" kindref="member">MinReward</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minReward;<sp/>}</highlight></codeline>
+<codeline lineno="120" refid="classmlpack_1_1rl_1_1RewardClipping_1a842cc3c3e49e15e90bf0e029f150cccc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a842cc3c3e49e15e90bf0e029f150cccc" kindref="member">MinReward</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minReward;<sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="classmlpack_1_1rl_1_1RewardClipping_1a00e2e3602d4233fc27e8674511641e68" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a00e2e3602d4233fc27e8674511641e68" kindref="member">MaxReward</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxReward;<sp/>}</highlight></codeline>
+<codeline lineno="125" refid="classmlpack_1_1rl_1_1RewardClipping_1a3c1ad6d51dd13323ac752a4ca1c0cfb3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a3c1ad6d51dd13323ac752a4ca1c0cfb3" kindref="member">MaxReward</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxReward;<sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/>EnvironmentType<sp/>environment;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minReward;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxReward;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp"/>
+  </compounddef>
+</doxygen>

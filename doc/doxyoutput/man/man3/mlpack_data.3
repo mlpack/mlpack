@@ -1,0 +1,1537 @@
+.TH "mlpack::data" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data \- Functions to load and save matrices and models\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBBagOfWordsEncodingPolicy\fP"
+.br
+.RI "Definition of the \fBBagOfWordsEncodingPolicy\fP class\&. "
+.ti -1c
+.RI "class \fBCharExtract\fP"
+.br
+.RI "The class is used to split a string into characters\&. "
+.ti -1c
+.RI "class \fBCustomImputation\fP"
+.br
+.RI "A simple custom imputation class\&. "
+.ti -1c
+.RI "class \fBDatasetMapper\fP"
+.br
+.RI "Auxiliary information for a dataset, including mappings to/from strings (or other types) and the datatype of each dimension\&. "
+.ti -1c
+.RI "class \fBDictionaryEncodingPolicy\fP"
+.br
+.RI "DicitonaryEnocdingPolicy is used as a helper class for \fBStringEncoding\fP\&. "
+.ti -1c
+.RI "struct \fBHasSerialize\fP"
+.br
+.ti -1c
+.RI "struct \fBHasSerializeFunction\fP"
+.br
+.ti -1c
+.RI "class \fBImageInfo\fP"
+.br
+.RI "Implements meta-data of images required by \fBdata::Load\fP and \fBdata::Save\fP for loading and saving images into arma::Mat\&. "
+.ti -1c
+.RI "class \fBImputer\fP"
+.br
+.RI "Given a dataset of a particular datatype, replace user-specified missing value with a variable dependent on the StrategyType and MapperType\&. "
+.ti -1c
+.RI "class \fBIncrementPolicy\fP"
+.br
+.RI "\fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. "
+.ti -1c
+.RI "class \fBListwiseDeletion\fP"
+.br
+.RI "A complete-case analysis to remove the values containing mappedValue\&. "
+.ti -1c
+.RI "class \fBLoadCSV\fP"
+.br
+.RI "Load the csv file\&.This class use boost::spirit to implement the parser, please refer to following link http://theboostcpplibraries.com/boost.spirit for quick review\&. "
+.ti -1c
+.RI "class \fBMaxAbsScaler\fP"
+.br
+.RI "A simple MaxAbs Scaler class\&. "
+.ti -1c
+.RI "class \fBMeanImputation\fP"
+.br
+.RI "A simple mean imputation class\&. "
+.ti -1c
+.RI "class \fBMeanNormalization\fP"
+.br
+.RI "A simple Mean Normalization class\&. "
+.ti -1c
+.RI "class \fBMedianImputation\fP"
+.br
+.RI "This is a class implementation of simple median imputation\&. "
+.ti -1c
+.RI "class \fBMinMaxScaler\fP"
+.br
+.RI "A simple MinMax Scaler class\&. "
+.ti -1c
+.RI "class \fBMissingPolicy\fP"
+.br
+.RI "\fBMissingPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. "
+.ti -1c
+.RI "class \fBPCAWhitening\fP"
+.br
+.RI "A simple \fBPCAWhitening\fP class\&. "
+.ti -1c
+.RI "class \fBScalingModel\fP"
+.br
+.RI "The model to save to disk\&. "
+.ti -1c
+.RI "class \fBSplitByAnyOf\fP"
+.br
+.RI "The \fBSplitByAnyOf\fP class tokenizes a string using a set of delimiters\&. "
+.ti -1c
+.RI "class \fBStandardScaler\fP"
+.br
+.RI "A simple Standard Scaler class\&. "
+.ti -1c
+.RI "class \fBStringEncoding\fP"
+.br
+.RI "The class translates a set of strings into numbers using various encoding algorithms\&. "
+.ti -1c
+.RI "class \fBStringEncodingDictionary\fP"
+.br
+.RI "This class provides a dictionary interface for the purpose of string encoding\&. "
+.ti -1c
+.RI "class \fBStringEncodingDictionary< boost::string_view >\fP"
+.br
+.ti -1c
+.RI "class \fBStringEncodingDictionary< int >\fP"
+.br
+.ti -1c
+.RI "struct \fBStringEncodingPolicyTraits\fP"
+.br
+.RI "This is a template struct that provides some information about various encoding policies\&. "
+.ti -1c
+.RI "struct \fBStringEncodingPolicyTraits< DictionaryEncodingPolicy >\fP"
+.br
+.RI "The specialization provides some information about the dictionary encoding policy\&. "
+.ti -1c
+.RI "class \fBTfIdfEncodingPolicy\fP"
+.br
+.RI "Definition of the \fBTfIdfEncodingPolicy\fP class\&. "
+.ti -1c
+.RI "class \fBZCAWhitening\fP"
+.br
+.RI "A simple \fBZCAWhitening\fP class\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename TokenType > using \fBBagOfWordsEncoding\fP = \fBStringEncoding\fP< \fBBagOfWordsEncodingPolicy\fP, \fBStringEncodingDictionary\fP< TokenType > >"
+.br
+.RI "A convenient alias for the \fBStringEncoding\fP class with \fBBagOfWordsEncodingPolicy\fP and the default dictionary for the given token type\&. "
+.ti -1c
+.RI "using \fBDatasetInfo\fP = \fBDatasetMapper\fP< \fBdata::IncrementPolicy\fP >"
+.br
+.ti -1c
+.RI "template<typename TokenType > using \fBDictionaryEncoding\fP = \fBStringEncoding\fP< \fBDictionaryEncodingPolicy\fP, \fBStringEncodingDictionary\fP< TokenType > >"
+.br
+.RI "A convenient alias for the \fBStringEncoding\fP class with \fBDictionaryEncodingPolicy\fP and the default dictionary for the given token type\&. "
+.ti -1c
+.RI "template<typename TokenType > using \fBTfIdfEncoding\fP = \fBStringEncoding\fP< \fBTfIdfEncodingPolicy\fP, \fBStringEncodingDictionary\fP< TokenType > >"
+.br
+.RI "A convenient alias for the \fBStringEncoding\fP class with \fBTfIdfEncodingPolicy\fP and the default dictionary for the given token type\&. "
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBDatatype\fP : bool { \fBnumeric\fP = 0, \fBcategorical\fP = 1 }
+.RI "The Datatype enum specifies the types of data mlpack algorithms can use\&. ""
+.br
+.ti -1c
+.RI "enum \fBformat\fP { \fBautodetect\fP, \fBjson\fP, \fBxml\fP, \fBbinary\fP }
+.RI "Define the formats we can read through cereal\&. ""
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "arma::file_type \fBAutoDetect\fP (std::fstream &stream, const std::string &filename)"
+.br
+.RI "Attempt to auto-detect the type of a file given its extension, and by inspecting the parts of the file to disambiguate between types when necessary\&. "
+.ti -1c
+.RI "template<typename T > void \fBBinarize\fP (const arma::Mat< T > &input, arma::Mat< T > &output, const double threshold)"
+.br
+.RI "Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. "
+.ti -1c
+.RI "template<typename T > void \fBBinarize\fP (const arma::Mat< T > &input, arma::Mat< T > &output, const double threshold, const size_t dimension)"
+.br
+.RI "Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. "
+.ti -1c
+.RI "template<typename eT > void \fBConfusionMatrix\fP (const arma::Row< size_t > predictors, const arma::Row< size_t > responses, arma::Mat< eT > &output, const size_t numClasses)"
+.br
+.RI "A confusion matrix is a summary of prediction results on a classification problem\&. "
+.ti -1c
+.RI "arma::file_type \fBDetectFromExtension\fP (const std::string &filename)"
+.br
+.RI "Return the type based only on the extension\&. "
+.ti -1c
+.RI "std::string \fBExtension\fP (const std::string &filename)"
+.br
+.ti -1c
+.RI "std::string \fBGetStringType\fP (const arma::file_type &type)"
+.br
+.RI "Given a file type, return a logical name corresponding to that file type\&. "
+.ti -1c
+.RI "arma::file_type \fBGuessFileType\fP (std::istream &f)"
+.br
+.RI "Given an istream, attempt to guess the file type\&. "
+.ti -1c
+.RI "\fBHAS_EXACT_METHOD_FORM\fP (serialize, HasSerializeCheck)"
+.br
+.ti -1c
+.RI "bool \fBImageFormatSupported\fP (const std::string &fileName, const bool save=false)"
+.br
+.RI "Checks if the given image filename is supported\&. "
+.ti -1c
+.RI "template<typename T > bool \fBIsNaNInf\fP (T &val, const std::string &token)"
+.br
+.RI "See if the token is a NaN or an Inf, and if so, set the value accordingly and return a boolean representing whether or not it is\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::string &filename, arma::Mat< eT > &matrix, const bool fatal=false, const bool transpose=true, const arma::file_type inputLoadType=arma::auto_detect)"
+.br
+.RI "Loads a matrix from file, guessing the filetype from the extension\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::string &filename, arma::SpMat< eT > &matrix, const bool fatal=false, const bool transpose=true)"
+.br
+.RI "Loads a sparse matrix from file, using arma::coord_ascii format\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::string &filename, arma::Col< eT > &vec, const bool fatal=false)"
+.br
+.RI "Don't document these with doxygen; these declarations aren't helpful to users\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::string &filename, arma::Row< eT > &rowvec, const bool fatal=false)"
+.br
+.RI "Load a row vector from a file, guessing the filetype from the extension\&. "
+.ti -1c
+.RI "template<typename eT , typename PolicyType > bool \fBLoad\fP (const std::string &filename, arma::Mat< eT > &matrix, \fBDatasetMapper\fP< PolicyType > &info, const bool fatal=false, const bool transpose=true)"
+.br
+.RI "Loads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \fBDatasetMapper\fP object\&. "
+.ti -1c
+.RI "template<typename T > bool \fBLoad\fP (const std::string &filename, const std::string &name, T &t, const bool fatal=false, \fBformat\fP f=format::autodetect)"
+.br
+.RI "Don't document these with doxygen; they aren't helpful for users to know about\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::string &filename, arma::Mat< eT > &matrix, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.RI "Image load/save interfaces\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const std::vector< std::string > &files, arma::Mat< eT > &matrix, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.RI "Load the image file into the given matrix\&. "
+.ti -1c
+.RI "template<typename eT > void \fBLoadARFF\fP (const std::string &filename, arma::Mat< eT > &matrix)"
+.br
+.RI "A utility function to load an ARFF dataset as numeric features (that is, as an Armadillo matrix without any modification)\&. "
+.ti -1c
+.RI "template<typename eT , typename PolicyType > void \fBLoadARFF\fP (const std::string &filename, arma::Mat< eT > &matrix, \fBDatasetMapper\fP< PolicyType > &info)"
+.br
+.RI "A utility function to load an ARFF dataset as numeric and categorical features, using the DatasetInfo structure for mapping\&. "
+.ti -1c
+.RI "bool \fBLoadImage\fP (const std::string &filename, arma::Mat< unsigned char > &matrix, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.ti -1c
+.RI "template<typename eT , typename RowType > void \fBNormalizeLabels\fP (const RowType &labelsIn, arma::Row< size_t > &labels, arma::Col< eT > &mapping)"
+.br
+.RI "Given a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels\&. "
+.ti -1c
+.RI "template<typename RowType , typename MatType > void \fBOneHotEncoding\fP (const RowType &labelsIn, MatType &output)"
+.br
+.RI "Given a set of labels of a particular datatype, convert them to binary vector\&. "
+.ti -1c
+.RI "template<typename eT > void \fBOneHotEncoding\fP (const arma::Mat< eT > &input, const arma::Col< size_t > &indices, arma::Mat< eT > &output)"
+.br
+.RI "Overloaded function for the above function, which takes a matrix as input and also a vector of indices to encode and outputs a matrix\&. "
+.ti -1c
+.RI "template<typename eT > void \fBOneHotEncoding\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output, const \fBdata::DatasetInfo\fP &datasetInfo)"
+.br
+.RI "Overloaded function for the above function, which takes a matrix as input and also a DatasetInfo object and outputs a matrix\&. "
+.ti -1c
+.RI "template<typename eT > void \fBRevertLabels\fP (const arma::Row< size_t > &labels, const arma::Col< eT > &mapping, arma::Row< eT > &labelsOut)"
+.br
+.RI "Given a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the 'mapping' vector\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBSave\fP (const std::string &filename, const arma::Mat< eT > &matrix, const bool fatal=false, bool transpose=true, arma::file_type inputSaveType=arma::auto_detect)"
+.br
+.RI "Saves a matrix to file, guessing the filetype from the extension\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBSave\fP (const std::string &filename, const arma::SpMat< eT > &matrix, const bool fatal=false, bool transpose=true)"
+.br
+.RI "Saves a sparse matrix to file, guessing the filetype from the extension\&. "
+.ti -1c
+.RI "template<typename T > bool \fBSave\fP (const std::string &filename, const std::string &name, T &t, const bool fatal=false, \fBformat\fP f=format::autodetect)"
+.br
+.RI "Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBSave\fP (const std::string &filename, arma::Mat< eT > &matrix, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.RI "Save the image file from the given matrix\&. "
+.ti -1c
+.RI "template<typename eT > bool \fBSave\fP (const std::vector< std::string > &files, arma::Mat< eT > &matrix, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.RI "Save the image file from the given matrix\&. "
+.ti -1c
+.RI "bool \fBSaveImage\fP (const std::string &filename, arma::Mat< unsigned char > &image, \fBImageInfo\fP &info, const bool fatal=false)"
+.br
+.RI "Helper function to save files\&. "
+.ti -1c
+.RI "template<typename T , typename LabelsType , typename  = std::enable_if_t<arma::is_arma_type<LabelsType>::value>> void \fBSplit\fP (const arma::Mat< T > &input, const LabelsType &inputLabel, arma::Mat< T > &trainData, arma::Mat< T > &testData, LabelsType &trainLabel, LabelsType &testLabel, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset and labels, split into a training set and test set\&. "
+.ti -1c
+.RI "template<typename T > void \fBSplit\fP (const arma::Mat< T > &input, arma::Mat< T > &trainData, arma::Mat< T > &testData, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset, split into a training set and test set\&. "
+.ti -1c
+.RI "template<typename T , typename LabelsType , typename  = std::enable_if_t<arma::is_arma_type<LabelsType>::value>> std::tuple< arma::Mat< T >, arma::Mat< T >, LabelsType, LabelsType > \fBSplit\fP (const arma::Mat< T > &input, const LabelsType &inputLabel, const double testRatio, const bool shuffleData=true, const bool stratifyData=false)"
+.br
+.RI "Given an input dataset and labels, split into a training set and test set\&. "
+.ti -1c
+.RI "template<typename T > std::tuple< arma::Mat< T >, arma::Mat< T > > \fBSplit\fP (const arma::Mat< T > &input, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset, split into a training set and test set\&. "
+.ti -1c
+.RI "template<typename FieldType , typename T , typename  = std::enable_if_t<              arma::is_Col<typename FieldType::object_type>::value ||              arma::is_Mat_only<typename FieldType::object_type>::value>> void \fBSplit\fP (const FieldType &input, const arma::field< T > &inputLabel, FieldType &trainData, arma::field< T > &trainLabel, FieldType &testData, arma::field< T > &testLabel, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset and labels, split into a training set and test set\&. "
+.ti -1c
+.RI "template<class FieldType , class  = std::enable_if_t<              arma::is_Col<typename FieldType::object_type>::value ||              arma::is_Mat_only<typename FieldType::object_type>::value>> void \fBSplit\fP (const FieldType &input, FieldType &trainData, FieldType &testData, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset, split into a training set and test set\&. "
+.ti -1c
+.RI "template<class FieldType , typename T , class  = std::enable_if_t<              arma::is_Col<typename FieldType::object_type>::value ||              arma::is_Mat_only<typename FieldType::object_type>::value>> std::tuple< FieldType, FieldType, arma::field< T >, arma::field< T > > \fBSplit\fP (const FieldType &input, const arma::field< T > &inputLabel, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset and labels, split into a training set and test set\&. "
+.ti -1c
+.RI "template<class FieldType , class  = std::enable_if_t<              arma::is_Col<typename FieldType::object_type>::value ||              arma::is_Mat_only<typename FieldType::object_type>::value>> std::tuple< FieldType, FieldType > \fBSplit\fP (const FieldType &input, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset, split into a training set and test set\&. "
+.ti -1c
+.RI "template<typename InputType > void \fBSplitHelper\fP (const InputType &input, InputType &train, InputType &test, const double testRatio, const arma::uvec &order=arma::uvec())"
+.br
+.RI "This helper function splits any \fCinput\fP data into training and testing parts\&. "
+.ti -1c
+.RI "template<typename T , typename LabelsType , typename  = std::enable_if_t<arma::is_arma_type<LabelsType>::value>> void \fBStratifiedSplit\fP (const arma::Mat< T > &input, const LabelsType &inputLabel, arma::Mat< T > &trainData, arma::Mat< T > &testData, LabelsType &trainLabel, LabelsType &testLabel, const double testRatio, const bool shuffleData=true)"
+.br
+.RI "Given an input dataset and labels, stratify into a training set and test set\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Functions to load and save matrices and models\&. 
+
+Functions to load and save matrices\&.
+.SH "Typedef Documentation"
+.PP 
+.SS "using \fBBagOfWordsEncoding\fP =  \fBStringEncoding\fP<\fBBagOfWordsEncodingPolicy\fP, \fBStringEncodingDictionary\fP<TokenType> >"
+
+.PP
+A convenient alias for the \fBStringEncoding\fP class with \fBBagOfWordsEncodingPolicy\fP and the default dictionary for the given token type\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITokenType\fP Type of the tokens\&. 
+.RE
+.PP
+
+.PP
+Definition at line 167 of file bag_of_words_encoding_policy\&.hpp\&.
+.SS "typedef \fBDatasetMapper\fP< \fBIncrementPolicy\fP, std::string > \fBDatasetInfo\fP"
+
+.PP
+Definition at line 196 of file dataset_mapper\&.hpp\&.
+.SS "using \fBDictionaryEncoding\fP =  \fBStringEncoding\fP<\fBDictionaryEncodingPolicy\fP, \fBStringEncodingDictionary\fP<TokenType> >"
+
+.PP
+A convenient alias for the \fBStringEncoding\fP class with \fBDictionaryEncodingPolicy\fP and the default dictionary for the given token type\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITokenType\fP Type of the tokens\&. 
+.RE
+.PP
+
+.PP
+Definition at line 146 of file dictionary_encoding_policy\&.hpp\&.
+.SS "using \fBTfIdfEncoding\fP =  \fBStringEncoding\fP<\fBTfIdfEncodingPolicy\fP, \fBStringEncodingDictionary\fP<TokenType> >"
+
+.PP
+A convenient alias for the \fBStringEncoding\fP class with \fBTfIdfEncodingPolicy\fP and the default dictionary for the given token type\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITokenType\fP Type of the tokens\&. 
+.RE
+.PP
+
+.PP
+Definition at line 345 of file tf_idf_encoding_policy\&.hpp\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBDatatype\fP : bool"
+
+.PP
+The Datatype enum specifies the types of data mlpack algorithms can use\&. The vast majority of mlpack algorithms can only use numeric data (i\&.e\&. float/double/etc\&.), but some algorithms can use categorical data, specified via this Datatype enum and the \fBDatasetMapper\fP class\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fInumeric \fP\fP
+.TP
+\fB\fIcategorical \fP\fP
+.PP
+Definition at line 24 of file datatype\&.hpp\&.
+.SS "enum \fBformat\fP"
+
+.PP
+Define the formats we can read through cereal\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIautodetect \fP\fP
+.TP
+\fB\fIjson \fP\fP
+.TP
+\fB\fIxml \fP\fP
+.TP
+\fB\fIbinary \fP\fP
+.PP
+Definition at line 20 of file format\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "arma::file_type mlpack::data::AutoDetect (std::fstream & stream, const std::string & filename)"
+
+.PP
+Attempt to auto-detect the type of a file given its extension, and by inspecting the parts of the file to disambiguate between types when necessary\&. (For instance, a \&.csv file could be delimited by spaces, commas, or tabs\&.) This is meant to be used during loading\&.
+.PP
+If the file is detected as a CSV, and the CSV is detected to have a header row, \fCstream\fP will be fast-forwarded to point at the second line of the file\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstream\fP Opened file stream to look into for autodetection\&. 
+.br
+\fIfilename\fP Name of the file\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The detected file type\&. arma::file_type_unknown if unknown\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::Binarize (const arma::Mat< T > & input, arma::Mat< T > & output, const double threshold)"
+
+.PP
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. This overload applies the changes to all dimensions\&.
+.PP
+.PP
+.nf
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+double threshold = 0\&.5;
+
+// Binarize the whole Matrix\&. All positive values in will be set to 1 and
+// the values less than or equal to 0\&.5 will become 0\&.
+Binarize<double>(input, output, threshold);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input matrix to Binarize\&. 
+.br
+\fIoutput\fP Matrix you want to save binarized data into\&. 
+.br
+\fIthreshold\fP Threshold can by any number\&. 
+.RE
+.PP
+
+.PP
+Definition at line 41 of file binarize\&.hpp\&.
+.PP
+References omp_size_t\&.
+.SS "void mlpack::data::Binarize (const arma::Mat< T > & input, arma::Mat< T > & output, const double threshold, const size_t dimension)"
+
+.PP
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. This overload takes a dimension and applys the changes to the given dimension\&.
+.PP
+.PP
+.nf
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+double threshold = 0\&.5;
+size_t dimension = 0;
+
+// Binarize the first dimension\&. All positive values in the first dimension
+// will be set to 1 and the values less than or equal to 0 will become 0\&.
+Binarize<double>(input, output, threshold, dimension);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input matrix to Binarize\&. 
+.br
+\fIoutput\fP Matrix you want to save binarized data into\&. 
+.br
+\fIthreshold\fP Threshold can by any number\&. 
+.br
+\fIdimension\fP Feature to apply the Binarize function\&. 
+.RE
+.PP
+
+.PP
+Definition at line 77 of file binarize\&.hpp\&.
+.PP
+References omp_size_t\&.
+.SS "void mlpack::data::ConfusionMatrix (const arma::Row< size_t > predictors, const arma::Row< size_t > responses, arma::Mat< eT > & output, const size_t numClasses)"
+
+.PP
+A confusion matrix is a summary of prediction results on a classification problem\&. The number of correct and incorrect predictions are summarized by count and broken down by each class\&. For example, for 2 classes, the function call will be
+.PP
+.PP
+.nf
+ConfusionMatrix(predictors, responses, output, 2)
+.fi
+.PP
+.PP
+In this case, the output matrix will be of size 2 * 2:
+.PP
+.PP
+.nf
+     0     1
+0    TP    FN
+1    FP    TN
+.fi
+.PP
+.PP
+The confusion matrix for two labels will look like what is shown above\&. In this confusion matrix, TP represents the number of true positives, FP represents the number of false positives, FN represents the number of false negatives, and TN represents the number of true negatives\&.
+.PP
+When generalizing to 2 or more classes, the row index of the confusion matrix represents the predicted classes and column index represents the actual class\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of data points\&. 
+.br
+\fIresponses\fP The measured data for each point\&. 
+.br
+\fIoutput\fP Matrix which is represented as confusion matrix\&. 
+.br
+\fInumClasses\fP Number of classes\&. 
+.RE
+.PP
+
+.SS "arma::file_type mlpack::data::DetectFromExtension (const std::string & filename)"
+
+.PP
+Return the type based only on the extension\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of the file whose type we should detect\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Detected type of file\&. arma::file_type_unknown if unknown\&. 
+.RE
+.PP
+
+.SS "std::string mlpack::data::Extension (const std::string & filename)\fC [inline]\fP"
+
+.PP
+Definition at line 21 of file extension\&.hpp\&.
+.SS "std::string mlpack::data::GetStringType (const arma::file_type & type)"
+
+.PP
+Given a file type, return a logical name corresponding to that file type\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItype\fP Type to get the logical name of\&. 
+.RE
+.PP
+
+.SS "arma::file_type mlpack::data::GuessFileType (std::istream & f)"
+
+.PP
+Given an istream, attempt to guess the file type\&. This is taken originally from Armadillo's function guess_file_type_internal(), but we avoid using internal Armadillo functionality\&.
+.PP
+If the file is detected as a CSV, and the CSV is detected to have a header row, the stream \fCf\fP will be fast-forwarded to point at the second line of the file\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIf\fP Opened istream to look into to guess the file type\&. 
+.RE
+.PP
+
+.SS "mlpack::data::HAS_EXACT_METHOD_FORM (serialize, HasSerializeCheck)"
+
+.SS "bool mlpack::data::ImageFormatSupported (const std::string & fileName, const bool save = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Checks if the given image filename is supported\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfileName\fP Name of the image file\&. 
+.br
+\fIsave\fP Set to true to check if the file format can be saved, else loaded\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success if it is an image\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::IsNaNInf (T & val, const std::string & token)\fC [inline]\fP"
+
+.PP
+See if the token is a NaN or an Inf, and if so, set the value accordingly and return a boolean representing whether or not it is\&. 
+.PP
+Definition at line 27 of file is_naninf\&.hpp\&.
+.SS "bool mlpack::data::Load (const std::string & filename, arma::Mat< eT > & matrix, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP, const arma::file_type inputLoadType = \fCarma::auto_detect\fP)"
+
+.PP
+Loads a matrix from file, guessing the filetype from the extension\&. This will transpose the matrix at load time (unless the transpose parameter is set to false)\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (arma::csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (arma::raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (arma::raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma::arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (arma::pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (arma::ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (arma::raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma::arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5 (arma::hdf5_binary), denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+By default, this function will try to automatically determine the type of file to load based on its extension and by inspecting the file\&. If you know the file type and want to specify it manually, override the default \fCinputLoadType\fP parameter with the correct type above (e\&.g\&. \fCarma::csv_ascii\fP\&.)
+.PP
+If the detected file type is CSV (\fCarma::csv_ascii\fP), the first row will be checked for a CSV header\&. If a CSV header is not detected, the first row will be treated as data; otherwise, the first row will be skipped\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fImatrix\fP Matrix to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix after loading (default true)\&. 
+.br
+\fIinputLoadType\fP Used to determine the type of file to load (default arma::auto_detect)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::string & filename, arma::SpMat< eT > & matrix, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP)"
+
+.PP
+Loads a sparse matrix from file, using arma::coord_ascii format\&. This will transpose the matrix at load time (unless the transpose parameter is set to false)\&. If the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+TSV (coord_ascii), denoted by \&.tsv or \&.txt
+.IP "\(bu" 2
+TXT (coord_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fImatrix\fP Sparse matrix to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix after loading (default true)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::string & filename, arma::Col< eT > & vec, const bool fatal = \fCfalse\fP)"
+
+.PP
+Don't document these with doxygen; these declarations aren't helpful to users\&. Load a column vector from a file, guessing the filetype from the extension\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5, denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fIvec\fP Column vector to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::string & filename, arma::Row< eT > & rowvec, const bool fatal = \fCfalse\fP)"
+
+.PP
+Load a row vector from a file, guessing the filetype from the extension\&. The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5, denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fIrowvec\fP Row vector to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::string & filename, arma::Mat< eT > & matrix, \fBDatasetMapper\fP< PolicyType > & info, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP)"
+
+.PP
+Loads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \fBDatasetMapper\fP object\&. This will transpose the matrix (unless the transpose parameter is set to false)\&. This particular overload of \fBLoad()\fP can only load text-based formats, such as those given below:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
+.PP
+The \fBDatasetMapper\fP object passed to this function will be re-created, so any mappings from previous loads will be lost\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fImatrix\fP Matrix to load contents of file into\&. 
+.br
+\fIinfo\fP \fBDatasetMapper\fP object to populate with mappings and data types\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix after loading\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::string & filename, const std::string & name, T & t, const bool fatal = \fCfalse\fP, \fBformat\fP f = \fCformat::autodetect\fP)"
+
+.PP
+Don't document these with doxygen; they aren't helpful for users to know about\&. Load a model from a file, guessing the filetype from the extension, or, optionally, loading the specified format\&. If automatic extension detection is used and the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as what is supported by the cereal library:
+.PP
+.IP "\(bu" 2
+json, denoted by \&.json
+.IP "\(bu" 2
+xml, denoted by \&.xml
+.IP "\(bu" 2
+binary, denoted by \&.bin
+.PP
+.PP
+The format parameter can take any of the values in the 'format' enum: 'format::autodetect', 'format::json', 'format::xml', and 'format::binary'\&. The autodetect functionality operates on the file extension (so, 'file\&.txt' would be autodetected as text)\&.
+.PP
+The name parameter should be specified to indicate the name of the structure to be loaded\&. This should be the same as the name that was used to save the structure (otherwise, the loading procedure will fail)\&.
+.PP
+If the parameter 'fatal' is set to true, then an exception will be thrown in the event of load failure\&. Otherwise, the method will return false and the relevant error information will be printed to Log::Warn\&. 
+.SS "bool mlpack::data::Load (const std::string & filename, arma::Mat< eT > & matrix, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.PP
+Image load/save interfaces\&. Load the image file into the given matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of the image file\&. 
+.br
+\fImatrix\fP Matrix to load the image into\&. 
+.br
+\fIinfo\fP An object of \fBImageInfo\fP class\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Load (const std::vector< std::string > & files, arma::Mat< eT > & matrix, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.PP
+Load the image file into the given matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfiles\fP A vector consisting of filenames\&. 
+.br
+\fImatrix\fP Matrix to save the image from\&. 
+.br
+\fIinfo\fP An object of \fBImageInfo\fP class\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::LoadARFF (const std::string & filename, arma::Mat< eT > & matrix)"
+
+.PP
+A utility function to load an ARFF dataset as numeric features (that is, as an Armadillo matrix without any modification)\&. An exception will be thrown if any features are non-numeric\&. 
+.SS "void mlpack::data::LoadARFF (const std::string & filename, arma::Mat< eT > & matrix, \fBDatasetMapper\fP< PolicyType > & info)"
+
+.PP
+A utility function to load an ARFF dataset as numeric and categorical features, using the DatasetInfo structure for mapping\&. An exception will be thrown upon failure\&.
+.PP
+A pre-existing DatasetInfo object can be passed in, but if the dimensionality of the given DatasetInfo object (info\&.Dimensionality()) does not match the dimensionality of the data, a std::invalid_argument exception will be thrown\&. If an empty DatasetInfo object is given (constructed with the default constructor or otherwise, so that info\&.Dimensionality() is 0), it will be set to the right dimensionality\&.
+.PP
+This ability to pass in pre-existing DatasetInfo objects is very necessary when, e\&.g\&., loading a test set after training\&. If the same DatasetInfo from loading the training set is not used, then the test set may be loaded with different mappings---which can cause horrible problems!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of ARFF file to load\&. 
+.br
+\fImatrix\fP Matrix to load data into\&. 
+.br
+\fIinfo\fP DatasetInfo object; can be default-constructed or pre-existing from another call to \fBLoadARFF()\fP\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::LoadImage (const std::string & filename, arma::Mat< unsigned char > & matrix, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.SS "void mlpack::data::NormalizeLabels (const RowType & labelsIn, arma::Row< size_t > & labels, arma::Col< eT > & mapping)"
+
+.PP
+Given a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels\&. Also, a reverse mapping from the new label to the old value is stored in the 'mapping' vector\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabelsIn\fP Input labels of arbitrary datatype\&. 
+.br
+\fIlabels\fP Vector that unsigned labels will be stored in\&. 
+.br
+\fImapping\fP Reverse mapping to convert new labels back to old labels\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::OneHotEncoding (const RowType & labelsIn, MatType & output)"
+
+.PP
+Given a set of labels of a particular datatype, convert them to binary vector\&. The categorical values be mapped to integer values\&. Then, each integer value is represented as a binary vector that is all zero values except the index of the integer, which is marked with a 1\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabelsIn\fP Input labels of arbitrary datatype\&. 
+.br
+\fIoutput\fP Binary matrix\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::OneHotEncoding (const arma::Mat< eT > & input, const arma::Col< size_t > & indices, arma::Mat< eT > & output)"
+
+.PP
+Overloaded function for the above function, which takes a matrix as input and also a vector of indices to encode and outputs a matrix\&. Indices represent the IDs of the dimensions to be one-hot encoded\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to be encoded\&. 
+.br
+\fIindices\fP Index of rows to be encoded\&. 
+.br
+\fIoutput\fP Encoded matrix\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::OneHotEncoding (const arma::Mat< eT > & input, arma::Mat< eT > & output, const \fBdata::DatasetInfo\fP & datasetInfo)"
+
+.PP
+Overloaded function for the above function, which takes a matrix as input and also a DatasetInfo object and outputs a matrix\&. This function encodes all the dimensions marked \fCDatatype::categorical\fP in the \fBdata::DatasetInfo\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to be encoded\&. 
+.br
+\fIoutput\fP Encoded matrix\&. 
+.br
+\fIdatasetInfo\fP DatasetInfo object that has information about data\&. 
+.RE
+.PP
+
+.SS "void mlpack::data::RevertLabels (const arma::Row< size_t > & labels, const arma::Col< eT > & mapping, arma::Row< eT > & labelsOut)"
+
+.PP
+Given a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the 'mapping' vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Set of normalized labels to convert\&. 
+.br
+\fImapping\fP Mapping to use to convert labels\&. 
+.br
+\fIlabelsOut\fP Vector to store new labels in\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Save (const std::string & filename, const arma::Mat< eT > & matrix, const bool fatal = \fCfalse\fP, bool transpose = \fCtrue\fP, arma::file_type inputSaveType = \fCarma::auto_detect\fP)"
+
+.PP
+Saves a matrix to file, guessing the filetype from the extension\&. This will transpose the matrix at save time\&. If the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (arma::csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+ASCII (arma::raw_ascii), denoted by \&.json
+.IP "\(bu" 2
+Armadillo ASCII (arma::arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (arma::pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (arma::ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (arma::raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma::arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5 (arma::hdf5_binary), denoted by \&.hdf5, \&.hdf, \&.h5, or \&.he5
+.PP
+.PP
+By default, this function will try to automatically determine the format to save with based only on the filename's extension\&. If you would prefer to specify a file type manually, override the default \fCinputSaveType\fP parameter with the correct type above (e\&.g\&. \fCarma::csv_ascii\fP\&.)
+.PP
+If the 'fatal' parameter is set to true, a std::runtime_error exception will be thrown upon failure\&. If the 'transpose' parameter is set to true, the matrix will be transposed before saving\&. Generally, because mlpack stores matrices in a column-major format and most datasets are stored on disk as row-major, this parameter should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to save to\&. 
+.br
+\fImatrix\fP Matrix to save into file\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix before saving (default true)\&. 
+.br
+\fIinputSaveType\fP File type to save to (defaults to arma::auto_detect)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of save\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Save (const std::string & filename, const arma::SpMat< eT > & matrix, const bool fatal = \fCfalse\fP, bool transpose = \fCtrue\fP)"
+
+.PP
+Saves a sparse matrix to file, guessing the filetype from the extension\&. This will transpose the matrix at save time\&. If the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+TSV (coord_ascii), denoted by \&.tsv or \&.txt
+.IP "\(bu" 2
+TXT (coord_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. If the 'fatal' parameter is set to true, a std::runtime_error exception will be thrown upon failure\&. If the 'transpose' parameter is set to true, the matrix will be transposed before saving\&. Generally, because mlpack stores matrices in a column-major format and most datasets are stored on disk as row-major, this parameter should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to save to\&. 
+.br
+\fImatrix\fP Sparse matrix to save into file\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix before saving (default true)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of save\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Save (const std::string & filename, const std::string & name, T & t, const bool fatal = \fCfalse\fP, \fBformat\fP f = \fCformat::autodetect\fP)"
+
+.PP
+Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format\&. If automatic extension detection is used and the filetype cannot be determined, and error will be given\&.
+.PP
+The supported types of files are the same as what is supported by the cereal library:
+.PP
+.IP "\(bu" 2
+json, denoted by \&.json
+.IP "\(bu" 2
+xml, denoted by \&.xml
+.IP "\(bu" 2
+binary, denoted by \&.bin
+.PP
+.PP
+The format parameter can take any of the values in the 'format' enum: 'format::autodetect', 'format::json', 'format::xml', and 'format::binary'\&. The autodetect functionality operates on the file extension (so, 'file\&.txt' would be autodetected as text)\&.
+.PP
+The name parameter should be specified to indicate the name of the structure to be saved\&. If \fBLoad()\fP is later called on the generated file, the name used to load should be the same as the name used for this call to \fBSave()\fP\&.
+.PP
+If the parameter 'fatal' is set to true, then an exception will be thrown in the event of a save failure\&. Otherwise, the method will return false and the relevant error information will be printed to Log::Warn\&. 
+.SS "bool mlpack::data::Save (const std::string & filename, arma::Mat< eT > & matrix, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.PP
+Save the image file from the given matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of the image file\&. 
+.br
+\fImatrix\fP Matrix to save the image from\&. 
+.br
+\fIinfo\fP An object of \fBImageInfo\fP class\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::Save (const std::vector< std::string > & files, arma::Mat< eT > & matrix, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.PP
+Save the image file from the given matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfiles\fP A vector consisting of filenames\&. 
+.br
+\fImatrix\fP Matrix to save the image from\&. 
+.br
+\fIinfo\fP An object of \fBImageInfo\fP class\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "bool mlpack::data::SaveImage (const std::string & filename, arma::Mat< unsigned char > & image, \fBImageInfo\fP & info, const bool fatal = \fCfalse\fP)"
+
+.PP
+Helper function to save files\&. Implementation in save_image\&.cpp\&. 
+.SS "void mlpack::data::Split (const arma::Mat< T > & input, const LabelsType & inputLabel, arma::Mat< T > & trainData, arma::Mat< T > & testData, LabelsType & trainLabel, LabelsType & testLabel, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the four output parameters given (trainData, testData, trainLabel, and testLabel)\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::Row<size_t> label = loadLabel();
+arma::mat trainData;
+arma::mat testData;
+arma::Row<size_t> trainLabel;
+arma::Row<size_t> testLabel;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, label, trainData,
+               testData, trainLabel, testLabel, 0\&.3);
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Type of the elements of the input matrix\&. 
+.br
+\fILabelsType\fP Type of input labels\&. It can be arma::Mat, arma::Row, arma::Cube or arma::SpMat\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIinputLabel\fP Input labels to split\&. 
+.br
+\fItrainData\fP Matrix to store training data into\&. 
+.br
+\fItestData\fP Matrix to store test data into\&. 
+.br
+\fItrainLabel\fP Vector to store training labels into\&. 
+.br
+\fItestLabel\fP Vector to store test labels into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true\&.) 
+.RE
+.PP
+
+.PP
+Definition at line 255 of file split_data\&.hpp\&.
+.PP
+References SplitHelper()\&.
+.PP
+Referenced by Split()\&.
+.SS "void mlpack::data::Split (const arma::Mat< T > & input, arma::Mat< T > & trainData, arma::Mat< T > & testData, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the two output parameters given (trainData, testData)\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::mat trainData;
+arma::mat testData;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, trainData, testData, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItrainData\fP Matrix to store training data into\&. 
+.br
+\fItestData\fP Matrix to store test data into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 302 of file split_data\&.hpp\&.
+.PP
+References SplitHelper()\&.
+.SS "std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType> mlpack::data::Split (const arma::Mat< T > & input, const LabelsType & inputLabel, const double testRatio, const bool shuffleData = \fCtrue\fP, const bool stratifyData = \fCfalse\fP)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with four elements: an arma::Mat<T> containing the training data, an arma::Mat<T> containing the test data, an arma::Row<U> containing the training labels, and an arma::Row<U> containing the test labels\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::Row<size_t> label = loadLabel();
+auto splitResult = Split(input, label, 0\&.2);
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Type of the elements of the input matrix\&. 
+.br
+\fILabelsType\fP Type of input labels\&. It can be arma::Mat, arma::Row, arma::Cube or arma::SpMat\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIinputLabel\fP Input labels to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.br
+\fIstratifyData\fP If true, the train and test splits are stratified so that the ratio of each class in the training and test sets is the same as in the original dataset\&. Expects labels to be of type arma::Row<> or arma::Col<>\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (arma::Mat<T>), testData (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 351 of file split_data\&.hpp\&.
+.PP
+References Split(), and StratifiedSplit()\&.
+.SS "std::tuple<arma::Mat<T>, arma::Mat<T> > mlpack::data::Split (const arma::Mat< T > & input, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with two elements: an arma::Mat<T> containing the training data and an arma::Mat<T> containing the test data\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+auto splitResult = Split(input, 0\&.2);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (arma::Mat<T>) and testData (arma::Mat<T>)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 399 of file split_data\&.hpp\&.
+.PP
+References Split()\&.
+.SS "void mlpack::data::Split (const FieldType & input, const arma::field< T > & inputLabel, FieldType & trainData, arma::field< T > & trainLabel, FieldType & testData, arma::field< T > & testLabel, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the four output parameters given (trainData, testData, trainLabel, and testLabel)\&.
+.PP
+The input dataset must be of type arma::field\&. It should have the shape - (n_rows = 1, n_cols = Number of samples, n_slices = 1)\&.
+.PP
+NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>\&.
+.PP
+.PP
+.nf
+arma::field<arma::mat> input = loadData();
+arma::field<arma::vec> label = loadLabel();
+arma::field<arma::mat> trainData;
+arma::field<arma::mat> testData;
+arma::field<arma::vec> trainLabel;
+arma::field<arma::vec> testLabel;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, label, trainData, testData, trainLabel, testLabel, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIinputLabel\fP Input labels to split\&. 
+.br
+\fItrainData\fP FieldType to store training data into\&. 
+.br
+\fItestData\fP FieldType test data into\&. 
+.br
+\fItrainLabel\fP Field vector to store training labels into\&. 
+.br
+\fItestLabel\fP Field vector to store test labels into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true\&.) 
+.RE
+.PP
+
+.PP
+Definition at line 449 of file split_data\&.hpp\&.
+.PP
+References SplitHelper()\&.
+.SS "void mlpack::data::Split (const FieldType & input, FieldType & trainData, FieldType & testData, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the two output parameters given (trainData, testData)\&.
+.PP
+The input dataset must be of type arma::field\&. It should have the shape - (n_rows = 1, n_cols = Number of samples, n_slices = 1)
+.PP
+NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+.PP
+.PP
+.nf
+arma::field<arma::mat> input = loadData();
+arma::field<arma::mat> trainData;
+arma::field<arma::mat> testData;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, trainData, testData, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItrainData\fP FieldType to store training data into\&. 
+.br
+\fItestData\fP FieldType test data into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 504 of file split_data\&.hpp\&.
+.PP
+References SplitHelper()\&.
+.SS "std::tuple<FieldType, FieldType, arma::field<T>, arma::field<T> > mlpack::data::Split (const FieldType & input, const arma::field< T > & inputLabel, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with four elements: an FieldType containing the training data, an FieldType containing the test data, an arma::field<arma::vec> containing the training labels, and an arma::field<arma::vec> containing the test labels\&.
+.PP
+The input dataset must be of type arma::field\&. It should have the shape - (n_rows = 1, n_cols = Number of samples, n_slices = 1)
+.PP
+NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+.PP
+.PP
+.nf
+arma::field<arma::mat> input = loadData();
+arma::field<arma::vec> label = loadLabel();
+auto splitResult = Split(input, label, 0\&.2);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIinputLabel\fP Input labels to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (FieldType), testData (FieldType), trainLabel (arma::field<arma::vec>), and testLabel (arma::field<arma::vec>)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 554 of file split_data\&.hpp\&.
+.PP
+References Split()\&.
+.SS "std::tuple<FieldType, FieldType> mlpack::data::Split (const FieldType & input, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with two elements: an FieldType containing the training data and an FieldType containing the test data\&.
+.PP
+The input dataset must be of type arma::field\&. It should have the shape - (n_rows = 1, n_cols = Number of samples, n_slices = 1)
+.PP
+NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+.PP
+.PP
+.nf
+arma::field<arma::mat> input = loadData();
+auto splitResult = Split(input, 0\&.2);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (FieldType) and testData (FieldType)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 601 of file split_data\&.hpp\&.
+.PP
+References Split()\&.
+.SS "void mlpack::data::SplitHelper (const InputType & input, InputType & train, InputType & test, const double testRatio, const arma::uvec & order = \fCarma::uvec()\fP)"
+
+.PP
+This helper function splits any \fCinput\fP data into training and testing parts\&. In order to shuffle the input data before spliting, an array of shuffled indices of the input data is passed in the form of argument \fCorder\fP\&. 
+.PP
+Definition at line 27 of file split_data\&.hpp\&.
+.PP
+Referenced by Split()\&.
+.SS "void mlpack::data::StratifiedSplit (const arma::Mat< T > & input, const LabelsType & inputLabel, arma::Mat< T > & trainData, arma::Mat< T > & testData, LabelsType & trainLabel, LabelsType & testLabel, const double testRatio, const bool shuffleData = \fCtrue\fP)"
+
+.PP
+Given an input dataset and labels, stratify into a training set and test set\&. It is recommended to have the input labels between the range [0, n) where n is the number of different labels\&. The \fBNormalizeLabels()\fP function in \fBmlpack::data\fP can be used for this\&. Expects labels to be of type arma::Row<> or arma::Col<>\&. Throws a runtime error if this is not the case\&. Example usage below\&. This overload places the stratified dataset into the four output parameters given (trainData, testData, trainLabel, and testLabel)\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::Row<size_t> label = loadLabel();
+arma::mat trainData;
+arma::mat testData;
+arma::Row<size_t> trainLabel;
+arma::Row<size_t> testLabel;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Stratify the dataset into a training and test set, with 30% of the data
+// being held out for the test set\&.
+StratifiedSplit(input, label, trainData,
+                testData, trainLabel, testLabel, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to stratify\&. 
+.br
+\fIinputLabel\fP Input labels to stratify\&. 
+.br
+\fItrainData\fP Matrix to store training data into\&. 
+.br
+\fItestData\fP Matrix to store test data into\&. 
+.br
+\fItrainLabel\fP Vector to store training labels into\&. 
+.br
+\fItestLabel\fP Vector to store test labels into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.br
+\fIshuffleData\fP If true, the sample order is shuffled; otherwise, each sample is visited in linear order\&. (Default true\&.) 
+.RE
+.PP
+Basic idea: Let us say we have to stratify a dataset based on labels: 0 0 0 0 0 (5 0s) 1 1 1 1 1 1 1 1 1 1 1 (11 1s)
+.PP
+Let our test ratio be 0\&.2\&. Then, the number of 0 labels in our test set = floor(5 * 0\&.2) = 1\&. The number of 1 labels in our test set = floor(11 * 0\&.2) = 2\&.
+.PP
+In our first pass over the dataset, We visit each label and keep count of each label in our 'labelCounts' uvec\&.
+.PP
+We then take a second pass over the dataset\&. We now maintain an additional uvec 'testLabelCounts' to hold the label counts of our test set\&.
+.PP
+In this pass, when we encounter a label we check the 'testLabelCounts' uvec for the count of this label in the test set\&. If this count is less than the required number of labels in the test set, we add the data to the test set and increment the label count in the uvec\&. If this count is equal to or more than the required count in the test set, we add this data to the train set\&.
+.PP
+Based on the above steps, we get the following labels in the split set: Train set (4 0s, 9 1s) 0 0 0 0 1 1 1 1 1 1 1 1 1
+.PP
+Test set (1 0s, 2 1s) 0 1 1
+.PP
+Definition at line 103 of file split_data\&.hpp\&.
+.PP
+Referenced by Split()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

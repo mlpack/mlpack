@@ -1,0 +1,52 @@
+.TH "PreFixedArg< T >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PreFixedArg< T > \- A struct for marking arguments as ones that should be fixed (it can be useful for the Optimize method of \fBHyperParameterTuner\fP)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBType\fP = T"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "const T \fBvalue\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::hpt::PreFixedArg< T >"
+A struct for marking arguments as ones that should be fixed (it can be useful for the Optimize method of \fBHyperParameterTuner\fP)\&. 
+
+Arguments of this type are supposed to be converted into structs of the type \fBFixedArg\fP by adding information about argument positions\&.
+.PP
+This struct is not meant to be used directly by users\&. Rather use the \fBmlpack::hpt::Fixed\fP function\&. 
+.PP
+Definition at line 23 of file fixed\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBType\fP =  T"
+
+.PP
+Definition at line 73 of file fixed\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const T value"
+
+.PP
+Definition at line 75 of file fixed\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

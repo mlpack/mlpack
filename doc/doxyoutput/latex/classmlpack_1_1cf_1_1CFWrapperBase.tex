@@ -1,0 +1,156 @@
+\section{C\+F\+Wrapper\+Base Class Reference}
+\label{classmlpack_1_1cf_1_1CFWrapperBase}\index{C\+F\+Wrapper\+Base@{C\+F\+Wrapper\+Base}}
+
+
+The \doxyref{C\+F\+Wrapper\+Base}{p.}{classmlpack_1_1cf_1_1CFWrapperBase} class provides a unified interface that can be used by the \doxyref{C\+F\+Model}{p.}{classmlpack_1_1cf_1_1CFModel} class to interact with all different CF types at runtime.  
+
+
+
+
+Inheritance diagram for C\+F\+Wrapper\+Base\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classmlpack_1_1cf_1_1CFWrapperBase__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ C\+F\+Wrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Create the object. The base class has nothing to hold. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+C\+F\+Wrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Delete the object. \end{DoxyCompactList}\item 
+virtual \textbf{ C\+F\+Wrapper\+Base} $\ast$ \textbf{ Clone} () const =0
+\begin{DoxyCompactList}\small\item\em Make a copy of the object. \end{DoxyCompactList}\item 
+virtual void \textbf{ Get\+Recommendations} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const size\+\_\+t num\+Recs, arma\+::\+Mat$<$ size\+\_\+t $>$ \&recommendations)=0
+\begin{DoxyCompactList}\small\item\em Compute recommendations for all users. \end{DoxyCompactList}\item 
+virtual void \textbf{ Get\+Recommendations} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const size\+\_\+t num\+Recs, arma\+::\+Mat$<$ size\+\_\+t $>$ \&recommendations, const arma\+::\+Col$<$ size\+\_\+t $>$ \&users)=0
+\begin{DoxyCompactList}\small\item\em Compute recommendations. \end{DoxyCompactList}\item 
+virtual void \textbf{ Predict} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&combinations, arma\+::vec \&predictions)=0
+\begin{DoxyCompactList}\small\item\em Compute predictions for users. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \doxyref{C\+F\+Wrapper\+Base}{p.}{classmlpack_1_1cf_1_1CFWrapperBase} class provides a unified interface that can be used by the \doxyref{C\+F\+Model}{p.}{classmlpack_1_1cf_1_1CFModel} class to interact with all different CF types at runtime. 
+
+All CF wrapper types inherit from this base class. 
+
+Definition at line 49 of file cf\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_a5536395b99c030b97a2860df3e2ae5c4}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!C\+F\+Wrapper\+Base@{C\+F\+Wrapper\+Base}}
+\index{C\+F\+Wrapper\+Base@{C\+F\+Wrapper\+Base}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{C\+F\+Wrapper\+Base()}
+{\footnotesize\ttfamily \textbf{ C\+F\+Wrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the object. The base class has nothing to hold. 
+
+
+
+Definition at line 53 of file cf\+\_\+model.\+hpp.
+
+
+
+References C\+F\+Wrapper\+Base\+::\+Clone().
+
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_ac017d61192618af5a5f70a671c2a886b}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!````~C\+F\+Wrapper\+Base@{$\sim$\+C\+F\+Wrapper\+Base}}
+\index{````~C\+F\+Wrapper\+Base@{$\sim$\+C\+F\+Wrapper\+Base}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{$\sim$\+C\+F\+Wrapper\+Base()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ C\+F\+Wrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Delete the object. 
+
+
+
+Definition at line 59 of file cf\+\_\+model.\+hpp.
+
+
+
+References C\+F\+Wrapper\+Base\+::\+Get\+Recommendations(), and C\+F\+Wrapper\+Base\+::\+Predict().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_a390b40d2a1416852dd64201e55dac770}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!Clone@{Clone}}
+\index{Clone@{Clone}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ C\+F\+Wrapper\+Base}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Make a copy of the object. 
+
+
+
+Implemented in \textbf{ C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1cf_1_1CFWrapper_af9bba55939ac1cb5bc1c4828094f502c}.
+
+
+
+Referenced by C\+F\+Wrapper\+Base\+::\+C\+F\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_aefd1ffc070784adf594bd91a2469a6c7}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!Get\+Recommendations@{Get\+Recommendations}}
+\index{Get\+Recommendations@{Get\+Recommendations}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{Get\+Recommendations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Get\+Recommendations (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const size\+\_\+t}]{num\+Recs,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{recommendations }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Compute recommendations for all users. 
+
+
+
+Implemented in \textbf{ C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1cf_1_1CFWrapper_aaa12de12e686286f465afa8a399677d2}.
+
+
+
+Referenced by C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$\+::\+C\+F(), C\+F\+Model\+::\+Normalization\+Type(), and C\+F\+Wrapper\+Base\+::$\sim$\+C\+F\+Wrapper\+Base().
+
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_af9ad22de59a4e9396157809f41f6c5dc}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!Get\+Recommendations@{Get\+Recommendations}}
+\index{Get\+Recommendations@{Get\+Recommendations}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{Get\+Recommendations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Get\+Recommendations (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const size\+\_\+t}]{num\+Recs,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{recommendations,  }\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{users }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Compute recommendations. 
+
+
+
+Implemented in \textbf{ C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1cf_1_1CFWrapper_ab3b85ddacc36d16322f28f5b5a113d0d}.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFWrapperBase_a3de57e8cd8b989a1e7e719c80f39d07b}} 
+\index{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::cf\+::\+C\+F\+Wrapper\+Base@{mlpack\+::cf\+::\+C\+F\+Wrapper\+Base}}
+\subsubsection{Predict()}
+{\footnotesize\ttfamily virtual void Predict (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{combinations,  }\item[{arma\+::vec \&}]{predictions }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Compute predictions for users. 
+
+
+
+Implemented in \textbf{ C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1cf_1_1CFWrapper_adeae1e56456f3c8c71d0da5542ee4415}.
+
+
+
+Referenced by C\+F\+Wrapper$<$ Decomposition\+Policy, Normalization\+Policy $>$\+::\+C\+F(), C\+F\+Model\+::\+Normalization\+Type(), and C\+F\+Wrapper\+Base\+::$\sim$\+C\+F\+Wrapper\+Base().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/\textbf{ cf\+\_\+model.\+hpp}\end{DoxyCompactItemize}

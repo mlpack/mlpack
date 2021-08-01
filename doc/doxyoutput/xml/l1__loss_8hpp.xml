@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="l1__loss_8hpp" kind="file" language="C++">
+    <compoundname>l1_loss.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">l1_loss_impl.hpp</includes>
+    <incdepgraph>
+      <node id="39638">
+        <label>list</label>
+      </node>
+      <node id="39635">
+        <label>atomic</label>
+      </node>
+      <node id="39625">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="39601">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="39645">
+        <label>l1_loss_impl.hpp</label>
+      </node>
+      <node id="39637">
+        <label>iomanip</label>
+      </node>
+      <node id="39610">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="39611" relation="include">
+        </childnode>
+        <childnode refid="39613" relation="include">
+        </childnode>
+      </node>
+      <node id="39593">
+        <label>cstdint</label>
+      </node>
+      <node id="39602">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="39609">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="39632">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="39587">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/l1_loss.hpp</label>
+        <link refid="l1__loss_8hpp"/>
+        <childnode refid="39588" relation="include">
+        </childnode>
+        <childnode refid="39645" relation="include">
+        </childnode>
+      </node>
+      <node id="39622">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="39589">
+        <label>cmath</label>
+      </node>
+      <node id="39608">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="39597">
+        <label>stdexcept</label>
+      </node>
+      <node id="39617">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="39602" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39603" relation="include">
+        </childnode>
+      </node>
+      <node id="39641">
+        <label>string</label>
+      </node>
+      <node id="39629">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="39630" relation="include">
+        </childnode>
+        <childnode refid="39596" relation="include">
+        </childnode>
+      </node>
+      <node id="39639">
+        <label>map</label>
+      </node>
+      <node id="39591">
+        <label>cfloat</label>
+      </node>
+      <node id="39621">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="39643">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="39605">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="39628">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="39629" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39612" relation="include">
+        </childnode>
+        <childnode refid="39630" relation="include">
+        </childnode>
+      </node>
+      <node id="39618">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="39616">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="39602" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39603" relation="include">
+        </childnode>
+      </node>
+      <node id="39619">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="39602" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39603" relation="include">
+        </childnode>
+      </node>
+      <node id="39607">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="39627">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="39603" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39615" relation="include">
+        </childnode>
+        <childnode refid="39624" relation="include">
+        </childnode>
+      </node>
+      <node id="39631">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="39632" relation="include">
+        </childnode>
+      </node>
+      <node id="39633">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="39588">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="39589" relation="include">
+        </childnode>
+        <childnode refid="39590" relation="include">
+        </childnode>
+        <childnode refid="39591" relation="include">
+        </childnode>
+        <childnode refid="39592" relation="include">
+        </childnode>
+        <childnode refid="39593" relation="include">
+        </childnode>
+        <childnode refid="39594" relation="include">
+        </childnode>
+        <childnode refid="39595" relation="include">
+        </childnode>
+        <childnode refid="39596" relation="include">
+        </childnode>
+        <childnode refid="39597" relation="include">
+        </childnode>
+        <childnode refid="39598" relation="include">
+        </childnode>
+        <childnode refid="39599" relation="include">
+        </childnode>
+        <childnode refid="39600" relation="include">
+        </childnode>
+        <childnode refid="39601" relation="include">
+        </childnode>
+        <childnode refid="39602" relation="include">
+        </childnode>
+        <childnode refid="39603" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39606" relation="include">
+        </childnode>
+        <childnode refid="39607" relation="include">
+        </childnode>
+        <childnode refid="39608" relation="include">
+        </childnode>
+        <childnode refid="39609" relation="include">
+        </childnode>
+        <childnode refid="39610" relation="include">
+        </childnode>
+        <childnode refid="39614" relation="include">
+        </childnode>
+        <childnode refid="39615" relation="include">
+        </childnode>
+        <childnode refid="39616" relation="include">
+        </childnode>
+        <childnode refid="39617" relation="include">
+        </childnode>
+        <childnode refid="39618" relation="include">
+        </childnode>
+        <childnode refid="39619" relation="include">
+        </childnode>
+        <childnode refid="39620" relation="include">
+        </childnode>
+        <childnode refid="39626" relation="include">
+        </childnode>
+        <childnode refid="39627" relation="include">
+        </childnode>
+        <childnode refid="39624" relation="include">
+        </childnode>
+        <childnode refid="39628" relation="include">
+        </childnode>
+        <childnode refid="39631" relation="include">
+        </childnode>
+        <childnode refid="39633" relation="include">
+        </childnode>
+        <childnode refid="39634" relation="include">
+        </childnode>
+        <childnode refid="39643" relation="include">
+        </childnode>
+        <childnode refid="39644" relation="include">
+        </childnode>
+      </node>
+      <node id="39594">
+        <label>cstdio</label>
+      </node>
+      <node id="39598">
+        <label>tuple</label>
+      </node>
+      <node id="39603">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="39620">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="39603" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39607" relation="include">
+        </childnode>
+        <childnode refid="39621" relation="include">
+        </childnode>
+        <childnode refid="39622" relation="include">
+        </childnode>
+        <childnode refid="39623" relation="include">
+        </childnode>
+        <childnode refid="39624" relation="include">
+        </childnode>
+      </node>
+      <node id="39599">
+        <label>utility</label>
+      </node>
+      <node id="39623">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="39614">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="39611">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="39612" relation="include">
+        </childnode>
+      </node>
+      <node id="39634">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="39635" relation="include">
+        </childnode>
+        <childnode refid="39636" relation="include">
+        </childnode>
+        <childnode refid="39637" relation="include">
+        </childnode>
+        <childnode refid="39638" relation="include">
+        </childnode>
+        <childnode refid="39639" relation="include">
+        </childnode>
+        <childnode refid="39640" relation="include">
+        </childnode>
+        <childnode refid="39641" relation="include">
+        </childnode>
+        <childnode refid="39642" relation="include">
+        </childnode>
+      </node>
+      <node id="39612">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="39626">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="39624" relation="include">
+        </childnode>
+        <childnode refid="39620" relation="include">
+        </childnode>
+        <childnode refid="39627" relation="include">
+        </childnode>
+      </node>
+      <node id="39595">
+        <label>cstdlib</label>
+      </node>
+      <node id="39590">
+        <label>cctype</label>
+      </node>
+      <node id="39613">
+        <label>unordered_map</label>
+      </node>
+      <node id="39592">
+        <label>climits</label>
+      </node>
+      <node id="39640">
+        <label>mutex</label>
+      </node>
+      <node id="39636">
+        <label>chrono</label>
+      </node>
+      <node id="39644">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="39642">
+        <label>thread</label>
+      </node>
+      <node id="39630">
+        <label>type_traits</label>
+      </node>
+      <node id="39606">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="39600">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="39624">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="39602" relation="include">
+        </childnode>
+        <childnode refid="39603" relation="include">
+        </childnode>
+        <childnode refid="39604" relation="include">
+        </childnode>
+        <childnode refid="39605" relation="include">
+        </childnode>
+        <childnode refid="39625" relation="include">
+        </childnode>
+      </node>
+      <node id="39596">
+        <label>cstring</label>
+      </node>
+      <node id="39615">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="39604">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1L1Loss" prot="public">mlpack::ann::L1Loss</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Himanshu Pathak</para></simplesect>
+Definition of the L1 Loss function.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTION_L1_LOSS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTION_L1_LOSS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputDataType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputDataType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1ann_1_1L1Loss" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1L1Loss" kindref="compound">L1Loss</ref></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1a81d99073e4914ffecd3d988342fae068" kindref="member">L1Loss</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>mean<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType&gt;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType::elem_type<sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1ab3640059898ea76c13709b8099316fe8" kindref="member">Forward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LossType&gt;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1add41dbaf358dc099750dc6064cb7e0d7" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LossType&amp;<sp/>loss);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="classmlpack_1_1ann_1_1L1Loss_1a8bae962cc603d1cab8d80ec78f8d505d" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1a8bae962cc603d1cab8d80ec78f8d505d" kindref="member">OutputParameter</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="71" refid="classmlpack_1_1ann_1_1L1Loss_1a21d5f745f02c709625a4ee0907f004a5" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1a21d5f745f02c709625a4ee0907f004a5" kindref="member">OutputParameter</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="classmlpack_1_1ann_1_1L1Loss_1ab3fece30ee983f7dc98302bacde75efe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1ab3fece30ee983f7dc98302bacde75efe" kindref="member">Mean</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mean;<sp/>}</highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1ann_1_1L1Loss_1ab9d30d78fb30a243c70e8dd27a88bf49" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1ab9d30d78fb30a243c70e8dd27a88bf49" kindref="member">Mean</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mean;<sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1L1Loss_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>outputParameter;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>mean;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>L1Loss</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;l1_loss_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/l1_loss.hpp"/>
+  </compounddef>
+</doxygen>

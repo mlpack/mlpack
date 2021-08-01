@@ -1,0 +1,215 @@
+\section{Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1SoftShrink}\index{Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Soft Shrink operator is defined as, \begin{eqnarray*} f(x) &=& \begin{cases} x - \lambda & : x > \lambda \\ x + \lambda & : x < -\lambda \\ 0 & : otherwise. \\ \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > \lambda \\ 1 & : x < -\lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Soft\+Shrink} (const double lambda=0.\+5)
+\begin{DoxyCompactList}\small\item\em Create Soft Shrink object using specified hyperparameter lambda. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Backward} (const Data\+Type \&input, Data\+Type \&gy, Data\+Type \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+double const  \& \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Get the hyperparameter lambda. \end{DoxyCompactList}\item 
+double \& \textbf{ Lambda} ()
+\begin{DoxyCompactList}\small\item\em Modify the hyperparameter lambda. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Soft Shrink operator is defined as, \begin{eqnarray*} f(x) &=& \begin{cases} x - \lambda & : x > \lambda \\ x + \lambda & : x < -\lambda \\ 0 & : otherwise. \\ \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > \lambda \\ 1 & : x < -\lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 50 of file softshrink.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_ae697be59cee297cc5cafd9ea08117402}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Soft\+Shrink@{Soft\+Shrink}}
+\index{Soft\+Shrink@{Soft\+Shrink}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Soft\+Shrink()}
+{\footnotesize\ttfamily \textbf{ Soft\+Shrink} (\begin{DoxyParamCaption}\item[{const double}]{lambda = {\ttfamily 0.5} }\end{DoxyParamCaption})}
+
+
+
+Create Soft Shrink object using specified hyperparameter lambda. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lambda} & The noise level of an image depends on settings of an imaging device. The settings can be used to select appropriate parameters for denoising methods. It is proportional to the noise level entered by the user. And it is calculated by multiplying the noise level sigma of the input(noisy image) and a coefficient \textquotesingle{}a\textquotesingle{} which is one of the training parameters. Default value of lambda is 0.\+5. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a3ad74424be92ee20e633e1008e08004b}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{input,  }\item[{Data\+Type \&}]{gy,  }\item[{Data\+Type \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation f(x). \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 97 of file softshrink.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 99 of file softshrink.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the Soft Shrink function. \\
+\hline
+{\em output} & Resulting output activation \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_acb669457ad59e62d0fccc5bae3a6c35e}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double const\& Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the hyperparameter lambda. 
+
+
+
+Definition at line 102 of file softshrink.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_aaf66629b989a326453647f42443c6a0c}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the hyperparameter lambda. 
+
+
+
+Definition at line 104 of file softshrink.\+hpp.
+
+
+
+References Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 92 of file softshrink.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 94 of file softshrink.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1SoftShrink_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Soft\+Shrink@{mlpack\+::ann\+::\+Soft\+Shrink}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Soft\+Shrink$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Lambda().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ softshrink.\+hpp}\end{DoxyCompactItemize}

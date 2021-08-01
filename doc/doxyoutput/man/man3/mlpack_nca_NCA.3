@@ -1,0 +1,127 @@
+.TH "NCA< MetricType, OptimizerType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NCA< MetricType, OptimizerType > \- An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNCA\fP (const arma::mat &dataset, const arma::Row< size_t > &labels, MetricType metric=MetricType())"
+.br
+.RI "Construct the Neighborhood Components Analysis object\&. "
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const"
+.br
+.RI "Get the dataset reference\&. "
+.ti -1c
+.RI "const arma::Row< size_t > & \fBLabels\fP () const"
+.br
+.RI "Get the labels reference\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. CallbackTypes> void \fBLearnDistance\fP (arma::mat &outputMatrix, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Perform Neighborhood Components Analysis\&. "
+.ti -1c
+.RI "const OptimizerType & \fBOptimizer\fP () const"
+.br
+.RI "Get the optimizer\&. "
+.ti -1c
+.RI "OptimizerType & \fBOptimizer\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::SquaredEuclideanDistance, typename OptimizerType = ens::StandardSGD>
+.br
+class mlpack::nca::NCA< MetricType, OptimizerType >"
+An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique\&. 
+
+The method seeks to improve k-nearest-neighbor classification on a dataset by scaling the dimensions\&. The method is nonparametric, and does not require a value of k\&. It works by using stochastic ('soft') neighbor assignments and using optimization techniques over the gradient of the accuracy of the neighbor assignments\&.
+.PP
+For more details, see the following published paper:
+.PP
+.PP
+.nf
+@inproceedings{Goldberger2004,
+  author = {Goldberger, Jacob and Roweis, Sam and Hinton, Geoff and
+      Salakhutdinov, Ruslan},
+  booktitle = {Advances in Neural Information Processing Systems 17},
+  pages = {513--520},
+  publisher = {MIT Press},
+  title = {{Neighbourhood Components Analysis}},
+  year = {2004}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 49 of file nca\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNCA\fP (const arma::mat & dataset, const arma::Row< size_t > & labels, MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Construct the Neighborhood Components Analysis object\&. This simply stores the reference to the dataset and labels as well as the parameters for optimization before the actual optimization is performed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Input dataset\&. 
+.br
+\fIlabels\fP Input dataset labels\&. 
+.br
+\fImetric\fP Instantiated metric to use\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::mat& Dataset () const\fC [inline]\fP"
+
+.PP
+Get the dataset reference\&. 
+.PP
+Definition at line 81 of file nca\&.hpp\&.
+.SS "const arma::Row<size_t>& Labels () const\fC [inline]\fP"
+
+.PP
+Get the labels reference\&. 
+.PP
+Definition at line 83 of file nca\&.hpp\&.
+.SS "void LearnDistance (arma::mat & outputMatrix, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Perform Neighborhood Components Analysis\&. The output distance learning matrix is written into the passed reference\&. If \fBLearnDistance()\fP is called with an outputMatrix which has the correct size (dataset\&.n_rows x dataset\&.n_rows), that matrix will be used as the starting point for optimization\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fICallbackTypes\fP Types of Callback functions\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutputMatrix\fP Covariance matrix of Mahalanobis distance\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+
+.SS "const OptimizerType& Optimizer () const\fC [inline]\fP"
+
+.PP
+Get the optimizer\&. 
+.PP
+Definition at line 86 of file nca\&.hpp\&.
+.SS "OptimizerType& Optimizer ()\fC [inline]\fP"
+
+.PP
+Definition at line 87 of file nca\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

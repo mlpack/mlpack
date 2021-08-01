@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1a27987092139727fd7a471b5f74dc62de:
+
+Define THEN
+===========
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: THEN

@@ -1,0 +1,13 @@
+.. _exhale_function_decision__tree__main_8cpp_1a78a77b94dc8405bd7f2f7970c9302856:
+
+Function PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).", "D", 0)
+===============================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).", "D", 0)

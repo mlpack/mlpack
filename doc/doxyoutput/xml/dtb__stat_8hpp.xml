@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dtb__stat_8hpp" kind="file" language="C++">
+    <compoundname>dtb_stat.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="dtb_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</includedby>
+    <incdepgraph>
+      <node id="47735">
+        <label>list</label>
+      </node>
+      <node id="47732">
+        <label>atomic</label>
+      </node>
+      <node id="47722">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47698">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="47734">
+        <label>iomanip</label>
+      </node>
+      <node id="47707">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47708" relation="include">
+        </childnode>
+        <childnode refid="47710" relation="include">
+        </childnode>
+      </node>
+      <node id="47690">
+        <label>cstdint</label>
+      </node>
+      <node id="47699">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47706">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47729">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47719">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47686">
+        <label>cmath</label>
+      </node>
+      <node id="47705">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="47694">
+        <label>stdexcept</label>
+      </node>
+      <node id="47714">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47699" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47700" relation="include">
+        </childnode>
+      </node>
+      <node id="47738">
+        <label>string</label>
+      </node>
+      <node id="47726">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47727" relation="include">
+        </childnode>
+        <childnode refid="47693" relation="include">
+        </childnode>
+      </node>
+      <node id="47736">
+        <label>map</label>
+      </node>
+      <node id="47688">
+        <label>cfloat</label>
+      </node>
+      <node id="47718">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="47740">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="47702">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47725">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47726" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47709" relation="include">
+        </childnode>
+        <childnode refid="47727" relation="include">
+        </childnode>
+      </node>
+      <node id="47715">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="47713">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47699" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47700" relation="include">
+        </childnode>
+      </node>
+      <node id="47716">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47699" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47700" relation="include">
+        </childnode>
+      </node>
+      <node id="47704">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47724">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47700" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47712" relation="include">
+        </childnode>
+        <childnode refid="47721" relation="include">
+        </childnode>
+      </node>
+      <node id="47728">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47729" relation="include">
+        </childnode>
+      </node>
+      <node id="47684">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp</label>
+        <link refid="dtb__stat_8hpp"/>
+        <childnode refid="47685" relation="include">
+        </childnode>
+      </node>
+      <node id="47730">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47685">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47686" relation="include">
+        </childnode>
+        <childnode refid="47687" relation="include">
+        </childnode>
+        <childnode refid="47688" relation="include">
+        </childnode>
+        <childnode refid="47689" relation="include">
+        </childnode>
+        <childnode refid="47690" relation="include">
+        </childnode>
+        <childnode refid="47691" relation="include">
+        </childnode>
+        <childnode refid="47692" relation="include">
+        </childnode>
+        <childnode refid="47693" relation="include">
+        </childnode>
+        <childnode refid="47694" relation="include">
+        </childnode>
+        <childnode refid="47695" relation="include">
+        </childnode>
+        <childnode refid="47696" relation="include">
+        </childnode>
+        <childnode refid="47697" relation="include">
+        </childnode>
+        <childnode refid="47698" relation="include">
+        </childnode>
+        <childnode refid="47699" relation="include">
+        </childnode>
+        <childnode refid="47700" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47703" relation="include">
+        </childnode>
+        <childnode refid="47704" relation="include">
+        </childnode>
+        <childnode refid="47705" relation="include">
+        </childnode>
+        <childnode refid="47706" relation="include">
+        </childnode>
+        <childnode refid="47707" relation="include">
+        </childnode>
+        <childnode refid="47711" relation="include">
+        </childnode>
+        <childnode refid="47712" relation="include">
+        </childnode>
+        <childnode refid="47713" relation="include">
+        </childnode>
+        <childnode refid="47714" relation="include">
+        </childnode>
+        <childnode refid="47715" relation="include">
+        </childnode>
+        <childnode refid="47716" relation="include">
+        </childnode>
+        <childnode refid="47717" relation="include">
+        </childnode>
+        <childnode refid="47723" relation="include">
+        </childnode>
+        <childnode refid="47724" relation="include">
+        </childnode>
+        <childnode refid="47721" relation="include">
+        </childnode>
+        <childnode refid="47725" relation="include">
+        </childnode>
+        <childnode refid="47728" relation="include">
+        </childnode>
+        <childnode refid="47730" relation="include">
+        </childnode>
+        <childnode refid="47731" relation="include">
+        </childnode>
+        <childnode refid="47740" relation="include">
+        </childnode>
+        <childnode refid="47741" relation="include">
+        </childnode>
+      </node>
+      <node id="47691">
+        <label>cstdio</label>
+      </node>
+      <node id="47695">
+        <label>tuple</label>
+      </node>
+      <node id="47700">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47717">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47700" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47704" relation="include">
+        </childnode>
+        <childnode refid="47718" relation="include">
+        </childnode>
+        <childnode refid="47719" relation="include">
+        </childnode>
+        <childnode refid="47720" relation="include">
+        </childnode>
+        <childnode refid="47721" relation="include">
+        </childnode>
+      </node>
+      <node id="47696">
+        <label>utility</label>
+      </node>
+      <node id="47720">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47711">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47708">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47709" relation="include">
+        </childnode>
+      </node>
+      <node id="47731">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47732" relation="include">
+        </childnode>
+        <childnode refid="47733" relation="include">
+        </childnode>
+        <childnode refid="47734" relation="include">
+        </childnode>
+        <childnode refid="47735" relation="include">
+        </childnode>
+        <childnode refid="47736" relation="include">
+        </childnode>
+        <childnode refid="47737" relation="include">
+        </childnode>
+        <childnode refid="47738" relation="include">
+        </childnode>
+        <childnode refid="47739" relation="include">
+        </childnode>
+      </node>
+      <node id="47709">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47723">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47721" relation="include">
+        </childnode>
+        <childnode refid="47717" relation="include">
+        </childnode>
+        <childnode refid="47724" relation="include">
+        </childnode>
+      </node>
+      <node id="47692">
+        <label>cstdlib</label>
+      </node>
+      <node id="47687">
+        <label>cctype</label>
+      </node>
+      <node id="47710">
+        <label>unordered_map</label>
+      </node>
+      <node id="47689">
+        <label>climits</label>
+      </node>
+      <node id="47737">
+        <label>mutex</label>
+      </node>
+      <node id="47733">
+        <label>chrono</label>
+      </node>
+      <node id="47741">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="47739">
+        <label>thread</label>
+      </node>
+      <node id="47727">
+        <label>type_traits</label>
+      </node>
+      <node id="47703">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="47697">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47721">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47699" relation="include">
+        </childnode>
+        <childnode refid="47700" relation="include">
+        </childnode>
+        <childnode refid="47701" relation="include">
+        </childnode>
+        <childnode refid="47702" relation="include">
+        </childnode>
+        <childnode refid="47722" relation="include">
+        </childnode>
+      </node>
+      <node id="47693">
+        <label>cstring</label>
+      </node>
+      <node id="47712">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47701">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="47742">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp</label>
+        <link refid="dtb__stat_8hpp"/>
+        <childnode refid="47743" relation="include">
+        </childnode>
+      </node>
+      <node id="47743">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</label>
+        <link refid="dtb_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1emst_1_1DTBStat" prot="public">mlpack::emst::DTBStat</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1emst">mlpack::emst</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Bill March (<ulink url="mailto:march@gatech.edu">march@gatech.edu</ulink>)</para></simplesect>
+DTBStat is the StatisticType used by trees when performing EMST.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_EMST_DTB_STAT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_EMST_DTB_STAT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">emst<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="classmlpack_1_1emst_1_1DTBStat" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1emst_1_1DTBStat" kindref="compound">DTBStat</ref></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxNeighborDistance;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minNeighborDistance;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bound;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>componentMembership;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1emst_1_1DTBStat_1abf24d1728c9b1953062c6a2486aa2efa" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1abf24d1728c9b1953062c6a2486aa2efa" kindref="member">DTBStat</ref>()<sp/>:</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxNeighborDistance(DBL_MAX),</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>minNeighborDistance(DBL_MAX),</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>bound(DBL_MAX),</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>componentMembership(-1)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="63" refid="classmlpack_1_1emst_1_1DTBStat_1a53418f29d577baf63a854464390e8170" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a53418f29d577baf63a854464390e8170" kindref="member">DTBStat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType&amp;<sp/>node)<sp/>:</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxNeighborDistance(DBL_MAX),</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>minNeighborDistance(DBL_MAX),</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>bound(DBL_MAX),</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>componentMembership(</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((node.NumPoints()<sp/>==<sp/>1)<sp/>&amp;&amp;<sp/>(node.NumChildren()<sp/>==<sp/>0))<sp/>?</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node.Point(0)<sp/>:<sp/>-1)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1emst_1_1DTBStat_1a4d4e97c209c9d20ab2214ebea3888c01" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a4d4e97c209c9d20ab2214ebea3888c01" kindref="member">MaxNeighborDistance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxNeighborDistance;<sp/>}</highlight></codeline>
+<codeline lineno="74" refid="classmlpack_1_1emst_1_1DTBStat_1abcf9c2e19fb0a9c1d95dea5d09e04262" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1abcf9c2e19fb0a9c1d95dea5d09e04262" kindref="member">MaxNeighborDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxNeighborDistance;<sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="classmlpack_1_1emst_1_1DTBStat_1a7d566fbeb953884df157bef4b07ab664" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a7d566fbeb953884df157bef4b07ab664" kindref="member">MinNeighborDistance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minNeighborDistance;<sp/>}</highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1emst_1_1DTBStat_1aa09dedc3377b0db900030d33270f7423" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1aa09dedc3377b0db900030d33270f7423" kindref="member">MinNeighborDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minNeighborDistance;<sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1emst_1_1DTBStat_1abe1eb75f967ca19571a77a1e90faa0ad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1abe1eb75f967ca19571a77a1e90faa0ad" kindref="member">Bound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1emst_1_1DTBStat_1a421b6e4a396e0c1057e297e39a7d1b8b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a421b6e4a396e0c1057e297e39a7d1b8b" kindref="member">Bound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1emst_1_1DTBStat_1a3f07069a05538d0f822f9dca68371c7c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a3f07069a05538d0f822f9dca68371c7c" kindref="member">ComponentMembership</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>componentMembership;<sp/>}</highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1emst_1_1DTBStat_1a8a7729e91d7bab8346489e63d43b6026" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBStat_1a8a7729e91d7bab8346489e63d43b6026" kindref="member">ComponentMembership</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>componentMembership;<sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>DTBStat</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>emst</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_EMST_DTB_STAT_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp"/>
+  </compounddef>
+</doxygen>

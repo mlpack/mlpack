@@ -1,0 +1,130 @@
+.TH "QDAFN< MatType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+QDAFN< MatType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBQDAFN\fP (const size_t l, const size_t m)"
+.br
+.RI "Construct the \fBQDAFN\fP object but do not train it\&. "
+.ti -1c
+.RI "\fBQDAFN\fP (const MatType &referenceSet, const size_t l, const size_t m)"
+.br
+.RI "Construct the \fBQDAFN\fP object with the given reference set (this is the set that will be searched)\&. "
+.ti -1c
+.RI "const MatType & \fBCandidateSet\fP (const size_t t) const"
+.br
+.RI "Get the candidate set for the given projection table\&. "
+.ti -1c
+.RI "MatType & \fBCandidateSet\fP (const size_t t)"
+.br
+.RI "Modify the candidate set for the given projection table\&. Careful! "
+.ti -1c
+.RI "size_t \fBNumProjections\fP () const"
+.br
+.RI "Get the number of projections\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "Search for the k furthest neighbors of the given query set\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the model\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &referenceSet, const size_t l=0, const size_t m=0)"
+.br
+.RI "Train the \fBQDAFN\fP model on the given reference set, optionally setting new parameters for the number of projections/tables (l) and the number of elements stored for each projection/table (m)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MatType = arma::mat>
+.br
+class mlpack::neighbor::QDAFN< MatType >"
+
+.PP
+Definition at line 34 of file qdafn\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBQDAFN\fP (const size_t l, const size_t m)"
+
+.PP
+Construct the \fBQDAFN\fP object but do not train it\&. Be sure to call \fBTrain()\fP before calling \fBSearch()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIl\fP Number of projections\&. 
+.br
+\fIm\fP Number of elements to store for each projection\&. 
+.RE
+.PP
+
+.SS "\fBQDAFN\fP (const MatType & referenceSet, const size_t l, const size_t m)"
+
+.PP
+Construct the \fBQDAFN\fP object with the given reference set (this is the set that will be searched)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference data\&. 
+.br
+\fIl\fP Number of projections\&. 
+.br
+\fIm\fP Number of elements to store for each projection\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const MatType& CandidateSet (const size_t t) const\fC [inline]\fP"
+
+.PP
+Get the candidate set for the given projection table\&. 
+.PP
+Definition at line 90 of file qdafn\&.hpp\&.
+.SS "MatType& CandidateSet (const size_t t)\fC [inline]\fP"
+
+.PP
+Modify the candidate set for the given projection table\&. Careful! 
+.PP
+Definition at line 92 of file qdafn\&.hpp\&.
+.SS "size_t NumProjections () const\fC [inline]\fP"
+
+.PP
+Get the number of projections\&. 
+.PP
+Definition at line 87 of file qdafn\&.hpp\&.
+.SS "void Search (const MatType & querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Search for the k furthest neighbors of the given query set\&. (The query set can contain just one point, that is okay\&.) The results will be stored in the given neighbors and distances matrices, in the same format as the mlpack \fBNeighborSearch\fP and \fBLSHSearch\fP classes\&. 
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the model\&. 
+.SS "void Train (const MatType & referenceSet, const size_t l = \fC0\fP, const size_t m = \fC0\fP)"
+
+.PP
+Train the \fBQDAFN\fP model on the given reference set, optionally setting new parameters for the number of projections/tables (l) and the number of elements stored for each projection/table (m)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Reference set to train on\&. 
+.br
+\fIl\fP Number of projections\&. 
+.br
+\fIm\fP Number of elements to store for each projection\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

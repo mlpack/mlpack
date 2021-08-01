@@ -1,0 +1,444 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="r__star__tree__split_8hpp" kind="file" language="C++">
+    <compoundname>r_star_tree_split.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">r_star_tree_split_impl.hpp</includes>
+    <incdepgraph>
+      <node id="17705">
+        <label>list</label>
+      </node>
+      <node id="17702">
+        <label>atomic</label>
+      </node>
+      <node id="17692">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="17668">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="17704">
+        <label>iomanip</label>
+      </node>
+      <node id="17654">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_star_tree_split.hpp</label>
+        <link refid="r__star__tree__split_8hpp"/>
+        <childnode refid="17655" relation="include">
+        </childnode>
+        <childnode refid="17712" relation="include">
+        </childnode>
+      </node>
+      <node id="17677">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="17678" relation="include">
+        </childnode>
+        <childnode refid="17680" relation="include">
+        </childnode>
+      </node>
+      <node id="17660">
+        <label>cstdint</label>
+      </node>
+      <node id="17669">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="17676">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="17699">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="17689">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="17656">
+        <label>cmath</label>
+      </node>
+      <node id="17675">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="17664">
+        <label>stdexcept</label>
+      </node>
+      <node id="17684">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="17669" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17670" relation="include">
+        </childnode>
+      </node>
+      <node id="17708">
+        <label>string</label>
+      </node>
+      <node id="17696">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="17697" relation="include">
+        </childnode>
+        <childnode refid="17663" relation="include">
+        </childnode>
+      </node>
+      <node id="17706">
+        <label>map</label>
+      </node>
+      <node id="17658">
+        <label>cfloat</label>
+      </node>
+      <node id="17688">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="17710">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="17672">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="17695">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="17696" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17679" relation="include">
+        </childnode>
+        <childnode refid="17697" relation="include">
+        </childnode>
+      </node>
+      <node id="17685">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="17683">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="17669" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17670" relation="include">
+        </childnode>
+      </node>
+      <node id="17686">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="17669" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17670" relation="include">
+        </childnode>
+      </node>
+      <node id="17674">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="17694">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17670" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17682" relation="include">
+        </childnode>
+        <childnode refid="17691" relation="include">
+        </childnode>
+      </node>
+      <node id="17698">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="17699" relation="include">
+        </childnode>
+      </node>
+      <node id="17700">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="17655">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="17656" relation="include">
+        </childnode>
+        <childnode refid="17657" relation="include">
+        </childnode>
+        <childnode refid="17658" relation="include">
+        </childnode>
+        <childnode refid="17659" relation="include">
+        </childnode>
+        <childnode refid="17660" relation="include">
+        </childnode>
+        <childnode refid="17661" relation="include">
+        </childnode>
+        <childnode refid="17662" relation="include">
+        </childnode>
+        <childnode refid="17663" relation="include">
+        </childnode>
+        <childnode refid="17664" relation="include">
+        </childnode>
+        <childnode refid="17665" relation="include">
+        </childnode>
+        <childnode refid="17666" relation="include">
+        </childnode>
+        <childnode refid="17667" relation="include">
+        </childnode>
+        <childnode refid="17668" relation="include">
+        </childnode>
+        <childnode refid="17669" relation="include">
+        </childnode>
+        <childnode refid="17670" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17673" relation="include">
+        </childnode>
+        <childnode refid="17674" relation="include">
+        </childnode>
+        <childnode refid="17675" relation="include">
+        </childnode>
+        <childnode refid="17676" relation="include">
+        </childnode>
+        <childnode refid="17677" relation="include">
+        </childnode>
+        <childnode refid="17681" relation="include">
+        </childnode>
+        <childnode refid="17682" relation="include">
+        </childnode>
+        <childnode refid="17683" relation="include">
+        </childnode>
+        <childnode refid="17684" relation="include">
+        </childnode>
+        <childnode refid="17685" relation="include">
+        </childnode>
+        <childnode refid="17686" relation="include">
+        </childnode>
+        <childnode refid="17687" relation="include">
+        </childnode>
+        <childnode refid="17693" relation="include">
+        </childnode>
+        <childnode refid="17694" relation="include">
+        </childnode>
+        <childnode refid="17691" relation="include">
+        </childnode>
+        <childnode refid="17695" relation="include">
+        </childnode>
+        <childnode refid="17698" relation="include">
+        </childnode>
+        <childnode refid="17700" relation="include">
+        </childnode>
+        <childnode refid="17701" relation="include">
+        </childnode>
+        <childnode refid="17710" relation="include">
+        </childnode>
+        <childnode refid="17711" relation="include">
+        </childnode>
+      </node>
+      <node id="17661">
+        <label>cstdio</label>
+      </node>
+      <node id="17665">
+        <label>tuple</label>
+      </node>
+      <node id="17670">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="17687">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17670" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17674" relation="include">
+        </childnode>
+        <childnode refid="17688" relation="include">
+        </childnode>
+        <childnode refid="17689" relation="include">
+        </childnode>
+        <childnode refid="17690" relation="include">
+        </childnode>
+        <childnode refid="17691" relation="include">
+        </childnode>
+      </node>
+      <node id="17666">
+        <label>utility</label>
+      </node>
+      <node id="17690">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="17681">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="17678">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="17679" relation="include">
+        </childnode>
+      </node>
+      <node id="17712">
+        <label>r_star_tree_split_impl.hpp</label>
+      </node>
+      <node id="17701">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="17702" relation="include">
+        </childnode>
+        <childnode refid="17703" relation="include">
+        </childnode>
+        <childnode refid="17704" relation="include">
+        </childnode>
+        <childnode refid="17705" relation="include">
+        </childnode>
+        <childnode refid="17706" relation="include">
+        </childnode>
+        <childnode refid="17707" relation="include">
+        </childnode>
+        <childnode refid="17708" relation="include">
+        </childnode>
+        <childnode refid="17709" relation="include">
+        </childnode>
+      </node>
+      <node id="17679">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="17693">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="17691" relation="include">
+        </childnode>
+        <childnode refid="17687" relation="include">
+        </childnode>
+        <childnode refid="17694" relation="include">
+        </childnode>
+      </node>
+      <node id="17662">
+        <label>cstdlib</label>
+      </node>
+      <node id="17657">
+        <label>cctype</label>
+      </node>
+      <node id="17680">
+        <label>unordered_map</label>
+      </node>
+      <node id="17659">
+        <label>climits</label>
+      </node>
+      <node id="17707">
+        <label>mutex</label>
+      </node>
+      <node id="17703">
+        <label>chrono</label>
+      </node>
+      <node id="17711">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="17709">
+        <label>thread</label>
+      </node>
+      <node id="17697">
+        <label>type_traits</label>
+      </node>
+      <node id="17673">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="17667">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="17691">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="17669" relation="include">
+        </childnode>
+        <childnode refid="17670" relation="include">
+        </childnode>
+        <childnode refid="17671" relation="include">
+        </childnode>
+        <childnode refid="17672" relation="include">
+        </childnode>
+        <childnode refid="17692" relation="include">
+        </childnode>
+      </node>
+      <node id="17663">
+        <label>cstring</label>
+      </node>
+      <node id="17682">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="17671">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1RStarTreeSplit" prot="public">mlpack::tree::RStarTreeSplit</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Andrew Wells</para></simplesect>
+Definition of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting at a leaf node and moving upwards if necessary.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_R_STAR_TREE_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1tree_1_1RStarTreeSplit" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RStarTreeSplit" kindref="compound">RStarTreeSplit</ref></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RStarTreeSplit_1af73652d9536a1715364bbb0e4a9ba04e" kindref="member">SplitLeafNode</ref>(TreeType<sp/>*tree,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RStarTreeSplit_1a73ff1eaa94449d763847fff1f537922f" kindref="member">SplitNonLeafNode</ref>(TreeType<sp/>*tree,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RStarTreeSplit_1a1100e195f158ec58fb680edc0e57b5eb" kindref="member">ReinsertPoints</ref>(TreeType*<sp/>tree,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RStarTreeSplit_1aae7d976de7b1ce1a2dfe3ef1bbd6db42" kindref="member">PickLeafSplit</ref>(</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>TreeType*<sp/>tree,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/>bestAxis,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/>bestIndex);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InsertNodeIntoTree(TreeType*<sp/>destTree,<sp/>TreeType*<sp/>srcNode);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>PairComp(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;ElemType,<sp/>TreeType&gt;&amp;<sp/>p1,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;ElemType,<sp/>TreeType&gt;&amp;<sp/>p2)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>p1.first<sp/>&lt;<sp/>p2.first;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;r_star_tree_split_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_star_tree_split.hpp"/>
+  </compounddef>
+</doxygen>

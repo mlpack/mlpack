@@ -1,0 +1,430 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="make__alias_8hpp" kind="file" language="C++">
+    <compoundname>make_alias.hpp</compoundname>
+    <includedby refid="core_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core.hpp</includedby>
+    <includedby refid="logistic__regression__function_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression_function.hpp</includedby>
+    <includedby refid="nca__softmax__error__function_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp</includedby>
+    <invincdepgraph>
+      <node id="12420">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="12383">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="12382">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="12412">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="12413" relation="include">
+        </childnode>
+        <childnode refid="12414" relation="include">
+        </childnode>
+      </node>
+      <node id="12409">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="12389">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="12384">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="12399">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="12400" relation="include">
+        </childnode>
+        <childnode refid="12401" relation="include">
+        </childnode>
+        <childnode refid="12405" relation="include">
+        </childnode>
+        <childnode refid="12406" relation="include">
+        </childnode>
+        <childnode refid="12402" relation="include">
+        </childnode>
+        <childnode refid="12403" relation="include">
+        </childnode>
+        <childnode refid="12404" relation="include">
+        </childnode>
+        <childnode refid="12407" relation="include">
+        </childnode>
+      </node>
+      <node id="12377">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="12378" relation="include">
+        </childnode>
+        <childnode refid="12383" relation="include">
+        </childnode>
+        <childnode refid="12384" relation="include">
+        </childnode>
+        <childnode refid="12385" relation="include">
+        </childnode>
+        <childnode refid="12386" relation="include">
+        </childnode>
+        <childnode refid="12387" relation="include">
+        </childnode>
+        <childnode refid="12388" relation="include">
+        </childnode>
+        <childnode refid="12389" relation="include">
+        </childnode>
+        <childnode refid="12390" relation="include">
+        </childnode>
+        <childnode refid="12391" relation="include">
+        </childnode>
+        <childnode refid="12392" relation="include">
+        </childnode>
+        <childnode refid="12393" relation="include">
+        </childnode>
+        <childnode refid="12394" relation="include">
+        </childnode>
+        <childnode refid="12396" relation="include">
+        </childnode>
+        <childnode refid="12397" relation="include">
+        </childnode>
+        <childnode refid="12398" relation="include">
+        </childnode>
+        <childnode refid="12405" relation="include">
+        </childnode>
+        <childnode refid="12408" relation="include">
+        </childnode>
+        <childnode refid="12409" relation="include">
+        </childnode>
+        <childnode refid="12410" relation="include">
+        </childnode>
+        <childnode refid="12411" relation="include">
+        </childnode>
+        <childnode refid="12415" relation="include">
+        </childnode>
+        <childnode refid="12416" relation="include">
+        </childnode>
+        <childnode refid="12417" relation="include">
+        </childnode>
+        <childnode refid="12418" relation="include">
+        </childnode>
+        <childnode refid="12419" relation="include">
+        </childnode>
+        <childnode refid="12420" relation="include">
+        </childnode>
+        <childnode refid="12421" relation="include">
+        </childnode>
+        <childnode refid="12422" relation="include">
+        </childnode>
+      </node>
+      <node id="12392">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="12377" relation="include">
+        </childnode>
+      </node>
+      <node id="12398">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="12399" relation="include">
+        </childnode>
+      </node>
+      <node id="12417">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="12413">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="12408">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="12406">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="12402">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="12385">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="12410">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="12419">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="12395">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="12382" relation="include">
+        </childnode>
+      </node>
+      <node id="12376">
+        <label>/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+        <childnode refid="12377" relation="include">
+        </childnode>
+        <childnode refid="12423" relation="include">
+        </childnode>
+        <childnode refid="12425" relation="include">
+        </childnode>
+      </node>
+      <node id="12414">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="12379">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="12380" relation="include">
+        </childnode>
+        <childnode refid="12381" relation="include">
+        </childnode>
+      </node>
+      <node id="12391">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="12421">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="12420" relation="include">
+        </childnode>
+      </node>
+      <node id="12387">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="12380">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="12400">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="12422">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="12405">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="12407">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="12425">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nca/nca_softmax_error_function.hpp</label>
+        <link refid="nca__softmax__error__function_8hpp"/>
+        <childnode refid="12426" relation="include">
+        </childnode>
+      </node>
+      <node id="12415">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="12424">
+        <label>/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression.hpp</label>
+        <link refid="logistic__regression_8hpp"/>
+        <childnode refid="12422" relation="include">
+        </childnode>
+      </node>
+      <node id="12386">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="12401">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="12397" relation="include">
+        </childnode>
+        <childnode refid="12402" relation="include">
+        </childnode>
+        <childnode refid="12403" relation="include">
+        </childnode>
+        <childnode refid="12404" relation="include">
+        </childnode>
+      </node>
+      <node id="12393">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="12403">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="12388">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="12416">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="12423">
+        <label>/home/aakash/mlpack/src/mlpack/methods/logistic_regression/logistic_regression_function.hpp</label>
+        <link refid="logistic__regression__function_8hpp"/>
+        <childnode refid="12424" relation="include">
+        </childnode>
+      </node>
+      <node id="12397">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="12396">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="12378">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="12379" relation="include">
+        </childnode>
+        <childnode refid="12380" relation="include">
+        </childnode>
+        <childnode refid="12381" relation="include">
+        </childnode>
+        <childnode refid="12382" relation="include">
+        </childnode>
+      </node>
+      <node id="12404">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="12381">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="12411">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="12412" relation="include">
+        </childnode>
+      </node>
+      <node id="12418">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="12390">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="12394">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="12395" relation="include">
+        </childnode>
+      </node>
+      <node id="12426">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp</label>
+        <link refid="nca_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1math">mlpack::math</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Make an alias of a matrix. For sparse matrices, unfortunately no alias can be made and a copy must be incurred.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_MATH_MAKE_ALIAS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_MATH_MAKE_ALIAS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">math<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="24" refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" refkind="member"><highlight class="normal">arma::Cube&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(arma::Cube&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>strict<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>the<sp/>advanced<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::Cube&lt;ElemType&gt;(input.memptr(),<sp/>input.n_rows,<sp/>input.n_cols,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>input.n_slices,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>strict);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="37" refid="namespacemlpack_1_1math_1a6611a3cfd0aad124d0ca5bf45b44801c" refkind="member"><highlight class="normal">arma::Mat&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(arma::Mat&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>strict<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>the<sp/>advanced<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::Mat&lt;ElemType&gt;(input.memptr(),<sp/>input.n_rows,<sp/>input.n_cols,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>strict);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="50" refid="namespacemlpack_1_1math_1ae0f2bc84fae09e2232931990bcb3fc08" refkind="member"><highlight class="normal">arma::Row&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(arma::Row&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>strict<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>the<sp/>advanced<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::Row&lt;ElemType&gt;(input.memptr(),<sp/>input.n_elem,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>strict);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="62" refid="namespacemlpack_1_1math_1acd2b618f5a0ec77ccb94cf43a06846e9" refkind="member"><highlight class="normal">arma::Col&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(arma::Col&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>strict<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>the<sp/>advanced<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::Col&lt;ElemType&gt;(input.memptr(),<sp/>input.n_elem,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>strict);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="74" refid="namespacemlpack_1_1math_1a327a59b10b6b84ea4c3eec3469644bec" refkind="member"><highlight class="normal">arma::SpMat&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::SpMat&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>strict<sp/>*/</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>copy...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::SpMat&lt;ElemType&gt;(input);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="86" refid="namespacemlpack_1_1math_1a6b3f7eb08a72a99cd338824b85276e0f" refkind="member"><highlight class="normal">arma::SpRow&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::SpRow&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>strict<sp/>*/</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>copy...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::SpRow&lt;ElemType&gt;(input);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="98" refid="namespacemlpack_1_1math_1a42a8a4c43e657af6d3557fdaa3082f93" refkind="member"><highlight class="normal">arma::SpCol&lt;ElemType&gt;<sp/><ref refid="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" kindref="member">MakeAlias</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::SpCol&lt;ElemType&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>strict<sp/>*/</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>copy...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::SpCol&lt;ElemType&gt;(input);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="110" refid="namespacemlpack_1_1math_1a61d04fbb64cb618da2dc4305b1e7024f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1math_1a61d04fbb64cb618da2dc4305b1e7024f" kindref="member">ClearAlias</ref>(arma::Mat&lt;ElemType&gt;&amp;<sp/>mat)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mat.mem_state<sp/>&gt;=<sp/>1)</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>mat.reset();</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="121" refid="namespacemlpack_1_1math_1aa25733e8424870f1be6b1eb0492503a2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1math_1a61d04fbb64cb618da2dc4305b1e7024f" kindref="member">ClearAlias</ref>(arma::SpMat&lt;ElemType&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>mat<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Nothing<sp/>to<sp/>do.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>math</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp"/>
+  </compounddef>
+</doxygen>

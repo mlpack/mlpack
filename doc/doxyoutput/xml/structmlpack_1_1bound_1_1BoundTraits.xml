@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1bound_1_1BoundTraits" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::bound::BoundTraits</compoundname>
+    <includes refid="bound__traits_8hpp" local="no">bound_traits.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename BoundType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1bound_1_1BoundTraits_1af41e456bf5ea6c0557730318fe660d2d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool HasTightBounds</definition>
+        <argsstring></argsstring>
+        <name>HasTightBounds</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>If true, then the bounds for each dimension are tight. </para>        </briefdescription>
+        <detaileddescription>
+<para>If false, then the bounds for each dimension may be looser than the range of all points held in the bound. This defaults to false. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/bound_traits.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/bound_traits.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A class to obtain compile-time traits about BoundType classes. </para>    </briefdescription>
+    <detaileddescription>
+<para>If you are writing your own BoundType class, you should make a template specialization in order to set the values correctly.</para><para><simplesect kind="see"><para>TreeTraits, KernelTraits </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/bound_traits.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/bound_traits.hpp" bodystart="26" bodyend="32"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1bound_1_1BoundTraits_1af41e456bf5ea6c0557730318fe660d2d" prot="public" virt="non-virtual"><scope>mlpack::bound::BoundTraits</scope><name>HasTightBounds</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

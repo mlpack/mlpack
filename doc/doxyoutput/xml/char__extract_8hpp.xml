@@ -1,0 +1,429 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="char__extract_8hpp" kind="file" language="C++">
+    <compoundname>char_extract.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="9565">
+        <label>list</label>
+      </node>
+      <node id="9562">
+        <label>atomic</label>
+      </node>
+      <node id="9552">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="9528">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="9564">
+        <label>iomanip</label>
+      </node>
+      <node id="9537">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="9538" relation="include">
+        </childnode>
+        <childnode refid="9540" relation="include">
+        </childnode>
+      </node>
+      <node id="9520">
+        <label>cstdint</label>
+      </node>
+      <node id="9529">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="9536">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="9559">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="9549">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="9516">
+        <label>cmath</label>
+      </node>
+      <node id="9535">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="9524">
+        <label>stdexcept</label>
+      </node>
+      <node id="9544">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="9529" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9530" relation="include">
+        </childnode>
+      </node>
+      <node id="9568">
+        <label>string</label>
+      </node>
+      <node id="9556">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="9557" relation="include">
+        </childnode>
+        <childnode refid="9523" relation="include">
+        </childnode>
+      </node>
+      <node id="9566">
+        <label>map</label>
+      </node>
+      <node id="9518">
+        <label>cfloat</label>
+      </node>
+      <node id="9548">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="9570">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="9532">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="9555">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="9556" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9539" relation="include">
+        </childnode>
+        <childnode refid="9557" relation="include">
+        </childnode>
+      </node>
+      <node id="9545">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="9543">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="9529" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9530" relation="include">
+        </childnode>
+      </node>
+      <node id="9546">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="9529" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9530" relation="include">
+        </childnode>
+      </node>
+      <node id="9534">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="9554">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="9530" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9542" relation="include">
+        </childnode>
+        <childnode refid="9551" relation="include">
+        </childnode>
+      </node>
+      <node id="9558">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="9559" relation="include">
+        </childnode>
+      </node>
+      <node id="9560">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="9515">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="9516" relation="include">
+        </childnode>
+        <childnode refid="9517" relation="include">
+        </childnode>
+        <childnode refid="9518" relation="include">
+        </childnode>
+        <childnode refid="9519" relation="include">
+        </childnode>
+        <childnode refid="9520" relation="include">
+        </childnode>
+        <childnode refid="9521" relation="include">
+        </childnode>
+        <childnode refid="9522" relation="include">
+        </childnode>
+        <childnode refid="9523" relation="include">
+        </childnode>
+        <childnode refid="9524" relation="include">
+        </childnode>
+        <childnode refid="9525" relation="include">
+        </childnode>
+        <childnode refid="9526" relation="include">
+        </childnode>
+        <childnode refid="9527" relation="include">
+        </childnode>
+        <childnode refid="9528" relation="include">
+        </childnode>
+        <childnode refid="9529" relation="include">
+        </childnode>
+        <childnode refid="9530" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9533" relation="include">
+        </childnode>
+        <childnode refid="9534" relation="include">
+        </childnode>
+        <childnode refid="9535" relation="include">
+        </childnode>
+        <childnode refid="9536" relation="include">
+        </childnode>
+        <childnode refid="9537" relation="include">
+        </childnode>
+        <childnode refid="9541" relation="include">
+        </childnode>
+        <childnode refid="9542" relation="include">
+        </childnode>
+        <childnode refid="9543" relation="include">
+        </childnode>
+        <childnode refid="9544" relation="include">
+        </childnode>
+        <childnode refid="9545" relation="include">
+        </childnode>
+        <childnode refid="9546" relation="include">
+        </childnode>
+        <childnode refid="9547" relation="include">
+        </childnode>
+        <childnode refid="9553" relation="include">
+        </childnode>
+        <childnode refid="9554" relation="include">
+        </childnode>
+        <childnode refid="9551" relation="include">
+        </childnode>
+        <childnode refid="9555" relation="include">
+        </childnode>
+        <childnode refid="9558" relation="include">
+        </childnode>
+        <childnode refid="9560" relation="include">
+        </childnode>
+        <childnode refid="9561" relation="include">
+        </childnode>
+        <childnode refid="9570" relation="include">
+        </childnode>
+        <childnode refid="9571" relation="include">
+        </childnode>
+      </node>
+      <node id="9521">
+        <label>cstdio</label>
+      </node>
+      <node id="9525">
+        <label>tuple</label>
+      </node>
+      <node id="9530">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="9547">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="9530" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9534" relation="include">
+        </childnode>
+        <childnode refid="9548" relation="include">
+        </childnode>
+        <childnode refid="9549" relation="include">
+        </childnode>
+        <childnode refid="9550" relation="include">
+        </childnode>
+        <childnode refid="9551" relation="include">
+        </childnode>
+      </node>
+      <node id="9526">
+        <label>utility</label>
+      </node>
+      <node id="9550">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="9541">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="9538">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="9539" relation="include">
+        </childnode>
+      </node>
+      <node id="9561">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="9562" relation="include">
+        </childnode>
+        <childnode refid="9563" relation="include">
+        </childnode>
+        <childnode refid="9564" relation="include">
+        </childnode>
+        <childnode refid="9565" relation="include">
+        </childnode>
+        <childnode refid="9566" relation="include">
+        </childnode>
+        <childnode refid="9567" relation="include">
+        </childnode>
+        <childnode refid="9568" relation="include">
+        </childnode>
+        <childnode refid="9569" relation="include">
+        </childnode>
+      </node>
+      <node id="9539">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="9553">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="9551" relation="include">
+        </childnode>
+        <childnode refid="9547" relation="include">
+        </childnode>
+        <childnode refid="9554" relation="include">
+        </childnode>
+      </node>
+      <node id="9522">
+        <label>cstdlib</label>
+      </node>
+      <node id="9517">
+        <label>cctype</label>
+      </node>
+      <node id="9540">
+        <label>unordered_map</label>
+      </node>
+      <node id="9519">
+        <label>climits</label>
+      </node>
+      <node id="9567">
+        <label>mutex</label>
+      </node>
+      <node id="9563">
+        <label>chrono</label>
+      </node>
+      <node id="9571">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="9569">
+        <label>thread</label>
+      </node>
+      <node id="9557">
+        <label>type_traits</label>
+      </node>
+      <node id="9533">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="9527">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="9551">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="9529" relation="include">
+        </childnode>
+        <childnode refid="9530" relation="include">
+        </childnode>
+        <childnode refid="9531" relation="include">
+        </childnode>
+        <childnode refid="9532" relation="include">
+        </childnode>
+        <childnode refid="9552" relation="include">
+        </childnode>
+      </node>
+      <node id="9523">
+        <label>cstring</label>
+      </node>
+      <node id="9542">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="9514">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp</label>
+        <link refid="char__extract_8hpp"/>
+        <childnode refid="9515" relation="include">
+        </childnode>
+      </node>
+      <node id="9531">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1CharExtract" prot="public">mlpack::data::CharExtract</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Jeffin Sam </para></simplesect>
+<simplesect kind="author"><para>Mikhail Lozhnikov</para></simplesect>
+Definition of the CharExtract class which tokenizes a string into characters.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_TOKENIZERS_CHAR_EXTRACT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_TOKENIZERS_CHAR_EXTRACT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classmlpack_1_1data_1_1CharExtract" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1CharExtract" kindref="compound">CharExtract</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1data_1_1CharExtract_1a80e7e247aa7b4392b900c808645a26cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1CharExtract_1a80e7e247aa7b4392b900c808645a26cb" kindref="member">TokenType</ref><sp/>=<sp/>int;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1data_1_1CharExtract_1af8bc68c5ca75596657ff05e08954fbcd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1CharExtract_1af8bc68c5ca75596657ff05e08954fbcd" kindref="member">operator()</ref>(boost::string_view&amp;<sp/>str)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="40"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(str.empty())</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>EOF;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>retval<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(str[0]);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>str.remove_prefix(1);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>retval;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="classmlpack_1_1data_1_1CharExtract_1a68ac0f257a34674662078d3303c25b99" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1CharExtract_1a68ac0f257a34674662078d3303c25b99" kindref="member">IsTokenEmpty</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>token)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>token<sp/>==<sp/>EOF;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="timer" kind="page">
+    <compoundname>timer</compoundname>
+    <title>mlpack Timers</title>
+    <detaileddescription>
+<sect1 id="timer_1timerintro">
+<title>Introduction</title>
+<para>mlpack provides a simple timer interface for the timing of machine learning methods. The results of any timers used during the program are displayed at output by any command-line binding, when <ndash/>verbose is given:</para><para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_knn<sp/>-r<sp/>dataset.csv<sp/>-n<sp/>neighbors_out.csv<sp/>-d<sp/>distances_out.csv<sp/>-k<sp/>5<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">&lt;...&gt;</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Program<sp/>timers:</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>computing_neighbors:<sp/>0.010650s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>loading_data:<sp/>0.002567s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>saving_data:<sp/>0.001115s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>total_time:<sp/>0.149816s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>tree_building:<sp/>0.000534s</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="timer_1usingtimer">
+<title>Timer API</title>
+<para>The <ref refid="classmlpack_1_1Timer" kindref="compound">mlpack::Timer</ref> class provides three simple methods:</para><para><programlisting><codeline><highlight class="normal">void<sp/>Timer::Start(const<sp/>char*<sp/>name);</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Timer::Stop(const<sp/>char*<sp/>name);</highlight></codeline>
+<codeline><highlight class="normal">timeval<sp/>Timer::Get(const<sp/>char*<sp/>name);</highlight></codeline>
+</programlisting></para><para>Each timer is given a name, and is referenced by that name. You can call <computeroutput>Timer::Start()</computeroutput> and <computeroutput>Timer::Stop()</computeroutput> multiple times for a particular timer name, and the result will be the sum of the runs of the timer. Note that <computeroutput>Timer::Stop()</computeroutput> must be called before <computeroutput>Timer::Start()</computeroutput> is called again, otherwise a std::runtime_error exception will be thrown.</para><para>A <computeroutput>&quot;total_time&quot;</computeroutput> timer is run by default for each mlpack program.</para></sect1>
+<sect1 id="timer_1example">
+<title>Timer Example</title>
+<para>Below is a very simple example of timer usage in code.</para><para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/core.hpp&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;mlpack/core/util/io.hpp&gt;</highlight></codeline>
+<codeline><highlight class="normal">#define<sp/>BINDING_TYPE<sp/>BINDING_TYPE_CLI</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;mlpack/core/util/mlpack_main.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">void<sp/>mlpackMain()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Start<sp/>a<sp/>timer.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Timer::Start(&quot;some_timer&quot;);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Do<sp/>some<sp/>things.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>DoSomeStuff();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Stop<sp/>the<sp/>timer.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Timer::Stop(&quot;some_timer&quot;);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>If the <ndash/>verbose flag was given to this executable, the time that <computeroutput>&quot;some_timer&quot;</computeroutput> ran for would be printed at the end of the program&apos;s output. </para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1026 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classLayerNameVisitor" kind="class" language="C++" prot="public">
+    <compoundname>LayerNameVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; std::string &gt;</basecompoundref>
+    <includes refid="layer__names_8hpp" local="no">layer_names.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classLayerNameVisitor_1a0f946fadb7fc5a9e013e9d3e8ceeccf2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LayerNameVisitor</definition>
+        <argsstring>()</argsstring>
+        <name>LayerNameVisitor</name>
+        <briefdescription>
+<para>Create the <ref refid="classLayerNameVisitor" kindref="compound">LayerNameVisitor</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ad55492fe23bb6506b3830005e570d0f4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(AdaptiveMaxPooling&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1AdaptiveMaxPooling" kindref="compound">AdaptiveMaxPooling</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type AdaptiveMaxPooling as string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type AdaptiveMaxPooling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1afaadce64dd171a43976fa27c0f964cb5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(AdaptiveMeanPooling&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1AdaptiveMeanPooling" kindref="compound">AdaptiveMeanPooling</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type AdaptiveMeanPooling as string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type AdaptiveMeanPooling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="50" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ad72724c1e1f75a4e0b527cf5f112dbf2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(AtrousConvolution&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1AtrousConvolution" kindref="compound">AtrousConvolution</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type AtrousConvolution as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type AtrousConvolution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="61" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ab51bbaee7abbc2f952a30e998790cc98" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(AlphaDropout&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1AlphaDropout" kindref="compound">AlphaDropout</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type AlphaDropout as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type AlphaDropout. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a0f92b876d223dfd54b5e110f50f86b32" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(BatchNorm&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1BatchNorm" kindref="compound">BatchNorm</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type BatchNorm as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type BatchNorm. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="83" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a39da4a132e66c82902eeba09baceae96" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Constant&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Constant" kindref="compound">Constant</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Constant as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Constant. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="94" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a12b9b0063f4ded9394e639cbbd2e3549" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Convolution&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Convolution as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Convolution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="105" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a99ff4ddf503523d8d403c7c792b0236c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(DropConnect&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1DropConnect" kindref="compound">DropConnect</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type DropConnect as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type DropConnect. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="116" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a258731098d15efbb82ee2ceec9b5897f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Dropout&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Dropout" kindref="compound">Dropout</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Dropout as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Dropout. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="127" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ab9efbc7989ba3450f4fc9643399ec439" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(FlexibleReLU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1FlexibleReLU" kindref="compound">FlexibleReLU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type FlexibleReLU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type FlexibleReLU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="138" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a8f96f8bff340dfbbb5cd4ccbd9cd2485" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LayerNorm&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LayerNorm" kindref="compound">LayerNorm</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type LayerNorm as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type LayerNorm. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="149" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ab6374862c4fea77c8a7f12cd995986b9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Linear&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Linear" kindref="compound">Linear</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Linear as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Linear. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="160" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a44c5753f704c569d347f43839ab56bdc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LinearNoBias&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LinearNoBias" kindref="compound">LinearNoBias</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type LinearNoBias as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type LinearNoBias. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="171" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a0343f87493c3642238fa790b938eb3c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(NoisyLinear&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1NoisyLinear" kindref="compound">NoisyLinear</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type NoisyLinear as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type NoisyLinear. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="182" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a096dc22b45f743239b16f0b590dc52fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(MaxPooling&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1MaxPooling" kindref="compound">MaxPooling</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type MaxPooling as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type MaxPooling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="193" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="193" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ac138d739a1edee7dbdfc7c094b643981" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(MeanPooling&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1MeanPooling" kindref="compound">MeanPooling</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type MeanPooling as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type MeanPooling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="204" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a38c01d9ceecf6cfa50a52cf42559d9d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LpPooling&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LpPooling" kindref="compound">LpPooling</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type LpPooling as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type LpPooling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="215" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1aa510725bd200647541d63b23c0e3011d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(MultiplyConstant&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1MultiplyConstant" kindref="compound">MultiplyConstant</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type MultiplyConstant as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type MultiplyConstant. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="226" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="226" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a4e3117494c28548a6143b4f91a09414a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(ReLULayer&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a06b6e29ab52ee62d0bccbf108d64d1a2" kindref="member">ReLULayer</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type ReLULayer as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type ReLULayer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="237" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="237" bodyend="240"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a75cde73bf2060570c2dd01cd85dddd97" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(TransposedConvolution&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1TransposedConvolution" kindref="compound">TransposedConvolution</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type TransposedConvolution as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type TransposedConvolution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="249" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="249" bodyend="252"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a8eada8e45a040c05fafe5d6d06e3937b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(IdentityLayer&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a41e9b25c5b33b7de07a0eac6c46dc085" kindref="member">IdentityLayer</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type IdentityLayer as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type IdentityLayer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="260" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ae7a363c9e3cd1256c5b1457ed8208a72" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(TanHLayer&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1acc8e7f6b94728a4a6eb310677b5bc532" kindref="member">TanHLayer</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type TanHLayer as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type TanHLayer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="271" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="271" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ac0ed16ce5f99db03c05010bdfb6fffcd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(ELU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1ELU" kindref="compound">ELU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type ELU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type ELU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="282" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="282" bodyend="285"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a04beac676270816997f6bfdac76c0569" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(HardTanH&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1HardTanH" kindref="compound">HardTanH</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type HardTanH as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type HardTanH. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="293" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a761a505854bc1159b2be04ddd9c93f2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LeakyReLU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LeakyReLU" kindref="compound">LeakyReLU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type LeakyReLU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type LeakyReLU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="304" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="304" bodyend="307"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a618a068d141b4b41a22afcc8306507c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(PReLU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1PReLU" kindref="compound">PReLU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type PReLU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type PReLU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="315" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="315" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1aadda738726af2889fe9fec2f26a02249" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(SigmoidLayer&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1ad4f35bf0f4f5e2750668e17c2d07a27b" kindref="member">SigmoidLayer</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type SigmoidLayer as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type SigmoidLayer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="326" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="326" bodyend="329"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ae93cc138ff6a2eb636a877ea1c7047ec" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LogSoftMax&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LogSoftMax" kindref="compound">LogSoftMax</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type LogSoftMax as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type LogSoftMax. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="337" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="337" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ae1c5eaae028534cdd5c57d3b3c7bc29d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(LSTM&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1LSTM" kindref="compound">LSTM</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="348" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="348" bodyend="351"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a13fd8d36fd5708012e8a8ef3c4cb2ac5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(CReLU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1CReLU" kindref="compound">CReLU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type CReLU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type CReLU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="359" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="359" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a2004522d3e87d102e8b911e7e2f7d989" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Highway&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Highway" kindref="compound">Highway</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Highway as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Highway. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="370" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="370" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a9c0a890184848420df7c37892691b1f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(GRU&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1GRU" kindref="compound">GRU</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type GRU as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type GRU. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="381" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="381" bodyend="384"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a0bc5e33b9ed3e4d7b794cc95452f902c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(Glimpse&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Glimpse" kindref="compound">Glimpse</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type Glimpse as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type Glimpse. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="392" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="392" bodyend="395"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1ab4e0701f4c4ad4743eea30a186a33f61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(FastLSTM&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1FastLSTM" kindref="compound">FastLSTM</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type FastLSTM as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type FastLSTM. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="403" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="403" bodyend="406"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1aba824a9f4695661ccf5a1f232d6dc0b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(WeightNorm&lt;&gt; *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref>&lt;&gt; *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the given layer of type WeightNorm as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of type WeightNorm. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string representation of the layer. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="414" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="414" bodyend="417"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a6bb446bf320c905d75ddd2644e613bda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string LayerString</definition>
+        <argsstring>(T *) const</argsstring>
+        <name>LayerString</name>
+        <param>
+          <type>T *</type>
+        </param>
+        <briefdescription>
+<para>Return the name of the layer of specified type as a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given layer of any type. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string declaring that the layer is unsupported. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="426" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="426" bodyend="429"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a5b17c31f0df22e777430e82a6d61666a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Overload function call. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="432" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="432" bodyend="435"/>
+      </memberdef>
+      <memberdef kind="function" id="classLayerNameVisitor_1a7ac25ef2c2798323872be99b6cfcf6d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Overload function call. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="439" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="439" bodyend="442"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of a class that returns the string representation of the name of the given layer. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="43">
+        <label>static_visitor&lt; std::string &gt;</label>
+      </node>
+      <node id="42">
+        <label>LayerNameVisitor</label>
+        <link refid="classLayerNameVisitor"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="45">
+        <label>static_visitor&lt; std::string &gt;</label>
+      </node>
+      <node id="44">
+        <label>LayerNameVisitor</label>
+        <link refid="classLayerNameVisitor"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp" bodystart="25" bodyend="443"/>
+    <listofallmembers>
+      <member refid="classLayerNameVisitor_1a0f946fadb7fc5a9e013e9d3e8ceeccf2" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerNameVisitor</name></member>
+      <member refid="classLayerNameVisitor_1ad55492fe23bb6506b3830005e570d0f4" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1afaadce64dd171a43976fa27c0f964cb5" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ad72724c1e1f75a4e0b527cf5f112dbf2" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ab51bbaee7abbc2f952a30e998790cc98" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a0f92b876d223dfd54b5e110f50f86b32" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a39da4a132e66c82902eeba09baceae96" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a12b9b0063f4ded9394e639cbbd2e3549" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a99ff4ddf503523d8d403c7c792b0236c" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a258731098d15efbb82ee2ceec9b5897f" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ab9efbc7989ba3450f4fc9643399ec439" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a8f96f8bff340dfbbb5cd4ccbd9cd2485" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ab6374862c4fea77c8a7f12cd995986b9" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a44c5753f704c569d347f43839ab56bdc" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a0343f87493c3642238fa790b938eb3c3" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a096dc22b45f743239b16f0b590dc52fb" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ac138d739a1edee7dbdfc7c094b643981" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a38c01d9ceecf6cfa50a52cf42559d9d0" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1aa510725bd200647541d63b23c0e3011d" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a4e3117494c28548a6143b4f91a09414a" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a75cde73bf2060570c2dd01cd85dddd97" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a8eada8e45a040c05fafe5d6d06e3937b" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ae7a363c9e3cd1256c5b1457ed8208a72" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ac0ed16ce5f99db03c05010bdfb6fffcd" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a04beac676270816997f6bfdac76c0569" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a761a505854bc1159b2be04ddd9c93f2f" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a618a068d141b4b41a22afcc8306507c1" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1aadda738726af2889fe9fec2f26a02249" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ae93cc138ff6a2eb636a877ea1c7047ec" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ae1c5eaae028534cdd5c57d3b3c7bc29d" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a13fd8d36fd5708012e8a8ef3c4cb2ac5" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a2004522d3e87d102e8b911e7e2f7d989" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a9c0a890184848420df7c37892691b1f6" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a0bc5e33b9ed3e4d7b794cc95452f902c" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1ab4e0701f4c4ad4743eea30a186a33f61" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1aba824a9f4695661ccf5a1f232d6dc0b3" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a6bb446bf320c905d75ddd2644e613bda" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>LayerString</name></member>
+      <member refid="classLayerNameVisitor_1a5b17c31f0df22e777430e82a6d61666a" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>operator()</name></member>
+      <member refid="classLayerNameVisitor_1a7ac25ef2c2798323872be99b6cfcf6d6" prot="public" virt="non-virtual"><scope>LayerNameVisitor</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

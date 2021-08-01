@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1cf_1_1LMetricSearch" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::LMetricSearch</compoundname>
+    <includes refid="lmetric__search_8hpp" local="no">lmetric_search.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>int</type>
+        <declname>TPower</declname>
+        <defname>TPower</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1cf_1_1LMetricSearch_1a7ec82c48ea6d34622bba11476edfb1d0" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">neighbor::NeighborSearch</ref>&lt; <ref refid="namespacemlpack_1_1neighbor_1af3f11fce33c041aa26b1c91107f71b0f" kindref="member">neighbor::NearestNeighborSort</ref>, <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">metric::LMetric</ref>&lt; TPower, true &gt; &gt;</type>
+        <definition>using NeighborSearchType =  neighbor::NeighborSearch&lt; neighbor::NearestNeighborSort, metric::LMetric&lt;TPower, true&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>NeighborSearchType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1LMetricSearch_1abca7adac68802680c72b28ce583bbd4c" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1cf_1_1LMetricSearch_1a7ec82c48ea6d34622bba11476edfb1d0" kindref="member">NeighborSearchType</ref></type>
+        <definition>NeighborSearchType neighborSearch</definition>
+        <argsstring></argsstring>
+        <name>neighborSearch</name>
+        <briefdescription>
+<para>NeighborSearch object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="76" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1LMetricSearch_1adf30d29ff937a051ff8e1c1bbc1a0f7c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LMetricSearch</definition>
+        <argsstring>(const arma::mat &amp;referenceSet)</argsstring>
+        <name>LMetricSearch</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="52" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1LMetricSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const arma::mat &amp;query, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;similarities)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>query</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>similarities</declname>
+        </param>
+        <briefdescription>
+<para>Given a set of query points, find the nearest k neighbors, and return similarites. </para>        </briefdescription>
+        <detaileddescription>
+<para>Similarities are non-negative and no larger thant one.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>query</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A set of query points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Nearest neighbors. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>similarities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Similarities between query point and its neighbors. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="64" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="64" bodyend="72"/>
+        <references refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f">NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;::Search</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Nearest neighbor search with L_p distance. </para>    </briefdescription>
+    <detaileddescription>
+<para>An example of how to use <ref refid="classmlpack_1_1cf_1_1LMetricSearch" kindref="compound">LMetricSearch</ref> in CF is shown below:</para><para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>data<sp/>is<sp/>a<sp/>(user,<sp/>item,<sp/>rating)<sp/>table.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Users<sp/>for<sp/>whom<sp/>recommendations<sp/>are<sp/>generated.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Col&lt;size_t&gt;<sp/>users;</highlight></codeline>
+<codeline><highlight class="normal">arma::Mat&lt;size_t&gt;<sp/>recommendations;<sp/>//<sp/>Resulting<sp/>recommendations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">CFType&lt;&gt;<sp/>cf(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Generate<sp/>10<sp/>recommendations<sp/>for<sp/>all<sp/>users.</highlight></codeline>
+<codeline><highlight class="normal">cf.template<sp/>GetRecommendations&lt;LMetricSearch&lt;2&gt;&gt;(10,<sp/>recommendations);</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TPower</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Power of metric. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="42" bodyend="77"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1LMetricSearch_1adf30d29ff937a051ff8e1c1bbc1a0f7c" prot="public" virt="non-virtual"><scope>mlpack::cf::LMetricSearch</scope><name>LMetricSearch</name></member>
+      <member refid="classmlpack_1_1cf_1_1LMetricSearch_1abca7adac68802680c72b28ce583bbd4c" prot="private" virt="non-virtual"><scope>mlpack::cf::LMetricSearch</scope><name>neighborSearch</name></member>
+      <member refid="classmlpack_1_1cf_1_1LMetricSearch_1a7ec82c48ea6d34622bba11476edfb1d0" prot="public" virt="non-virtual"><scope>mlpack::cf::LMetricSearch</scope><name>NeighborSearchType</name></member>
+      <member refid="classmlpack_1_1cf_1_1LMetricSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" prot="public" virt="non-virtual"><scope>mlpack::cf::LMetricSearch</scope><name>Search</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

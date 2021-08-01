@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1data_1_1HasSerialize" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::data::HasSerialize</compoundname>
+    <includes refid="has__serialize_8hpp" local="no">has_serialize.hpp</includes>
+    <innerclass refid="structmlpack_1_1data_1_1HasSerialize_1_1check" prot="public">mlpack::data::HasSerialize::check</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structmlpack_1_1data_1_1HasSerialize_1a60b821c13604c22450353fa73865c3af" prot="public" static="no">
+        <type>char</type>
+        <definition>typedef char no[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>no</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structmlpack_1_1data_1_1HasSerialize_1a8d05d9e44de47fbffe6082ba732f35d3" prot="public" static="no">
+        <type>char</type>
+        <definition>typedef char yes[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>yes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1data_1_1HasSerialize_1a11ddd051208250c32dc4985abcafa86d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= (sizeof(<ref refid="structmlpack_1_1data_1_1HasSerialize_1ac27e1314a46e93ff63f509e1f2260841" kindref="member">chk</ref>&lt;T&gt;(0)) == sizeof(<ref refid="structmlpack_1_1data_1_1HasSerialize_1a8d05d9e44de47fbffe6082ba732f35d3" kindref="member">yes</ref>))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structmlpack_1_1data_1_1HasSerialize_1ac27e1314a46e93ff63f509e1f2260841" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename U</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structmlpack_1_1data_1_1HasSerialize_1a8d05d9e44de47fbffe6082ba732f35d3" kindref="member">yes</ref> &amp;</type>
+        <definition>static yes&amp; chk</definition>
+        <argsstring>(check&lt; U, typename std::enable_if_t&lt; std::is_class&lt; U &gt;::value &gt; *, typename std::enable_if_t&lt; HasSerializeFunction&lt; U &gt;::value &gt; *&gt; *)</argsstring>
+        <name>chk</name>
+        <param>
+          <type><ref refid="structmlpack_1_1data_1_1HasSerialize_1_1check" kindref="compound">check</ref>&lt; U, typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; std::is_class&lt; U &gt;::<ref refid="structmlpack_1_1data_1_1HasSerialize_1a11ddd051208250c32dc4985abcafa86d" kindref="member">value</ref> &gt; *, typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structmlpack_1_1data_1_1HasSerializeFunction" kindref="compound">HasSerializeFunction</ref>&lt; U &gt;::<ref refid="structmlpack_1_1data_1_1HasSerialize_1a11ddd051208250c32dc4985abcafa86d" kindref="member">value</ref> &gt; *&gt; *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="53" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structmlpack_1_1data_1_1HasSerialize_1a0f08a85124143fdc0b47ebd46d3b8ae0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structmlpack_1_1data_1_1HasSerialize_1a60b821c13604c22450353fa73865c3af" kindref="member">no</ref> &amp;</type>
+        <definition>static no&amp; chk</definition>
+        <argsstring>(...)</argsstring>
+        <name>chk</name>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="57" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" bodystart="47" bodyend="60"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1data_1_1HasSerialize_1ac27e1314a46e93ff63f509e1f2260841" prot="public" virt="non-virtual"><scope>mlpack::data::HasSerialize</scope><name>chk</name></member>
+      <member refid="structmlpack_1_1data_1_1HasSerialize_1a0f08a85124143fdc0b47ebd46d3b8ae0" prot="public" virt="non-virtual"><scope>mlpack::data::HasSerialize</scope><name>chk</name></member>
+      <member refid="structmlpack_1_1data_1_1HasSerialize_1a60b821c13604c22450353fa73865c3af" prot="public" virt="non-virtual"><scope>mlpack::data::HasSerialize</scope><name>no</name></member>
+      <member refid="structmlpack_1_1data_1_1HasSerialize_1a11ddd051208250c32dc4985abcafa86d" prot="public" virt="non-virtual"><scope>mlpack::data::HasSerialize</scope><name>value</name></member>
+      <member refid="structmlpack_1_1data_1_1HasSerialize_1a8d05d9e44de47fbffe6082ba732f35d3" prot="public" virt="non-virtual"><scope>mlpack::data::HasSerialize</scope><name>yes</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="src_2mlpack_2tests_2README_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>mlpack<sp/>Tests</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>directory<sp/>contains<sp/>code<sp/>and<sp/>data<sp/>used<sp/>to<sp/>test<sp/>all<sp/>the<sp/>algorithms<sp/>and<sp/>functions<sp/>implemented<sp/>in<sp/>mlpack.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Test<sp/>Directories<sp/>Structure</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>*_test.cpp<sp/>-<sp/>methods<sp/>tests</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>main_tests/*_test.cpp<sp/>-<sp/>binding<sp/>tests</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>data<sp/>-<sp/>data<sp/>needed<sp/>to<sp/>run<sp/>the<sp/>tests</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Add<sp/>tests<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>have<sp/>a<sp/>rich<sp/>test<sp/>suite,<sp/>consisting<sp/>of<sp/>almost<sp/>2000<sp/>tests<sp/>(and<sp/>still<sp/>counting).<sp/>It<sp/>is<sp/>suggested<sp/>to<sp/>add<sp/>tests<sp/>when:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Adding<sp/>new<sp/>functionality.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Fixing<sp/>regressions<sp/>and<sp/>bugs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Building<sp/>Tests</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>build<sp/>the<sp/>test<sp/>suite<sp/>you<sp/>can<sp/>simply<sp/>run<sp/>`make<sp/>mlpack_test`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>To<sp/>run<sp/>Tests</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>use<sp/>`Catch2`<sp/>to<sp/>write<sp/>our<sp/>tests.<sp/>To<sp/>run<sp/>all<sp/>tests,<sp/>you<sp/>can<sp/>simply<sp/>run:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`./bin/mlpack_test`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>run<sp/>all<sp/>tests<sp/>in<sp/>a<sp/>particular<sp/>file<sp/>you<sp/>can<sp/>run:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`./bin/mlpack_test<sp/>&quot;[testname]&quot;`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">where<sp/>`testname`<sp/>is<sp/>the<sp/>name<sp/>of<sp/>the<sp/>test<sp/>suite.<sp/>For<sp/>example<sp/>to<sp/>run<sp/>all</highlight></codeline>
+<codeline><highlight class="normal">collaborative<sp/>filtering<sp/>tests<sp/>implemented<sp/>in<sp/>`cv_test.cpp`<sp/>you<sp/>can<sp/>run:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`./bin/mlpack_test<sp/>&quot;[CVTest]&quot;`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Now<sp/>similarly<sp/>you<sp/>can<sp/>run<sp/>all<sp/>the<sp/>binding<sp/>related<sp/>tests<sp/>using:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`./bin/mlpack_test<sp/>&quot;[BindingTests]&quot;`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>run<sp/>a<sp/>single<sp/>test,<sp/>you<sp/>can<sp/>explicitly<sp/>provide<sp/>the<sp/>name<sp/>of<sp/>the<sp/>test,<sp/>for<sp/>example,<sp/>to<sp/>run</highlight></codeline>
+<codeline><highlight class="normal">`BinaryClassificationMetricsTest`<sp/>implemented<sp/>in<sp/>`cv_test.cpp`<sp/>you<sp/>can<sp/>run<sp/>the<sp/>following:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`./bin/mlpack_test<sp/>BinaryClassificationMetricsTest`</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Catch2<sp/>provides<sp/>many<sp/>other<sp/>features<sp/>like<sp/>filter,<sp/>checkout<sp/>the<sp/>[Catch2<sp/>reference<sp/>section](https://github.com/catchorg/Catch2/blob/devel/docs/Readme.md#top)<sp/>-<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/README.md"/>
+  </compounddef>
+</doxygen>

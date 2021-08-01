@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1sparse__coding_1_1NothingInitializer" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::sparse_coding::NothingInitializer</compoundname>
+    <includes refid="nothing__initializer_8hpp" local="no">nothing_initializer.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1sparse__coding_1_1NothingInitializer_1a25623311cf903fc680ee6fb08a64bb12" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Initialize</definition>
+        <argsstring>(const arma::mat &amp;, const size_t, arma::mat &amp;)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+        </param>
+        <briefdescription>
+<para>This function does not initialize the dictionary. </para>        </briefdescription>
+        <detaileddescription>
+<para>This will cause problems for <ref refid="classmlpack_1_1sparse__coding_1_1SparseCoding" kindref="compound">SparseCoding</ref> if the dictionary is not set manually before running the method. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_coding/nothing_initializer.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_coding/nothing_initializer.hpp" bodystart="35" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A DictionaryInitializer for <ref refid="classmlpack_1_1sparse__coding_1_1SparseCoding" kindref="compound">SparseCoding</ref> which does not initialize anything; it is useful for when the dictionary is already known and will be set with <ref refid="classmlpack_1_1sparse__coding_1_1SparseCoding_1a3146526cfc85ff339121972d67c73f62" kindref="member">SparseCoding::Dictionary()</ref>. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_coding/nothing_initializer.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_coding/nothing_initializer.hpp" bodystart="27" bodyend="41"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1sparse__coding_1_1NothingInitializer_1a25623311cf903fc680ee6fb08a64bb12" prot="public" virt="non-virtual"><scope>mlpack::sparse_coding::NothingInitializer</scope><name>Initialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

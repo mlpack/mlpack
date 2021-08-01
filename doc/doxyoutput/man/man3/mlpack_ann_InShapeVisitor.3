@@ -1,0 +1,39 @@
+.TH "InShapeVisitor" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+InShapeVisitor \- \fBInShapeVisitor\fP returns the input shape a Layer expects\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< size_t >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > size_t \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Return the input shape of layer\&. "
+.ti -1c
+.RI "size_t \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBInShapeVisitor\fP returns the input shape a Layer expects\&. 
+.PP
+Definition at line 29 of file input_shape_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t operator() (LayerType * layer) const"
+
+.PP
+Return the input shape of layer\&. 
+.SS "size_t operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

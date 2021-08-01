@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="r__plus__tree__descent__heuristic_8hpp" kind="file" language="C++">
+    <compoundname>r_plus_tree_descent_heuristic.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">r_plus_tree_descent_heuristic_impl.hpp</includes>
+    <incdepgraph>
+      <node id="17523">
+        <label>list</label>
+      </node>
+      <node id="17520">
+        <label>atomic</label>
+      </node>
+      <node id="17510">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="17486">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="17522">
+        <label>iomanip</label>
+      </node>
+      <node id="17530">
+        <label>r_plus_tree_descent_heuristic_impl.hpp</label>
+      </node>
+      <node id="17495">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="17496" relation="include">
+        </childnode>
+        <childnode refid="17498" relation="include">
+        </childnode>
+      </node>
+      <node id="17478">
+        <label>cstdint</label>
+      </node>
+      <node id="17487">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="17494">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="17517">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="17507">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="17474">
+        <label>cmath</label>
+      </node>
+      <node id="17493">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="17482">
+        <label>stdexcept</label>
+      </node>
+      <node id="17502">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="17487" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17488" relation="include">
+        </childnode>
+      </node>
+      <node id="17526">
+        <label>string</label>
+      </node>
+      <node id="17514">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="17515" relation="include">
+        </childnode>
+        <childnode refid="17481" relation="include">
+        </childnode>
+      </node>
+      <node id="17524">
+        <label>map</label>
+      </node>
+      <node id="17476">
+        <label>cfloat</label>
+      </node>
+      <node id="17506">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="17528">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="17490">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="17513">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="17514" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17497" relation="include">
+        </childnode>
+        <childnode refid="17515" relation="include">
+        </childnode>
+      </node>
+      <node id="17503">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="17501">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="17487" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17488" relation="include">
+        </childnode>
+      </node>
+      <node id="17504">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="17487" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17488" relation="include">
+        </childnode>
+      </node>
+      <node id="17492">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="17512">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17488" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17500" relation="include">
+        </childnode>
+        <childnode refid="17509" relation="include">
+        </childnode>
+      </node>
+      <node id="17516">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="17517" relation="include">
+        </childnode>
+      </node>
+      <node id="17518">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="17473">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="17474" relation="include">
+        </childnode>
+        <childnode refid="17475" relation="include">
+        </childnode>
+        <childnode refid="17476" relation="include">
+        </childnode>
+        <childnode refid="17477" relation="include">
+        </childnode>
+        <childnode refid="17478" relation="include">
+        </childnode>
+        <childnode refid="17479" relation="include">
+        </childnode>
+        <childnode refid="17480" relation="include">
+        </childnode>
+        <childnode refid="17481" relation="include">
+        </childnode>
+        <childnode refid="17482" relation="include">
+        </childnode>
+        <childnode refid="17483" relation="include">
+        </childnode>
+        <childnode refid="17484" relation="include">
+        </childnode>
+        <childnode refid="17485" relation="include">
+        </childnode>
+        <childnode refid="17486" relation="include">
+        </childnode>
+        <childnode refid="17487" relation="include">
+        </childnode>
+        <childnode refid="17488" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17491" relation="include">
+        </childnode>
+        <childnode refid="17492" relation="include">
+        </childnode>
+        <childnode refid="17493" relation="include">
+        </childnode>
+        <childnode refid="17494" relation="include">
+        </childnode>
+        <childnode refid="17495" relation="include">
+        </childnode>
+        <childnode refid="17499" relation="include">
+        </childnode>
+        <childnode refid="17500" relation="include">
+        </childnode>
+        <childnode refid="17501" relation="include">
+        </childnode>
+        <childnode refid="17502" relation="include">
+        </childnode>
+        <childnode refid="17503" relation="include">
+        </childnode>
+        <childnode refid="17504" relation="include">
+        </childnode>
+        <childnode refid="17505" relation="include">
+        </childnode>
+        <childnode refid="17511" relation="include">
+        </childnode>
+        <childnode refid="17512" relation="include">
+        </childnode>
+        <childnode refid="17509" relation="include">
+        </childnode>
+        <childnode refid="17513" relation="include">
+        </childnode>
+        <childnode refid="17516" relation="include">
+        </childnode>
+        <childnode refid="17518" relation="include">
+        </childnode>
+        <childnode refid="17519" relation="include">
+        </childnode>
+        <childnode refid="17528" relation="include">
+        </childnode>
+        <childnode refid="17529" relation="include">
+        </childnode>
+      </node>
+      <node id="17479">
+        <label>cstdio</label>
+      </node>
+      <node id="17483">
+        <label>tuple</label>
+      </node>
+      <node id="17488">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="17505">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17488" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17492" relation="include">
+        </childnode>
+        <childnode refid="17506" relation="include">
+        </childnode>
+        <childnode refid="17507" relation="include">
+        </childnode>
+        <childnode refid="17508" relation="include">
+        </childnode>
+        <childnode refid="17509" relation="include">
+        </childnode>
+      </node>
+      <node id="17484">
+        <label>utility</label>
+      </node>
+      <node id="17508">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="17499">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="17496">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="17497" relation="include">
+        </childnode>
+      </node>
+      <node id="17519">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="17520" relation="include">
+        </childnode>
+        <childnode refid="17521" relation="include">
+        </childnode>
+        <childnode refid="17522" relation="include">
+        </childnode>
+        <childnode refid="17523" relation="include">
+        </childnode>
+        <childnode refid="17524" relation="include">
+        </childnode>
+        <childnode refid="17525" relation="include">
+        </childnode>
+        <childnode refid="17526" relation="include">
+        </childnode>
+        <childnode refid="17527" relation="include">
+        </childnode>
+      </node>
+      <node id="17497">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="17472">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_plus_tree_descent_heuristic.hpp</label>
+        <link refid="r__plus__tree__descent__heuristic_8hpp"/>
+        <childnode refid="17473" relation="include">
+        </childnode>
+        <childnode refid="17530" relation="include">
+        </childnode>
+      </node>
+      <node id="17511">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="17509" relation="include">
+        </childnode>
+        <childnode refid="17505" relation="include">
+        </childnode>
+        <childnode refid="17512" relation="include">
+        </childnode>
+      </node>
+      <node id="17480">
+        <label>cstdlib</label>
+      </node>
+      <node id="17475">
+        <label>cctype</label>
+      </node>
+      <node id="17498">
+        <label>unordered_map</label>
+      </node>
+      <node id="17477">
+        <label>climits</label>
+      </node>
+      <node id="17525">
+        <label>mutex</label>
+      </node>
+      <node id="17521">
+        <label>chrono</label>
+      </node>
+      <node id="17529">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="17527">
+        <label>thread</label>
+      </node>
+      <node id="17515">
+        <label>type_traits</label>
+      </node>
+      <node id="17491">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="17485">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="17509">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="17487" relation="include">
+        </childnode>
+        <childnode refid="17488" relation="include">
+        </childnode>
+        <childnode refid="17489" relation="include">
+        </childnode>
+        <childnode refid="17490" relation="include">
+        </childnode>
+        <childnode refid="17510" relation="include">
+        </childnode>
+      </node>
+      <node id="17481">
+        <label>cstring</label>
+      </node>
+      <node id="17500">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="17489">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic" prot="public">mlpack::tree::RPlusTreeDescentHeuristic</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Mikhail Lozhnikov</para></simplesect>
+Definition of RPlusTreeDescentHeuristic, a class that chooses the best child of a node in an R+ tree when inserting a new point.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic" kindref="compound">RPlusTreeDescentHeuristic</ref></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic_1addab0c2e6048c1ca04f964cbd8f4c4e6" kindref="member">ChooseDescentNode</ref>(TreeType*<sp/>node,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic_1addab0c2e6048c1ca04f964cbd8f4c4e6" kindref="member">ChooseDescentNode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/></highlight><highlight class="comment">/*insertedNode<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;r_plus_tree_descent_heuristic_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_plus_tree_descent_heuristic.hpp"/>
+  </compounddef>
+</doxygen>

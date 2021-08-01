@@ -1,0 +1,13 @@
+.. _exhale_function_lars__main_8cpp_1a9693a4439e8872632f7c631787f558f7:
+
+Function PARAM_MODEL_OUT(LARS, "output_model", "Output LARS model.", "M")
+=========================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_lars_lars_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: PARAM_MODEL_OUT(LARS, "output_model", "Output LARS model.", "M")

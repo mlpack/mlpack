@@ -1,0 +1,450 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="quic__svd_8hpp" kind="file" language="C++">
+    <compoundname>quic_svd.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="cosine__tree_8hpp" local="no">mlpack/core/tree/cosine_tree/cosine_tree.hpp</includes>
+    <includedby refid="quic__svd__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp</includedby>
+    <incdepgraph>
+      <node id="53981">
+        <label>list</label>
+      </node>
+      <node id="53978">
+        <label>atomic</label>
+      </node>
+      <node id="53968">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="53944">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="53980">
+        <label>iomanip</label>
+      </node>
+      <node id="53989">
+        <label>boost/heap/priority_queue.hpp</label>
+      </node>
+      <node id="53953">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="53954" relation="include">
+        </childnode>
+        <childnode refid="53956" relation="include">
+        </childnode>
+      </node>
+      <node id="53936">
+        <label>cstdint</label>
+      </node>
+      <node id="53945">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="53952">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="53975">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="53965">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="53932">
+        <label>cmath</label>
+      </node>
+      <node id="53951">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="53940">
+        <label>stdexcept</label>
+      </node>
+      <node id="53960">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="53945" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53946" relation="include">
+        </childnode>
+      </node>
+      <node id="53984">
+        <label>string</label>
+      </node>
+      <node id="53972">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="53973" relation="include">
+        </childnode>
+        <childnode refid="53939" relation="include">
+        </childnode>
+      </node>
+      <node id="53982">
+        <label>map</label>
+      </node>
+      <node id="53934">
+        <label>cfloat</label>
+      </node>
+      <node id="53964">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="53986">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="53948">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="53971">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="53972" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53955" relation="include">
+        </childnode>
+        <childnode refid="53973" relation="include">
+        </childnode>
+      </node>
+      <node id="53961">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="53959">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="53945" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53946" relation="include">
+        </childnode>
+      </node>
+      <node id="53962">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="53945" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53946" relation="include">
+        </childnode>
+      </node>
+      <node id="53950">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="53970">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="53946" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53958" relation="include">
+        </childnode>
+        <childnode refid="53967" relation="include">
+        </childnode>
+      </node>
+      <node id="53974">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="53975" relation="include">
+        </childnode>
+      </node>
+      <node id="53976">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="53931">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="53932" relation="include">
+        </childnode>
+        <childnode refid="53933" relation="include">
+        </childnode>
+        <childnode refid="53934" relation="include">
+        </childnode>
+        <childnode refid="53935" relation="include">
+        </childnode>
+        <childnode refid="53936" relation="include">
+        </childnode>
+        <childnode refid="53937" relation="include">
+        </childnode>
+        <childnode refid="53938" relation="include">
+        </childnode>
+        <childnode refid="53939" relation="include">
+        </childnode>
+        <childnode refid="53940" relation="include">
+        </childnode>
+        <childnode refid="53941" relation="include">
+        </childnode>
+        <childnode refid="53942" relation="include">
+        </childnode>
+        <childnode refid="53943" relation="include">
+        </childnode>
+        <childnode refid="53944" relation="include">
+        </childnode>
+        <childnode refid="53945" relation="include">
+        </childnode>
+        <childnode refid="53946" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53949" relation="include">
+        </childnode>
+        <childnode refid="53950" relation="include">
+        </childnode>
+        <childnode refid="53951" relation="include">
+        </childnode>
+        <childnode refid="53952" relation="include">
+        </childnode>
+        <childnode refid="53953" relation="include">
+        </childnode>
+        <childnode refid="53957" relation="include">
+        </childnode>
+        <childnode refid="53958" relation="include">
+        </childnode>
+        <childnode refid="53959" relation="include">
+        </childnode>
+        <childnode refid="53960" relation="include">
+        </childnode>
+        <childnode refid="53961" relation="include">
+        </childnode>
+        <childnode refid="53962" relation="include">
+        </childnode>
+        <childnode refid="53963" relation="include">
+        </childnode>
+        <childnode refid="53969" relation="include">
+        </childnode>
+        <childnode refid="53970" relation="include">
+        </childnode>
+        <childnode refid="53967" relation="include">
+        </childnode>
+        <childnode refid="53971" relation="include">
+        </childnode>
+        <childnode refid="53974" relation="include">
+        </childnode>
+        <childnode refid="53976" relation="include">
+        </childnode>
+        <childnode refid="53977" relation="include">
+        </childnode>
+        <childnode refid="53986" relation="include">
+        </childnode>
+        <childnode refid="53987" relation="include">
+        </childnode>
+      </node>
+      <node id="53937">
+        <label>cstdio</label>
+      </node>
+      <node id="53941">
+        <label>tuple</label>
+      </node>
+      <node id="53946">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="53963">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="53946" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53950" relation="include">
+        </childnode>
+        <childnode refid="53964" relation="include">
+        </childnode>
+        <childnode refid="53965" relation="include">
+        </childnode>
+        <childnode refid="53966" relation="include">
+        </childnode>
+        <childnode refid="53967" relation="include">
+        </childnode>
+      </node>
+      <node id="53942">
+        <label>utility</label>
+      </node>
+      <node id="53966">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="53957">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="53954">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="53955" relation="include">
+        </childnode>
+      </node>
+      <node id="53977">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="53978" relation="include">
+        </childnode>
+        <childnode refid="53979" relation="include">
+        </childnode>
+        <childnode refid="53980" relation="include">
+        </childnode>
+        <childnode refid="53981" relation="include">
+        </childnode>
+        <childnode refid="53982" relation="include">
+        </childnode>
+        <childnode refid="53983" relation="include">
+        </childnode>
+        <childnode refid="53984" relation="include">
+        </childnode>
+        <childnode refid="53985" relation="include">
+        </childnode>
+      </node>
+      <node id="53955">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="53969">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="53967" relation="include">
+        </childnode>
+        <childnode refid="53963" relation="include">
+        </childnode>
+        <childnode refid="53970" relation="include">
+        </childnode>
+      </node>
+      <node id="53938">
+        <label>cstdlib</label>
+      </node>
+      <node id="53933">
+        <label>cctype</label>
+      </node>
+      <node id="53956">
+        <label>unordered_map</label>
+      </node>
+      <node id="53935">
+        <label>climits</label>
+      </node>
+      <node id="53983">
+        <label>mutex</label>
+      </node>
+      <node id="53979">
+        <label>chrono</label>
+      </node>
+      <node id="53987">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="53930">
+        <label>/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp</label>
+        <link refid="quic__svd_8hpp"/>
+        <childnode refid="53931" relation="include">
+        </childnode>
+        <childnode refid="53988" relation="include">
+        </childnode>
+      </node>
+      <node id="53985">
+        <label>thread</label>
+      </node>
+      <node id="53973">
+        <label>type_traits</label>
+      </node>
+      <node id="53949">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="53943">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="53967">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="53945" relation="include">
+        </childnode>
+        <childnode refid="53946" relation="include">
+        </childnode>
+        <childnode refid="53947" relation="include">
+        </childnode>
+        <childnode refid="53948" relation="include">
+        </childnode>
+        <childnode refid="53968" relation="include">
+        </childnode>
+      </node>
+      <node id="53988">
+        <label>mlpack/core/tree/cosine_tree/cosine_tree.hpp</label>
+        <link refid="cosine__tree_8hpp"/>
+        <childnode refid="53931" relation="include">
+        </childnode>
+        <childnode refid="53989" relation="include">
+        </childnode>
+      </node>
+      <node id="53939">
+        <label>cstring</label>
+      </node>
+      <node id="53958">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="53947">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="53991">
+        <label>/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp</label>
+        <link refid="quic__svd__method_8hpp"/>
+      </node>
+      <node id="53990">
+        <label>/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp</label>
+        <link refid="quic__svd_8hpp"/>
+        <childnode refid="53991" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1svd_1_1QUIC__SVD" prot="public">mlpack::svd::QUIC_SVD</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1svd">mlpack::svd</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Siddharth Agrawal</para></simplesect>
+An implementation of QUIC-SVD.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_QUIC_SVD_QUIC_SVD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="cosine__tree_8hpp" kindref="compound">mlpack/core/tree/cosine_tree/cosine_tree.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">svd<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1svd_1_1QUIC__SVD" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1svd_1_1QUIC__SVD" kindref="compound">QUIC_SVD</ref></highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1svd_1_1QUIC__SVD_1afc9e4cc0d239c3577ed2bdfaf8015c30" kindref="member">QUIC_SVD</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>u,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>v,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>sigma,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>epsilon<sp/>=<sp/>0.03,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delta<sp/>=<sp/>0.1);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1svd_1_1QUIC__SVD_1a07a627ca0943a4fbd483466d89b0c8e5" kindref="member">ExtractSVD</ref>(arma::mat&amp;<sp/>u,<sp/>arma::mat&amp;<sp/>v,<sp/>arma::mat&amp;<sp/>sigma);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>arma::mat<sp/>basis;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>svd</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/quic_svd.hpp"/>
+  </compounddef>
+</doxygen>

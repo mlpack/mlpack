@@ -1,0 +1,152 @@
+\section{Rectifier\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1RectifierFunction}\index{Rectifier\+Function@{Rectifier\+Function}}
+
+
+The rectifier function, defined by.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the rectifier function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Type \&y, Output\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the rectifier function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the rectifier function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\static void \textbf{ Fn} (const arma\+::\+Mat$<$ eT $>$ \&x, arma\+::\+Mat$<$ eT $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Computes the rectifier function using a dense matrix as input. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\static void \textbf{ Fn} (const arma\+::\+Cube$<$ eT $>$ \&x, arma\+::\+Cube$<$ eT $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Computes the rectifier function using a 3rd-\/order tensor as input. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The rectifier function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \max(0, x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*} 
+
+Definition at line 45 of file rectifier\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1RectifierFunction_acd77fae79f7ba1f4b9a21e07a261e537}} 
+\index{mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivative of the rectifier function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 91 of file rectifier\+\_\+function.\+hpp.
+
+
+
+Referenced by Rectifier\+Function\+::\+Deriv().
+
+\mbox{\label{classmlpack_1_1ann_1_1RectifierFunction_ac7573a8739be4400959956c5cc42d19b}} 
+\index{mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{y,  }\item[{Output\+Type \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the rectifier function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 103 of file rectifier\+\_\+function.\+hpp.
+
+
+
+References Rectifier\+Function\+::\+Deriv().
+
+\mbox{\label{classmlpack_1_1ann_1_1RectifierFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the rectifier function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 54 of file rectifier\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1RectifierFunction_ab98eb0966f8d770ad8ce5eb422cc41c0}} 
+\index{mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{x,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the rectifier function using a dense matrix as input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 66 of file rectifier\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1RectifierFunction_a6e5b128d616e05849ca1fc1833f7d569}} 
+\index{mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Rectifier\+Function@{mlpack\+::ann\+::\+Rectifier\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{x,  }\item[{arma\+::\+Cube$<$ eT $>$ \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the rectifier function using a 3rd-\/order tensor as input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 79 of file rectifier\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ rectifier\+\_\+function.\+hpp}\end{DoxyCompactItemize}

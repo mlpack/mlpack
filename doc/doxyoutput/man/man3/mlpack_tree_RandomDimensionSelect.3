@@ -1,0 +1,88 @@
+.TH "RandomDimensionSelect" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RandomDimensionSelect \- This dimension selection policy only selects one single random dimension\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRandomDimensionSelect\fP ()"
+.br
+.RI "Construct the \fBRandomDimensionSelect\fP object with the given number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBBegin\fP () const"
+.br
+.RI "Get the first dimension to select from\&. "
+.ti -1c
+.RI "size_t \fBDimensions\fP () const"
+.br
+.RI "Get the number of dimensions\&. "
+.ti -1c
+.RI "size_t & \fBDimensions\fP ()"
+.br
+.RI "Set the number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBEnd\fP () const"
+.br
+.RI "Get the last dimension to select from\&. "
+.ti -1c
+.RI "size_t \fBNext\fP () const"
+.br
+.RI "Get the next (last) dimensions\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This dimension selection policy only selects one single random dimension\&. 
+.PP
+Definition at line 21 of file random_dimension_select\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRandomDimensionSelect\fP ()\fC [inline]\fP"
+
+.PP
+Construct the \fBRandomDimensionSelect\fP object with the given number of dimensions\&. 
+.PP
+Definition at line 28 of file random_dimension_select\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Begin () const\fC [inline]\fP"
+
+.PP
+Get the first dimension to select from\&. 
+.PP
+Definition at line 33 of file random_dimension_select\&.hpp\&.
+.PP
+References mlpack::math::RandInt()\&.
+.SS "size_t Dimensions () const\fC [inline]\fP"
+
+.PP
+Get the number of dimensions\&. 
+.PP
+Definition at line 47 of file random_dimension_select\&.hpp\&.
+.SS "size_t& Dimensions ()\fC [inline]\fP"
+
+.PP
+Set the number of dimensions\&. 
+.PP
+Definition at line 49 of file random_dimension_select\&.hpp\&.
+.SS "size_t End () const\fC [inline]\fP"
+
+.PP
+Get the last dimension to select from\&. 
+.PP
+Definition at line 38 of file random_dimension_select\&.hpp\&.
+.SS "size_t Next () const\fC [inline]\fP"
+
+.PP
+Get the next (last) dimensions\&. We only allow one dimension, so any 'next' dimension is past our bounds\&. 
+.PP
+Definition at line 44 of file random_dimension_select\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

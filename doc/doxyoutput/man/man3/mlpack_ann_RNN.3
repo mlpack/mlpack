@@ -1,0 +1,508 @@
+.TH "RNN< OutputLayerType, InitializationRuleType, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RNN< OutputLayerType, InitializationRuleType, CustomLayers > \- Implementation of a standard recurrent neural network container\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBNetworkType\fP = \fBRNN\fP< OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&. >"
+.br
+.RI "Convenience typedef for the internal model construction\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRNN\fP (const size_t rho, const bool single=false, OutputLayerType outputLayer=OutputLayerType(), InitializationRuleType initializeRule=InitializationRuleType())"
+.br
+.RI "Create the \fBRNN\fP object\&. "
+.ti -1c
+.RI "\fBRNN\fP (const \fBRNN\fP &)"
+.br
+.RI "Copy constructor\&. "
+.ti -1c
+.RI "\fBRNN\fP (\fBRNN\fP &&)"
+.br
+.RI "Move constructor\&. "
+.ti -1c
+.RI "\fB~RNN\fP ()"
+.br
+.RI "Destructor to release allocated memory\&. "
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)"
+.br
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters, const size_t begin, const size_t batchSize, const bool deterministic)"
+.br
+.RI "Evaluate the recurrent neural network with the given parameters\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters, const size_t begin, const size_t batchSize)"
+.br
+.RI "Evaluate the recurrent neural network with the given parameters\&. "
+.ti -1c
+.RI "template<typename GradType > double \fBEvaluateWithGradient\fP (const arma::mat &parameters, const size_t begin, GradType &gradient, const size_t batchSize)"
+.br
+.RI "Evaluate the recurrent neural network with the given parameters\&. "
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, const size_t begin, arma::mat &gradient, const size_t batchSize)"
+.br
+.RI "Evaluate the gradient of the recurrent neural network with the given parameters, and with respect to only one point in the dataset\&. "
+.ti -1c
+.RI "size_t \fBNumFunctions\fP () const"
+.br
+.RI "Return the number of separable functions (the number of predictor points)\&. "
+.ti -1c
+.RI "\fBRNN\fP & \fBoperator=\fP (const \fBRNN\fP &)"
+.br
+.RI "Copy assignment operator\&. "
+.ti -1c
+.RI "\fBRNN\fP & \fBoperator=\fP (\fBRNN\fP &&)"
+.br
+.RI "Move assignment operator\&. "
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const"
+.br
+.RI "Return the initial point for the optimization\&. "
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "Modify the initial point for the optimization\&. "
+.ti -1c
+.RI "void \fBPredict\fP (arma::cube predictors, arma::cube &results, const size_t batchSize=256)"
+.br
+.RI "Predict the responses to a given set of predictors\&. "
+.ti -1c
+.RI "const arma::cube & \fBPredictors\fP () const"
+.br
+.RI "Get the matrix of data points (predictors)\&. "
+.ti -1c
+.RI "arma::cube & \fBPredictors\fP ()"
+.br
+.RI "Modify the matrix of data points (predictors)\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Reset the state of the network\&. "
+.ti -1c
+.RI "void \fBResetParameters\fP ()"
+.br
+.RI "Reset the module information (weights/parameters)\&. "
+.ti -1c
+.RI "const arma::cube & \fBResponses\fP () const"
+.br
+.RI "Get the matrix of responses to the input data points\&. "
+.ti -1c
+.RI "arma::cube & \fBResponses\fP ()"
+.br
+.RI "Modify the matrix of responses to the input data points\&. "
+.ti -1c
+.RI "const size_t & \fBRho\fP () const"
+.br
+.RI "Return the maximum length of backpropagation through time\&. "
+.ti -1c
+.RI "size_t & \fBRho\fP ()"
+.br
+.RI "Modify the maximum length of backpropagation through time\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the model\&. "
+.ti -1c
+.RI "void \fBShuffle\fP ()"
+.br
+.RI "Shuffle the order of function visitation\&. "
+.ti -1c
+.RI "template<typename OptimizerType , typename\&.\&.\&. CallbackTypes> double \fBTrain\fP (arma::cube predictors, arma::cube responses, OptimizerType &optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Train the recurrent neural network on the given input data using the given optimizer\&. "
+.ti -1c
+.RI "template<typename OptimizerType  = ens::StandardSGD, typename\&.\&.\&. CallbackTypes> double \fBTrain\fP (arma::cube predictors, arma::cube responses, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Train the recurrent neural network on the given input data\&. "
+.ti -1c
+.RI "template<typename OptimizerType > std::enable_if< HasMaxIterations< OptimizerType, size_t &(OptimizerType::*)()>::value, void >::type \fBWarnMessageMaxIterations\fP (OptimizerType &optimizer, size_t samples) const"
+.br
+.RI "Check if the optimizer has MaxIterations() parameter, if it does then check if it's value is less than the number of datapoints in the dataset\&. "
+.ti -1c
+.RI "template<typename OptimizerType > std::enable_if< !HasMaxIterations< OptimizerType, size_t &(OptimizerType::*)()>::value, void >::type \fBWarnMessageMaxIterations\fP (OptimizerType &optimizer, size_t samples) const"
+.br
+.RI "Check if the optimizer has MaxIterations() parameter, if it doesn't then simply return from the function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename OutputLayerType = NegativeLogLikelihood<>, typename InitializationRuleType = RandomInitialization, typename\&.\&.\&. CustomLayers>
+.br
+class mlpack::ann::RNN< OutputLayerType, InitializationRuleType, CustomLayers >"
+Implementation of a standard recurrent neural network container\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOutputLayerType\fP The output layer type used to evaluate the network\&. 
+.br
+\fIInitializationRuleType\fP Rule used to initialize the weight matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file rnn\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBNetworkType\fP =  \fBRNN\fP<OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&.>"
+
+.PP
+Convenience typedef for the internal model construction\&. 
+.PP
+Definition at line 51 of file rnn\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRNN\fP (const size_t rho, const bool single = \fCfalse\fP, OutputLayerType outputLayer = \fCOutputLayerType()\fP, InitializationRuleType initializeRule = \fCInitializationRuleType()\fP)"
+
+.PP
+Create the \fBRNN\fP object\&. Optionally, specify which initialize rule and performance function should be used\&.
+.PP
+If you want to pass in a parameter and discard the original parameter object, be sure to use std::move to avoid unnecessary copy\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrho\fP Maximum number of steps to backpropagate through time (BPTT)\&. 
+.br
+\fIsingle\fP Predict only the last element of the input sequence\&. 
+.br
+\fIoutputLayer\fP Output layer used to evaluate the network\&. 
+.br
+\fIinitializeRule\fP Optional instantiated InitializationRule object for initializing the network parameter\&. 
+.RE
+.PP
+
+.SS "\fBRNN\fP (const \fBRNN\fP< OutputLayerType, InitializationRuleType, CustomLayers > &)"
+
+.PP
+Copy constructor\&. 
+.SS "\fBRNN\fP (\fBRNN\fP< OutputLayerType, InitializationRuleType, CustomLayers > &&)"
+
+.PP
+Move constructor\&. 
+.SS "~\fBRNN\fP ()"
+
+.PP
+Destructor to release allocated memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void \fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 284 of file rnn\&.hpp\&.
+.SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
+
+.PP
+Definition at line 291 of file rnn\&.hpp\&.
+.SS "double Evaluate (const arma::mat & parameters, const size_t begin, const size_t batchSize, const bool deterministic)"
+
+.PP
+Evaluate the recurrent neural network with the given parameters\&. This function is usually called by the optimizer to train the model\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix model parameters\&. 
+.br
+\fIbegin\fP Index of the starting point to use for objective function evaluation\&. 
+.br
+\fIbatchSize\fP Number of points to be passed at a time to use for objective function evaluation\&. 
+.br
+\fIdeterministic\fP Whether or not to train or test the model\&. Note some layer act differently in training or testing mode\&. 
+.RE
+.PP
+
+.SS "double Evaluate (const arma::mat & parameters, const size_t begin, const size_t batchSize)"
+
+.PP
+Evaluate the recurrent neural network with the given parameters\&. This function is usually called by the optimizer to train the model\&. This just calls the other overload of \fBEvaluate()\fP with deterministic = true\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix model parameters\&. 
+.br
+\fIbegin\fP Index of the starting point to use for objective function evaluation\&. 
+.br
+\fIbatchSize\fP Number of points to be passed at a time to use for objective function evaluation\&. 
+.RE
+.PP
+
+.SS "double EvaluateWithGradient (const arma::mat & parameters, const size_t begin, GradType & gradient, const size_t batchSize)"
+
+.PP
+Evaluate the recurrent neural network with the given parameters\&. This function is usually called by the optimizer to train the model\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix model parameters\&. 
+.br
+\fIbegin\fP Index of the starting point to use for objective function evaluation\&. 
+.br
+\fIgradient\fP Matrix to output gradient into\&. 
+.br
+\fIbatchSize\fP Number of points to be passed at a time to use for objective function evaluation\&. 
+.RE
+.PP
+
+.SS "void Gradient (const arma::mat & parameters, const size_t begin, arma::mat & gradient, const size_t batchSize)"
+
+.PP
+Evaluate the gradient of the recurrent neural network with the given parameters, and with respect to only one point in the dataset\&. This is useful for optimizers such as SGD, which require a separable objective function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix of the model parameters to be optimized\&. 
+.br
+\fIbegin\fP Index of the starting point to use for objective function gradient evaluation\&. 
+.br
+\fIgradient\fP Matrix to output gradient into\&. 
+.br
+\fIbatchSize\fP Number of points to be processed as a batch for objective function gradient evaluation\&. 
+.RE
+.PP
+
+.PP
+Referenced by RNN< OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&. >::Predictors()\&.
+.SS "size_t NumFunctions () const\fC [inline]\fP"
+
+.PP
+Return the number of separable functions (the number of predictor points)\&. 
+.PP
+Definition at line 294 of file rnn\&.hpp\&.
+.SS "\fBRNN\fP& operator= (const \fBRNN\fP< OutputLayerType, InitializationRuleType, CustomLayers > &)"
+
+.PP
+Copy assignment operator\&. 
+.SS "\fBRNN\fP& operator= (\fBRNN\fP< OutputLayerType, InitializationRuleType, CustomLayers > &&)"
+
+.PP
+Move assignment operator\&. 
+.SS "const arma::mat& Parameters () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 297 of file rnn\&.hpp\&.
+.SS "arma::mat& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the initial point for the optimization\&. 
+.PP
+Definition at line 299 of file rnn\&.hpp\&.
+.SS "void Predict (arma::cube predictors, arma::cube & results, const size_t batchSize = \fC256\fP)"
+
+.PP
+Predict the responses to a given set of predictors\&. The responses will reflect the output of the given output layer as returned by the output layer function\&.
+.PP
+If you want to pass in a parameter and discard the original parameter object, be sure to use std::move to avoid unnecessary copy\&.
+.PP
+The format of the data should be as follows:
+.IP "\(bu" 2
+each slice should correspond to a time step
+.IP "\(bu" 2
+each column should correspond to a data point
+.IP "\(bu" 2
+each row should correspond to a dimension So, e\&.g\&., predictors(i, j, k) is the i'th dimension of the j'th data point at time slice k\&. The responses will be in the same format\&.
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input predictors\&. 
+.br
+\fIresults\fP Matrix to put output predictions of responses into\&. 
+.br
+\fIbatchSize\fP Number of points to predict at once\&. 
+.RE
+.PP
+
+.SS "const arma::cube& Predictors () const\fC [inline]\fP"
+
+.PP
+Get the matrix of data points (predictors)\&. 
+.PP
+Definition at line 312 of file rnn\&.hpp\&.
+.SS "arma::cube& Predictors ()\fC [inline]\fP"
+
+.PP
+Modify the matrix of data points (predictors)\&. 
+.PP
+Definition at line 314 of file rnn\&.hpp\&.
+.SS "void Reset ()"
+
+.PP
+Reset the state of the network\&. This ensures that all internally-held gradients are set to 0, all memory cells are reset, and the parameters matrix is the right size\&. 
+.PP
+Referenced by RNN< OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&. >::Predictors()\&.
+.SS "void ResetParameters ()"
+
+.PP
+Reset the module information (weights/parameters)\&. 
+.PP
+Referenced by RNN< OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&. >::Predictors()\&.
+.SS "const arma::cube& Responses () const\fC [inline]\fP"
+
+.PP
+Get the matrix of responses to the input data points\&. 
+.PP
+Definition at line 307 of file rnn\&.hpp\&.
+.SS "arma::cube& Responses ()\fC [inline]\fP"
+
+.PP
+Modify the matrix of responses to the input data points\&. 
+.PP
+Definition at line 309 of file rnn\&.hpp\&.
+.SS "const size_t& Rho () const\fC [inline]\fP"
+
+.PP
+Return the maximum length of backpropagation through time\&. 
+.PP
+Definition at line 302 of file rnn\&.hpp\&.
+.SS "size_t& Rho ()\fC [inline]\fP"
+
+.PP
+Modify the maximum length of backpropagation through time\&. 
+.PP
+Definition at line 304 of file rnn\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the model\&. 
+.PP
+Referenced by RNN< OutputLayerType, InitializationRuleType, CustomLayers\&.\&.\&. >::Predictors()\&.
+.SS "void Shuffle ()"
+
+.PP
+Shuffle the order of function visitation\&. This may be called by the optimizer\&. 
+.SS "double Train (arma::cube predictors, arma::cube responses, OptimizerType & optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Train the recurrent neural network on the given input data using the given optimizer\&. This will use the existing model parameters as a starting point for the optimization\&. If this is not what you want, then you should access the parameters vector directly with \fBParameters()\fP and modify it as desired\&.
+.PP
+If you want to pass in a parameter and discard the original parameter object, be sure to use std::move to avoid unnecessary copy\&.
+.PP
+The format of the data should be as follows:
+.IP "\(bu" 2
+each slice should correspond to a time step
+.IP "\(bu" 2
+each column should correspond to a data point
+.IP "\(bu" 2
+each row should correspond to a dimension So, e\&.g\&., predictors(i, j, k) is the i'th dimension of the j'th data point at time slice k\&.
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.br
+\fICallbackTypes\fP Types of Callback Functions\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input training variables\&. 
+.br
+\fIresponses\fP Outputs results from input training variables\&. 
+.br
+\fIoptimizer\fP Instantiated optimizer used to train the model\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The final objective of the trained model (NaN or Inf on error)\&. 
+.RE
+.PP
+
+.SS "double Train (arma::cube predictors, arma::cube responses, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Train the recurrent neural network on the given input data\&. By default, the SGD optimization algorithm is used, but others can be specified (such as ens::RMSprop)\&.
+.PP
+This will use the existing model parameters as a starting point for the optimization\&. If this is not what you want, then you should access the parameters vector directly with \fBParameters()\fP and modify it as desired\&.
+.PP
+If you want to pass in a parameter and discard the original parameter object, be sure to use std::move to avoid unnecessary copy\&.
+.PP
+The format of the data should be as follows:
+.IP "\(bu" 2
+each slice should correspond to a time step
+.IP "\(bu" 2
+each column should correspond to a data point
+.IP "\(bu" 2
+each row should correspond to a dimension So, e\&.g\&., predictors(i, j, k) is the i'th dimension of the j'th data point at time slice k\&.
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.br
+\fICallbackTypes\fP Types of Callback Functions\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input training variables\&. 
+.br
+\fIresponses\fP Outputs results from input training variables\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The final objective of the trained model (NaN or Inf on error)\&. 
+.RE
+.PP
+
+.SS "std::enable_if< HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>::value, void>::type WarnMessageMaxIterations (OptimizerType & optimizer, size_t samples) const"
+
+.PP
+Check if the optimizer has MaxIterations() parameter, if it does then check if it's value is less than the number of datapoints in the dataset\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptimizer\fP optimizer used in the training process\&. 
+.br
+\fIsamples\fP Number of datapoints in the dataset\&. 
+.RE
+.PP
+
+.SS "std::enable_if< !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>::value, void>::type WarnMessageMaxIterations (OptimizerType & optimizer, size_t samples) const"
+
+.PP
+Check if the optimizer has MaxIterations() parameter, if it doesn't then simply return from the function\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptimizer\fP optimizer used in the training process\&. 
+.br
+\fIsamples\fP Number of datapoints in the dataset\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

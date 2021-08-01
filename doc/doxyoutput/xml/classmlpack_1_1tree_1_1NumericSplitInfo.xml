@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1NumericSplitInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::NumericSplitInfo</compoundname>
+    <includes refid="numeric__split__info_8hpp" local="no">numeric_split_info.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ObservationType</type>
+        <defval>double</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1NumericSplitInfo_1a1b81ed7fedf3200128438d0083d92ef1" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; ObservationType &gt;</type>
+        <definition>arma::Col&lt;ObservationType&gt; splitPoints</definition>
+        <argsstring></argsstring>
+        <name>splitPoints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1NumericSplitInfo_1a892617978e7e3c7202df113e230f7c7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NumericSplitInfo</definition>
+        <argsstring>()</argsstring>
+        <name>NumericSplitInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1NumericSplitInfo_1af296632ae595098a0a5eaa6d96385e1c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NumericSplitInfo</definition>
+        <argsstring>(const arma::Col&lt; ObservationType &gt; &amp;splitPoints)</argsstring>
+        <name>NumericSplitInfo</name>
+        <param>
+          <type>const arma::Col&lt; ObservationType &gt; &amp;</type>
+          <declname>splitPoints</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="25" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1NumericSplitInfo_1aa802a4b4fde3489025146c60ec5b60d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t CalculateDirection</definition>
+        <argsstring>(const eT &amp;value) const</argsstring>
+        <name>CalculateDirection</name>
+        <param>
+          <type>const eT &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="29" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1NumericSplitInfo_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the split (save/load the split points). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="41" bodyend="44"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/numeric_split_info.hpp" bodystart="21" bodyend="48"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1NumericSplitInfo_1aa802a4b4fde3489025146c60ec5b60d3" prot="public" virt="non-virtual"><scope>mlpack::tree::NumericSplitInfo</scope><name>CalculateDirection</name></member>
+      <member refid="classmlpack_1_1tree_1_1NumericSplitInfo_1a892617978e7e3c7202df113e230f7c7e" prot="public" virt="non-virtual"><scope>mlpack::tree::NumericSplitInfo</scope><name>NumericSplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1NumericSplitInfo_1af296632ae595098a0a5eaa6d96385e1c" prot="public" virt="non-virtual"><scope>mlpack::tree::NumericSplitInfo</scope><name>NumericSplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1NumericSplitInfo_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::NumericSplitInfo</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1NumericSplitInfo_1a1b81ed7fedf3200128438d0083d92ef1" prot="private" virt="non-virtual"><scope>mlpack::tree::NumericSplitInfo</scope><name>splitPoints</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

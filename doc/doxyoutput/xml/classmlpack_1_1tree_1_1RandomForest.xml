@@ -1,0 +1,1594 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1RandomForest" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::RandomForest</compoundname>
+    <includes refid="random__forest_8hpp" local="no">random_forest.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename FitnessFunction</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1GiniGain" kindref="compound">GiniGain</ref></defval>
+      </param>
+      <param>
+        <type>typename DimensionSelectionType</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect" kindref="compound">MultipleRandomDimensionSelect</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>NumericSplitType</declname>
+        <defname>NumericSplitType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit" kindref="compound">BestBinaryNumericSplit</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>CategoricalSplitType</declname>
+        <defname>CategoricalSplitType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1AllCategoricalSplit" kindref="compound">AllCategoricalSplit</ref></defval>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>UseBootstrap</declname>
+        <defname>UseBootstrap</defname>
+        <defval>true</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1RandomForest_1a92cfb3308be3abab1f6016c7adb61927" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref>&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType &gt;</type>
+        <definition>typedef DecisionTree&lt;FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType&gt; DecisionTreeType</definition>
+        <argsstring></argsstring>
+        <name>DecisionTreeType</name>
+        <briefdescription>
+<para>Allow access to the underlying decision tree type. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RandomForest_1a23ea9c3ad116e7fc37f00c9b57e79911" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double avgGain</definition>
+        <argsstring></argsstring>
+        <name>avgGain</name>
+        <briefdescription>
+<para>The average gain of the forest. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="410" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RandomForest_1a1e82cb063b44886245e5d8d724f9802a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1tree_1_1RandomForest_1a92cfb3308be3abab1f6016c7adb61927" kindref="member">DecisionTreeType</ref> &gt;</type>
+        <definition>std::vector&lt;DecisionTreeType&gt; trees</definition>
+        <argsstring></argsstring>
+        <name>trees</name>
+        <briefdescription>
+<para>The trees in the forest. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="407" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="407" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a5b3e9a68306078538430d202c765511f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RandomForest</definition>
+        <argsstring>()</argsstring>
+        <name>RandomForest</name>
+        <briefdescription>
+<para>Construct the random forest without any training or specifying the number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>Predict() will throw an exception until <ref refid="classmlpack_1_1tree_1_1RandomForest_1aeccf8af588e537075304ad8d27ebd2e0" kindref="member">Train()</ref> is called. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="55" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1afce52e00bdecce34f8faaea718ac3914" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RandomForest</definition>
+        <argsstring>(const MatType &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>RandomForest</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a random forest, training on the given labeled training data with the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1af1e8d1cbbfcc5b9beefffba9df054d16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RandomForest</definition>
+        <argsstring>(const MatType &amp;dataset, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>RandomForest</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a random forest, training on the given labeled training data with the given dataset info and the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions. This constructor can be used to train on categorical data.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension info for the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="103" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1ac98132e5bf0ae00c8d5256a17f703a9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RandomForest</definition>
+        <argsstring>(const MatType &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>RandomForest</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a random forest, training on the given weighted labeled training data with the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize parameter is given to each individual decision tree during tree building.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights (importances) of each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="130" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1ab5bde168f40055031465da736523863c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RandomForest</definition>
+        <argsstring>(const MatType &amp;dataset, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>RandomForest</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a random forest, training on the given weighted labeled training data with the given dataset info and the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions. This can be used for categorical weighted training.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension info for the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights (importances) of each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="161" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t Classify</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Predict the class of the given point. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the random forest has not been trained, this will throw an exception.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to be classified. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="315" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1abddb69ee5b97027cd4eebd398bf39ac6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const VecType &amp;point, size_t &amp;prediction, arma::vec &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Predict the class of the given point and return the predicted class probabilities for each class. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the random forest has not been trained, this will throw an exception.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to be classified. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size_t to store predicted class in. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output vector of class probabilities. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="327" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1abd3c3812715d2e249e47476782d8e95e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Predict the classes of each point in the given dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the random forest has not been trained, this will throw an exception.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to be classified. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output predictions for each point in the dataset. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="339" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a255d0a8b26a14cfd6a1f745568b83017" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions, arma::mat &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Predict the classes of each point in the given dataset, also returning the predicted class probabilities for each point. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the random forest has not been trained, this will throw an exception.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to be classified. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output predictions for each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix of class probabilities for each point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="352" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1ac110b5de4a11acaeb25d011dcc9e23fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumTrees</definition>
+        <argsstring>() const</argsstring>
+        <name>NumTrees</name>
+        <briefdescription>
+<para>Get the number of trees in the forest. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="362" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="362" bodyend="362"/>
+        <references refid="classmlpack_1_1tree_1_1RandomForest_1a65cba07328997659bec80b9879b15a51">RandomForest&lt; FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap &gt;::serialize</references>
+        <references refid="classmlpack_1_1tree_1_1RandomForest_1aeccf8af588e537075304ad8d27ebd2e0">RandomForest&lt; FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap &gt;::Train</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the random forest. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="368" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1RandomForest_1ac110b5de4a11acaeb25d011dcc9e23fe" compoundref="random__forest_8hpp" startline="362" endline="362">RandomForest&lt; FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap &gt;::NumTrees</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1aeccf8af588e537075304ad8d27ebd2e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>warmStart</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the random forest on the given labeled training data with the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>warmStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When set to <computeroutput>true</computeroutput>, it adds <computeroutput>numTrees</computeroutput> new trees to the existing random forest otherwise a new forest is trained from scratch. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The average entropy of all the decision trees trained under forest. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="193" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1RandomForest_1ac110b5de4a11acaeb25d011dcc9e23fe" compoundref="random__forest_8hpp" startline="362" endline="362">RandomForest&lt; FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap &gt;::NumTrees</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a5382754e06b17ea6fae7dc965620f680" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>warmStart</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the random forest on the given labeled training data with the given dataset info and the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize parameter is given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions. This overload can be used to train on categorical data.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension info for the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>warmStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When set to <computeroutput>true</computeroutput>, it adds <computeroutput>numTrees</computeroutput> new trees to the existing random forest else a new forest is trained from scratch. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The average entropy of all the decision trees trained under forest. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="227" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a7cc97baee4cad9ae6f5b782e5a3d2c56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>warmStart</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the random forest on the given weighted labeled training data with the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights (importances) of each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>warmStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When set to <computeroutput>true</computeroutput>, it adds <computeroutput>numTrees</computeroutput> new trees to the existing random forest else a new forest is trained from scratch. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The average entropy of all the decision trees trained under forest. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="260" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a2ebb32707ab7f04c66431623da429030" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>warmStart</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the random forest on the given weighted labeled training data with the given dataset info and the given number of trees. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions. This overload can be used for categorical weighted training.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension info for the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights (importances) of each point in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each tree&apos;s leaf nodes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>warmStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When set to <computeroutput>true</computeroutput>, it adds <computeroutput>numTrees</computeroutput> new trees to the existing random forest else a new forest is trained from scratch. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The average entropy of all the decision trees trained under forest. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="295" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1a1067c0af57c2a483b1d6db5364d03b2a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1tree_1_1RandomForest_1a92cfb3308be3abab1f6016c7adb61927" kindref="member">DecisionTreeType</ref> &amp;</type>
+        <definition>const DecisionTreeType&amp; Tree</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Tree</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Access a tree in the forest. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="357" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="357" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1ae6046d73d87a67c78dcca6fc0450d53e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RandomForest_1a92cfb3308be3abab1f6016c7adb61927" kindref="member">DecisionTreeType</ref> &amp;</type>
+        <definition>DecisionTreeType&amp; Tree</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>Tree</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify a tree in the forest (be careful!). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="359" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="359" bodyend="359"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RandomForest_1ab3180c1c393bb6cdbfe06b22c0ce9ce2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>UseWeights</declname>
+            <defname>UseWeights</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>UseDatasetInfo</declname>
+            <defname>UseDatasetInfo</defname>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const arma::rowvec &amp;weights, const size_t numTrees, const size_t minimumLeafSize, const double minimumGainSplit, const size_t maximumDepth, DimensionSelectionType &amp;dimensionSelector, const bool warmStart=false)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTrees</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+        </param>
+        <param>
+          <type>DimensionSelectionType &amp;</type>
+          <declname>dimensionSelector</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>warmStart</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Perform the training of the decision tree. </para>        </briefdescription>
+        <detaileddescription>
+<para>The template bool parameters control whether or not the datasetInfo or weights arguments should be ignored.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimension information for the dataset (may be ignored). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights for each point in the dataset (may be ignored). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTrees</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trees in the forest. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for splitting a decision tree node. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>warmStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When set to <computeroutput>true</computeroutput>, it fits new trees and add them to the previous forest else a new forest is trained from scratch. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>UseWeights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to use the weights parameter. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>UseDatasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to use the datasetInfo parameter. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of data matrix (i.e. arma::mat). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The average entropy of all the decision trees trained under forest. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="394" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1tree_1_1RandomForest" kindref="compound">RandomForest</ref> class provides an implementation of random forests, described in Breiman&apos;s seminal paper: </para>    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@article{breiman2001random,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Random<sp/>forests},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Breiman,<sp/>Leo},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal={Machine<sp/>Learning},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume={45},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>number={1},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={5--32},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2001},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>publisher={Springer}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp" bodystart="44" bodyend="411"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a23ea9c3ad116e7fc37f00c9b57e79911" prot="private" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>avgGain</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1aa610310b354b7badd88041ca07883569" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1abddb69ee5b97027cd4eebd398bf39ac6" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1abd3c3812715d2e249e47476782d8e95e" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a255d0a8b26a14cfd6a1f745568b83017" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a92cfb3308be3abab1f6016c7adb61927" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>DecisionTreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1ac110b5de4a11acaeb25d011dcc9e23fe" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>NumTrees</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a5b3e9a68306078538430d202c765511f" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>RandomForest</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1afce52e00bdecce34f8faaea718ac3914" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>RandomForest</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1af1e8d1cbbfcc5b9beefffba9df054d16" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>RandomForest</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1ac98132e5bf0ae00c8d5256a17f703a9b" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>RandomForest</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1ab5bde168f40055031465da736523863c" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>RandomForest</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1aeccf8af588e537075304ad8d27ebd2e0" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a5382754e06b17ea6fae7dc965620f680" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a7cc97baee4cad9ae6f5b782e5a3d2c56" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a2ebb32707ab7f04c66431623da429030" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1ab3180c1c393bb6cdbfe06b22c0ce9ce2" prot="private" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a1067c0af57c2a483b1d6db5364d03b2a" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Tree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1ae6046d73d87a67c78dcca6fc0450d53e" prot="public" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>Tree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RandomForest_1a1e82cb063b44886245e5d8d724f9802a" prot="private" virt="non-virtual"><scope>mlpack::tree::RandomForest</scope><name>trees</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

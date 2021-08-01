@@ -1,0 +1,157 @@
+.TH "SoftplusFunction" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SoftplusFunction \- The softplus function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double y)"
+.br
+.RI "Computes the first derivative of the softplus function\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > static void \fBDeriv\fP (const InputType &y, OutputType &x)"
+.br
+.RI "Computes the first derivatives of the softplus function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the softplus function\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > static void \fBFn\fP (const InputType &x, OutputType &y)"
+.br
+.RI "Computes the softplus function\&. "
+.ti -1c
+.RI "static double \fBInv\fP (const double y)"
+.br
+.RI "Computes the inverse of the softplus function\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > static void \fBInv\fP (const InputType &y, OutputType &x)"
+.br
+.RI "Computes the inverse of the softplus function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The softplus function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \ln(1 + e^{x}) \\ f'(x) &=& \frac{1}{1 + e^{-x}} \\ f^{-1}(y) &=& \ln(e^{y} - 1) \end{eqnarray*} 
+.PP
+Definition at line 43 of file softplus_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file softplus_function\&.hpp\&.
+.SS "static void Deriv (const InputType & y, OutputType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 93 of file softplus_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file softplus_function\&.hpp\&.
+.PP
+Referenced by SoftplusFunction::Fn()\&.
+.SS "static void Fn (const InputType & x, OutputType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file softplus_function\&.hpp\&.
+.PP
+References SoftplusFunction::Fn()\&.
+.SS "static double Inv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the inverse of the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f^{-1}(y) 
+.RE
+.PP
+
+.PP
+Definition at line 104 of file softplus_function\&.hpp\&.
+.PP
+Referenced by SoftplusFunction::Inv()\&.
+.SS "static void Inv (const InputType & y, OutputType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the inverse of the softplus function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting inverse of the input data\&. 
+.RE
+.PP
+
+.PP
+Definition at line 119 of file softplus_function\&.hpp\&.
+.PP
+References SoftplusFunction::Inv()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

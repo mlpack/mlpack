@@ -1,0 +1,77 @@
+\section{Pointer\+Variant\+Wrapper$<$ Variant\+Types $>$ Class Template Reference}
+\label{classcereal_1_1PointerVariantWrapper}\index{Pointer\+Variant\+Wrapper$<$ Variant\+Types $>$@{Pointer\+Variant\+Wrapper$<$ Variant\+Types $>$}}
+
+
+The objective of this class is to create a wrapper for boost\+::variant.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Pointer\+Variant\+Wrapper} (boost\+::variant$<$ Variant\+Types... $>$ \&pointer\+Var)
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \textbf{ load} (Archive \&ar)
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \textbf{ save} (Archive \&ar) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename... Variant\+Types$>$\newline
+class cereal\+::\+Pointer\+Variant\+Wrapper$<$ Variant\+Types $>$}
+
+The objective of this class is to create a wrapper for boost\+::variant. 
+
+Cereal supports the serialization of boost\+::variant, but we need to serialize it if it holds a raw pointers. This class depeds on the \doxyref{Pointer\+Wrapper}{p.}{classcereal_1_1PointerWrapper} we have already created in which it is used to serialize each variant independently 
+
+Definition at line 31 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classcereal_1_1PointerVariantWrapper_adc3bf228015bb20527a4716fe2139464}} 
+\index{cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}!Pointer\+Variant\+Wrapper@{Pointer\+Variant\+Wrapper}}
+\index{Pointer\+Variant\+Wrapper@{Pointer\+Variant\+Wrapper}!cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}}
+\subsubsection{Pointer\+Variant\+Wrapper()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Variant\+Wrapper} (\begin{DoxyParamCaption}\item[{boost\+::variant$<$ Variant\+Types... $>$ \&}]{pointer\+Var }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 110 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classcereal_1_1PointerVariantWrapper_a27f4b372d3515f81ee63062814c2bbe9}} 
+\index{cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}!load@{load}}
+\index{load@{load}!cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}}
+\subsubsection{load()}
+{\footnotesize\ttfamily void load (\begin{DoxyParamCaption}\item[{Archive \&}]{ar }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 125 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+References save\+\_\+visitor$<$ Archive $>$\+::ar.
+
+\mbox{\label{classcereal_1_1PointerVariantWrapper_ad719b5a03421363e973983b4e088ecb3}} 
+\index{cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}!save@{save}}
+\index{save@{save}!cereal\+::\+Pointer\+Variant\+Wrapper@{cereal\+::\+Pointer\+Variant\+Wrapper}}
+\subsubsection{save()}
+{\footnotesize\ttfamily void save (\begin{DoxyParamCaption}\item[{Archive \&}]{ar }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 115 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+References save\+\_\+visitor$<$ Archive $>$\+::ar.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cereal/\textbf{ pointer\+\_\+variant\+\_\+wrapper.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="sumtree_8hpp" kind="file" language="C++">
+    <compoundname>sumtree.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="prioritized__replay_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/prioritized_replay.hpp</includedby>
+    <incdepgraph>
+      <node id="57333">
+        <label>list</label>
+      </node>
+      <node id="57330">
+        <label>atomic</label>
+      </node>
+      <node id="57320">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="57296">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="57332">
+        <label>iomanip</label>
+      </node>
+      <node id="57305">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="57306" relation="include">
+        </childnode>
+        <childnode refid="57308" relation="include">
+        </childnode>
+      </node>
+      <node id="57288">
+        <label>cstdint</label>
+      </node>
+      <node id="57297">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="57304">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="57327">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="57317">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="57284">
+        <label>cmath</label>
+      </node>
+      <node id="57303">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="57292">
+        <label>stdexcept</label>
+      </node>
+      <node id="57312">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="57297" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57298" relation="include">
+        </childnode>
+      </node>
+      <node id="57336">
+        <label>string</label>
+      </node>
+      <node id="57324">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="57325" relation="include">
+        </childnode>
+        <childnode refid="57291" relation="include">
+        </childnode>
+      </node>
+      <node id="57334">
+        <label>map</label>
+      </node>
+      <node id="57286">
+        <label>cfloat</label>
+      </node>
+      <node id="57316">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="57338">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="57300">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="57323">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="57324" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57307" relation="include">
+        </childnode>
+        <childnode refid="57325" relation="include">
+        </childnode>
+      </node>
+      <node id="57313">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="57311">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="57297" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57298" relation="include">
+        </childnode>
+      </node>
+      <node id="57314">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="57297" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57298" relation="include">
+        </childnode>
+      </node>
+      <node id="57302">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="57322">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="57298" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57310" relation="include">
+        </childnode>
+        <childnode refid="57319" relation="include">
+        </childnode>
+      </node>
+      <node id="57326">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="57327" relation="include">
+        </childnode>
+      </node>
+      <node id="57328">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="57283">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="57284" relation="include">
+        </childnode>
+        <childnode refid="57285" relation="include">
+        </childnode>
+        <childnode refid="57286" relation="include">
+        </childnode>
+        <childnode refid="57287" relation="include">
+        </childnode>
+        <childnode refid="57288" relation="include">
+        </childnode>
+        <childnode refid="57289" relation="include">
+        </childnode>
+        <childnode refid="57290" relation="include">
+        </childnode>
+        <childnode refid="57291" relation="include">
+        </childnode>
+        <childnode refid="57292" relation="include">
+        </childnode>
+        <childnode refid="57293" relation="include">
+        </childnode>
+        <childnode refid="57294" relation="include">
+        </childnode>
+        <childnode refid="57295" relation="include">
+        </childnode>
+        <childnode refid="57296" relation="include">
+        </childnode>
+        <childnode refid="57297" relation="include">
+        </childnode>
+        <childnode refid="57298" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57301" relation="include">
+        </childnode>
+        <childnode refid="57302" relation="include">
+        </childnode>
+        <childnode refid="57303" relation="include">
+        </childnode>
+        <childnode refid="57304" relation="include">
+        </childnode>
+        <childnode refid="57305" relation="include">
+        </childnode>
+        <childnode refid="57309" relation="include">
+        </childnode>
+        <childnode refid="57310" relation="include">
+        </childnode>
+        <childnode refid="57311" relation="include">
+        </childnode>
+        <childnode refid="57312" relation="include">
+        </childnode>
+        <childnode refid="57313" relation="include">
+        </childnode>
+        <childnode refid="57314" relation="include">
+        </childnode>
+        <childnode refid="57315" relation="include">
+        </childnode>
+        <childnode refid="57321" relation="include">
+        </childnode>
+        <childnode refid="57322" relation="include">
+        </childnode>
+        <childnode refid="57319" relation="include">
+        </childnode>
+        <childnode refid="57323" relation="include">
+        </childnode>
+        <childnode refid="57326" relation="include">
+        </childnode>
+        <childnode refid="57328" relation="include">
+        </childnode>
+        <childnode refid="57329" relation="include">
+        </childnode>
+        <childnode refid="57338" relation="include">
+        </childnode>
+        <childnode refid="57339" relation="include">
+        </childnode>
+      </node>
+      <node id="57289">
+        <label>cstdio</label>
+      </node>
+      <node id="57282">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp</label>
+        <link refid="sumtree_8hpp"/>
+        <childnode refid="57283" relation="include">
+        </childnode>
+      </node>
+      <node id="57293">
+        <label>tuple</label>
+      </node>
+      <node id="57298">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="57315">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="57298" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57302" relation="include">
+        </childnode>
+        <childnode refid="57316" relation="include">
+        </childnode>
+        <childnode refid="57317" relation="include">
+        </childnode>
+        <childnode refid="57318" relation="include">
+        </childnode>
+        <childnode refid="57319" relation="include">
+        </childnode>
+      </node>
+      <node id="57294">
+        <label>utility</label>
+      </node>
+      <node id="57318">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="57309">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="57306">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="57307" relation="include">
+        </childnode>
+      </node>
+      <node id="57329">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="57330" relation="include">
+        </childnode>
+        <childnode refid="57331" relation="include">
+        </childnode>
+        <childnode refid="57332" relation="include">
+        </childnode>
+        <childnode refid="57333" relation="include">
+        </childnode>
+        <childnode refid="57334" relation="include">
+        </childnode>
+        <childnode refid="57335" relation="include">
+        </childnode>
+        <childnode refid="57336" relation="include">
+        </childnode>
+        <childnode refid="57337" relation="include">
+        </childnode>
+      </node>
+      <node id="57307">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="57321">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="57319" relation="include">
+        </childnode>
+        <childnode refid="57315" relation="include">
+        </childnode>
+        <childnode refid="57322" relation="include">
+        </childnode>
+      </node>
+      <node id="57290">
+        <label>cstdlib</label>
+      </node>
+      <node id="57285">
+        <label>cctype</label>
+      </node>
+      <node id="57308">
+        <label>unordered_map</label>
+      </node>
+      <node id="57287">
+        <label>climits</label>
+      </node>
+      <node id="57335">
+        <label>mutex</label>
+      </node>
+      <node id="57331">
+        <label>chrono</label>
+      </node>
+      <node id="57339">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="57337">
+        <label>thread</label>
+      </node>
+      <node id="57325">
+        <label>type_traits</label>
+      </node>
+      <node id="57301">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="57295">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="57319">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="57297" relation="include">
+        </childnode>
+        <childnode refid="57298" relation="include">
+        </childnode>
+        <childnode refid="57299" relation="include">
+        </childnode>
+        <childnode refid="57300" relation="include">
+        </childnode>
+        <childnode refid="57320" relation="include">
+        </childnode>
+      </node>
+      <node id="57291">
+        <label>cstring</label>
+      </node>
+      <node id="57310">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="57299">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="57342">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp</label>
+        <link refid="q__learning_8hpp"/>
+      </node>
+      <node id="57340">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp</label>
+        <link refid="sumtree_8hpp"/>
+        <childnode refid="57341" relation="include">
+        </childnode>
+      </node>
+      <node id="57341">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/prioritized_replay.hpp</label>
+        <link refid="prioritized__replay_8hpp"/>
+        <childnode refid="57342" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1SumTree" prot="public">mlpack::rl::SumTree</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Xiaohong</para></simplesect>
+This file is an implementation of sumtree. Based on: <ulink url="https://github.com/openai/baselines/blob/master/baselines/common/segment_tree.py">https://github.com/openai/baselines/blob/master/baselines/common/segment_tree.py</ulink></para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_SUMTREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_SUMTREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1rl_1_1SumTree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1SumTree" kindref="compound">SumTree</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="38" refid="classmlpack_1_1rl_1_1SumTree_1af906043363eaf9a8b6245ee65c48879e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1af906043363eaf9a8b6245ee65c48879e" kindref="member">SumTree</ref>()<sp/>:<sp/>capacity(0)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1rl_1_1SumTree_1a1320e39e7872440c0f719db04850ae60" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a1320e39e7872440c0f719db04850ae60" kindref="member">SumTree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>capacity)<sp/>:<sp/>capacity(capacity)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>element<sp/>=<sp/>std::vector&lt;T&gt;(2<sp/>*<sp/>capacity);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classmlpack_1_1rl_1_1SumTree_1a60cd481b36347a9062b4e0c740c836ec" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a60cd481b36347a9062b4e0c740c836ec" kindref="member">Set</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>value)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>idx<sp/>+=<sp/>capacity;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>element[idx]<sp/>=<sp/>value;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>idx<sp/>/=<sp/>2;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(idx<sp/>&gt;=<sp/>1)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>element[idx]<sp/>=<sp/>element[2<sp/>*<sp/>idx]<sp/>+<sp/>element[2<sp/>*<sp/>idx<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>idx<sp/>/=<sp/>2;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1rl_1_1SumTree_1a326fbc401980f2b071d3a0f37d51be05" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a326fbc401980f2b071d3a0f37d51be05" kindref="member">BatchUpdate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::ucolvec&amp;<sp/>indices,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;T&gt;&amp;<sp/>data)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>indices.n_rows;<sp/>++i)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>element[indices[i]<sp/>+<sp/>capacity]<sp/>=<sp/>data[i];</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>update<sp/>the<sp/>total<sp/>tree<sp/>with<sp/>bottom-up<sp/>technique.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>capacity<sp/>-<sp/>1;<sp/>i<sp/>&gt;<sp/>0;<sp/>i--)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>element[i]<sp/>=<sp/>element[2<sp/>*<sp/>i]<sp/>+<sp/>element[2<sp/>*<sp/>i<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1rl_1_1SumTree_1a0f6adb7068497f76d7f01870c3fa32a0" refkind="member"><highlight class="normal"><sp/><sp/>T<sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a0f6adb7068497f76d7f01870c3fa32a0" kindref="member">Get</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>idx<sp/>+=<sp/>capacity;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>element[idx];</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" refkind="member"><highlight class="normal"><sp/><sp/>T<sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>end,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>node,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nodeStart,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nodeEnd)</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(start<sp/>==<sp/>nodeStart<sp/>&amp;&amp;<sp/>end<sp/>==<sp/>nodeEnd)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>element[node];</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>mid<sp/>=<sp/>(nodeStart<sp/>+<sp/>nodeEnd)<sp/>/<sp/>2;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(end<sp/>&lt;=<sp/>mid)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(start,<sp/>end,<sp/>2<sp/>*<sp/>node,<sp/>nodeStart,<sp/>mid);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mid<sp/>+<sp/>1<sp/>&lt;=<sp/>start)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(start,<sp/>end,<sp/>2<sp/>*<sp/>node<sp/>+<sp/>1,<sp/>mid<sp/>+<sp/>1<sp/>,<sp/>nodeEnd);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(start,<sp/>mid,<sp/>2<sp/>*<sp/>node,<sp/>nodeStart,<sp/>mid)<sp/>+</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(mid<sp/>+<sp/>1,<sp/>end,<sp/>2<sp/>*<sp/>node<sp/>+<sp/>1,<sp/>mid<sp/>+<sp/>1<sp/>,<sp/>nodeEnd);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" refkind="member"><highlight class="normal"><sp/><sp/>T<sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" kindref="member">Sum</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>end)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>end<sp/>-=<sp/>1;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" kindref="member">SumHelper</ref>(start,<sp/>end,<sp/>1,<sp/>0,<sp/>capacity<sp/>-<sp/>1);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="classmlpack_1_1rl_1_1SumTree_1a1fc048090917da1f2202f4939aad1242" refkind="member"><highlight class="normal"><sp/><sp/>T<sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a1fc048090917da1f2202f4939aad1242" kindref="member">Sum</ref>()</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a1fc048090917da1f2202f4939aad1242" kindref="member">Sum</ref>(0,<sp/>capacity);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="classmlpack_1_1rl_1_1SumTree_1a3cc70bfa6c4dd50a0dd99da3a60ec761" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1SumTree_1a3cc70bfa6c4dd50a0dd99da3a60ec761" kindref="member">FindPrefixSum</ref>(T<sp/>mass)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(idx<sp/>&lt;<sp/>capacity)</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(element[2<sp/>*<sp/>idx]<sp/>&gt;<sp/>mass)</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>idx<sp/>=<sp/>2<sp/>*<sp/>idx;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mass<sp/>-=<sp/>element[2<sp/>*<sp/>idx];</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>idx<sp/>=<sp/>2<sp/>*<sp/>idx<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>idx<sp/>-<sp/>capacity;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>capacity;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>std::vector&lt;T&gt;<sp/>element;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp"/>
+  </compounddef>
+</doxygen>

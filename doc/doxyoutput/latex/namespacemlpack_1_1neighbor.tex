@@ -1,0 +1,296 @@
+\section{mlpack\+:\+:neighbor Namespace Reference}
+\label{namespacemlpack_1_1neighbor}\index{mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Drusilla\+Select}
+\item 
+class \textbf{ Furthest\+NS}
+\begin{DoxyCompactList}\small\item\em This class implements the necessary methods for the Sort\+Policy template parameter of the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class. \end{DoxyCompactList}\item 
+class \textbf{ Leaf\+Size\+N\+S\+Wrapper}
+\begin{DoxyCompactList}\small\item\em \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper} wraps any \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types that take a leaf size for tree construction. \end{DoxyCompactList}\item 
+class \textbf{ Leaf\+Size\+R\+A\+Wrapper}
+\begin{DoxyCompactList}\small\item\em \doxyref{Leaf\+Size\+R\+A\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper} wraps any \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} type that needs to be able to take the leaf size into account when building trees. \end{DoxyCompactList}\item 
+class \textbf{ L\+S\+H\+Search}
+\begin{DoxyCompactList}\small\item\em The \doxyref{L\+S\+H\+Search}{p.}{classmlpack_1_1neighbor_1_1LSHSearch} class; this class builds a hash on the reference set and uses this hash to compute the distance-\/approximate nearest-\/neighbors of the given queries. \end{DoxyCompactList}\item 
+class \textbf{ Nearest\+NS}
+\begin{DoxyCompactList}\small\item\em This class implements the necessary methods for the Sort\+Policy template parameter of the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class. \end{DoxyCompactList}\item 
+class \textbf{ Neighbor\+Search}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class is a template class for performing distance-\/based neighbor searches. \end{DoxyCompactList}\item 
+class \textbf{ Neighbor\+Search\+Rules}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Neighbor\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules} class is a template helper class used by \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class when performing distance-\/based neighbor searches. \end{DoxyCompactList}\item 
+class \textbf{ Neighbor\+Search\+Stat}
+\begin{DoxyCompactList}\small\item\em Extra data for each node in the tree. \end{DoxyCompactList}\item 
+class \textbf{ N\+S\+Model}
+\begin{DoxyCompactList}\small\item\em The \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} A\+PI. \end{DoxyCompactList}\item 
+class \textbf{ N\+S\+Wrapper}
+\begin{DoxyCompactList}\small\item\em \doxyref{N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} is a wrapper class for most \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types. \end{DoxyCompactList}\item 
+class \textbf{ N\+S\+Wrapper\+Base}
+\begin{DoxyCompactList}\small\item\em \doxyref{N\+S\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase} is a base wrapper class for holding all \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types supported by \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+class \textbf{ Q\+D\+A\+FN}
+\item 
+class \textbf{ R\+A\+Model}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Query\+Stat}
+\begin{DoxyCompactList}\small\item\em Extra data for each node in the tree. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Search}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class\+: This class provides a generic manner to perform rank-\/approximate search via random-\/sampling. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Search\+Rules}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1RASearchRules} class is a template helper class used by \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class when performing rank-\/approximate search via random-\/sampling. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Util}
+\item 
+class \textbf{ R\+A\+Wrapper}
+\begin{DoxyCompactList}\small\item\em \doxyref{R\+A\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1RAWrapper} is a wrapper class for most \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} types. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Wrapper\+Base}
+\begin{DoxyCompactList}\small\item\em \doxyref{R\+A\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} is a base wrapper class for holding all \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} types supported by \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+class \textbf{ Spill\+N\+S\+Wrapper}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Spill\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper} class wraps the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class when the spill tree is used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+S\+P\+Tree$>$ }\\using \textbf{ Defeatist\+K\+NN} = \textbf{ Neighbor\+Search}$<$ \textbf{ Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type, Tree\+Type$<$ \textbf{ metric\+::\+Euclidean\+Distance}, \textbf{ Neighbor\+Search\+Stat}$<$ \textbf{ Nearest\+Neighbor\+Sort} $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, Tree\+Type$<$ \textbf{ metric\+::\+Euclidean\+Distance}, \textbf{ Neighbor\+Search\+Stat}$<$ \textbf{ Nearest\+Neighbor\+Sort} $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$
+\begin{DoxyCompactList}\small\item\em The Defeatist\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search. \end{DoxyCompactList}\item 
+using \textbf{ Furthest\+Neighbor\+Sort} = \textbf{ Furthest\+NS}
+\item 
+typedef \textbf{ Neighbor\+Search}$<$ \textbf{ Furthest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance} $>$ \textbf{ K\+FN}
+\begin{DoxyCompactList}\small\item\em The K\+FN class is the k-\/furthest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef \textbf{ Neighbor\+Search}$<$ \textbf{ Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance} $>$ \textbf{ K\+NN}
+\begin{DoxyCompactList}\small\item\em The K\+NN class is the k-\/nearest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef \textbf{ R\+A\+Search}$<$ \textbf{ Furthest\+Neighbor\+Sort} $>$ \textbf{ K\+R\+A\+FN}
+\begin{DoxyCompactList}\small\item\em The K\+R\+A\+FN class is the k-\/rank-\/approximate-\/farthest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef \textbf{ R\+A\+Search} \textbf{ K\+R\+A\+NN}
+\begin{DoxyCompactList}\small\item\em The K\+R\+A\+NN class is the k-\/rank-\/approximate-\/nearest-\/neighbors method. \end{DoxyCompactList}\item 
+using \textbf{ Nearest\+Neighbor\+Sort} = \textbf{ Nearest\+NS}
+\item 
+typedef \textbf{ Defeatist\+K\+NN}$<$ \textbf{ tree\+::\+S\+P\+Tree} $>$ \textbf{ Spill\+K\+NN}
+\begin{DoxyCompactList}\small\item\em The Spill\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search on S\+P\+Tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Neighbor\+Search\+Mode} \{ \newline
+\textbf{ N\+A\+I\+V\+E\+\_\+\+M\+O\+DE}, 
+\newline
+\textbf{ S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, 
+\newline
+\textbf{ D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, 
+\newline
+\textbf{ G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}
+ \}\begin{DoxyCompactList}\small\item\em Neighbor\+Search\+Mode represents the different neighbor search modes available. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Unmap} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, const arma\+::mat \&distances, const std\+::vector$<$ size\+\_\+t $>$ \&reference\+Map, const std\+::vector$<$ size\+\_\+t $>$ \&query\+Map, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors\+Out, arma\+::mat \&distances\+Out, const bool square\+Root=false)
+\begin{DoxyCompactList}\small\item\em Assuming that the datasets have been mapped using the reference\+Map and the query\+Map (such as during kd-\/tree construction), unmap the columns of the distances and neighbors matrices into neighbors\+Out and distances\+Out, and also unmap the entries in each row of neighbors. \end{DoxyCompactList}\item 
+void \textbf{ Unmap} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, const arma\+::mat \&distances, const std\+::vector$<$ size\+\_\+t $>$ \&reference\+Map, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors\+Out, arma\+::mat \&distances\+Out, const bool square\+Root=false)
+\begin{DoxyCompactList}\small\item\em Assuming that the datasets have been mapped using reference\+Map (such as during kd-\/tree construction), unmap the columns of the distances and neighbors matrices into neighbors\+Out and distances\+Out, and also unmap the entries in each row of neighbors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\mbox{\label{namespacemlpack_1_1neighbor_afbd38e2fcbd26067f08c2e5cabbcb232}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Defeatist\+K\+NN@{Defeatist\+K\+NN}}
+\index{Defeatist\+K\+NN@{Defeatist\+K\+NN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Defeatist\+K\+NN}
+{\footnotesize\ttfamily using \textbf{ Defeatist\+K\+NN} =  \textbf{ Neighbor\+Search}$<$ \textbf{ Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type, Tree\+Type$<$\textbf{ metric\+::\+Euclidean\+Distance}, \textbf{ Neighbor\+Search\+Stat}$<$\textbf{ Nearest\+Neighbor\+Sort}$>$, arma\+::mat$>$\+::template Defeatist\+Dual\+Tree\+Traverser, Tree\+Type$<$\textbf{ metric\+::\+Euclidean\+Distance}, \textbf{ Neighbor\+Search\+Stat}$<$\textbf{ Nearest\+Neighbor\+Sort}$>$, arma\+::mat$>$\+::template Defeatist\+Single\+Tree\+Traverser$>$}
+
+
+
+The Defeatist\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search. 
+
+It returns L2 distances (Euclidean distances) for each of the k nearest neighbors found. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Tree\+Type} & The tree type to use; must adhere to the Tree\+Type A\+PI, and implement Defeatist Traversers. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 60 of file typedef.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_a690bbbab38fc719071a5c019acd2f947}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Furthest\+Neighbor\+Sort@{Furthest\+Neighbor\+Sort}}
+\index{Furthest\+Neighbor\+Sort@{Furthest\+Neighbor\+Sort}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Furthest\+Neighbor\+Sort}
+{\footnotesize\ttfamily using \textbf{ Furthest\+Neighbor\+Sort} =  \textbf{ Furthest\+NS}}
+
+
+
+Definition at line 201 of file furthest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_abfddff6c92a37aaa0b80d2193ccd71da}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!K\+FN@{K\+FN}}
+\index{K\+FN@{K\+FN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{K\+FN}
+{\footnotesize\ttfamily typedef \textbf{ Neighbor\+Search}$<$\textbf{ Furthest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance}$>$ \textbf{ K\+FN}}
+
+
+
+The K\+FN class is the k-\/furthest-\/neighbors method. 
+
+It returns L2 distances (Euclidean distances) for each of the k furthest neighbors. 
+
+Definition at line 38 of file typedef.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_ac8d70069e8acb12c5ba9a8536ae6ace4}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!K\+NN@{K\+NN}}
+\index{K\+NN@{K\+NN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{K\+NN}
+{\footnotesize\ttfamily typedef \textbf{ Neighbor\+Search}$<$\textbf{ Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+Euclidean\+Distance}$>$ \textbf{ K\+NN}}
+
+
+
+The K\+NN class is the k-\/nearest-\/neighbors method. 
+
+It returns L2 distances (Euclidean distances) for each of the k nearest neighbors. 
+
+Definition at line 32 of file typedef.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_ad9d67c2e8bcffa41c9be915d6face6f8}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!K\+R\+A\+FN@{K\+R\+A\+FN}}
+\index{K\+R\+A\+FN@{K\+R\+A\+FN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{K\+R\+A\+FN}
+{\footnotesize\ttfamily typedef \textbf{ R\+A\+Search}$<$\textbf{ Furthest\+Neighbor\+Sort}$>$ \textbf{ K\+R\+A\+FN}}
+
+
+
+The K\+R\+A\+FN class is the k-\/rank-\/approximate-\/farthest-\/neighbors method. 
+
+It returns L2 distances for each of the k rank-\/approximate farthest-\/neighbors.
+
+The approximation is controlled with two parameters (see allkrann\+\_\+main.\+cpp) which can be specified at search time. So the tree building is done only once while the search can be performed multiple times with different approximation levels. 
+
+Definition at line 47 of file ra\+\_\+typedef.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_aa72b1c4d0ff59f61a03c7b263a6a02d8}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!K\+R\+A\+NN@{K\+R\+A\+NN}}
+\index{K\+R\+A\+NN@{K\+R\+A\+NN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{K\+R\+A\+NN}
+{\footnotesize\ttfamily typedef \textbf{ R\+A\+Search} \textbf{ K\+R\+A\+NN}}
+
+
+
+The K\+R\+A\+NN class is the k-\/rank-\/approximate-\/nearest-\/neighbors method. 
+
+It returns L2 distances for each of the k rank-\/approximate nearest-\/neighbors.
+
+The approximation is controlled with two parameters (see allkrann\+\_\+main.\+cpp) which can be specified at search time. So the tree building is done only once while the search can be performed multiple times with different approximation levels. 
+
+Definition at line 36 of file ra\+\_\+typedef.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_af3f11fce33c041aa26b1c91107f71b0f}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Nearest\+Neighbor\+Sort@{Nearest\+Neighbor\+Sort}}
+\index{Nearest\+Neighbor\+Sort@{Nearest\+Neighbor\+Sort}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Nearest\+Neighbor\+Sort}
+{\footnotesize\ttfamily using \textbf{ Nearest\+Neighbor\+Sort} =  \textbf{ Nearest\+NS}}
+
+
+
+Definition at line 200 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1neighbor_a8145bada084a13663f9e7707f91db6ff}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Spill\+K\+NN@{Spill\+K\+NN}}
+\index{Spill\+K\+NN@{Spill\+K\+NN}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Spill\+K\+NN}
+{\footnotesize\ttfamily typedef \textbf{ Defeatist\+K\+NN}$<$\textbf{ tree\+::\+S\+P\+Tree}$>$ \textbf{ Spill\+K\+NN}}
+
+
+
+The Spill\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search on S\+P\+Tree. 
+
+It returns L2 distances (Euclidean distances) for each of the k nearest neighbors found. 
+
+Definition at line 67 of file typedef.\+hpp.
+
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\label{namespacemlpack_1_1neighbor_a1a65d2ce978562ab36affdc59938ef15}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Neighbor\+Search\+Mode@{Neighbor\+Search\+Mode}}
+\index{Neighbor\+Search\+Mode@{Neighbor\+Search\+Mode}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Neighbor\+Search\+Mode}
+{\footnotesize\ttfamily enum \textbf{ Neighbor\+Search\+Mode}}
+
+
+
+Neighbor\+Search\+Mode represents the different neighbor search modes available. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{N\+A\+I\+V\+E\+\_\+\+M\+O\+DE@{N\+A\+I\+V\+E\+\_\+\+M\+O\+DE}!mlpack\+::neighbor@{mlpack\+::neighbor}}\index{mlpack\+::neighbor@{mlpack\+::neighbor}!N\+A\+I\+V\+E\+\_\+\+M\+O\+DE@{N\+A\+I\+V\+E\+\_\+\+M\+O\+DE}}}\mbox{\label{namespacemlpack_1_1neighbor_a1a65d2ce978562ab36affdc59938ef15a84b6e9858a8a0186de25e6ac1b95fce9}} 
+N\+A\+I\+V\+E\+\_\+\+M\+O\+DE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}!mlpack\+::neighbor@{mlpack\+::neighbor}}\index{mlpack\+::neighbor@{mlpack\+::neighbor}!S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}}\mbox{\label{namespacemlpack_1_1neighbor_a1a65d2ce978562ab36affdc59938ef15a4963da1562f5c21be0ed6f3b4e438f12}} 
+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}!mlpack\+::neighbor@{mlpack\+::neighbor}}\index{mlpack\+::neighbor@{mlpack\+::neighbor}!D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}}\mbox{\label{namespacemlpack_1_1neighbor_a1a65d2ce978562ab36affdc59938ef15a902f8ca27975735ab2151d26152c6d2a}} 
+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}!mlpack\+::neighbor@{mlpack\+::neighbor}}\index{mlpack\+::neighbor@{mlpack\+::neighbor}!G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE@{G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}}\mbox{\label{namespacemlpack_1_1neighbor_a1a65d2ce978562ab36affdc59938ef15a21392e2b53181ee5d4d3402fba104846}} 
+G\+R\+E\+E\+D\+Y\+\_\+\+S\+I\+N\+G\+L\+E\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 43 of file neighbor\+\_\+search.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1neighbor_a841bafc12b36517208ff283b095dec2f}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Unmap@{Unmap}}
+\index{Unmap@{Unmap}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Unmap()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::neighbor\+::\+Unmap (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{const arma\+::mat \&}]{distances,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{reference\+Map,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{query\+Map,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors\+Out,  }\item[{arma\+::mat \&}]{distances\+Out,  }\item[{const bool}]{square\+Root = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Assuming that the datasets have been mapped using the reference\+Map and the query\+Map (such as during kd-\/tree construction), unmap the columns of the distances and neighbors matrices into neighbors\+Out and distances\+Out, and also unmap the entries in each row of neighbors. 
+
+This is useful for the dual-\/tree case.
+
+
+\begin{DoxyParams}{Parameters}
+{\em neighbors} & Matrix of neighbors resulting from neighbor search. \\
+\hline
+{\em distances} & Matrix of distances resulting from neighbor search. \\
+\hline
+{\em reference\+Map} & Mapping of reference set to old points. \\
+\hline
+{\em query\+Map} & Mapping of query set to old points. \\
+\hline
+{\em neighbors\+Out} & Matrix to store unmapped neighbors into. \\
+\hline
+{\em distances\+Out} & Matrix to store unmapped distances into. \\
+\hline
+{\em square\+Root} & If true, take the square root of the distances. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1neighbor_acc225558031fe27e3336544c50dd642d}} 
+\index{mlpack\+::neighbor@{mlpack\+::neighbor}!Unmap@{Unmap}}
+\index{Unmap@{Unmap}!mlpack\+::neighbor@{mlpack\+::neighbor}}
+\subsubsection{Unmap()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::neighbor\+::\+Unmap (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{const arma\+::mat \&}]{distances,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{reference\+Map,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors\+Out,  }\item[{arma\+::mat \&}]{distances\+Out,  }\item[{const bool}]{square\+Root = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Assuming that the datasets have been mapped using reference\+Map (such as during kd-\/tree construction), unmap the columns of the distances and neighbors matrices into neighbors\+Out and distances\+Out, and also unmap the entries in each row of neighbors. 
+
+This is useful for the single-\/tree case.
+
+
+\begin{DoxyParams}{Parameters}
+{\em neighbors} & Matrix of neighbors resulting from neighbor search. \\
+\hline
+{\em distances} & Matrix of distances resulting from neighbor search. \\
+\hline
+{\em reference\+Map} & Mapping of reference set to old points. \\
+\hline
+{\em neighbors\+Out} & Matrix to store unmapped neighbors into. \\
+\hline
+{\em distances\+Out} & Matrix to store unmapped distances into. \\
+\hline
+{\em square\+Root} & If true, take the square root of the distances. \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,236 @@
+\section{D\+T\+B\+Rules$<$ Metric\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1emst_1_1DTBRules}\index{D\+T\+B\+Rules$<$ Metric\+Type, Tree\+Type $>$@{D\+T\+B\+Rules$<$ Metric\+Type, Tree\+Type $>$}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ \textbf{ Traversal\+Info\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ D\+T\+B\+Rules} (const arma\+::mat \&data\+Set, \textbf{ Union\+Find} \&connections, arma\+::vec \&neighbors\+Distances, arma\+::\+Col$<$ size\+\_\+t $>$ \&neighbors\+In\+Component, arma\+::\+Col$<$ size\+\_\+t $>$ \&neighbors\+Out\+Component, Metric\+Type \&metric)
+\item 
+double \textbf{ Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\item 
+size\+\_\+t \textbf{ Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the number of base cases performed. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of base cases performed. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score)
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+double \textbf{ Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Scores} () const
+\begin{DoxyCompactList}\small\item\em Get the number of node combinations that have been scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of node combinations that have been scored. \end{DoxyCompactList}\item 
+const \textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} () const
+\item 
+\textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Tree\+Type$>$\newline
+class mlpack\+::emst\+::\+D\+T\+B\+Rules$<$ Metric\+Type, Tree\+Type $>$}
+
+
+
+Definition at line 23 of file dtb\+\_\+rules.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_ab5f079db10d0a6813eefeb1115e894cb}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Traversal\+Info\+Type@{Traversal\+Info\+Type}}
+\index{Traversal\+Info\+Type@{Traversal\+Info\+Type}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Traversal\+Info\+Type}
+{\footnotesize\ttfamily typedef \textbf{ tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ \textbf{ Traversal\+Info\+Type}}
+
+
+
+Definition at line 85 of file dtb\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a35c2f81de4f2561c34326a7c360a3c4e}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!D\+T\+B\+Rules@{D\+T\+B\+Rules}}
+\index{D\+T\+B\+Rules@{D\+T\+B\+Rules}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{D\+T\+B\+Rules()}
+{\footnotesize\ttfamily \textbf{ D\+T\+B\+Rules} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data\+Set,  }\item[{\textbf{ Union\+Find} \&}]{connections,  }\item[{arma\+::vec \&}]{neighbors\+Distances,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{neighbors\+In\+Component,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{neighbors\+Out\+Component,  }\item[{Metric\+Type \&}]{metric }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_abac50f780bb5e1bc12dd0d16d850cacc}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Base\+Case()}
+{\footnotesize\ttfamily double Base\+Case (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{const size\+\_\+t}]{reference\+Index }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a3f4bd5d0aa64ea090796725f7755287d}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of base cases performed. 
+
+
+
+Definition at line 91 of file dtb\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_ab93e60b3671ebddbe95a890f1e1b2768}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of base cases performed. 
+
+
+
+Definition at line 93 of file dtb\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a6f97dd07745e07a2d7ff3d4a42347e48}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption})}
+
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1emst_1_1DTBRules_a53d373b7aeee359b0e686f823c602b1c} (or \doxyref{Rescore()}{p.}{classmlpack_1_1emst_1_1DTBRules_a6f97dd07745e07a2d7ff3d4a42347e48}). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a536e5a7cbce35b9be7443775d32e11f5}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption}) const}
+
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+{\em old\+Score} & Old score produced by Socre() (or \doxyref{Rescore()}{p.}{classmlpack_1_1emst_1_1DTBRules_a6f97dd07745e07a2d7ff3d4a42347e48}). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a53d373b7aeee359b0e686f823c602b1c}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a05b142945ef94221b628a75961f48b02}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursionm while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a4d1e40c0bf406280a237ca1b487e3c62}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of node combinations that have been scored. 
+
+
+
+Definition at line 96 of file dtb\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a8c3486626c1d3c0a10cdb27a8faa198f}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of node combinations that have been scored. 
+
+
+
+Definition at line 98 of file dtb\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_ab5c6f4ae7c3b71b808403a7b7454f26f}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 87 of file dtb\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1DTBRules_a4027bb90e756a4520d55978459c7f83e}} 
+\index{mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::emst\+::\+D\+T\+B\+Rules@{mlpack\+::emst\+::\+D\+T\+B\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 88 of file dtb\+\_\+rules.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/emst/\textbf{ dtb\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

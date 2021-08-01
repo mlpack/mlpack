@@ -1,0 +1,837 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1gmm_1_1GMM" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::gmm::GMM</compoundname>
+    <includes refid="gmm_8hpp" local="no">gmm.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1gmm_1_1GMM_1a24ddaaffe28b96a6d94d9c12681a03b9" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dimensionality</definition>
+        <argsstring></argsstring>
+        <name>dimensionality</name>
+        <briefdescription>
+<para>The dimensionality of the model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1gmm_1_1GMM_1afcdb75bd523f039e83b31b6b38048b86" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">distribution::GaussianDistribution</ref> &gt;</type>
+        <definition>std::vector&lt;distribution::GaussianDistribution&gt; dists</definition>
+        <argsstring></argsstring>
+        <name>dists</name>
+        <briefdescription>
+<para>Vector of Gaussians. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1gmm_1_1GMM_1a61696e781157d6276e7ef7786e5ea3d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t gaussians</definition>
+        <argsstring></argsstring>
+        <name>gaussians</name>
+        <briefdescription>
+<para>The number of Gaussians in the model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1gmm_1_1GMM_1ab88610abad7d31c50287ddd63847d81c" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Vector of a priori weights for each Gaussian. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a0848a828790e4f2dcebd3be297c31622" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GMM</definition>
+        <argsstring>()</argsstring>
+        <name>GMM</name>
+        <briefdescription>
+<para>Create an empty Gaussian Mixture Model, with zero gaussians. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="96" bodyend="105"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a6c36db07dcbd3c3236596baaf55cd373" compoundref="gmm_8hpp" startline="122" endline="127">GMM::GMM</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a0eab6782f1e56e70f455efd424970942" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GMM</definition>
+        <argsstring>(const size_t gaussians, const size_t dimensionality)</argsstring>
+        <name>GMM</name>
+        <param>
+          <type>const size_t</type>
+          <declname>gaussians</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+        </param>
+        <briefdescription>
+<para>Create a <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> with the given number of Gaussians, each of which have the specified dimensionality. </para>        </briefdescription>
+        <detaileddescription>
+<para>The means and covariances will be set to 0.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gaussians</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of Gaussians in this <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimensionality of each Gaussian. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="114" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a6c36db07dcbd3c3236596baaf55cd373" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GMM</definition>
+        <argsstring>(const std::vector&lt; distribution::GaussianDistribution &gt; &amp;dists, const arma::vec &amp;weights)</argsstring>
+        <name>GMM</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">distribution::GaussianDistribution</ref> &gt; &amp;</type>
+          <declname>dists</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Create a <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> with the given dists and weights. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dists</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distributions of the model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights of the model. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="122" bodyend="127"/>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a0848a828790e4f2dcebd3be297c31622" compoundref="gmm_8hpp" startline="96" endline="105">GMM::GMM</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a06fc875f2c82e831a10a7c38f9919cb3">GMM::operator=</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1aa31455d0c337b178db5c068062a0288a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GMM</definition>
+        <argsstring>(const GMM &amp;other)</argsstring>
+        <name>GMM</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor for GMMs. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="130" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a4e6c4f4110899f4f4fd18b46d3d141c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const arma::mat &amp;observations, arma::Row&lt; size_t &gt; &amp;labels) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given observations as being from an individual component in this <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>The resultant classifications are stored in the &apos;labels&apos; object, and each label will be between 0 and (<ref refid="classmlpack_1_1gmm_1_1GMM_1a130ce966c49ab36f847f8fac950f1e39" kindref="member">Gaussians()</ref> - 1). Supposing that a point was classified with label 2, and that our <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> object was called &apos;gmm&apos;, one could access the relevant Gaussian distribution as follows:</para><para><programlisting><codeline><highlight class="normal">arma::vec<sp/>mean<sp/>=<sp/>gmm.Means()[2];</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>covariance<sp/>=<sp/>gmm.Covariances()[2];</highlight></codeline>
+<codeline><highlight class="normal">double<sp/>priorWeight<sp/>=<sp/>gmm.Weights()[2];</highlight></codeline>
+</programlisting></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations to classify. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object which will be filled with labels. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="295" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a14b393b6da8638dcc2d27c878e2e5c35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">distribution::GaussianDistribution</ref> &amp;</type>
+        <definition>const distribution::GaussianDistribution&amp; Component</definition>
+        <argsstring>(size_t i) const</argsstring>
+        <name>Component</name>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Return a const reference to a component distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of component. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="145" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a91d594ca41a307e58506ca5f57a6b0c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">distribution::GaussianDistribution</ref> &amp;</type>
+        <definition>distribution::GaussianDistribution&amp; Component</definition>
+        <argsstring>(size_t i)</argsstring>
+        <name>Component</name>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Return a reference to a component distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of component. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Return the dimensionality of the model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="138" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a130ce966c49ab36f847f8fac950f1e39" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Gaussians</definition>
+        <argsstring>() const</argsstring>
+        <name>Gaussians</name>
+        <briefdescription>
+<para>Return the number of gaussians in the model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a7063c1fb92f512f32bf44542c7528739" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogProbability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the log probability that the given observation came from this distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation vector to evaluate the probability of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="181" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a36f5c23ddd588e40e9465a56bfafabab" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogProbability</definition>
+        <argsstring>(const arma::mat &amp;observation, arma::vec &amp;logProbs) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>logProbs</declname>
+        </param>
+        <briefdescription>
+<para>Return the log-probability of the given observation (x) matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logProbs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store log-probability value of observation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="189" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a5df8a8ba219eda2fb45a1f24e18a6320" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogProbability</definition>
+        <argsstring>(const arma::vec &amp;observation, const size_t component) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>component</declname>
+        </param>
+        <briefdescription>
+<para>Return the log probability that the given observation came from the given Gaussian component in this distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation to evaluate the probability of. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>component</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the component of the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> to be considered. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="208" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a06fc875f2c82e831a10a7c38f9919cb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> &amp;</type>
+        <definition>GMM&amp; operator=</definition>
+        <argsstring>(const GMM &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy operator for GMMs. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="133" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a6c36db07dcbd3c3236596baaf55cd373" compoundref="gmm_8hpp" startline="122" endline="127">GMM::GMM</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1ab72935d592516e77511d0b5e703c0d41" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Probability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the probability that the given observation came from this distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation vector to evaluate the probability of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="165" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1aca6288954f9a21aa3a555e431124b765" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Probability</definition>
+        <argsstring>(const arma::mat &amp;observation, arma::vec &amp;probs) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>probs</declname>
+        </param>
+        <briefdescription>
+<para>Return the probability of the given observation matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store probability value of observation x. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="173" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1afcd98507a97e8592a6e10b2794285224" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Probability</definition>
+        <argsstring>(const arma::vec &amp;observation, const size_t component) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>component</declname>
+        </param>
+        <briefdescription>
+<para>Return the probability that the given observation came from the given Gaussian component in this distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation to evaluate the probability of. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>component</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the component of the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> to be considered. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="198" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a2c6f8d5bb4eacf7de767d2172b320756" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>arma::vec</type>
+        <definition>arma::vec Random</definition>
+        <argsstring>() const</argsstring>
+        <name>Random</name>
+        <briefdescription>
+<para>Return a randomly generated observation according to the probability distribution defined by this object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Random observation from this <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="216" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="302" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FittingType</type>
+            <defval><ref refid="classmlpack_1_1gmm_1_1EMFit" kindref="compound">EMFit</ref>&lt;&gt;</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const arma::mat &amp;observations, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>trials</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>useExistingModel</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>FittingType</type>
+          <declname>fitter</declname>
+          <defval>FittingType()</defval>
+        </param>
+        <briefdescription>
+<para>Estimate the probability distribution directly from the given observations, using the given algorithm in the FittingType class to fit the data. </para>        </briefdescription>
+        <detaileddescription>
+<para>The fitting will be performed &apos;trials&apos; times; from these trials, the model with the greatest log-likelihood will be selected. By default, only one trial is performed. The log-likelihood of the best fitting is returned.</para><para>Optionally, the existing model can be used as an initial model for the estimation by setting &apos;useExistingModel&apos; to true. If the fitting procedure is deterministic after the initial position is given, then &apos;trials&apos; should be set to 1.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>FittingType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of fitting method which should be used (EMFit&lt;&gt; is suggested). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observations of the model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>trials</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>useExistingModel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the existing model is used as an initial model for the estimation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The fitter to use, optional. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The log-likelihood of the best fit. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="242" column="1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" compoundref="gmm_8hpp" startline="157" endline="157">GMM::Weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a6c28af6823c03973003fefdf026b2b53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FittingType</type>
+            <defval><ref refid="classmlpack_1_1gmm_1_1EMFit" kindref="compound">EMFit</ref>&lt;&gt;</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const arma::mat &amp;observations, const arma::vec &amp;probabilities, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>trials</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>useExistingModel</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>FittingType</type>
+          <declname>fitter</declname>
+          <defval>FittingType()</defval>
+        </param>
+        <briefdescription>
+<para>Estimate the probability distribution directly from the given observations, taking into account the probability of each observation actually being from this distribution, and using the given algorithm in the FittingType class to fit the data. </para>        </briefdescription>
+        <detaileddescription>
+<para>The fitting will be performed &apos;trials&apos; times; from these trials, the model with the greatest log-likelihood will be selected. By default, only one trial is performed. The log-likelihood of the best fitting is returned.</para><para>Optionally, the existing model can be used as an initial model for the estimation by setting &apos;useExistingModel&apos; to true. If the fitting procedure is deterministic after the initial position is given, then &apos;trials&apos; should be set to 1.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observations of the model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability of each observation being from this distribution. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>trials</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>useExistingModel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the existing model is used as an initial model for the estimation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The fitter to use, optional. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The log-likelihood of the best fit. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="273" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1ab2c1e663a100784ff6753e3eec8453dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Weights</definition>
+        <argsstring>() const</argsstring>
+        <name>Weights</name>
+        <briefdescription>
+<para>Return a const reference to the a priori weights of each Gaussian. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="155" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="155" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec &amp;</type>
+        <definition>arma::vec&amp; Weights</definition>
+        <argsstring>()</argsstring>
+        <name>Weights</name>
+        <briefdescription>
+<para>Return a reference to the a priori weights of each Gaussian. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="157" bodyend="157"/>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a4e6c4f4110899f4f4fd18b46d3d141c6">GMM::Classify</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a7063c1fb92f512f32bf44542c7528739">GMM::LogProbability</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1ab72935d592516e77511d0b5e703c0d41">GMM::Probability</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a2c6f8d5bb4eacf7de767d2172b320756">GMM::Random</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1a65cba07328997659bec80b9879b15a51">GMM::serialize</references>
+        <references refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed">GMM::Train</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1GMM_1ab43e2176461633f29be0661fb3ce7b19" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogLikelihood</definition>
+        <argsstring>(const arma::mat &amp;dataPoints, const std::vector&lt; distribution::GaussianDistribution &gt; &amp;distsL, const arma::vec &amp;weights) const</argsstring>
+        <name>LogLikelihood</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataPoints</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">distribution::GaussianDistribution</ref> &gt; &amp;</type>
+          <declname>distsL</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>This function computes the loglikelihood of the given model. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function is used by <ref refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" kindref="member">GMM::Train()</ref>.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataPoints</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observations to calculate the likelihood for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>means</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Means of the given mixture model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>covars</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariances of the given mixture model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights of the given mixture model. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="314" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A Gaussian Mixture Model (<ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>). </para>    </briefdescription>
+    <detaileddescription>
+<para>This class uses maximum likelihood loss functions to estimate the parameters of the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> on a given dataset via the given fitting mechanism, defined by the FittingType template parameter. The <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> can be trained using normal data, or data with probabilities of being from this <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> (see <ref refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" kindref="member">GMM::Train()</ref> for more information).</para><para>The <ref refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" kindref="member">Train()</ref> method uses a template type &apos;FittingType&apos;. The FittingType template class must provide a way for the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> to train on data. It must provide the following two functions:</para><para><programlisting><codeline><highlight class="normal">void<sp/>Estimate(const<sp/>arma::mat&amp;<sp/>observations,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;distribution::GaussianDistribution&gt;&amp;<sp/>dists,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>weights);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">void<sp/>Estimate(const<sp/>arma::mat&amp;<sp/>observations,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>arma::vec&amp;<sp/>probabilities,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;distribution::GaussianDistribution&gt;&amp;<sp/>dists,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>weights);</highlight></codeline>
+</programlisting></para><para>These functions should produce a trained <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> from the given observations and probabilities. These may modify the size of the model (by increasing the size of the mean and covariance vectors as well as the weight vectors), but the method should expect that these vectors are already set to the size of the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> as specified in the constructor.</para><para>For a sample implementation, see the <ref refid="classmlpack_1_1gmm_1_1EMFit" kindref="compound">EMFit</ref> class; this class uses the EM algorithm to train a <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>, and is the default fitting type for the <ref refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" kindref="member">Train()</ref> method.</para><para>The <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref>, once trained, can be used to generate random points from the distribution and estimate the probability of points being from the distribution. The parameters of the <ref refid="classmlpack_1_1gmm_1_1GMM" kindref="compound">GMM</ref> can be obtained through the accessors and mutators.</para><para>Example use:</para><para><programlisting><codeline><highlight class="normal">//<sp/>Set<sp/>up<sp/>a<sp/>mixture<sp/>of<sp/>5<sp/>gaussians<sp/>in<sp/>a<sp/>4-dimensional<sp/>space.</highlight></codeline>
+<codeline><highlight class="normal">GMM<sp/>g(5,<sp/>4);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Train<sp/>the<sp/>GMM<sp/>given<sp/>the<sp/>data<sp/>observations,<sp/>using<sp/>the<sp/>default<sp/>EM<sp/>fitting</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>mechanism.</highlight></codeline>
+<codeline><highlight class="normal">g.Train(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Get<sp/>the<sp/>probability<sp/>of<sp/>&apos;observation&apos;<sp/>being<sp/>observed<sp/>from<sp/>this<sp/>GMM.</highlight></codeline>
+<codeline><highlight class="normal">double<sp/>probability<sp/>=<sp/>g.Probability(observation);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Get<sp/>a<sp/>random<sp/>observation<sp/>from<sp/>the<sp/>GMM.</highlight></codeline>
+<codeline><highlight class="normal">arma::vec<sp/>observation<sp/>=<sp/>g.Random();</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp" bodystart="78" bodyend="318"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a4e6c4f4110899f4f4fd18b46d3d141c6" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a14b393b6da8638dcc2d27c878e2e5c35" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Component</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a91d594ca41a307e58506ca5f57a6b0c0" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Component</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a24ddaaffe28b96a6d94d9c12681a03b9" prot="private" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>dimensionality</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1afcdb75bd523f039e83b31b6b38048b86" prot="private" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>dists</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a61696e781157d6276e7ef7786e5ea3d7" prot="private" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>gaussians</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a130ce966c49ab36f847f8fac950f1e39" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Gaussians</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a0848a828790e4f2dcebd3be297c31622" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>GMM</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a0eab6782f1e56e70f455efd424970942" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>GMM</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a6c36db07dcbd3c3236596baaf55cd373" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>GMM</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1aa31455d0c337b178db5c068062a0288a" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>GMM</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1ab43e2176461633f29be0661fb3ce7b19" prot="private" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>LogLikelihood</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a7063c1fb92f512f32bf44542c7528739" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a36f5c23ddd588e40e9465a56bfafabab" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a5df8a8ba219eda2fb45a1f24e18a6320" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a06fc875f2c82e831a10a7c38f9919cb3" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1ab72935d592516e77511d0b5e703c0d41" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1aca6288954f9a21aa3a555e431124b765" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1afcd98507a97e8592a6e10b2794285224" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a2c6f8d5bb4eacf7de767d2172b320756" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Random</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1ad33ec5cf10980e0b315280ea51ef41ed" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a6c28af6823c03973003fefdf026b2b53" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1ab2c1e663a100784ff6753e3eec8453dd" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Weights</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1a8361070d4a9097e29c005dd5dc6ca54d" prot="public" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>Weights</name></member>
+      <member refid="classmlpack_1_1gmm_1_1GMM_1ab88610abad7d31c50287ddd63847d81c" prot="private" virt="non-virtual"><scope>mlpack::gmm::GMM</scope><name>weights</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

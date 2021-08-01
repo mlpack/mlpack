@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_b3c5350e667f151883a666a1430e6001" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies</compoundname>
+    <innerfile refid="bag__of__words__encoding__policy_8hpp">bag_of_words_encoding_policy.hpp</innerfile>
+    <innerfile refid="dictionary__encoding__policy_8hpp">dictionary_encoding_policy.hpp</innerfile>
+    <innerfile refid="policy__traits_8hpp">policy_traits.hpp</innerfile>
+    <innerfile refid="tf__idf__encoding__policy_8hpp">tf_idf_encoding_policy.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,121 @@
+\section{Multi\+Quad\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1MultiQuadFunction}\index{Multi\+Quad\+Function@{Multi\+Quad\+Function}}
+
+
+The Multi Quadratic function, defined by.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the Multi Quadratic function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the Multi Quadratic function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the Multi Quadratic function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the Multi Quadratic function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Multi Quadratic function, defined by. 
+
+\begin{eqnarray*} f(x) = \sqrt(1 + x^2) \\ f'(x) = x / f(x) \\ \end{eqnarray*} 
+
+Definition at line 28 of file multi\+\_\+quadratic\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MultiQuadFunction_a163d34fd09f8edf457164f5033c635cf}} 
+\index{mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivative of the Multi Quadratic function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 60 of file multi\+\_\+quadratic\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiQuadFunction_a0ad035ec996acd7025807d0e9e082887}} 
+\index{mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the Multi Quadratic function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file multi\+\_\+quadratic\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiQuadFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the Multi Quadratic function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 37 of file multi\+\_\+quadratic\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MultiQuadFunction_af6cf5da90eb6312e3e25c9b8bd9c3527}} 
+\index{mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Multi\+Quad\+Function@{mlpack\+::ann\+::\+Multi\+Quad\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the Multi Quadratic function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file multi\+\_\+quadratic\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ multi\+\_\+quadratic\+\_\+function.\+hpp}\end{DoxyCompactItemize}

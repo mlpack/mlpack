@@ -1,0 +1,154 @@
+.TH "CombinedNormalization< NormalizationTypes >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CombinedNormalization< NormalizationTypes > \- This normalization class performs a sequence of normalization methods on raw ratings\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBTupleType\fP = std::tuple< NormalizationTypes\&.\&.\&. >"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCombinedNormalization\fP ()"
+.br
+.ti -1c
+.RI "double \fBDenormalize\fP (const size_t user, const size_t item, const double rating) const"
+.br
+.RI "Denormalize rating by calling \fBDenormalize()\fP in each normalization object\&. "
+.ti -1c
+.RI "void \fBDenormalize\fP (const arma::Mat< size_t > &combinations, arma::vec &predictions) const"
+.br
+.RI "Denormalize rating by calling \fBDenormalize()\fP in each normalization object\&. "
+.ti -1c
+.RI "const \fBTupleType\fP & \fBNormalizations\fP () const"
+.br
+.RI "Return normalizations tuple\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBNormalize\fP (MatType &data)"
+.br
+.RI "Normalize the data by calling \fBNormalize()\fP in each normalization object\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialization\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename\&.\&.\&. NormalizationTypes>
+.br
+class mlpack::cf::CombinedNormalization< NormalizationTypes >"
+This normalization class performs a sequence of normalization methods on raw ratings\&. 
+
+An example of how to use \fBCombinedNormalization\fP in CF is shown below:
+.PP
+.PP
+.nf
+extern arma::mat data; // data is a (user, item, rating) table\&.
+// Users for whom recommendations are generated\&.
+extern arma::Col<size_t> users;
+arma::Mat<size_t> recommendations; // Resulting recommendations\&.
+
+CFType<NMFPolicy,
+       CombinedNormalization<
+           OverallMeanNormalization,
+           UserMeanNormalization,
+           ItemMeanNormalization>> cf(data);
+
+// Generate 10 recommendations for all users\&.
+cf\&.GetRecommendations(10, recommendations);
+.fi
+.PP
+ 
+.PP
+Definition at line 44 of file combined_normalization\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBTupleType\fP =  std::tuple<NormalizationTypes\&.\&.\&.>"
+
+.PP
+Definition at line 47 of file combined_normalization\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCombinedNormalization\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 50 of file combined_normalization\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double Denormalize (const size_t user, const size_t item, const double rating) const\fC [inline]\fP"
+
+.PP
+Denormalize rating by calling \fBDenormalize()\fP in each normalization object\&. Note that the order of objects calling \fBDenormalize()\fP should be the reversed order of objects calling \fBNormalize()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIuser\fP User ID\&. 
+.br
+\fIitem\fP Item ID\&. 
+.br
+\fIrating\fP Computed rating before denormalization\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file combined_normalization\&.hpp\&.
+.PP
+Referenced by CombinedNormalization< NormalizationTypes >::serialize()\&.
+.SS "void Denormalize (const arma::Mat< size_t > & combinations, arma::vec & predictions) const\fC [inline]\fP"
+
+.PP
+Denormalize rating by calling \fBDenormalize()\fP in each normalization object\&. Note that the order of objects calling \fBDenormalize()\fP should be the reversed order of objects calling \fBNormalize()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcombinations\fP User/Item combinations\&. 
+.br
+\fIpredictions\fP Predicted ratings for each user/item combination\&. 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file combined_normalization\&.hpp\&.
+.SS "const \fBTupleType\fP& Normalizations () const\fC [inline]\fP"
+
+.PP
+Return normalizations tuple\&. 
+.PP
+Definition at line 96 of file combined_normalization\&.hpp\&.
+.SS "void Normalize (MatType & data)\fC [inline]\fP"
+
+.PP
+Normalize the data by calling \fBNormalize()\fP in each normalization object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 58 of file combined_normalization\&.hpp\&.
+.PP
+Referenced by CombinedNormalization< NormalizationTypes >::serialize()\&.
+.SS "void serialize (Archive & ar, const uint32_t version)\fC [inline]\fP"
+
+.PP
+Serialization\&. 
+.PP
+Definition at line 105 of file combined_normalization\&.hpp\&.
+.PP
+References CombinedNormalization< NormalizationTypes >::Denormalize(), and CombinedNormalization< NormalizationTypes >::Normalize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,382 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1amf_1_1SimpleToleranceTermination" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::SimpleToleranceTermination</compoundname>
+    <includes refid="simple__tolerance__termination_8hpp" local="no">simple_tolerance_termination.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class MatType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1aaafe5c5cd07f5e6fd8e1ff30f7f8c042" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double c_index</definition>
+        <argsstring></argsstring>
+        <name>c_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a26864984dbe2921c6f7ee6d6155eb3f9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double c_indexOld</definition>
+        <argsstring></argsstring>
+        <name>c_indexOld</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="201" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a33a338843e2c1109a61f6197a07b2511" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat H</definition>
+        <argsstring></argsstring>
+        <name>H</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a46ad19e04b4a0c3a656248f9068d4722" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool isCopy</definition>
+        <argsstring></argsstring>
+        <name>isCopy</name>
+        <briefdescription>
+<para>Indicates whether a copy of information is available which corresponds to minimum residue point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="196" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a5e82034717bd8738680b6efc7165182d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <briefdescription>
+<para>Current iteration count. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>Locally-stored iteration threshold. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="177" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a1482cb31e6b6b5b272baf532461b9ffb" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double residue</definition>
+        <argsstring></argsstring>
+        <name>residue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="187" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1addb0c2a21c4bcb89190e038340de6538" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double residueOld</definition>
+        <argsstring></argsstring>
+        <name>residueOld</name>
+        <briefdescription>
+<para>Locally-stored residue values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="186" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a23ef3a4ed2356f203826488369b93ea9" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t reverseStepCount</definition>
+        <argsstring></argsstring>
+        <name>reverseStepCount</name>
+        <briefdescription>
+<para>Successive residue drops. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a1cb7c56a5937fecd90ba0bdad1de090c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t reverseStepTolerance</definition>
+        <argsstring></argsstring>
+        <name>reverseStepTolerance</name>
+        <briefdescription>
+<para>Tolerance on successive residue drops. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="190" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double tolerance</definition>
+        <argsstring></argsstring>
+        <name>tolerance</name>
+        <briefdescription>
+<para>Locally-stored tolerance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1ad306c9dac4334aad91361a289f6f7f8a" prot="private" static="no" mutable="no">
+        <type>const MatType *</type>
+        <definition>const MatType* V</definition>
+        <argsstring></argsstring>
+        <name>V</name>
+        <briefdescription>
+<para>Pointer to matrix being factorized. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a2ea1d9ec4f0d482eb7edfc0c0326d748" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat W</definition>
+        <argsstring></argsstring>
+        <name>W</name>
+        <briefdescription>
+<para>Variables to store information of minimum residue poi. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="199" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a8b485eec7b56aa4526a9c3749fd204dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SimpleToleranceTermination</definition>
+        <argsstring>(const double tolerance=1e-5, const size_t maxIterations=10000, const size_t reverseStepTolerance=3)</argsstring>
+        <name>SimpleToleranceTermination</name>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-5</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>10000</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>reverseStepTolerance</declname>
+          <defval>3</defval>
+        </param>
+        <briefdescription>
+<para>empty constructor </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="35" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a866b70f9202a81d2bdbb116bc2683eb2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const double &amp;</type>
+        <definition>const double&amp; Index</definition>
+        <argsstring>() const</argsstring>
+        <name>Index</name>
+        <briefdescription>
+<para>Get current value of residue. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="160" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a60bfe6387760b1d86552cce461d23099" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;V)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the termination policy before stating the factorization. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="56" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a21aa00d1db37e94076e46c66313514df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsConverged</definition>
+        <argsstring>(arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>IsConverged</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>Check if termination criterio is met. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix of output. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix of output. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="76" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="76" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a5226c80136390904f5893e72749211e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; Iteration</definition>
+        <argsstring>() const</argsstring>
+        <name>Iteration</name>
+        <briefdescription>
+<para>Get current iteration count. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="163" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a26b939a18b15788ad266b8eda3f301e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Access upper limit of iteration count. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="167" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1aa3141c2547caeb826a4c221e10b8529e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const double &amp;</type>
+        <definition>const double&amp; Tolerance</definition>
+        <argsstring>() const</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+<para>Access tolerance value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="170" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a3d9fac84af16250f5a3689692e8f2173" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Tolerance</definition>
+        <argsstring>()</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements residue tolerance termination policy. </para>    </briefdescription>
+    <detaileddescription>
+<para>Termination criterion is met when increase in residue value drops below the given tolerance. To accommodate spikes certain number of successive residue drops are accepted. This upper imit on successive drops can be adjusted with reverseStepCount. Secondary termination criterion terminates algorithm when iteration count goes above the threshold.</para><para><simplesect kind="see"><para><ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp" bodystart="31" bodyend="203"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1aaafe5c5cd07f5e6fd8e1ff30f7f8c042" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>c_index</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a26864984dbe2921c6f7ee6d6155eb3f9" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>c_indexOld</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a33a338843e2c1109a61f6197a07b2511" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>H</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a866b70f9202a81d2bdbb116bc2683eb2" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>Index</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a60bfe6387760b1d86552cce461d23099" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a21aa00d1db37e94076e46c66313514df" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>IsConverged</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a46ad19e04b4a0c3a656248f9068d4722" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>isCopy</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a5226c80136390904f5893e72749211e6" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>Iteration</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a5e82034717bd8738680b6efc7165182d" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>iteration</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a26b939a18b15788ad266b8eda3f301e6" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a1482cb31e6b6b5b272baf532461b9ffb" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>residue</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1addb0c2a21c4bcb89190e038340de6538" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>residueOld</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a23ef3a4ed2356f203826488369b93ea9" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>reverseStepCount</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a1cb7c56a5937fecd90ba0bdad1de090c" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>reverseStepTolerance</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a8b485eec7b56aa4526a9c3749fd204dc" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>SimpleToleranceTermination</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>tolerance</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1aa3141c2547caeb826a4c221e10b8529e" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a3d9fac84af16250f5a3689692e8f2173" prot="public" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1ad306c9dac4334aad91361a289f6f7f8a" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>V</name></member>
+      <member refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a2ea1d9ec4f0d482eb7edfc0c0326d748" prot="private" virt="non-virtual"><scope>mlpack::amf::SimpleToleranceTermination</scope><name>W</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

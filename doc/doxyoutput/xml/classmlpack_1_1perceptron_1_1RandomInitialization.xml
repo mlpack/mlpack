@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1perceptron_1_1RandomInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::perceptron::RandomInitialization</compoundname>
+    <includes refid="perceptron_2initialization__methods_2random__init_8hpp" local="no">random_init.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1RandomInitialization_1a82f2c9d150d42175823128808690c25a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RandomInitialization</definition>
+        <argsstring>()</argsstring>
+        <name>RandomInitialization</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" bodystart="27" bodyend="27"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1perceptron_1_1RandomInitialization_1ae4285f008adf2a80d33e3fa1570d86d5" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Initialize</definition>
+        <argsstring>(arma::mat &amp;weights, arma::vec &amp;biases, const size_t numFeatures, const size_t numClasses)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>biases</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numFeatures</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" bodystart="29" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize weights for the weightVectors matrix in a random manner. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/perceptron/initialization_methods/random_init.hpp" bodystart="24" bodyend="37"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1perceptron_1_1RandomInitialization_1ae4285f008adf2a80d33e3fa1570d86d5" prot="public" virt="non-virtual"><scope>mlpack::perceptron::RandomInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1perceptron_1_1RandomInitialization_1a82f2c9d150d42175823128808690c25a" prot="public" virt="non-virtual"><scope>mlpack::perceptron::RandomInitialization</scope><name>RandomInitialization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

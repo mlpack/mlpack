@@ -1,0 +1,311 @@
+\section{String\+Encoding\+Dictionary$<$ boost\+:\+:string\+\_\+view $>$ Class Template Reference}
+\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4}\index{String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Map\+Type} = std\+::unordered\+\_\+map$<$ boost\+::string\+\_\+view, size\+\_\+t, boost\+::hash$<$ boost\+::string\+\_\+view $>$ $>$
+\begin{DoxyCompactList}\small\item\em A convenient alias for the internal type of the map. \end{DoxyCompactList}\item 
+using \textbf{ Token\+Type} = boost\+::string\+\_\+view
+\begin{DoxyCompactList}\small\item\em The type of the token that the dictionary stores. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ String\+Encoding\+Dictionary} ()=default
+\begin{DoxyCompactList}\small\item\em Construct the default class. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding\+Dictionary} (const \textbf{ String\+Encoding\+Dictionary} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the class from the given object. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding\+Dictionary} (\textbf{ String\+Encoding\+Dictionary} \&\&other)=default
+\begin{DoxyCompactList}\small\item\em Standard move constructor. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Add\+Token} (const boost\+::string\+\_\+view token)
+\begin{DoxyCompactList}\small\item\em The function adds the given token to the dictionary and assigns a label to the token. \end{DoxyCompactList}\item 
+void \textbf{ Clear} ()
+\begin{DoxyCompactList}\small\item\em Clear the dictionary. \end{DoxyCompactList}\item 
+bool \textbf{ Has\+Token} (const boost\+::string\+\_\+view token) const
+\begin{DoxyCompactList}\small\item\em The function returns true if the dictionary contains the given token. \end{DoxyCompactList}\item 
+const \textbf{ Map\+Type} \& \textbf{ Mapping} () const
+\begin{DoxyCompactList}\small\item\em Get the mapping. \end{DoxyCompactList}\item 
+\textbf{ Map\+Type} \& \textbf{ Mapping} ()
+\begin{DoxyCompactList}\small\item\em Modify the mapping. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding\+Dictionary} \& \textbf{ operator=} (const \textbf{ String\+Encoding\+Dictionary} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the class from the given object. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding\+Dictionary} \& \textbf{ operator=} (\textbf{ String\+Encoding\+Dictionary} \&\&other)=default
+\begin{DoxyCompactList}\small\item\em Standard move assignment operator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the class to the given archive. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the dictionary. \end{DoxyCompactList}\item 
+const std\+::deque$<$ std\+::string $>$ \& \textbf{ Tokens} () const
+\begin{DoxyCompactList}\small\item\em Get the tokens. \end{DoxyCompactList}\item 
+std\+::deque$<$ std\+::string $>$ \& \textbf{ Tokens} ()
+\begin{DoxyCompactList}\small\item\em Modify the tokens. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Value} (const boost\+::string\+\_\+view token) const
+\begin{DoxyCompactList}\small\item\em The function returns the label assigned to the given token. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$$>$\newline
+class mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}
+
+
+
+Definition at line 111 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a80bcbe8fbdd933f5a09c26776424d0f5}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Map\+Type@{Map\+Type}}
+\index{Map\+Type@{Map\+Type}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Map\+Type}
+{\footnotesize\ttfamily using \textbf{ Map\+Type} =  std\+::unordered\+\_\+map$<$ boost\+::string\+\_\+view, size\+\_\+t, boost\+::hash$<$boost\+::string\+\_\+view$>$ $>$}
+
+
+
+A convenient alias for the internal type of the map. 
+
+
+
+Definition at line 118 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a03f0c19bcdda5c1375b8a758629eff5d}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Token\+Type@{Token\+Type}}
+\index{Token\+Type@{Token\+Type}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Token\+Type}
+{\footnotesize\ttfamily using \textbf{ Token\+Type} =  boost\+::string\+\_\+view}
+
+
+
+The type of the token that the dictionary stores. 
+
+
+
+Definition at line 121 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a7753620df3329d75a5d9ab76ce6e72d4}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}}
+\index{String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{String\+Encoding\+Dictionary()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding\+Dictionary} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Construct the default class. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_ada4e2b3a26c1abbd1e7ddaecc3959742}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}}
+\index{String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{String\+Encoding\+Dictionary()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding\+Dictionary} (\begin{DoxyParamCaption}\item[{const \textbf{ String\+Encoding\+Dictionary}$<$ boost\+::string\+\_\+view $>$ \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy the class from the given object. 
+
+
+
+Definition at line 127 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a06da134d963a5468b120d0adc6a8bf8f}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}}
+\index{String\+Encoding\+Dictionary@{String\+Encoding\+Dictionary}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{String\+Encoding\+Dictionary()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding\+Dictionary} (\begin{DoxyParamCaption}\item[{\textbf{ String\+Encoding\+Dictionary}$<$ boost\+::string\+\_\+view $>$ \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Standard move constructor. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a7e3410f3fb40a02e7fb73cee88237343}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Add\+Token@{Add\+Token}}
+\index{Add\+Token@{Add\+Token}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Add\+Token()}
+{\footnotesize\ttfamily size\+\_\+t Add\+Token (\begin{DoxyParamCaption}\item[{const boost\+::string\+\_\+view}]{token }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function adds the given token to the dictionary and assigns a label to the token. 
+
+The label is equal to the resulting size of the dictionary. The function returns the assigned label.
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & The given token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 170 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_aa71d36872f416feaa853788a7a7a7ef8}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Clear@{Clear}}
+\index{Clear@{Clear}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Clear()}
+{\footnotesize\ttfamily void Clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clear the dictionary. 
+
+
+
+Definition at line 196 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a525507684140c7199a299e693eeb4394}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Has\+Token@{Has\+Token}}
+\index{Has\+Token@{Has\+Token}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Has\+Token()}
+{\footnotesize\ttfamily bool Has\+Token (\begin{DoxyParamCaption}\item[{const boost\+::string\+\_\+view}]{token }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function returns true if the dictionary contains the given token. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & The given token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 158 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_aa2eae80cec94bbeb1f8bc25367fc0305}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Mapping@{Mapping}}
+\index{Mapping@{Mapping}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Mapping()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Map\+Type}\& Mapping (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the mapping. 
+
+
+
+Definition at line 208 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a11a693fe23d0648d295d6715304e4130}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Mapping@{Mapping}}
+\index{Mapping@{Mapping}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Mapping()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Map\+Type}\& Mapping (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the mapping. 
+
+
+
+Definition at line 210 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a506c8ec992a602df1248debdedf142f4}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding\+Dictionary}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ String\+Encoding\+Dictionary}$<$ boost\+::string\+\_\+view $>$ \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy the class from the given object. 
+
+
+
+Definition at line 138 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_ad87ec7b408381f64b022a4461876bb08}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding\+Dictionary}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ String\+Encoding\+Dictionary}$<$ boost\+::string\+\_\+view $>$ \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Standard move assignment operator. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the class to the given archive. 
+
+
+
+Definition at line 216 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a58f4b9e873b7c1c7d512bd9f7d1489d8}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Size@{Size}}
+\index{Size@{Size}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Size()}
+{\footnotesize\ttfamily size\+\_\+t Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the dictionary. 
+
+
+
+Definition at line 193 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a7e8a6917b70419501aeb3a554032e3eb}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Tokens@{Tokens}}
+\index{Tokens@{Tokens}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Tokens()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const std\+::deque$<$std\+::string$>$\& Tokens (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the tokens. 
+
+
+
+Definition at line 203 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a734a659f62e0faf07d1d106ff702e935}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Tokens@{Tokens}}
+\index{Tokens@{Tokens}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Tokens()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::deque$<$std\+::string$>$\& Tokens (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the tokens. 
+
+
+
+Definition at line 205 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncodingDictionary_3_01boost_1_1string__view_01_4_a4ce5937aeb9e286d27ecff459a327b55}} 
+\index{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}!Value@{Value}}
+\index{Value@{Value}!mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$@{mlpack\+::data\+::\+String\+Encoding\+Dictionary$<$ boost\+::string\+\_\+view $>$}}
+\subsubsection{Value()}
+{\footnotesize\ttfamily size\+\_\+t Value (\begin{DoxyParamCaption}\item[{const boost\+::string\+\_\+view}]{token }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function returns the label assigned to the given token. 
+
+The function throws std\+::out\+\_\+of\+\_\+range if no such token is found.
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & The given token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 187 of file string\+\_\+encoding\+\_\+dictionary.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/\textbf{ string\+\_\+encoding\+\_\+dictionary.\+hpp}\end{DoxyCompactItemize}

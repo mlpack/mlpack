@@ -1,0 +1,204 @@
+.TH "CartPole" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CartPole \- Implementation of Cart Pole task\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAction\fP"
+.br
+.RI "Implementation of action of Cart Pole\&. "
+.ti -1c
+.RI "class \fBState\fP"
+.br
+.RI "Implementation of the state of Cart Pole\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCartPole\fP (const size_t maxSteps=200, const double gravity=9\&.8, const double massCart=1\&.0, const double massPole=0\&.1, const double length=0\&.5, const double forceMag=10\&.0, const double tau=0\&.02, const double thetaThresholdRadians=12 *2 *3\&.1416/360, const double xThreshold=2\&.4, const double doneReward=1\&.0)"
+.br
+.RI "Construct a Cart Pole instance using the given constants\&. "
+.ti -1c
+.RI "\fBState\fP \fBInitialSample\fP ()"
+.br
+.RI "Initial state representation is randomly generated within [-0\&.05, 0\&.05]\&. "
+.ti -1c
+.RI "bool \fBIsTerminal\fP (const \fBState\fP &state) const"
+.br
+.RI "This function checks if the cart has reached the terminal state\&. "
+.ti -1c
+.RI "size_t \fBMaxSteps\fP () const"
+.br
+.RI "Get the maximum number of steps allowed\&. "
+.ti -1c
+.RI "size_t & \fBMaxSteps\fP ()"
+.br
+.RI "Set the maximum number of steps allowed\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action, \fBState\fP &nextState)"
+.br
+.RI "Dynamics of Cart Pole instance\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action)"
+.br
+.RI "Dynamics of Cart Pole\&. "
+.ti -1c
+.RI "size_t \fBStepsPerformed\fP () const"
+.br
+.RI "Get the number of steps performed\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of Cart Pole task\&. 
+.PP
+Definition at line 26 of file cart_pole\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCartPole\fP (const size_t maxSteps = \fC200\fP, const double gravity = \fC9\&.8\fP, const double massCart = \fC1\&.0\fP, const double massPole = \fC0\&.1\fP, const double length = \fC0\&.5\fP, const double forceMag = \fC10\&.0\fP, const double tau = \fC0\&.02\fP, const double thetaThresholdRadians = \fC12 * 2 * 3\&.1416 / 360\fP, const double xThreshold = \fC2\&.4\fP, const double doneReward = \fC1\&.0\fP)\fC [inline]\fP"
+
+.PP
+Construct a Cart Pole instance using the given constants\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxSteps\fP The number of steps after which the episode terminates\&. If the value is 0, there is no limit\&. 
+.br
+\fIgravity\fP The gravity constant\&. 
+.br
+\fImassCart\fP The mass of the cart\&. 
+.br
+\fImassPole\fP The mass of the pole\&. 
+.br
+\fIlength\fP The length of the pole\&. 
+.br
+\fIforceMag\fP The magnitude of the applied force\&. 
+.br
+\fItau\fP The time interval\&. 
+.br
+\fIthetaThresholdRadians\fP The maximum angle\&. 
+.br
+\fIxThreshold\fP The maximum position\&. 
+.br
+\fIdoneReward\fP Reward recieved by agent on success\&. 
+.RE
+.PP
+
+.PP
+Definition at line 117 of file cart_pole\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBState\fP InitialSample ()\fC [inline]\fP"
+
+.PP
+Initial state representation is randomly generated within [-0\&.05, 0\&.05]\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Initial state for each episode\&. 
+.RE
+.PP
+
+.PP
+Definition at line 207 of file cart_pole\&.hpp\&.
+.PP
+References CartPole::State::State()\&.
+.SS "bool IsTerminal (const \fBState\fP & state) const\fC [inline]\fP"
+
+.PP
+This function checks if the cart has reached the terminal state\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstate\fP The desired state\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+true if state is a terminal state, otherwise false\&. 
+.RE
+.PP
+
+.PP
+Definition at line 219 of file cart_pole\&.hpp\&.
+.PP
+References CartPole::State::Angle(), and CartPole::State::Position()\&.
+.PP
+Referenced by CartPole::Sample()\&.
+.SS "size_t MaxSteps () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of steps allowed\&. 
+.PP
+Definition at line 240 of file cart_pole\&.hpp\&.
+.SS "size_t& MaxSteps ()\fC [inline]\fP"
+
+.PP
+Set the maximum number of steps allowed\&. 
+.PP
+Definition at line 242 of file cart_pole\&.hpp\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action, \fBState\fP & nextState)\fC [inline]\fP"
+
+.PP
+Dynamics of Cart Pole instance\&. Get reward and next state based on current state and current action\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.br
+\fInextState\fP The next state\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+reward, it's always 1\&.0\&. 
+.RE
+.PP
+When done is false, it means that the cartpole has fallen down\&. For this case the reward is 1\&.0\&.
+.PP
+Definition at line 151 of file cart_pole\&.hpp\&.
+.PP
+References CartPole::Action::action, CartPole::State::Angle(), CartPole::State::AngularVelocity(), CartPole::IsTerminal(), CartPole::State::Position(), and CartPole::State::Velocity()\&.
+.PP
+Referenced by CartPole::Sample()\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action)\fC [inline]\fP"
+
+.PP
+Dynamics of Cart Pole\&. Get reward based on current state and current action\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+reward, it's always 1\&.0\&. 
+.RE
+.PP
+
+.PP
+Definition at line 196 of file cart_pole\&.hpp\&.
+.PP
+References CartPole::Sample()\&.
+.SS "size_t StepsPerformed () const\fC [inline]\fP"
+
+.PP
+Get the number of steps performed\&. 
+.PP
+Definition at line 237 of file cart_pole\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

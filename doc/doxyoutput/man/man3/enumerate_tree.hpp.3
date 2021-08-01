@@ -1,0 +1,51 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/tree/enumerate_tree.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/tree/enumerate_tree.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::tree\fP"
+.br
+.RI "Trees and tree-building procedures\&. "
+.ti -1c
+.RI " \fBmlpack::tree::enumerate\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class TreeType , class Walker > void \fBEnumerateTree\fP (TreeType *tree, Walker &walker)"
+.br
+.RI "Traverses all nodes of the tree, including the inner ones\&. "
+.ti -1c
+.RI "template<class TreeType , class Walker > void \fBEnumerateTreeImpl\fP (TreeType *tree, Walker &walker, bool root)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ivan (Jonan) Georgiev
+.RE
+.PP
+This file contains function that performs a simple depth-first walk on the tree calling \fCEnter\fP and \fCLeave\fP methods of a provided walker\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBenumerate_tree\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

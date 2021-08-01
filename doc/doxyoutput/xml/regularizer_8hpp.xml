@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="regularizer_8hpp" kind="file" language="C++">
+    <compoundname>regularizer.hpp</compoundname>
+    <includes refid="lregularizer_8hpp" local="yes">lregularizer.hpp</includes>
+    <includes refid="orthogonal__regularizer_8hpp" local="yes">orthogonal_regularizer.hpp</includes>
+    <includes refid="no__regularizer_8hpp" local="yes">no_regularizer.hpp</includes>
+    <incdepgraph>
+      <node id="40845">
+        <label>list</label>
+      </node>
+      <node id="40842">
+        <label>atomic</label>
+      </node>
+      <node id="40832">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="40808">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="40844">
+        <label>iomanip</label>
+      </node>
+      <node id="40817">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="40818" relation="include">
+        </childnode>
+        <childnode refid="40820" relation="include">
+        </childnode>
+      </node>
+      <node id="40800">
+        <label>cstdint</label>
+      </node>
+      <node id="40809">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="40816">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="40839">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="40829">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="40796">
+        <label>cmath</label>
+      </node>
+      <node id="40815">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="40804">
+        <label>stdexcept</label>
+      </node>
+      <node id="40855">
+        <label>no_regularizer.hpp</label>
+        <link refid="no__regularizer_8hpp"/>
+        <childnode refid="40795" relation="include">
+        </childnode>
+      </node>
+      <node id="40824">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="40809" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40810" relation="include">
+        </childnode>
+      </node>
+      <node id="40848">
+        <label>string</label>
+      </node>
+      <node id="40836">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="40837" relation="include">
+        </childnode>
+        <childnode refid="40803" relation="include">
+        </childnode>
+      </node>
+      <node id="40846">
+        <label>map</label>
+      </node>
+      <node id="40854">
+        <label>orthogonal_regularizer_impl.hpp</label>
+      </node>
+      <node id="40798">
+        <label>cfloat</label>
+      </node>
+      <node id="40828">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="40850">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="40812">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="40835">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="40836" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40819" relation="include">
+        </childnode>
+        <childnode refid="40837" relation="include">
+        </childnode>
+      </node>
+      <node id="40852">
+        <label>lregularizer_impl.hpp</label>
+      </node>
+      <node id="40825">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="40823">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="40809" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40810" relation="include">
+        </childnode>
+      </node>
+      <node id="40826">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="40809" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40810" relation="include">
+        </childnode>
+      </node>
+      <node id="40814">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="40834">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="40810" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40822" relation="include">
+        </childnode>
+        <childnode refid="40831" relation="include">
+        </childnode>
+      </node>
+      <node id="40838">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="40839" relation="include">
+        </childnode>
+      </node>
+      <node id="40840">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="40795">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="40796" relation="include">
+        </childnode>
+        <childnode refid="40797" relation="include">
+        </childnode>
+        <childnode refid="40798" relation="include">
+        </childnode>
+        <childnode refid="40799" relation="include">
+        </childnode>
+        <childnode refid="40800" relation="include">
+        </childnode>
+        <childnode refid="40801" relation="include">
+        </childnode>
+        <childnode refid="40802" relation="include">
+        </childnode>
+        <childnode refid="40803" relation="include">
+        </childnode>
+        <childnode refid="40804" relation="include">
+        </childnode>
+        <childnode refid="40805" relation="include">
+        </childnode>
+        <childnode refid="40806" relation="include">
+        </childnode>
+        <childnode refid="40807" relation="include">
+        </childnode>
+        <childnode refid="40808" relation="include">
+        </childnode>
+        <childnode refid="40809" relation="include">
+        </childnode>
+        <childnode refid="40810" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40813" relation="include">
+        </childnode>
+        <childnode refid="40814" relation="include">
+        </childnode>
+        <childnode refid="40815" relation="include">
+        </childnode>
+        <childnode refid="40816" relation="include">
+        </childnode>
+        <childnode refid="40817" relation="include">
+        </childnode>
+        <childnode refid="40821" relation="include">
+        </childnode>
+        <childnode refid="40822" relation="include">
+        </childnode>
+        <childnode refid="40823" relation="include">
+        </childnode>
+        <childnode refid="40824" relation="include">
+        </childnode>
+        <childnode refid="40825" relation="include">
+        </childnode>
+        <childnode refid="40826" relation="include">
+        </childnode>
+        <childnode refid="40827" relation="include">
+        </childnode>
+        <childnode refid="40833" relation="include">
+        </childnode>
+        <childnode refid="40834" relation="include">
+        </childnode>
+        <childnode refid="40831" relation="include">
+        </childnode>
+        <childnode refid="40835" relation="include">
+        </childnode>
+        <childnode refid="40838" relation="include">
+        </childnode>
+        <childnode refid="40840" relation="include">
+        </childnode>
+        <childnode refid="40841" relation="include">
+        </childnode>
+        <childnode refid="40850" relation="include">
+        </childnode>
+        <childnode refid="40851" relation="include">
+        </childnode>
+      </node>
+      <node id="40794">
+        <label>lregularizer.hpp</label>
+        <link refid="lregularizer_8hpp"/>
+        <childnode refid="40795" relation="include">
+        </childnode>
+        <childnode refid="40852" relation="include">
+        </childnode>
+      </node>
+      <node id="40801">
+        <label>cstdio</label>
+      </node>
+      <node id="40805">
+        <label>tuple</label>
+      </node>
+      <node id="40810">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="40827">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="40810" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40814" relation="include">
+        </childnode>
+        <childnode refid="40828" relation="include">
+        </childnode>
+        <childnode refid="40829" relation="include">
+        </childnode>
+        <childnode refid="40830" relation="include">
+        </childnode>
+        <childnode refid="40831" relation="include">
+        </childnode>
+      </node>
+      <node id="40806">
+        <label>utility</label>
+      </node>
+      <node id="40830">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="40821">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="40818">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="40819" relation="include">
+        </childnode>
+      </node>
+      <node id="40841">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="40842" relation="include">
+        </childnode>
+        <childnode refid="40843" relation="include">
+        </childnode>
+        <childnode refid="40844" relation="include">
+        </childnode>
+        <childnode refid="40845" relation="include">
+        </childnode>
+        <childnode refid="40846" relation="include">
+        </childnode>
+        <childnode refid="40847" relation="include">
+        </childnode>
+        <childnode refid="40848" relation="include">
+        </childnode>
+        <childnode refid="40849" relation="include">
+        </childnode>
+      </node>
+      <node id="40793">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/regularizer.hpp</label>
+        <link refid="regularizer_8hpp"/>
+        <childnode refid="40794" relation="include">
+        </childnode>
+        <childnode refid="40853" relation="include">
+        </childnode>
+        <childnode refid="40855" relation="include">
+        </childnode>
+      </node>
+      <node id="40819">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40833">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="40831" relation="include">
+        </childnode>
+        <childnode refid="40827" relation="include">
+        </childnode>
+        <childnode refid="40834" relation="include">
+        </childnode>
+      </node>
+      <node id="40802">
+        <label>cstdlib</label>
+      </node>
+      <node id="40797">
+        <label>cctype</label>
+      </node>
+      <node id="40820">
+        <label>unordered_map</label>
+      </node>
+      <node id="40799">
+        <label>climits</label>
+      </node>
+      <node id="40847">
+        <label>mutex</label>
+      </node>
+      <node id="40843">
+        <label>chrono</label>
+      </node>
+      <node id="40851">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="40849">
+        <label>thread</label>
+      </node>
+      <node id="40837">
+        <label>type_traits</label>
+      </node>
+      <node id="40813">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="40807">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="40831">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="40809" relation="include">
+        </childnode>
+        <childnode refid="40810" relation="include">
+        </childnode>
+        <childnode refid="40811" relation="include">
+        </childnode>
+        <childnode refid="40812" relation="include">
+        </childnode>
+        <childnode refid="40832" relation="include">
+        </childnode>
+      </node>
+      <node id="40803">
+        <label>cstring</label>
+      </node>
+      <node id="40853">
+        <label>orthogonal_regularizer.hpp</label>
+        <link refid="orthogonal__regularizer_8hpp"/>
+        <childnode refid="40795" relation="include">
+        </childnode>
+        <childnode refid="40854" relation="include">
+        </childnode>
+      </node>
+      <node id="40822">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="40811">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Saksham Bansal</para></simplesect>
+This includes various regularizers to construct a model.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_REGULARIZER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_REGULARIZER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="lregularizer_8hpp" kindref="compound">lregularizer.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="orthogonal__regularizer_8hpp" kindref="compound">orthogonal_regularizer.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="no__regularizer_8hpp" kindref="compound">no_regularizer.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/regularizer.hpp"/>
+  </compounddef>
+</doxygen>

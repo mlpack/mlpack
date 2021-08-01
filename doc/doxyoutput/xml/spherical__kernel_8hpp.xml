@@ -1,0 +1,797 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="spherical__kernel_8hpp" kind="file" language="C++">
+    <compoundname>spherical_kernel.hpp</compoundname>
+    <includes local="no">boost/math/special_functions/gamma.hpp</includes>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="core_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core.hpp</includedby>
+    <includedby refid="fastmks__model_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</includedby>
+    <incdepgraph>
+      <node id="11781">
+        <label>list</label>
+      </node>
+      <node id="11778">
+        <label>atomic</label>
+      </node>
+      <node id="11768">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="11744">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="11780">
+        <label>iomanip</label>
+      </node>
+      <node id="11753">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="11754" relation="include">
+        </childnode>
+        <childnode refid="11756" relation="include">
+        </childnode>
+      </node>
+      <node id="11736">
+        <label>cstdint</label>
+      </node>
+      <node id="11745">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="11752">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="11775">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="11729">
+        <label>/home/aakash/mlpack/src/mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="11730" relation="include">
+        </childnode>
+        <childnode refid="11731" relation="include">
+        </childnode>
+      </node>
+      <node id="11765">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="11732">
+        <label>cmath</label>
+      </node>
+      <node id="11751">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11740">
+        <label>stdexcept</label>
+      </node>
+      <node id="11760">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="11745" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11746" relation="include">
+        </childnode>
+      </node>
+      <node id="11784">
+        <label>string</label>
+      </node>
+      <node id="11772">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="11773" relation="include">
+        </childnode>
+        <childnode refid="11739" relation="include">
+        </childnode>
+      </node>
+      <node id="11782">
+        <label>map</label>
+      </node>
+      <node id="11734">
+        <label>cfloat</label>
+      </node>
+      <node id="11764">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="11786">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="11748">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="11771">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="11772" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11755" relation="include">
+        </childnode>
+        <childnode refid="11773" relation="include">
+        </childnode>
+      </node>
+      <node id="11761">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="11759">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="11745" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11746" relation="include">
+        </childnode>
+      </node>
+      <node id="11762">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="11745" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11746" relation="include">
+        </childnode>
+      </node>
+      <node id="11750">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="11770">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="11746" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11758" relation="include">
+        </childnode>
+        <childnode refid="11767" relation="include">
+        </childnode>
+      </node>
+      <node id="11774">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="11775" relation="include">
+        </childnode>
+      </node>
+      <node id="11776">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="11731">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="11732" relation="include">
+        </childnode>
+        <childnode refid="11733" relation="include">
+        </childnode>
+        <childnode refid="11734" relation="include">
+        </childnode>
+        <childnode refid="11735" relation="include">
+        </childnode>
+        <childnode refid="11736" relation="include">
+        </childnode>
+        <childnode refid="11737" relation="include">
+        </childnode>
+        <childnode refid="11738" relation="include">
+        </childnode>
+        <childnode refid="11739" relation="include">
+        </childnode>
+        <childnode refid="11740" relation="include">
+        </childnode>
+        <childnode refid="11741" relation="include">
+        </childnode>
+        <childnode refid="11742" relation="include">
+        </childnode>
+        <childnode refid="11743" relation="include">
+        </childnode>
+        <childnode refid="11744" relation="include">
+        </childnode>
+        <childnode refid="11745" relation="include">
+        </childnode>
+        <childnode refid="11746" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11749" relation="include">
+        </childnode>
+        <childnode refid="11750" relation="include">
+        </childnode>
+        <childnode refid="11751" relation="include">
+        </childnode>
+        <childnode refid="11752" relation="include">
+        </childnode>
+        <childnode refid="11753" relation="include">
+        </childnode>
+        <childnode refid="11757" relation="include">
+        </childnode>
+        <childnode refid="11758" relation="include">
+        </childnode>
+        <childnode refid="11759" relation="include">
+        </childnode>
+        <childnode refid="11760" relation="include">
+        </childnode>
+        <childnode refid="11761" relation="include">
+        </childnode>
+        <childnode refid="11762" relation="include">
+        </childnode>
+        <childnode refid="11763" relation="include">
+        </childnode>
+        <childnode refid="11769" relation="include">
+        </childnode>
+        <childnode refid="11770" relation="include">
+        </childnode>
+        <childnode refid="11767" relation="include">
+        </childnode>
+        <childnode refid="11771" relation="include">
+        </childnode>
+        <childnode refid="11774" relation="include">
+        </childnode>
+        <childnode refid="11776" relation="include">
+        </childnode>
+        <childnode refid="11777" relation="include">
+        </childnode>
+        <childnode refid="11786" relation="include">
+        </childnode>
+        <childnode refid="11787" relation="include">
+        </childnode>
+      </node>
+      <node id="11737">
+        <label>cstdio</label>
+      </node>
+      <node id="11741">
+        <label>tuple</label>
+      </node>
+      <node id="11746">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="11763">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="11746" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11750" relation="include">
+        </childnode>
+        <childnode refid="11764" relation="include">
+        </childnode>
+        <childnode refid="11765" relation="include">
+        </childnode>
+        <childnode refid="11766" relation="include">
+        </childnode>
+        <childnode refid="11767" relation="include">
+        </childnode>
+      </node>
+      <node id="11742">
+        <label>utility</label>
+      </node>
+      <node id="11766">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="11757">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="11754">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="11755" relation="include">
+        </childnode>
+      </node>
+      <node id="11777">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="11778" relation="include">
+        </childnode>
+        <childnode refid="11779" relation="include">
+        </childnode>
+        <childnode refid="11780" relation="include">
+        </childnode>
+        <childnode refid="11781" relation="include">
+        </childnode>
+        <childnode refid="11782" relation="include">
+        </childnode>
+        <childnode refid="11783" relation="include">
+        </childnode>
+        <childnode refid="11784" relation="include">
+        </childnode>
+        <childnode refid="11785" relation="include">
+        </childnode>
+      </node>
+      <node id="11755">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="11769">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="11767" relation="include">
+        </childnode>
+        <childnode refid="11763" relation="include">
+        </childnode>
+        <childnode refid="11770" relation="include">
+        </childnode>
+      </node>
+      <node id="11738">
+        <label>cstdlib</label>
+      </node>
+      <node id="11733">
+        <label>cctype</label>
+      </node>
+      <node id="11756">
+        <label>unordered_map</label>
+      </node>
+      <node id="11735">
+        <label>climits</label>
+      </node>
+      <node id="11783">
+        <label>mutex</label>
+      </node>
+      <node id="11779">
+        <label>chrono</label>
+      </node>
+      <node id="11787">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="11730">
+        <label>boost/math/special_functions/gamma.hpp</label>
+      </node>
+      <node id="11785">
+        <label>thread</label>
+      </node>
+      <node id="11773">
+        <label>type_traits</label>
+      </node>
+      <node id="11749">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="11743">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="11767">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="11745" relation="include">
+        </childnode>
+        <childnode refid="11746" relation="include">
+        </childnode>
+        <childnode refid="11747" relation="include">
+        </childnode>
+        <childnode refid="11748" relation="include">
+        </childnode>
+        <childnode refid="11768" relation="include">
+        </childnode>
+      </node>
+      <node id="11739">
+        <label>cstring</label>
+      </node>
+      <node id="11758">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="11747">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="11832">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="11795">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="11794">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="11824">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="11825" relation="include">
+        </childnode>
+        <childnode refid="11826" relation="include">
+        </childnode>
+      </node>
+      <node id="11821">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="11801">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="11796">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="11835">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</label>
+        <link refid="fastmks__model_8hpp"/>
+      </node>
+      <node id="11788">
+        <label>/home/aakash/mlpack/src/mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="11789" relation="include">
+        </childnode>
+        <childnode refid="11835" relation="include">
+        </childnode>
+      </node>
+      <node id="11811">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="11812" relation="include">
+        </childnode>
+        <childnode refid="11813" relation="include">
+        </childnode>
+        <childnode refid="11817" relation="include">
+        </childnode>
+        <childnode refid="11818" relation="include">
+        </childnode>
+        <childnode refid="11814" relation="include">
+        </childnode>
+        <childnode refid="11815" relation="include">
+        </childnode>
+        <childnode refid="11816" relation="include">
+        </childnode>
+        <childnode refid="11819" relation="include">
+        </childnode>
+      </node>
+      <node id="11789">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="11790" relation="include">
+        </childnode>
+        <childnode refid="11795" relation="include">
+        </childnode>
+        <childnode refid="11796" relation="include">
+        </childnode>
+        <childnode refid="11797" relation="include">
+        </childnode>
+        <childnode refid="11798" relation="include">
+        </childnode>
+        <childnode refid="11799" relation="include">
+        </childnode>
+        <childnode refid="11800" relation="include">
+        </childnode>
+        <childnode refid="11801" relation="include">
+        </childnode>
+        <childnode refid="11802" relation="include">
+        </childnode>
+        <childnode refid="11803" relation="include">
+        </childnode>
+        <childnode refid="11804" relation="include">
+        </childnode>
+        <childnode refid="11805" relation="include">
+        </childnode>
+        <childnode refid="11806" relation="include">
+        </childnode>
+        <childnode refid="11808" relation="include">
+        </childnode>
+        <childnode refid="11809" relation="include">
+        </childnode>
+        <childnode refid="11810" relation="include">
+        </childnode>
+        <childnode refid="11817" relation="include">
+        </childnode>
+        <childnode refid="11820" relation="include">
+        </childnode>
+        <childnode refid="11821" relation="include">
+        </childnode>
+        <childnode refid="11822" relation="include">
+        </childnode>
+        <childnode refid="11823" relation="include">
+        </childnode>
+        <childnode refid="11827" relation="include">
+        </childnode>
+        <childnode refid="11828" relation="include">
+        </childnode>
+        <childnode refid="11829" relation="include">
+        </childnode>
+        <childnode refid="11830" relation="include">
+        </childnode>
+        <childnode refid="11831" relation="include">
+        </childnode>
+        <childnode refid="11832" relation="include">
+        </childnode>
+        <childnode refid="11833" relation="include">
+        </childnode>
+        <childnode refid="11834" relation="include">
+        </childnode>
+      </node>
+      <node id="11804">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="11789" relation="include">
+        </childnode>
+      </node>
+      <node id="11810">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="11811" relation="include">
+        </childnode>
+      </node>
+      <node id="11829">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="11825">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="11820">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="11818">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="11814">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="11797">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="11822">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="11831">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="11807">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="11794" relation="include">
+        </childnode>
+      </node>
+      <node id="11826">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="11791">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="11792" relation="include">
+        </childnode>
+        <childnode refid="11793" relation="include">
+        </childnode>
+      </node>
+      <node id="11803">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="11833">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="11832" relation="include">
+        </childnode>
+      </node>
+      <node id="11799">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="11792">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="11812">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="11834">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="11817">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="11819">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="11827">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="11798">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="11813">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="11809" relation="include">
+        </childnode>
+        <childnode refid="11814" relation="include">
+        </childnode>
+        <childnode refid="11815" relation="include">
+        </childnode>
+        <childnode refid="11816" relation="include">
+        </childnode>
+      </node>
+      <node id="11805">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="11815">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="11800">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="11828">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="11809">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="11808">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="11790">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="11791" relation="include">
+        </childnode>
+        <childnode refid="11792" relation="include">
+        </childnode>
+        <childnode refid="11793" relation="include">
+        </childnode>
+        <childnode refid="11794" relation="include">
+        </childnode>
+      </node>
+      <node id="11816">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="11793">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="11823">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="11824" relation="include">
+        </childnode>
+      </node>
+      <node id="11830">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="11802">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="11806">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="11807" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1kernel_1_1KernelTraits_3_01SphericalKernel_01_4" prot="public">mlpack::kernel::KernelTraits&lt; SphericalKernel &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1kernel_1_1SphericalKernel" prot="public">mlpack::kernel::SphericalKernel</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kernel">mlpack::kernel</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Neil Slagle</para></simplesect>
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="10"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_KERNELS_SPHERICAL_KERNEL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;boost/math/special_functions/gamma.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kernel<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1kernel_1_1SphericalKernel" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kernel_1_1SphericalKernel" kindref="compound">SphericalKernel</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1kernel_1_1SphericalKernel_1af1adb8ad3b56cf32b9800d2d842d3c8d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1af1adb8ad3b56cf32b9800d2d842d3c8d" kindref="member">SphericalKernel</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bandwidth<sp/>=<sp/>1.0)<sp/>:</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>bandwidth(bandwidth),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>bandwidthSquared(<ref refid="namespacestd" kindref="compound">std</ref>::pow(bandwidth,<sp/>2.0))</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeA,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeB&gt;</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1kernel_1_1SphericalKernel_1a84c3aeba25ea7703bd2d4f85a54301da" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a84c3aeba25ea7703bd2d4f85a54301da" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeA&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeB&amp;<sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="45"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="classmlpack_1_1metric_1_1LMetric_1af39380107875eb94f0efef7d37cc57df" kindref="member">metric::SquaredEuclideanDistance::Evaluate</ref>(a,<sp/>b)<sp/>&lt;=<sp/>bandwidthSquared)<sp/>?</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1.0<sp/>:<sp/>0.0;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeA,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeB&gt;</highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1kernel_1_1SphericalKernel_1a9bcc650e49c4b0578d4eb5a62810622a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a9bcc650e49c4b0578d4eb5a62810622a" kindref="member">ConvolutionIntegral</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeA&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeB&amp;<sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="63"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance<sp/>=<sp/>sqrt(<ref refid="classmlpack_1_1metric_1_1LMetric_1af39380107875eb94f0efef7d37cc57df" kindref="member">metric::SquaredEuclideanDistance::Evaluate</ref>(a,<sp/>b));</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(distance<sp/>&gt;=<sp/>2.0<sp/>*<sp/>bandwidth)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>volumeSquared<sp/>=<sp/>pow(<ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a945f6339551eba9cf1164a84899a5427" kindref="member">Normalizer</ref>(a.n_rows),<sp/>2.0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(a.n_rows)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>1:</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1.0<sp/>/<sp/>volumeSquared<sp/>*<sp/>(2.0<sp/>*<sp/>bandwidth<sp/>-<sp/>distance);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>2:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1.0<sp/>/<sp/>volumeSquared<sp/>*</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(2.0<sp/>*<sp/>bandwidth<sp/>*<sp/>bandwidth<sp/>*<sp/>acos(distance/(2.0<sp/>*<sp/>bandwidth))<sp/>-</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>distance<sp/>/<sp/>4.0<sp/>*<sp/>sqrt(4.0*bandwidth*bandwidth-distance*distance));</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;The<sp/>spherical<sp/>kernel<sp/>does<sp/>not<sp/>support<sp/>convolution\</highlight></codeline>
+<codeline lineno="81"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>integrals<sp/>above<sp/>dimension<sp/>two,<sp/>yet...&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1.0;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1kernel_1_1SphericalKernel_1a945f6339551eba9cf1164a84899a5427" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a945f6339551eba9cf1164a84899a5427" kindref="member">Normalizer</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimension)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="86"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pow(bandwidth,<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)<sp/>dimension)<sp/>*<sp/>pow(<ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>,<sp/>dimension<sp/>/<sp/>2.0)<sp/>/</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::tgamma(dimension<sp/>/<sp/>2.0<sp/>+<sp/>1.0);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1kernel_1_1SphericalKernel_1a031ed73efe13c6e6bc805006bd249238" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a031ed73efe13c6e6bc805006bd249238" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="97"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(t<sp/>&lt;=<sp/>bandwidth)<sp/>?<sp/>1.0<sp/>:<sp/>0.0;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1kernel_1_1SphericalKernel_1af4d3d89832c78fff51f19ae81c720011" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1af4d3d89832c78fff51f19ae81c720011" kindref="member">Gradient</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>t<sp/>==<sp/>bandwidth<sp/>?<sp/>arma::datum::nan<sp/>:<sp/>0.0;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1kernel_1_1SphericalKernel_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kernel_1_1SphericalKernel_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(bandwidth));</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(bandwidthSquared));</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bandwidth;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bandwidthSquared;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="120" refid="classmlpack_1_1kernel_1_1KernelTraits_3_01SphericalKernel_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kernel_1_1KernelTraits" kindref="compound">KernelTraits</ref>&lt;<ref refid="classmlpack_1_1kernel_1_1SphericalKernel" kindref="compound">SphericalKernel</ref>&gt;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="124" refid="classmlpack_1_1kernel_1_1KernelTraits_3_01SphericalKernel_01_4_1a213c74e1e7c01890b64c8b9e88f8c0dc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsNormalized<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126" refid="classmlpack_1_1kernel_1_1KernelTraits_3_01SphericalKernel_01_4_1a12fc177e124e69c8efbac5b08e5c5196" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UsesSquaredDistance<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kernel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/kernels/spherical_kernel.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,538 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="amf_2init__rules_2random__init_8hpp" kind="file" language="C++">
+    <compoundname>random_init.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="amf_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp</includedby>
+    <incdepgraph>
+      <node id="23189">
+        <label>list</label>
+      </node>
+      <node id="23186">
+        <label>atomic</label>
+      </node>
+      <node id="23176">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="23152">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="23188">
+        <label>iomanip</label>
+      </node>
+      <node id="23161">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="23162" relation="include">
+        </childnode>
+        <childnode refid="23164" relation="include">
+        </childnode>
+      </node>
+      <node id="23144">
+        <label>cstdint</label>
+      </node>
+      <node id="23153">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23160">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="23183">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="23173">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="23140">
+        <label>cmath</label>
+      </node>
+      <node id="23159">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="23148">
+        <label>stdexcept</label>
+      </node>
+      <node id="23168">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="23153" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23154" relation="include">
+        </childnode>
+      </node>
+      <node id="23192">
+        <label>string</label>
+      </node>
+      <node id="23180">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="23181" relation="include">
+        </childnode>
+        <childnode refid="23147" relation="include">
+        </childnode>
+      </node>
+      <node id="23190">
+        <label>map</label>
+      </node>
+      <node id="23142">
+        <label>cfloat</label>
+      </node>
+      <node id="23172">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="23194">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="23156">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="23179">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="23180" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23163" relation="include">
+        </childnode>
+        <childnode refid="23181" relation="include">
+        </childnode>
+      </node>
+      <node id="23169">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="23167">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="23153" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23154" relation="include">
+        </childnode>
+      </node>
+      <node id="23170">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="23153" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23154" relation="include">
+        </childnode>
+      </node>
+      <node id="23158">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="23178">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="23154" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23166" relation="include">
+        </childnode>
+        <childnode refid="23175" relation="include">
+        </childnode>
+      </node>
+      <node id="23182">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="23183" relation="include">
+        </childnode>
+      </node>
+      <node id="23184">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="23139">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="23140" relation="include">
+        </childnode>
+        <childnode refid="23141" relation="include">
+        </childnode>
+        <childnode refid="23142" relation="include">
+        </childnode>
+        <childnode refid="23143" relation="include">
+        </childnode>
+        <childnode refid="23144" relation="include">
+        </childnode>
+        <childnode refid="23145" relation="include">
+        </childnode>
+        <childnode refid="23146" relation="include">
+        </childnode>
+        <childnode refid="23147" relation="include">
+        </childnode>
+        <childnode refid="23148" relation="include">
+        </childnode>
+        <childnode refid="23149" relation="include">
+        </childnode>
+        <childnode refid="23150" relation="include">
+        </childnode>
+        <childnode refid="23151" relation="include">
+        </childnode>
+        <childnode refid="23152" relation="include">
+        </childnode>
+        <childnode refid="23153" relation="include">
+        </childnode>
+        <childnode refid="23154" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23157" relation="include">
+        </childnode>
+        <childnode refid="23158" relation="include">
+        </childnode>
+        <childnode refid="23159" relation="include">
+        </childnode>
+        <childnode refid="23160" relation="include">
+        </childnode>
+        <childnode refid="23161" relation="include">
+        </childnode>
+        <childnode refid="23165" relation="include">
+        </childnode>
+        <childnode refid="23166" relation="include">
+        </childnode>
+        <childnode refid="23167" relation="include">
+        </childnode>
+        <childnode refid="23168" relation="include">
+        </childnode>
+        <childnode refid="23169" relation="include">
+        </childnode>
+        <childnode refid="23170" relation="include">
+        </childnode>
+        <childnode refid="23171" relation="include">
+        </childnode>
+        <childnode refid="23177" relation="include">
+        </childnode>
+        <childnode refid="23178" relation="include">
+        </childnode>
+        <childnode refid="23175" relation="include">
+        </childnode>
+        <childnode refid="23179" relation="include">
+        </childnode>
+        <childnode refid="23182" relation="include">
+        </childnode>
+        <childnode refid="23184" relation="include">
+        </childnode>
+        <childnode refid="23185" relation="include">
+        </childnode>
+        <childnode refid="23194" relation="include">
+        </childnode>
+        <childnode refid="23195" relation="include">
+        </childnode>
+      </node>
+      <node id="23145">
+        <label>cstdio</label>
+      </node>
+      <node id="23149">
+        <label>tuple</label>
+      </node>
+      <node id="23154">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="23171">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="23154" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23158" relation="include">
+        </childnode>
+        <childnode refid="23172" relation="include">
+        </childnode>
+        <childnode refid="23173" relation="include">
+        </childnode>
+        <childnode refid="23174" relation="include">
+        </childnode>
+        <childnode refid="23175" relation="include">
+        </childnode>
+      </node>
+      <node id="23150">
+        <label>utility</label>
+      </node>
+      <node id="23174">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="23165">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="23138">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_init.hpp</label>
+        <link refid="amf_2init__rules_2random__init_8hpp"/>
+        <childnode refid="23139" relation="include">
+        </childnode>
+      </node>
+      <node id="23162">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="23163" relation="include">
+        </childnode>
+      </node>
+      <node id="23185">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="23186" relation="include">
+        </childnode>
+        <childnode refid="23187" relation="include">
+        </childnode>
+        <childnode refid="23188" relation="include">
+        </childnode>
+        <childnode refid="23189" relation="include">
+        </childnode>
+        <childnode refid="23190" relation="include">
+        </childnode>
+        <childnode refid="23191" relation="include">
+        </childnode>
+        <childnode refid="23192" relation="include">
+        </childnode>
+        <childnode refid="23193" relation="include">
+        </childnode>
+      </node>
+      <node id="23163">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="23177">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="23175" relation="include">
+        </childnode>
+        <childnode refid="23171" relation="include">
+        </childnode>
+        <childnode refid="23178" relation="include">
+        </childnode>
+      </node>
+      <node id="23146">
+        <label>cstdlib</label>
+      </node>
+      <node id="23141">
+        <label>cctype</label>
+      </node>
+      <node id="23164">
+        <label>unordered_map</label>
+      </node>
+      <node id="23143">
+        <label>climits</label>
+      </node>
+      <node id="23191">
+        <label>mutex</label>
+      </node>
+      <node id="23187">
+        <label>chrono</label>
+      </node>
+      <node id="23195">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="23193">
+        <label>thread</label>
+      </node>
+      <node id="23181">
+        <label>type_traits</label>
+      </node>
+      <node id="23157">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="23151">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="23175">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="23153" relation="include">
+        </childnode>
+        <childnode refid="23154" relation="include">
+        </childnode>
+        <childnode refid="23155" relation="include">
+        </childnode>
+        <childnode refid="23156" relation="include">
+        </childnode>
+        <childnode refid="23176" relation="include">
+        </childnode>
+      </node>
+      <node id="23147">
+        <label>cstring</label>
+      </node>
+      <node id="23166">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="23155">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="23197">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp</label>
+        <link refid="amf_8hpp"/>
+        <childnode refid="23198" relation="include">
+        </childnode>
+        <childnode refid="23206" relation="include">
+        </childnode>
+        <childnode refid="23207" relation="include">
+        </childnode>
+        <childnode refid="23208" relation="include">
+        </childnode>
+        <childnode refid="23209" relation="include">
+        </childnode>
+      </node>
+      <node id="23201">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="23203">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="23200">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="23198">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="23199" relation="include">
+        </childnode>
+        <childnode refid="23201" relation="include">
+        </childnode>
+        <childnode refid="23202" relation="include">
+        </childnode>
+        <childnode refid="23204" relation="include">
+        </childnode>
+      </node>
+      <node id="23204">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="23205" relation="include">
+        </childnode>
+      </node>
+      <node id="23209">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</label>
+        <link refid="svd__incomplete__method_8hpp"/>
+      </node>
+      <node id="23206">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp</label>
+        <link refid="batch__svd__method_8hpp"/>
+      </node>
+      <node id="23199">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="23200" relation="include">
+        </childnode>
+      </node>
+      <node id="23196">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_init.hpp</label>
+        <link refid="amf_2init__rules_2random__init_8hpp"/>
+        <childnode refid="23197" relation="include">
+        </childnode>
+      </node>
+      <node id="23205">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="23202">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="23203" relation="include">
+        </childnode>
+      </node>
+      <node id="23208">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</label>
+        <link refid="svd__complete__method_8hpp"/>
+      </node>
+      <node id="23207">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
+        <link refid="nmf__method_8hpp"/>
+        <childnode refid="23198" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1amf_1_1RandomInitialization" prot="public">mlpack::amf::RandomInitialization</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1amf">mlpack::amf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Mohan Rajendran</para></simplesect>
+Initialization rule for alternating matrix factorization (AMF). This simple initialization is performed by assigning a random matrix to W and H.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_LMF_RANDOM_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_LMF_RANDOM_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">amf<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classmlpack_1_1amf_1_1RandomInitialization" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1amf_1_1RandomInitialization" kindref="compound">RandomInitialization</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Empty<sp/>constructor<sp/>required<sp/>for<sp/>the<sp/>InitializeRule<sp/>template</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1amf_1_1RandomInitialization_1a82f2c9d150d42175823128808690c25a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1amf_1_1RandomInitialization_1a82f2c9d150d42175823128808690c25a" kindref="member">RandomInitialization</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1amf_1_1RandomInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1RandomInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" kindref="member">Initialize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>V,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>W,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>H)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Simple<sp/>implementation<sp/>(left<sp/>in<sp/>the<sp/>header<sp/>file<sp/>due<sp/>to<sp/>its<sp/>simplicity).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>V.n_rows;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m<sp/>=<sp/>V.n_cols;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initialize<sp/>to<sp/>random<sp/>values.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>W.randu(n,<sp/>r);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>H.randu(r,<sp/>m);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="63" refid="classmlpack_1_1amf_1_1RandomInitialization_1ab36c483763ea43179dd94fac38e29f03" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1RandomInitialization_1ab36c483763ea43179dd94fac38e29f03" kindref="member">InitializeOne</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>V,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>M,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>whichMatrix<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Simple<sp/>implementation<sp/>(left<sp/>in<sp/>the<sp/>header<sp/>file<sp/>due<sp/>to<sp/>its<sp/>simplicity).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>V.n_rows;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m<sp/>=<sp/>V.n_cols;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initialize<sp/>W<sp/>or<sp/>H<sp/>to<sp/>random<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(whichMatrix)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>M.randu(n,<sp/>r);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>M.randu(r,<sp/>m);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1amf_1_1RandomInitialization_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1RandomInitialization_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" kindref="member">serialize</ref>(Archive&amp;<sp/></highlight><highlight class="comment">/*<sp/>ar<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>amf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_init.hpp"/>
+  </compounddef>
+</doxygen>

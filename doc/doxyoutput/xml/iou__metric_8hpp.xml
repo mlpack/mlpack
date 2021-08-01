@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="iou__metric_8hpp" kind="file" language="C++">
+    <compoundname>iou_metric.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">iou_metric_impl.hpp</includes>
+    <incdepgraph>
+      <node id="13072">
+        <label>list</label>
+      </node>
+      <node id="13069">
+        <label>atomic</label>
+      </node>
+      <node id="13059">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="13035">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="13071">
+        <label>iomanip</label>
+      </node>
+      <node id="13044">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="13045" relation="include">
+        </childnode>
+        <childnode refid="13047" relation="include">
+        </childnode>
+      </node>
+      <node id="13027">
+        <label>cstdint</label>
+      </node>
+      <node id="13036">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="13043">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="13066">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="13056">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="13023">
+        <label>cmath</label>
+      </node>
+      <node id="13042">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="13031">
+        <label>stdexcept</label>
+      </node>
+      <node id="13051">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="13036" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13037" relation="include">
+        </childnode>
+      </node>
+      <node id="13075">
+        <label>string</label>
+      </node>
+      <node id="13063">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="13064" relation="include">
+        </childnode>
+        <childnode refid="13030" relation="include">
+        </childnode>
+      </node>
+      <node id="13073">
+        <label>map</label>
+      </node>
+      <node id="13025">
+        <label>cfloat</label>
+      </node>
+      <node id="13055">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="13077">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="13039">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="13062">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="13063" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13046" relation="include">
+        </childnode>
+        <childnode refid="13064" relation="include">
+        </childnode>
+      </node>
+      <node id="13052">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="13050">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="13036" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13037" relation="include">
+        </childnode>
+      </node>
+      <node id="13053">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="13036" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13037" relation="include">
+        </childnode>
+      </node>
+      <node id="13041">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="13061">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="13037" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13049" relation="include">
+        </childnode>
+        <childnode refid="13058" relation="include">
+        </childnode>
+      </node>
+      <node id="13065">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="13066" relation="include">
+        </childnode>
+      </node>
+      <node id="13067">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="13022">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="13023" relation="include">
+        </childnode>
+        <childnode refid="13024" relation="include">
+        </childnode>
+        <childnode refid="13025" relation="include">
+        </childnode>
+        <childnode refid="13026" relation="include">
+        </childnode>
+        <childnode refid="13027" relation="include">
+        </childnode>
+        <childnode refid="13028" relation="include">
+        </childnode>
+        <childnode refid="13029" relation="include">
+        </childnode>
+        <childnode refid="13030" relation="include">
+        </childnode>
+        <childnode refid="13031" relation="include">
+        </childnode>
+        <childnode refid="13032" relation="include">
+        </childnode>
+        <childnode refid="13033" relation="include">
+        </childnode>
+        <childnode refid="13034" relation="include">
+        </childnode>
+        <childnode refid="13035" relation="include">
+        </childnode>
+        <childnode refid="13036" relation="include">
+        </childnode>
+        <childnode refid="13037" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13040" relation="include">
+        </childnode>
+        <childnode refid="13041" relation="include">
+        </childnode>
+        <childnode refid="13042" relation="include">
+        </childnode>
+        <childnode refid="13043" relation="include">
+        </childnode>
+        <childnode refid="13044" relation="include">
+        </childnode>
+        <childnode refid="13048" relation="include">
+        </childnode>
+        <childnode refid="13049" relation="include">
+        </childnode>
+        <childnode refid="13050" relation="include">
+        </childnode>
+        <childnode refid="13051" relation="include">
+        </childnode>
+        <childnode refid="13052" relation="include">
+        </childnode>
+        <childnode refid="13053" relation="include">
+        </childnode>
+        <childnode refid="13054" relation="include">
+        </childnode>
+        <childnode refid="13060" relation="include">
+        </childnode>
+        <childnode refid="13061" relation="include">
+        </childnode>
+        <childnode refid="13058" relation="include">
+        </childnode>
+        <childnode refid="13062" relation="include">
+        </childnode>
+        <childnode refid="13065" relation="include">
+        </childnode>
+        <childnode refid="13067" relation="include">
+        </childnode>
+        <childnode refid="13068" relation="include">
+        </childnode>
+        <childnode refid="13077" relation="include">
+        </childnode>
+        <childnode refid="13078" relation="include">
+        </childnode>
+      </node>
+      <node id="13028">
+        <label>cstdio</label>
+      </node>
+      <node id="13032">
+        <label>tuple</label>
+      </node>
+      <node id="13037">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="13054">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="13037" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13041" relation="include">
+        </childnode>
+        <childnode refid="13055" relation="include">
+        </childnode>
+        <childnode refid="13056" relation="include">
+        </childnode>
+        <childnode refid="13057" relation="include">
+        </childnode>
+        <childnode refid="13058" relation="include">
+        </childnode>
+      </node>
+      <node id="13021">
+        <label>/home/aakash/mlpack/src/mlpack/core/metrics/iou_metric.hpp</label>
+        <link refid="iou__metric_8hpp"/>
+        <childnode refid="13022" relation="include">
+        </childnode>
+        <childnode refid="13079" relation="include">
+        </childnode>
+      </node>
+      <node id="13033">
+        <label>utility</label>
+      </node>
+      <node id="13057">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="13048">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="13045">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="13046" relation="include">
+        </childnode>
+      </node>
+      <node id="13068">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="13069" relation="include">
+        </childnode>
+        <childnode refid="13070" relation="include">
+        </childnode>
+        <childnode refid="13071" relation="include">
+        </childnode>
+        <childnode refid="13072" relation="include">
+        </childnode>
+        <childnode refid="13073" relation="include">
+        </childnode>
+        <childnode refid="13074" relation="include">
+        </childnode>
+        <childnode refid="13075" relation="include">
+        </childnode>
+        <childnode refid="13076" relation="include">
+        </childnode>
+      </node>
+      <node id="13046">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="13060">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="13058" relation="include">
+        </childnode>
+        <childnode refid="13054" relation="include">
+        </childnode>
+        <childnode refid="13061" relation="include">
+        </childnode>
+      </node>
+      <node id="13029">
+        <label>cstdlib</label>
+      </node>
+      <node id="13079">
+        <label>iou_metric_impl.hpp</label>
+      </node>
+      <node id="13024">
+        <label>cctype</label>
+      </node>
+      <node id="13047">
+        <label>unordered_map</label>
+      </node>
+      <node id="13026">
+        <label>climits</label>
+      </node>
+      <node id="13074">
+        <label>mutex</label>
+      </node>
+      <node id="13070">
+        <label>chrono</label>
+      </node>
+      <node id="13078">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="13076">
+        <label>thread</label>
+      </node>
+      <node id="13064">
+        <label>type_traits</label>
+      </node>
+      <node id="13040">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="13034">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="13058">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="13036" relation="include">
+        </childnode>
+        <childnode refid="13037" relation="include">
+        </childnode>
+        <childnode refid="13038" relation="include">
+        </childnode>
+        <childnode refid="13039" relation="include">
+        </childnode>
+        <childnode refid="13059" relation="include">
+        </childnode>
+      </node>
+      <node id="13030">
+        <label>cstring</label>
+      </node>
+      <node id="13049">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="13038">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1metric_1_1IoU" prot="public">mlpack::metric::IoU</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1metric">mlpack::metric</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Kartik Dutt</para></simplesect>
+Definition of Intersection Over Union metric. It is defined as intersection of given bounding-boxes / masks divided by their union. Useful metric for object detection.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_METRICS_IOU_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_METRICS_IOU_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">metric<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseCoordinates<sp/>=<sp/>false&gt;</highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1metric_1_1IoU" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1metric_1_1IoU" kindref="compound">IoU</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1metric_1_1IoU_1a95184d4e35a737ca44f85b33e9b9c7e3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1metric_1_1IoU_1a95184d4e35a737ca44f85b33e9b9c7e3" kindref="member">IoU</ref>()</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Nothing<sp/>to<sp/>do<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeA,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeB&gt;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeA::elem_type<sp/><ref refid="classmlpack_1_1metric_1_1IoU_1af39380107875eb94f0efef7d37cc57df" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeA&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeB&amp;<sp/>b);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1metric_1_1IoU_1a6c223cd63c9c9434b5e5fca28a8ed517" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1metric_1_1IoU_1a6c223cd63c9c9434b5e5fca28a8ed517" kindref="member">useCoordinates</ref><sp/>=<sp/>UseCoordinates;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1metric_1_1IoU_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>IoU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>metric</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;iou_metric_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/metrics/iou_metric.hpp"/>
+  </compounddef>
+</doxygen>

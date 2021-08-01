@@ -1,0 +1,877 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="increment__policy_8hpp" kind="file" language="C++">
+    <compoundname>increment_policy.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="no">unordered_map</includes>
+    <includes refid="datatype_8hpp" local="no">mlpack/core/data/map_policies/datatype.hpp</includes>
+    <includedby refid="dataset__mapper_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp</includedby>
+    <includedby refid="imputer_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/data/imputer.hpp</includedby>
+    <incdepgraph>
+      <node id="8171">
+        <label>list</label>
+      </node>
+      <node id="8168">
+        <label>atomic</label>
+      </node>
+      <node id="8158">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="8134">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="8170">
+        <label>iomanip</label>
+      </node>
+      <node id="8143">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="8144" relation="include">
+        </childnode>
+        <childnode refid="8146" relation="include">
+        </childnode>
+      </node>
+      <node id="8126">
+        <label>cstdint</label>
+      </node>
+      <node id="8135">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="8142">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="8165">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="8155">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="8122">
+        <label>cmath</label>
+      </node>
+      <node id="8141">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="8130">
+        <label>stdexcept</label>
+      </node>
+      <node id="8150">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="8135" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8136" relation="include">
+        </childnode>
+      </node>
+      <node id="8178">
+        <label>mlpack/core/data/map_policies/datatype.hpp</label>
+        <link refid="datatype_8hpp"/>
+        <childnode refid="8121" relation="include">
+        </childnode>
+      </node>
+      <node id="8174">
+        <label>string</label>
+      </node>
+      <node id="8162">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="8163" relation="include">
+        </childnode>
+        <childnode refid="8129" relation="include">
+        </childnode>
+      </node>
+      <node id="8172">
+        <label>map</label>
+      </node>
+      <node id="8124">
+        <label>cfloat</label>
+      </node>
+      <node id="8154">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="8176">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="8138">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="8161">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="8162" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8145" relation="include">
+        </childnode>
+        <childnode refid="8163" relation="include">
+        </childnode>
+      </node>
+      <node id="8151">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="8149">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="8135" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8136" relation="include">
+        </childnode>
+      </node>
+      <node id="8152">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="8135" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8136" relation="include">
+        </childnode>
+      </node>
+      <node id="8140">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="8160">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="8136" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8148" relation="include">
+        </childnode>
+        <childnode refid="8157" relation="include">
+        </childnode>
+      </node>
+      <node id="8164">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="8165" relation="include">
+        </childnode>
+      </node>
+      <node id="8166">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="8121">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="8122" relation="include">
+        </childnode>
+        <childnode refid="8123" relation="include">
+        </childnode>
+        <childnode refid="8124" relation="include">
+        </childnode>
+        <childnode refid="8125" relation="include">
+        </childnode>
+        <childnode refid="8126" relation="include">
+        </childnode>
+        <childnode refid="8127" relation="include">
+        </childnode>
+        <childnode refid="8128" relation="include">
+        </childnode>
+        <childnode refid="8129" relation="include">
+        </childnode>
+        <childnode refid="8130" relation="include">
+        </childnode>
+        <childnode refid="8131" relation="include">
+        </childnode>
+        <childnode refid="8132" relation="include">
+        </childnode>
+        <childnode refid="8133" relation="include">
+        </childnode>
+        <childnode refid="8134" relation="include">
+        </childnode>
+        <childnode refid="8135" relation="include">
+        </childnode>
+        <childnode refid="8136" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8139" relation="include">
+        </childnode>
+        <childnode refid="8140" relation="include">
+        </childnode>
+        <childnode refid="8141" relation="include">
+        </childnode>
+        <childnode refid="8142" relation="include">
+        </childnode>
+        <childnode refid="8143" relation="include">
+        </childnode>
+        <childnode refid="8147" relation="include">
+        </childnode>
+        <childnode refid="8148" relation="include">
+        </childnode>
+        <childnode refid="8149" relation="include">
+        </childnode>
+        <childnode refid="8150" relation="include">
+        </childnode>
+        <childnode refid="8151" relation="include">
+        </childnode>
+        <childnode refid="8152" relation="include">
+        </childnode>
+        <childnode refid="8153" relation="include">
+        </childnode>
+        <childnode refid="8159" relation="include">
+        </childnode>
+        <childnode refid="8160" relation="include">
+        </childnode>
+        <childnode refid="8157" relation="include">
+        </childnode>
+        <childnode refid="8161" relation="include">
+        </childnode>
+        <childnode refid="8164" relation="include">
+        </childnode>
+        <childnode refid="8166" relation="include">
+        </childnode>
+        <childnode refid="8167" relation="include">
+        </childnode>
+        <childnode refid="8176" relation="include">
+        </childnode>
+        <childnode refid="8177" relation="include">
+        </childnode>
+      </node>
+      <node id="8120">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp</label>
+        <link refid="increment__policy_8hpp"/>
+        <childnode refid="8121" relation="include">
+        </childnode>
+        <childnode refid="8146" relation="include">
+        </childnode>
+        <childnode refid="8178" relation="include">
+        </childnode>
+      </node>
+      <node id="8127">
+        <label>cstdio</label>
+      </node>
+      <node id="8131">
+        <label>tuple</label>
+      </node>
+      <node id="8136">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="8153">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="8136" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8140" relation="include">
+        </childnode>
+        <childnode refid="8154" relation="include">
+        </childnode>
+        <childnode refid="8155" relation="include">
+        </childnode>
+        <childnode refid="8156" relation="include">
+        </childnode>
+        <childnode refid="8157" relation="include">
+        </childnode>
+      </node>
+      <node id="8132">
+        <label>utility</label>
+      </node>
+      <node id="8156">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="8147">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="8144">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="8145" relation="include">
+        </childnode>
+      </node>
+      <node id="8167">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="8168" relation="include">
+        </childnode>
+        <childnode refid="8169" relation="include">
+        </childnode>
+        <childnode refid="8170" relation="include">
+        </childnode>
+        <childnode refid="8171" relation="include">
+        </childnode>
+        <childnode refid="8172" relation="include">
+        </childnode>
+        <childnode refid="8173" relation="include">
+        </childnode>
+        <childnode refid="8174" relation="include">
+        </childnode>
+        <childnode refid="8175" relation="include">
+        </childnode>
+      </node>
+      <node id="8145">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="8159">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="8157" relation="include">
+        </childnode>
+        <childnode refid="8153" relation="include">
+        </childnode>
+        <childnode refid="8160" relation="include">
+        </childnode>
+      </node>
+      <node id="8128">
+        <label>cstdlib</label>
+      </node>
+      <node id="8123">
+        <label>cctype</label>
+      </node>
+      <node id="8146">
+        <label>unordered_map</label>
+      </node>
+      <node id="8125">
+        <label>climits</label>
+      </node>
+      <node id="8173">
+        <label>mutex</label>
+      </node>
+      <node id="8169">
+        <label>chrono</label>
+      </node>
+      <node id="8177">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="8175">
+        <label>thread</label>
+      </node>
+      <node id="8163">
+        <label>type_traits</label>
+      </node>
+      <node id="8139">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="8133">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="8157">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="8135" relation="include">
+        </childnode>
+        <childnode refid="8136" relation="include">
+        </childnode>
+        <childnode refid="8137" relation="include">
+        </childnode>
+        <childnode refid="8138" relation="include">
+        </childnode>
+        <childnode refid="8158" relation="include">
+        </childnode>
+      </node>
+      <node id="8129">
+        <label>cstring</label>
+      </node>
+      <node id="8148">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="8137">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8227">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="8190">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="8189">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="8219">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="8220" relation="include">
+        </childnode>
+        <childnode refid="8221" relation="include">
+        </childnode>
+      </node>
+      <node id="8216">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="8196">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="8191">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="8182">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load.hpp</label>
+        <link refid="load_8hpp"/>
+        <childnode refid="8183" relation="include">
+        </childnode>
+        <childnode refid="8184" relation="include">
+        </childnode>
+      </node>
+      <node id="8206">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="8207" relation="include">
+        </childnode>
+        <childnode refid="8208" relation="include">
+        </childnode>
+        <childnode refid="8212" relation="include">
+        </childnode>
+        <childnode refid="8213" relation="include">
+        </childnode>
+        <childnode refid="8209" relation="include">
+        </childnode>
+        <childnode refid="8210" relation="include">
+        </childnode>
+        <childnode refid="8211" relation="include">
+        </childnode>
+        <childnode refid="8214" relation="include">
+        </childnode>
+      </node>
+      <node id="8184">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="8185" relation="include">
+        </childnode>
+        <childnode refid="8190" relation="include">
+        </childnode>
+        <childnode refid="8191" relation="include">
+        </childnode>
+        <childnode refid="8192" relation="include">
+        </childnode>
+        <childnode refid="8193" relation="include">
+        </childnode>
+        <childnode refid="8194" relation="include">
+        </childnode>
+        <childnode refid="8195" relation="include">
+        </childnode>
+        <childnode refid="8196" relation="include">
+        </childnode>
+        <childnode refid="8197" relation="include">
+        </childnode>
+        <childnode refid="8198" relation="include">
+        </childnode>
+        <childnode refid="8199" relation="include">
+        </childnode>
+        <childnode refid="8200" relation="include">
+        </childnode>
+        <childnode refid="8201" relation="include">
+        </childnode>
+        <childnode refid="8203" relation="include">
+        </childnode>
+        <childnode refid="8204" relation="include">
+        </childnode>
+        <childnode refid="8205" relation="include">
+        </childnode>
+        <childnode refid="8212" relation="include">
+        </childnode>
+        <childnode refid="8215" relation="include">
+        </childnode>
+        <childnode refid="8216" relation="include">
+        </childnode>
+        <childnode refid="8217" relation="include">
+        </childnode>
+        <childnode refid="8218" relation="include">
+        </childnode>
+        <childnode refid="8222" relation="include">
+        </childnode>
+        <childnode refid="8223" relation="include">
+        </childnode>
+        <childnode refid="8224" relation="include">
+        </childnode>
+        <childnode refid="8225" relation="include">
+        </childnode>
+        <childnode refid="8226" relation="include">
+        </childnode>
+        <childnode refid="8227" relation="include">
+        </childnode>
+        <childnode refid="8228" relation="include">
+        </childnode>
+        <childnode refid="8229" relation="include">
+        </childnode>
+      </node>
+      <node id="8199">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="8184" relation="include">
+        </childnode>
+      </node>
+      <node id="8205">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="8206" relation="include">
+        </childnode>
+      </node>
+      <node id="8224">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="8231">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp</label>
+        <link refid="hoeffding__tree_8hpp"/>
+        <childnode refid="8232" relation="include">
+        </childnode>
+        <childnode refid="8233" relation="include">
+        </childnode>
+      </node>
+      <node id="8220">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="8215">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="8213">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="8209">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="8230">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_arff.hpp</label>
+        <link refid="load__arff_8hpp"/>
+      </node>
+      <node id="8192">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="8217">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="8226">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="8202">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="8189" relation="include">
+        </childnode>
+      </node>
+      <node id="8221">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="8186">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="8187" relation="include">
+        </childnode>
+        <childnode refid="8188" relation="include">
+        </childnode>
+      </node>
+      <node id="8198">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="8228">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="8227" relation="include">
+        </childnode>
+      </node>
+      <node id="8194">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="8187">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="8207">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="8229">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="8179">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp</label>
+        <link refid="increment__policy_8hpp"/>
+        <childnode refid="8180" relation="include">
+        </childnode>
+        <childnode refid="8181" relation="include">
+        </childnode>
+      </node>
+      <node id="8212">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="8214">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="8222">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="8233">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/typedef.hpp</label>
+        <link refid="methods_2hoeffding__trees_2typedef_8hpp"/>
+      </node>
+      <node id="8193">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="8181">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/imputer.hpp</label>
+        <link refid="imputer_8hpp"/>
+      </node>
+      <node id="8208">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="8204" relation="include">
+        </childnode>
+        <childnode refid="8209" relation="include">
+        </childnode>
+        <childnode refid="8210" relation="include">
+        </childnode>
+        <childnode refid="8211" relation="include">
+        </childnode>
+      </node>
+      <node id="8200">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="8210">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="8195">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="8180">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp</label>
+        <link refid="dataset__mapper_8hpp"/>
+        <childnode refid="8181" relation="include">
+        </childnode>
+        <childnode refid="8182" relation="include">
+        </childnode>
+        <childnode refid="8230" relation="include">
+        </childnode>
+        <childnode refid="8198" relation="include">
+        </childnode>
+        <childnode refid="8231" relation="include">
+        </childnode>
+      </node>
+      <node id="8223">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="8232">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp</label>
+        <link refid="hoeffding__tree__model_8hpp"/>
+      </node>
+      <node id="8204">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="8203">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="8185">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="8186" relation="include">
+        </childnode>
+        <childnode refid="8187" relation="include">
+        </childnode>
+        <childnode refid="8188" relation="include">
+        </childnode>
+        <childnode refid="8189" relation="include">
+        </childnode>
+      </node>
+      <node id="8211">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="8188">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="8218">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="8219" relation="include">
+        </childnode>
+      </node>
+      <node id="8225">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="8197">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="8183">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="8184" relation="include">
+        </childnode>
+      </node>
+      <node id="8201">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="8202" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1IncrementPolicy" prot="public">mlpack::data::IncrementPolicy</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Keon Kim</para></simplesect>
+Default increment maping policy for dataset info.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unordered_map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="datatype_8hpp" kindref="compound">mlpack/core/data/map_policies/datatype.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1data_1_1IncrementPolicy" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1IncrementPolicy" kindref="compound">IncrementPolicy</ref></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="36" refid="classmlpack_1_1data_1_1IncrementPolicy_1a2dd7eacb1bec6fc7c6e71e7e9bc159e0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1IncrementPolicy_1a2dd7eacb1bec6fc7c6e71e7e9bc159e0" kindref="member">IncrementPolicy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>forceAllMappings<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/>:</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>forceAllMappings(forceAllMappings)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>typedef<sp/>of<sp/>MappedType</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1data_1_1IncrementPolicy_1af69dde245ce7bff33371d70e40886cdb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1IncrementPolicy_1af69dde245ce7bff33371d70e40886cdb" kindref="member">MappedType</ref><sp/>=<sp/>size_t;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1data_1_1IncrementPolicy_1a6ef7d83a1da0e9f1d02b61f62e852079" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1IncrementPolicy_1a6ef7d83a1da0e9f1d02b61f62e852079" kindref="member">NeedsFirstPass</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputType&gt;</highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1data_1_1IncrementPolicy_1abee97eb223d917dcd8f4da68e59cee46" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1IncrementPolicy_1abee97eb223d917dcd8f4da68e59cee46" kindref="member">MapFirstPass</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputType&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Datatype&gt;&amp;<sp/>types)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(types[dim]<sp/>==<sp/><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" kindref="member">Datatype::categorical</ref>)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>need<sp/>to<sp/>check;<sp/>it&apos;s<sp/>already<sp/>categorical.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(forceAllMappings)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>types[dim]<sp/>=<sp/><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" kindref="member">Datatype::categorical</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Attempt<sp/>to<sp/>convert<sp/>the<sp/>input<sp/>to<sp/>an<sp/>output<sp/>type<sp/>via<sp/>a<sp/>stringstream.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::stringstream<sp/>token;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>token<sp/>&lt;&lt;<sp/>input;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>T<sp/>val;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>token<sp/>&gt;&gt;<sp/>val;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(token.fail()<sp/>||<sp/>!token.eof())</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>types[dim]<sp/>=<sp/><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" kindref="member">Datatype::categorical</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MapType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputType&gt;</highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1data_1_1IncrementPolicy_1ab39961e90a7e1a33d0f1ab3d4004b807" refkind="member"><highlight class="normal"><sp/><sp/>T<sp/><ref refid="classmlpack_1_1data_1_1IncrementPolicy_1ab39961e90a7e1a33d0f1ab3d4004b807" kindref="member">MapString</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputType&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimension,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MapType&amp;<sp/>maps,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Datatype&gt;&amp;<sp/>types)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>we<sp/>are<sp/>in<sp/>a<sp/>categorical<sp/>dimension<sp/>we<sp/>already<sp/>know<sp/>we<sp/>need<sp/>to<sp/>map.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(types[dimension]<sp/>==<sp/><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a1b5484703e716389553255e6f11f12ec" kindref="member">Datatype::numeric</ref><sp/>&amp;&amp;<sp/>!forceAllMappings)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>this<sp/>input<sp/>needs<sp/>to<sp/>be<sp/>mapped<sp/>or<sp/>if<sp/>it<sp/>can<sp/>be<sp/>read</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>directly<sp/>as<sp/>a<sp/>number.<sp/><sp/>This<sp/>will<sp/>be<sp/>true<sp/>if<sp/>nothing<sp/>else<sp/>in<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>dimension<sp/>has<sp/>yet<sp/>been<sp/>mapped,<sp/>but<sp/>this<sp/>can&apos;t<sp/>be<sp/>read<sp/>as<sp/>a<sp/>number.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::stringstream<sp/>token;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>token<sp/>&lt;&lt;<sp/>input;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>T<sp/>val;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>token<sp/>&gt;&gt;<sp/>val;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!token.fail()<sp/>&amp;&amp;<sp/>token.eof())</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>val;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Otherwise,<sp/>we<sp/>must<sp/>map.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>this<sp/>condition<sp/>is<sp/>true,<sp/>either<sp/>we<sp/>have<sp/>no<sp/>mapping<sp/>for<sp/>the<sp/>given<sp/>input</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>or<sp/>we<sp/>have<sp/>no<sp/>mappings<sp/>for<sp/>the<sp/>given<sp/>dimension<sp/>at<sp/>all.<sp/><sp/>In<sp/>either<sp/>case,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>create<sp/>a<sp/>mapping.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maps.count(dimension)<sp/>==<sp/>0<sp/>||</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>maps[dimension].first.count(input)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>input<sp/>does<sp/>not<sp/>exist<sp/>yet.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numMappings<sp/>=<sp/>maps[dimension].first.size();</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Change<sp/>type<sp/>of<sp/>the<sp/>feature<sp/>to<sp/>categorical.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(numMappings<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>types[dimension]<sp/>=<sp/><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" kindref="member">Datatype::categorical</ref>;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::pair&lt;InputType,<sp/>MappedType&gt;<sp/>PairType;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maps[dimension].first.insert(PairType(input,<sp/>numMappings));</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>we<sp/>need<sp/>to<sp/>create<sp/>the<sp/>second<sp/>map?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maps[dimension].second.count(numMappings)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>maps[dimension].second.insert(std::make_pair(numMappings,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;InputType&gt;()));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maps[dimension].second[numMappings].push_back(input);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>T(numMappings);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>input<sp/>already<sp/>exists<sp/>in<sp/>the<sp/>mapping.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maps[dimension].first.at(input);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Whether<sp/>or<sp/>not<sp/>we<sp/>should<sp/>map<sp/>all<sp/>tokens.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>forceAllMappings;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>IncrementPolicy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp"/>
+  </compounddef>
+</doxygen>

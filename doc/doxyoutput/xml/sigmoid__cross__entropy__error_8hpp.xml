@@ -1,0 +1,444 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="sigmoid__cross__entropy__error_8hpp" kind="file" language="C++">
+    <compoundname>sigmoid_cross_entropy_error.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">sigmoid_cross_entropy_error_impl.hpp</includes>
+    <incdepgraph>
+      <node id="40296">
+        <label>list</label>
+      </node>
+      <node id="40293">
+        <label>atomic</label>
+      </node>
+      <node id="40283">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="40259">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="40295">
+        <label>iomanip</label>
+      </node>
+      <node id="40268">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="40269" relation="include">
+        </childnode>
+        <childnode refid="40271" relation="include">
+        </childnode>
+      </node>
+      <node id="40251">
+        <label>cstdint</label>
+      </node>
+      <node id="40260">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="40267">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="40290">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="40280">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="40247">
+        <label>cmath</label>
+      </node>
+      <node id="40266">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="40255">
+        <label>stdexcept</label>
+      </node>
+      <node id="40275">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="40260" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40261" relation="include">
+        </childnode>
+      </node>
+      <node id="40299">
+        <label>string</label>
+      </node>
+      <node id="40287">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="40288" relation="include">
+        </childnode>
+        <childnode refid="40254" relation="include">
+        </childnode>
+      </node>
+      <node id="40297">
+        <label>map</label>
+      </node>
+      <node id="40303">
+        <label>sigmoid_cross_entropy_error_impl.hpp</label>
+      </node>
+      <node id="40249">
+        <label>cfloat</label>
+      </node>
+      <node id="40279">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="40301">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="40263">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="40286">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="40287" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40270" relation="include">
+        </childnode>
+        <childnode refid="40288" relation="include">
+        </childnode>
+      </node>
+      <node id="40276">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="40274">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="40260" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40261" relation="include">
+        </childnode>
+      </node>
+      <node id="40277">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="40260" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40261" relation="include">
+        </childnode>
+      </node>
+      <node id="40265">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="40285">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="40261" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40273" relation="include">
+        </childnode>
+        <childnode refid="40282" relation="include">
+        </childnode>
+      </node>
+      <node id="40289">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="40290" relation="include">
+        </childnode>
+      </node>
+      <node id="40245">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp</label>
+        <link refid="sigmoid__cross__entropy__error_8hpp"/>
+        <childnode refid="40246" relation="include">
+        </childnode>
+        <childnode refid="40303" relation="include">
+        </childnode>
+      </node>
+      <node id="40291">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="40246">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="40247" relation="include">
+        </childnode>
+        <childnode refid="40248" relation="include">
+        </childnode>
+        <childnode refid="40249" relation="include">
+        </childnode>
+        <childnode refid="40250" relation="include">
+        </childnode>
+        <childnode refid="40251" relation="include">
+        </childnode>
+        <childnode refid="40252" relation="include">
+        </childnode>
+        <childnode refid="40253" relation="include">
+        </childnode>
+        <childnode refid="40254" relation="include">
+        </childnode>
+        <childnode refid="40255" relation="include">
+        </childnode>
+        <childnode refid="40256" relation="include">
+        </childnode>
+        <childnode refid="40257" relation="include">
+        </childnode>
+        <childnode refid="40258" relation="include">
+        </childnode>
+        <childnode refid="40259" relation="include">
+        </childnode>
+        <childnode refid="40260" relation="include">
+        </childnode>
+        <childnode refid="40261" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40264" relation="include">
+        </childnode>
+        <childnode refid="40265" relation="include">
+        </childnode>
+        <childnode refid="40266" relation="include">
+        </childnode>
+        <childnode refid="40267" relation="include">
+        </childnode>
+        <childnode refid="40268" relation="include">
+        </childnode>
+        <childnode refid="40272" relation="include">
+        </childnode>
+        <childnode refid="40273" relation="include">
+        </childnode>
+        <childnode refid="40274" relation="include">
+        </childnode>
+        <childnode refid="40275" relation="include">
+        </childnode>
+        <childnode refid="40276" relation="include">
+        </childnode>
+        <childnode refid="40277" relation="include">
+        </childnode>
+        <childnode refid="40278" relation="include">
+        </childnode>
+        <childnode refid="40284" relation="include">
+        </childnode>
+        <childnode refid="40285" relation="include">
+        </childnode>
+        <childnode refid="40282" relation="include">
+        </childnode>
+        <childnode refid="40286" relation="include">
+        </childnode>
+        <childnode refid="40289" relation="include">
+        </childnode>
+        <childnode refid="40291" relation="include">
+        </childnode>
+        <childnode refid="40292" relation="include">
+        </childnode>
+        <childnode refid="40301" relation="include">
+        </childnode>
+        <childnode refid="40302" relation="include">
+        </childnode>
+      </node>
+      <node id="40252">
+        <label>cstdio</label>
+      </node>
+      <node id="40256">
+        <label>tuple</label>
+      </node>
+      <node id="40261">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="40278">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="40261" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40265" relation="include">
+        </childnode>
+        <childnode refid="40279" relation="include">
+        </childnode>
+        <childnode refid="40280" relation="include">
+        </childnode>
+        <childnode refid="40281" relation="include">
+        </childnode>
+        <childnode refid="40282" relation="include">
+        </childnode>
+      </node>
+      <node id="40257">
+        <label>utility</label>
+      </node>
+      <node id="40281">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="40272">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="40269">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="40270" relation="include">
+        </childnode>
+      </node>
+      <node id="40292">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="40293" relation="include">
+        </childnode>
+        <childnode refid="40294" relation="include">
+        </childnode>
+        <childnode refid="40295" relation="include">
+        </childnode>
+        <childnode refid="40296" relation="include">
+        </childnode>
+        <childnode refid="40297" relation="include">
+        </childnode>
+        <childnode refid="40298" relation="include">
+        </childnode>
+        <childnode refid="40299" relation="include">
+        </childnode>
+        <childnode refid="40300" relation="include">
+        </childnode>
+      </node>
+      <node id="40270">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40284">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="40282" relation="include">
+        </childnode>
+        <childnode refid="40278" relation="include">
+        </childnode>
+        <childnode refid="40285" relation="include">
+        </childnode>
+      </node>
+      <node id="40253">
+        <label>cstdlib</label>
+      </node>
+      <node id="40248">
+        <label>cctype</label>
+      </node>
+      <node id="40271">
+        <label>unordered_map</label>
+      </node>
+      <node id="40250">
+        <label>climits</label>
+      </node>
+      <node id="40298">
+        <label>mutex</label>
+      </node>
+      <node id="40294">
+        <label>chrono</label>
+      </node>
+      <node id="40302">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="40300">
+        <label>thread</label>
+      </node>
+      <node id="40288">
+        <label>type_traits</label>
+      </node>
+      <node id="40264">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="40258">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="40282">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="40260" relation="include">
+        </childnode>
+        <childnode refid="40261" relation="include">
+        </childnode>
+        <childnode refid="40262" relation="include">
+        </childnode>
+        <childnode refid="40263" relation="include">
+        </childnode>
+        <childnode refid="40283" relation="include">
+        </childnode>
+      </node>
+      <node id="40254">
+        <label>cstring</label>
+      </node>
+      <node id="40273">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="40262">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError" prot="public">mlpack::ann::SigmoidCrossEntropyError</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Kris Singh </para></simplesect>
+<simplesect kind="author"><para>Shikhar Jaiswal</para></simplesect>
+Definition of the cross-entropy with logit performance function.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputDataType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputDataType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="52" refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError" kindref="compound">SigmoidCrossEntropyError</ref></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a5d08bab32a040d5a35d277ed020930a1" kindref="member">SigmoidCrossEntropyError</ref>();</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType&gt;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType::elem_type<sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1ab3640059898ea76c13709b8099316fe8" kindref="member">Forward</ref>(</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LossType&gt;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1add41dbaf358dc099750dc6064cb7e0d7" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LossType&amp;<sp/>loss);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a8bae962cc603d1cab8d80ec78f8d505d" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a8bae962cc603d1cab8d80ec78f8d505d" kindref="member">OutputParameter</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a21d5f745f02c709625a4ee0907f004a5" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a21d5f745f02c709625a4ee0907f004a5" kindref="member">OutputParameter</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>outputParameter;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>SigmoidCrossEntropy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;sigmoid_cross_entropy_error_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp"/>
+  </compounddef>
+</doxygen>

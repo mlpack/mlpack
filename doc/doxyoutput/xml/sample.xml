@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="sample" kind="page">
+    <compoundname>sample</compoundname>
+    <title>Simple Sample mlpack Programs</title>
+    <detaileddescription>
+<sect1 id="sample_1sampleintro">
+<title>Introduction</title>
+<para>On this page, several simple mlpack examples are contained, in increasing order of complexity. If you compile from the command-line, be sure that your compiler is in C++11 mode. With modern gcc and clang, this should already be the default.</para><para><simplesect kind="note"><para>The command-line programs like <computeroutput>knn_main.cpp</computeroutput> and <computeroutput>logistic_regression_main.cpp</computeroutput> from the directory <computeroutput>src/mlpack/methods/</computeroutput> cannot be compiled easily by hand (the same is true for the individual tests in <computeroutput>src/mlpack/tests/</computeroutput>); instead, those should be compiled with CMake, by running, e.g., <computeroutput>make</computeroutput> <computeroutput>mlpack_knn</computeroutput> or <computeroutput>make</computeroutput> <computeroutput>mlpack_test</computeroutput>; see <ref refid="build" kindref="compound">Building mlpack From Source</ref>. However, any program that uses mlpack (and is not a part of the library itself) can be compiled easily with g++ or clang from the command line.</para></simplesect>
+</para></sect1>
+<sect1 id="sample_1covariance">
+<title>Covariance Computation</title>
+<para>A simple program to compute the covariance of a data matrix (&quot;data.csv&quot;), assuming that the data is already centered, and save it to file.</para><para><programlisting><codeline><highlight class="normal">//<sp/>Includes<sp/>all<sp/>relevant<sp/>components<sp/>of<sp/>mlpack.</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;mlpack/core.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Convenience.</highlight></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>First,<sp/>load<sp/>the<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>arma::mat<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Use<sp/>data::Load()<sp/>which<sp/>transposes<sp/>the<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>data::Load(&quot;data.csv&quot;,<sp/>data,<sp/>true);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Now<sp/>compute<sp/>the<sp/>covariance.<sp/><sp/>We<sp/>assume<sp/>that<sp/>the<sp/>data<sp/>is<sp/>already<sp/>centered.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Remember,<sp/>because<sp/>the<sp/>matrix<sp/>is<sp/>column-major,<sp/>the<sp/>covariance<sp/>operation<sp/>is</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>transposed.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>arma::mat<sp/>cov<sp/>=<sp/>data<sp/>*<sp/>trans(data)<sp/>/<sp/>data.n_cols;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Save<sp/>the<sp/>output.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>data::Save(&quot;cov.csv&quot;,<sp/>cov,<sp/>true);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="sample_1nn">
+<title>Nearest Neighbor</title>
+<para>This simple program uses the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">mlpack::neighbor::NeighborSearch</ref> object to find the nearest neighbor of each point in a dataset using the L1 metric, and then print the index of the neighbor and the distance of it to stdout.</para><para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/core.hpp&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/neighbor_search/neighbor_search.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::neighbor;<sp/>//<sp/>NeighborSearch<sp/>and<sp/>NearestNeighborSort</highlight></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::metric;<sp/>//<sp/>ManhattanDistance</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Load<sp/>the<sp/>data<sp/>from<sp/>data.csv<sp/>(hard-coded).<sp/><sp/>Use<sp/>IO<sp/>for<sp/>simple<sp/>command-line</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>parameter<sp/>handling.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>arma::mat<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>data::Load(&quot;data.csv&quot;,<sp/>data,<sp/>true);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Use<sp/>templates<sp/>to<sp/>specify<sp/>that<sp/>we<sp/>want<sp/>a<sp/>NeighborSearch<sp/>object<sp/>which<sp/>uses</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>the<sp/>Manhattan<sp/>distance.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>NeighborSearch&lt;NearestNeighborSort,<sp/>ManhattanDistance&gt;<sp/>nn(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Create<sp/>the<sp/>object<sp/>we<sp/>will<sp/>store<sp/>the<sp/>nearest<sp/>neighbors<sp/>in.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>arma::Mat&lt;size_t&gt;<sp/>neighbors;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>arma::mat<sp/>distances;<sp/>//<sp/>We<sp/>need<sp/>to<sp/>store<sp/>the<sp/>distance<sp/>too.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Compute<sp/>the<sp/>neighbors.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>nn.Search(1,<sp/>neighbors,<sp/>distances);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Write<sp/>each<sp/>neighbor<sp/>and<sp/>distance<sp/>using<sp/>Log.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>for<sp/>(size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>neighbors.n_elem;<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Nearest<sp/>neighbor<sp/>of<sp/>point<sp/>&quot;<sp/>&lt;&lt;<sp/>i<sp/>&lt;&lt;<sp/>&quot;<sp/>is<sp/>point<sp/>&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>neighbors[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>and<sp/>the<sp/>distance<sp/>is<sp/>&quot;<sp/>&lt;&lt;<sp/>distances[i]<sp/>&lt;&lt;<sp/>&quot;.\n&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="sample_1other">
+<title>Other examples</title>
+<para>For more complex examples, it is useful to refer to the main executables, found in <computeroutput>src/mlpack/methods/</computeroutput>. A few are listed below.</para><para><itemizedlist>
+<listitem><para>methods/neighbor_search/knn_main.cpp</para></listitem><listitem><para>methods/neighbor_search/kfn_main.cpp</para></listitem><listitem><para>methods/emst/emst_main.cpp</para></listitem><listitem><para>methods/radical/radical_main.cpp</para></listitem><listitem><para>methods/nca/nca_main.cpp</para></listitem><listitem><para>methods/naive_bayes/nbc_main.cpp</para></listitem><listitem><para>methods/pca/pca_main.cpp</para></listitem><listitem><para>methods/lars/lars_main.cpp</para></listitem><listitem><para>methods/linear_regression/linear_regression_main.cpp</para></listitem><listitem><para>methods/gmm/gmm_main.cpp</para></listitem><listitem><para>methods/kmeans/kmeans_main.cpp </para></listitem></itemizedlist>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

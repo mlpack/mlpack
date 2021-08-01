@@ -1,0 +1,485 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="hoeffding__categorical__split_8hpp" kind="file" language="C++">
+    <compoundname>hoeffding_categorical_split.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="categorical__split__info_8hpp" local="yes">categorical_split_info.hpp</includes>
+    <includes local="yes">hoeffding_categorical_split_impl.hpp</includes>
+    <includedby refid="hoeffding__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp</includedby>
+    <incdepgraph>
+      <node id="49417">
+        <label>list</label>
+      </node>
+      <node id="49414">
+        <label>atomic</label>
+      </node>
+      <node id="49404">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="49380">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="49416">
+        <label>iomanip</label>
+      </node>
+      <node id="49424">
+        <label>categorical_split_info.hpp</label>
+        <link refid="categorical__split__info_8hpp"/>
+        <childnode refid="49367" relation="include">
+        </childnode>
+      </node>
+      <node id="49389">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="49390" relation="include">
+        </childnode>
+        <childnode refid="49392" relation="include">
+        </childnode>
+      </node>
+      <node id="49372">
+        <label>cstdint</label>
+      </node>
+      <node id="49381">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="49388">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="49411">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="49401">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="49368">
+        <label>cmath</label>
+      </node>
+      <node id="49387">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="49376">
+        <label>stdexcept</label>
+      </node>
+      <node id="49396">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="49381" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49382" relation="include">
+        </childnode>
+      </node>
+      <node id="49420">
+        <label>string</label>
+      </node>
+      <node id="49408">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="49409" relation="include">
+        </childnode>
+        <childnode refid="49375" relation="include">
+        </childnode>
+      </node>
+      <node id="49418">
+        <label>map</label>
+      </node>
+      <node id="49370">
+        <label>cfloat</label>
+      </node>
+      <node id="49400">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="49422">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="49384">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="49407">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="49408" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49391" relation="include">
+        </childnode>
+        <childnode refid="49409" relation="include">
+        </childnode>
+      </node>
+      <node id="49397">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="49395">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="49381" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49382" relation="include">
+        </childnode>
+      </node>
+      <node id="49398">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="49381" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49382" relation="include">
+        </childnode>
+      </node>
+      <node id="49386">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="49406">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="49382" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49394" relation="include">
+        </childnode>
+        <childnode refid="49403" relation="include">
+        </childnode>
+      </node>
+      <node id="49410">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="49411" relation="include">
+        </childnode>
+      </node>
+      <node id="49366">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp</label>
+        <link refid="hoeffding__categorical__split_8hpp"/>
+        <childnode refid="49367" relation="include">
+        </childnode>
+        <childnode refid="49424" relation="include">
+        </childnode>
+        <childnode refid="49425" relation="include">
+        </childnode>
+      </node>
+      <node id="49412">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="49367">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="49368" relation="include">
+        </childnode>
+        <childnode refid="49369" relation="include">
+        </childnode>
+        <childnode refid="49370" relation="include">
+        </childnode>
+        <childnode refid="49371" relation="include">
+        </childnode>
+        <childnode refid="49372" relation="include">
+        </childnode>
+        <childnode refid="49373" relation="include">
+        </childnode>
+        <childnode refid="49374" relation="include">
+        </childnode>
+        <childnode refid="49375" relation="include">
+        </childnode>
+        <childnode refid="49376" relation="include">
+        </childnode>
+        <childnode refid="49377" relation="include">
+        </childnode>
+        <childnode refid="49378" relation="include">
+        </childnode>
+        <childnode refid="49379" relation="include">
+        </childnode>
+        <childnode refid="49380" relation="include">
+        </childnode>
+        <childnode refid="49381" relation="include">
+        </childnode>
+        <childnode refid="49382" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49385" relation="include">
+        </childnode>
+        <childnode refid="49386" relation="include">
+        </childnode>
+        <childnode refid="49387" relation="include">
+        </childnode>
+        <childnode refid="49388" relation="include">
+        </childnode>
+        <childnode refid="49389" relation="include">
+        </childnode>
+        <childnode refid="49393" relation="include">
+        </childnode>
+        <childnode refid="49394" relation="include">
+        </childnode>
+        <childnode refid="49395" relation="include">
+        </childnode>
+        <childnode refid="49396" relation="include">
+        </childnode>
+        <childnode refid="49397" relation="include">
+        </childnode>
+        <childnode refid="49398" relation="include">
+        </childnode>
+        <childnode refid="49399" relation="include">
+        </childnode>
+        <childnode refid="49405" relation="include">
+        </childnode>
+        <childnode refid="49406" relation="include">
+        </childnode>
+        <childnode refid="49403" relation="include">
+        </childnode>
+        <childnode refid="49407" relation="include">
+        </childnode>
+        <childnode refid="49410" relation="include">
+        </childnode>
+        <childnode refid="49412" relation="include">
+        </childnode>
+        <childnode refid="49413" relation="include">
+        </childnode>
+        <childnode refid="49422" relation="include">
+        </childnode>
+        <childnode refid="49423" relation="include">
+        </childnode>
+      </node>
+      <node id="49425">
+        <label>hoeffding_categorical_split_impl.hpp</label>
+      </node>
+      <node id="49373">
+        <label>cstdio</label>
+      </node>
+      <node id="49377">
+        <label>tuple</label>
+      </node>
+      <node id="49382">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="49399">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="49382" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49386" relation="include">
+        </childnode>
+        <childnode refid="49400" relation="include">
+        </childnode>
+        <childnode refid="49401" relation="include">
+        </childnode>
+        <childnode refid="49402" relation="include">
+        </childnode>
+        <childnode refid="49403" relation="include">
+        </childnode>
+      </node>
+      <node id="49378">
+        <label>utility</label>
+      </node>
+      <node id="49402">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="49393">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="49390">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="49391" relation="include">
+        </childnode>
+      </node>
+      <node id="49413">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="49414" relation="include">
+        </childnode>
+        <childnode refid="49415" relation="include">
+        </childnode>
+        <childnode refid="49416" relation="include">
+        </childnode>
+        <childnode refid="49417" relation="include">
+        </childnode>
+        <childnode refid="49418" relation="include">
+        </childnode>
+        <childnode refid="49419" relation="include">
+        </childnode>
+        <childnode refid="49420" relation="include">
+        </childnode>
+        <childnode refid="49421" relation="include">
+        </childnode>
+      </node>
+      <node id="49391">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="49405">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="49403" relation="include">
+        </childnode>
+        <childnode refid="49399" relation="include">
+        </childnode>
+        <childnode refid="49406" relation="include">
+        </childnode>
+      </node>
+      <node id="49374">
+        <label>cstdlib</label>
+      </node>
+      <node id="49369">
+        <label>cctype</label>
+      </node>
+      <node id="49392">
+        <label>unordered_map</label>
+      </node>
+      <node id="49371">
+        <label>climits</label>
+      </node>
+      <node id="49419">
+        <label>mutex</label>
+      </node>
+      <node id="49415">
+        <label>chrono</label>
+      </node>
+      <node id="49423">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="49421">
+        <label>thread</label>
+      </node>
+      <node id="49409">
+        <label>type_traits</label>
+      </node>
+      <node id="49385">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="49379">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="49403">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="49381" relation="include">
+        </childnode>
+        <childnode refid="49382" relation="include">
+        </childnode>
+        <childnode refid="49383" relation="include">
+        </childnode>
+        <childnode refid="49384" relation="include">
+        </childnode>
+        <childnode refid="49404" relation="include">
+        </childnode>
+      </node>
+      <node id="49375">
+        <label>cstring</label>
+      </node>
+      <node id="49394">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="49383">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="49427">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp</label>
+        <link refid="hoeffding__tree_8hpp"/>
+        <childnode refid="49428" relation="include">
+        </childnode>
+        <childnode refid="49429" relation="include">
+        </childnode>
+      </node>
+      <node id="49426">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp</label>
+        <link refid="hoeffding__categorical__split_8hpp"/>
+        <childnode refid="49427" relation="include">
+        </childnode>
+      </node>
+      <node id="49429">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/typedef.hpp</label>
+        <link refid="methods_2hoeffding__trees_2typedef_8hpp"/>
+      </node>
+      <node id="49428">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp</label>
+        <link refid="hoeffding__tree__model_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" prot="public">mlpack::tree::HoeffdingCategoricalSplit</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+A class that contains the information necessary to perform a categorical split for Hoeffding trees.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_CATEGORICAL_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_CATEGORICAL_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="categorical__split__info_8hpp" kindref="compound">categorical_split_info.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>FitnessFunction&gt;</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref></highlight></codeline>
+<codeline lineno="45"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="48" refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ae55bc875c7f68cd63e45eb0ac35de5aa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1CategoricalSplitInfo" kindref="compound">CategoricalSplitInfo</ref><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ae55bc875c7f68cd63e45eb0ac35de5aa" kindref="member">SplitInfo</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ac8914c662d828e446d1e7065094a3c29" kindref="member">HoeffdingCategoricalSplit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numCategories<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ac8914c662d828e446d1e7065094a3c29" kindref="member">HoeffdingCategoricalSplit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numCategories,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a066e841465846ace64e00f9b6fef9b27" kindref="member">Train</ref>(eT<sp/>value,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>label);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ab4f1b00c777ddabfddd98e45093b97ab" kindref="member">EvaluateFitnessFunction</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>bestFitness,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>secondBestFitness)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" kindref="member">NumChildren</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sufficientStatistics.n_cols;<sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a12faa9838c740b8383130fee17c108b6" kindref="member">Split</ref>(arma::Col&lt;size_t&gt;&amp;<sp/>childMajorities,<sp/>SplitInfo&amp;<sp/>splitInfo);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a2fbf818eb68075c92655a22904b7ee1a" kindref="member">MajorityClass</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a68e5f5a4d8c6194482a83440619be83b" kindref="member">MajorityProbability</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="111" refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(sufficientStatistics));</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>arma::Mat&lt;size_t&gt;<sp/>sufficientStatistics;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;hoeffding_categorical_split_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp"/>
+  </compounddef>
+</doxygen>

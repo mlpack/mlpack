@@ -1,0 +1,481 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1Lookup" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Lookup</compoundname>
+    <includes refid="lookup_8hpp" local="no">lookup.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1a11e091320002ac7134e8b904208cba38" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t embeddingSize</definition>
+        <argsstring></argsstring>
+        <name>embeddingSize</name>
+        <briefdescription>
+<para>Locally-stored length of each embedding vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="137" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1a2da07e19c0f3c6a28a85ce03bb32a6fb" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t vocabSize</definition>
+        <argsstring></argsstring>
+        <name>vocabSize</name>
+        <briefdescription>
+<para>Locally-stored size of the vocabulary. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Lookup_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored weight object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1ad2a92a24a6c38f608d103d2ac2153a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Lookup</definition>
+        <argsstring>(const size_t vocabSize=0, const size_t embeddingSize=0)</argsstring>
+        <name>Lookup</name>
+        <param>
+          <type>const size_t</type>
+          <declname>vocabSize</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>embeddingSize</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref> object using the specified vocabulary and embedding size. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vocabSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the vocabulary. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>embeddingSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of each embedding vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="50" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="72" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1af901e8433309aa802f54ce6efdafe41b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t EmbeddingSize</definition>
+        <argsstring>() const</argsstring>
+        <name>EmbeddingSize</name>
+        <briefdescription>
+<para>Get the length of each embedding vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="112" bodyend="112"/>
+        <references refid="classmlpack_1_1ann_1_1Lookup_1a65cba07328997659bec80b9879b15a51">Lookup&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the gradient using the output delta and the input activation. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input parameter used for calculating the gradient. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="84" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="118" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Lookup_1af901e8433309aa802f54ce6efdafe41b" compoundref="lookup_8hpp" startline="112" endline="112">Lookup&lt; InputDataType, OutputDataType &gt;::EmbeddingSize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Lookup_1acc5c821b1d52424abca736bd81c3f476" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t VocabSize</definition>
+        <argsstring>() const</argsstring>
+        <name>VocabSize</name>
+        <briefdescription>
+<para>Get the size of the vocabulary. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="109" bodyend="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref> class stores word embeddings and retrieves them using tokens. </para>    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref> layer is always the first layer of the network. The input to the <ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref> class is a matrix of shape (sequenceLength, batchSize). The matrix consists of tokens which are used to lookup the table (i.e. weights) to find the embeddings of those tokens.</para><para>The input shape : (sequenceLength, batchSize). The output shape : (embeddingSize, sequenceLength, batchSize).</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="41" bodyend="138"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a11e091320002ac7134e8b904208cba38" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>embeddingSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1af901e8433309aa802f54ce6efdafe41b" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>EmbeddingSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1aaf577db350e2130754490d8486fba215" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1ad2a92a24a6c38f608d103d2ac2153a91" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Lookup</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a2da07e19c0f3c6a28a85ce03bb32a6fb" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>vocabSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1acc5c821b1d52424abca736bd81c3f476" prot="public" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>VocabSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Lookup_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::Lookup</scope><name>weights</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

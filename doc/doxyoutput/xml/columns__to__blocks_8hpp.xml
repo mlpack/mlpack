@@ -1,0 +1,456 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="columns__to__blocks_8hpp" kind="file" language="C++">
+    <compoundname>columns_to_blocks.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="12158">
+        <label>list</label>
+      </node>
+      <node id="12155">
+        <label>atomic</label>
+      </node>
+      <node id="12145">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="12121">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="12157">
+        <label>iomanip</label>
+      </node>
+      <node id="12130">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="12131" relation="include">
+        </childnode>
+        <childnode refid="12133" relation="include">
+        </childnode>
+      </node>
+      <node id="12113">
+        <label>cstdint</label>
+      </node>
+      <node id="12122">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="12129">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="12152">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="12142">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="12109">
+        <label>cmath</label>
+      </node>
+      <node id="12128">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="12117">
+        <label>stdexcept</label>
+      </node>
+      <node id="12137">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="12122" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12123" relation="include">
+        </childnode>
+      </node>
+      <node id="12161">
+        <label>string</label>
+      </node>
+      <node id="12149">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="12150" relation="include">
+        </childnode>
+        <childnode refid="12116" relation="include">
+        </childnode>
+      </node>
+      <node id="12159">
+        <label>map</label>
+      </node>
+      <node id="12111">
+        <label>cfloat</label>
+      </node>
+      <node id="12141">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="12163">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="12125">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="12148">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="12149" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12132" relation="include">
+        </childnode>
+        <childnode refid="12150" relation="include">
+        </childnode>
+      </node>
+      <node id="12138">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="12136">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="12122" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12123" relation="include">
+        </childnode>
+      </node>
+      <node id="12139">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="12122" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12123" relation="include">
+        </childnode>
+      </node>
+      <node id="12127">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="12147">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="12123" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12135" relation="include">
+        </childnode>
+        <childnode refid="12144" relation="include">
+        </childnode>
+      </node>
+      <node id="12151">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="12152" relation="include">
+        </childnode>
+      </node>
+      <node id="12153">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="12108">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="12109" relation="include">
+        </childnode>
+        <childnode refid="12110" relation="include">
+        </childnode>
+        <childnode refid="12111" relation="include">
+        </childnode>
+        <childnode refid="12112" relation="include">
+        </childnode>
+        <childnode refid="12113" relation="include">
+        </childnode>
+        <childnode refid="12114" relation="include">
+        </childnode>
+        <childnode refid="12115" relation="include">
+        </childnode>
+        <childnode refid="12116" relation="include">
+        </childnode>
+        <childnode refid="12117" relation="include">
+        </childnode>
+        <childnode refid="12118" relation="include">
+        </childnode>
+        <childnode refid="12119" relation="include">
+        </childnode>
+        <childnode refid="12120" relation="include">
+        </childnode>
+        <childnode refid="12121" relation="include">
+        </childnode>
+        <childnode refid="12122" relation="include">
+        </childnode>
+        <childnode refid="12123" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12126" relation="include">
+        </childnode>
+        <childnode refid="12127" relation="include">
+        </childnode>
+        <childnode refid="12128" relation="include">
+        </childnode>
+        <childnode refid="12129" relation="include">
+        </childnode>
+        <childnode refid="12130" relation="include">
+        </childnode>
+        <childnode refid="12134" relation="include">
+        </childnode>
+        <childnode refid="12135" relation="include">
+        </childnode>
+        <childnode refid="12136" relation="include">
+        </childnode>
+        <childnode refid="12137" relation="include">
+        </childnode>
+        <childnode refid="12138" relation="include">
+        </childnode>
+        <childnode refid="12139" relation="include">
+        </childnode>
+        <childnode refid="12140" relation="include">
+        </childnode>
+        <childnode refid="12146" relation="include">
+        </childnode>
+        <childnode refid="12147" relation="include">
+        </childnode>
+        <childnode refid="12144" relation="include">
+        </childnode>
+        <childnode refid="12148" relation="include">
+        </childnode>
+        <childnode refid="12151" relation="include">
+        </childnode>
+        <childnode refid="12153" relation="include">
+        </childnode>
+        <childnode refid="12154" relation="include">
+        </childnode>
+        <childnode refid="12163" relation="include">
+        </childnode>
+        <childnode refid="12164" relation="include">
+        </childnode>
+      </node>
+      <node id="12114">
+        <label>cstdio</label>
+      </node>
+      <node id="12118">
+        <label>tuple</label>
+      </node>
+      <node id="12123">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="12140">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="12123" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12127" relation="include">
+        </childnode>
+        <childnode refid="12141" relation="include">
+        </childnode>
+        <childnode refid="12142" relation="include">
+        </childnode>
+        <childnode refid="12143" relation="include">
+        </childnode>
+        <childnode refid="12144" relation="include">
+        </childnode>
+      </node>
+      <node id="12119">
+        <label>utility</label>
+      </node>
+      <node id="12143">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="12134">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="12131">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="12132" relation="include">
+        </childnode>
+      </node>
+      <node id="12154">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="12155" relation="include">
+        </childnode>
+        <childnode refid="12156" relation="include">
+        </childnode>
+        <childnode refid="12157" relation="include">
+        </childnode>
+        <childnode refid="12158" relation="include">
+        </childnode>
+        <childnode refid="12159" relation="include">
+        </childnode>
+        <childnode refid="12160" relation="include">
+        </childnode>
+        <childnode refid="12161" relation="include">
+        </childnode>
+        <childnode refid="12162" relation="include">
+        </childnode>
+      </node>
+      <node id="12132">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="12146">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="12144" relation="include">
+        </childnode>
+        <childnode refid="12140" relation="include">
+        </childnode>
+        <childnode refid="12147" relation="include">
+        </childnode>
+      </node>
+      <node id="12115">
+        <label>cstdlib</label>
+      </node>
+      <node id="12110">
+        <label>cctype</label>
+      </node>
+      <node id="12107">
+        <label>/home/aakash/mlpack/src/mlpack/core/math/columns_to_blocks.hpp</label>
+        <link refid="columns__to__blocks_8hpp"/>
+        <childnode refid="12108" relation="include">
+        </childnode>
+      </node>
+      <node id="12133">
+        <label>unordered_map</label>
+      </node>
+      <node id="12112">
+        <label>climits</label>
+      </node>
+      <node id="12160">
+        <label>mutex</label>
+      </node>
+      <node id="12156">
+        <label>chrono</label>
+      </node>
+      <node id="12164">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="12162">
+        <label>thread</label>
+      </node>
+      <node id="12150">
+        <label>type_traits</label>
+      </node>
+      <node id="12126">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="12120">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="12144">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="12122" relation="include">
+        </childnode>
+        <childnode refid="12123" relation="include">
+        </childnode>
+        <childnode refid="12124" relation="include">
+        </childnode>
+        <childnode refid="12125" relation="include">
+        </childnode>
+        <childnode refid="12145" relation="include">
+        </childnode>
+      </node>
+      <node id="12116">
+        <label>cstring</label>
+      </node>
+      <node id="12135">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="12124">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1math_1_1ColumnsToBlocks" prot="public">mlpack::math::ColumnsToBlocks</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1math">mlpack::math</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Tham Ngap Wei</para></simplesect>
+A helper class that could be useful for visualizing the output of <ref refid="namespacemlpack_1_1nn_1a5fcd73722265acc12d00ba8d32db6f17" kindref="member">MaximalInputs()</ref> and possibly other things.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">math<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="classmlpack_1_1math_1_1ColumnsToBlocks" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks" kindref="compound">ColumnsToBlocks</ref></highlight></codeline>
+<codeline lineno="107"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1aaf286af44a52e58e3791183cdc203deb" kindref="member">ColumnsToBlocks</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockHeight<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockWidth<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1ac8cc13952caefd0b3640d172955977a7" kindref="member">Transform</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>maximalInputs,<sp/>arma::mat&amp;<sp/>output);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a7909cc5374f22c946c4a792598582419" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a7909cc5374f22c946c4a792598582419" kindref="member">BlockHeight</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>blockHeight<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="151" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1af00fa96c0b3e0dacd1c0176eca472483" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1af00fa96c0b3e0dacd1c0176eca472483" kindref="member">BlockHeight</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>blockHeight;<sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1aa9d6f51aed3fb8b76f9bdf8183a8a596" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1aa9d6f51aed3fb8b76f9bdf8183a8a596" kindref="member">BlockWidth</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>blockWidth<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1aecfe34325ed6f312ce3aeaedb994d1f7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1aecfe34325ed6f312ce3aeaedb994d1f7" kindref="member">BlockWidth</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>blockWidth;<sp/>}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a0ed6759ae521a7c0183187697bc048e9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a0ed6759ae521a7c0183187697bc048e9" kindref="member">BufSize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>bufSize<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="162" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a798519f6802d88a49635e44d5230020a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a798519f6802d88a49635e44d5230020a" kindref="member">BufSize</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bufSize;<sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a1f975716805f8568cda0888a78e917b8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a1f975716805f8568cda0888a78e917b8" kindref="member">BufValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>bufValue<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="167" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a49f9cd43a166d9f864310e9f444698b6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a49f9cd43a166d9f864310e9f444698b6" kindref="member">BufValue</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bufValue;<sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a87701466a13a6cc63643b9f46eaa2bed" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a87701466a13a6cc63643b9f46eaa2bed" kindref="member">MaxRange</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>maxRange<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="174" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1acafd86fdb4e4d1c32d5edee456b8ba84" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1acafd86fdb4e4d1c32d5edee456b8ba84" kindref="member">MaxRange</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxRange;<sp/>}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1abcc192d4fe9322997d9bc1b6fbd5fb40" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1abcc192d4fe9322997d9bc1b6fbd5fb40" kindref="member">MinRange</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>minRange<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="181" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a48f09a1c6bd5e08aea80485023818908" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a48f09a1c6bd5e08aea80485023818908" kindref="member">MinRange</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minRange;<sp/>}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a668b1e7a0dab0c0dc31f1097f57f1c38" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a668b1e7a0dab0c0dc31f1097f57f1c38" kindref="member">Scale</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>scale<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="188" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1ab7ad8f9c12a950a6087504534992c270" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1ab7ad8f9c12a950a6087504534992c270" kindref="member">Scale</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scale;<sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a8fb9290a74b4454f4f8e8484c18f1635" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a8fb9290a74b4454f4f8e8484c18f1635" kindref="member">Rows</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>rows<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="193" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1ae4dde733be7af7e81bd4a1e89f9c4b91" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1ae4dde733be7af7e81bd4a1e89f9c4b91" kindref="member">Rows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rows;<sp/>}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a4baee2c2b3fe90b0921171da72b6890c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a4baee2c2b3fe90b0921171da72b6890c" kindref="member">Cols</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/>{<sp/>cols<sp/>=<sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="198" refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a4272c009d2f2f8572158049515044a61" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1math_1_1ColumnsToBlocks_1a4272c009d2f2f8572158049515044a61" kindref="member">Cols</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>cols;<sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>IsPerfectSquare(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockHeight;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockWidth;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bufSize;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bufValue;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minRange;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxRange;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>scale;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>math</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/math/columns_to_blocks.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,89 @@
+.TH "CosineSearch" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CosineSearch \- Nearest neighbor search with cosine distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCosineSearch\fP (const arma::mat &referenceSet)"
+.br
+.RI "Constructor with reference set\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const arma::mat &query, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &similarities)"
+.br
+.RI "Given a set of query points, find the nearest k neighbors, and return similarities\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Nearest neighbor search with cosine distance\&. 
+
+Note that, with normalized vectors, neighbor search with cosine distance is equivalent to neighbor search with Euclidean distance\&. Therefore, instead of performing neighbor search directly with cosine distance, we first normalize all vectors to unit length, and then use \fBneighbor::KNN\fP (i\&.e\&. NeighborSearch with Euclidean distance, KDTree)\&. Cosine similarities are calculated from Euclidean distance\&.
+.PP
+An example of how to use \fBCosineSearch\fP in CF is shown below:
+.PP
+.PP
+.nf
+extern arma::mat data; // data is a (user, item, rating) table\&.
+// Users for whom recommendations are generated\&.
+extern arma::Col<size_t> users;
+arma::Mat<size_t> recommendations; // Resulting recommendations\&.
+
+CFType<> cf(data);
+
+// Generate 10 recommendations for all users\&.
+cf\&.template GetRecommendations<CosineSearch>(10, recommendations);
+.fi
+.PP
+ 
+.PP
+Definition at line 44 of file cosine_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCosineSearch\fP (const arma::mat & referenceSet)\fC [inline]\fP"
+
+.PP
+Constructor with reference set\&. All vectors in reference set are normalized to unit length\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file cosine_search\&.hpp\&.
+.PP
+References NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Train()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Search (const arma::mat & query, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & similarities)\fC [inline]\fP"
+
+.PP
+Given a set of query points, find the nearest k neighbors, and return similarities\&. Similarities are non-negative and no larger than one\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquery\fP A set of query points\&. 
+.br
+\fIk\fP Number of neighbors to search\&. 
+.br
+\fIneighbors\fP Nearest neighbors\&. 
+.br
+\fIsimilarities\fP Similarities between query point and its neighbors\&. 
+.RE
+.PP
+
+.PP
+Definition at line 70 of file cosine_search\&.hpp\&.
+.PP
+References NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Search()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

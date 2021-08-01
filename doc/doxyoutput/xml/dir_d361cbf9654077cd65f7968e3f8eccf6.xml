@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d361cbf9654077cd65f7968e3f8eccf6" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree</compoundname>
+    <innerdir refid="dir_f2c902aa2e0a74bdfe4e54224fb2267f">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree</innerdir>
+    <innerdir refid="dir_47f18cd886ddfd9fe2e9eded46d048f4">/home/aakash/mlpack/src/mlpack/core/tree/cosine_tree</innerdir>
+    <innerdir refid="dir_8909127a93079ea6b332007d78eda270">/home/aakash/mlpack/src/mlpack/core/tree/cover_tree</innerdir>
+    <innerdir refid="dir_d6a1e83a35c0777ddb5f306ab15ead95">/home/aakash/mlpack/src/mlpack/core/tree/octree</innerdir>
+    <innerdir refid="dir_7919cd971787b4fc956a50aa3613ed0a">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree</innerdir>
+    <innerdir refid="dir_ed97a359292189f6ce70548f8cfe7fb7">/home/aakash/mlpack/src/mlpack/core/tree/space_split</innerdir>
+    <innerdir refid="dir_337db9a6a47b9eca6587909f40224d7c">/home/aakash/mlpack/src/mlpack/core/tree/spill_tree</innerdir>
+    <innerfile refid="address_8hpp">address.hpp</innerfile>
+    <innerfile refid="ballbound_8hpp">ballbound.hpp</innerfile>
+    <innerfile refid="binary__space__tree_8hpp">binary_space_tree.hpp</innerfile>
+    <innerfile refid="bound__traits_8hpp">bound_traits.hpp</innerfile>
+    <innerfile refid="bounds_8hpp">bounds.hpp</innerfile>
+    <innerfile refid="cellbound_8hpp">cellbound.hpp</innerfile>
+    <innerfile refid="cover__tree_8hpp">cover_tree.hpp</innerfile>
+    <innerfile refid="enumerate__tree_8hpp">enumerate_tree.hpp</innerfile>
+    <innerfile refid="example__tree_8hpp">example_tree.hpp</innerfile>
+    <innerfile refid="greedy__single__tree__traverser_8hpp">greedy_single_tree_traverser.hpp</innerfile>
+    <innerfile refid="hollow__ball__bound_8hpp">hollow_ball_bound.hpp</innerfile>
+    <innerfile refid="hrectbound_8hpp">hrectbound.hpp</innerfile>
+    <innerfile refid="octree_8hpp">octree.hpp</innerfile>
+    <innerfile refid="perform__split_8hpp">perform_split.hpp</innerfile>
+    <innerfile refid="spill__tree_8hpp">spill_tree.hpp</innerfile>
+    <innerfile refid="statistic_8hpp">statistic.hpp</innerfile>
+    <innerfile refid="traversal__info_8hpp">traversal_info.hpp</innerfile>
+    <innerfile refid="tree__traits_8hpp">tree_traits.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/"/>
+  </compounddef>
+</doxygen>

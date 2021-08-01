@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_6c1f83a8c807bd60aeee8e610fd4412e" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/perceptron/learning_policies</compoundname>
+    <innerfile refid="simple__weight__update_8hpp">simple_weight_update.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/perceptron/learning_policies/"/>
+  </compounddef>
+</doxygen>

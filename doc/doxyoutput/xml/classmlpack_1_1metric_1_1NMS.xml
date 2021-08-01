@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1metric_1_1NMS" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::metric::NMS</compoundname>
+    <includes refid="non__maximal__supression_8hpp" local="no">non_maximal_supression.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>bool</type>
+        <declname>UseCoordinates</declname>
+        <defname>UseCoordinates</defname>
+        <defval>false</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1metric_1_1NMS_1a6c223cd63c9c9434b5e5fca28a8ed517" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool useCoordinates</definition>
+        <argsstring></argsstring>
+        <name>useCoordinates</name>
+        <initializer>= UseCoordinates</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" line="73" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1NMS_1a7d8e59faf04a83a958e2916934a67b3e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NMS</definition>
+        <argsstring>()</argsstring>
+        <name>NMS</name>
+        <briefdescription>
+<para>Default constructor required to satisfy the Metric policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" bodystart="44" bodyend="44"/>
+        <references refid="classmlpack_1_1metric_1_1NMS_1aae1c5d8685c76ae88d8defc15e062122">NMS&lt; UseCoordinates &gt;::Evaluate</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1NMS_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the metric. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" line="77" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1NMS_1aae1c5d8685c76ae88d8defc15e062122" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename BoundingBoxesType</type>
+          </param>
+          <param>
+            <type>typename ConfidenceScoreType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Evaluate</definition>
+        <argsstring>(const BoundingBoxesType &amp;boundingBoxes, const ConfidenceScoreType &amp;confidenceScores, OutputType &amp;selectedIndices, const double threshold=0.5)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const BoundingBoxesType &amp;</type>
+          <declname>boundingBoxes</declname>
+        </param>
+        <param>
+          <type>const ConfidenceScoreType &amp;</type>
+          <declname>confidenceScores</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>selectedIndices</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>threshold</declname>
+          <defval>0.5</defval>
+        </param>
+        <briefdescription>
+<para>Performs non-maximal suppression. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>boundingBoxes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column major representation of bounding boxes i.e. Each column corresponds to a different bounding box. Each bounding box should contain 4 points only either {x1, y1, x2, y2} or {x1, y1, h, w} depending on UseCoordinates parameter. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>confidenceScores</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing confidence score corresponding to each bounding box. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>selectedIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output of Non Maximal Suppression (<ref refid="classmlpack_1_1metric_1_1NMS" kindref="compound">NMS</ref>) is stored here. It contains a list of indices corresponding to bounding boxes in input parameter, sorted in descending order of the confidence scores. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>threshold</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Threshold used to discard all overlapping bounding boxes that have <ref refid="classmlpack_1_1metric_1_1IoU" kindref="compound">IoU</ref> greater than the threshold. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" line="68" column="1"/>
+        <referencedby refid="classmlpack_1_1metric_1_1NMS_1a7d8e59faf04a83a958e2916934a67b3e" compoundref="non__maximal__supression_8hpp" startline="44" endline="44">NMS&lt; UseCoordinates &gt;::NMS</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Definition of Non Maximal Supression. </para>    </briefdescription>
+    <detaileddescription>
+<para>Performs non-maximal suppression (<ref refid="classmlpack_1_1metric_1_1NMS" kindref="compound">NMS</ref>) on the boxes according to their Intersection-over-Union (<ref refid="classmlpack_1_1metric_1_1IoU" kindref="compound">IoU</ref>). <ref refid="classmlpack_1_1metric_1_1NMS" kindref="compound">NMS</ref> iteratively removes lower scoring boxes which have an <ref refid="classmlpack_1_1metric_1_1IoU" kindref="compound">IoU</ref> greater than threshold with another high scoring box.</para><para>For bounding box representation there are two common representation either as coordinates i.e. each value in vector represents a coordinate in the format x0, y0, x1, y1 where x0, y0 represent the lower left coordinate and x1, y1, represent upper right coordinate.</para><para>Second representation follows the following representation : x0, y0, h, w. Where x0 and y0 are bottom left bounding box coordinates and h, w are height and width of the bounding box.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>UseCoordinates</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Toggles between the two representation of bounding box. If true, each value in vector represents a coordinate in the formate x0, y0, x1, y1. Else the bounding box is represented as x0, y0, h, w. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/non_maximal_supression.hpp" bodystart="40" bodyend="78"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1metric_1_1NMS_1aae1c5d8685c76ae88d8defc15e062122" prot="public" virt="non-virtual"><scope>mlpack::metric::NMS</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1metric_1_1NMS_1a7d8e59faf04a83a958e2916934a67b3e" prot="public" virt="non-virtual"><scope>mlpack::metric::NMS</scope><name>NMS</name></member>
+      <member refid="classmlpack_1_1metric_1_1NMS_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::metric::NMS</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1metric_1_1NMS_1a6c223cd63c9c9434b5e5fca28a8ed517" prot="public" virt="non-virtual"><scope>mlpack::metric::NMS</scope><name>useCoordinates</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

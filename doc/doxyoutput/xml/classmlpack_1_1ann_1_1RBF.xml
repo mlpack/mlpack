@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1RBF" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::RBF</compoundname>
+    <includes refid="layer__types_8hpp" local="no">layer_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename Activation</type>
+        <defval><ref refid="classmlpack_1_1ann_1_1GaussianFunction" kindref="compound">GaussianFunction</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1a17b4e9bfdb7698b6714922c5949c08ed" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double betas</definition>
+        <argsstring></argsstring>
+        <name>betas</name>
+        <briefdescription>
+<para>Locally-stored the betas values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1aa17455bc94002aec1d089c8bcaa0ca45" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType centres</definition>
+        <argsstring></argsstring>
+        <name>centres</name>
+        <briefdescription>
+<para>Locally-stored the learnable centre of the shape. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1affa7995de3752a3c075fa8b1bb9c533b" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType distances</definition>
+        <argsstring></argsstring>
+        <name>distances</name>
+        <briefdescription>
+<para>Locally-stored the output distances of the shape. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inSize</definition>
+        <argsstring></argsstring>
+        <name>inSize</name>
+        <briefdescription>
+<para>Locally-stored number of input units. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outSize</definition>
+        <argsstring></argsstring>
+        <name>outSize</name>
+        <briefdescription>
+<para>Locally-stored number of output units. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RBF_1a7265e9f0c361d056cbc8d8a8c68bc7c6" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double sigmas</definition>
+        <argsstring></argsstring>
+        <name>sigmas</name>
+        <briefdescription>
+<para>Locally-stored the sigmas values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1ae44ef733c364ddb1a3b9202216ce100c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RBF</definition>
+        <argsstring>()</argsstring>
+        <name>RBF</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1RBF" kindref="compound">RBF</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1ad40154c64ad5a60b08248198f06eb3d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RBF</definition>
+        <argsstring>(const size_t inSize, const size_t outSize, arma::mat &amp;centres, double betas=0)</argsstring>
+        <name>RBF</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outSize</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>centres</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>betas</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the Radial Basis Function layer object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of input units. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of output units. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centres</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The centres calculated using k-means of data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>betas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The beta value to be used with centres. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="68" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a2eeb9b2b39181bce4c6a18783443636a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;, arma::Mat&lt; eT &gt; &amp;)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of the radial basis function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="87" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the detla. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="109" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="111" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of the radial basis function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="80" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType const  &amp;</type>
+        <definition>InputDataType const&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>Get the input parameter. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+<para>Get the shape of the input. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="120" bodyend="123"/>
+        <references refid="classmlpack_1_1ann_1_1RBF_1a65cba07328997659bec80b9879b15a51">RBF&lt; InputDataType, OutputDataType, Activation &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InputSize</name>
+        <briefdescription>
+<para>Get the input size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputSize</name>
+        <briefdescription>
+<para>Get the output size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="129" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1RBF_1a13ab93f234244a68f6ade76287284447" compoundref="radial__basis__function_8hpp" startline="120" endline="123">RBF&lt; InputDataType, OutputDataType, Activation &gt;::InputShape</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RBF_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get the size of the weights. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp" bodystart="114" bodyend="117"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the Radial Basis Function layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1RBF" kindref="compound">RBF</ref> class when use with a non-linear activation function acts as a Radial Basis Function which can be used with Feed-Forward neural network.</para><para>For more information, refer to the following paper,</para><para><programlisting><codeline><highlight class="normal">@article{Volume<sp/>51:<sp/>Artificial<sp/>Intelligence<sp/>and<sp/>Statistics,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Qichao<sp/>Que,<sp/>Mikhail<sp/>Belkin},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{Back<sp/>to<sp/>the<sp/>Future:<sp/>Radial<sp/>Basis<sp/>Function<sp/>Networks<sp/>Revisited},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2016},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/>=<sp/>{http://proceedings.mlr.press/v51/que16.pdf},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Activation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the activation function (mlpack::ann::Gaussian). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="94" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a2eeb9b2b39181bce4c6a18783443636a" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a17b4e9bfdb7698b6714922c5949c08ed" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>betas</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1aa17455bc94002aec1d089c8bcaa0ca45" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>centres</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1affa7995de3752a3c075fa8b1bb9c533b" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>distances</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>InputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1ad8790e1135ba331e561e2151f527a9d7" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>inSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>OutputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>outSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1ae44ef733c364ddb1a3b9202216ce100c" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>RBF</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1ad40154c64ad5a60b08248198f06eb3d2" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>RBF</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a7265e9f0c361d056cbc8d8a8c68bc7c6" prot="private" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>sigmas</name></member>
+      <member refid="classmlpack_1_1ann_1_1RBF_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::RBF</scope><name>WeightSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

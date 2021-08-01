@@ -1,0 +1,56 @@
+\section{/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp File Reference}
+\label{amf_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/amf/amf.\+hpp@{/home/aakash/mlpack/src/mlpack/methods/amf/amf.\+hpp}}
+Include dependency graph for amf.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{amf_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{amf_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ A\+M\+F$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$}
+\begin{DoxyCompactList}\small\item\em This class implements \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (alternating matrix factorization) on the given matrix V. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::amf}
+\begin{DoxyCompactList}\small\item\em Alternating Matrix Factorization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef amf\+::\+A\+MF$<$ amf\+::\+Simple\+Residue\+Termination, amf\+::\+Random\+Acol\+Initialization$<$$>$, amf\+::\+N\+M\+F\+A\+L\+S\+Update $>$ \textbf{ N\+M\+F\+A\+L\+S\+Factorizer}
+\item 
+{\footnotesize template$<$typename Mat\+Type  = arma\+::mat$>$ }\\using \textbf{ S\+V\+D\+Batch\+Factorizer} = amf\+::\+A\+MF$<$ amf\+::\+Simple\+Residue\+Termination, amf\+::\+Random\+Acol\+Initialization$<$$>$, amf\+::\+S\+V\+D\+Batch\+Learning $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedefs. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Mat\+Type  = arma\+::mat$>$ }\\using \textbf{ S\+V\+D\+Complete\+Incremental\+Factorizer} = amf\+::\+A\+MF$<$ amf\+::\+Simple\+Residue\+Termination, amf\+::\+Random\+Acol\+Initialization$<$$>$, amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$ $>$
+\begin{DoxyCompactList}\small\item\em S\+V\+D\+Complete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Mat\+Type  = arma\+::mat$>$ }\\using \textbf{ S\+V\+D\+Incomplete\+Incremental\+Factorizer} = amf\+::\+A\+MF$<$ amf\+::\+Simple\+Residue\+Termination, amf\+::\+Random\+Acol\+Initialization$<$$>$, amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning $>$
+\begin{DoxyCompactList}\small\item\em S\+V\+D\+Incomplete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Sumedh Ghaisas 
+
+Mohan Rajendran 
+
+Ryan Curtin
+\end{DoxyAuthor}
+Alternating Matrix Factorization
+
+The A\+MF (alternating matrix factorization) class, from which more commonly known techniques such as incremental S\+VD, N\+MF, and batch-\/learning S\+VD can be derived.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

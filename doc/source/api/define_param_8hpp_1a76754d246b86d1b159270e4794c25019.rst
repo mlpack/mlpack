@@ -1,0 +1,13 @@
+.. _exhale_define_param_8hpp_1a76754d246b86d1b159270e4794c25019:
+
+Define PARAM_TMATRIX_OUT
+========================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_core_util_param.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: PARAM_TMATRIX_OUT

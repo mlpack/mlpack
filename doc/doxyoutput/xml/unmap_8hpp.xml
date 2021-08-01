@@ -1,0 +1,419 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="unmap_8hpp" kind="file" language="C++">
+    <compoundname>unmap.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="53123">
+        <label>list</label>
+      </node>
+      <node id="53120">
+        <label>atomic</label>
+      </node>
+      <node id="53110">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="53086">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="53122">
+        <label>iomanip</label>
+      </node>
+      <node id="53095">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="53096" relation="include">
+        </childnode>
+        <childnode refid="53098" relation="include">
+        </childnode>
+      </node>
+      <node id="53078">
+        <label>cstdint</label>
+      </node>
+      <node id="53087">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="53094">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="53072">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/unmap.hpp</label>
+        <link refid="unmap_8hpp"/>
+        <childnode refid="53073" relation="include">
+        </childnode>
+      </node>
+      <node id="53117">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="53107">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="53074">
+        <label>cmath</label>
+      </node>
+      <node id="53093">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="53082">
+        <label>stdexcept</label>
+      </node>
+      <node id="53102">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="53087" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53088" relation="include">
+        </childnode>
+      </node>
+      <node id="53126">
+        <label>string</label>
+      </node>
+      <node id="53114">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="53115" relation="include">
+        </childnode>
+        <childnode refid="53081" relation="include">
+        </childnode>
+      </node>
+      <node id="53124">
+        <label>map</label>
+      </node>
+      <node id="53076">
+        <label>cfloat</label>
+      </node>
+      <node id="53106">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="53128">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="53090">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="53113">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="53114" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53097" relation="include">
+        </childnode>
+        <childnode refid="53115" relation="include">
+        </childnode>
+      </node>
+      <node id="53103">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="53101">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="53087" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53088" relation="include">
+        </childnode>
+      </node>
+      <node id="53104">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="53087" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53088" relation="include">
+        </childnode>
+      </node>
+      <node id="53092">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="53112">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="53088" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53100" relation="include">
+        </childnode>
+        <childnode refid="53109" relation="include">
+        </childnode>
+      </node>
+      <node id="53116">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="53117" relation="include">
+        </childnode>
+      </node>
+      <node id="53118">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="53073">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="53074" relation="include">
+        </childnode>
+        <childnode refid="53075" relation="include">
+        </childnode>
+        <childnode refid="53076" relation="include">
+        </childnode>
+        <childnode refid="53077" relation="include">
+        </childnode>
+        <childnode refid="53078" relation="include">
+        </childnode>
+        <childnode refid="53079" relation="include">
+        </childnode>
+        <childnode refid="53080" relation="include">
+        </childnode>
+        <childnode refid="53081" relation="include">
+        </childnode>
+        <childnode refid="53082" relation="include">
+        </childnode>
+        <childnode refid="53083" relation="include">
+        </childnode>
+        <childnode refid="53084" relation="include">
+        </childnode>
+        <childnode refid="53085" relation="include">
+        </childnode>
+        <childnode refid="53086" relation="include">
+        </childnode>
+        <childnode refid="53087" relation="include">
+        </childnode>
+        <childnode refid="53088" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53091" relation="include">
+        </childnode>
+        <childnode refid="53092" relation="include">
+        </childnode>
+        <childnode refid="53093" relation="include">
+        </childnode>
+        <childnode refid="53094" relation="include">
+        </childnode>
+        <childnode refid="53095" relation="include">
+        </childnode>
+        <childnode refid="53099" relation="include">
+        </childnode>
+        <childnode refid="53100" relation="include">
+        </childnode>
+        <childnode refid="53101" relation="include">
+        </childnode>
+        <childnode refid="53102" relation="include">
+        </childnode>
+        <childnode refid="53103" relation="include">
+        </childnode>
+        <childnode refid="53104" relation="include">
+        </childnode>
+        <childnode refid="53105" relation="include">
+        </childnode>
+        <childnode refid="53111" relation="include">
+        </childnode>
+        <childnode refid="53112" relation="include">
+        </childnode>
+        <childnode refid="53109" relation="include">
+        </childnode>
+        <childnode refid="53113" relation="include">
+        </childnode>
+        <childnode refid="53116" relation="include">
+        </childnode>
+        <childnode refid="53118" relation="include">
+        </childnode>
+        <childnode refid="53119" relation="include">
+        </childnode>
+        <childnode refid="53128" relation="include">
+        </childnode>
+        <childnode refid="53129" relation="include">
+        </childnode>
+      </node>
+      <node id="53079">
+        <label>cstdio</label>
+      </node>
+      <node id="53083">
+        <label>tuple</label>
+      </node>
+      <node id="53088">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="53105">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="53088" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53092" relation="include">
+        </childnode>
+        <childnode refid="53106" relation="include">
+        </childnode>
+        <childnode refid="53107" relation="include">
+        </childnode>
+        <childnode refid="53108" relation="include">
+        </childnode>
+        <childnode refid="53109" relation="include">
+        </childnode>
+      </node>
+      <node id="53084">
+        <label>utility</label>
+      </node>
+      <node id="53108">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="53099">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="53096">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="53097" relation="include">
+        </childnode>
+      </node>
+      <node id="53119">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="53120" relation="include">
+        </childnode>
+        <childnode refid="53121" relation="include">
+        </childnode>
+        <childnode refid="53122" relation="include">
+        </childnode>
+        <childnode refid="53123" relation="include">
+        </childnode>
+        <childnode refid="53124" relation="include">
+        </childnode>
+        <childnode refid="53125" relation="include">
+        </childnode>
+        <childnode refid="53126" relation="include">
+        </childnode>
+        <childnode refid="53127" relation="include">
+        </childnode>
+      </node>
+      <node id="53097">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="53111">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="53109" relation="include">
+        </childnode>
+        <childnode refid="53105" relation="include">
+        </childnode>
+        <childnode refid="53112" relation="include">
+        </childnode>
+      </node>
+      <node id="53080">
+        <label>cstdlib</label>
+      </node>
+      <node id="53075">
+        <label>cctype</label>
+      </node>
+      <node id="53098">
+        <label>unordered_map</label>
+      </node>
+      <node id="53077">
+        <label>climits</label>
+      </node>
+      <node id="53125">
+        <label>mutex</label>
+      </node>
+      <node id="53121">
+        <label>chrono</label>
+      </node>
+      <node id="53129">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="53127">
+        <label>thread</label>
+      </node>
+      <node id="53115">
+        <label>type_traits</label>
+      </node>
+      <node id="53091">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="53085">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="53109">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="53087" relation="include">
+        </childnode>
+        <childnode refid="53088" relation="include">
+        </childnode>
+        <childnode refid="53089" relation="include">
+        </childnode>
+        <childnode refid="53090" relation="include">
+        </childnode>
+        <childnode refid="53110" relation="include">
+        </childnode>
+      </node>
+      <node id="53081">
+        <label>cstring</label>
+      </node>
+      <node id="53100">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="53089">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1neighbor">mlpack::neighbor</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Convenience methods to unmap results.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">neighbor<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1neighbor_1a841bafc12b36517208ff283b095dec2f" kindref="member">Unmap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>distances,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>referenceMap,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>queryMap,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighborsOut,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>distancesOut,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>squareRoot<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1neighbor_1a841bafc12b36517208ff283b095dec2f" kindref="member">Unmap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>distances,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>referenceMap,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighborsOut,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>distancesOut,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>squareRoot<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>neighbor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/unmap.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,690 @@
+\section{K\+DE$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kde_1_1KDE}\index{K\+D\+E$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$@{K\+D\+E$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}}
+
+
+The \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} class is a template class for performing Kernel Density Estimations.  
+
+
+
+
+Inheritance diagram for K\+DE$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{classmlpack_1_1kde_1_1KDE__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Tree\+Type$<$ Metric\+Type, \textbf{ kde\+::\+K\+D\+E\+Stat}, Mat\+Type $>$ \textbf{ Tree}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ K\+DE} (const double rel\+Error=\textbf{ K\+D\+E\+Default\+Params\+::rel\+Error}, const double abs\+Error=\textbf{ K\+D\+E\+Default\+Params\+::abs\+Error}, Kernel\+Type kernel=Kernel\+Type(), const \textbf{ K\+D\+E\+Mode} mode=\textbf{ K\+D\+E\+Default\+Params\+::mode}, Metric\+Type metric=Metric\+Type(), const bool monte\+Carlo=\textbf{ K\+D\+E\+Default\+Params\+::monte\+Carlo}, const double mc\+Prob=\textbf{ K\+D\+E\+Default\+Params\+::mc\+Prob}, const size\+\_\+t initial\+Sample\+Size=\textbf{ K\+D\+E\+Default\+Params\+::initial\+Sample\+Size}, const double mc\+Entry\+Coef=\textbf{ K\+D\+E\+Default\+Params\+::mc\+Entry\+Coef}, const double mc\+Break\+Coef=\textbf{ K\+D\+E\+Default\+Params\+::mc\+Break\+Coef})
+\begin{DoxyCompactList}\small\item\em Initialize \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object using custom instantiated Metric and Kernel objects. \end{DoxyCompactList}\item 
+\textbf{ K\+DE} (const \textbf{ K\+DE} \&other)
+\begin{DoxyCompactList}\small\item\em Construct \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object as a copy of the given model. \end{DoxyCompactList}\item 
+\textbf{ K\+DE} (\textbf{ K\+DE} \&\&other)
+\begin{DoxyCompactList}\small\item\em Construct \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object taking ownership of the given model. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+K\+DE} ()
+\begin{DoxyCompactList}\small\item\em Destroy the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object. \end{DoxyCompactList}\item 
+double \textbf{ Absolute\+Error} () const
+\begin{DoxyCompactList}\small\item\em Get absolute error tolerance. \end{DoxyCompactList}\item 
+void \textbf{ Absolute\+Error} (const double new\+Error)
+\begin{DoxyCompactList}\small\item\em Modify absolute error tolerance (0 $<$= new\+Error). \end{DoxyCompactList}\item 
+void \textbf{ Evaluate} (Mat\+Type query\+Set, arma\+::vec \&estimations)
+\begin{DoxyCompactList}\small\item\em Estimate density of each point in the query set given the data of the reference set. \end{DoxyCompactList}\item 
+void \textbf{ Evaluate} (\textbf{ Tree} $\ast$query\+Tree, const std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New\+Queries, arma\+::vec \&estimations)
+\begin{DoxyCompactList}\small\item\em Estimate density of each point in the query set given the data of an already created query tree. \end{DoxyCompactList}\item 
+void \textbf{ Evaluate} (arma\+::vec \&estimations)
+\begin{DoxyCompactList}\small\item\em Estimate density of each point in the reference set given the data of the reference set. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Trained} () const
+\begin{DoxyCompactList}\small\item\em Check whether \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model is trained or not. \end{DoxyCompactList}\item 
+const Kernel\+Type \& \textbf{ Kernel} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel. \end{DoxyCompactList}\item 
+Kernel\+Type \& \textbf{ Kernel} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel. \end{DoxyCompactList}\item 
+double \textbf{ M\+C\+Break\+Coef} () const
+\begin{DoxyCompactList}\small\item\em Get Monte Carlo break coefficient. \end{DoxyCompactList}\item 
+void \textbf{ M\+C\+Break\+Coef} (const double new\+Coef)
+\begin{DoxyCompactList}\small\item\em Modify Monte Carlo break coefficient. (0 $<$ new\+Coef $<$= 1). \end{DoxyCompactList}\item 
+double \textbf{ M\+C\+Entry\+Coef} () const
+\begin{DoxyCompactList}\small\item\em Get Monte Carlo entry coefficient. \end{DoxyCompactList}\item 
+void \textbf{ M\+C\+Entry\+Coef} (const double new\+Coef)
+\begin{DoxyCompactList}\small\item\em Modify Monte Carlo entry coefficient. (new\+Coef $>$= 1). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ M\+C\+Initial\+Sample\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get Monte Carlo initial sample size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ M\+C\+Initial\+Sample\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify Monte Carlo initial sample size. \end{DoxyCompactList}\item 
+double \textbf{ M\+C\+Prob} () const
+\begin{DoxyCompactList}\small\item\em Get Monte Carlo probability of error being bounded by relative error. \end{DoxyCompactList}\item 
+void \textbf{ M\+C\+Prob} (const double new\+Prob)
+\begin{DoxyCompactList}\small\item\em Modify Monte Carlo probability of error being bounded by relative error. \end{DoxyCompactList}\item 
+const Metric\+Type \& \textbf{ Metric} () const
+\begin{DoxyCompactList}\small\item\em Get the metric. \end{DoxyCompactList}\item 
+Metric\+Type \& \textbf{ Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the metric. \end{DoxyCompactList}\item 
+\textbf{ K\+D\+E\+Mode} \textbf{ Mode} () const
+\begin{DoxyCompactList}\small\item\em Get the mode of \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE}. \end{DoxyCompactList}\item 
+\textbf{ K\+D\+E\+Mode} \& \textbf{ Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify the mode of \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE}. \end{DoxyCompactList}\item 
+bool \textbf{ Monte\+Carlo} () const
+\begin{DoxyCompactList}\small\item\em Get whether Monte Carlo estimations are being used or not. \end{DoxyCompactList}\item 
+bool \& \textbf{ Monte\+Carlo} ()
+\begin{DoxyCompactList}\small\item\em Modify whether Monte Carlo estimations are being used or not. \end{DoxyCompactList}\item 
+\textbf{ K\+DE} \& \textbf{ operator=} (const \textbf{ K\+DE} \&other)
+\begin{DoxyCompactList}\small\item\em Copy a \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. \end{DoxyCompactList}\item 
+\textbf{ K\+DE} \& \textbf{ operator=} (\textbf{ K\+DE} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move a \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. \end{DoxyCompactList}\item 
+bool \textbf{ Owns\+Reference\+Tree} () const
+\begin{DoxyCompactList}\small\item\em Check whether reference tree is owned by the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. \end{DoxyCompactList}\item 
+\textbf{ Tree} $\ast$ \textbf{ Reference\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Get the reference tree. \end{DoxyCompactList}\item 
+double \textbf{ Relative\+Error} () const
+\begin{DoxyCompactList}\small\item\em Get relative error tolerance. \end{DoxyCompactList}\item 
+void \textbf{ Relative\+Error} (const double new\+Error)
+\begin{DoxyCompactList}\small\item\em Modify relative error tolerance (0 $<$= new\+Error $<$= 1). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Train} (Mat\+Type reference\+Set)
+\begin{DoxyCompactList}\small\item\em Trains the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. \end{DoxyCompactList}\item 
+void \textbf{ Train} (\textbf{ Tree} $\ast$reference\+Tree, std\+::vector$<$ size\+\_\+t $>$ $\ast$old\+From\+New\+References)
+\begin{DoxyCompactList}\small\item\em Trains the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Kernel\+Type = kernel\+::\+Gaussian\+Kernel, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      kde\+::\+K\+D\+E\+Stat,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      kde\+::\+K\+D\+E\+Stat,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$\newline
+class mlpack\+::kde\+::\+K\+D\+E$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}
+
+The \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} class is a template class for performing Kernel Density Estimations. 
+
+In statistics, kernel density estimation is a way to estimate the probability density function of a variable in a non parametric way. This implementation performs this estimation using a tree-\/independent dual-\/tree algorithm. Details about this algorithm are available in \doxyref{K\+D\+E\+Rules}{p.}{classmlpack_1_1kde_1_1KDERules}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Kernel\+Type} & Kernel function to use for \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} calculations. \\
+\hline
+{\em Metric\+Type} & Metric to use for \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} calculations. \\
+\hline
+{\em Mat\+Type} & Type of data to use. \\
+\hline
+{\em Tree\+Type} & Type of tree to use; must satisfy the Tree\+Type policy A\+PI. \\
+\hline
+{\em Dual\+Tree\+Traversal\+Type} & Type of dual-\/tree traversal to use. \\
+\hline
+{\em Single\+Tree\+Traversal\+Type} & Type of single-\/tree traversal to use. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 88 of file kde.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a7ec73720d052fdfc84bb673625973f6c}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Tree@{Tree}}
+\index{Tree@{Tree}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Tree}
+{\footnotesize\ttfamily typedef Tree\+Type$<$Metric\+Type, \textbf{ kde\+::\+K\+D\+E\+Stat}, Mat\+Type$>$ \textbf{ Tree}}
+
+
+
+Convenience typedef. 
+
+
+
+Definition at line 92 of file kde.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a3b15ef11109a15007464af153c5cc27c}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!K\+DE@{K\+DE}}
+\index{K\+DE@{K\+DE}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{K\+D\+E()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ K\+DE} (\begin{DoxyParamCaption}\item[{const double}]{rel\+Error = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::rel\+Error}},  }\item[{const double}]{abs\+Error = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::abs\+Error}},  }\item[{Kernel\+Type}]{kernel = {\ttfamily KernelType()},  }\item[{const \textbf{ K\+D\+E\+Mode}}]{mode = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::mode}},  }\item[{Metric\+Type}]{metric = {\ttfamily MetricType()},  }\item[{const bool}]{monte\+Carlo = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::monte\+Carlo}},  }\item[{const double}]{mc\+Prob = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::mc\+Prob}},  }\item[{const size\+\_\+t}]{initial\+Sample\+Size = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::initial\+Sample\+Size}},  }\item[{const double}]{mc\+Entry\+Coef = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::mc\+Entry\+Coef}},  }\item[{const double}]{mc\+Break\+Coef = {\ttfamily \textbf{ K\+D\+E\+Default\+Params\+::mc\+Break\+Coef}} }\end{DoxyParamCaption})}
+
+
+
+Initialize \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object using custom instantiated Metric and Kernel objects. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rel\+Error} & Relative error tolerance of the model. \\
+\hline
+{\em abs\+Error} & Absolute error tolerance of the model. \\
+\hline
+{\em kernel} & Instantiated kernel object. \\
+\hline
+{\em mode} & Mode for the algorithm. \\
+\hline
+{\em metric} & Instantiated metric object. \\
+\hline
+{\em monte\+Carlo} & Whether to use Monte Carlo estimations when possible. \\
+\hline
+{\em mc\+Prob} & Probability of a Monte Carlo estimation to be bounded by relative error tolerance. \\
+\hline
+{\em initial\+Sample\+Size} & Initial sample size for Monte Carlo estimations. \\
+\hline
+{\em mc\+Entry\+Coef} & Coefficient to control how much larger does the amount of node descendants has to be compared to the initial sample size in order for it to be a candidate for Monte Carlo estimations. \\
+\hline
+{\em mc\+Break\+Coef} & Coefficient to control what fraction of the node\textquotesingle{}s descendants evaluated is the limit before Monte Carlo estimation recurses. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a0c58cd0cc7015dd56f5a2fff80045d53}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!K\+DE@{K\+DE}}
+\index{K\+DE@{K\+DE}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{K\+D\+E()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ K\+DE} (\begin{DoxyParamCaption}\item[{const \textbf{ K\+DE}$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Construct \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object as a copy of the given model. 
+
+This may be computationally intensive!
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_ad7c0a5538d2f6c9f71caf0eec9f5b217}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!K\+DE@{K\+DE}}
+\index{K\+DE@{K\+DE}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{K\+D\+E()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ K\+DE} (\begin{DoxyParamCaption}\item[{\textbf{ K\+DE}$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Construct \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object taking ownership of the given model. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a5415f52db7dc45d65e7536750b5197bb}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!````~K\+DE@{$\sim$\+K\+DE}}
+\index{````~K\+DE@{$\sim$\+K\+DE}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{$\sim$\+K\+D\+E()}
+{\footnotesize\ttfamily $\sim$\textbf{ K\+DE} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destroy the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} object. 
+
+If this object created any trees, they will be deleted. If you created the trees then you have to delete them yourself. 
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_aca74512f13027b15d913461e55df3da2}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Absolute\+Error@{Absolute\+Error}}
+\index{Absolute\+Error@{Absolute\+Error}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Absolute\+Error()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Absolute\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get absolute error tolerance. 
+
+
+
+Definition at line 250 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_acc3d1ceb7d9a4ad69d29438ab2cce83c}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Absolute\+Error@{Absolute\+Error}}
+\index{Absolute\+Error@{Absolute\+Error}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Absolute\+Error()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Absolute\+Error (\begin{DoxyParamCaption}\item[{const double}]{new\+Error }\end{DoxyParamCaption})}
+
+
+
+Modify absolute error tolerance (0 $<$= new\+Error). 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_aa5b23d22f7d3de88a0de5eb74a0053b8}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Evaluate (\begin{DoxyParamCaption}\item[{Mat\+Type}]{query\+Set,  }\item[{arma\+::vec \&}]{estimations }\end{DoxyParamCaption})}
+
+
+
+Estimate density of each point in the query set given the data of the reference set. 
+
+The result is stored in an estimations vector. Estimations might not be normalized.
+
+
+\begin{DoxyItemize}
+\item Dimension of each point in the query set must match the dimension of each point in the reference set.
+\item Use std\+::move if the query set is no longer needed.
+\end{DoxyItemize}
+
+\begin{DoxyPrecond}{Precondition}
+The model has to be previously trained. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set of query points to get the density of. \\
+\hline
+{\em estimations} & Object which will hold the density of each query point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_ac9b3a488ac370ad0a985098caa235e83}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Evaluate (\begin{DoxyParamCaption}\item[{\textbf{ Tree} $\ast$}]{query\+Tree,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New\+Queries,  }\item[{arma\+::vec \&}]{estimations }\end{DoxyParamCaption})}
+
+
+
+Estimate density of each point in the query set given the data of an already created query tree. 
+
+The result is stored in an estimations vector. Estimations might not be normalized.
+
+
+\begin{DoxyItemize}
+\item Dimension of each point in the query\+Tree dataset must match the dimension of each point in the reference set.
+\item Use std\+::move if the query tree is no longer needed.
+\end{DoxyItemize}
+
+\begin{DoxyPrecond}{Precondition}
+The model has to be previously trained and mode has to be dual-\/tree. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Tree} & Tree of query points to get the density of. \\
+\hline
+{\em old\+From\+New\+Queries} & Mappings of query points to the tree dataset. \\
+\hline
+{\em estimations} & Object which will hold the density of each query point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a995ae5cd93b97b9b96f4fb9b87c427c9}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Evaluate (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{estimations }\end{DoxyParamCaption})}
+
+
+
+Estimate density of each point in the reference set given the data of the reference set. 
+
+It does not compute the estimation of a point with itself. The result is stored in an estimations vector. Estimations might not be normalized.
+
+\begin{DoxyPrecond}{Precondition}
+The model has to be previously trained. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em estimations} & Object which will hold the density of each reference point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a5270a78c5fedacf75d68a66d4d3f5ef8}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Is\+Trained@{Is\+Trained}}
+\index{Is\+Trained@{Is\+Trained}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Is\+Trained()}
+{\footnotesize\ttfamily bool Is\+Trained (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check whether \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model is trained or not. 
+
+
+
+Definition at line 259 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a917492b75cc17298bc58c3d28e2944fb}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Kernel@{Kernel}}
+\index{Kernel@{Kernel}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Kernel()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Kernel\+Type\& Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel. 
+
+
+
+Definition at line 229 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_ab8d1bedeac8344d80e50d819790a117a}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Kernel@{Kernel}}
+\index{Kernel@{Kernel}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Kernel()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Kernel\+Type\& Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel. 
+
+
+
+Definition at line 232 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a383c3b24cdfe09c445bbac92c8f9d22a}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Break\+Coef@{M\+C\+Break\+Coef}}
+\index{M\+C\+Break\+Coef@{M\+C\+Break\+Coef}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Break\+Coef()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double M\+C\+Break\+Coef (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Monte Carlo break coefficient. 
+
+
+
+Definition at line 293 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_af2cbea78691c295425eea5dd8b1a833e}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Break\+Coef@{M\+C\+Break\+Coef}}
+\index{M\+C\+Break\+Coef@{M\+C\+Break\+Coef}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Break\+Coef()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void M\+C\+Break\+Coef (\begin{DoxyParamCaption}\item[{const double}]{new\+Coef }\end{DoxyParamCaption})}
+
+
+
+Modify Monte Carlo break coefficient. (0 $<$ new\+Coef $<$= 1). 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a1b5eaa65ee1fb8956638afd7df76d32d}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Entry\+Coef@{M\+C\+Entry\+Coef}}
+\index{M\+C\+Entry\+Coef@{M\+C\+Entry\+Coef}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Entry\+Coef()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double M\+C\+Entry\+Coef (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Monte Carlo entry coefficient. 
+
+
+
+Definition at line 287 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_aaf327103b86180c1982ca8ef79aefee5}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Entry\+Coef@{M\+C\+Entry\+Coef}}
+\index{M\+C\+Entry\+Coef@{M\+C\+Entry\+Coef}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Entry\+Coef()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void M\+C\+Entry\+Coef (\begin{DoxyParamCaption}\item[{const double}]{new\+Coef }\end{DoxyParamCaption})}
+
+
+
+Modify Monte Carlo entry coefficient. (new\+Coef $>$= 1). 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a9c03312f8ff7dec25f32ba59dac70881}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Initial\+Sample\+Size@{M\+C\+Initial\+Sample\+Size}}
+\index{M\+C\+Initial\+Sample\+Size@{M\+C\+Initial\+Sample\+Size}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Initial\+Sample\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t M\+C\+Initial\+Sample\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Monte Carlo initial sample size. 
+
+
+
+Definition at line 281 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a2b8c45e6258f5219a2a956d656674d9c}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Initial\+Sample\+Size@{M\+C\+Initial\+Sample\+Size}}
+\index{M\+C\+Initial\+Sample\+Size@{M\+C\+Initial\+Sample\+Size}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Initial\+Sample\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& M\+C\+Initial\+Sample\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify Monte Carlo initial sample size. 
+
+
+
+Definition at line 284 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a43aaa23d2540a3ea399bec8731b7417b}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Prob@{M\+C\+Prob}}
+\index{M\+C\+Prob@{M\+C\+Prob}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Prob()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double M\+C\+Prob (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Monte Carlo probability of error being bounded by relative error. 
+
+
+
+Definition at line 274 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a1f0423027203dc7cfec12ce5da60becd}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!M\+C\+Prob@{M\+C\+Prob}}
+\index{M\+C\+Prob@{M\+C\+Prob}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{M\+C\+Prob()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void M\+C\+Prob (\begin{DoxyParamCaption}\item[{const double}]{new\+Prob }\end{DoxyParamCaption})}
+
+
+
+Modify Monte Carlo probability of error being bounded by relative error. 
+
+(0 $<$= new\+Prob $<$ 1). \mbox{\label{classmlpack_1_1kde_1_1KDE_aac4d643c62af7d9cc2a072aea10d2b32}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the metric. 
+
+
+
+Definition at line 235 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_acc71d930ed90e73b2bc0c360835c5371}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the metric. 
+
+
+
+Definition at line 238 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a6f3cb532b850ad02807a209193ff2289}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Mode@{Mode}}
+\index{Mode@{Mode}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ K\+D\+E\+Mode} Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the mode of \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE}. 
+
+
+
+Definition at line 262 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a94b40037a0d33cbb55823d5c36d677a7}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Mode@{Mode}}
+\index{Mode@{Mode}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ K\+D\+E\+Mode}\& Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the mode of \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE}. 
+
+
+
+Definition at line 265 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_aa7ca7b5a3a96b5603461debdc82f3c3e}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Monte\+Carlo@{Monte\+Carlo}}
+\index{Monte\+Carlo@{Monte\+Carlo}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Monte\+Carlo()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Monte\+Carlo (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether Monte Carlo estimations are being used or not. 
+
+
+
+Definition at line 268 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_ab9f78566bfa14c2a766ef00c898a55d4}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Monte\+Carlo@{Monte\+Carlo}}
+\index{Monte\+Carlo@{Monte\+Carlo}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Monte\+Carlo()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Monte\+Carlo (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether Monte Carlo estimations are being used or not. 
+
+
+
+Definition at line 271 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a9dc815742ebc5605158b567099a4dc22}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ K\+DE}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ K\+DE}$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy a \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a9797191bcc5570ffb3cf7d15ee84ab64}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ K\+DE}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ K\+DE}$<$ Kernel\+Type, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move a \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a4c5662e0d098ea1e60da85efa93ad561}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Owns\+Reference\+Tree@{Owns\+Reference\+Tree}}
+\index{Owns\+Reference\+Tree@{Owns\+Reference\+Tree}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Owns\+Reference\+Tree()}
+{\footnotesize\ttfamily bool Owns\+Reference\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check whether reference tree is owned by the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. 
+
+
+
+Definition at line 256 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a92cb2297c084f56afea6f37e3c894f52}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Reference\+Tree@{Reference\+Tree}}
+\index{Reference\+Tree@{Reference\+Tree}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Reference\+Tree()}
+{\footnotesize\ttfamily \textbf{ Tree}$\ast$ Reference\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the reference tree. 
+
+
+
+Definition at line 241 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a2cd3d49a6dcafe980d0734421d296828}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Relative\+Error@{Relative\+Error}}
+\index{Relative\+Error@{Relative\+Error}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Relative\+Error()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Relative\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get relative error tolerance. 
+
+
+
+Definition at line 244 of file kde.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a3f0da520dc2a015ceb086eb09e5c3bc2}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Relative\+Error@{Relative\+Error}}
+\index{Relative\+Error@{Relative\+Error}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Relative\+Error()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Relative\+Error (\begin{DoxyParamCaption}\item[{const double}]{new\+Error }\end{DoxyParamCaption})}
+
+
+
+Modify relative error tolerance (0 $<$= new\+Error $<$= 1). 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDE_a27ba39af83e3cb01f2e6fbec159adf0e}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{Mat\+Type}]{reference\+Set }\end{DoxyParamCaption})}
+
+
+
+Trains the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. 
+
+It builds a tree using a reference set.
+
+Use std\+::move if the reference set is no longer needed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kde_1_1KDE_af96057bbfd77c3ba7bcdf9ebcd70d7d4}} 
+\index{mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::kde\+::\+K\+DE@{mlpack\+::kde\+::\+K\+DE}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{\textbf{ Tree} $\ast$}]{reference\+Tree,  }\item[{std\+::vector$<$ size\+\_\+t $>$ $\ast$}]{old\+From\+New\+References }\end{DoxyParamCaption})}
+
+
+
+Trains the \doxyref{K\+DE}{p.}{classmlpack_1_1kde_1_1KDE} model. 
+
+Sets the reference tree to an already created tree.
+
+
+\begin{DoxyItemize}
+\item If Tree\+Traits$<$\+Tree\+Type$>$\+::\+Rearranges\+Dataset is false then it is possible to use an empty old\+From\+New\+References vector.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Built reference tree. \\
+\hline
+{\em old\+From\+New\+References} & Permutations of reference points obtained during tree generation. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kde/\textbf{ kde.\+hpp}\end{DoxyCompactItemize}

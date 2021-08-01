@@ -1,0 +1,142 @@
+\section{Edge\+Pair Class Reference}
+\label{classmlpack_1_1emst_1_1EdgePair}\index{Edge\+Pair@{Edge\+Pair}}
+
+
+An edge pair is simply two indices and a distance.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Edge\+Pair} (const size\+\_\+t lesser, const size\+\_\+t greater, const double dist)
+\begin{DoxyCompactList}\small\item\em Initialize an \doxyref{Edge\+Pair}{p.}{classmlpack_1_1emst_1_1EdgePair} with two indices and a distance. \end{DoxyCompactList}\item 
+double \textbf{ Distance} () const
+\begin{DoxyCompactList}\small\item\em Get the distance. \end{DoxyCompactList}\item 
+double \& \textbf{ Distance} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Greater} () const
+\begin{DoxyCompactList}\small\item\em Get the greater index. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Greater} ()
+\begin{DoxyCompactList}\small\item\em Modify the greater index. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Lesser} () const
+\begin{DoxyCompactList}\small\item\em Get the lesser index. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Lesser} ()
+\begin{DoxyCompactList}\small\item\em Modify the lesser index. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An edge pair is simply two indices and a distance. 
+
+It is used as the basic element of an edge list when computing a minimum spanning tree. 
+
+Definition at line 28 of file edge\+\_\+pair.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_af3f7bffad4afa6cf42a2638be0323fad}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Edge\+Pair@{Edge\+Pair}}
+\index{Edge\+Pair@{Edge\+Pair}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Edge\+Pair()}
+{\footnotesize\ttfamily \textbf{ Edge\+Pair} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{lesser,  }\item[{const size\+\_\+t}]{greater,  }\item[{const double}]{dist }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize an \doxyref{Edge\+Pair}{p.}{classmlpack_1_1emst_1_1EdgePair} with two indices and a distance. 
+
+The indices are called lesser and greater, implying that they be sorted before calling Init. However, this is not necessary for functionality; it is just a way to keep the edge list organized in other code. 
+
+Definition at line 45 of file edge\+\_\+pair.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_a2a7bfdfb655cc5a9fbf9f8613121eb52}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Distance@{Distance}}
+\index{Distance@{Distance}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the distance. 
+
+
+
+Definition at line 63 of file edge\+\_\+pair.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_a63e78be68aebecbecf7e06763f39f31c}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Distance@{Distance}}
+\index{Distance@{Distance}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the distance. 
+
+
+
+Definition at line 65 of file edge\+\_\+pair.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_aedc0e9385d1e0e671eda49c2784c8216}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Greater@{Greater}}
+\index{Greater@{Greater}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Greater()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Greater (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the greater index. 
+
+
+
+Definition at line 58 of file edge\+\_\+pair.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_ae1bcb2f0c03f9208e17cd75741d96e43}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Greater@{Greater}}
+\index{Greater@{Greater}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Greater()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Greater (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the greater index. 
+
+
+
+Definition at line 60 of file edge\+\_\+pair.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_a63d103ffd628dd98d4d5e35bd05f385d}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Lesser@{Lesser}}
+\index{Lesser@{Lesser}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Lesser()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Lesser (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the lesser index. 
+
+
+
+Definition at line 53 of file edge\+\_\+pair.\+hpp.
+
+\mbox{\label{classmlpack_1_1emst_1_1EdgePair_a8cae10dbf99f3609608acf2ab0e001f3}} 
+\index{mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}!Lesser@{Lesser}}
+\index{Lesser@{Lesser}!mlpack\+::emst\+::\+Edge\+Pair@{mlpack\+::emst\+::\+Edge\+Pair}}
+\subsubsection{Lesser()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Lesser (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the lesser index. 
+
+
+
+Definition at line 55 of file edge\+\_\+pair.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/emst/\textbf{ edge\+\_\+pair.\+hpp}\end{DoxyCompactItemize}

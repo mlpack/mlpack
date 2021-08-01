@@ -1,0 +1,180 @@
+\section{Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Join}\index{Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Join}{p.}{classmlpack_1_1ann_1_1Join} module class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Join} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Join}{p.}{classmlpack_1_1ann_1_1Join} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Join}{p.}{classmlpack_1_1ann_1_1Join} module class. 
+
+The \doxyref{Join}{p.}{classmlpack_1_1ann_1_1Join} class accumulates the output of various modules.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 33 of file join.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Join_af7da1cd77b478e2dc66b37eeeb35aa67}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Join@{Join}}
+\index{Join@{Join}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Join()}
+{\footnotesize\ttfamily \textbf{ Join} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Join}{p.}{classmlpack_1_1ann_1_1Join} object. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Join_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Join_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 69 of file join.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Join_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 71 of file join.\+hpp.
+
+
+
+References Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1Join_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Join_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 64 of file join.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Join_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 66 of file join.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Join_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Join@{mlpack\+::ann\+::\+Join}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Join$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ join.\+hpp}\end{DoxyCompactItemize}

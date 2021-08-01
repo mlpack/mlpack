@@ -1,0 +1,77 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::math\fP"
+.br
+.RI "Miscellaneous math routines\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename ElemType > void \fBClearAlias\fP (arma::Mat< ElemType > &mat)"
+.br
+.RI "Clear an alias so that no data is overwritten\&. "
+.ti -1c
+.RI "template<typename ElemType > void \fBClearAlias\fP (arma::SpMat< ElemType > &)"
+.br
+.RI "Clear an alias for a sparse matrix\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::Cube< ElemType > \fBMakeAlias\fP (arma::Cube< ElemType > &input, const bool strict=true)"
+.br
+.RI "Make an alias of a dense cube\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::Mat< ElemType > \fBMakeAlias\fP (arma::Mat< ElemType > &input, const bool strict=true)"
+.br
+.RI "Make an alias of a dense matrix\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::Row< ElemType > \fBMakeAlias\fP (arma::Row< ElemType > &input, const bool strict=true)"
+.br
+.RI "Make an alias of a dense row\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::Col< ElemType > \fBMakeAlias\fP (arma::Col< ElemType > &input, const bool strict=true)"
+.br
+.RI "Make an alias of a dense column\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::SpMat< ElemType > \fBMakeAlias\fP (const arma::SpMat< ElemType > &input, const bool=true)"
+.br
+.RI "Make a copy of a sparse matrix (an alias is not possible)\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::SpRow< ElemType > \fBMakeAlias\fP (const arma::SpRow< ElemType > &input, const bool=true)"
+.br
+.RI "Make a copy of a sparse row (an alias is not possible)\&. "
+.ti -1c
+.RI "template<typename ElemType > arma::SpCol< ElemType > \fBMakeAlias\fP (const arma::SpCol< ElemType > &input, const bool=true)"
+.br
+.RI "Make a copy of a sparse column (an alias is not possible)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Make an alias of a matrix\&. For sparse matrices, unfortunately no alias can be made and a copy must be incurred\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBmake_alias\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

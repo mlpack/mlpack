@@ -1,0 +1,501 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="sparse__autoencoder__function_8hpp" kind="file" language="C++">
+    <compoundname>sparse_autoencoder_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="sparse__autoencoder_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp</includedby>
+    <incdepgraph>
+      <node id="57840">
+        <label>list</label>
+      </node>
+      <node id="57837">
+        <label>atomic</label>
+      </node>
+      <node id="57827">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="57803">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="57839">
+        <label>iomanip</label>
+      </node>
+      <node id="57812">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="57813" relation="include">
+        </childnode>
+        <childnode refid="57815" relation="include">
+        </childnode>
+      </node>
+      <node id="57795">
+        <label>cstdint</label>
+      </node>
+      <node id="57804">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="57811">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="57834">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="57824">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="57791">
+        <label>cmath</label>
+      </node>
+      <node id="57810">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="57799">
+        <label>stdexcept</label>
+      </node>
+      <node id="57819">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="57804" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57805" relation="include">
+        </childnode>
+      </node>
+      <node id="57843">
+        <label>string</label>
+      </node>
+      <node id="57831">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="57832" relation="include">
+        </childnode>
+        <childnode refid="57798" relation="include">
+        </childnode>
+      </node>
+      <node id="57841">
+        <label>map</label>
+      </node>
+      <node id="57793">
+        <label>cfloat</label>
+      </node>
+      <node id="57823">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="57845">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="57807">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="57830">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="57831" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57814" relation="include">
+        </childnode>
+        <childnode refid="57832" relation="include">
+        </childnode>
+      </node>
+      <node id="57820">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="57818">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="57804" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57805" relation="include">
+        </childnode>
+      </node>
+      <node id="57821">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="57804" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57805" relation="include">
+        </childnode>
+      </node>
+      <node id="57809">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="57829">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="57805" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57817" relation="include">
+        </childnode>
+        <childnode refid="57826" relation="include">
+        </childnode>
+      </node>
+      <node id="57833">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="57834" relation="include">
+        </childnode>
+      </node>
+      <node id="57835">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="57790">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="57791" relation="include">
+        </childnode>
+        <childnode refid="57792" relation="include">
+        </childnode>
+        <childnode refid="57793" relation="include">
+        </childnode>
+        <childnode refid="57794" relation="include">
+        </childnode>
+        <childnode refid="57795" relation="include">
+        </childnode>
+        <childnode refid="57796" relation="include">
+        </childnode>
+        <childnode refid="57797" relation="include">
+        </childnode>
+        <childnode refid="57798" relation="include">
+        </childnode>
+        <childnode refid="57799" relation="include">
+        </childnode>
+        <childnode refid="57800" relation="include">
+        </childnode>
+        <childnode refid="57801" relation="include">
+        </childnode>
+        <childnode refid="57802" relation="include">
+        </childnode>
+        <childnode refid="57803" relation="include">
+        </childnode>
+        <childnode refid="57804" relation="include">
+        </childnode>
+        <childnode refid="57805" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57808" relation="include">
+        </childnode>
+        <childnode refid="57809" relation="include">
+        </childnode>
+        <childnode refid="57810" relation="include">
+        </childnode>
+        <childnode refid="57811" relation="include">
+        </childnode>
+        <childnode refid="57812" relation="include">
+        </childnode>
+        <childnode refid="57816" relation="include">
+        </childnode>
+        <childnode refid="57817" relation="include">
+        </childnode>
+        <childnode refid="57818" relation="include">
+        </childnode>
+        <childnode refid="57819" relation="include">
+        </childnode>
+        <childnode refid="57820" relation="include">
+        </childnode>
+        <childnode refid="57821" relation="include">
+        </childnode>
+        <childnode refid="57822" relation="include">
+        </childnode>
+        <childnode refid="57828" relation="include">
+        </childnode>
+        <childnode refid="57829" relation="include">
+        </childnode>
+        <childnode refid="57826" relation="include">
+        </childnode>
+        <childnode refid="57830" relation="include">
+        </childnode>
+        <childnode refid="57833" relation="include">
+        </childnode>
+        <childnode refid="57835" relation="include">
+        </childnode>
+        <childnode refid="57836" relation="include">
+        </childnode>
+        <childnode refid="57845" relation="include">
+        </childnode>
+        <childnode refid="57846" relation="include">
+        </childnode>
+      </node>
+      <node id="57796">
+        <label>cstdio</label>
+      </node>
+      <node id="57800">
+        <label>tuple</label>
+      </node>
+      <node id="57805">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="57822">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="57805" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57809" relation="include">
+        </childnode>
+        <childnode refid="57823" relation="include">
+        </childnode>
+        <childnode refid="57824" relation="include">
+        </childnode>
+        <childnode refid="57825" relation="include">
+        </childnode>
+        <childnode refid="57826" relation="include">
+        </childnode>
+      </node>
+      <node id="57801">
+        <label>utility</label>
+      </node>
+      <node id="57825">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="57816">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="57813">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="57814" relation="include">
+        </childnode>
+      </node>
+      <node id="57836">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="57837" relation="include">
+        </childnode>
+        <childnode refid="57838" relation="include">
+        </childnode>
+        <childnode refid="57839" relation="include">
+        </childnode>
+        <childnode refid="57840" relation="include">
+        </childnode>
+        <childnode refid="57841" relation="include">
+        </childnode>
+        <childnode refid="57842" relation="include">
+        </childnode>
+        <childnode refid="57843" relation="include">
+        </childnode>
+        <childnode refid="57844" relation="include">
+        </childnode>
+      </node>
+      <node id="57814">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="57828">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="57826" relation="include">
+        </childnode>
+        <childnode refid="57822" relation="include">
+        </childnode>
+        <childnode refid="57829" relation="include">
+        </childnode>
+      </node>
+      <node id="57797">
+        <label>cstdlib</label>
+      </node>
+      <node id="57792">
+        <label>cctype</label>
+      </node>
+      <node id="57789">
+        <label>/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp</label>
+        <link refid="sparse__autoencoder__function_8hpp"/>
+        <childnode refid="57790" relation="include">
+        </childnode>
+      </node>
+      <node id="57815">
+        <label>unordered_map</label>
+      </node>
+      <node id="57794">
+        <label>climits</label>
+      </node>
+      <node id="57842">
+        <label>mutex</label>
+      </node>
+      <node id="57838">
+        <label>chrono</label>
+      </node>
+      <node id="57846">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="57844">
+        <label>thread</label>
+      </node>
+      <node id="57832">
+        <label>type_traits</label>
+      </node>
+      <node id="57808">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="57802">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="57826">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="57804" relation="include">
+        </childnode>
+        <childnode refid="57805" relation="include">
+        </childnode>
+        <childnode refid="57806" relation="include">
+        </childnode>
+        <childnode refid="57807" relation="include">
+        </childnode>
+        <childnode refid="57827" relation="include">
+        </childnode>
+      </node>
+      <node id="57798">
+        <label>cstring</label>
+      </node>
+      <node id="57817">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="57806">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="57847">
+        <label>/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp</label>
+        <link refid="sparse__autoencoder__function_8hpp"/>
+        <childnode refid="57848" relation="include">
+        </childnode>
+      </node>
+      <node id="57848">
+        <label>/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp</label>
+        <link refid="sparse__autoencoder_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction" prot="public">mlpack::nn::SparseAutoencoderFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1nn">mlpack::nn</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Siddharth Agrawal</para></simplesect>
+The function to be optimized for sparse autoencoders. Any mlpack optimizer can be used.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">nn<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction" kindref="compound">SparseAutoencoderFunction</ref></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a4a7a43662bc32bf255eb155815e3585c" kindref="member">SparseAutoencoderFunction</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>visibleSize,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>hiddenSize,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.0001,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>beta<sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rho<sp/>=<sp/>0.01);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat<sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97fbb8f95277b263fbb07eda614633ea" kindref="member">InitializeWeights</ref>();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ab9a604f48072ce6c08443519ff787a73" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,<sp/>arma::mat&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a78a48b3c359a36dbc1d6936d7c8ba276" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a78a48b3c359a36dbc1d6936d7c8ba276" kindref="member">Sigmoid</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>x,<sp/>arma::mat&amp;<sp/>output)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="81"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>(1.0<sp/>/<sp/>(1<sp/>+<sp/>arma::exp(-x)));</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" kindref="member">GetInitialPoint</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialPoint;<sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a56ba0c1d534d55c931e725914b00a100" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a56ba0c1d534d55c931e725914b00a100" kindref="member">VisibleSize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>visible)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;visibleSize<sp/>=<sp/>visible;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3cea635d43096bb8cd925c74dcdd1d48" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3cea635d43096bb8cd925c74dcdd1d48" kindref="member">VisibleSize</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="96"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>visibleSize;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1aef6f7e6478c5268a8762768f2bed7cf3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1aef6f7e6478c5268a8762768f2bed7cf3" kindref="member">HiddenSize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>hidden)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;hiddenSize<sp/>=<sp/>hidden;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a820e775a98d21ef0d06283a445e0813a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a820e775a98d21ef0d06283a445e0813a" kindref="member">HiddenSize</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="108"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>hiddenSize;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1af476ed1916ad9b39eaddd7e7ac108f4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1af476ed1916ad9b39eaddd7e7ac108f4b" kindref="member">Lambda</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>l)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;lambda<sp/>=<sp/>l;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="120"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac48f9c3723fbeb5d97e8382b706bb20d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac48f9c3723fbeb5d97e8382b706bb20d" kindref="member">Beta</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;beta<sp/>=<sp/>b;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad1b9206255af52171cb88dfb7c326576" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad1b9206255af52171cb88dfb7c326576" kindref="member">Beta</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="132"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>beta;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97ac05cf618f1f137a4aa8fcd4e48539" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97ac05cf618f1f137a4aa8fcd4e48539" kindref="member">Rho</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>r)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;rho<sp/>=<sp/>r;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a309719b378c0bb1962982a8162e58e84" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a309719b378c0bb1962982a8162e58e84" kindref="member">Rho</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="144"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rho;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>arma::mat<sp/>initialPoint;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>visibleSize;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>hiddenSize;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>beta;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rho;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>nn</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp"/>
+  </compounddef>
+</doxygen>

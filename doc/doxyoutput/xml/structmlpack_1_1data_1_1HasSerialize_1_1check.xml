@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1data_1_1HasSerialize_1_1check" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::data::HasSerialize::check</compoundname>
+    <includes refid="has__serialize_8hpp" local="no">has_serialize.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename U</type>
+      </param>
+      <param>
+        <type>typename V</type>
+      </param>
+      <param>
+        <type>typename W</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/has_serialize.hpp" bodystart="52" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classKMeansPlusPlusInitialization" kind="class" language="C++" prot="public">
+    <compoundname>KMeansPlusPlusInitialization</compoundname>
+    <includes refid="kmeans__plus__plus__initialization_8hpp" local="no">kmeans_plus_plus_initialization.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classKMeansPlusPlusInitialization_1a69d8fc81c3917d59282b0385f55c7b88" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>KMeansPlusPlusInitialization</definition>
+        <argsstring>()</argsstring>
+        <name>KMeansPlusPlusInitialization</name>
+        <briefdescription>
+<para>Empty constructor, required by the InitialPartitionPolicy type definition. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classKMeansPlusPlusInitialization_1a8ee4dff98d318a0f5586140c5846ef39" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Cluster</definition>
+        <argsstring>(const MatType &amp;data, const size_t clusters, arma::mat &amp;centroids)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>clusters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>centroids</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the centroids matrix by randomly sampling points from the data matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>clusters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of clusters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to put initial centroids into. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" bodystart="47" bodyend="100"/>
+        <references refid="classmlpack_1_1metric_1_1LMetric_1af39380107875eb94f0efef7d37cc57df">LMetric&lt; TPower, TTakeRoot &gt;::Evaluate</references>
+        <references refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" compoundref="random_8hpp" startline="110" endline="113">mlpack::math::RandInt</references>
+        <references refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" compoundref="random_8hpp" startline="83" endline="86">mlpack::math::Random</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements the k-means++ initialization, as described in the following paper: </para>    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{arthur2007k,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={k-means++:<sp/>The<sp/>advantages<sp/>of<sp/>careful<sp/>seeding},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Arthur,<sp/>David<sp/>and<sp/>Vassilvitskii,<sp/>Sergei},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>Eighteenth<sp/>Annual<sp/>ACM-SIAM<sp/>Symposium<sp/>on</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Discrete<sp/>Algorithms<sp/>(SODA<sp/>&apos;07)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={1027--1035},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2007},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>organization={Society<sp/>for<sp/>Industrial<sp/>and<sp/>Applied<sp/>Mathematics}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>In accordance with mlpack&apos;s InitialPartitionPolicy template type, we only need to implement a constructor and a method to compute the initial centroids. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp" bodystart="32" bodyend="101"/>
+    <listofallmembers>
+      <member refid="classKMeansPlusPlusInitialization_1a8ee4dff98d318a0f5586140c5846ef39" prot="public" virt="non-virtual"><scope>KMeansPlusPlusInitialization</scope><name>Cluster</name></member>
+      <member refid="classKMeansPlusPlusInitialization_1a69d8fc81c3917d59282b0385f55c7b88" prot="public" virt="non-virtual"><scope>KMeansPlusPlusInitialization</scope><name>KMeansPlusPlusInitialization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

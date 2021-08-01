@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="softmax__regression__function_8hpp" kind="file" language="C++">
+    <compoundname>softmax_regression_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="softmax__regression_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression.hpp</includedby>
+    <incdepgraph>
+      <node id="57659">
+        <label>list</label>
+      </node>
+      <node id="57656">
+        <label>atomic</label>
+      </node>
+      <node id="57646">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="57622">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="57658">
+        <label>iomanip</label>
+      </node>
+      <node id="57631">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="57632" relation="include">
+        </childnode>
+        <childnode refid="57634" relation="include">
+        </childnode>
+      </node>
+      <node id="57614">
+        <label>cstdint</label>
+      </node>
+      <node id="57623">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="57630">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="57653">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="57643">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="57610">
+        <label>cmath</label>
+      </node>
+      <node id="57629">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="57618">
+        <label>stdexcept</label>
+      </node>
+      <node id="57638">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="57623" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57624" relation="include">
+        </childnode>
+      </node>
+      <node id="57662">
+        <label>string</label>
+      </node>
+      <node id="57650">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="57651" relation="include">
+        </childnode>
+        <childnode refid="57617" relation="include">
+        </childnode>
+      </node>
+      <node id="57660">
+        <label>map</label>
+      </node>
+      <node id="57612">
+        <label>cfloat</label>
+      </node>
+      <node id="57642">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="57664">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="57626">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="57649">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="57650" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57633" relation="include">
+        </childnode>
+        <childnode refid="57651" relation="include">
+        </childnode>
+      </node>
+      <node id="57639">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="57637">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="57623" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57624" relation="include">
+        </childnode>
+      </node>
+      <node id="57640">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="57623" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57624" relation="include">
+        </childnode>
+      </node>
+      <node id="57628">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="57648">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="57624" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57636" relation="include">
+        </childnode>
+        <childnode refid="57645" relation="include">
+        </childnode>
+      </node>
+      <node id="57652">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="57653" relation="include">
+        </childnode>
+      </node>
+      <node id="57654">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="57609">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="57610" relation="include">
+        </childnode>
+        <childnode refid="57611" relation="include">
+        </childnode>
+        <childnode refid="57612" relation="include">
+        </childnode>
+        <childnode refid="57613" relation="include">
+        </childnode>
+        <childnode refid="57614" relation="include">
+        </childnode>
+        <childnode refid="57615" relation="include">
+        </childnode>
+        <childnode refid="57616" relation="include">
+        </childnode>
+        <childnode refid="57617" relation="include">
+        </childnode>
+        <childnode refid="57618" relation="include">
+        </childnode>
+        <childnode refid="57619" relation="include">
+        </childnode>
+        <childnode refid="57620" relation="include">
+        </childnode>
+        <childnode refid="57621" relation="include">
+        </childnode>
+        <childnode refid="57622" relation="include">
+        </childnode>
+        <childnode refid="57623" relation="include">
+        </childnode>
+        <childnode refid="57624" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57627" relation="include">
+        </childnode>
+        <childnode refid="57628" relation="include">
+        </childnode>
+        <childnode refid="57629" relation="include">
+        </childnode>
+        <childnode refid="57630" relation="include">
+        </childnode>
+        <childnode refid="57631" relation="include">
+        </childnode>
+        <childnode refid="57635" relation="include">
+        </childnode>
+        <childnode refid="57636" relation="include">
+        </childnode>
+        <childnode refid="57637" relation="include">
+        </childnode>
+        <childnode refid="57638" relation="include">
+        </childnode>
+        <childnode refid="57639" relation="include">
+        </childnode>
+        <childnode refid="57640" relation="include">
+        </childnode>
+        <childnode refid="57641" relation="include">
+        </childnode>
+        <childnode refid="57647" relation="include">
+        </childnode>
+        <childnode refid="57648" relation="include">
+        </childnode>
+        <childnode refid="57645" relation="include">
+        </childnode>
+        <childnode refid="57649" relation="include">
+        </childnode>
+        <childnode refid="57652" relation="include">
+        </childnode>
+        <childnode refid="57654" relation="include">
+        </childnode>
+        <childnode refid="57655" relation="include">
+        </childnode>
+        <childnode refid="57664" relation="include">
+        </childnode>
+        <childnode refid="57665" relation="include">
+        </childnode>
+      </node>
+      <node id="57615">
+        <label>cstdio</label>
+      </node>
+      <node id="57619">
+        <label>tuple</label>
+      </node>
+      <node id="57624">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="57641">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="57624" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57628" relation="include">
+        </childnode>
+        <childnode refid="57642" relation="include">
+        </childnode>
+        <childnode refid="57643" relation="include">
+        </childnode>
+        <childnode refid="57644" relation="include">
+        </childnode>
+        <childnode refid="57645" relation="include">
+        </childnode>
+      </node>
+      <node id="57608">
+        <label>/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp</label>
+        <link refid="softmax__regression__function_8hpp"/>
+        <childnode refid="57609" relation="include">
+        </childnode>
+      </node>
+      <node id="57620">
+        <label>utility</label>
+      </node>
+      <node id="57644">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="57635">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="57632">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="57633" relation="include">
+        </childnode>
+      </node>
+      <node id="57655">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="57656" relation="include">
+        </childnode>
+        <childnode refid="57657" relation="include">
+        </childnode>
+        <childnode refid="57658" relation="include">
+        </childnode>
+        <childnode refid="57659" relation="include">
+        </childnode>
+        <childnode refid="57660" relation="include">
+        </childnode>
+        <childnode refid="57661" relation="include">
+        </childnode>
+        <childnode refid="57662" relation="include">
+        </childnode>
+        <childnode refid="57663" relation="include">
+        </childnode>
+      </node>
+      <node id="57633">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="57647">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="57645" relation="include">
+        </childnode>
+        <childnode refid="57641" relation="include">
+        </childnode>
+        <childnode refid="57648" relation="include">
+        </childnode>
+      </node>
+      <node id="57616">
+        <label>cstdlib</label>
+      </node>
+      <node id="57611">
+        <label>cctype</label>
+      </node>
+      <node id="57634">
+        <label>unordered_map</label>
+      </node>
+      <node id="57613">
+        <label>climits</label>
+      </node>
+      <node id="57661">
+        <label>mutex</label>
+      </node>
+      <node id="57657">
+        <label>chrono</label>
+      </node>
+      <node id="57665">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="57663">
+        <label>thread</label>
+      </node>
+      <node id="57651">
+        <label>type_traits</label>
+      </node>
+      <node id="57627">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="57621">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="57645">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="57623" relation="include">
+        </childnode>
+        <childnode refid="57624" relation="include">
+        </childnode>
+        <childnode refid="57625" relation="include">
+        </childnode>
+        <childnode refid="57626" relation="include">
+        </childnode>
+        <childnode refid="57646" relation="include">
+        </childnode>
+      </node>
+      <node id="57617">
+        <label>cstring</label>
+      </node>
+      <node id="57636">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="57625">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="57666">
+        <label>/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp</label>
+        <link refid="softmax__regression__function_8hpp"/>
+        <childnode refid="57667" relation="include">
+        </childnode>
+      </node>
+      <node id="57667">
+        <label>/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression.hpp</label>
+        <link refid="softmax__regression_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction" prot="public">mlpack::regression::SoftmaxRegressionFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1regression">mlpack::regression</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Siddharth Agrawal</para></simplesect>
+The function to be optimized for softmax regression. Any mlpack optimizer can be used.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">regression<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction" kindref="compound">SoftmaxRegressionFunction</ref></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ad91be7fff0c78244b24191b92fe5fcfd" kindref="member">SoftmaxRegressionFunction</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.0001,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a97fbb8f95277b263fbb07eda614633ea" kindref="member">InitializeWeights</ref>();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle</ref>();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a97fbb8f95277b263fbb07eda614633ea" kindref="member">InitializeWeights</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>featureSize,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a97fbb8f95277b263fbb07eda614633ea" kindref="member">InitializeWeights</ref>(arma::mat<sp/>&amp;weights,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>featureSize,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1afb090fbee5f880dd69edde4cdd0797cd" kindref="member">GetGroundTruthMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::sp_mat&amp;<sp/>groundTruth);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab7a1e4a3f61c8476cb508491173e97ea" kindref="member">GetProbabilitiesMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>probabilities,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,<sp/>arma::mat&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start,</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>gradient,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize<sp/>=<sp/>1)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a063626210e7484e95655702487e3feed" kindref="member">PartialGradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>parameters,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::sp_mat&amp;<sp/>gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" kindref="member">GetInitialPoint</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialPoint;<sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a088ebfdf3c7a9e7eea81716d0c55b5a3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a088ebfdf3c7a9e7eea81716d0c55b5a3" kindref="member">NumClasses</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numClasses;<sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a351704783f122196cf5dc7fb408b8522" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a351704783f122196cf5dc7fb408b8522" kindref="member">NumFeatures</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="174"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialPoint.n_cols;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" kindref="member">NumFunctions</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data.n_cols;<sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="185" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2878e0828ecdc1d486b0f43a81f95059" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2878e0828ecdc1d486b0f43a81f95059" kindref="member">FitIntercept</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fitIntercept;<sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>arma::mat<sp/>data;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>arma::sp_mat<sp/>groundTruth;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>arma::mat<sp/>initialPoint;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp"/>
+  </compounddef>
+</doxygen>

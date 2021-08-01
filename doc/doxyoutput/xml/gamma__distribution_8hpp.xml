@@ -1,0 +1,782 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="gamma__distribution_8hpp" kind="file" language="C++">
+    <compoundname>gamma_distribution.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="random_8hpp" local="no">mlpack/core/math/random.hpp</includes>
+    <includedby refid="core_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core.hpp</includedby>
+    <incdepgraph>
+      <node id="9910">
+        <label>list</label>
+      </node>
+      <node id="9907">
+        <label>atomic</label>
+      </node>
+      <node id="9897">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="9873">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="9909">
+        <label>iomanip</label>
+      </node>
+      <node id="9882">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="9883" relation="include">
+        </childnode>
+        <childnode refid="9885" relation="include">
+        </childnode>
+      </node>
+      <node id="9865">
+        <label>cstdint</label>
+      </node>
+      <node id="9874">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="9881">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="9859">
+        <label>/home/aakash/mlpack/src/mlpack/core/dists/gamma_distribution.hpp</label>
+        <link refid="gamma__distribution_8hpp"/>
+        <childnode refid="9860" relation="include">
+        </childnode>
+        <childnode refid="9917" relation="include">
+        </childnode>
+      </node>
+      <node id="9918">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="9904">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="9894">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="9861">
+        <label>cmath</label>
+      </node>
+      <node id="9880">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="9869">
+        <label>stdexcept</label>
+      </node>
+      <node id="9889">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="9874" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9875" relation="include">
+        </childnode>
+      </node>
+      <node id="9913">
+        <label>string</label>
+      </node>
+      <node id="9901">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="9902" relation="include">
+        </childnode>
+        <childnode refid="9868" relation="include">
+        </childnode>
+      </node>
+      <node id="9911">
+        <label>map</label>
+      </node>
+      <node id="9863">
+        <label>cfloat</label>
+      </node>
+      <node id="9893">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="9915">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="9877">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="9900">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="9901" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9884" relation="include">
+        </childnode>
+        <childnode refid="9902" relation="include">
+        </childnode>
+      </node>
+      <node id="9890">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="9888">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="9874" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9875" relation="include">
+        </childnode>
+      </node>
+      <node id="9891">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="9874" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9875" relation="include">
+        </childnode>
+      </node>
+      <node id="9879">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="9899">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="9875" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9887" relation="include">
+        </childnode>
+        <childnode refid="9896" relation="include">
+        </childnode>
+      </node>
+      <node id="9903">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="9904" relation="include">
+        </childnode>
+      </node>
+      <node id="9905">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="9860">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="9861" relation="include">
+        </childnode>
+        <childnode refid="9862" relation="include">
+        </childnode>
+        <childnode refid="9863" relation="include">
+        </childnode>
+        <childnode refid="9864" relation="include">
+        </childnode>
+        <childnode refid="9865" relation="include">
+        </childnode>
+        <childnode refid="9866" relation="include">
+        </childnode>
+        <childnode refid="9867" relation="include">
+        </childnode>
+        <childnode refid="9868" relation="include">
+        </childnode>
+        <childnode refid="9869" relation="include">
+        </childnode>
+        <childnode refid="9870" relation="include">
+        </childnode>
+        <childnode refid="9871" relation="include">
+        </childnode>
+        <childnode refid="9872" relation="include">
+        </childnode>
+        <childnode refid="9873" relation="include">
+        </childnode>
+        <childnode refid="9874" relation="include">
+        </childnode>
+        <childnode refid="9875" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9878" relation="include">
+        </childnode>
+        <childnode refid="9879" relation="include">
+        </childnode>
+        <childnode refid="9880" relation="include">
+        </childnode>
+        <childnode refid="9881" relation="include">
+        </childnode>
+        <childnode refid="9882" relation="include">
+        </childnode>
+        <childnode refid="9886" relation="include">
+        </childnode>
+        <childnode refid="9887" relation="include">
+        </childnode>
+        <childnode refid="9888" relation="include">
+        </childnode>
+        <childnode refid="9889" relation="include">
+        </childnode>
+        <childnode refid="9890" relation="include">
+        </childnode>
+        <childnode refid="9891" relation="include">
+        </childnode>
+        <childnode refid="9892" relation="include">
+        </childnode>
+        <childnode refid="9898" relation="include">
+        </childnode>
+        <childnode refid="9899" relation="include">
+        </childnode>
+        <childnode refid="9896" relation="include">
+        </childnode>
+        <childnode refid="9900" relation="include">
+        </childnode>
+        <childnode refid="9903" relation="include">
+        </childnode>
+        <childnode refid="9905" relation="include">
+        </childnode>
+        <childnode refid="9906" relation="include">
+        </childnode>
+        <childnode refid="9915" relation="include">
+        </childnode>
+        <childnode refid="9916" relation="include">
+        </childnode>
+      </node>
+      <node id="9919">
+        <label>random</label>
+      </node>
+      <node id="9866">
+        <label>cstdio</label>
+      </node>
+      <node id="9870">
+        <label>tuple</label>
+      </node>
+      <node id="9875">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="9892">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="9875" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9879" relation="include">
+        </childnode>
+        <childnode refid="9893" relation="include">
+        </childnode>
+        <childnode refid="9894" relation="include">
+        </childnode>
+        <childnode refid="9895" relation="include">
+        </childnode>
+        <childnode refid="9896" relation="include">
+        </childnode>
+      </node>
+      <node id="9917">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="9860" relation="include">
+        </childnode>
+        <childnode refid="9918" relation="include">
+        </childnode>
+        <childnode refid="9919" relation="include">
+        </childnode>
+      </node>
+      <node id="9871">
+        <label>utility</label>
+      </node>
+      <node id="9895">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="9886">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="9883">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="9884" relation="include">
+        </childnode>
+      </node>
+      <node id="9906">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="9907" relation="include">
+        </childnode>
+        <childnode refid="9908" relation="include">
+        </childnode>
+        <childnode refid="9909" relation="include">
+        </childnode>
+        <childnode refid="9910" relation="include">
+        </childnode>
+        <childnode refid="9911" relation="include">
+        </childnode>
+        <childnode refid="9912" relation="include">
+        </childnode>
+        <childnode refid="9913" relation="include">
+        </childnode>
+        <childnode refid="9914" relation="include">
+        </childnode>
+      </node>
+      <node id="9884">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="9898">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="9896" relation="include">
+        </childnode>
+        <childnode refid="9892" relation="include">
+        </childnode>
+        <childnode refid="9899" relation="include">
+        </childnode>
+      </node>
+      <node id="9867">
+        <label>cstdlib</label>
+      </node>
+      <node id="9862">
+        <label>cctype</label>
+      </node>
+      <node id="9885">
+        <label>unordered_map</label>
+      </node>
+      <node id="9864">
+        <label>climits</label>
+      </node>
+      <node id="9912">
+        <label>mutex</label>
+      </node>
+      <node id="9908">
+        <label>chrono</label>
+      </node>
+      <node id="9916">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="9914">
+        <label>thread</label>
+      </node>
+      <node id="9902">
+        <label>type_traits</label>
+      </node>
+      <node id="9878">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="9872">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="9896">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="9874" relation="include">
+        </childnode>
+        <childnode refid="9875" relation="include">
+        </childnode>
+        <childnode refid="9876" relation="include">
+        </childnode>
+        <childnode refid="9877" relation="include">
+        </childnode>
+        <childnode refid="9897" relation="include">
+        </childnode>
+      </node>
+      <node id="9868">
+        <label>cstring</label>
+      </node>
+      <node id="9887">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="9876">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="9964">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+      </node>
+      <node id="9927">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp</label>
+        <link refid="accuracy_8hpp"/>
+      </node>
+      <node id="9926">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="9956">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="9957" relation="include">
+        </childnode>
+        <childnode refid="9958" relation="include">
+        </childnode>
+      </node>
+      <node id="9953">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="9933">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
+        <link refid="recall_8hpp"/>
+      </node>
+      <node id="9928">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
+        <link refid="f1_8hpp"/>
+      </node>
+      <node id="9920">
+        <label>/home/aakash/mlpack/src/mlpack/core/dists/gamma_distribution.hpp</label>
+        <link refid="gamma__distribution_8hpp"/>
+        <childnode refid="9921" relation="include">
+        </childnode>
+      </node>
+      <node id="9943">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="9944" relation="include">
+        </childnode>
+        <childnode refid="9945" relation="include">
+        </childnode>
+        <childnode refid="9949" relation="include">
+        </childnode>
+        <childnode refid="9950" relation="include">
+        </childnode>
+        <childnode refid="9946" relation="include">
+        </childnode>
+        <childnode refid="9947" relation="include">
+        </childnode>
+        <childnode refid="9948" relation="include">
+        </childnode>
+        <childnode refid="9951" relation="include">
+        </childnode>
+      </node>
+      <node id="9921">
+        <label>/home/aakash/mlpack/src/mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="9922" relation="include">
+        </childnode>
+        <childnode refid="9927" relation="include">
+        </childnode>
+        <childnode refid="9928" relation="include">
+        </childnode>
+        <childnode refid="9929" relation="include">
+        </childnode>
+        <childnode refid="9930" relation="include">
+        </childnode>
+        <childnode refid="9931" relation="include">
+        </childnode>
+        <childnode refid="9932" relation="include">
+        </childnode>
+        <childnode refid="9933" relation="include">
+        </childnode>
+        <childnode refid="9934" relation="include">
+        </childnode>
+        <childnode refid="9935" relation="include">
+        </childnode>
+        <childnode refid="9936" relation="include">
+        </childnode>
+        <childnode refid="9937" relation="include">
+        </childnode>
+        <childnode refid="9938" relation="include">
+        </childnode>
+        <childnode refid="9940" relation="include">
+        </childnode>
+        <childnode refid="9941" relation="include">
+        </childnode>
+        <childnode refid="9942" relation="include">
+        </childnode>
+        <childnode refid="9949" relation="include">
+        </childnode>
+        <childnode refid="9952" relation="include">
+        </childnode>
+        <childnode refid="9953" relation="include">
+        </childnode>
+        <childnode refid="9954" relation="include">
+        </childnode>
+        <childnode refid="9955" relation="include">
+        </childnode>
+        <childnode refid="9959" relation="include">
+        </childnode>
+        <childnode refid="9960" relation="include">
+        </childnode>
+        <childnode refid="9961" relation="include">
+        </childnode>
+        <childnode refid="9962" relation="include">
+        </childnode>
+        <childnode refid="9963" relation="include">
+        </childnode>
+        <childnode refid="9964" relation="include">
+        </childnode>
+        <childnode refid="9965" relation="include">
+        </childnode>
+        <childnode refid="9966" relation="include">
+        </childnode>
+      </node>
+      <node id="9936">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="9921" relation="include">
+        </childnode>
+      </node>
+      <node id="9942">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="9943" relation="include">
+        </childnode>
+      </node>
+      <node id="9961">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+      </node>
+      <node id="9957">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="9952">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
+        <link refid="rbm_8hpp"/>
+      </node>
+      <node id="9950">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="9946">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="9929">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/facilities.hpp</label>
+        <link refid="facilities_8hpp"/>
+      </node>
+      <node id="9954">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="9963">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="9939">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp</label>
+        <link refid="deduce__hp__types_8hpp"/>
+        <childnode refid="9926" relation="include">
+        </childnode>
+      </node>
+      <node id="9958">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="9923">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="9924" relation="include">
+        </childnode>
+        <childnode refid="9925" relation="include">
+        </childnode>
+      </node>
+      <node id="9935">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp</label>
+        <link refid="load__csv_8hpp"/>
+      </node>
+      <node id="9965">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="9964" relation="include">
+        </childnode>
+      </node>
+      <node id="9931">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
+        <link refid="precision_8hpp"/>
+      </node>
+      <node id="9924">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="9944">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="9966">
+        <label>/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp</label>
+        <link refid="test__function__tools_8hpp"/>
+      </node>
+      <node id="9949">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="9951">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="9959">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="9930">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/mse.hpp</label>
+        <link refid="mse_8hpp"/>
+      </node>
+      <node id="9945">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="9941" relation="include">
+        </childnode>
+        <childnode refid="9946" relation="include">
+        </childnode>
+        <childnode refid="9947" relation="include">
+        </childnode>
+        <childnode refid="9948" relation="include">
+        </childnode>
+      </node>
+      <node id="9937">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp</label>
+        <link refid="cv__function_8hpp"/>
+      </node>
+      <node id="9947">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="9932">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/r2_score.hpp</label>
+        <link refid="r2__score_8hpp"/>
+      </node>
+      <node id="9960">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="9941">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="9940">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost_model.hpp</label>
+        <link refid="adaboost__model_8hpp"/>
+      </node>
+      <node id="9922">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="9923" relation="include">
+        </childnode>
+        <childnode refid="9924" relation="include">
+        </childnode>
+        <childnode refid="9925" relation="include">
+        </childnode>
+        <childnode refid="9926" relation="include">
+        </childnode>
+      </node>
+      <node id="9948">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="9925">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+      <node id="9955">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/gini_gain.hpp</label>
+        <link refid="gini__gain_8hpp"/>
+        <childnode refid="9956" relation="include">
+        </childnode>
+      </node>
+      <node id="9962">
+        <label>/home/aakash/mlpack/src/mlpack/tests/ann_test_tools.hpp</label>
+        <link refid="ann__test__tools_8hpp"/>
+      </node>
+      <node id="9934">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp</label>
+        <link refid="silhouette__score_8hpp"/>
+      </node>
+      <node id="9938">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp</label>
+        <link refid="fixed_8hpp"/>
+        <childnode refid="9939" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1distribution_1_1GammaDistribution" prot="public">mlpack::distribution::GammaDistribution</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1distribution">mlpack::distribution</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Yannis Mentekidis </para></simplesect>
+<simplesect kind="author"><para>Rohan Raj</para></simplesect>
+Implementation of a Gamma distribution of multidimensional data that fits gamma parameters (alpha, beta) to data. The fitting is done independently for each dataset dimension (row), based on the assumption each dimension is fully independent.</para><para>Based on &quot;Estimating a Gamma Distribution&quot; by Thomas P. Minka: research.microsoft.com/~minka/papers/minka-gamma.pdf</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="19"><highlight class="preprocessor">#ifndef<sp/>_MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="random_8hpp" kindref="compound">mlpack/core/math/random.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">distribution<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="classmlpack_1_1distribution_1_1GammaDistribution" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1distribution_1_1GammaDistribution" kindref="compound">GammaDistribution</ref></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aad5c9deb1c53fda3075ce214ec9f68c2" kindref="member">GammaDistribution</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimensionality<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aad5c9deb1c53fda3075ce214ec9f68c2" kindref="member">GammaDistribution</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tol<sp/>=<sp/>1e-8);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aad5c9deb1c53fda3075ce214ec9f68c2" kindref="member">GammaDistribution</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>alpha,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>beta);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="classmlpack_1_1distribution_1_1GammaDistribution_1a3dfc2487502db9fd91b7a16a44f0014e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a3dfc2487502db9fd91b7a16a44f0014e" kindref="member">~GammaDistribution</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aa026c530ceb9b6eb76ffe66dcb8d257b" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>rdata,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tol<sp/>=<sp/>1e-8);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aa026c530ceb9b6eb76ffe66dcb8d257b" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>observations,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>probabilities,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tol<sp/>=<sp/>1e-8);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aa026c530ceb9b6eb76ffe66dcb8d257b" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>logMeanxVec,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>meanLogxVec,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>meanxVec,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tol<sp/>=<sp/>1e-8);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aea9691b5cbbb57e28db1de846a50b44e" kindref="member">Probability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>observations,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>probabilities)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aea9691b5cbbb57e28db1de846a50b44e" kindref="member">Probability</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a10aa8675001ec75323be892d23b4a2cb" kindref="member">LogProbability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>observations,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>logProbabilities)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a10aa8675001ec75323be892d23b4a2cb" kindref="member">LogProbability</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/>arma::vec<sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a2c6f8d5bb4eacf7de767d2172b320756" kindref="member">Random</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Access<sp/>to<sp/>Gamma<sp/>distribution<sp/>parameters.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="classmlpack_1_1distribution_1_1GammaDistribution_1ab0770061da842c3d1ef78b6c13d6b324" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1ab0770061da842c3d1ef78b6c13d6b324" kindref="member">Alpha</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>alpha[dim];<sp/>}</highlight></codeline>
+<codeline lineno="198" refid="classmlpack_1_1distribution_1_1GammaDistribution_1af677766dff71e1394fb7531aa73ec755" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1af677766dff71e1394fb7531aa73ec755" kindref="member">Alpha</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>alpha[dim];<sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="classmlpack_1_1distribution_1_1GammaDistribution_1a4a58618c95fbb488db0201f02d722d17" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a4a58618c95fbb488db0201f02d722d17" kindref="member">Beta</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>beta[dim];<sp/>}</highlight></codeline>
+<codeline lineno="203" refid="classmlpack_1_1distribution_1_1GammaDistribution_1aca929e6fd58776c990e0a59545283e4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1aca929e6fd58776c990e0a59545283e4f" kindref="member">Beta</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dim)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>beta[dim];<sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206" refid="classmlpack_1_1distribution_1_1GammaDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1distribution_1_1GammaDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" kindref="member">Dimensionality</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>alpha.n_elem;<sp/>}</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/>arma::vec<sp/>alpha;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/>arma::vec<sp/>beta;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Converged(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>aOld,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>aNew,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tol);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>distribution</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/dists/gamma_distribution.hpp"/>
+  </compounddef>
+</doxygen>

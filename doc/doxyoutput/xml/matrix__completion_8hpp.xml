@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="matrix__completion_8hpp" kind="file" language="C++">
+    <compoundname>matrix_completion.hpp</compoundname>
+    <includes local="no">ensmallen.hpp</includes>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="52190">
+        <label>list</label>
+      </node>
+      <node id="52187">
+        <label>atomic</label>
+      </node>
+      <node id="52177">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="52153">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="52189">
+        <label>iomanip</label>
+      </node>
+      <node id="52162">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="52163" relation="include">
+        </childnode>
+        <childnode refid="52165" relation="include">
+        </childnode>
+      </node>
+      <node id="52145">
+        <label>cstdint</label>
+      </node>
+      <node id="52154">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="52161">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="52184">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="52174">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="52141">
+        <label>cmath</label>
+      </node>
+      <node id="52160">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="52149">
+        <label>stdexcept</label>
+      </node>
+      <node id="52169">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="52154" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52155" relation="include">
+        </childnode>
+      </node>
+      <node id="52193">
+        <label>string</label>
+      </node>
+      <node id="52181">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="52182" relation="include">
+        </childnode>
+        <childnode refid="52148" relation="include">
+        </childnode>
+      </node>
+      <node id="52191">
+        <label>map</label>
+      </node>
+      <node id="52143">
+        <label>cfloat</label>
+      </node>
+      <node id="52173">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="52195">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="52157">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="52180">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="52181" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52164" relation="include">
+        </childnode>
+        <childnode refid="52182" relation="include">
+        </childnode>
+      </node>
+      <node id="52170">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52168">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="52154" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52155" relation="include">
+        </childnode>
+      </node>
+      <node id="52171">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="52154" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52155" relation="include">
+        </childnode>
+      </node>
+      <node id="52159">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="52179">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="52155" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52167" relation="include">
+        </childnode>
+        <childnode refid="52176" relation="include">
+        </childnode>
+      </node>
+      <node id="52183">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="52184" relation="include">
+        </childnode>
+      </node>
+      <node id="52185">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="52140">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="52141" relation="include">
+        </childnode>
+        <childnode refid="52142" relation="include">
+        </childnode>
+        <childnode refid="52143" relation="include">
+        </childnode>
+        <childnode refid="52144" relation="include">
+        </childnode>
+        <childnode refid="52145" relation="include">
+        </childnode>
+        <childnode refid="52146" relation="include">
+        </childnode>
+        <childnode refid="52147" relation="include">
+        </childnode>
+        <childnode refid="52148" relation="include">
+        </childnode>
+        <childnode refid="52149" relation="include">
+        </childnode>
+        <childnode refid="52150" relation="include">
+        </childnode>
+        <childnode refid="52151" relation="include">
+        </childnode>
+        <childnode refid="52152" relation="include">
+        </childnode>
+        <childnode refid="52153" relation="include">
+        </childnode>
+        <childnode refid="52154" relation="include">
+        </childnode>
+        <childnode refid="52155" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52158" relation="include">
+        </childnode>
+        <childnode refid="52159" relation="include">
+        </childnode>
+        <childnode refid="52160" relation="include">
+        </childnode>
+        <childnode refid="52161" relation="include">
+        </childnode>
+        <childnode refid="52162" relation="include">
+        </childnode>
+        <childnode refid="52166" relation="include">
+        </childnode>
+        <childnode refid="52167" relation="include">
+        </childnode>
+        <childnode refid="52168" relation="include">
+        </childnode>
+        <childnode refid="52169" relation="include">
+        </childnode>
+        <childnode refid="52170" relation="include">
+        </childnode>
+        <childnode refid="52171" relation="include">
+        </childnode>
+        <childnode refid="52172" relation="include">
+        </childnode>
+        <childnode refid="52178" relation="include">
+        </childnode>
+        <childnode refid="52179" relation="include">
+        </childnode>
+        <childnode refid="52176" relation="include">
+        </childnode>
+        <childnode refid="52180" relation="include">
+        </childnode>
+        <childnode refid="52183" relation="include">
+        </childnode>
+        <childnode refid="52185" relation="include">
+        </childnode>
+        <childnode refid="52186" relation="include">
+        </childnode>
+        <childnode refid="52195" relation="include">
+        </childnode>
+        <childnode refid="52196" relation="include">
+        </childnode>
+      </node>
+      <node id="52146">
+        <label>cstdio</label>
+      </node>
+      <node id="52150">
+        <label>tuple</label>
+      </node>
+      <node id="52155">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="52172">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="52155" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52159" relation="include">
+        </childnode>
+        <childnode refid="52173" relation="include">
+        </childnode>
+        <childnode refid="52174" relation="include">
+        </childnode>
+        <childnode refid="52175" relation="include">
+        </childnode>
+        <childnode refid="52176" relation="include">
+        </childnode>
+      </node>
+      <node id="52151">
+        <label>utility</label>
+      </node>
+      <node id="52175">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="52166">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="52163">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="52164" relation="include">
+        </childnode>
+      </node>
+      <node id="52186">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="52187" relation="include">
+        </childnode>
+        <childnode refid="52188" relation="include">
+        </childnode>
+        <childnode refid="52189" relation="include">
+        </childnode>
+        <childnode refid="52190" relation="include">
+        </childnode>
+        <childnode refid="52191" relation="include">
+        </childnode>
+        <childnode refid="52192" relation="include">
+        </childnode>
+        <childnode refid="52193" relation="include">
+        </childnode>
+        <childnode refid="52194" relation="include">
+        </childnode>
+      </node>
+      <node id="52164">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="52178">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="52176" relation="include">
+        </childnode>
+        <childnode refid="52172" relation="include">
+        </childnode>
+        <childnode refid="52179" relation="include">
+        </childnode>
+      </node>
+      <node id="52147">
+        <label>cstdlib</label>
+      </node>
+      <node id="52142">
+        <label>cctype</label>
+      </node>
+      <node id="52165">
+        <label>unordered_map</label>
+      </node>
+      <node id="52144">
+        <label>climits</label>
+      </node>
+      <node id="52192">
+        <label>mutex</label>
+      </node>
+      <node id="52188">
+        <label>chrono</label>
+      </node>
+      <node id="52196">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="52194">
+        <label>thread</label>
+      </node>
+      <node id="52182">
+        <label>type_traits</label>
+      </node>
+      <node id="52138">
+        <label>/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp</label>
+        <link refid="matrix__completion_8hpp"/>
+        <childnode refid="52139" relation="include">
+        </childnode>
+        <childnode refid="52140" relation="include">
+        </childnode>
+      </node>
+      <node id="52158">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="52152">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="52176">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="52154" relation="include">
+        </childnode>
+        <childnode refid="52155" relation="include">
+        </childnode>
+        <childnode refid="52156" relation="include">
+        </childnode>
+        <childnode refid="52157" relation="include">
+        </childnode>
+        <childnode refid="52177" relation="include">
+        </childnode>
+      </node>
+      <node id="52148">
+        <label>cstring</label>
+      </node>
+      <node id="52167">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="52139">
+        <label>ensmallen.hpp</label>
+      </node>
+      <node id="52156">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion" prot="public">mlpack::matrix_completion::MatrixCompletion</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1matrix__completion">mlpack::matrix_completion</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Stephen Tu</para></simplesect>
+A thin wrapper around nuclear norm minimization to solve low rank matrix completion problems.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ensmallen.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20" refid="namespacemlpack_1_1matrix__completion" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">matrix_completion<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion" kindref="compound">MatrixCompletion</ref></highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a5f500c0e84f8afe5603571983f88339b" kindref="member">MatrixCompletion</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::umat&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>values,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a5f500c0e84f8afe5603571983f88339b" kindref="member">MatrixCompletion</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::umat&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>values,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>initialPoint);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a5f500c0e84f8afe5603571983f88339b" kindref="member">MatrixCompletion</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::umat&amp;<sp/>indices,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>values);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aa758764911348e5540da0ffd092eba75" kindref="member">Recover</ref>(arma::mat&amp;<sp/>recovered);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ac1d73e9809358a87bd0092a77f8f00be" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt;&gt;&amp;<sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ac1d73e9809358a87bd0092a77f8f00be" kindref="member">Sdp</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="116"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sdp;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="120" refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a67f1f8713360e9c83a12f1ad735d7f8d" refkind="member"><highlight class="normal"><sp/><sp/>ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt;&gt;&amp;<sp/><ref refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a67f1f8713360e9c83a12f1ad735d7f8d" kindref="member">Sdp</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sdp;<sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>arma::umat<sp/>indices;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/>arma::mat<sp/>values;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt;&gt;<sp/>sdp;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>CheckValues();</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InitSDP();</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>DefaultRank(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>p);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>matrix_completion</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp"/>
+  </compounddef>
+</doxygen>

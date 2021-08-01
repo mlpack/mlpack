@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="md__home_aakash_mlpack_src_mlpack_tests_README" kind="page">
+    <compoundname>md__home_aakash_mlpack_src_mlpack_tests_README</compoundname>
+    <title>mlpack Tests</title>
+    <detaileddescription>
+<para>This directory contains code and data used to test all the algorithms and functions implemented in mlpack.</para><para><heading level="2">Test Directories Structure</heading>
+</para><para><itemizedlist>
+<listitem><para>*_test.cpp - methods tests</para></listitem><listitem><para>main_tests/*_test.cpp - binding tests</para></listitem><listitem><para>data - data needed to run the tests</para></listitem></itemizedlist>
+</para><para><heading level="2">Add tests</heading>
+</para><para>We have a rich test suite, consisting of almost 2000 tests (and still counting). It is suggested to add tests when:</para><para><itemizedlist>
+<listitem><para>Adding new functionality.</para></listitem><listitem><para>Fixing regressions and bugs.</para></listitem></itemizedlist>
+</para><para><heading level="2">Building Tests</heading>
+</para><para>To build the test suite you can simply run <computeroutput>make mlpack_test</computeroutput>.</para><para><heading level="2">To run Tests</heading>
+</para><para>We use <computeroutput>Catch2</computeroutput> to write our tests. To run all tests, you can simply run:</para><para><computeroutput>./bin/mlpack_test</computeroutput></para><para>To run all tests in a particular file you can run:</para><para><computeroutput>./bin/mlpack_test &quot;[testname]&quot;</computeroutput></para><para>where <computeroutput>testname</computeroutput> is the name of the test suite. For example to run all collaborative filtering tests implemented in <computeroutput>cv_test.cpp</computeroutput> you can run:</para><para><computeroutput>./bin/mlpack_test &quot;[CVTest]&quot;</computeroutput></para><para>Now similarly you can run all the binding related tests using:</para><para><computeroutput>./bin/mlpack_test &quot;[BindingTests]&quot;</computeroutput></para><para>To run a single test, you can explicitly provide the name of the test, for example, to run <computeroutput>BinaryClassificationMetricsTest</computeroutput> implemented in <computeroutput>cv_test.cpp</computeroutput> you can run the following:</para><para><computeroutput>./bin/mlpack_test BinaryClassificationMetricsTest</computeroutput></para><para>Catch2 provides many other features like filter, checkout the <ulink url="https://github.com/catchorg/Catch2/blob/devel/docs/Readme.md#top">Catch2 reference section</ulink> - for more details. </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

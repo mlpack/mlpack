@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1neighbor_1_1LSHSearch_1_1CandidateCmp" kind="struct" language="C++" prot="private">
+    <compoundname>mlpack::neighbor::LSHSearch::CandidateCmp</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmlpack_1_1neighbor_1_1LSHSearch_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator()</definition>
+        <argsstring>(const Candidate &amp;c1, const Candidate &amp;c2)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>const Candidate &amp;</type>
+          <declname>c1</declname>
+        </param>
+        <param>
+          <type>const Candidate &amp;</type>
+          <declname>c2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="473" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="473" bodyend="476"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Compare two candidates based on the distance. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="472" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="472" bodyend="477"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1neighbor_1_1LSHSearch_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch::CandidateCmp</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

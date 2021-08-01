@@ -1,0 +1,214 @@
+.TH "RangeSearchRules< MetricType, TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RangeSearchRules< MetricType, TreeType > \- The \fBRangeSearchRules\fP class is a template helper class used by \fBRangeSearch\fP class when performing range searches\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::TraversalInfo\fP< TreeType > \fBTraversalInfoType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRangeSearchRules\fP (const arma::mat &referenceSet, const arma::mat &querySet, const math::Range &range, std::vector< std::vector< size_t > > &neighbors, std::vector< std::vector< double > > &distances, MetricType &metric, const bool sameSet=false)"
+.br
+.RI "Construct the \fBRangeSearchRules\fP object\&. "
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.RI "Compute the base case between the given query point and reference point\&. "
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const"
+.br
+.RI "Get the number of base cases\&. "
+.ti -1c
+.RI "size_t \fBMinimumBaseCases\fP () const"
+.br
+.RI "Get the minimum number of base cases we need to perform to have acceptable results\&. "
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore) const"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBRescore\fP (TreeType &queryNode, TreeType &referenceNode, const double oldScore) const"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (TreeType &queryNode, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "size_t \fBScores\fP () const"
+.br
+.RI "Get the number of scores (that is, calls to RangeDistance())\&. "
+.ti -1c
+.RI "const \fBTraversalInfoType\fP & \fBTraversalInfo\fP () const"
+.br
+.ti -1c
+.RI "\fBTraversalInfoType\fP & \fBTraversalInfo\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename TreeType>
+.br
+class mlpack::range::RangeSearchRules< MetricType, TreeType >"
+The \fBRangeSearchRules\fP class is a template helper class used by \fBRangeSearch\fP class when performing range searches\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP The metric to use for computation\&. 
+.br
+\fITreeType\fP The tree type to use; must adhere to the TreeType API\&. 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file range_search_rules\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBtree::TraversalInfo\fP<TreeType> \fBTraversalInfoType\fP"
+
+.PP
+Definition at line 110 of file range_search_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRangeSearchRules\fP (const arma::mat & referenceSet, const arma::mat & querySet, const math::Range & range, std::vector< std::vector< size_t > > & neighbors, std::vector< std::vector< double > > & distances, MetricType & metric, const bool sameSet = \fCfalse\fP)"
+
+.PP
+Construct the \fBRangeSearchRules\fP object\&. This is usually done from within the \fBRangeSearch\fP class at search time\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference data\&. 
+.br
+\fIquerySet\fP Set of query data\&. 
+.br
+\fIrange\fP Range to search for\&. 
+.br
+\fIneighbors\fP Vector to store resulting neighbors in\&. 
+.br
+\fIdistances\fP Vector to store resulting distances in\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.br
+\fIsameSet\fP If true, the query and reference set are taken to be the same, and a query point will not return itself in the results\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.PP
+Compute the base case between the given query point and reference point\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceIndex\fP Index of reference point\&. 
+.RE
+.PP
+
+.SS "size_t BaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of base cases\&. 
+.PP
+Definition at line 116 of file range_search_rules\&.hpp\&.
+.SS "size_t MinimumBaseCases () const\fC [inline]\fP"
+
+.PP
+Get the minimum number of base cases we need to perform to have acceptable results\&. 
+.PP
+Definition at line 122 of file range_search_rules\&.hpp\&.
+.SS "double Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Rescore (TreeType & queryNode, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.RE
+.PP
+
+.SS "double Score (TreeType & queryNode, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.RE
+.PP
+
+.SS "size_t Scores () const\fC [inline]\fP"
+
+.PP
+Get the number of scores (that is, calls to RangeDistance())\&. 
+.PP
+Definition at line 118 of file range_search_rules\&.hpp\&.
+.SS "const \fBTraversalInfoType\fP& TraversalInfo () const\fC [inline]\fP"
+
+.PP
+Definition at line 112 of file range_search_rules\&.hpp\&.
+.SS "\fBTraversalInfoType\fP& TraversalInfo ()\fC [inline]\fP"
+
+.PP
+Definition at line 113 of file range_search_rules\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

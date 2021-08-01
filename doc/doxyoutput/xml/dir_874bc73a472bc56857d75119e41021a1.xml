@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_874bc73a472bc56857d75119e41021a1" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/amf/init_rules</compoundname>
+    <innerfile refid="average__init_8hpp">average_init.hpp</innerfile>
+    <innerfile refid="given__init_8hpp">given_init.hpp</innerfile>
+    <innerfile refid="merge__init_8hpp">merge_init.hpp</innerfile>
+    <innerfile refid="random__acol__init_8hpp">random_acol_init.hpp</innerfile>
+    <innerfile refid="amf_2init__rules_2random__init_8hpp">random_init.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/"/>
+  </compounddef>
+</doxygen>

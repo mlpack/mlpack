@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="combined__normalization_8hpp" kind="file" language="C++">
+    <compoundname>combined_normalization.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="46185">
+        <label>list</label>
+      </node>
+      <node id="46182">
+        <label>atomic</label>
+      </node>
+      <node id="46172">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="46148">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="46184">
+        <label>iomanip</label>
+      </node>
+      <node id="46157">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="46158" relation="include">
+        </childnode>
+        <childnode refid="46160" relation="include">
+        </childnode>
+      </node>
+      <node id="46140">
+        <label>cstdint</label>
+      </node>
+      <node id="46149">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="46156">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="46179">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="46169">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="46136">
+        <label>cmath</label>
+      </node>
+      <node id="46155">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="46144">
+        <label>stdexcept</label>
+      </node>
+      <node id="46164">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="46149" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46150" relation="include">
+        </childnode>
+      </node>
+      <node id="46188">
+        <label>string</label>
+      </node>
+      <node id="46176">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="46177" relation="include">
+        </childnode>
+        <childnode refid="46143" relation="include">
+        </childnode>
+      </node>
+      <node id="46186">
+        <label>map</label>
+      </node>
+      <node id="46138">
+        <label>cfloat</label>
+      </node>
+      <node id="46168">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="46190">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="46152">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="46175">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="46176" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46159" relation="include">
+        </childnode>
+        <childnode refid="46177" relation="include">
+        </childnode>
+      </node>
+      <node id="46165">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="46163">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="46149" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46150" relation="include">
+        </childnode>
+      </node>
+      <node id="46166">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="46149" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46150" relation="include">
+        </childnode>
+      </node>
+      <node id="46154">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="46174">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="46150" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46162" relation="include">
+        </childnode>
+        <childnode refid="46171" relation="include">
+        </childnode>
+      </node>
+      <node id="46178">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46179" relation="include">
+        </childnode>
+      </node>
+      <node id="46180">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="46135">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="46136" relation="include">
+        </childnode>
+        <childnode refid="46137" relation="include">
+        </childnode>
+        <childnode refid="46138" relation="include">
+        </childnode>
+        <childnode refid="46139" relation="include">
+        </childnode>
+        <childnode refid="46140" relation="include">
+        </childnode>
+        <childnode refid="46141" relation="include">
+        </childnode>
+        <childnode refid="46142" relation="include">
+        </childnode>
+        <childnode refid="46143" relation="include">
+        </childnode>
+        <childnode refid="46144" relation="include">
+        </childnode>
+        <childnode refid="46145" relation="include">
+        </childnode>
+        <childnode refid="46146" relation="include">
+        </childnode>
+        <childnode refid="46147" relation="include">
+        </childnode>
+        <childnode refid="46148" relation="include">
+        </childnode>
+        <childnode refid="46149" relation="include">
+        </childnode>
+        <childnode refid="46150" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46153" relation="include">
+        </childnode>
+        <childnode refid="46154" relation="include">
+        </childnode>
+        <childnode refid="46155" relation="include">
+        </childnode>
+        <childnode refid="46156" relation="include">
+        </childnode>
+        <childnode refid="46157" relation="include">
+        </childnode>
+        <childnode refid="46161" relation="include">
+        </childnode>
+        <childnode refid="46162" relation="include">
+        </childnode>
+        <childnode refid="46163" relation="include">
+        </childnode>
+        <childnode refid="46164" relation="include">
+        </childnode>
+        <childnode refid="46165" relation="include">
+        </childnode>
+        <childnode refid="46166" relation="include">
+        </childnode>
+        <childnode refid="46167" relation="include">
+        </childnode>
+        <childnode refid="46173" relation="include">
+        </childnode>
+        <childnode refid="46174" relation="include">
+        </childnode>
+        <childnode refid="46171" relation="include">
+        </childnode>
+        <childnode refid="46175" relation="include">
+        </childnode>
+        <childnode refid="46178" relation="include">
+        </childnode>
+        <childnode refid="46180" relation="include">
+        </childnode>
+        <childnode refid="46181" relation="include">
+        </childnode>
+        <childnode refid="46190" relation="include">
+        </childnode>
+        <childnode refid="46191" relation="include">
+        </childnode>
+      </node>
+      <node id="46141">
+        <label>cstdio</label>
+      </node>
+      <node id="46145">
+        <label>tuple</label>
+      </node>
+      <node id="46150">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="46167">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="46150" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46154" relation="include">
+        </childnode>
+        <childnode refid="46168" relation="include">
+        </childnode>
+        <childnode refid="46169" relation="include">
+        </childnode>
+        <childnode refid="46170" relation="include">
+        </childnode>
+        <childnode refid="46171" relation="include">
+        </childnode>
+      </node>
+      <node id="46146">
+        <label>utility</label>
+      </node>
+      <node id="46170">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="46161">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="46158">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="46159" relation="include">
+        </childnode>
+      </node>
+      <node id="46181">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="46182" relation="include">
+        </childnode>
+        <childnode refid="46183" relation="include">
+        </childnode>
+        <childnode refid="46184" relation="include">
+        </childnode>
+        <childnode refid="46185" relation="include">
+        </childnode>
+        <childnode refid="46186" relation="include">
+        </childnode>
+        <childnode refid="46187" relation="include">
+        </childnode>
+        <childnode refid="46188" relation="include">
+        </childnode>
+        <childnode refid="46189" relation="include">
+        </childnode>
+      </node>
+      <node id="46159">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="46173">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="46171" relation="include">
+        </childnode>
+        <childnode refid="46167" relation="include">
+        </childnode>
+        <childnode refid="46174" relation="include">
+        </childnode>
+      </node>
+      <node id="46142">
+        <label>cstdlib</label>
+      </node>
+      <node id="46137">
+        <label>cctype</label>
+      </node>
+      <node id="46160">
+        <label>unordered_map</label>
+      </node>
+      <node id="46139">
+        <label>climits</label>
+      </node>
+      <node id="46187">
+        <label>mutex</label>
+      </node>
+      <node id="46183">
+        <label>chrono</label>
+      </node>
+      <node id="46134">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/normalization/combined_normalization.hpp</label>
+        <link refid="combined__normalization_8hpp"/>
+        <childnode refid="46135" relation="include">
+        </childnode>
+      </node>
+      <node id="46191">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="46189">
+        <label>thread</label>
+      </node>
+      <node id="46177">
+        <label>type_traits</label>
+      </node>
+      <node id="46153">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="46147">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="46171">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="46149" relation="include">
+        </childnode>
+        <childnode refid="46150" relation="include">
+        </childnode>
+        <childnode refid="46151" relation="include">
+        </childnode>
+        <childnode refid="46152" relation="include">
+        </childnode>
+        <childnode refid="46172" relation="include">
+        </childnode>
+      </node>
+      <node id="46143">
+        <label>cstring</label>
+      </node>
+      <node id="46162">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="46151">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1CombinedNormalization" prot="public">mlpack::cf::CombinedNormalization</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Wenhao Huang</para></simplesect>
+CombinedNormalization is a class template for performing a sequence of data normalization methods which are specified by template parameter.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_CF_NORMALIZATION_COMBINED_NORMALIZATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_CF_NORMALIZATION_COMBINED_NORMALIZATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>NormalizationTypes&gt;</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1cf_1_1CombinedNormalization" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1CombinedNormalization" kindref="compound">CombinedNormalization</ref></highlight></codeline>
+<codeline lineno="45"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a1e98d43da1ec47c76125e7782460aa2c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a1e98d43da1ec47c76125e7782460aa2c" kindref="member">TupleType</ref><sp/>=<sp/>std::tuple&lt;NormalizationTypes...&gt;;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Empty<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a8fb4e3fa10e0ecf786c2b710175bb75b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a8fb4e3fa10e0ecf786c2b710175bb75b" kindref="member">CombinedNormalization</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="58" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a47ac5da06a1301c0c72529184cc77a7e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a47ac5da06a1301c0c72529184cc77a7e" kindref="member">Normalize</ref>(MatType&amp;<sp/>data)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceNormalize&lt;0&gt;(data);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a27ffe74669d0dfd1c217728c369b35f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a27ffe74669d0dfd1c217728c369b35f9" kindref="member">Denormalize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>item,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="75"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>SequenceDenormalize&lt;0&gt;(user,<sp/>item,<sp/>rating);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a93926452083f79197edc30f83476a40d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a93926452083f79197edc30f83476a40d" kindref="member">Denormalize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>combinations,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>predictions)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="89"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceDenormalize&lt;0&gt;(combinations,<sp/>predictions);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a58a35d3ef1c11ee69753aa099513840e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a1e98d43da1ec47c76125e7782460aa2c" kindref="member">TupleType</ref>&amp;<sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a58a35d3ef1c11ee69753aa099513840e" kindref="member">Normalizations</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="97"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>normalizations;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1cf_1_1CombinedNormalization_1a72d63b74c8166dff8e1a9006905ad9ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a72d63b74c8166dff8e1a9006905ad9ca" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>version)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceSerialize&lt;0,<sp/>Archive&gt;(ar,<sp/>version);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a1e98d43da1ec47c76125e7782460aa2c" kindref="member">TupleType</ref><sp/>normalizations;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &lt; std::tuple_size&lt;TupleType&gt;::value</ref>)&gt;&gt;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceNormalize(MatType&amp;<sp/>data)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>std::get&lt;I&gt;(normalizations).<ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a47ac5da06a1301c0c72529184cc77a7e" kindref="member">Normalize</ref>(data);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceNormalize&lt;I<sp/>+<sp/>1&gt;(data);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &gt;</ref>=<sp/>std::tuple_size&lt;TupleType&gt;::value)&gt;,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceNormalize(MatType&amp;<sp/></highlight><highlight class="comment">/*<sp/>data<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &lt; std::tuple_size&lt;TupleType&gt;::value</ref>)&gt;&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>SequenceDenormalize(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>item,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>order<sp/>of<sp/>denormalization<sp/>should<sp/>be<sp/>the<sp/>reversed<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>of<sp/>normalization.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>realRating<sp/>=<sp/>SequenceDenormalize&lt;I<sp/>+<sp/>1&gt;(user,<sp/>item,<sp/>rating);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>realRating<sp/>=</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::get&lt;I&gt;(normalizations).<ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a27ffe74669d0dfd1c217728c369b35f9" kindref="member">Denormalize</ref>(user,<sp/>item,<sp/>realRating);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>realRating;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &gt;</ref>=<sp/>std::tuple_size&lt;TupleType&gt;::value)&gt;,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>SequenceDenormalize(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>user<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>item<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rating;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &lt; std::tuple_size&lt;TupleType&gt;::value</ref>)&gt;&gt;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceDenormalize(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>combinations,</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>predictions)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>order<sp/>of<sp/>denormalization<sp/>should<sp/>be<sp/>the<sp/>reversed<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>of<sp/>normalization.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceDenormalize&lt;I+1&gt;(combinations,<sp/>predictions);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>std::get&lt;I&gt;(normalizations).<ref refid="classmlpack_1_1cf_1_1CombinedNormalization_1a27ffe74669d0dfd1c217728c369b35f9" kindref="member">Denormalize</ref>(combinations,<sp/>predictions);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>use<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &gt;</ref>=<sp/>std::tuple_size&lt;TupleType&gt;::value)&gt;,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceDenormalize(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>combinations<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/></highlight><highlight class="comment">/*<sp/>predictions<sp/>*/</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>serialize<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &lt; std::tuple_size&lt;TupleType&gt;::value</ref>)&gt;&gt;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceSerialize(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>version)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>tagName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;normalization_&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>tagName<sp/>+=<sp/>std::to_string(I);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(cereal::make_nvp(</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tagName.c_str(),<sp/>std::get&lt;I&gt;(normalizations)));</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>SequenceSerialize&lt;I<sp/>+<sp/>1,<sp/>Archive&gt;(ar,<sp/>version);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>I,<sp/></highlight><highlight class="comment">/*<sp/>Which<sp/>normalization<sp/>in<sp/>tuple<sp/>to<sp/>serialize<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive,</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t&lt;(I &gt;</ref>=<sp/>std::tuple_size&lt;TupleType&gt;::value)&gt;,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SequenceSerialize(Archive&amp;<sp/></highlight><highlight class="comment">/*<sp/>ar<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/combined_normalization.hpp"/>
+  </compounddef>
+</doxygen>

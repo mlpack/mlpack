@@ -1,0 +1,57 @@
+\section{Kernel\+Normalizer Class Reference}
+\label{classmlpack_1_1kde_1_1KernelNormalizer}\index{Kernel\+Normalizer@{Kernel\+Normalizer}}
+
+
+\doxyref{Kernel\+Normalizer}{p.}{classmlpack_1_1kde_1_1KernelNormalizer} holds a set of methods to normalize estimations applying in each case the appropiate kernel normalizer function.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Kernel\+Type $>$ }\\static void \textbf{ Apply\+Normalizer} (Kernel\+Type \&, const size\+\_\+t, arma\+::vec \&, const typename std\+::enable\+\_\+if$<$ !Has\+Normalizer$<$ Kernel\+Type, double(Kernel\+Type\+::$\ast$)(size\+\_\+t)$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Normalization not needed. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Kernel\+Type $>$ }\\static void \textbf{ Apply\+Normalizer} (Kernel\+Type \&kernel, const size\+\_\+t dimension, arma\+::vec \&estimations, const typename std\+::enable\+\_\+if$<$ Has\+Normalizer$<$ Kernel\+Type, double(Kernel\+Type\+::$\ast$)(size\+\_\+t)$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Normalize kernels that have normalizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Kernel\+Normalizer}{p.}{classmlpack_1_1kde_1_1KernelNormalizer} holds a set of methods to normalize estimations applying in each case the appropiate kernel normalizer function. 
+
+Definition at line 34 of file kde\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KernelNormalizer_a717e03847e745cbb17dbd6bef4430a51}} 
+\index{mlpack\+::kde\+::\+Kernel\+Normalizer@{mlpack\+::kde\+::\+Kernel\+Normalizer}!Apply\+Normalizer@{Apply\+Normalizer}}
+\index{Apply\+Normalizer@{Apply\+Normalizer}!mlpack\+::kde\+::\+Kernel\+Normalizer@{mlpack\+::kde\+::\+Kernel\+Normalizer}}
+\subsubsection{Apply\+Normalizer()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static void Apply\+Normalizer (\begin{DoxyParamCaption}\item[{Kernel\+Type \&}]{,  }\item[{const size\+\_\+t}]{,  }\item[{arma\+::vec \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ !Has\+Normalizer$<$ Kernel\+Type, double(Kernel\+Type\+::$\ast$)(size\+\_\+t)$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Normalization not needed. 
+
+
+
+Definition at line 43 of file kde\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KernelNormalizer_ab3f3e0c4ab1a1242d78d1162890ae3a1}} 
+\index{mlpack\+::kde\+::\+Kernel\+Normalizer@{mlpack\+::kde\+::\+Kernel\+Normalizer}!Apply\+Normalizer@{Apply\+Normalizer}}
+\index{Apply\+Normalizer@{Apply\+Normalizer}!mlpack\+::kde\+::\+Kernel\+Normalizer@{mlpack\+::kde\+::\+Kernel\+Normalizer}}
+\subsubsection{Apply\+Normalizer()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Apply\+Normalizer (\begin{DoxyParamCaption}\item[{Kernel\+Type \&}]{kernel,  }\item[{const size\+\_\+t}]{dimension,  }\item[{arma\+::vec \&}]{estimations,  }\item[{const typename std\+::enable\+\_\+if$<$ Has\+Normalizer$<$ Kernel\+Type, double(Kernel\+Type\+::$\ast$)(size\+\_\+t)$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Normalize kernels that have normalizer. 
+
+
+
+Definition at line 54 of file kde\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kde/\textbf{ kde\+\_\+model.\+hpp}\end{DoxyCompactItemize}

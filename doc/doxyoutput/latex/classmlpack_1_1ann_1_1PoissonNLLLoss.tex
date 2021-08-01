@@ -1,0 +1,319 @@
+\section{Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1PoissonNLLLoss}\index{Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the Poisson negative log likelihood loss.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Poisson\+N\+L\+L\+Loss} (const bool log\+Input=true, const bool full=false, const typename Input\+Data\+Type\+::elem\+\_\+type eps=1e-\/08, const bool mean=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Poisson\+N\+L\+L\+Loss}{p.}{classmlpack_1_1ann_1_1PoissonNLLLoss} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type , typename Loss\+Type $>$ }\\void \textbf{ Backward} (const Prediction\+Type \&prediction, const Target\+Type \&target, Loss\+Type \&loss)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+Input\+Data\+Type\+::elem\+\_\+type \textbf{ Eps} () const
+\begin{DoxyCompactList}\small\item\em Get the value of eps. \end{DoxyCompactList}\item 
+Input\+Data\+Type\+::elem\+\_\+type \& \textbf{ Eps} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of eps. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type $>$ }\\Input\+Data\+Type\+::elem\+\_\+type \textbf{ Forward} (const Prediction\+Type \&prediction, const Target\+Type \&target)
+\begin{DoxyCompactList}\small\item\em Computes the Poisson negative log likelihood Loss. \end{DoxyCompactList}\item 
+bool \textbf{ Full} () const
+\begin{DoxyCompactList}\small\item\em Get the value of full. \end{DoxyCompactList}\item 
+bool \& \textbf{ Full} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of full. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Log\+Input} () const
+\begin{DoxyCompactList}\small\item\em Get the value of log\+Input. \end{DoxyCompactList}\item 
+bool \& \textbf{ Log\+Input} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of log\+Input. \end{DoxyCompactList}\item 
+bool \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the value of mean. \end{DoxyCompactList}\item 
+bool \& \textbf{ Mean} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of mean. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the Poisson negative log likelihood loss. 
+
+This loss function expects input for each class. It also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 36 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a5865e4aed39aa2b2bab1dc3986c17bad}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Poisson\+N\+L\+L\+Loss@{Poisson\+N\+L\+L\+Loss}}
+\index{Poisson\+N\+L\+L\+Loss@{Poisson\+N\+L\+L\+Loss}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Poisson\+N\+L\+L\+Loss()}
+{\footnotesize\ttfamily \textbf{ Poisson\+N\+L\+L\+Loss} (\begin{DoxyParamCaption}\item[{const bool}]{log\+Input = {\ttfamily true},  }\item[{const bool}]{full = {\ttfamily false},  }\item[{const typename Input\+Data\+Type\+::elem\+\_\+type}]{eps = {\ttfamily 1e-\/08},  }\item[{const bool}]{mean = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Poisson\+N\+L\+L\+Loss}{p.}{classmlpack_1_1ann_1_1PoissonNLLLoss} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em log\+Input} & If true the loss is computed as $ \exp(input) - target \cdot input $, if false then the loss is $ input - target \cdot \log(input + eps) $. \\
+\hline
+{\em full} & Boolean value that determines whether to include Stirling\textquotesingle{}s approximation term. \\
+\hline
+{\em eps} & A small value to prevent 0 in denominators and logarithms. \\
+\hline
+{\em mean} & When true, mean loss is computed otherwise total loss. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_add41dbaf358dc099750dc6064cb7e0d7}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target,  }\item[{Loss\+Type \&}]{loss }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network. 
+
+The Poisson Negative Log Likelihood loss function expects the input for each class. It expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector, that contains the class index in the range between 1 and the number of classes. \\
+\hline
+{\em loss} & The calculated error. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_ab05635563f993b63975c8b908c2d7ee0}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Eps@{Eps}}
+\index{Eps@{Eps}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Eps()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\+::elem\+\_\+type Eps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of eps. 
+
+eps is a small value required to prevent 0 in logarithms and denominators. 
+
+Definition at line 110 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a69f7617ebeb301d9bef61a7a0be364c0}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Eps@{Eps}}
+\index{Eps@{Eps}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Eps()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\+::elem\+\_\+type\& Eps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of eps. 
+
+eps is a small value required to prevent 0 in logarithms and denominators. 
+
+Definition at line 113 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a7861d7a6b25939cdfef5bac8cbc92925}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily Input\+Data\+Type\+::elem\+\_\+type Forward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target }\end{DoxyParamCaption})}
+
+
+
+Computes the Poisson negative log likelihood Loss. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector, that contains the class index in the range between 1 and the number of classes. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_ac98e449411de44d49685058319efc65e}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Full@{Full}}
+\index{Full@{Full}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Full()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Full (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of full. 
+
+full is a boolean value that determines whether to include Stirling\textquotesingle{}s approximation term. 
+
+Definition at line 103 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_adfe203f7f5637e67ec07731c514cde34}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Full@{Full}}
+\index{Full@{Full}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Full()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Full (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of full. 
+
+full is a boolean value that determines whether to include Stirling\textquotesingle{}s approximation term. 
+
+Definition at line 106 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a1506936601ddae886088d2804623ca4b}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 85 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 87 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a9267f964724129e144495c74e942651c}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Log\+Input@{Log\+Input}}
+\index{Log\+Input@{Log\+Input}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Log\+Input()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Log\+Input (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of log\+Input. 
+
+log\+Input is a boolean value that tells if logits are given as input. 
+
+Definition at line 96 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_ae62d8090ee6dba2ecfc81eee0976c0e1}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Log\+Input@{Log\+Input}}
+\index{Log\+Input@{Log\+Input}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Log\+Input()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Log\+Input (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of log\+Input. 
+
+log\+Input is a boolean value that tells if logits are given as input. 
+
+Definition at line 99 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_ab3fece30ee983f7dc98302bacde75efe}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Mean@{Mean}}
+\index{Mean@{Mean}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of mean. 
+
+It\textquotesingle{}s a boolean value that tells if mean of the total loss has to be taken. 
+
+Definition at line 117 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_ab9d30d78fb30a243c70e8dd27a88bf49}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Mean@{Mean}}
+\index{Mean@{Mean}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of mean. 
+
+It\textquotesingle{}s a boolean value that tells if mean of the total loss has to be taken. 
+
+Definition at line 120 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+
+
+References Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 90 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 92 of file poisson\+\_\+nll\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PoissonNLLLoss_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss@{mlpack\+::ann\+::\+Poisson\+N\+L\+L\+Loss}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Poisson\+N\+L\+L\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Mean().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/loss\+\_\+functions/\textbf{ poisson\+\_\+nll\+\_\+loss.\+hpp}\end{DoxyCompactItemize}

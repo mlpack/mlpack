@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1hpt_1_1FixedArg" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::hpt::FixedArg</compoundname>
+    <includes refid="fixed_8hpp" local="no">fixed.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>size_t</type>
+        <declname>I</declname>
+        <defname>I</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1hpt_1_1FixedArg_1a7f76d280ceee4a993fcfe312f4c46e44" prot="public" static="yes" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <initializer>= I</initializer>
+        <briefdescription>
+<para>The index of the fixed argument. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" line="55" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1hpt_1_1FixedArg_1a0b6f3694312803de4bea1fe97896294f" prot="public" static="no" mutable="no">
+        <type>const T &amp;</type>
+        <definition>const T&amp; value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>The value of the fixed argument. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" line="58" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A struct for storing information about a fixed argument. </para>    </briefdescription>
+    <detaileddescription>
+<para>Objects of this type are supposed to be passed into the <ref refid="classmlpack_1_1hpt_1_1CVFunction" kindref="compound">CVFunction</ref> constructor.</para><para>This struct is not meant to be used directly by users. Rather use the <ref refid="namespacemlpack_1_1hpt_1ad773f4d1def8deb412ffbf37bdf289ec" kindref="member">mlpack::hpt::Fixed</ref> function.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the fixed argument. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>I</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the fixed argument. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" bodystart="52" bodyend="59"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1hpt_1_1FixedArg_1a7f76d280ceee4a993fcfe312f4c46e44" prot="public" virt="non-virtual"><scope>mlpack::hpt::FixedArg</scope><name>index</name></member>
+      <member refid="structmlpack_1_1hpt_1_1FixedArg_1a0b6f3694312803de4bea1fe97896294f" prot="public" virt="non-virtual"><scope>mlpack::hpt::FixedArg</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

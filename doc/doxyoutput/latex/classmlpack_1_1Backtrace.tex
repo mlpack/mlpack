@@ -1,0 +1,80 @@
+\section{Backtrace Class Reference}
+\label{classmlpack_1_1Backtrace}\index{Backtrace@{Backtrace}}
+
+
+Provides a backtrace.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Backtrace} ()
+\begin{DoxyCompactList}\small\item\em Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. \end{DoxyCompactList}\item 
+std\+::string \textbf{ To\+String} ()
+\begin{DoxyCompactList}\small\item\em Returns string of backtrace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Provides a backtrace. 
+
+The \doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} class retrieve addresses of each called function from the stack and decode file name, function \& line number. Retrieved information can be printed in form\+:
+
+
+\begin{DoxyCode}
+[b]: (count) /directory/to/file.cpp:\textcolor{keyword}{function}(args):line\_number
+\end{DoxyCode}
+
+
+\doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} is printed always when Log\+::\+Assert failed. An example is given below.
+
+
+\begin{DoxyCode}
+\textcolor{keywordflow}{if} (!someImportantCondition())
+\{
+  Log::Fatal << \textcolor{stringliteral}{"someImportantCondition() is not satisfied! Terminating."};
+  Log::Fatal << std::endl;
+\}
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+Log\+::\+Assert will not be shown when compiling in non-\/debug mode.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+Prefixed\+Out\+Stream, Log 
+\end{DoxySeeAlso}
+
+
+Definition at line 46 of file backtrace.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1Backtrace_a56f5712848b4d5b5d2ad8f940750faa8}} 
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!Backtrace@{Backtrace}}
+\index{Backtrace@{Backtrace}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection{Backtrace()}
+{\footnotesize\ttfamily \textbf{ Backtrace} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1Backtrace_a7ef596a0c429a1a74709cf14d8fa15d2}} 
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!To\+String@{To\+String}}
+\index{To\+String@{To\+String}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection{To\+String()}
+{\footnotesize\ttfamily std\+::string To\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns string of backtrace. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ backtrace.\+hpp}\end{DoxyCompactItemize}

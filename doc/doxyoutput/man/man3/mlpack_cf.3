@@ -1,0 +1,192 @@
+.TH "mlpack::cf" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::cf \- Collaborative filtering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAverageInterpolation\fP"
+.br
+.RI "This class performs average interpolation to generate interpolation weights for neighborhood-based collaborative filtering\&. "
+.ti -1c
+.RI "class \fBBatchSVDPolicy\fP"
+.br
+.RI "Implementation of the Batch SVD policy to act as a wrapper when accessing Batch SVD from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBBiasSVDPolicy\fP"
+.br
+.RI "Implementation of the Bias SVD policy to act as a wrapper when accessing Bias SVD from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBCFModel\fP"
+.br
+.RI "The model to save to disk\&. "
+.ti -1c
+.RI "class \fBCFType\fP"
+.br
+.RI "This class implements Collaborative Filtering (CF)\&. "
+.ti -1c
+.RI "class \fBCFWrapper\fP"
+.br
+.RI "The \fBCFWrapper\fP class wraps the functionality of all CF types\&. "
+.ti -1c
+.RI "class \fBCFWrapperBase\fP"
+.br
+.RI "The \fBCFWrapperBase\fP class provides a unified interface that can be used by the \fBCFModel\fP class to interact with all different CF types at runtime\&. "
+.ti -1c
+.RI "class \fBCombinedNormalization\fP"
+.br
+.RI "This normalization class performs a sequence of normalization methods on raw ratings\&. "
+.ti -1c
+.RI "class \fBCosineSearch\fP"
+.br
+.RI "Nearest neighbor search with cosine distance\&. "
+.ti -1c
+.RI "class \fBDummyClass\fP"
+.br
+.RI "This class acts as a dummy class for passing as template parameter\&. "
+.ti -1c
+.RI "class \fBItemMeanNormalization\fP"
+.br
+.RI "This normalization class performs item mean normalization on raw ratings\&. "
+.ti -1c
+.RI "class \fBLMetricSearch\fP"
+.br
+.RI "Nearest neighbor search with L_p distance\&. "
+.ti -1c
+.RI "class \fBNMFPolicy\fP"
+.br
+.RI "Implementation of the NMF policy to act as a wrapper when accessing NMF from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBNoNormalization\fP"
+.br
+.RI "This normalization class doesn't perform any normalization\&. "
+.ti -1c
+.RI "class \fBOverallMeanNormalization\fP"
+.br
+.RI "This normalization class performs overall mean normalization on raw ratings\&. "
+.ti -1c
+.RI "class \fBPearsonSearch\fP"
+.br
+.RI "Nearest neighbor search with pearson distance (or furthest neighbor search with pearson correlation)\&. "
+.ti -1c
+.RI "class \fBRandomizedSVDPolicy\fP"
+.br
+.RI "Implementation of the Randomized SVD policy to act as a wrapper when accessing Randomized SVD from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBRegressionInterpolation\fP"
+.br
+.RI "Implementation of regression-based interpolation method\&. "
+.ti -1c
+.RI "class \fBRegSVDPolicy\fP"
+.br
+.RI "Implementation of the Regularized SVD policy to act as a wrapper when accessing Regularized SVD from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBSimilarityInterpolation\fP"
+.br
+.RI "With \fBSimilarityInterpolation\fP, interpolation weights are based on similarities between query user and its neighbors\&. "
+.ti -1c
+.RI "class \fBSVDCompletePolicy\fP"
+.br
+.RI "Implementation of the SVD complete incremental policy to act as a wrapper when accessing SVD complete decomposition from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBSVDIncompletePolicy\fP"
+.br
+.RI "Implementation of the SVD incomplete incremental to act as a wrapper when accessing SVD incomplete incremental from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBSVDPlusPlusPolicy\fP"
+.br
+.RI "Implementation of the SVDPlusPlus policy to act as a wrapper when accessing SVDPlusPlus from within \fBCFType\fP\&. "
+.ti -1c
+.RI "class \fBSVDWrapper\fP"
+.br
+.RI "This class acts as the wrapper for all SVD factorizers which are incompatible with CF module\&. "
+.ti -1c
+.RI "class \fBUserMeanNormalization\fP"
+.br
+.RI "This normalization class performs user mean normalization on raw ratings\&. "
+.ti -1c
+.RI "class \fBZScoreNormalization\fP"
+.br
+.RI "This normalization class performs z-score normalization on raw ratings\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBSVDWrapper\fP< \fBDummyClass\fP > \fBArmaSVDFactorizer\fP"
+.br
+.RI "add simple typedefs "
+.ti -1c
+.RI "using \fBEuclideanSearch\fP = \fBLMetricSearch\fP< 2 >"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBInterpolationTypes\fP { \fBAVERAGE_INTERPOLATION\fP, \fBREGRESSION_INTERPOLATION\fP, \fBSIMILARITY_INTERPOLATION\fP }
+.RI "InterpolationTypes contains the set of InterpolationPolicy classes that are usable by CFModel at prediction time\&. ""
+.br
+.ti -1c
+.RI "enum \fBNeighborSearchTypes\fP { \fBCOSINE_SEARCH\fP, \fBEUCLIDEAN_SEARCH\fP, \fBPEARSON_SEARCH\fP }
+.RI "NeighborSearchTypes contains the set of NeighborSearchPolicy classes that are usable by CFModel at prediction time\&. ""
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Collaborative filtering\&. 
+
+
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef \fBSVDWrapper\fP<\fBDummyClass\fP> \fBArmaSVDFactorizer\fP"
+
+.PP
+add simple typedefs 
+.PP
+Definition at line 87 of file svd_wrapper\&.hpp\&.
+.SS "using \fBEuclideanSearch\fP =  \fBLMetricSearch\fP<2>"
+
+.PP
+Definition at line 79 of file lmetric_search\&.hpp\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBInterpolationTypes\fP"
+
+.PP
+InterpolationTypes contains the set of InterpolationPolicy classes that are usable by \fBCFModel\fP at prediction time\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIAVERAGE_INTERPOLATION \fP\fP
+.TP
+\fB\fIREGRESSION_INTERPOLATION \fP\fP
+.TP
+\fB\fISIMILARITY_INTERPOLATION \fP\fP
+.PP
+Definition at line 37 of file cf_model\&.hpp\&.
+.SS "enum \fBNeighborSearchTypes\fP"
+
+.PP
+NeighborSearchTypes contains the set of NeighborSearchPolicy classes that are usable by \fBCFModel\fP at prediction time\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fICOSINE_SEARCH \fP\fP
+.TP
+\fB\fIEUCLIDEAN_SEARCH \fP\fP
+.TP
+\fB\fIPEARSON_SEARCH \fP\fP
+.PP
+Definition at line 26 of file cf_model\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

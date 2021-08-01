@@ -1,0 +1,186 @@
+.TH "DualTreeKMeansStatistic" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DualTreeKMeansStatistic
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBNeighborSearchStat< neighbor::NearestNeighborSort >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDualTreeKMeansStatistic\fP ()"
+.br
+.ti -1c
+.RI "template<typename TreeType > \fBDualTreeKMeansStatistic\fP (TreeType &node)"
+.br
+.ti -1c
+.RI "const arma::vec & \fBCentroid\fP () const"
+.br
+.ti -1c
+.RI "arma::vec & \fBCentroid\fP ()"
+.br
+.ti -1c
+.RI "double \fBLowerBound\fP () const"
+.br
+.ti -1c
+.RI "double & \fBLowerBound\fP ()"
+.br
+.ti -1c
+.RI "size_t \fBNumTrueChildren\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBOwner\fP () const"
+.br
+.ti -1c
+.RI "size_t & \fBOwner\fP ()"
+.br
+.ti -1c
+.RI "size_t \fBPruned\fP () const"
+.br
+.ti -1c
+.RI "size_t & \fBPruned\fP ()"
+.br
+.ti -1c
+.RI "double \fBStaticLowerBoundMovement\fP () const"
+.br
+.ti -1c
+.RI "double & \fBStaticLowerBoundMovement\fP ()"
+.br
+.ti -1c
+.RI "bool \fBStaticPruned\fP () const"
+.br
+.ti -1c
+.RI "bool & \fBStaticPruned\fP ()"
+.br
+.ti -1c
+.RI "double \fBStaticUpperBoundMovement\fP () const"
+.br
+.ti -1c
+.RI "double & \fBStaticUpperBoundMovement\fP ()"
+.br
+.ti -1c
+.RI "void * \fBTrueChild\fP (const size_t i) const"
+.br
+.ti -1c
+.RI "void *& \fBTrueChild\fP (const size_t i)"
+.br
+.ti -1c
+.RI "void * \fBTrueParent\fP () const"
+.br
+.ti -1c
+.RI "void *& \fBTrueParent\fP ()"
+.br
+.ti -1c
+.RI "double \fBUpperBound\fP () const"
+.br
+.ti -1c
+.RI "double & \fBUpperBound\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 20 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDualTreeKMeansStatistic\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 24 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "\fBDualTreeKMeansStatistic\fP (TreeType & node)\fC [inline]\fP"
+
+.PP
+Definition at line 40 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::vec& Centroid () const\fC [inline]\fP"
+
+.PP
+Definition at line 81 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "arma::vec& Centroid ()\fC [inline]\fP"
+
+.PP
+Definition at line 82 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double LowerBound () const\fC [inline]\fP"
+
+.PP
+Definition at line 78 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double& LowerBound ()\fC [inline]\fP"
+
+.PP
+Definition at line 79 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "size_t NumTrueChildren () const\fC [inline]\fP"
+
+.PP
+Definition at line 105 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "size_t Owner () const\fC [inline]\fP"
+
+.PP
+Definition at line 84 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "size_t& Owner ()\fC [inline]\fP"
+
+.PP
+Definition at line 85 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "size_t Pruned () const\fC [inline]\fP"
+
+.PP
+Definition at line 87 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "size_t& Pruned ()\fC [inline]\fP"
+
+.PP
+Definition at line 88 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double StaticLowerBoundMovement () const\fC [inline]\fP"
+
+.PP
+Definition at line 96 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double& StaticLowerBoundMovement ()\fC [inline]\fP"
+
+.PP
+Definition at line 97 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "bool StaticPruned () const\fC [inline]\fP"
+
+.PP
+Definition at line 90 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "bool& StaticPruned ()\fC [inline]\fP"
+
+.PP
+Definition at line 91 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double StaticUpperBoundMovement () const\fC [inline]\fP"
+
+.PP
+Definition at line 93 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double& StaticUpperBoundMovement ()\fC [inline]\fP"
+
+.PP
+Definition at line 94 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "void* TrueChild (const size_t i) const\fC [inline]\fP"
+
+.PP
+Definition at line 102 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "void*& TrueChild (const size_t i)\fC [inline]\fP"
+
+.PP
+Definition at line 103 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "void* TrueParent () const\fC [inline]\fP"
+
+.PP
+Definition at line 99 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "void*& TrueParent ()\fC [inline]\fP"
+
+.PP
+Definition at line 100 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double UpperBound () const\fC [inline]\fP"
+
+.PP
+Definition at line 75 of file dual_tree_kmeans_statistic\&.hpp\&.
+.SS "double& UpperBound ()\fC [inline]\fP"
+
+.PP
+Definition at line 76 of file dual_tree_kmeans_statistic\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,496 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="nguyen__widrow__init_8hpp" kind="file" language="C++">
+    <compoundname>nguyen_widrow_init.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="init__rules__traits_8hpp" local="yes">init_rules_traits.hpp</includes>
+    <includes refid="ann_2init__rules_2random__init_8hpp" local="yes">random_init.hpp</includes>
+    <incdepgraph>
+      <node id="28809">
+        <label>list</label>
+      </node>
+      <node id="28806">
+        <label>atomic</label>
+      </node>
+      <node id="28796">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="28772">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="28808">
+        <label>iomanip</label>
+      </node>
+      <node id="28781">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="28782" relation="include">
+        </childnode>
+        <childnode refid="28784" relation="include">
+        </childnode>
+      </node>
+      <node id="28764">
+        <label>cstdint</label>
+      </node>
+      <node id="28773">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="28780">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="28803">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="28793">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="28760">
+        <label>cmath</label>
+      </node>
+      <node id="28779">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="28768">
+        <label>stdexcept</label>
+      </node>
+      <node id="28788">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="28773" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28774" relation="include">
+        </childnode>
+      </node>
+      <node id="28812">
+        <label>string</label>
+      </node>
+      <node id="28800">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="28801" relation="include">
+        </childnode>
+        <childnode refid="28767" relation="include">
+        </childnode>
+      </node>
+      <node id="28810">
+        <label>map</label>
+      </node>
+      <node id="28762">
+        <label>cfloat</label>
+      </node>
+      <node id="28792">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="28814">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="28776">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="28799">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="28800" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28783" relation="include">
+        </childnode>
+        <childnode refid="28801" relation="include">
+        </childnode>
+      </node>
+      <node id="28817">
+        <label>random_init.hpp</label>
+        <link refid="ann_2init__rules_2random__init_8hpp"/>
+        <childnode refid="28759" relation="include">
+        </childnode>
+      </node>
+      <node id="28789">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="28787">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="28773" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28774" relation="include">
+        </childnode>
+      </node>
+      <node id="28790">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="28773" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28774" relation="include">
+        </childnode>
+      </node>
+      <node id="28778">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="28798">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="28774" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28786" relation="include">
+        </childnode>
+        <childnode refid="28795" relation="include">
+        </childnode>
+      </node>
+      <node id="28802">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="28803" relation="include">
+        </childnode>
+      </node>
+      <node id="28804">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="28759">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="28760" relation="include">
+        </childnode>
+        <childnode refid="28761" relation="include">
+        </childnode>
+        <childnode refid="28762" relation="include">
+        </childnode>
+        <childnode refid="28763" relation="include">
+        </childnode>
+        <childnode refid="28764" relation="include">
+        </childnode>
+        <childnode refid="28765" relation="include">
+        </childnode>
+        <childnode refid="28766" relation="include">
+        </childnode>
+        <childnode refid="28767" relation="include">
+        </childnode>
+        <childnode refid="28768" relation="include">
+        </childnode>
+        <childnode refid="28769" relation="include">
+        </childnode>
+        <childnode refid="28770" relation="include">
+        </childnode>
+        <childnode refid="28771" relation="include">
+        </childnode>
+        <childnode refid="28772" relation="include">
+        </childnode>
+        <childnode refid="28773" relation="include">
+        </childnode>
+        <childnode refid="28774" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28777" relation="include">
+        </childnode>
+        <childnode refid="28778" relation="include">
+        </childnode>
+        <childnode refid="28779" relation="include">
+        </childnode>
+        <childnode refid="28780" relation="include">
+        </childnode>
+        <childnode refid="28781" relation="include">
+        </childnode>
+        <childnode refid="28785" relation="include">
+        </childnode>
+        <childnode refid="28786" relation="include">
+        </childnode>
+        <childnode refid="28787" relation="include">
+        </childnode>
+        <childnode refid="28788" relation="include">
+        </childnode>
+        <childnode refid="28789" relation="include">
+        </childnode>
+        <childnode refid="28790" relation="include">
+        </childnode>
+        <childnode refid="28791" relation="include">
+        </childnode>
+        <childnode refid="28797" relation="include">
+        </childnode>
+        <childnode refid="28798" relation="include">
+        </childnode>
+        <childnode refid="28795" relation="include">
+        </childnode>
+        <childnode refid="28799" relation="include">
+        </childnode>
+        <childnode refid="28802" relation="include">
+        </childnode>
+        <childnode refid="28804" relation="include">
+        </childnode>
+        <childnode refid="28805" relation="include">
+        </childnode>
+        <childnode refid="28814" relation="include">
+        </childnode>
+        <childnode refid="28815" relation="include">
+        </childnode>
+      </node>
+      <node id="28765">
+        <label>cstdio</label>
+      </node>
+      <node id="28769">
+        <label>tuple</label>
+      </node>
+      <node id="28774">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="28791">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="28774" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28778" relation="include">
+        </childnode>
+        <childnode refid="28792" relation="include">
+        </childnode>
+        <childnode refid="28793" relation="include">
+        </childnode>
+        <childnode refid="28794" relation="include">
+        </childnode>
+        <childnode refid="28795" relation="include">
+        </childnode>
+      </node>
+      <node id="28770">
+        <label>utility</label>
+      </node>
+      <node id="28794">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28785">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="28816">
+        <label>init_rules_traits.hpp</label>
+        <link refid="init__rules__traits_8hpp"/>
+      </node>
+      <node id="28782">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="28783" relation="include">
+        </childnode>
+      </node>
+      <node id="28805">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="28806" relation="include">
+        </childnode>
+        <childnode refid="28807" relation="include">
+        </childnode>
+        <childnode refid="28808" relation="include">
+        </childnode>
+        <childnode refid="28809" relation="include">
+        </childnode>
+        <childnode refid="28810" relation="include">
+        </childnode>
+        <childnode refid="28811" relation="include">
+        </childnode>
+        <childnode refid="28812" relation="include">
+        </childnode>
+        <childnode refid="28813" relation="include">
+        </childnode>
+      </node>
+      <node id="28783">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="28797">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="28795" relation="include">
+        </childnode>
+        <childnode refid="28791" relation="include">
+        </childnode>
+        <childnode refid="28798" relation="include">
+        </childnode>
+      </node>
+      <node id="28766">
+        <label>cstdlib</label>
+      </node>
+      <node id="28761">
+        <label>cctype</label>
+      </node>
+      <node id="28784">
+        <label>unordered_map</label>
+      </node>
+      <node id="28763">
+        <label>climits</label>
+      </node>
+      <node id="28811">
+        <label>mutex</label>
+      </node>
+      <node id="28807">
+        <label>chrono</label>
+      </node>
+      <node id="28815">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="28813">
+        <label>thread</label>
+      </node>
+      <node id="28801">
+        <label>type_traits</label>
+      </node>
+      <node id="28777">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="28771">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="28795">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="28773" relation="include">
+        </childnode>
+        <childnode refid="28774" relation="include">
+        </childnode>
+        <childnode refid="28775" relation="include">
+        </childnode>
+        <childnode refid="28776" relation="include">
+        </childnode>
+        <childnode refid="28796" relation="include">
+        </childnode>
+      </node>
+      <node id="28767">
+        <label>cstring</label>
+      </node>
+      <node id="28786">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="28775">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="28758">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp</label>
+        <link refid="nguyen__widrow__init_8hpp"/>
+        <childnode refid="28759" relation="include">
+        </childnode>
+        <childnode refid="28816" relation="include">
+        </childnode>
+        <childnode refid="28817" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1InitTraits_3_01NguyenWidrowInitialization_01_4" prot="public">mlpack::ann::InitTraits&lt; NguyenWidrowInitialization &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization" prot="public">mlpack::ann::NguyenWidrowInitialization</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Definition and implementation of the Nguyen-Widrow method. This initialization rule initialize the weights so that the active regions of the neurons are approximately evenly distributed over the input space.</para><para>For more information, see the following paper.</para><para><programlisting><codeline><highlight class="normal">@inproceedings{NguyenIJCNN1990,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Improving<sp/>the<sp/>learning<sp/>speed<sp/>of<sp/>2-layer<sp/>neural<sp/>networks<sp/>by<sp/>choosing</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>initial<sp/>values<sp/>of<sp/>the<sp/>adaptive<sp/>weights},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Neural<sp/>Networks,<sp/>1990.,<sp/>1990<sp/>IJCNN<sp/>International<sp/>Joint</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Conference<sp/>on},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={1990}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="26"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_INIT_RULES_NGUYEN_WIDROW_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_INIT_RULES_NGUYEN_WIDROW_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="init__rules__traits_8hpp" kindref="compound">init_rules_traits.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ann_2init__rules_2random__init_8hpp" kindref="compound">random_init.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization" kindref="compound">NguyenWidrowInitialization</ref></highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="63" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1aebb458897ab391c33618e53bf599a51c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1aebb458897ab391c33618e53bf599a51c" kindref="member">NguyenWidrowInitialization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerBound<sp/>=<sp/>-0.5,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperBound<sp/>=<sp/>0.5)<sp/>:</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lowerBound(lowerBound),<sp/>upperBound(upperBound)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(arma::Mat&lt;eT&gt;&amp;<sp/>W,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols)</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1RandomInitialization" kindref="compound">RandomInitialization</ref><sp/>randomInit(lowerBound,<sp/>upperBound);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>randomInit.<ref refid="classmlpack_1_1ann_1_1RandomInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W,<sp/>rows,<sp/>cols);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>beta<sp/>=<sp/>0.7<sp/>*<sp/>std::pow(cols,<sp/>1.0<sp/>/<sp/>rows);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>W<sp/>*=<sp/>(beta<sp/>/<sp/>arma::norm(W));</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="92" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1af2d770912321b8b9ca7b03ab98f735c0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1af2d770912321b8b9ca7b03ab98f735c0" kindref="member">Initialize</ref>(arma::Mat&lt;eT&gt;&amp;<sp/>W)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1RandomInitialization" kindref="compound">RandomInitialization</ref><sp/>randomInit(lowerBound,<sp/>upperBound);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>randomInit.<ref refid="classmlpack_1_1ann_1_1RandomInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>beta<sp/>=<sp/>0.7<sp/>*<sp/>std::pow(W.n_cols,<sp/>1.0<sp/>/<sp/>W.n_rows);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>W<sp/>*=<sp/>(beta<sp/>/<sp/>arma::norm(W));</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="111" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" kindref="member">Initialize</ref>(arma::Cube&lt;eT&gt;&amp;<sp/>W,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>slices)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(W.is_empty())</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>W.set_size(rows,<sp/>cols,<sp/>slices);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>slices;<sp/>++i)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W.slice(i),<sp/>rows,<sp/>cols);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="130" refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1ae2f3e6d570824a160b687ff9f734f83c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1ae2f3e6d570824a160b687ff9f734f83c" kindref="member">Initialize</ref>(arma::Cube&lt;eT&gt;&amp;<sp/>W)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(W.is_empty())</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Cannot<sp/>initialize<sp/>an<sp/>empty<sp/>matrix.&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>W.n_slices;<sp/>++i)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W.slice(i));</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerBound;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperBound;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>NguyenWidrowInitialization</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="149" refid="classmlpack_1_1ann_1_1InitTraits_3_01NguyenWidrowInitialization_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1InitTraits" kindref="compound">InitTraits</ref>&lt;<ref refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization" kindref="compound">NguyenWidrowInitialization</ref>&gt;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="153" refid="classmlpack_1_1ann_1_1InitTraits_3_01NguyenWidrowInitialization_01_4_1a6aadf10c95af2a5f0ab17196f682ffd4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseLayer<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp"/>
+  </compounddef>
+</doxygen>

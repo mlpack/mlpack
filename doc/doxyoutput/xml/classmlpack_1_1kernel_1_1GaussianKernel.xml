@@ -1,0 +1,373 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kernel_1_1GaussianKernel" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kernel::GaussianKernel</compoundname>
+    <includes refid="gaussian__kernel_8hpp" local="no">gaussian_kernel.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kernel_1_1GaussianKernel_1a3a14628ead92d0afcce5f53e0ff017c8" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double bandwidth</definition>
+        <argsstring></argsstring>
+        <name>bandwidth</name>
+        <briefdescription>
+<para>Kernel bandwidth. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kernel_1_1GaussianKernel_1a72f9e01745b3a8203067ab84aefc9aea" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gamma</definition>
+        <argsstring></argsstring>
+        <name>gamma</name>
+        <briefdescription>
+<para>Precalculated constant depending on the bandwidth; <formula id="48">$ \gamma = -\frac{1}{2 \mu^2} $</formula>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a3e3737b271f9d6a43319dd5aedc8390e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GaussianKernel</definition>
+        <argsstring>()</argsstring>
+        <name>GaussianKernel</name>
+        <briefdescription>
+<para>Default constructor; sets bandwidth to 1.0. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="40" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a863246483e645a55547661d9d470667e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GaussianKernel</definition>
+        <argsstring>(const double bandwidth)</argsstring>
+        <name>GaussianKernel</name>
+        <param>
+          <type>const double</type>
+          <declname>bandwidth</declname>
+        </param>
+        <briefdescription>
+<para>Construct the Gaussian kernel with a custom bandwidth. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bandwidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bandwidth of the kernel ( <formula id="35">$\mu$</formula>). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1ae9cbd816179d6c36036139ccc8fea8c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Bandwidth</definition>
+        <argsstring>() const</argsstring>
+        <name>Bandwidth</name>
+        <briefdescription>
+<para>Get the bandwidth. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="135" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a73bfbbc3f9a234670309c4895a7321e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Bandwidth</definition>
+        <argsstring>(const double bandwidth)</argsstring>
+        <name>Bandwidth</name>
+        <param>
+          <type>const double</type>
+          <declname>bandwidth</declname>
+        </param>
+        <briefdescription>
+<para>Modify the bandwidth. </para>        </briefdescription>
+        <detaileddescription>
+<para>This takes an argument because we must update the precalculated constant (gamma). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="139" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1af3077f924263d1932950f4f7176c93eb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecTypeA</type>
+          </param>
+          <param>
+            <type>typename VecTypeB</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double ConvolutionIntegral</definition>
+        <argsstring>(const VecTypeA &amp;a, const VecTypeB &amp;b)</argsstring>
+        <name>ConvolutionIntegral</name>
+        <param>
+          <type>const VecTypeA &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const VecTypeB &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Obtain a convolution integral of the Gaussian kernel. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The convolution integral. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="127" bodyend="131"/>
+        <references refid="classmlpack_1_1kernel_1_1GaussianKernel_1a84c3aeba25ea7703bd2d4f85a54301da" compoundref="gaussian__kernel_8hpp" startline="65" endline="69">GaussianKernel::Evaluate</references>
+        <references refid="classmlpack_1_1metric_1_1LMetric_1af39380107875eb94f0efef7d37cc57df">LMetric&lt; TPower, TTakeRoot &gt;::Evaluate</references>
+        <references refid="classmlpack_1_1kernel_1_1GaussianKernel_1aa500736f2a5dac08fa9027543c2b05cb" compoundref="gaussian__kernel_8hpp" startline="114" endline="117">GaussianKernel::Normalizer</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a84c3aeba25ea7703bd2d4f85a54301da" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecTypeA</type>
+          </param>
+          <param>
+            <type>typename VecTypeB</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const VecTypeA &amp;a, const VecTypeB &amp;b) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const VecTypeA &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const VecTypeB &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Evaluation of the Gaussian kernel. </para>        </briefdescription>
+        <detaileddescription>
+<para>This could be generalized to use any distance metric, not the Euclidean distance, but for now, the Euclidean distance is used.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>VecType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of vector (likely arma::vec or arma::spvec). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>K(a, b) using the bandwidth ( <formula id="35">$\mu$</formula>) specified in the constructor. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="65" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="65" bodyend="69"/>
+        <references refid="classmlpack_1_1metric_1_1LMetric_1af39380107875eb94f0efef7d37cc57df">LMetric&lt; TPower, TTakeRoot &gt;::Evaluate</references>
+        <referencedby refid="classmlpack_1_1kernel_1_1GaussianKernel_1af3077f924263d1932950f4f7176c93eb" compoundref="gaussian__kernel_8hpp" startline="127" endline="131">GaussianKernel::ConvolutionIntegral</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a031ed73efe13c6e6bc805006bd249238" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const double t) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const double</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Evaluation of the Gaussian kernel given the distance between two points. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The distance between the two points the kernel is evaluated on. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>K(t) using the bandwidth ( <formula id="35">$\mu$</formula>) specified in the constructor. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="78" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1aebe61d5199ae22a5d9101a5cee3dfbd7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Gamma</definition>
+        <argsstring>() const</argsstring>
+        <name>Gamma</name>
+        <briefdescription>
+<para>Get the precalculated constant. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="146" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a6abdb9c6ceb3252af988ab5fb5f13764" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Gradient</definition>
+        <argsstring>(const double t) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const double</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Evaluation of the gradient of Gaussian kernel given the distance between two points. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The distance between the two points the kernel is evaluated on. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>K(t) using the bandwidth ( <formula id="35">$\mu$</formula>) specified in the constructor. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="92" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a7f2c3729f3cac0b0b327ec28ccb8e1d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double GradientForSquaredDistance</definition>
+        <argsstring>(const double t) const</argsstring>
+        <name>GradientForSquaredDistance</name>
+        <param>
+          <type>const double</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Evaluation of the gradient of Gaussian kernel given the squared distance between two points. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The squared distance between the two points </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>K(t) using the bandwidth ( <formula id="35">$\mu$</formula>) specified in the constructor. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="104" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1aa500736f2a5dac08fa9027543c2b05cb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Normalizer</definition>
+        <argsstring>(const size_t dimension)</argsstring>
+        <name>Normalizer</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <briefdescription>
+<para>Obtain the normalization constant of the Gaussian kernel. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the normalization constant </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="114" bodyend="117"/>
+        <references refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" compoundref="prereqs_8hpp" startline="39">M_PI</references>
+        <referencedby refid="classmlpack_1_1kernel_1_1GaussianKernel_1af3077f924263d1932950f4f7176c93eb" compoundref="gaussian__kernel_8hpp" startline="127" endline="131">GaussianKernel::ConvolutionIntegral</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1GaussianKernel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="150" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="150" bodyend="154"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The standard Gaussian kernel. </para>    </briefdescription>
+    <detaileddescription>
+<para>Given two vectors <formula id="36">$ x $</formula>, <formula id="37">$ y $</formula>, and a bandwidth <formula id="46">$ \mu $</formula> (set in the constructor),</para><para><formula id="47">\[ K(x, y) = \exp(-\frac{|| x - y ||^2}{2 \mu^2}). \]</formula></para><para>The implementation is all in the header file because it is so simple. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/kernels/gaussian_kernel.hpp" bodystart="34" bodyend="163"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a3a14628ead92d0afcce5f53e0ff017c8" prot="private" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>bandwidth</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1ae9cbd816179d6c36036139ccc8fea8c8" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Bandwidth</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a73bfbbc3f9a234670309c4895a7321e1" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Bandwidth</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1af3077f924263d1932950f4f7176c93eb" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>ConvolutionIntegral</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a84c3aeba25ea7703bd2d4f85a54301da" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a031ed73efe13c6e6bc805006bd249238" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a72f9e01745b3a8203067ab84aefc9aea" prot="private" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>gamma</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1aebe61d5199ae22a5d9101a5cee3dfbd7" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Gamma</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a3e3737b271f9d6a43319dd5aedc8390e" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>GaussianKernel</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a863246483e645a55547661d9d470667e" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>GaussianKernel</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a6abdb9c6ceb3252af988ab5fb5f13764" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a7f2c3729f3cac0b0b327ec28ccb8e1d3" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>GradientForSquaredDistance</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1aa500736f2a5dac08fa9027543c2b05cb" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>Normalizer</name></member>
+      <member refid="classmlpack_1_1kernel_1_1GaussianKernel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::kernel::GaussianKernel</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

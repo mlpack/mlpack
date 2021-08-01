@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1ad9594e9891b032f0dd0279960dc861a5:
+
+Define CATCH_INTERNAL_STOP_WARNINGS_SUPPRESSION
+===============================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CATCH_INTERNAL_STOP_WARNINGS_SUPPRESSION

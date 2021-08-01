@@ -1,0 +1,140 @@
+\section{Axis\+Parallel\+Proj\+Vector Class Reference}
+\label{classmlpack_1_1tree_1_1AxisParallelProjVector}\index{Axis\+Parallel\+Proj\+Vector@{Axis\+Parallel\+Proj\+Vector}}
+
+
+\doxyref{Axis\+Parallel\+Proj\+Vector}{p.}{classmlpack_1_1tree_1_1AxisParallelProjVector} defines an axis-\/parallel projection vector.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Axis\+Parallel\+Proj\+Vector} (size\+\_\+t dim=0)
+\begin{DoxyCompactList}\small\item\em Create the projection vector based on the specified dimension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\double \textbf{ Project} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Project the given point on the projection vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Elem\+Type $>$ }\\math\+::\+Range\+Type$<$ Elem\+Type $>$ \textbf{ Project} (const \textbf{ bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type, Elem\+Type $>$ \&bound) const
+\begin{DoxyCompactList}\small\item\em Project the given hrect bound on the projection vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Vec\+Type $>$ }\\math\+::\+Range\+Type$<$ typename Vec\+Type\+::elem\+\_\+type $>$ \textbf{ Project} (const \textbf{ bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&bound) const
+\begin{DoxyCompactList}\small\item\em Project the given ball bound on the projection vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Axis\+Parallel\+Proj\+Vector}{p.}{classmlpack_1_1tree_1_1AxisParallelProjVector} defines an axis-\/parallel projection vector. 
+
+We can efficiently project points, simply analyzing a specific dimension. 
+
+Definition at line 24 of file projection\+\_\+vector.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1AxisParallelProjVector_a6c381c346dbaf1c4d8385dbb19657c60}} 
+\index{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}!Axis\+Parallel\+Proj\+Vector@{Axis\+Parallel\+Proj\+Vector}}
+\index{Axis\+Parallel\+Proj\+Vector@{Axis\+Parallel\+Proj\+Vector}!mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}}
+\subsubsection{Axis\+Parallel\+Proj\+Vector()}
+{\footnotesize\ttfamily \textbf{ Axis\+Parallel\+Proj\+Vector} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{dim = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the projection vector based on the specified dimension. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dim} & Dimension to be considered. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 35 of file projection\+\_\+vector.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1AxisParallelProjVector_a3992c37d68bb4c57a67c6f422ad60133}} 
+\index{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}}
+\subsubsection{Project()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily double Project (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given point on the projection vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to be projected. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 45 of file projection\+\_\+vector.\+hpp.
+
+
+
+Referenced by Proj\+Vector\+::\+Project().
+
+\mbox{\label{classmlpack_1_1tree_1_1AxisParallelProjVector_a60b8471a434438329ec195263db2ea57}} 
+\index{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}}
+\subsubsection{Project()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily math\+::\+Range\+Type$<$Elem\+Type$>$ Project (\begin{DoxyParamCaption}\item[{const \textbf{ bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type, Elem\+Type $>$ \&}]{bound }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given hrect bound on the projection vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & Bound to be projected. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Range of projected values. 
+\end{DoxyReturn}
+
+
+Definition at line 58 of file projection\+\_\+vector.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1AxisParallelProjVector_aa2d4cdbd216dff439dbffc30905bcc40}} 
+\index{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}}
+\subsubsection{Project()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily math\+::\+Range\+Type$<$typename Vec\+Type\+::elem\+\_\+type$>$ Project (\begin{DoxyParamCaption}\item[{const \textbf{ bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{bound }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given ball bound on the projection vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & Bound to be projected. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Range of projected values. 
+\end{DoxyReturn}
+
+
+Definition at line 71 of file projection\+\_\+vector.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1AxisParallelProjVector_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector@{mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 81 of file projection\+\_\+vector.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/space\+\_\+split/\textbf{ projection\+\_\+vector.\+hpp}\end{DoxyCompactItemize}

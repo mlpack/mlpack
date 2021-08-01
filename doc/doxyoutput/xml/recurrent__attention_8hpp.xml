@@ -1,0 +1,1660 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="recurrent__attention_8hpp" kind="file" language="C++">
+    <compoundname>recurrent_attention.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="no">boost/ptr_container/ptr_vector.hpp</includes>
+    <includes refid="delta__visitor_8hpp" local="yes">../visitor/delta_visitor.hpp</includes>
+    <includes refid="output__parameter__visitor_8hpp" local="yes">../visitor/output_parameter_visitor.hpp</includes>
+    <includes refid="reset__visitor_8hpp" local="yes">../visitor/reset_visitor.hpp</includes>
+    <includes refid="weight__size__visitor_8hpp" local="yes">../visitor/weight_size_visitor.hpp</includes>
+    <includes refid="layer__types_8hpp" local="yes">layer_types.hpp</includes>
+    <includes refid="add__merge_8hpp" local="yes">add_merge.hpp</includes>
+    <includes refid="sequential_8hpp" local="yes">sequential.hpp</includes>
+    <includes local="yes">recurrent_attention_impl.hpp</includes>
+    <includedby refid="layer_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</includedby>
+    <incdepgraph>
+      <node id="36726">
+        <label>list</label>
+      </node>
+      <node id="36844">
+        <label>radial_basis_function_impl.hpp</label>
+      </node>
+      <node id="36723">
+        <label>atomic</label>
+      </node>
+      <node id="36822">
+        <label>mlpack/methods/ann/layer/reinforce_normal.hpp</label>
+        <link refid="reinforce__normal_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36823" relation="include">
+        </childnode>
+      </node>
+      <node id="36810">
+        <label>mlpack/methods/ann/layer/noisylinear.hpp</label>
+        <link refid="noisylinear_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36811" relation="include">
+        </childnode>
+      </node>
+      <node id="36808">
+        <label>mlpack/methods/ann/layer/lp_pooling.hpp</label>
+        <link refid="lp__pooling_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36809" relation="include">
+        </childnode>
+      </node>
+      <node id="36802">
+        <label>mlpack/methods/ann/layer/multiply_constant.hpp</label>
+        <link refid="multiply__constant_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36803" relation="include">
+        </childnode>
+      </node>
+      <node id="36713">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="36689">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="36766">
+        <label>concatenate_impl.hpp</label>
+      </node>
+      <node id="36767">
+        <label>mlpack/methods/ann/layer/dropout.hpp</label>
+        <link refid="dropout_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36768" relation="include">
+        </childnode>
+      </node>
+      <node id="36725">
+        <label>iomanip</label>
+      </node>
+      <node id="36750">
+        <label>mlpack/methods/ann/activation_functions/mish_function.hpp</label>
+        <link refid="mish__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36745" relation="include">
+        </childnode>
+      </node>
+      <node id="36843">
+        <label>mlpack/methods/ann/layer/radial_basis_function.hpp</label>
+        <link refid="radial__basis__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36755" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36844" relation="include">
+        </childnode>
+      </node>
+      <node id="36839">
+        <label>mlpack/methods/ann/layer/isrlu.hpp</label>
+        <link refid="isrlu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36840" relation="include">
+        </childnode>
+      </node>
+      <node id="36817">
+        <label>parametric_relu_impl.hpp</label>
+      </node>
+      <node id="36790">
+        <label>mlpack/methods/ann/layer/lookup.hpp</label>
+        <link refid="lookup_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36791" relation="include">
+        </childnode>
+      </node>
+      <node id="36871">
+        <label>recurrent_attention_impl.hpp</label>
+      </node>
+      <node id="36819">
+        <label>pixel_shuffle_impl.hpp</label>
+      </node>
+      <node id="36740">
+        <label>alpha_dropout_impl.hpp</label>
+      </node>
+      <node id="36794">
+        <label>softmax_impl.hpp</label>
+      </node>
+      <node id="36861">
+        <label>sequential.hpp</label>
+        <link refid="sequential_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36733" relation="include">
+        </childnode>
+        <childnode refid="36858" relation="include">
+        </childnode>
+        <childnode refid="36862" relation="include">
+        </childnode>
+        <childnode refid="36734" relation="include">
+        </childnode>
+        <childnode refid="36864" relation="include">
+        </childnode>
+        <childnode refid="36851" relation="include">
+        </childnode>
+        <childnode refid="36866" relation="include">
+        </childnode>
+        <childnode refid="36868" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36857" relation="include">
+        </childnode>
+        <childnode refid="36870" relation="include">
+        </childnode>
+      </node>
+      <node id="36698">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="36699" relation="include">
+        </childnode>
+        <childnode refid="36701" relation="include">
+        </childnode>
+      </node>
+      <node id="36795">
+        <label>mlpack/methods/ann/init_rules/glorot_init.hpp</label>
+        <link refid="glorot__init_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36796" relation="include">
+        </childnode>
+        <childnode refid="36797" relation="include">
+        </childnode>
+      </node>
+      <node id="36681">
+        <label>cstdint</label>
+      </node>
+      <node id="36690">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="36850">
+        <label>delta_visitor_impl.hpp</label>
+      </node>
+      <node id="36697">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="36769">
+        <label>mlpack/methods/ann/layer/elu.hpp</label>
+        <link refid="elu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36770" relation="include">
+        </childnode>
+      </node>
+      <node id="36815">
+        <label>adaptive_mean_pooling_impl.hpp</label>
+      </node>
+      <node id="36799">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="36720">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="36811">
+        <label>noisylinear_impl.hpp</label>
+      </node>
+      <node id="36805">
+        <label>max_pooling_impl.hpp</label>
+      </node>
+      <node id="36759">
+        <label>mlpack/methods/ann/layer/batch_norm.hpp</label>
+        <link refid="batch__norm_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36760" relation="include">
+        </childnode>
+      </node>
+      <node id="36743">
+        <label>mlpack/methods/ann/activation_functions/identity_function.hpp</label>
+        <link refid="identity__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36832">
+        <label>mlpack/methods/ann/layer/subview.hpp</label>
+        <link refid="subview_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36743" relation="include">
+        </childnode>
+      </node>
+      <node id="36830">
+        <label>bernoulli_distribution_impl.hpp</label>
+      </node>
+      <node id="36710">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="36677">
+        <label>cmath</label>
+      </node>
+      <node id="36696">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="36869">
+        <label>input_shape_visitor_impl.hpp</label>
+      </node>
+      <node id="36820">
+        <label>mlpack/methods/ann/layer/positional_encoding.hpp</label>
+        <link refid="positional__encoding_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36821" relation="include">
+        </childnode>
+      </node>
+      <node id="36851">
+        <label>../visitor/output_parameter_visitor.hpp</label>
+        <link refid="output__parameter__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36852" relation="include">
+        </childnode>
+      </node>
+      <node id="36685">
+        <label>stdexcept</label>
+      </node>
+      <node id="36784">
+        <label>mlpack/methods/ann/regularizer/no_regularizer.hpp</label>
+        <link refid="no__regularizer_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36859">
+        <label>delete_visitor_impl.hpp</label>
+      </node>
+      <node id="36870">
+        <label>sequential_impl.hpp</label>
+      </node>
+      <node id="36705">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="36690" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36691" relation="include">
+        </childnode>
+      </node>
+      <node id="36852">
+        <label>output_parameter_visitor_impl.hpp</label>
+      </node>
+      <node id="36786">
+        <label>mlpack/methods/ann/layer/linear3d.hpp</label>
+        <link refid="linear3d_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36784" relation="include">
+        </childnode>
+        <childnode refid="36787" relation="include">
+        </childnode>
+      </node>
+      <node id="36729">
+        <label>string</label>
+      </node>
+      <node id="36746">
+        <label>mlpack/methods/ann/activation_functions/tanh_function.hpp</label>
+        <link refid="tanh__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36717">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="36718" relation="include">
+        </childnode>
+        <childnode refid="36684" relation="include">
+        </childnode>
+      </node>
+      <node id="36814">
+        <label>mlpack/methods/ann/layer/adaptive_mean_pooling.hpp</label>
+        <link refid="adaptive__mean__pooling_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36815" relation="include">
+        </childnode>
+      </node>
+      <node id="36744">
+        <label>mlpack/methods/ann/activation_functions/rectifier_function.hpp</label>
+        <link refid="rectifier__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36745" relation="include">
+        </childnode>
+      </node>
+      <node id="36836">
+        <label>hardshrink_impl.hpp</label>
+      </node>
+      <node id="36727">
+        <label>map</label>
+      </node>
+      <node id="36825">
+        <label>reparametrization_impl.hpp</label>
+      </node>
+      <node id="36858">
+        <label>../visitor/delete_visitor.hpp</label>
+        <link refid="delete__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36859" relation="include">
+        </childnode>
+      </node>
+      <node id="36738">
+        <label>add_impl.hpp</label>
+      </node>
+      <node id="36849">
+        <label>negative_log_likelihood_impl.hpp</label>
+      </node>
+      <node id="36737">
+        <label>mlpack/methods/ann/layer/add.hpp</label>
+        <link refid="layer_2add_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36738" relation="include">
+        </childnode>
+      </node>
+      <node id="36679">
+        <label>cfloat</label>
+      </node>
+      <node id="36751">
+        <label>mlpack/methods/ann/activation_functions/lisht_function.hpp</label>
+        <link refid="lisht__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36745" relation="include">
+        </childnode>
+      </node>
+      <node id="36709">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="36834">
+        <label>virtual_batch_norm_impl.hpp</label>
+      </node>
+      <node id="36731">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="36693">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="36716">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="36717" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36700" relation="include">
+        </childnode>
+        <childnode refid="36718" relation="include">
+        </childnode>
+      </node>
+      <node id="36803">
+        <label>multiply_constant_impl.hpp</label>
+      </node>
+      <node id="36778">
+        <label>leaky_relu_impl.hpp</label>
+      </node>
+      <node id="36796">
+        <label>random_init.hpp</label>
+        <link refid="ann_2init__rules_2random__init_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36764">
+        <label>constant_impl.hpp</label>
+      </node>
+      <node id="36772">
+        <label>hard_tanh_impl.hpp</label>
+      </node>
+      <node id="36706">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="36823">
+        <label>reinforce_normal_impl.hpp</label>
+      </node>
+      <node id="36779">
+        <label>mlpack/methods/ann/layer/c_relu.hpp</label>
+        <link refid="c__relu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36780" relation="include">
+        </childnode>
+      </node>
+      <node id="36818">
+        <label>mlpack/methods/ann/layer/pixel_shuffle.hpp</label>
+        <link refid="pixel__shuffle_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36819" relation="include">
+        </childnode>
+      </node>
+      <node id="36704">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="36690" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36691" relation="include">
+        </childnode>
+      </node>
+      <node id="36763">
+        <label>mlpack/methods/ann/layer/constant.hpp</label>
+        <link refid="constant_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36764" relation="include">
+        </childnode>
+      </node>
+      <node id="36785">
+        <label>linear_no_bias_impl.hpp</label>
+      </node>
+      <node id="36707">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="36690" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36691" relation="include">
+        </childnode>
+      </node>
+      <node id="36695">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="36824">
+        <label>mlpack/methods/ann/layer/reparametrization.hpp</label>
+        <link refid="reparametrization_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36747" relation="include">
+        </childnode>
+        <childnode refid="36825" relation="include">
+        </childnode>
+      </node>
+      <node id="36847">
+        <label>mlpack/methods/ann/convolution_rules/fft_convolution.hpp</label>
+        <link refid="fft__convolution_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36845" relation="include">
+        </childnode>
+      </node>
+      <node id="36741">
+        <label>mlpack/methods/ann/layer/base_layer.hpp</label>
+        <link refid="base__layer_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36742" relation="include">
+        </childnode>
+        <childnode refid="36743" relation="include">
+        </childnode>
+        <childnode refid="36744" relation="include">
+        </childnode>
+        <childnode refid="36746" relation="include">
+        </childnode>
+        <childnode refid="36747" relation="include">
+        </childnode>
+        <childnode refid="36748" relation="include">
+        </childnode>
+        <childnode refid="36749" relation="include">
+        </childnode>
+        <childnode refid="36750" relation="include">
+        </childnode>
+        <childnode refid="36751" relation="include">
+        </childnode>
+        <childnode refid="36752" relation="include">
+        </childnode>
+        <childnode refid="36753" relation="include">
+        </childnode>
+        <childnode refid="36754" relation="include">
+        </childnode>
+        <childnode refid="36755" relation="include">
+        </childnode>
+        <childnode refid="36756" relation="include">
+        </childnode>
+        <childnode refid="36757" relation="include">
+        </childnode>
+        <childnode refid="36758" relation="include">
+        </childnode>
+      </node>
+      <node id="36715">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="36691" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36703" relation="include">
+        </childnode>
+        <childnode refid="36712" relation="include">
+        </childnode>
+      </node>
+      <node id="36719">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="36720" relation="include">
+        </childnode>
+      </node>
+      <node id="36846">
+        <label>mlpack/methods/ann/convolution_rules/naive_convolution.hpp</label>
+        <link refid="naive__convolution_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36845" relation="include">
+        </childnode>
+      </node>
+      <node id="36864">
+        <label>../visitor/output_height_visitor.hpp</label>
+        <link refid="output__height__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36865" relation="include">
+        </childnode>
+      </node>
+      <node id="36776">
+        <label>layer_norm_impl.hpp</label>
+      </node>
+      <node id="36721">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="36676">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="36677" relation="include">
+        </childnode>
+        <childnode refid="36678" relation="include">
+        </childnode>
+        <childnode refid="36679" relation="include">
+        </childnode>
+        <childnode refid="36680" relation="include">
+        </childnode>
+        <childnode refid="36681" relation="include">
+        </childnode>
+        <childnode refid="36682" relation="include">
+        </childnode>
+        <childnode refid="36683" relation="include">
+        </childnode>
+        <childnode refid="36684" relation="include">
+        </childnode>
+        <childnode refid="36685" relation="include">
+        </childnode>
+        <childnode refid="36686" relation="include">
+        </childnode>
+        <childnode refid="36687" relation="include">
+        </childnode>
+        <childnode refid="36688" relation="include">
+        </childnode>
+        <childnode refid="36689" relation="include">
+        </childnode>
+        <childnode refid="36690" relation="include">
+        </childnode>
+        <childnode refid="36691" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36694" relation="include">
+        </childnode>
+        <childnode refid="36695" relation="include">
+        </childnode>
+        <childnode refid="36696" relation="include">
+        </childnode>
+        <childnode refid="36697" relation="include">
+        </childnode>
+        <childnode refid="36698" relation="include">
+        </childnode>
+        <childnode refid="36702" relation="include">
+        </childnode>
+        <childnode refid="36703" relation="include">
+        </childnode>
+        <childnode refid="36704" relation="include">
+        </childnode>
+        <childnode refid="36705" relation="include">
+        </childnode>
+        <childnode refid="36706" relation="include">
+        </childnode>
+        <childnode refid="36707" relation="include">
+        </childnode>
+        <childnode refid="36708" relation="include">
+        </childnode>
+        <childnode refid="36714" relation="include">
+        </childnode>
+        <childnode refid="36715" relation="include">
+        </childnode>
+        <childnode refid="36712" relation="include">
+        </childnode>
+        <childnode refid="36716" relation="include">
+        </childnode>
+        <childnode refid="36719" relation="include">
+        </childnode>
+        <childnode refid="36721" relation="include">
+        </childnode>
+        <childnode refid="36722" relation="include">
+        </childnode>
+        <childnode refid="36731" relation="include">
+        </childnode>
+        <childnode refid="36732" relation="include">
+        </childnode>
+      </node>
+      <node id="36756">
+        <label>mlpack/methods/ann/activation_functions/hard_swish_function.hpp</label>
+        <link refid="hard__swish__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36792">
+        <label>mlpack/methods/ann/layer/multihead_attention.hpp</label>
+        <link refid="multihead__attention_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36793" relation="include">
+        </childnode>
+        <childnode refid="36767" relation="include">
+        </childnode>
+        <childnode refid="36795" relation="include">
+        </childnode>
+        <childnode refid="36784" relation="include">
+        </childnode>
+        <childnode refid="36801" relation="include">
+        </childnode>
+      </node>
+      <node id="36736">
+        <label>mlpack/methods/ann/layer/layer_types.hpp</label>
+        <link refid="layer__types_8hpp"/>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36737" relation="include">
+        </childnode>
+        <childnode refid="36739" relation="include">
+        </childnode>
+        <childnode refid="36741" relation="include">
+        </childnode>
+        <childnode refid="36759" relation="include">
+        </childnode>
+        <childnode refid="36761" relation="include">
+        </childnode>
+        <childnode refid="36763" relation="include">
+        </childnode>
+        <childnode refid="36765" relation="include">
+        </childnode>
+        <childnode refid="36767" relation="include">
+        </childnode>
+        <childnode refid="36769" relation="include">
+        </childnode>
+        <childnode refid="36771" relation="include">
+        </childnode>
+        <childnode refid="36773" relation="include">
+        </childnode>
+        <childnode refid="36775" relation="include">
+        </childnode>
+        <childnode refid="36777" relation="include">
+        </childnode>
+        <childnode refid="36779" relation="include">
+        </childnode>
+        <childnode refid="36781" relation="include">
+        </childnode>
+        <childnode refid="36783" relation="include">
+        </childnode>
+        <childnode refid="36786" relation="include">
+        </childnode>
+        <childnode refid="36788" relation="include">
+        </childnode>
+        <childnode refid="36790" relation="include">
+        </childnode>
+        <childnode refid="36792" relation="include">
+        </childnode>
+        <childnode refid="36802" relation="include">
+        </childnode>
+        <childnode refid="36804" relation="include">
+        </childnode>
+        <childnode refid="36806" relation="include">
+        </childnode>
+        <childnode refid="36808" relation="include">
+        </childnode>
+        <childnode refid="36810" relation="include">
+        </childnode>
+        <childnode refid="36812" relation="include">
+        </childnode>
+        <childnode refid="36814" relation="include">
+        </childnode>
+        <childnode refid="36816" relation="include">
+        </childnode>
+        <childnode refid="36818" relation="include">
+        </childnode>
+        <childnode refid="36820" relation="include">
+        </childnode>
+        <childnode refid="36822" relation="include">
+        </childnode>
+        <childnode refid="36824" relation="include">
+        </childnode>
+        <childnode refid="36826" relation="include">
+        </childnode>
+        <childnode refid="36793" relation="include">
+        </childnode>
+        <childnode refid="36828" relation="include">
+        </childnode>
+        <childnode refid="36832" relation="include">
+        </childnode>
+        <childnode refid="36833" relation="include">
+        </childnode>
+        <childnode refid="36835" relation="include">
+        </childnode>
+        <childnode refid="36837" relation="include">
+        </childnode>
+        <childnode refid="36839" relation="include">
+        </childnode>
+        <childnode refid="36841" relation="include">
+        </childnode>
+        <childnode refid="36843" relation="include">
+        </childnode>
+        <childnode refid="36845" relation="include">
+        </childnode>
+        <childnode refid="36846" relation="include">
+        </childnode>
+        <childnode refid="36847" relation="include">
+        </childnode>
+        <childnode refid="36784" relation="include">
+        </childnode>
+        <childnode refid="36848" relation="include">
+        </childnode>
+      </node>
+      <node id="36800">
+        <label>random</label>
+      </node>
+      <node id="36857">
+        <label>add_merge.hpp</label>
+        <link refid="add__merge_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36858" relation="include">
+        </childnode>
+        <childnode refid="36734" relation="include">
+        </childnode>
+        <childnode refid="36851" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36860" relation="include">
+        </childnode>
+      </node>
+      <node id="36783">
+        <label>mlpack/methods/ann/layer/linear_no_bias.hpp</label>
+        <link refid="linear__no__bias_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36784" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36785" relation="include">
+        </childnode>
+      </node>
+      <node id="36733">
+        <label>boost/ptr_container/ptr_vector.hpp</label>
+      </node>
+      <node id="36827">
+        <label>select_impl.hpp</label>
+      </node>
+      <node id="36835">
+        <label>mlpack/methods/ann/layer/hardshrink.hpp</label>
+        <link refid="hardshrink_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36836" relation="include">
+        </childnode>
+      </node>
+      <node id="36682">
+        <label>cstdio</label>
+      </node>
+      <node id="36842">
+        <label>softshrink_impl.hpp</label>
+      </node>
+      <node id="36686">
+        <label>tuple</label>
+      </node>
+      <node id="36691">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="36782">
+        <label>flexible_relu_impl.hpp</label>
+      </node>
+      <node id="36809">
+        <label>lp_pooling_impl.hpp</label>
+      </node>
+      <node id="36708">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="36691" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36695" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36710" relation="include">
+        </childnode>
+        <childnode refid="36711" relation="include">
+        </childnode>
+        <childnode refid="36712" relation="include">
+        </childnode>
+      </node>
+      <node id="36838">
+        <label>celu_impl.hpp</label>
+      </node>
+      <node id="36831">
+        <label>spatial_dropout_impl.hpp</label>
+      </node>
+      <node id="36797">
+        <label>gaussian_init.hpp</label>
+        <link refid="gaussian__init_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36798" relation="include">
+        </childnode>
+      </node>
+      <node id="36853">
+        <label>../visitor/reset_visitor.hpp</label>
+        <link refid="reset__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36854" relation="include">
+        </childnode>
+      </node>
+      <node id="36841">
+        <label>mlpack/methods/ann/layer/softshrink.hpp</label>
+        <link refid="softshrink_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36842" relation="include">
+        </childnode>
+      </node>
+      <node id="36807">
+        <label>mean_pooling_impl.hpp</label>
+      </node>
+      <node id="36748">
+        <label>mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp</label>
+        <link refid="hard__sigmoid__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36745" relation="include">
+        </childnode>
+      </node>
+      <node id="36747">
+        <label>mlpack/methods/ann/activation_functions/softplus_function.hpp</label>
+        <link refid="softplus__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36868">
+        <label>../visitor/input_shape_visitor.hpp</label>
+        <link refid="input__shape__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36869" relation="include">
+        </childnode>
+      </node>
+      <node id="36675">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp</label>
+        <link refid="recurrent__attention_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36733" relation="include">
+        </childnode>
+        <childnode refid="36734" relation="include">
+        </childnode>
+        <childnode refid="36851" relation="include">
+        </childnode>
+        <childnode refid="36853" relation="include">
+        </childnode>
+        <childnode refid="36855" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36857" relation="include">
+        </childnode>
+        <childnode refid="36861" relation="include">
+        </childnode>
+        <childnode refid="36871" relation="include">
+        </childnode>
+      </node>
+      <node id="36863">
+        <label>copy_visitor_impl.hpp</label>
+      </node>
+      <node id="36813">
+        <label>adaptive_max_pooling_impl.hpp</label>
+      </node>
+      <node id="36801">
+        <label>multihead_attention_impl.hpp</label>
+      </node>
+      <node id="36798">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36799" relation="include">
+        </childnode>
+        <childnode refid="36800" relation="include">
+        </childnode>
+      </node>
+      <node id="36848">
+        <label>mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp</label>
+        <link refid="negative__log__likelihood_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36849" relation="include">
+        </childnode>
+      </node>
+      <node id="36687">
+        <label>utility</label>
+      </node>
+      <node id="36804">
+        <label>mlpack/methods/ann/layer/max_pooling.hpp</label>
+        <link refid="max__pooling_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36805" relation="include">
+        </childnode>
+      </node>
+      <node id="36788">
+        <label>mlpack/methods/ann/layer/log_softmax.hpp</label>
+        <link refid="log__softmax_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36789" relation="include">
+        </childnode>
+      </node>
+      <node id="36711">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="36757">
+        <label>mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp</label>
+        <link refid="tanh__exponential__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36702">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="36840">
+        <label>isrlu_impl.hpp</label>
+      </node>
+      <node id="36867">
+        <label>output_width_visitor_impl.hpp</label>
+      </node>
+      <node id="36793">
+        <label>mlpack/methods/ann/layer/softmax.hpp</label>
+        <link refid="softmax_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36794" relation="include">
+        </childnode>
+      </node>
+      <node id="36699">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="36700" relation="include">
+        </childnode>
+      </node>
+      <node id="36854">
+        <label>reset_visitor_impl.hpp</label>
+      </node>
+      <node id="36855">
+        <label>../visitor/weight_size_visitor.hpp</label>
+        <link refid="weight__size__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36856" relation="include">
+        </childnode>
+      </node>
+      <node id="36722">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="36723" relation="include">
+        </childnode>
+        <childnode refid="36724" relation="include">
+        </childnode>
+        <childnode refid="36725" relation="include">
+        </childnode>
+        <childnode refid="36726" relation="include">
+        </childnode>
+        <childnode refid="36727" relation="include">
+        </childnode>
+        <childnode refid="36728" relation="include">
+        </childnode>
+        <childnode refid="36729" relation="include">
+        </childnode>
+        <childnode refid="36730" relation="include">
+        </childnode>
+      </node>
+      <node id="36700">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="36714">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="36712" relation="include">
+        </childnode>
+        <childnode refid="36708" relation="include">
+        </childnode>
+        <childnode refid="36715" relation="include">
+        </childnode>
+      </node>
+      <node id="36683">
+        <label>cstdlib</label>
+      </node>
+      <node id="36828">
+        <label>mlpack/methods/ann/layer/spatial_dropout.hpp</label>
+        <link refid="spatial__dropout_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36829" relation="include">
+        </childnode>
+        <childnode refid="36831" relation="include">
+        </childnode>
+      </node>
+      <node id="36678">
+        <label>cctype</label>
+      </node>
+      <node id="36806">
+        <label>mlpack/methods/ann/layer/mean_pooling.hpp</label>
+        <link refid="mean__pooling_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36807" relation="include">
+        </childnode>
+      </node>
+      <node id="36735">
+        <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
+        <link refid="layer__traits_8hpp"/>
+        <childnode refid="36717" relation="include">
+        </childnode>
+      </node>
+      <node id="36752">
+        <label>mlpack/methods/ann/activation_functions/gelu_function.hpp</label>
+        <link refid="gelu__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36755">
+        <label>mlpack/methods/ann/activation_functions/gaussian_function.hpp</label>
+        <link refid="gaussian__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36701">
+        <label>unordered_map</label>
+      </node>
+      <node id="36775">
+        <label>mlpack/methods/ann/layer/layer_norm.hpp</label>
+        <link refid="layer__norm_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36776" relation="include">
+        </childnode>
+      </node>
+      <node id="36791">
+        <label>lookup_impl.hpp</label>
+      </node>
+      <node id="36680">
+        <label>climits</label>
+      </node>
+      <node id="36773">
+        <label>mlpack/methods/ann/layer/join.hpp</label>
+        <link refid="join_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36774" relation="include">
+        </childnode>
+      </node>
+      <node id="36826">
+        <label>mlpack/methods/ann/layer/select.hpp</label>
+        <link refid="select_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36827" relation="include">
+        </childnode>
+      </node>
+      <node id="36728">
+        <label>mutex</label>
+      </node>
+      <node id="36862">
+        <label>../visitor/copy_visitor.hpp</label>
+        <link refid="copy__visitor_8hpp"/>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36863" relation="include">
+        </childnode>
+      </node>
+      <node id="36724">
+        <label>chrono</label>
+      </node>
+      <node id="36754">
+        <label>mlpack/methods/ann/activation_functions/elish_function.hpp</label>
+        <link refid="elish__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36753">
+        <label>mlpack/methods/ann/activation_functions/elliot_function.hpp</label>
+        <link refid="elliot__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36732">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="36829">
+        <label>mlpack/methods/ann/dists/bernoulli_distribution.hpp</label>
+        <link refid="bernoulli__distribution_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36742" relation="include">
+        </childnode>
+        <childnode refid="36830" relation="include">
+        </childnode>
+      </node>
+      <node id="36866">
+        <label>../visitor/output_width_visitor.hpp</label>
+        <link refid="output__width__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36867" relation="include">
+        </childnode>
+      </node>
+      <node id="36768">
+        <label>dropout_impl.hpp</label>
+      </node>
+      <node id="36789">
+        <label>log_softmax_impl.hpp</label>
+      </node>
+      <node id="36730">
+        <label>thread</label>
+      </node>
+      <node id="36734">
+        <label>../visitor/delta_visitor.hpp</label>
+        <link refid="delta__visitor_8hpp"/>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36709" relation="include">
+        </childnode>
+        <childnode refid="36850" relation="include">
+        </childnode>
+      </node>
+      <node id="36816">
+        <label>mlpack/methods/ann/layer/parametric_relu.hpp</label>
+        <link refid="parametric__relu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36817" relation="include">
+        </childnode>
+      </node>
+      <node id="36780">
+        <label>c_relu_impl.hpp</label>
+      </node>
+      <node id="36762">
+        <label>bilinear_interpolation_impl.hpp</label>
+      </node>
+      <node id="36774">
+        <label>join_impl.hpp</label>
+      </node>
+      <node id="36787">
+        <label>linear3d_impl.hpp</label>
+      </node>
+      <node id="36760">
+        <label>batch_norm_impl.hpp</label>
+      </node>
+      <node id="36837">
+        <label>mlpack/methods/ann/layer/celu.hpp</label>
+        <link refid="celu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36838" relation="include">
+        </childnode>
+      </node>
+      <node id="36781">
+        <label>mlpack/methods/ann/layer/flexible_relu.hpp</label>
+        <link refid="flexible__relu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36782" relation="include">
+        </childnode>
+      </node>
+      <node id="36718">
+        <label>type_traits</label>
+      </node>
+      <node id="36694">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="36688">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="36712">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="36690" relation="include">
+        </childnode>
+        <childnode refid="36691" relation="include">
+        </childnode>
+        <childnode refid="36692" relation="include">
+        </childnode>
+        <childnode refid="36693" relation="include">
+        </childnode>
+        <childnode refid="36713" relation="include">
+        </childnode>
+      </node>
+      <node id="36777">
+        <label>mlpack/methods/ann/layer/leaky_relu.hpp</label>
+        <link refid="leaky__relu_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36778" relation="include">
+        </childnode>
+      </node>
+      <node id="36745">
+        <label>algorithm</label>
+      </node>
+      <node id="36821">
+        <label>positional_encoding_impl.hpp</label>
+      </node>
+      <node id="36812">
+        <label>mlpack/methods/ann/layer/adaptive_max_pooling.hpp</label>
+        <link refid="adaptive__max__pooling_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36736" relation="include">
+        </childnode>
+        <childnode refid="36813" relation="include">
+        </childnode>
+      </node>
+      <node id="36845">
+        <label>mlpack/methods/ann/convolution_rules/border_modes.hpp</label>
+        <link refid="border__modes_8hpp"/>
+      </node>
+      <node id="36865">
+        <label>output_height_visitor_impl.hpp</label>
+      </node>
+      <node id="36739">
+        <label>mlpack/methods/ann/layer/alpha_dropout.hpp</label>
+        <link refid="alpha__dropout_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36740" relation="include">
+        </childnode>
+      </node>
+      <node id="36742">
+        <label>mlpack/methods/ann/activation_functions/logistic_function.hpp</label>
+        <link refid="logistic__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36771">
+        <label>mlpack/methods/ann/layer/hard_tanh.hpp</label>
+        <link refid="hard__tanh_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36772" relation="include">
+        </childnode>
+      </node>
+      <node id="36684">
+        <label>cstring</label>
+      </node>
+      <node id="36703">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="36749">
+        <label>mlpack/methods/ann/activation_functions/swish_function.hpp</label>
+        <link refid="swish__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36758">
+        <label>mlpack/methods/ann/activation_functions/silu_function.hpp</label>
+        <link refid="silu__function_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+      </node>
+      <node id="36860">
+        <label>add_merge_impl.hpp</label>
+      </node>
+      <node id="36856">
+        <label>weight_size_visitor_impl.hpp</label>
+      </node>
+      <node id="36770">
+        <label>elu_impl.hpp</label>
+      </node>
+      <node id="36692">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="36833">
+        <label>mlpack/methods/ann/layer/virtual_batch_norm.hpp</label>
+        <link refid="virtual__batch__norm_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36834" relation="include">
+        </childnode>
+      </node>
+      <node id="36761">
+        <label>mlpack/methods/ann/layer/bilinear_interpolation.hpp</label>
+        <link refid="bilinear__interpolation_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36762" relation="include">
+        </childnode>
+      </node>
+      <node id="36765">
+        <label>mlpack/methods/ann/layer/concatenate.hpp</label>
+        <link refid="concatenate_8hpp"/>
+        <childnode refid="36676" relation="include">
+        </childnode>
+        <childnode refid="36735" relation="include">
+        </childnode>
+        <childnode refid="36766" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="36873">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="36874" relation="include">
+        </childnode>
+        <childnode refid="36875" relation="include">
+        </childnode>
+        <childnode refid="36880" relation="include">
+        </childnode>
+        <childnode refid="36881" relation="include">
+        </childnode>
+        <childnode refid="36877" relation="include">
+        </childnode>
+        <childnode refid="36878" relation="include">
+        </childnode>
+        <childnode refid="36879" relation="include">
+        </childnode>
+        <childnode refid="36882" relation="include">
+        </childnode>
+      </node>
+      <node id="36881">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="36877">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="36874">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="36880">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="36882">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="36872">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp</label>
+        <link refid="recurrent__attention_8hpp"/>
+        <childnode refid="36873" relation="include">
+        </childnode>
+      </node>
+      <node id="36875">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="36876" relation="include">
+        </childnode>
+        <childnode refid="36877" relation="include">
+        </childnode>
+        <childnode refid="36878" relation="include">
+        </childnode>
+        <childnode refid="36879" relation="include">
+        </childnode>
+      </node>
+      <node id="36878">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="36876">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="36879">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1RecurrentAttention" prot="public">mlpack::ann::RecurrentAttention</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Definition of the RecurrentAttention class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;boost/ptr_container/ptr_vector.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../visitor/delta_visitor.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../visitor/output_parameter_visitor.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../visitor/reset_visitor.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../visitor/weight_size_visitor.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="layer__types_8hpp" kindref="compound">layer_types.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="add__merge_8hpp" kindref="compound">add_merge.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sequential_8hpp" kindref="compound">sequential.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputDataType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputDataType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">RecurrentAttention</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a22ed8f5cdffdce22f47f8f3768e19a47" kindref="member">RecurrentAttention</ref>();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RNNModuleType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ActionModuleType&gt;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a22ed8f5cdffdce22f47f8f3768e19a47" kindref="member">RecurrentAttention</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>outSize,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RNNModuleType&amp;<sp/>rnn,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ActionModuleType&amp;<sp/>action,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rho);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a461f849bc638c15bec262dc9c3a58abe" kindref="member">Forward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>input,<sp/>arma::Mat&lt;eT&gt;&amp;<sp/>output);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;eT&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>input<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>gy,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>g);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="104"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Calculate<sp/>the<sp/>gradient<sp/>using<sp/>the<sp/>output<sp/>delta<sp/>and<sp/>the<sp/>input<sp/>activation.</highlight></codeline>
+<codeline lineno="105"><highlight class="comment"><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>*<sp/>(input)<sp/>The<sp/>input<sp/>parameter<sp/>used<sp/>for<sp/>calculating<sp/>the<sp/>gradient.</highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>*<sp/>(error)<sp/>The<sp/>calculated<sp/>error.</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>*<sp/>(gradient)<sp/>The<sp/>calculated<sp/>gradient.</highlight></codeline>
+<codeline lineno="109"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a0f1f4e6d93472d83852731a96c8c3f59" kindref="member">Gradient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;eT&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>input<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;eT&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>error<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/></highlight><highlight class="comment">/*<sp/>gradient<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a50c707b4f7c009339d8d661539baf38f" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;LayerTypes&lt;&gt;&gt;&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a50c707b4f7c009339d8d661539baf38f" kindref="member">Model</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>network;<sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a9f4103707f4d199ce5594d239b60443e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a9f4103707f4d199ce5594d239b60443e" kindref="member">Deterministic</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>deterministic;<sp/>}</highlight></codeline>
+<codeline lineno="121" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a42d4ee3da432cff20d3a41b8b1ec801c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a42d4ee3da432cff20d3a41b8b1ec801c" kindref="member">Deterministic</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>deterministic;<sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="classmlpack_1_1ann_1_1RecurrentAttention_1aa530552c7ef915c952fbacc77b965c90" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1aa530552c7ef915c952fbacc77b965c90" kindref="member">Parameters</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="126" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a9c5c5900772a689d5a6b59778ec67120" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a9c5c5900772a689d5a6b59778ec67120" kindref="member">Parameters</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a0ee21c2a36e5abad1e7a9d5dd00849f9" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a0ee21c2a36e5abad1e7a9d5dd00849f9" kindref="member">OutputParameter</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="131" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a21d5f745f02c709625a4ee0907f004a5" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a21d5f745f02c709625a4ee0907f004a5" kindref="member">OutputParameter</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a797f7edb44dd081e5e2b3cc316eef6bd" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a797f7edb44dd081e5e2b3cc316eef6bd" kindref="member">Delta</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>delta;<sp/>}</highlight></codeline>
+<codeline lineno="136" refid="classmlpack_1_1ann_1_1RecurrentAttention_1ad6601342d560219ce951d554e69e5e87" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1ad6601342d560219ce951d554e69e5e87" kindref="member">Delta</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>delta;<sp/>}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a0f1f4e6d93472d83852731a96c8c3f59" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a0f1f4e6d93472d83852731a96c8c3f59" kindref="member">Gradient</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>gradient;<sp/>}</highlight></codeline>
+<codeline lineno="141" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a19abce4739c3b0b658b612537e21956a" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a19abce4739c3b0b658b612537e21956a" kindref="member">Gradient</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>gradient;<sp/>}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="classmlpack_1_1ann_1_1RecurrentAttention_1a366243e673681001c6080d84ea644f6a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a366243e673681001c6080d84ea644f6a" kindref="member">OutSize</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outSize;<sp/>}</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="classmlpack_1_1ann_1_1RecurrentAttention_1aae052295a422d4030c3eacfc1255b1b6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1aae052295a422d4030c3eacfc1255b1b6" kindref="member">Rho</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rho;<sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RecurrentAttention_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>IntermediateGradient()</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>intermediateGradient.zeros();</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Gradient<sp/>of<sp/>the<sp/>action<sp/>module.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backwardStep<sp/>==<sp/>(rho<sp/>-<sp/>1))</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>boost::apply_visitor(<ref refid="classmlpack_1_1ann_1_1GradientVisitor" kindref="compound">GradientVisitor</ref>(initialInput,<sp/>actionError),</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>actionModule);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>boost::apply_visitor(<ref refid="classmlpack_1_1ann_1_1GradientVisitor" kindref="compound">GradientVisitor</ref>(boost::apply_visitor(</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>outputParameterVisitor,<sp/>actionModule),<sp/>actionError),</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>actionModule);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Gradient<sp/>of<sp/>the<sp/>recurrent<sp/>module.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>boost::apply_visitor(<ref refid="classmlpack_1_1ann_1_1GradientVisitor" kindref="compound">GradientVisitor</ref>(boost::apply_visitor(</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>outputParameterVisitor,<sp/>rnnModule),<sp/>recurrentError),</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rnnModule);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>attentionGradient<sp/>+=<sp/>intermediateGradient;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>outSize;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes&lt;&gt;</ref><sp/>rnnModule;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes&lt;&gt;</ref><sp/>actionModule;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rho;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>forwardStep;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>backwardStep;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>deterministic;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>parameters;</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>std::vector&lt;LayerTypes&lt;&gt;&gt;<sp/>network;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1WeightSizeVisitor" kindref="compound">WeightSizeVisitor</ref><sp/>weightSizeVisitor;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref><sp/>deltaVisitor;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref><sp/>outputParameterVisitor;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/>std::vector&lt;arma::mat&gt;<sp/>feedbackOutputParameter;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/>std::vector&lt;arma::mat&gt;<sp/>moduleOutputParameter;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>delta;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>gradient;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>outputParameter;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/>arma::mat<sp/>recurrentError;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/>arma::mat<sp/>actionError;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>arma::mat<sp/>actionDelta;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/>arma::mat<sp/>rnnDelta;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/>arma::mat<sp/>initialInput;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1ResetVisitor" kindref="compound">ResetVisitor</ref><sp/>resetVisitor;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/>arma::mat<sp/>attentionGradient;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/>arma::mat<sp/>intermediateGradient;</highlight></codeline>
+<codeline lineno="256"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>RecurrentAttention</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;recurrent_attention_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp"/>
+  </compounddef>
+</doxygen>

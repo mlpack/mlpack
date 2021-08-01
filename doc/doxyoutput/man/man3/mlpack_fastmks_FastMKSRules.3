@@ -1,0 +1,236 @@
+.TH "FastMKSRules< KernelType, TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+FastMKSRules< KernelType, TreeType > \- The \fBFastMKSRules\fP class is a template helper class used by \fBFastMKS\fP class when performing exact max-kernel search\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::TraversalInfo\fP< TreeType > \fBTraversalInfoType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFastMKSRules\fP (const typename TreeType::Mat &referenceSet, const typename TreeType::Mat &querySet, const size_t k, KernelType &kernel)"
+.br
+.RI "Construct the \fBFastMKSRules\fP object\&. "
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.RI "Compute the base case (kernel value) between two points\&. "
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const"
+.br
+.RI "Get the number of times \fBBaseCase()\fP was called\&. "
+.ti -1c
+.RI "size_t & \fBBaseCases\fP ()"
+.br
+.RI "Modify the number of times \fBBaseCase()\fP was called\&. "
+.ti -1c
+.RI "void \fBGetResults\fP (arma::Mat< size_t > &indices, arma::mat &products)"
+.br
+.RI "Store the list of candidates for each query point in the given matrices\&. "
+.ti -1c
+.RI "size_t \fBMinimumBaseCases\fP () const"
+.br
+.RI "Get the minimum number of base cases we need to perform to have acceptable results\&. "
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore) const"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBRescore\fP (TreeType &queryNode, TreeType &referenceNode, const double oldScore) const"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (TreeType &queryNode, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "size_t \fBScores\fP () const"
+.br
+.RI "Get the number of times \fBScore()\fP was called\&. "
+.ti -1c
+.RI "size_t & \fBScores\fP ()"
+.br
+.RI "Modify the number of times \fBScore()\fP was called\&. "
+.ti -1c
+.RI "const \fBTraversalInfoType\fP & \fBTraversalInfo\fP () const"
+.br
+.ti -1c
+.RI "\fBTraversalInfoType\fP & \fBTraversalInfo\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename KernelType, typename TreeType>
+.br
+class mlpack::fastmks::FastMKSRules< KernelType, TreeType >"
+The \fBFastMKSRules\fP class is a template helper class used by \fBFastMKS\fP class when performing exact max-kernel search\&. 
+
+For each point in the query dataset, it keeps track of the k best candidates in the reference dataset\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIKernelType\fP Type of kernel to run \fBFastMKS\fP with\&. 
+.br
+\fITreeType\fP Type of tree to run \fBFastMKS\fP with; it must satisfy the TreeType policy API\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file fastmks_rules\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBtree::TraversalInfo\fP<TreeType> \fBTraversalInfoType\fP"
+
+.PP
+Definition at line 122 of file fastmks_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBFastMKSRules\fP (const typename TreeType::Mat & referenceSet, const typename TreeType::Mat & querySet, const size_t k, KernelType & kernel)"
+
+.PP
+Construct the \fBFastMKSRules\fP object\&. This is usually done from within the \fBFastMKS\fP class at search time\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference data\&. 
+.br
+\fIquerySet\fP Set of query data\&. 
+.br
+\fIk\fP Number of candidates to search for\&. 
+.br
+\fIkernel\fP Kernel to run \fBFastMKS\fP with\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.PP
+Compute the base case (kernel value) between two points\&. 
+.SS "size_t BaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of times \fBBaseCase()\fP was called\&. 
+.PP
+Definition at line 113 of file fastmks_rules\&.hpp\&.
+.SS "size_t& BaseCases ()\fC [inline]\fP"
+
+.PP
+Modify the number of times \fBBaseCase()\fP was called\&. 
+.PP
+Definition at line 115 of file fastmks_rules\&.hpp\&.
+.SS "void GetResults (arma::Mat< size_t > & indices, arma::mat & products)"
+
+.PP
+Store the list of candidates for each query point in the given matrices\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindices\fP Matrix storing lists of candidate for each query point\&. 
+.br
+\fIproducts\fP Matrix storing kernel value for each candidate\&. 
+.RE
+.PP
+
+.SS "size_t MinimumBaseCases () const\fC [inline]\fP"
+
+.PP
+Get the minimum number of base cases we need to perform to have acceptable results\&. 
+.PP
+Definition at line 129 of file fastmks_rules\&.hpp\&.
+.SS "double Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that a node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Rescore (TreeType & queryNode, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that a node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to be recursed into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to be recursed into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate to be recursed into\&. 
+.RE
+.PP
+
+.SS "double Score (TreeType & queryNode, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to be recursed into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to be recursed into\&. 
+.RE
+.PP
+
+.SS "size_t Scores () const\fC [inline]\fP"
+
+.PP
+Get the number of times \fBScore()\fP was called\&. 
+.PP
+Definition at line 118 of file fastmks_rules\&.hpp\&.
+.SS "size_t& Scores ()\fC [inline]\fP"
+
+.PP
+Modify the number of times \fBScore()\fP was called\&. 
+.PP
+Definition at line 120 of file fastmks_rules\&.hpp\&.
+.SS "const \fBTraversalInfoType\fP& TraversalInfo () const\fC [inline]\fP"
+
+.PP
+Definition at line 124 of file fastmks_rules\&.hpp\&.
+.SS "\fBTraversalInfoType\fP& TraversalInfo ()\fC [inline]\fP"
+
+.PP
+Definition at line 125 of file fastmks_rules\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

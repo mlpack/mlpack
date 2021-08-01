@@ -1,0 +1,429 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="ordered__point__selection_8hpp" kind="file" language="C++">
+    <compoundname>ordered_point_selection.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="dbscan_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</includedby>
+    <incdepgraph>
+      <node id="46784">
+        <label>list</label>
+      </node>
+      <node id="46781">
+        <label>atomic</label>
+      </node>
+      <node id="46771">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="46747">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="46783">
+        <label>iomanip</label>
+      </node>
+      <node id="46756">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="46757" relation="include">
+        </childnode>
+        <childnode refid="46759" relation="include">
+        </childnode>
+      </node>
+      <node id="46739">
+        <label>cstdint</label>
+      </node>
+      <node id="46748">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="46755">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="46778">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="46768">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="46735">
+        <label>cmath</label>
+      </node>
+      <node id="46754">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="46743">
+        <label>stdexcept</label>
+      </node>
+      <node id="46763">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="46748" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46749" relation="include">
+        </childnode>
+      </node>
+      <node id="46787">
+        <label>string</label>
+      </node>
+      <node id="46775">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="46776" relation="include">
+        </childnode>
+        <childnode refid="46742" relation="include">
+        </childnode>
+      </node>
+      <node id="46785">
+        <label>map</label>
+      </node>
+      <node id="46737">
+        <label>cfloat</label>
+      </node>
+      <node id="46767">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="46789">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="46751">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="46774">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="46775" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46758" relation="include">
+        </childnode>
+        <childnode refid="46776" relation="include">
+        </childnode>
+      </node>
+      <node id="46764">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="46762">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="46748" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46749" relation="include">
+        </childnode>
+      </node>
+      <node id="46765">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="46748" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46749" relation="include">
+        </childnode>
+      </node>
+      <node id="46753">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="46773">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="46749" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46761" relation="include">
+        </childnode>
+        <childnode refid="46770" relation="include">
+        </childnode>
+      </node>
+      <node id="46777">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46778" relation="include">
+        </childnode>
+      </node>
+      <node id="46779">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="46734">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="46735" relation="include">
+        </childnode>
+        <childnode refid="46736" relation="include">
+        </childnode>
+        <childnode refid="46737" relation="include">
+        </childnode>
+        <childnode refid="46738" relation="include">
+        </childnode>
+        <childnode refid="46739" relation="include">
+        </childnode>
+        <childnode refid="46740" relation="include">
+        </childnode>
+        <childnode refid="46741" relation="include">
+        </childnode>
+        <childnode refid="46742" relation="include">
+        </childnode>
+        <childnode refid="46743" relation="include">
+        </childnode>
+        <childnode refid="46744" relation="include">
+        </childnode>
+        <childnode refid="46745" relation="include">
+        </childnode>
+        <childnode refid="46746" relation="include">
+        </childnode>
+        <childnode refid="46747" relation="include">
+        </childnode>
+        <childnode refid="46748" relation="include">
+        </childnode>
+        <childnode refid="46749" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46752" relation="include">
+        </childnode>
+        <childnode refid="46753" relation="include">
+        </childnode>
+        <childnode refid="46754" relation="include">
+        </childnode>
+        <childnode refid="46755" relation="include">
+        </childnode>
+        <childnode refid="46756" relation="include">
+        </childnode>
+        <childnode refid="46760" relation="include">
+        </childnode>
+        <childnode refid="46761" relation="include">
+        </childnode>
+        <childnode refid="46762" relation="include">
+        </childnode>
+        <childnode refid="46763" relation="include">
+        </childnode>
+        <childnode refid="46764" relation="include">
+        </childnode>
+        <childnode refid="46765" relation="include">
+        </childnode>
+        <childnode refid="46766" relation="include">
+        </childnode>
+        <childnode refid="46772" relation="include">
+        </childnode>
+        <childnode refid="46773" relation="include">
+        </childnode>
+        <childnode refid="46770" relation="include">
+        </childnode>
+        <childnode refid="46774" relation="include">
+        </childnode>
+        <childnode refid="46777" relation="include">
+        </childnode>
+        <childnode refid="46779" relation="include">
+        </childnode>
+        <childnode refid="46780" relation="include">
+        </childnode>
+        <childnode refid="46789" relation="include">
+        </childnode>
+        <childnode refid="46790" relation="include">
+        </childnode>
+      </node>
+      <node id="46740">
+        <label>cstdio</label>
+      </node>
+      <node id="46744">
+        <label>tuple</label>
+      </node>
+      <node id="46749">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="46766">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="46749" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46753" relation="include">
+        </childnode>
+        <childnode refid="46767" relation="include">
+        </childnode>
+        <childnode refid="46768" relation="include">
+        </childnode>
+        <childnode refid="46769" relation="include">
+        </childnode>
+        <childnode refid="46770" relation="include">
+        </childnode>
+      </node>
+      <node id="46745">
+        <label>utility</label>
+      </node>
+      <node id="46769">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="46760">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="46757">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="46758" relation="include">
+        </childnode>
+      </node>
+      <node id="46780">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="46781" relation="include">
+        </childnode>
+        <childnode refid="46782" relation="include">
+        </childnode>
+        <childnode refid="46783" relation="include">
+        </childnode>
+        <childnode refid="46784" relation="include">
+        </childnode>
+        <childnode refid="46785" relation="include">
+        </childnode>
+        <childnode refid="46786" relation="include">
+        </childnode>
+        <childnode refid="46787" relation="include">
+        </childnode>
+        <childnode refid="46788" relation="include">
+        </childnode>
+      </node>
+      <node id="46758">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="46772">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="46770" relation="include">
+        </childnode>
+        <childnode refid="46766" relation="include">
+        </childnode>
+        <childnode refid="46773" relation="include">
+        </childnode>
+      </node>
+      <node id="46741">
+        <label>cstdlib</label>
+      </node>
+      <node id="46736">
+        <label>cctype</label>
+      </node>
+      <node id="46759">
+        <label>unordered_map</label>
+      </node>
+      <node id="46738">
+        <label>climits</label>
+      </node>
+      <node id="46786">
+        <label>mutex</label>
+      </node>
+      <node id="46782">
+        <label>chrono</label>
+      </node>
+      <node id="46790">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="46733">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/ordered_point_selection.hpp</label>
+        <link refid="ordered__point__selection_8hpp"/>
+        <childnode refid="46734" relation="include">
+        </childnode>
+      </node>
+      <node id="46788">
+        <label>thread</label>
+      </node>
+      <node id="46776">
+        <label>type_traits</label>
+      </node>
+      <node id="46752">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="46746">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="46770">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="46748" relation="include">
+        </childnode>
+        <childnode refid="46749" relation="include">
+        </childnode>
+        <childnode refid="46750" relation="include">
+        </childnode>
+        <childnode refid="46751" relation="include">
+        </childnode>
+        <childnode refid="46771" relation="include">
+        </childnode>
+      </node>
+      <node id="46742">
+        <label>cstring</label>
+      </node>
+      <node id="46761">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="46750">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="46792">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="46791">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/ordered_point_selection.hpp</label>
+        <link refid="ordered__point__selection_8hpp"/>
+        <childnode refid="46792" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1dbscan_1_1OrderedPointSelection" prot="public">mlpack::dbscan::OrderedPointSelection</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1dbscan">mlpack::dbscan</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Kim SangYeon</para></simplesect>
+Sequentially select the next point for DBSCAN.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_DBSCAN_ORDERED_POINT_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_DBSCAN_ORDERED_POINT_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">dbscan<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1dbscan_1_1OrderedPointSelection" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1dbscan_1_1OrderedPointSelection" kindref="compound">OrderedPointSelection</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1dbscan_1_1OrderedPointSelection_1a9a546d442fdff6f352f55eb14822bbbf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1dbscan_1_1OrderedPointSelection_1a9a546d442fdff6f352f55eb14822bbbf" kindref="member">Select</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/></highlight><highlight class="comment">/*<sp/>data<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>point;<sp/></highlight><highlight class="comment">//<sp/>Just<sp/>return<sp/>point.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>dbscan</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/ordered_point_selection.hpp"/>
+  </compounddef>
+</doxygen>

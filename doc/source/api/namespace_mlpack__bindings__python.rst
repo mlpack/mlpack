@@ -1,0 +1,198 @@
+
+.. _namespace_mlpack__bindings__python:
+
+Namespace mlpack::bindings::python
+==================================
+
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+
+
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classmlpack_1_1bindings_1_1python_1_1PyOption`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6e0e0614e11b883601227d5bf884fce6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a24efbbdd5edd02b416e5f53cff686a07`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aae1b43223a82e87c26dda721ffe1b64c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a5b7ef19eb1efae59337f8ca8a68c8bc7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3a7c26c01db5e577f3d40870d5b9fd30`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a01a87ad978f242a7b6c889690ce55a1d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3eb6211ac8ddac3acc284d57c44e20de`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a376a58b3162f01312a81b83504f568ce`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aaf9f486764e2a7d4780b3b865a42976c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a7081081aa4247623e8d1db6136102d94`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a61ad87233086dfafe8ea8e4e34e231c2`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a62060e3eede9c45540c426105c552ef4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a1c682bf6da1b0aec259c40f05e6d0ad5`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a9be0b495a6023db3314fd406a9c7d1cb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1acf355ab2766c7b6ce900b02402e8b22f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ab65db7770f63b8cd83a53ebb8764138c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ac3ff131af41b583e1e0312f0cadd85d1`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a7af32159e75699310ce38618deb652d2`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a30d1acd19b418db8d6ae54695cbc075f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a9cd3725915ba360fa07cf321400a181e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ae37e41e8b171c5a1f95a567d5f2d05fa`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ad6abd609f63e481daf6827935495438e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a5aa0d6f0438898ff9b81db7b8f9c1b7f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ae37a682d330659caa949ae76f17ebbd0`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a8ca31c929f423d9b0fefef8ca03dc1ff`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6e9bffcf30c3b4b9dcd53b59b9c8cd88`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1afbe3788455628c38332b452b946fa310`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a30b583a945d1f88d73bc87682603c7a4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ac899c96d653773482ef953ef21b6a60e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a78699240722ab3e72b39ddcaf4309325`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1af9e36a90b5bd87c12a707c7841602166`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a0b74f4fe624bf08d50b13d921f1b476e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aeb3b9177f23eddfc0d2d8d0b53518c67`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a29e51ddbf3f2cb4ddbc4d0f40c1474fa`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a7025812e38208c8df59d1a3d56c7d3f3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aaf8d2ec60ff388711c55e631f6e4566f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a64c0a2dda975be94dac5b9f5c8eab9d7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a47c9c478a80e8e7be2c17f87f634929d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a0be0f6c09cc84674121d49178981fe19`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a439896a9de3ddc4c67f15b55b7dff2e3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3ea59db131b61502a938f86816a21c1c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3b4859fba72d1572232e578bd78b015a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aa8cb764eab62bf27d4602075f277599d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a7096496e9709c3bf9a3c4c2d35fccea3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1abfff680c34a36b80498b39de5c002bae`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3862770cfbd7c639832a167c21c0e636`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aecc682142101d2111db7705da00a8775`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a02caa6bbd7dc53b45d0beb3178fa8bfa`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a8acf794a4cadb2cb27431245bed5bd16`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aee67e03f9f9ba1b8e7a30d1f160b464c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aa54735f722600e44319257fd8d2becff`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a3c827aec0d0ff3ae5ae7d565fcda5ced`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a9f757a36e42cdc6ccbfc296ca9439679`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a544f01f8f04b0e90b6d165a7427f6e7a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6b8bcdebe252c46b6ee4131ea45465b8`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a1f157c96afaed787e2a5b35298ca680d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a996892b33ffaf97639cecb66e7f77650`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a2c09399575bb61ca91eb665e67f1a2f6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1af1b1c91db5f4872ad6a8420740665e47`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a4d147955dd7f5d654e112998d3ca51ca`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6ed858166ad7d26009f2e85f1fa101c4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a4ad9b3cc77bbb36c86c5346eb98620b6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1aecb4f9c6e5970d548e922f8ef18f23ea`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ab3d00ba5ed90f8820f650849b11c5007`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a9bc7b05f16ca6f11e1334707bd034a5a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6cd6a94b0d12a167d1f1e26ae35e4cb7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a1253bb8f30c651dc3af0c56e817bb52f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ab43363afc035bf95f3f9f53e9b669c49`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a04e6313fa3bbcaeaf638f9697856c1db`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a2b4db0ac1426d513555f5172dd25b5bb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a62411bebea8829e936ae0fb938cf2a99`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a1883607423bb52271836a8f41a96a9e3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a0d643eb3c0bdd232a1c6e50fbcb943d4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a92ef6a64a9ca64c2cf8dca28e9d77674`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6735678589340d2ecc4d8f0c8746179b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1af279250fe16b29931b6ec5f9c5196962`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1adea6945f820d4d090266903135f35729`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6a2dff1d929365bb624ff6a5659d9205`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a6273a497a8744775c3c90fced897dd55`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1a2a8eea6be336f87e143a069df9404bf6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa`
+
+
+Variables
+---------
+
+
+- :ref:`exhale_variable_namespacemlpack_1_1bindings_1_1python_1a24d855d329269931b59bdf1b36706a88`

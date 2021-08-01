@@ -1,0 +1,32 @@
+<map id="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" name="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp">
+<area shape="rect" id="node2" href="$binary__space__tree_8hpp.html" title="mlpack/core/tree/binary\l_space_tree.hpp" alt="" coords="2387,199,2546,240"/>
+<area shape="rect" id="node32" href="$cover__tree_8hpp.html" title="mlpack/core/tree/cover\l_tree.hpp" alt="" coords="399,199,553,240"/>
+<area shape="rect" id="node42" href="$octree_8hpp.html" title="mlpack/core/tree/octree.hpp" alt="" coords="3469,303,3653,329"/>
+<area shape="rect" id="node47" href="$range__search_8hpp.html" title="range_search.hpp" alt="" coords="3056,117,3181,143"/>
+<area shape="rect" id="node3" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="2656,571,2792,597"/>
+<area shape="rect" id="node15" href="$bounds_8hpp.html" title="Bounds that are useful for binary space partitioning trees. " alt="" coords="3186,399,3275,426"/>
+<area shape="rect" id="node17" href="$midpoint__split_8hpp.html" title="binary_space_tree/midpoint\l_split.hpp" alt="" coords="2872,481,3053,523"/>
+<area shape="rect" id="node18" href="$mean__split_8hpp.html" title="binary_space_tree/mean\l_split.hpp" alt="" coords="1950,481,2114,523"/>
+<area shape="rect" id="node19" href="$vantage__point__split_8hpp.html" title="binary_space_tree/vantage\l_point_split.hpp" alt="" coords="2347,481,2525,523"/>
+<area shape="rect" id="node20" href="$rp__tree__max__split_8hpp.html" title="binary_space_tree/rp\l_tree_max_split.hpp" alt="" coords="2474,392,2617,433"/>
+<area shape="rect" id="node21" href="$rp__tree__mean__split_8hpp.html" title="binary_space_tree/rp\l_tree_mean_split.hpp" alt="" coords="2529,295,2676,337"/>
+<area shape="rect" id="node22" href="$ub__tree__split_8hpp.html" title="binary_space_tree/ub\l_tree_split.hpp" alt="" coords="2651,481,2797,523"/>
+<area shape="rect" id="node23" href="$binary__space__tree_2binary__space__tree_8hpp.html" title="Definition of generalized binary space partitioning tree (BinarySpaceTree). " alt="" coords="2925,392,3091,433"/>
+<area shape="rect" id="node24" href="$binary__space__tree_2single__tree__traverser_8hpp.html" title="binary_space_tree/single\l_tree_traverser.hpp" alt="" coords="3058,295,3225,337"/>
+<area shape="rect" id="node26" href="$binary__space__tree_2dual__tree__traverser_8hpp.html" title="binary_space_tree/dual\l_tree_traverser.hpp" alt="" coords="2802,295,2958,337"/>
+<area shape="rect" id="node28" href="$breadth__first__dual__tree__traverser_8hpp.html" title="binary_space_tree/breadth\l_first_dual_tree_traverser.hpp" alt="" coords="1092,295,1287,337"/>
+<area shape="rect" id="node30" href="$binary__space__tree_2traits_8hpp.html" title="binary_space_tree/traits.hpp" alt="" coords="1993,303,2180,329"/>
+<area shape="rect" id="node31" href="$core_2tree_2binary__space__tree_2typedef_8hpp.html" title="binary_space_tree/typedef.hpp" alt="" coords="2204,303,2404,329"/>
+<area shape="rect" id="node16" href="$lmetric_8hpp.html" title="mlpack/core/metrics\l/lmetric.hpp" alt="" coords="3179,481,3319,523"/>
+<area shape="rect" id="node33" href="$first__point__is__root_8hpp.html" title="cover_tree/first_point\l_is_root.hpp" alt="" coords="404,481,548,523"/>
+<area shape="rect" id="node34" href="$cover__tree_2cover__tree_8hpp.html" title="cover_tree/cover_tree.hpp" alt="" coords="389,399,563,426"/>
+<area shape="rect" id="node35" href="$cover__tree_2single__tree__traverser_8hpp.html" title="cover_tree/single_tree\l_traverser.hpp" alt="" coords="526,295,677,337"/>
+<area shape="rect" id="node37" href="$cover__tree_2dual__tree__traverser_8hpp.html" title="cover_tree/dual_tree\l_traverser.hpp" alt="" coords="1147,392,1287,433"/>
+<area shape="rect" id="node39" href="$cover__tree_2traits_8hpp.html" title="cover_tree/traits.hpp" alt="" coords="5,303,147,329"/>
+<area shape="rect" id="node40" href="$core_2tree_2cover__tree_2typedef_8hpp.html" title="cover_tree/typedef.hpp" alt="" coords="272,303,427,329"/>
+<area shape="rect" id="node43" href="$octree_2octree_8hpp.html" title="octree/octree.hpp" alt="" coords="3680,489,3803,515"/>
+<area shape="rect" id="node44" href="$octree_2traits_8hpp.html" title="octree/traits.hpp" alt="" coords="3503,399,3619,426"/>
+<area shape="rect" id="node45" href="$octree_2single__tree__traverser_8hpp.html" title="octree/single_tree\l_traverser.hpp" alt="" coords="3644,392,3769,433"/>
+<area shape="rect" id="node46" href="$octree_2dual__tree__traverser_8hpp.html" title="octree/dual_tree_traverser.hpp" alt="" coords="3843,399,4042,426"/>
+<area shape="rect" id="node48" href="$range__search__stat_8hpp.html" title="range_search_stat.hpp" alt="" coords="3041,206,3196,233"/>
+</map>

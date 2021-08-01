@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1GlorotInitializationType" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::GlorotInitializationType</compoundname>
+    <includes refid="glorot__init_8hpp" local="no">glorot_init.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>bool</type>
+        <declname>Uniform</declname>
+        <defname>Uniform</defname>
+        <defval>true</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a31ca952a1516a5e8013efef9faa0d0e6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GlorotInitializationType</definition>
+        <argsstring>()</argsstring>
+        <name>GlorotInitializationType</name>
+        <briefdescription>
+<para>Initialize the Glorot initialization object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="61" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements weight matrix with glorot initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements weight matrix with glorot initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="84" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W, const size_t rows, const size_t cols, const size_t slices)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>slices</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with glorot initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of slices. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="167" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with glorot initialization method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="181" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a8a614fcc8aeff6f47c9f608762411e2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="113" bodyend="123"/>
+        <references refid="classmlpack_1_1ann_1_1GaussianInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="gaussian__init_8hpp" startline="51" endline="59">GaussianInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a24da1718009511401802942918bd3261" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="127" bodyend="135"/>
+        <references refid="classmlpack_1_1ann_1_1GaussianInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="gaussian__init_8hpp" startline="51" endline="59">GaussianInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a8a614fcc8aeff6f47c9f608762411e2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="139" bodyend="150"/>
+        <references refid="classmlpack_1_1ann_1_1RandomInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="ann_2init__rules_2random__init_8hpp" startline="56" endline="64">RandomInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GlorotInitializationType_1a24da1718009511401802942918bd3261" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="154" bodyend="163"/>
+        <references refid="classmlpack_1_1ann_1_1RandomInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="ann_2init__rules_2random__init_8hpp" startline="56" endline="64">RandomInitialization::Initialize</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize the weight matrix with the Glorot Initialization method. </para>    </briefdescription>
+    <detaileddescription>
+<para>The method is defined by</para><para><formula id="104">\begin{eqnarray*} \mathrm{Var}[w_i] &amp;=&amp; \frac{2}{n_i + n_{i+1}} \\ w_i \sim \mathrm{U}[-\frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}}, \frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}}] \end{eqnarray*}</formula></para><para>where <formula id="105">$ n_{i+1} $</formula> is the number of neurons in the outgoing layer, <formula id="106">$ n_i $</formula> represents the number of neurons in the ingoing layer. Here Normal Distribution may also be used if needed</para><para>For more information, see the following paper.</para><para><programlisting><codeline><highlight class="normal">@inproceedings<sp/>{pmlr-v9-glorot10a,</highlight></codeline>
+<codeline><highlight class="normal"><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Understanding<sp/>the<sp/>difficulty<sp/>of<sp/>training</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>deep<sp/>feedforward<sp/>neural<sp/>networks},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Xavier<sp/>Glorot<sp/>and<sp/>Yoshua<sp/>Bengio},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>booktitle<sp/>=<sp/>{Proceedings<sp/>of<sp/>the<sp/>Thirteenth<sp/>International<sp/>Conference</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>on<sp/>Artificial<sp/>Intelligence<sp/>and<sp/>Statistics},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2010}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="55" bodyend="109"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a31ca952a1516a5e8013efef9faa0d0e6" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>GlorotInitializationType</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a8a614fcc8aeff6f47c9f608762411e2a" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a24da1718009511401802942918bd3261" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a8a614fcc8aeff6f47c9f608762411e2a" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a24da1718009511401802942918bd3261" prot="public" virt="non-virtual"><scope>mlpack::ann::GlorotInitializationType</scope><name>Initialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1cv_1_1SilhouetteScore" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::SilhouetteScore</compoundname>
+    <includes refid="silhouette__score_8hpp" local="no">silhouette_score.hpp</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1SilhouetteScore_1a59117419810548f86c24651ffa3500d5" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool NeedsMinimization</definition>
+        <argsstring></argsstring>
+        <name>NeedsMinimization</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Information for hyper-parameter tuning code. </para>        </briefdescription>
+        <detaileddescription>
+<para>It indicates that we want to maximize the metric. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1SilhouetteScore_1afae80ee0a051c84c8f98628ef047bb65" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double MeanDistanceFromCluster</definition>
+        <argsstring>(const arma::colvec &amp;distances, const arma::Row&lt; size_t &gt; &amp;labels, const size_t &amp;label, const bool &amp;sameCluster=false)</argsstring>
+        <name>MeanDistanceFromCluster</name>
+        <param>
+          <type>const arma::colvec &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t &amp;</type>
+          <declname>label</declname>
+        </param>
+        <param>
+          <type>const bool &amp;</type>
+          <declname>sameCluster</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Find mean distance of element from a given cluster. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>colvec containing distances from other elements. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels assigned to data by clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>label of the target cluster. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sameCluster</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>true if calculating mean distance from same cluster. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>(double) distance from the cluster. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="90" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1SilhouetteScore_1aaaa2012022924364edaf766eb0a86934" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+          <param>
+            <type>typename Metric</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Overall</definition>
+        <argsstring>(const DataType &amp;X, const arma::Row&lt; size_t &gt; &amp;labels, const Metric &amp;metric)</argsstring>
+        <name>Overall</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const Metric &amp;</type>
+          <declname>metric</declname>
+        </param>
+        <briefdescription>
+<para>Find the overall silhouette score. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>X</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column-major data used for clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels assigned to data by clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Metric to be used to calculate dissimilarity. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>(double) silhouette score. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1SilhouetteScore_1aaffcc999da380dffa924f988cc224de0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::rowvec</type>
+        <definition>static arma::rowvec SamplesScore</definition>
+        <argsstring>(const DataType &amp;distances, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>SamplesScore</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Find the individual silhouette scores for precomputted dissimilarites. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Square matrix containing distances between data points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels assigned to data by clustering. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>(arma::rowvec) element-wise silhouette score. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1SilhouetteScore_1ac2a8ae2f271acee93ecce79481669c08" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+          <param>
+            <type>typename Metric</type>
+          </param>
+        </templateparamlist>
+        <type>arma::rowvec</type>
+        <definition>static arma::rowvec SamplesScore</definition>
+        <argsstring>(const DataType &amp;X, const arma::Row&lt; size_t &gt; &amp;labels, const Metric &amp;metric)</argsstring>
+        <name>SamplesScore</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const Metric &amp;</type>
+          <declname>metric</declname>
+        </param>
+        <briefdescription>
+<para>Find silhouette score of all individual elements. </para>        </briefdescription>
+        <detaileddescription>
+<para>(Distance not precomputed).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>X</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column-major data used for clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels assigned to data by clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Metric to be used to calculate dissimilarity. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>(arma::rowvec) element-wise silhouette score. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="77" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The Silhouette Score is a metric of performance for clustering that represents the quality of clusters made as a result. </para>    </briefdescription>
+    <detaileddescription>
+<para>It provides an indication of goodness of fit and therefore a measure of how well unseen samples are likely to be predicted by the model, considering the inter-cluster and intra-cluster dissimilarities. Silhoutte Score is dependent on the metric used to calculate the dissimilarities. The best possible score is <formula id="20">$ s(i) = 1.0 $</formula>. Smaller values of Silhouette Score indicate poor clustering. Negative values would occur when a wrong label was put on the element. Values near zero indicate overlapping clusters. For an element i <formula id="21">$ a(i) $</formula> is within cluster average dissimilarity and <formula id="22">$ b(i) $</formula> is minimum of average dissimilarity from other clusters. the Silhouette Score <formula id="23">$ s(i) $</formula> of a Sample is calculated by <formula id="24">\begin{eqnarray*} s(i) &amp;=&amp; \frac{b(i) - a(i)}{max\{b(i), a(i)\}} \end{eqnarray*}</formula></para><para>The Overall Silhouette Score is the mean of individual silhoutte scores. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/silhouette_score.hpp" bodystart="40" bodyend="100"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1SilhouetteScore_1afae80ee0a051c84c8f98628ef047bb65" prot="public" virt="non-virtual"><scope>mlpack::cv::SilhouetteScore</scope><name>MeanDistanceFromCluster</name></member>
+      <member refid="classmlpack_1_1cv_1_1SilhouetteScore_1a59117419810548f86c24651ffa3500d5" prot="public" virt="non-virtual"><scope>mlpack::cv::SilhouetteScore</scope><name>NeedsMinimization</name></member>
+      <member refid="classmlpack_1_1cv_1_1SilhouetteScore_1aaaa2012022924364edaf766eb0a86934" prot="public" virt="non-virtual"><scope>mlpack::cv::SilhouetteScore</scope><name>Overall</name></member>
+      <member refid="classmlpack_1_1cv_1_1SilhouetteScore_1aaffcc999da380dffa924f988cc224de0" prot="public" virt="non-virtual"><scope>mlpack::cv::SilhouetteScore</scope><name>SamplesScore</name></member>
+      <member refid="classmlpack_1_1cv_1_1SilhouetteScore_1ac2a8ae2f271acee93ecce79481669c08" prot="public" virt="non-virtual"><scope>mlpack::cv::SilhouetteScore</scope><name>SamplesScore</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,46 @@
+
+.. _program_listing_file__home_aakash_mlpack_src_mlpack_core_tree_octree_traits.hpp:
+
+Program Listing for File traits.hpp
+===================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file__home_aakash_mlpack_src_mlpack_core_tree_octree_traits.hpp>` (``/home/aakash/mlpack/src/mlpack/core/tree/octree/traits.hpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   
+   #ifndef MLPACK_CORE_TREE_OCTREE_TRAITS_HPP
+   #define MLPACK_CORE_TREE_OCTREE_TRAITS_HPP
+   
+   #include <mlpack/core/tree/tree_traits.hpp>
+   
+   namespace mlpack {
+   namespace tree {
+   
+   template<typename MetricType,
+            typename StatisticType,
+            typename MatType>
+   class TreeTraits<Octree<MetricType, StatisticType, MatType>>
+   {
+    public:
+     static const bool HasOverlappingChildren = false;
+   
+     static const bool HasDuplicatedPoints = false;
+   
+     static const bool FirstPointIsCentroid = false;
+   
+     static const bool HasSelfChildren = false;
+   
+     static const bool RearrangesDataset = true;
+   
+     static const bool BinaryTree = false;
+   
+     static const bool UniqueNumDescendants = true;
+   };
+   
+   } // namespace tree
+   } // namespace mlpack
+   
+   #endif

@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1GradientZeroVisitor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::GradientZeroVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; void &gt;</basecompoundref>
+    <includes refid="gradient__zero__visitor_8hpp" local="no">gradient_zero_visitor.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GradientZeroVisitor_1aa2cc6d8ff51ab7a8bb44f18e528286e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GradientZeroVisitor</definition>
+        <argsstring>()</argsstring>
+        <name>GradientZeroVisitor</name>
+        <briefdescription>
+<para>Set the gradient to zero for the given module. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="31" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GradientZeroVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Set the gradient to zero. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="35" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GradientZeroVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="37" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GradientZeroVisitor_1a869c9ff2fc6c50f80d6b5816b2120a3f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasGradientCheck&lt; T, arma::mat &amp;(T::*)()&gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasGradientCheck&lt;T, arma::mat&amp;(T::*)()&gt;::value, void&gt;::type LayerGradients</definition>
+        <argsstring>(T *layer, arma::mat &amp;input) const</argsstring>
+        <name>LayerGradients</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Set the gradient to zero if the module implements the Gradient() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="44" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GradientZeroVisitor_1a637e3688779093c74d91466a78ab55e3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename P</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasGradientCheck&lt; T, P &amp;(T::*)()&gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasGradientCheck&lt;T, P&amp;(T::*)()&gt;::value, void&gt;::type LayerGradients</definition>
+        <argsstring>(T *layer, P &amp;input) const</argsstring>
+        <name>LayerGradients</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <param>
+          <type>P &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Do not set the gradient to zero if the module doesn&apos;t implement the Gradient() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="51" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="228">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+      <node id="227">
+        <label>GradientZeroVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1GradientZeroVisitor"/>
+        <childnode refid="228" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="230">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+      <node id="229">
+        <label>GradientZeroVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1GradientZeroVisitor"/>
+        <childnode refid="230" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp" bodystart="27" bodyend="52"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1GradientZeroVisitor_1aa2cc6d8ff51ab7a8bb44f18e528286e8" prot="public" virt="non-virtual"><scope>mlpack::ann::GradientZeroVisitor</scope><name>GradientZeroVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1GradientZeroVisitor_1a869c9ff2fc6c50f80d6b5816b2120a3f" prot="private" virt="non-virtual"><scope>mlpack::ann::GradientZeroVisitor</scope><name>LayerGradients</name></member>
+      <member refid="classmlpack_1_1ann_1_1GradientZeroVisitor_1a637e3688779093c74d91466a78ab55e3" prot="private" virt="non-virtual"><scope>mlpack::ann::GradientZeroVisitor</scope><name>LayerGradients</name></member>
+      <member refid="classmlpack_1_1ann_1_1GradientZeroVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" virt="non-virtual"><scope>mlpack::ann::GradientZeroVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1GradientZeroVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" virt="non-virtual"><scope>mlpack::ann::GradientZeroVisitor</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

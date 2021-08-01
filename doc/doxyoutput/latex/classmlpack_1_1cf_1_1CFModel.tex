@@ -1,0 +1,356 @@
+\section{C\+F\+Model Class Reference}
+\label{classmlpack_1_1cf_1_1CFModel}\index{C\+F\+Model@{C\+F\+Model}}
+
+
+The model to save to disk.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Decomposition\+Types} \{ \newline
+\textbf{ N\+MF}, 
+\newline
+\textbf{ B\+A\+T\+C\+H\+\_\+\+S\+VD}, 
+\newline
+\textbf{ R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD}, 
+\newline
+\textbf{ R\+E\+G\+\_\+\+S\+VD}, 
+\newline
+\textbf{ S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE}, 
+\newline
+\textbf{ S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE}, 
+\newline
+\textbf{ B\+I\+A\+S\+\_\+\+S\+VD}, 
+\newline
+\textbf{ S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US}
+ \}
+\item 
+enum \textbf{ Normalization\+Types} \{ \newline
+\textbf{ N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}, 
+\newline
+\textbf{ I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}, 
+\newline
+\textbf{ U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}, 
+\newline
+\textbf{ O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}, 
+\newline
+\textbf{ Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ C\+F\+Model} ()
+\begin{DoxyCompactList}\small\item\em Create an empty CF model. \end{DoxyCompactList}\item 
+\textbf{ C\+F\+Model} (const \textbf{ C\+F\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Create a CF model by copying the given model. \end{DoxyCompactList}\item 
+\textbf{ C\+F\+Model} (\textbf{ C\+F\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Create a CF model by taking ownership of the data of the other model. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+C\+F\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean up memory. \end{DoxyCompactList}\item 
+\textbf{ C\+F\+Wrapper\+Base} $\ast$ \textbf{ CF} () const
+\begin{DoxyCompactList}\small\item\em Get the \doxyref{C\+F\+Wrapper\+Base}{p.}{classmlpack_1_1cf_1_1CFWrapperBase} object. (Be careful!) \end{DoxyCompactList}\item 
+const \textbf{ Decomposition\+Types} \& \textbf{ Decomposition\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the decomposition type. \end{DoxyCompactList}\item 
+\textbf{ Decomposition\+Types} \& \textbf{ Decomposition\+Type} ()
+\begin{DoxyCompactList}\small\item\em Set the decomposition type. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Recommendations} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const size\+\_\+t num\+Recs, arma\+::\+Mat$<$ size\+\_\+t $>$ \&recommendations, const arma\+::\+Col$<$ size\+\_\+t $>$ \&users)
+\begin{DoxyCompactList}\small\item\em Compute recommendations for query users. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Recommendations} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const size\+\_\+t num\+Recs, arma\+::\+Mat$<$ size\+\_\+t $>$ \&recommendations)
+\begin{DoxyCompactList}\small\item\em Compute recommendations for all users. \end{DoxyCompactList}\item 
+const \textbf{ Normalization\+Types} \& \textbf{ Normalization\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the normalization type. \end{DoxyCompactList}\item 
+\textbf{ Normalization\+Types} \& \textbf{ Normalization\+Type} ()
+\begin{DoxyCompactList}\small\item\em Set the normalization type. \end{DoxyCompactList}\item 
+\textbf{ C\+F\+Model} \& \textbf{ operator=} (const \textbf{ C\+F\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Make this CF model a copy of the other model. \end{DoxyCompactList}\item 
+\textbf{ C\+F\+Model} \& \textbf{ operator=} (\textbf{ C\+F\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Make this CF model take ownership of the data of the other model. \end{DoxyCompactList}\item 
+void \textbf{ Predict} (const \textbf{ Neighbor\+Search\+Types} ns\+Type, const \textbf{ Interpolation\+Types} interpolation\+Type, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&combinations, arma\+::vec \&predictions)
+\begin{DoxyCompactList}\small\item\em Make predictions. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const arma\+::mat \&data, const size\+\_\+t num\+Users\+For\+Similarity, const size\+\_\+t rank, const size\+\_\+t max\+Iterations, const double min\+Residue, const bool mit)
+\begin{DoxyCompactList}\small\item\em Train the model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The model to save to disk. 
+
+Definition at line 162 of file cf\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Decomposition\+Types@{Decomposition\+Types}}
+\index{Decomposition\+Types@{Decomposition\+Types}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Decomposition\+Types}
+{\footnotesize\ttfamily enum \textbf{ Decomposition\+Types}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{N\+MF@{N\+MF}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!N\+MF@{N\+MF}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3af2cbf4baa18e0247ed7ef03f98c1c896}} 
+N\+MF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+A\+T\+C\+H\+\_\+\+S\+VD@{B\+A\+T\+C\+H\+\_\+\+S\+VD}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!B\+A\+T\+C\+H\+\_\+\+S\+VD@{B\+A\+T\+C\+H\+\_\+\+S\+VD}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3ad89b11660e9fe489189ef81eeba75ba0}} 
+B\+A\+T\+C\+H\+\_\+\+S\+VD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD@{R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD@{R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3ae44c1c137ebc965d699554aadfbf5865}} 
+R\+A\+N\+D\+O\+M\+I\+Z\+E\+D\+\_\+\+S\+VD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+G\+\_\+\+S\+VD@{R\+E\+G\+\_\+\+S\+VD}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!R\+E\+G\+\_\+\+S\+VD@{R\+E\+G\+\_\+\+S\+VD}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3accee8c435616e0dfafc4410886f68d51}} 
+R\+E\+G\+\_\+\+S\+VD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE@{S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE@{S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3a4c23ca46a33b4e973638be60cca3b7b5}} 
+S\+V\+D\+\_\+\+C\+O\+M\+P\+L\+E\+TE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE@{S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE@{S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3a47406d821eeee5f4e2a19b8b549397fb}} 
+S\+V\+D\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+I\+A\+S\+\_\+\+S\+VD@{B\+I\+A\+S\+\_\+\+S\+VD}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!B\+I\+A\+S\+\_\+\+S\+VD@{B\+I\+A\+S\+\_\+\+S\+VD}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3ade2338f2230ab9d7b19cfe1465bcc80d}} 
+B\+I\+A\+S\+\_\+\+S\+VD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US@{S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US@{S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a2df2780dc62c63e87a69698607f03ea3abcfa38576ad06602dfb83c8b650e7705}} 
+S\+V\+D\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+US&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 165 of file cf\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Normalization\+Types@{Normalization\+Types}}
+\index{Normalization\+Types@{Normalization\+Types}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Normalization\+Types}
+{\footnotesize\ttfamily enum \textbf{ Normalization\+Types}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565ad9a831b0ac370f4155b26a850ce64fc8}} 
+N\+O\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565a7d94fdea267a8d26f70fa3fe893a67ee}} 
+I\+T\+E\+M\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565ad8d1bcaa0014bb1ecc28fc8b7fcd5ddb}} 
+U\+S\+E\+R\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565a44a4cc0253c524dcb55624c74c31f107}} 
+O\+V\+E\+R\+A\+L\+L\+\_\+\+M\+E\+A\+N\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON@{Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON}}}\mbox{\label{classmlpack_1_1cf_1_1CFModel_a64fc73a3a72ac3f0dcecd43bf35a2565a622067f1e73e543af7fd67342c7036d1}} 
+Z\+\_\+\+S\+C\+O\+R\+E\+\_\+\+N\+O\+R\+M\+A\+L\+I\+Z\+A\+T\+I\+ON&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 177 of file cf\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a169ddef56c31cadd9b363be262d60ba3}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!C\+F\+Model@{C\+F\+Model}}
+\index{C\+F\+Model@{C\+F\+Model}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{C\+F\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ C\+F\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create an empty CF model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_af6bc770a09ec035e15cf7140cc249766}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!C\+F\+Model@{C\+F\+Model}}
+\index{C\+F\+Model@{C\+F\+Model}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{C\+F\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ C\+F\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ C\+F\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Create a CF model by copying the given model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_aba22334da6ce18b2a593165fb8fa9ee5}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!C\+F\+Model@{C\+F\+Model}}
+\index{C\+F\+Model@{C\+F\+Model}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{C\+F\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ C\+F\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ C\+F\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Create a CF model by taking ownership of the data of the other model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a55bf85a1a0bd1caa9437867a386cd4d3}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!````~C\+F\+Model@{$\sim$\+C\+F\+Model}}
+\index{````~C\+F\+Model@{$\sim$\+C\+F\+Model}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{$\sim$\+C\+F\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ C\+F\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean up memory. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a861d50677ec1e5d429a75b23c23decd3}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!CF@{CF}}
+\index{CF@{CF}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{C\+F()}
+{\footnotesize\ttfamily \textbf{ C\+F\+Wrapper\+Base}$\ast$ CF (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the \doxyref{C\+F\+Wrapper\+Base}{p.}{classmlpack_1_1cf_1_1CFWrapperBase} object. (Be careful!) 
+
+
+
+Definition at line 219 of file cf\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_ac5f3d1c10b9195f857011b8eba813237}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Decomposition\+Type@{Decomposition\+Type}}
+\index{Decomposition\+Type@{Decomposition\+Type}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Decomposition\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Decomposition\+Types}\& Decomposition\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the decomposition type. 
+
+
+
+Definition at line 222 of file cf\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_aa73bf3b476ee722deee107e113f889a9}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Decomposition\+Type@{Decomposition\+Type}}
+\index{Decomposition\+Type@{Decomposition\+Type}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Decomposition\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Decomposition\+Types}\& Decomposition\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the decomposition type. 
+
+
+
+Definition at line 227 of file cf\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a6190357346a14f50b86a9e4b2448c117}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Get\+Recommendations@{Get\+Recommendations}}
+\index{Get\+Recommendations@{Get\+Recommendations}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Get\+Recommendations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Get\+Recommendations (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const size\+\_\+t}]{num\+Recs,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{recommendations,  }\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{users }\end{DoxyParamCaption})}
+
+
+
+Compute recommendations for query users. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a014c25bad7552f2d14066a20187266bb}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Get\+Recommendations@{Get\+Recommendations}}
+\index{Get\+Recommendations@{Get\+Recommendations}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Get\+Recommendations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Get\+Recommendations (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const size\+\_\+t}]{num\+Recs,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{recommendations }\end{DoxyParamCaption})}
+
+
+
+Compute recommendations for all users. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a47f078a075be8389962d9dbf7d4131d6}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Normalization\+Type@{Normalization\+Type}}
+\index{Normalization\+Type@{Normalization\+Type}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Normalization\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Normalization\+Types}\& Normalization\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the normalization type. 
+
+
+
+Definition at line 233 of file cf\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_aad708ca15e9ba3694222b1c8f4fc263f}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Normalization\+Type@{Normalization\+Type}}
+\index{Normalization\+Type@{Normalization\+Type}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Normalization\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Normalization\+Types}\& Normalization\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the normalization type. 
+
+
+
+Definition at line 238 of file cf\+\_\+model.\+hpp.
+
+
+
+References C\+F\+Wrapper\+Base\+::\+Get\+Recommendations(), and C\+F\+Wrapper\+Base\+::\+Predict().
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_aef2a7b565e1bea0483c1e9ff9f483d9d}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ C\+F\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ C\+F\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Make this CF model a copy of the other model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a4d61ce1f45004471cbbb23274a34d204}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ C\+F\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ C\+F\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Make this CF model take ownership of the data of the other model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_ae84e7f1c2e0feb642866cd3d4aab1df7}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Predict()}
+{\footnotesize\ttfamily void Predict (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Types}}]{ns\+Type,  }\item[{const \textbf{ Interpolation\+Types}}]{interpolation\+Type,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{combinations,  }\item[{arma\+::vec \&}]{predictions }\end{DoxyParamCaption})}
+
+
+
+Make predictions. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1cf_1_1CFModel_aa2ac0149615227b72abb724da06a8536}} 
+\index{mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::cf\+::\+C\+F\+Model@{mlpack\+::cf\+::\+C\+F\+Model}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{num\+Users\+For\+Similarity,  }\item[{const size\+\_\+t}]{rank,  }\item[{const size\+\_\+t}]{max\+Iterations,  }\item[{const double}]{min\+Residue,  }\item[{const bool}]{mit }\end{DoxyParamCaption})}
+
+
+
+Train the model. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/\textbf{ cf\+\_\+model.\+hpp}\end{DoxyCompactItemize}

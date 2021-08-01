@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_a05b89e13e21ccb1d653eec334a23617" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions</compoundname>
+    <innerfile refid="elish__function_8hpp">elish_function.hpp</innerfile>
+    <innerfile refid="elliot__function_8hpp">elliot_function.hpp</innerfile>
+    <innerfile refid="gaussian__function_8hpp">gaussian_function.hpp</innerfile>
+    <innerfile refid="gelu__function_8hpp">gelu_function.hpp</innerfile>
+    <innerfile refid="hard__sigmoid__function_8hpp">hard_sigmoid_function.hpp</innerfile>
+    <innerfile refid="hard__swish__function_8hpp">hard_swish_function.hpp</innerfile>
+    <innerfile refid="identity__function_8hpp">identity_function.hpp</innerfile>
+    <innerfile refid="inverse__quadratic__function_8hpp">inverse_quadratic_function.hpp</innerfile>
+    <innerfile refid="lisht__function_8hpp">lisht_function.hpp</innerfile>
+    <innerfile refid="logistic__function_8hpp">logistic_function.hpp</innerfile>
+    <innerfile refid="mish__function_8hpp">mish_function.hpp</innerfile>
+    <innerfile refid="multi__quadratic__function_8hpp">multi_quadratic_function.hpp</innerfile>
+    <innerfile refid="poisson1__function_8hpp">poisson1_function.hpp</innerfile>
+    <innerfile refid="quadratic__function_8hpp">quadratic_function.hpp</innerfile>
+    <innerfile refid="rectifier__function_8hpp">rectifier_function.hpp</innerfile>
+    <innerfile refid="silu__function_8hpp">silu_function.hpp</innerfile>
+    <innerfile refid="softplus__function_8hpp">softplus_function.hpp</innerfile>
+    <innerfile refid="softsign__function_8hpp">softsign_function.hpp</innerfile>
+    <innerfile refid="spline__function_8hpp">spline_function.hpp</innerfile>
+    <innerfile refid="swish__function_8hpp">swish_function.hpp</innerfile>
+    <innerfile refid="tanh__exponential__function_8hpp">tanh_exponential_function.hpp</innerfile>
+    <innerfile refid="tanh__function_8hpp">tanh_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/"/>
+  </compounddef>
+</doxygen>

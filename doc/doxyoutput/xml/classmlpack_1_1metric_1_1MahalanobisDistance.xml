@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1metric_1_1MahalanobisDistance" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::metric::MahalanobisDistance</compoundname>
+    <includes refid="mahalanobis__distance_8hpp" local="no">mahalanobis_distance.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>bool</type>
+        <declname>TakeRoot</declname>
+        <defname>TakeRoot</defname>
+        <defval>true</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a3be1162e6a85f9898970ec5cc26f2b54" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat covariance</definition>
+        <argsstring></argsstring>
+        <name>covariance</name>
+        <briefdescription>
+<para>The covariance matrix associated with this distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="119" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a00cbb536d89ebdafc57f3a481aa772e4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MahalanobisDistance</definition>
+        <argsstring>()</argsstring>
+        <name>MahalanobisDistance</name>
+        <briefdescription>
+<para>Initialize the Mahalanobis distance with the empty matrix as covariance. </para>        </briefdescription>
+        <detaileddescription>
+<para>Don&apos;t call <ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7bc3cfc0ee3750ba84ee4dc7f62994ae" kindref="member">Evaluate()</ref> until you set the covariance with <ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" kindref="member">Covariance()</ref>! </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a68f439d98cd6d071ed45bd91f47ebfcb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MahalanobisDistance</definition>
+        <argsstring>(const size_t dimensionality)</argsstring>
+        <name>MahalanobisDistance</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Mahalanobis distance with the identity matrix of the given dimensionality. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dimensionality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimesnsionality of the covariance matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="75" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="75" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a385234d4f1d914f7786c481fa805c31c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MahalanobisDistance</definition>
+        <argsstring>(arma::mat covariance)</argsstring>
+        <name>MahalanobisDistance</name>
+        <param>
+          <type>arma::mat</type>
+          <declname>covariance</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Mahalanobis distance with the given covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>The given covariance matrix will be copied (this is not optimal).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>covariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The covariance matrix to use for this distance. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="84" bodyend="85"/>
+        <references refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7bc3cfc0ee3750ba84ee4dc7f62994ae">MahalanobisDistance&lt; TakeRoot &gt;::Evaluate</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a7cab8a0b8c0deac1833f3e489fa52daf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Covariance</definition>
+        <argsstring>() const</argsstring>
+        <name>Covariance</name>
+        <briefdescription>
+<para>Access the covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Constant reference to the covariance matrix. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Covariance</definition>
+        <argsstring>()</argsstring>
+        <name>Covariance</name>
+        <briefdescription>
+<para>Modify the covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Reference to the covariance matrix. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="111" bodyend="111"/>
+        <references refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a72d63b74c8166dff8e1a9006905ad9ca">MahalanobisDistance&lt; TakeRoot &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a7bc3cfc0ee3750ba84ee4dc7f62994ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecTypeA</type>
+          </param>
+          <param>
+            <type>typename VecTypeB</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const VecTypeA &amp;a, const VecTypeB &amp;b)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const VecTypeA &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const VecTypeB &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the distance between the two given points using this Mahalanobis distance. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the covariance matrix has not been set (i.e. if you used the empty constructor and did not later modify the covariance matrix), calling this method will probably result in a crash.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="97" column="1"/>
+        <referencedby refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a385234d4f1d914f7786c481fa805c31c" compoundref="mahalanobis__distance_8hpp" startline="84" endline="85">MahalanobisDistance&lt; TakeRoot &gt;::MahalanobisDistance</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1metric_1_1MahalanobisDistance_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the Mahalanobis distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="115" column="1"/>
+        <referencedby refid="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" compoundref="mahalanobis__distance_8hpp" startline="111" endline="111">MahalanobisDistance&lt; TakeRoot &gt;::Covariance</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The Mahalanobis distance, which is essentially a stretched Euclidean distance. </para>    </briefdescription>
+    <detaileddescription>
+<para>Given a square covariance matrix <formula id="69">$ Q $</formula> of size <formula id="70">$ d $</formula> x <formula id="70">$ d $</formula>, where <formula id="70">$ d $</formula> is the dimensionality of the points it will be evaluating, and given two vectors <formula id="36">$ x $</formula> and <formula id="37">$ y $</formula> also of dimensionality <formula id="70">$ d $</formula>,</para><para><formula id="71">\[ d(x, y) = \sqrt{(x - y)^T Q (x - y)} \]</formula></para><para>where Q is the covariance matrix.</para><para>Because each evaluation multiplies (x_1 - x_2) by the covariance matrix, it is typically much quicker to use an <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">LMetric</ref> and simply stretch the actual dataset itself before performing any evaluations. However, this class is provided for convenience.</para><para>If you wish to use the KNN class or other tree-based algorithms with this distance, it is recommended to instead stretch the dataset first, by decomposing Q = L^T L (perhaps via a Cholesky decomposition), and then multiply the data by L. If you still wish to use the KNN class with a custom distance anyway, you will need to use a different tree type than the default KDTree, which only works with the <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">LMetric</ref> class.</para><para>Similar to the <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">LMetric</ref> class, this offers a template parameter TakeRoot which, when set to false, will instead evaluate the distance</para><para><formula id="72">\[ d(x, y) = (x - y)^T Q (x - y) \]</formula></para><para>which is faster to evaluate.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TakeRoot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, takes the root of the output. It is slightly faster to leave this at the default of false, but this means the metric may not satisfy the triangle inequality and may not be usable for methods that expect a true metric. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp" bodystart="60" bodyend="120"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a3be1162e6a85f9898970ec5cc26f2b54" prot="private" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>covariance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7cab8a0b8c0deac1833f3e489fa52daf" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>Covariance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>Covariance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7bc3cfc0ee3750ba84ee4dc7f62994ae" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a00cbb536d89ebdafc57f3a481aa772e4" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>MahalanobisDistance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a68f439d98cd6d071ed45bd91f47ebfcb" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>MahalanobisDistance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a385234d4f1d914f7786c481fa805c31c" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>MahalanobisDistance</name></member>
+      <member refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" virt="non-virtual"><scope>mlpack::metric::MahalanobisDistance</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

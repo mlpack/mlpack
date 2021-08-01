@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1LayerTraits" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::LayerTraits</compoundname>
+    <includes refid="layer__traits_8hpp" local="no">layer_traits.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename LayerType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1LayerTraits_1a69580094e588b884a0eb0b30d268d6eb" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsBiasLayer</definition>
+        <argsstring></argsstring>
+        <name>IsBiasLayer</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>This is true if the layer is a bias layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1LayerTraits_1aec3667955b84aa1f944329b5ca9ac6bc" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsBinary</definition>
+        <argsstring></argsstring>
+        <name>IsBinary</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>This is true if the layer is a binary layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1LayerTraits_1a4e4d37fda356f300a538357b06db74e3" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsConnection</definition>
+        <argsstring></argsstring>
+        <name>IsConnection</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="55" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1LayerTraits_1a816a2da3205a125090e7880005ff89cd" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsLSTMLayer</definition>
+        <argsstring></argsstring>
+        <name>IsLSTMLayer</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1LayerTraits_1a19ff589b2311f62ad44a0f47de8dc136" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsOutputLayer</definition>
+        <argsstring></argsstring>
+        <name>IsOutputLayer</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>This is true if the layer is an output layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is a template class that can provide information about various layers. </para>    </briefdescription>
+    <detaileddescription>
+<para>By default, this class will provide the weakest possible assumptions on layer, and each layer should override values as necessary. If a layer doesn&apos;t need to override a value, then there&apos;s no need to write a <ref refid="classmlpack_1_1ann_1_1LayerTraits" kindref="compound">LayerTraits</ref> specialization for that class. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" bodystart="29" bodyend="56"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1LayerTraits_1a69580094e588b884a0eb0b30d268d6eb" prot="public" virt="non-virtual"><scope>mlpack::ann::LayerTraits</scope><name>IsBiasLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1LayerTraits_1aec3667955b84aa1f944329b5ca9ac6bc" prot="public" virt="non-virtual"><scope>mlpack::ann::LayerTraits</scope><name>IsBinary</name></member>
+      <member refid="classmlpack_1_1ann_1_1LayerTraits_1a4e4d37fda356f300a538357b06db74e3" prot="public" virt="non-virtual"><scope>mlpack::ann::LayerTraits</scope><name>IsConnection</name></member>
+      <member refid="classmlpack_1_1ann_1_1LayerTraits_1a816a2da3205a125090e7880005ff89cd" prot="public" virt="non-virtual"><scope>mlpack::ann::LayerTraits</scope><name>IsLSTMLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1LayerTraits_1a19ff589b2311f62ad44a0f47de8dc136" prot="public" virt="non-virtual"><scope>mlpack::ann::LayerTraits</scope><name>IsOutputLayer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

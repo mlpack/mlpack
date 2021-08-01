@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_0c9cebbae2836f20c48fc7820984e89e" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/naive_bayes</compoundname>
+    <innerfile refid="naive__bayes__classifier_8hpp">naive_bayes_classifier.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,59 @@
+.TH "Accuracy" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Accuracy \- The \fBAccuracy\fP is a metric of performance for classification algorithms that is equal to a proportion of correctly labeled test items among all ones for given test items\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MLAlgorithm , typename DataType > static double \fBEvaluate\fP (MLAlgorithm &model, const DataType &data, const arma::Row< size_t > &labels)"
+.br
+.RI "Run classification and calculate accuracy\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsMinimization\fP = false"
+.br
+.RI "Information for hyper-parameter tuning code\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The \fBAccuracy\fP is a metric of performance for classification algorithms that is equal to a proportion of correctly labeled test items among all ones for given test items\&. 
+.PP
+Definition at line 26 of file accuracy\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (MLAlgorithm & model, const DataType & data, const arma::Row< size_t > & labels)\fC [static]\fP"
+
+.PP
+Run classification and calculate accuracy\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP A classification model\&. 
+.br
+\fIdata\fP Column-major data containing test items\&. 
+.br
+\fIlabels\fP Ground truth (correct) labels for the test items\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool NeedsMinimization = false\fC [static]\fP"
+
+.PP
+Information for hyper-parameter tuning code\&. It indicates that we want to maximize the metric\&. 
+.PP
+Definition at line 45 of file accuracy\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

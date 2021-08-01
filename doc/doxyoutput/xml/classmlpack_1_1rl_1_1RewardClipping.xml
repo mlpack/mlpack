@@ -1,0 +1,368 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1rl_1_1RewardClipping" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::RewardClipping</compoundname>
+    <includes refid="reward__clipping_8hpp" local="no">reward_clipping.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename EnvironmentType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" prot="public" static="no">
+        <type>typename EnvironmentType::Action</type>
+        <definition>using Action =  typename EnvironmentType::Action</definition>
+        <argsstring></argsstring>
+        <name>Action</name>
+        <briefdescription>
+<para>Convenient typedef for action. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" prot="public" static="no">
+        <type>typename EnvironmentType::State</type>
+        <definition>using State =  typename EnvironmentType::State</definition>
+        <argsstring></argsstring>
+        <name>State</name>
+        <briefdescription>
+<para>Convenient typedef for state. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1RewardClipping_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" static="no" mutable="no">
+        <type>EnvironmentType</type>
+        <definition>EnvironmentType environment</definition>
+        <argsstring></argsstring>
+        <name>environment</name>
+        <briefdescription>
+<para>An instance of the UpdatePolicy used for actual optimization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="129" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1RewardClipping_1a27cd68647e0bcb9d7208ec548fb22a0b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double maxReward</definition>
+        <argsstring></argsstring>
+        <name>maxReward</name>
+        <briefdescription>
+<para>Maximum possible value of clipped reward. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1RewardClipping_1ab02a204dc8de08380ad1a42ea2db6fb1" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double minReward</definition>
+        <argsstring></argsstring>
+        <name>minReward</name>
+        <briefdescription>
+<para>Minimum possible value of clipped reward. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a97f34a1179082c279260959eff023e1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RewardClipping</definition>
+        <argsstring>(EnvironmentType &amp;environment, const double minReward=-1.0, const double maxReward=1.0)</argsstring>
+        <name>RewardClipping</name>
+        <param>
+          <type>EnvironmentType &amp;</type>
+          <declname>environment</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minReward</declname>
+          <defval>-1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maxReward</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+<para>Constructor for creating a <ref refid="classmlpack_1_1rl_1_1RewardClipping" kindref="compound">RewardClipping</ref> instance. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>minReward</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum possible value of clipped reward. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxReward</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum possible value of clipped reward. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>environment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An instance of the environment used for actual simulations. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="47" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a18f14a98092c29dd41d3e1cbc2c52159" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>EnvironmentType &amp;</type>
+        <definition>EnvironmentType&amp; Environment</definition>
+        <argsstring>() const</argsstring>
+        <name>Environment</name>
+        <briefdescription>
+<para>Get the environment. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a59cc43eb892c46ea7c50e18fb78b9172" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EnvironmentType &amp;</type>
+        <definition>EnvironmentType&amp; Environment</definition>
+        <argsstring>()</argsstring>
+        <name>Environment</name>
+        <briefdescription>
+<para>Modify the environment. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1aa9f537249fa0c1e62b38197996ab4c6a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref></type>
+        <definition>State InitialSample</definition>
+        <argsstring>()</argsstring>
+        <name>InitialSample</name>
+        <briefdescription>
+<para>The InitialSample method is called by the environment to initialize the starting state. </para>        </briefdescription>
+        <detaileddescription>
+<para>Returns whatever Initial Sample is returned by the environment. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="62" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="62" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a7fd056133dfd315e4bf45c408f99326f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsTerminal</definition>
+        <argsstring>(const State &amp;state) const</argsstring>
+        <name>IsTerminal</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>Checks whether given state is a terminal state. </para>        </briefdescription>
+        <detaileddescription>
+<para>Returns the value by calling the environment method.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>desired state. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if state is a terminal state, otherwise false. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a00e2e3602d4233fc27e8674511641e68" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double MaxReward</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxReward</name>
+        <briefdescription>
+<para>Get the maximum reward value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a3c1ad6d51dd13323ac752a4ca1c0cfb3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MaxReward</definition>
+        <argsstring>()</argsstring>
+        <name>MaxReward</name>
+        <briefdescription>
+<para>Modify the maximum reward value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1ac054a2c9e0295beac8c7a4fabe68e563" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double MinReward</definition>
+        <argsstring>() const</argsstring>
+        <name>MinReward</name>
+        <briefdescription>
+<para>Get the minimum reward value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a842cc3c3e49e15e90bf0e029f150cccc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MinReward</definition>
+        <argsstring>()</argsstring>
+        <name>MinReward</name>
+        <briefdescription>
+<para>Modify the minimum reward value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Sample</definition>
+        <argsstring>(const State &amp;state, const Action &amp;action, State &amp;nextState)</argsstring>
+        <name>Sample</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" kindref="member">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref> &amp;</type>
+          <declname>nextState</declname>
+        </param>
+        <briefdescription>
+<para>Dynamics of Environment. </para>        </briefdescription>
+        <detaileddescription>
+<para>The rewards returned from the base environment are clipped according the maximum and minimum values specified.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current state. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current action. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nextState</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The next state. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>clippedReward, Reward clipped between [minReward, maxReward]. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="88" bodyend="96"/>
+        <references refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" compoundref="clamp_8hpp" startline="53" endline="62">mlpack::math::ClampRange</references>
+        <referencedby refid="classmlpack_1_1rl_1_1RewardClipping_1af2bb860eaefeaa62a40f5cf940793704" compoundref="reward__clipping_8hpp" startline="106" endline="110">RewardClipping&lt; EnvironmentType &gt;::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1RewardClipping_1af2bb860eaefeaa62a40f5cf940793704" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Sample</definition>
+        <argsstring>(const State &amp;state, const Action &amp;action)</argsstring>
+        <name>Sample</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" kindref="member">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" kindref="member">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <briefdescription>
+<para>Dynamics of Environment. </para>        </briefdescription>
+        <detaileddescription>
+<para>The rewards returned from the base environment are clipped according the maximum and minimum values specified.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current state. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current action. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>clippedReward, Reward clipped between [minReward, maxReward]. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="106" bodyend="110"/>
+        <references refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" compoundref="reward__clipping_8hpp" startline="88" endline="96">RewardClipping&lt; EnvironmentType &gt;::Sample</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as <formula id="164">$ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $</formula>.) </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>EnvironmentType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A type of Environment that is being wrapped. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp" bodystart="30" bodyend="136"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a1f2d996cd451bb1fed4d3d89b4ba19ba" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>Action</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a18f14a98092c29dd41d3e1cbc2c52159" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>Environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a59cc43eb892c46ea7c50e18fb78b9172" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>Environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1aa9f537249fa0c1e62b38197996ab4c6a" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>InitialSample</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a7fd056133dfd315e4bf45c408f99326f" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>IsTerminal</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a27cd68647e0bcb9d7208ec548fb22a0b" prot="private" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>maxReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a00e2e3602d4233fc27e8674511641e68" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>MaxReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a3c1ad6d51dd13323ac752a4ca1c0cfb3" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>MaxReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1ab02a204dc8de08380ad1a42ea2db6fb1" prot="private" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>minReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1ac054a2c9e0295beac8c7a4fabe68e563" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>MinReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a842cc3c3e49e15e90bf0e029f150cccc" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>MinReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a97f34a1179082c279260959eff023e1f" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>RewardClipping</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>Sample</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1af2bb860eaefeaa62a40f5cf940793704" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>Sample</name></member>
+      <member refid="classmlpack_1_1rl_1_1RewardClipping_1a1f6c591e4da193973060b0a606af688d" prot="public" virt="non-virtual"><scope>mlpack::rl::RewardClipping</scope><name>State</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

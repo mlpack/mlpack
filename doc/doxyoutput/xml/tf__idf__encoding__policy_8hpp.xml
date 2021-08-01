@@ -1,0 +1,646 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="tf__idf__encoding__policy_8hpp" kind="file" language="C++">
+    <compoundname>tf_idf_encoding_policy.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="policy__traits_8hpp" local="no">mlpack/core/data/string_encoding_policies/policy_traits.hpp</includes>
+    <includes refid="string__encoding_8hpp" local="no">mlpack/core/data/string_encoding.hpp</includes>
+    <incdepgraph>
+      <node id="9498">
+        <label>list</label>
+      </node>
+      <node id="9495">
+        <label>atomic</label>
+      </node>
+      <node id="9485">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="9461">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="9497">
+        <label>iomanip</label>
+      </node>
+      <node id="9507">
+        <label>mlpack/core/boost_backport/boost_backport_string_view.hpp</label>
+      </node>
+      <node id="9505">
+        <label>mlpack/core/data/string_encoding_policies/policy_traits.hpp</label>
+        <link refid="policy__traits_8hpp"/>
+        <childnode refid="9448" relation="include">
+        </childnode>
+      </node>
+      <node id="9470">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="9471" relation="include">
+        </childnode>
+        <childnode refid="9473" relation="include">
+        </childnode>
+      </node>
+      <node id="9453">
+        <label>cstdint</label>
+      </node>
+      <node id="9462">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="9469">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="9492">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="9482">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="9449">
+        <label>cmath</label>
+      </node>
+      <node id="9468">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="9457">
+        <label>stdexcept</label>
+      </node>
+      <node id="9477">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="9462" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9463" relation="include">
+        </childnode>
+      </node>
+      <node id="9501">
+        <label>string</label>
+      </node>
+      <node id="9489">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="9490" relation="include">
+        </childnode>
+        <childnode refid="9456" relation="include">
+        </childnode>
+      </node>
+      <node id="9499">
+        <label>map</label>
+      </node>
+      <node id="9451">
+        <label>cfloat</label>
+      </node>
+      <node id="9481">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="9503">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="9465">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="9488">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="9489" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9472" relation="include">
+        </childnode>
+        <childnode refid="9490" relation="include">
+        </childnode>
+      </node>
+      <node id="9478">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="9476">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="9462" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9463" relation="include">
+        </childnode>
+      </node>
+      <node id="9479">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="9462" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9463" relation="include">
+        </childnode>
+      </node>
+      <node id="9467">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="9487">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="9463" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9475" relation="include">
+        </childnode>
+        <childnode refid="9484" relation="include">
+        </childnode>
+      </node>
+      <node id="9491">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="9492" relation="include">
+        </childnode>
+      </node>
+      <node id="9493">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="9448">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="9449" relation="include">
+        </childnode>
+        <childnode refid="9450" relation="include">
+        </childnode>
+        <childnode refid="9451" relation="include">
+        </childnode>
+        <childnode refid="9452" relation="include">
+        </childnode>
+        <childnode refid="9453" relation="include">
+        </childnode>
+        <childnode refid="9454" relation="include">
+        </childnode>
+        <childnode refid="9455" relation="include">
+        </childnode>
+        <childnode refid="9456" relation="include">
+        </childnode>
+        <childnode refid="9457" relation="include">
+        </childnode>
+        <childnode refid="9458" relation="include">
+        </childnode>
+        <childnode refid="9459" relation="include">
+        </childnode>
+        <childnode refid="9460" relation="include">
+        </childnode>
+        <childnode refid="9461" relation="include">
+        </childnode>
+        <childnode refid="9462" relation="include">
+        </childnode>
+        <childnode refid="9463" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9466" relation="include">
+        </childnode>
+        <childnode refid="9467" relation="include">
+        </childnode>
+        <childnode refid="9468" relation="include">
+        </childnode>
+        <childnode refid="9469" relation="include">
+        </childnode>
+        <childnode refid="9470" relation="include">
+        </childnode>
+        <childnode refid="9474" relation="include">
+        </childnode>
+        <childnode refid="9475" relation="include">
+        </childnode>
+        <childnode refid="9476" relation="include">
+        </childnode>
+        <childnode refid="9477" relation="include">
+        </childnode>
+        <childnode refid="9478" relation="include">
+        </childnode>
+        <childnode refid="9479" relation="include">
+        </childnode>
+        <childnode refid="9480" relation="include">
+        </childnode>
+        <childnode refid="9486" relation="include">
+        </childnode>
+        <childnode refid="9487" relation="include">
+        </childnode>
+        <childnode refid="9484" relation="include">
+        </childnode>
+        <childnode refid="9488" relation="include">
+        </childnode>
+        <childnode refid="9491" relation="include">
+        </childnode>
+        <childnode refid="9493" relation="include">
+        </childnode>
+        <childnode refid="9494" relation="include">
+        </childnode>
+        <childnode refid="9503" relation="include">
+        </childnode>
+        <childnode refid="9504" relation="include">
+        </childnode>
+      </node>
+      <node id="9454">
+        <label>cstdio</label>
+      </node>
+      <node id="9458">
+        <label>tuple</label>
+      </node>
+      <node id="9463">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="9506">
+        <label>mlpack/core/data/string_encoding.hpp</label>
+        <link refid="string__encoding_8hpp"/>
+        <childnode refid="9448" relation="include">
+        </childnode>
+        <childnode refid="9507" relation="include">
+        </childnode>
+        <childnode refid="9508" relation="include">
+        </childnode>
+        <childnode refid="9505" relation="include">
+        </childnode>
+        <childnode refid="9511" relation="include">
+        </childnode>
+        <childnode refid="9512" relation="include">
+        </childnode>
+      </node>
+      <node id="9480">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="9463" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9467" relation="include">
+        </childnode>
+        <childnode refid="9481" relation="include">
+        </childnode>
+        <childnode refid="9482" relation="include">
+        </childnode>
+        <childnode refid="9483" relation="include">
+        </childnode>
+        <childnode refid="9484" relation="include">
+        </childnode>
+      </node>
+      <node id="9447">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp</label>
+        <link refid="tf__idf__encoding__policy_8hpp"/>
+        <childnode refid="9448" relation="include">
+        </childnode>
+        <childnode refid="9505" relation="include">
+        </childnode>
+        <childnode refid="9506" relation="include">
+        </childnode>
+      </node>
+      <node id="9512">
+        <label>string_encoding_impl.hpp</label>
+      </node>
+      <node id="9511">
+        <label>vector</label>
+      </node>
+      <node id="9459">
+        <label>utility</label>
+      </node>
+      <node id="9510">
+        <label>array</label>
+      </node>
+      <node id="9483">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="9474">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="9471">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="9472" relation="include">
+        </childnode>
+      </node>
+      <node id="9494">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="9495" relation="include">
+        </childnode>
+        <childnode refid="9496" relation="include">
+        </childnode>
+        <childnode refid="9497" relation="include">
+        </childnode>
+        <childnode refid="9498" relation="include">
+        </childnode>
+        <childnode refid="9499" relation="include">
+        </childnode>
+        <childnode refid="9500" relation="include">
+        </childnode>
+        <childnode refid="9501" relation="include">
+        </childnode>
+        <childnode refid="9502" relation="include">
+        </childnode>
+      </node>
+      <node id="9472">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="9486">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="9484" relation="include">
+        </childnode>
+        <childnode refid="9480" relation="include">
+        </childnode>
+        <childnode refid="9487" relation="include">
+        </childnode>
+      </node>
+      <node id="9455">
+        <label>cstdlib</label>
+      </node>
+      <node id="9450">
+        <label>cctype</label>
+      </node>
+      <node id="9509">
+        <label>deque</label>
+      </node>
+      <node id="9473">
+        <label>unordered_map</label>
+      </node>
+      <node id="9452">
+        <label>climits</label>
+      </node>
+      <node id="9500">
+        <label>mutex</label>
+      </node>
+      <node id="9496">
+        <label>chrono</label>
+      </node>
+      <node id="9504">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="9502">
+        <label>thread</label>
+      </node>
+      <node id="9508">
+        <label>mlpack/core/data/string_encoding_dictionary.hpp</label>
+        <link refid="string__encoding__dictionary_8hpp"/>
+        <childnode refid="9448" relation="include">
+        </childnode>
+        <childnode refid="9507" relation="include">
+        </childnode>
+        <childnode refid="9473" relation="include">
+        </childnode>
+        <childnode refid="9509" relation="include">
+        </childnode>
+        <childnode refid="9510" relation="include">
+        </childnode>
+      </node>
+      <node id="9490">
+        <label>type_traits</label>
+      </node>
+      <node id="9466">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="9460">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="9484">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="9462" relation="include">
+        </childnode>
+        <childnode refid="9463" relation="include">
+        </childnode>
+        <childnode refid="9464" relation="include">
+        </childnode>
+        <childnode refid="9465" relation="include">
+        </childnode>
+        <childnode refid="9485" relation="include">
+        </childnode>
+      </node>
+      <node id="9456">
+        <label>cstring</label>
+      </node>
+      <node id="9475">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="9464">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy" prot="public">mlpack::data::TfIdfEncodingPolicy</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Jeffin Sam </para></simplesect>
+<simplesect kind="author"><para>Mikhail Lozhnikov</para></simplesect>
+Definition of the TfIdfEncodingPolicy class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_TF_IDF_ENCODING_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_STRING_ENCODING_POLICIES_TF_IDF_ENCODING_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="policy__traits_8hpp" kindref="compound">mlpack/core/data/string_encoding_policies/policy_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="string__encoding_8hpp" kindref="compound">mlpack/core/data/string_encoding.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy" kindref="compound">TfIdfEncodingPolicy</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497a98ad0e8750ae10ad556ed7a62affb452" kindref="member">BINARY</ref>,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc" kindref="member">RAW_COUNT</ref>,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497ae4a6b916c2b2d80dbdb92d83b0500d64" kindref="member">TERM_FREQUENCY</ref>,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497add81d4ff18ee485ff5cd1dbb7284c47c" kindref="member">SUBLINEAR_TF</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" kindref="member">TfIdfEncodingPolicy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref><sp/>tfType<sp/>=<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc" kindref="member">TfTypes::RAW_COUNT</ref>,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>smoothIdf<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>:</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>tfType(tfType),</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>smoothIdf(smoothIdf)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a372de693ad40b3f42839c8ec6ac845f4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a372de693ad40b3f42839c8ec6ac845f4" kindref="member">Reset</ref>()</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>tokensFrequences.clear();</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>numContainingStrings.clear();</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>linesSizes.clear();</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="104" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a4e2c846435f9d535401110a83555d2ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a4e2c846435f9d535401110a83555d2ca" kindref="member">InitMatrix</ref>(MatType&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>datasetSize,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>maxNumTokens<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dictionarySize)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>output.zeros(dictionarySize,<sp/>datasetSize);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="127" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a44833b2c5967e5805ddfd5e0abbbd981" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a44833b2c5967e5805ddfd5e0abbbd981" kindref="member">InitMatrix</ref>(std::vector&lt;std::vector&lt;ElemType&gt;&gt;&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>datasetSize,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>maxNumTokens<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dictionarySize)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>output.resize(datasetSize,<sp/>std::vector&lt;ElemType&gt;(dictionarySize));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="148" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a03bdaf094410d559836b5359538a0969" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a03bdaf094410d559836b5359538a0969" kindref="member">Encode</ref>(MatType&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value,</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>line,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>index<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType::elem_type<sp/>tf<sp/>=</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TermFrequency&lt;typename<sp/>MatType::elem_type&gt;(</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tokensFrequences[line][value],<sp/>linesSizes[line]);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType::elem_type<sp/>idf<sp/>=</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>InverseDocumentFrequency&lt;typename<sp/>MatType::elem_type&gt;(</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>output.n_cols,<sp/>numContainingStrings[value]);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>output(value<sp/>-<sp/>1,<sp/>line)<sp/>=<sp/><sp/>tf<sp/>*<sp/>idf;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="180" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9397eba09af69a9324e459bfda52706" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ac9397eba09af69a9324e459bfda52706" kindref="member">Encode</ref>(std::vector&lt;std::vector&lt;ElemType&gt;&gt;&amp;<sp/>output,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>line,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>index<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ElemType<sp/>tf<sp/>=<sp/>TermFrequency&lt;ElemType&gt;(</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tokensFrequences[line][value],<sp/>linesSizes[line]);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ElemType<sp/>idf<sp/>=<sp/>InverseDocumentFrequency&lt;ElemType&gt;(</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>output.size(),<sp/>numContainingStrings[value]);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>output[line][value<sp/>-<sp/>1]<sp/>=<sp/><sp/>tf<sp/>*<sp/>idf;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/>*<sp/>The<sp/>function<sp/>calculates<sp/>the<sp/>necessary<sp/>statistics<sp/>for<sp/>the<sp/>purpose</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/>*<sp/>of<sp/>the<sp/>tf-idf<sp/>algorithm<sp/>during<sp/>the<sp/>first<sp/>pass<sp/>through<sp/>the<sp/>dataset.</highlight></codeline>
+<codeline lineno="197"><highlight class="comment"><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>line<sp/>The<sp/>line<sp/>number<sp/>at<sp/>which<sp/>the<sp/>encoding<sp/>is<sp/>performed.</highlight></codeline>
+<codeline lineno="199"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>index<sp/>The<sp/>token<sp/>sequence<sp/>number<sp/>in<sp/>the<sp/>line.</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/><sp/>*<sp/>@param<sp/>value<sp/>The<sp/>encoded<sp/>token.</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a306d7db4143a8fc05c5a9ff550362414" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a306d7db4143a8fc05c5a9ff550362414" kindref="member">PreprocessToken</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>line,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>index<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>value)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(line<sp/>&gt;=<sp/>tokensFrequences.size())</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linesSizes.resize(line<sp/>+<sp/>1);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>tokensFrequences.resize(line<sp/>+<sp/>1);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>tokensFrequences[line][value]++;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tokensFrequences[line][value]<sp/>==<sp/>1)</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>numContainingStrings[value]++;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>linesSizes[line]++;</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::unordered_map&lt;size_t,<sp/>size_t&gt;&gt;&amp;</highlight></codeline>
+<codeline lineno="222" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1afc6375981a9925ca23df9671fa473fd0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1afc6375981a9925ca23df9671fa473fd0" kindref="member">TokensFrequences</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tokensFrequences;<sp/>}</highlight></codeline>
+<codeline lineno="224" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a31e3c3de7dbe3012c83a012bf765a335" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;std::unordered_map&lt;size_t,<sp/>size_t&gt;&gt;&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a31e3c3de7dbe3012c83a012bf765a335" kindref="member">TokensFrequences</ref>()</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tokensFrequences;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a6a30fb7ebe89eff5005693c1494faa9b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::unordered_map&lt;size_t,<sp/>size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a6a30fb7ebe89eff5005693c1494faa9b" kindref="member">NumContainingStrings</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="231"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numContainingStrings;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ad17a5b987cd720225c6eb891b5185748" refkind="member"><highlight class="normal"><sp/><sp/>std::unordered_map&lt;size_t,<sp/>size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ad17a5b987cd720225c6eb891b5185748" kindref="member">NumContainingStrings</ref>()</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numContainingStrings;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9eb9be1df25db8022278d09cc6184e52" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9eb9be1df25db8022278d09cc6184e52" kindref="member">LinesSizes</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>linesSizes;<sp/>}</highlight></codeline>
+<codeline lineno="244" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a0d1ae8522e5b79e9d6948c525978bf21" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a0d1ae8522e5b79e9d6948c525978bf21" kindref="member">LinesSizes</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>linesSizes;<sp/>}</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9ae26149291cb921852ffe5abbf4ca15" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a9ae26149291cb921852ffe5abbf4ca15" kindref="member">TfType</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tfType;<sp/>}</highlight></codeline>
+<codeline lineno="249" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1acd741559ad8ff165f251dd4e1cf8ac61" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref>&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1acd741559ad8ff165f251dd4e1cf8ac61" kindref="member">TfType</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tfType;<sp/>}</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a888a84e90e38265bf460bacf545ee85c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a888a84e90e38265bf460bacf545ee85c" kindref="member">SmoothIdf</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>smoothIdf;<sp/>}</highlight></codeline>
+<codeline lineno="254" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5f69d3b7af4afaacc72d5f6ad6f2f35f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a5f69d3b7af4afaacc72d5f6ad6f2f35f" kindref="member">SmoothIdf</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>smoothIdf;<sp/>}</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="260" refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(tfType));</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(smoothIdf));</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ValueType&gt;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>ValueType<sp/>TermFrequency(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numOccurrences,</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numTokens)</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(tfType)</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497a98ad0e8750ae10ad556ed7a62affb452" kindref="member">TfTypes::BINARY</ref>:</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numOccurrences<sp/>&gt;<sp/>0;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497aaa5db4381426a88461ad4ebe782d04fc" kindref="member">TfTypes::RAW_COUNT</ref>:</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numOccurrences;</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497ae4a6b916c2b2d80dbdb92d83b0500d64" kindref="member">TfTypes::TERM_FREQUENCY</ref>:</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">ValueType</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(numOccurrences)<sp/>/<sp/>numTokens;</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497add81d4ff18ee485ff5cd1dbb7284c47c" kindref="member">TfTypes::SUBLINEAR_TF</ref>:</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::log(static_cast&lt;ValueType&gt;(numOccurrences))<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Incorrect<sp/>term<sp/>frequency<sp/>type!&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ValueType&gt;</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/>ValueType<sp/>InverseDocumentFrequency(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>totalNumLines,</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numOccurrences)</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(smoothIdf)</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::log(static_cast&lt;ValueType&gt;(totalNumLines<sp/>+<sp/>1)<sp/>/</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(1<sp/>+<sp/>numOccurrences))<sp/>+<sp/>1.0;</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::log(static_cast&lt;ValueType&gt;(totalNumLines)<sp/>/</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numOccurrences)<sp/>+<sp/>1.0;</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/>std::vector&lt;std::unordered_map&lt;size_t,<sp/>size_t&gt;&gt;<sp/>tokensFrequences;</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/>std::unordered_map&lt;size_t,<sp/>size_t&gt;<sp/>numContainingStrings;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/>std::vector&lt;size_t&gt;<sp/>linesSizes;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1ab8d85d42d950e086c7c311e29a68d497" kindref="member">TfTypes</ref><sp/>tfType;</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>smoothIdf;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TokenType&gt;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">TfIdfEncoding</ref><sp/>=<sp/><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref>&lt;<ref refid="classmlpack_1_1data_1_1TfIdfEncodingPolicy_1af15adf81c95183f8da9af1a0c86f86c6" kindref="member">TfIdfEncodingPolicy</ref>,</highlight></codeline>
+<codeline lineno="345" refid="namespacemlpack_1_1data_1adc64c1431b690f470d4949729d31191f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1data_1_1StringEncodingDictionary" kindref="compound">StringEncodingDictionary&lt;TokenType&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="346"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="348"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp"/>
+  </compounddef>
+</doxygen>

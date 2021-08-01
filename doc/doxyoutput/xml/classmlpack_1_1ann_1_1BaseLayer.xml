@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1BaseLayer" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::BaseLayer</compoundname>
+    <includes refid="base__layer_8hpp" local="no">base_layer.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class ActivationFunction</type>
+        <defval><ref refid="classmlpack_1_1ann_1_1LogisticFunction" kindref="compound">LogisticFunction</ref></defval>
+      </param>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BaseLayer_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BaseLayer_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a5efea921257d23b1d5a755609d7a7943" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BaseLayer</definition>
+        <argsstring>()</argsstring>
+        <name>BaseLayer</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="77" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="105" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a09440df0a90bdcc766e56e097d91205b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const InputType &amp;input, OutputType &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="90" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BaseLayer_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="128" bodyend="131"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the base layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>The base layer works as a metaclass which attaches various functions to the embedding layer.</para><para>A few convenience typedefs are given:</para><para><itemizedlist>
+<listitem><para>SigmoidLayer</para></listitem><listitem><para>IdentityLayer</para></listitem><listitem><para>ReLULayer</para></listitem><listitem><para>TanHLayer</para></listitem><listitem><para>SoftplusLayer</para></listitem><listitem><para>HardSigmoidLayer</para></listitem><listitem><para>SwishLayer</para></listitem><listitem><para>MishLayer</para></listitem><listitem><para>LiSHTLayer</para></listitem><listitem><para>GELULayer</para></listitem><listitem><para>ELiSHLayer</para></listitem><listitem><para>ElliotLayer</para></listitem><listitem><para>GaussianLayer</para></listitem><listitem><para>HardSwishLayer</para></listitem><listitem><para>TanhExpLayer</para></listitem><listitem><para>SILULayer</para></listitem></itemizedlist>
+</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ActivationFunction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Activation function used for the embedding layer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="71" bodyend="139"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a5efea921257d23b1d5a755609d7a7943" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>BaseLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a09440df0a90bdcc766e56e097d91205b" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BaseLayer_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::ann::BaseLayer</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

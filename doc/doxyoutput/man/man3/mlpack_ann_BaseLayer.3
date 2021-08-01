@@ -1,0 +1,179 @@
+.TH "BaseLayer< ActivationFunction, InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BaseLayer< ActivationFunction, InputDataType, OutputDataType > \- Implementation of the base layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBaseLayer\fP ()"
+.br
+.RI "Create the \fBBaseLayer\fP object\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class ActivationFunction = LogisticFunction, typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+Implementation of the base layer\&. 
+
+The base layer works as a metaclass which attaches various functions to the embedding layer\&.
+.PP
+A few convenience typedefs are given:
+.PP
+.IP "\(bu" 2
+SigmoidLayer
+.IP "\(bu" 2
+IdentityLayer
+.IP "\(bu" 2
+ReLULayer
+.IP "\(bu" 2
+TanHLayer
+.IP "\(bu" 2
+SoftplusLayer
+.IP "\(bu" 2
+HardSigmoidLayer
+.IP "\(bu" 2
+SwishLayer
+.IP "\(bu" 2
+MishLayer
+.IP "\(bu" 2
+LiSHTLayer
+.IP "\(bu" 2
+GELULayer
+.IP "\(bu" 2
+ELiSHLayer
+.IP "\(bu" 2
+ElliotLayer
+.IP "\(bu" 2
+GaussianLayer
+.IP "\(bu" 2
+HardSwishLayer
+.IP "\(bu" 2
+TanhExpLayer
+.IP "\(bu" 2
+SILULayer
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIActivationFunction\fP Activation function used for the embedding layer\&. 
+.br
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file base_layer\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBaseLayer\fP ()\fC [inline]\fP"
+
+.PP
+Create the \fBBaseLayer\fP object\&. 
+.PP
+Definition at line 77 of file base_layer\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > & input, const arma::Mat< eT > & gy, arma::Mat< eT > & g)\fC [inline]\fP"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.PP
+Definition at line 105 of file base_layer\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 120 of file base_layer\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 122 of file base_layer\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)\fC [inline]\fP"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 90 of file base_layer\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 115 of file base_layer\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 117 of file base_layer\&.hpp\&.
+.SS "void serialize (Archive &, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the layer\&. 
+.PP
+Definition at line 128 of file base_layer\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

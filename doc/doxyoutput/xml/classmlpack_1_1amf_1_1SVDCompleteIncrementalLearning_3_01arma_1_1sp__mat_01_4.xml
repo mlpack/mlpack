@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</compoundname>
+    <includes refid="svd__complete__incremental__learning_8hpp" local="no">svd_complete_incremental_learning.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a4ed73d6a4fcd7bbd2e384430a7e9b9a1" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat</type>
+        <definition>arma::sp_mat dummy</definition>
+        <argsstring></argsstring>
+        <name>dummy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1af7a5551431362e29d053ecba66345352" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool isStart</definition>
+        <argsstring></argsstring>
+        <name>isStart</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a2e4286138574ebd8e6ed733e1c4fbf3e" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat::const_iterator *</type>
+        <definition>arma::sp_mat::const_iterator* it</definition>
+        <argsstring></argsstring>
+        <name>it</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="264" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a6d2402476727060562dea8f9d5f44597" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double kh</definition>
+        <argsstring></argsstring>
+        <name>kh</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="258" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1ae006c02ce3ccca65596953543abc1815" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double kw</definition>
+        <argsstring></argsstring>
+        <name>kw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a007b64e06504c20a853be59118f2182a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t m</definition>
+        <argsstring></argsstring>
+        <name>m</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="261" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a3d05cf6aa68b03e254d70afbe869e305" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1aed08c8478a62910aab06ba708a0e5b5f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double u</definition>
+        <argsstring></argsstring>
+        <name>u</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="256" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a3b3cf22761deb19768df971259ed7d6e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SVDCompleteIncrementalLearning</definition>
+        <argsstring>(double u=0.01, double kw=0, double kh=0)</argsstring>
+        <name>SVDCompleteIncrementalLearning</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+          <defval>0.01</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>kw</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>kh</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="172" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="172" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a4dbaa16a0fc8a0687449487aa5bba055" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>~SVDCompleteIncrementalLearning</definition>
+        <argsstring>()</argsstring>
+        <name>~SVDCompleteIncrementalLearning</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="178" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1ad7f9d232c0abd66dfc2eaa5be2c71a96" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void HUpdate</definition>
+        <argsstring>(const arma::sp_mat &amp;, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>HUpdate</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the encoding matrix H. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function takes in all the matrices and only changes the value of the H matrix.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(V) Input matrix to be factorized. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to be updated. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="238" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="238" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a84c3c1a46335633353a999fa946488af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const arma::sp_mat &amp;dataset, const size_t rank)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="183" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a442a59086580a9e111528f60fa893d59" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void WUpdate</definition>
+        <argsstring>(const arma::sp_mat &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>WUpdate</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the basis matrix W. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function takes in all the matrices and only changes the value of the W matrix.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be updated. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="202" bodyend="227"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TODO : Merge this template specialized function for sparse matrix using common row_col_iterator. </para>    </briefdescription>
+    <detaileddescription>
+<para>template specialiazed functions for sparse matrices </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp" bodystart="169" bodyend="267"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a4ed73d6a4fcd7bbd2e384430a7e9b9a1" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>dummy</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1ad7f9d232c0abd66dfc2eaa5be2c71a96" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>HUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a84c3c1a46335633353a999fa946488af" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1af7a5551431362e29d053ecba66345352" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>isStart</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a2e4286138574ebd8e6ed733e1c4fbf3e" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>it</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a6d2402476727060562dea8f9d5f44597" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>kh</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1ae006c02ce3ccca65596953543abc1815" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>kw</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a007b64e06504c20a853be59118f2182a" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>m</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a3d05cf6aa68b03e254d70afbe869e305" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>n</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a3b3cf22761deb19768df971259ed7d6e" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>SVDCompleteIncrementalLearning</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1aed08c8478a62910aab06ba708a0e5b5f" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>u</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a442a59086580a9e111528f60fa893d59" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>WUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4_1a4dbaa16a0fc8a0687449487aa5bba055" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</scope><name>~SVDCompleteIncrementalLearning</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

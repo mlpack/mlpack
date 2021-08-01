@@ -1,0 +1,108 @@
+.TH "ElishFunction" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ElishFunction \- The ELiSH function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double y)"
+.br
+.RI "Computes the first derivatives of ELiSH function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &y, OutputVecType &x)"
+.br
+.RI "Computes the first derivatives of the ELiSH function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the ELiSH function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the ELiSH function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The ELiSH function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x / (1 + e^{-x}) & x \geq 0\\ (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\ \end{cases} \\ f'(x) &=& \begin{cases} 1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\ e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\ \end{cases} \end{eqnarray*} 
+.PP
+Definition at line 48 of file elish_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of ELiSH function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 84 of file elish_function\&.hpp\&.
+.SS "static void Deriv (const InputVecType & y, OutputVecType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the ELiSH function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 103 of file elish_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the ELiSH function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 57 of file elish_function\&.hpp\&.
+.SS "static void Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the ELiSH function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activations\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file elish_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

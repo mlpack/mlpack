@@ -1,0 +1,13 @@
+.. _exhale_define_CLI11_8hpp_1ab6f9ac59f853b1948fdbcf1188750208:
+
+Define CLI11_VERSION_MINOR
+==========================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_bindings_cli_third_party_CLI_CLI11.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CLI11_VERSION_MINOR

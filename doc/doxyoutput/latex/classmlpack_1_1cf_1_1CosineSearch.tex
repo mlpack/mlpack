@@ -1,0 +1,106 @@
+\section{Cosine\+Search Class Reference}
+\label{classmlpack_1_1cf_1_1CosineSearch}\index{Cosine\+Search@{Cosine\+Search}}
+
+
+Nearest neighbor search with cosine distance.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Cosine\+Search} (const arma\+::mat \&reference\+Set)
+\begin{DoxyCompactList}\small\item\em Constructor with reference set. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const arma\+::mat \&query, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&similarities)
+\begin{DoxyCompactList}\small\item\em Given a set of query points, find the nearest k neighbors, and return similarities. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Nearest neighbor search with cosine distance. 
+
+Note that, with normalized vectors, neighbor search with cosine distance is equivalent to neighbor search with Euclidean distance. Therefore, instead of performing neighbor search directly with cosine distance, we first normalize all vectors to unit length, and then use \doxyref{neighbor\+::\+K\+NN}{p.}{namespacemlpack_1_1neighbor_ac8d70069e8acb12c5ba9a8536ae6ace4} (i.\+e. Neighbor\+Search with Euclidean distance, K\+D\+Tree). Cosine similarities are calculated from Euclidean distance.
+
+An example of how to use \doxyref{Cosine\+Search}{p.}{classmlpack_1_1cf_1_1CosineSearch} in CF is shown below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}
+\textcolor{comment}{// Users for whom recommendations are generated.}
+\textcolor{keyword}{extern} arma::Col<size\_t> users;
+arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}
+
+CFType<> cf(data);
+
+\textcolor{comment}{// Generate 10 recommendations for all users.}
+cf.template GetRecommendations<CosineSearch>(10, recommendations);
+\end{DoxyCode}
+ 
+
+Definition at line 44 of file cosine\+\_\+search.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CosineSearch_a3c05953c20d36d4ea490e3d3aa879704}} 
+\index{mlpack\+::cf\+::\+Cosine\+Search@{mlpack\+::cf\+::\+Cosine\+Search}!Cosine\+Search@{Cosine\+Search}}
+\index{Cosine\+Search@{Cosine\+Search}!mlpack\+::cf\+::\+Cosine\+Search@{mlpack\+::cf\+::\+Cosine\+Search}}
+\subsubsection{Cosine\+Search()}
+{\footnotesize\ttfamily \textbf{ Cosine\+Search} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{reference\+Set }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor with reference set. 
+
+All vectors in reference set are normalized to unit length.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 53 of file cosine\+\_\+search.\+hpp.
+
+
+
+References Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Train().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1CosineSearch_a5ce7aae85679ed26a716bcb8d7c8ee7b}} 
+\index{mlpack\+::cf\+::\+Cosine\+Search@{mlpack\+::cf\+::\+Cosine\+Search}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::cf\+::\+Cosine\+Search@{mlpack\+::cf\+::\+Cosine\+Search}}
+\subsubsection{Search()}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{query,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{similarities }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a set of query points, find the nearest k neighbors, and return similarities. 
+
+Similarities are non-\/negative and no larger than one.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & A set of query points. \\
+\hline
+{\em k} & Number of neighbors to search. \\
+\hline
+{\em neighbors} & Nearest neighbors. \\
+\hline
+{\em similarities} & Similarities between query point and its neighbors. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 70 of file cosine\+\_\+search.\+hpp.
+
+
+
+References Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/neighbor\+\_\+search\+\_\+policies/\textbf{ cosine\+\_\+search.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,527 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="pca__whitening_8hpp" kind="file" language="C++">
+    <compoundname>pca_whitening.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="lin__alg_8hpp" local="no">mlpack/core/math/lin_alg.hpp</includes>
+    <includes refid="ccov_8hpp" local="no">mlpack/core/math/ccov.hpp</includes>
+    <includedby refid="zca__whitening_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp</includedby>
+    <includedby refid="scaling__model_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</includedby>
+    <incdepgraph>
+      <node id="8917">
+        <label>list</label>
+      </node>
+      <node id="8914">
+        <label>atomic</label>
+      </node>
+      <node id="8904">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="8880">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="8916">
+        <label>iomanip</label>
+      </node>
+      <node id="8889">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="8890" relation="include">
+        </childnode>
+        <childnode refid="8892" relation="include">
+        </childnode>
+      </node>
+      <node id="8872">
+        <label>cstdint</label>
+      </node>
+      <node id="8881">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="8888">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="8911">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="8925">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="8901">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="8868">
+        <label>cmath</label>
+      </node>
+      <node id="8887">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="8876">
+        <label>stdexcept</label>
+      </node>
+      <node id="8896">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="8881" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8882" relation="include">
+        </childnode>
+      </node>
+      <node id="8920">
+        <label>string</label>
+      </node>
+      <node id="8908">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="8909" relation="include">
+        </childnode>
+        <childnode refid="8875" relation="include">
+        </childnode>
+      </node>
+      <node id="8918">
+        <label>map</label>
+      </node>
+      <node id="8924">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="8867" relation="include">
+        </childnode>
+        <childnode refid="8925" relation="include">
+        </childnode>
+      </node>
+      <node id="8870">
+        <label>cfloat</label>
+      </node>
+      <node id="8900">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="8922">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="8884">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="8907">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="8908" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8891" relation="include">
+        </childnode>
+        <childnode refid="8909" relation="include">
+        </childnode>
+      </node>
+      <node id="8897">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="8895">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="8881" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8882" relation="include">
+        </childnode>
+      </node>
+      <node id="8898">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="8881" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8882" relation="include">
+        </childnode>
+      </node>
+      <node id="8886">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="8906">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="8882" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8894" relation="include">
+        </childnode>
+        <childnode refid="8903" relation="include">
+        </childnode>
+      </node>
+      <node id="8910">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="8911" relation="include">
+        </childnode>
+      </node>
+      <node id="8912">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="8867">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="8868" relation="include">
+        </childnode>
+        <childnode refid="8869" relation="include">
+        </childnode>
+        <childnode refid="8870" relation="include">
+        </childnode>
+        <childnode refid="8871" relation="include">
+        </childnode>
+        <childnode refid="8872" relation="include">
+        </childnode>
+        <childnode refid="8873" relation="include">
+        </childnode>
+        <childnode refid="8874" relation="include">
+        </childnode>
+        <childnode refid="8875" relation="include">
+        </childnode>
+        <childnode refid="8876" relation="include">
+        </childnode>
+        <childnode refid="8877" relation="include">
+        </childnode>
+        <childnode refid="8878" relation="include">
+        </childnode>
+        <childnode refid="8879" relation="include">
+        </childnode>
+        <childnode refid="8880" relation="include">
+        </childnode>
+        <childnode refid="8881" relation="include">
+        </childnode>
+        <childnode refid="8882" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8885" relation="include">
+        </childnode>
+        <childnode refid="8886" relation="include">
+        </childnode>
+        <childnode refid="8887" relation="include">
+        </childnode>
+        <childnode refid="8888" relation="include">
+        </childnode>
+        <childnode refid="8889" relation="include">
+        </childnode>
+        <childnode refid="8893" relation="include">
+        </childnode>
+        <childnode refid="8894" relation="include">
+        </childnode>
+        <childnode refid="8895" relation="include">
+        </childnode>
+        <childnode refid="8896" relation="include">
+        </childnode>
+        <childnode refid="8897" relation="include">
+        </childnode>
+        <childnode refid="8898" relation="include">
+        </childnode>
+        <childnode refid="8899" relation="include">
+        </childnode>
+        <childnode refid="8905" relation="include">
+        </childnode>
+        <childnode refid="8906" relation="include">
+        </childnode>
+        <childnode refid="8903" relation="include">
+        </childnode>
+        <childnode refid="8907" relation="include">
+        </childnode>
+        <childnode refid="8910" relation="include">
+        </childnode>
+        <childnode refid="8912" relation="include">
+        </childnode>
+        <childnode refid="8913" relation="include">
+        </childnode>
+        <childnode refid="8922" relation="include">
+        </childnode>
+        <childnode refid="8923" relation="include">
+        </childnode>
+      </node>
+      <node id="8873">
+        <label>cstdio</label>
+      </node>
+      <node id="8877">
+        <label>tuple</label>
+      </node>
+      <node id="8882">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="8899">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="8882" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8886" relation="include">
+        </childnode>
+        <childnode refid="8900" relation="include">
+        </childnode>
+        <childnode refid="8901" relation="include">
+        </childnode>
+        <childnode refid="8902" relation="include">
+        </childnode>
+        <childnode refid="8903" relation="include">
+        </childnode>
+      </node>
+      <node id="8878">
+        <label>utility</label>
+      </node>
+      <node id="8902">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="8893">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="8890">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="8891" relation="include">
+        </childnode>
+      </node>
+      <node id="8913">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="8914" relation="include">
+        </childnode>
+        <childnode refid="8915" relation="include">
+        </childnode>
+        <childnode refid="8916" relation="include">
+        </childnode>
+        <childnode refid="8917" relation="include">
+        </childnode>
+        <childnode refid="8918" relation="include">
+        </childnode>
+        <childnode refid="8919" relation="include">
+        </childnode>
+        <childnode refid="8920" relation="include">
+        </childnode>
+        <childnode refid="8921" relation="include">
+        </childnode>
+      </node>
+      <node id="8891">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="8905">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="8903" relation="include">
+        </childnode>
+        <childnode refid="8899" relation="include">
+        </childnode>
+        <childnode refid="8906" relation="include">
+        </childnode>
+      </node>
+      <node id="8874">
+        <label>cstdlib</label>
+      </node>
+      <node id="8869">
+        <label>cctype</label>
+      </node>
+      <node id="8892">
+        <label>unordered_map</label>
+      </node>
+      <node id="8871">
+        <label>climits</label>
+      </node>
+      <node id="8926">
+        <label>mlpack/core/math/ccov.hpp</label>
+        <link refid="ccov_8hpp"/>
+        <childnode refid="8867" relation="include">
+        </childnode>
+        <childnode refid="8927" relation="include">
+        </childnode>
+      </node>
+      <node id="8919">
+        <label>mutex</label>
+      </node>
+      <node id="8915">
+        <label>chrono</label>
+      </node>
+      <node id="8923">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="8927">
+        <label>ccov_impl.hpp</label>
+      </node>
+      <node id="8921">
+        <label>thread</label>
+      </node>
+      <node id="8909">
+        <label>type_traits</label>
+      </node>
+      <node id="8885">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="8879">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="8903">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="8881" relation="include">
+        </childnode>
+        <childnode refid="8882" relation="include">
+        </childnode>
+        <childnode refid="8883" relation="include">
+        </childnode>
+        <childnode refid="8884" relation="include">
+        </childnode>
+        <childnode refid="8904" relation="include">
+        </childnode>
+      </node>
+      <node id="8866">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/pca_whitening.hpp</label>
+        <link refid="pca__whitening_8hpp"/>
+        <childnode refid="8867" relation="include">
+        </childnode>
+        <childnode refid="8924" relation="include">
+        </childnode>
+        <childnode refid="8926" relation="include">
+        </childnode>
+      </node>
+      <node id="8875">
+        <label>cstring</label>
+      </node>
+      <node id="8894">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="8883">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8929">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp</label>
+        <link refid="zca__whitening_8hpp"/>
+        <childnode refid="8930" relation="include">
+        </childnode>
+      </node>
+      <node id="8930">
+        <label>/home/aakash/mlpack/src/mlpack/methods/preprocess/scaling_model.hpp</label>
+        <link refid="scaling__model_8hpp"/>
+      </node>
+      <node id="8928">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/pca_whitening.hpp</label>
+        <link refid="pca__whitening_8hpp"/>
+        <childnode refid="8929" relation="include">
+        </childnode>
+        <childnode refid="8930" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1PCAWhitening" prot="public">mlpack::data::PCAWhitening</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Jeffin Sam</para></simplesect>
+Whitening scaling to scale features, Using PCA Whitening.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_PCA_WHITENING_SCALE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_PCA_WHITENING_SCALE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lin__alg_8hpp" kindref="compound">mlpack/core/math/lin_alg.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="ccov_8hpp" kindref="compound">mlpack/core/math/ccov.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1data_1_1PCAWhitening" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1PCAWhitening" kindref="compound">PCAWhitening</ref></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1data_1_1PCAWhitening_1a45ec61849c4ad0dfbc18ff0ebc57d1ee" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a45ec61849c4ad0dfbc18ff0ebc57d1ee" kindref="member">PCAWhitening</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>eps<sp/>=<sp/>0.00005)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>epsilon<sp/>=<sp/>eps;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Ensure<sp/>scaleMin<sp/>is<sp/>smaller<sp/>than<sp/>scaleMax.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(epsilon<sp/>&lt;<sp/>0)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Regularization<sp/>parameter<sp/>is<sp/>not<sp/>correct&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="71" refid="classmlpack_1_1data_1_1PCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" kindref="member">Fit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>itemMean<sp/>=<sp/>arma::mean(input,<sp/>1);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Get<sp/>eigenvectors<sp/>and<sp/>eigenvalues<sp/>of<sp/>covariance<sp/>of<sp/>input<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>eig_sym(eigenValues,<sp/>eigenVectors,<sp/><ref refid="namespacemlpack_1_1math_1a5b2ddc31187ec7a449b6ebcd71b2e52b" kindref="member">mlpack::math::ColumnCovariance</ref>(</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>input.each_col()<sp/>-<sp/>itemMean));</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>eigenValues<sp/>+=<sp/>epsilon;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1data_1_1PCAWhitening_1a7bc470a1e097f5b0aaf2396691432b3f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a7bc470a1e097f5b0aaf2396691432b3f" kindref="member">Transform</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input,<sp/>MatType&amp;<sp/>output)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(eigenValues.is_empty()<sp/>||<sp/>eigenVectors.is_empty())</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Call<sp/>Fit()<sp/>before<sp/>Transform(),<sp/>please&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/>refer<sp/>to<sp/>the<sp/>documentation.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>output.copy_size(input);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>(input.each_col()<sp/>-<sp/>itemMean);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>arma::diagmat(1.0<sp/>/<sp/>(arma::sqrt(eigenValues)))<sp/>*<sp/>eigenVectors.t()</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>output;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1data_1_1PCAWhitening_1afb0e67c6fbf5a527f63469bbbf07066c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1afb0e67c6fbf5a527f63469bbbf07066c" kindref="member">InverseTransform</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>input,<sp/>MatType&amp;<sp/>output)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>arma::diagmat(arma::sqrt(eigenValues))<sp/>*<sp/>inv(eigenVectors.t())</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>input;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>output<sp/>=<sp/>(output.each_col()<sp/>+<sp/>itemMean);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="classmlpack_1_1data_1_1PCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" kindref="member">ItemMean</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>itemMean;<sp/>}</highlight></codeline>
+<codeline lineno="117" refid="classmlpack_1_1data_1_1PCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" kindref="member">EigenValues</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigenValues;<sp/>}</highlight></codeline>
+<codeline lineno="119" refid="classmlpack_1_1data_1_1PCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" kindref="member">EigenVectors</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigenVectors;<sp/>}</highlight></codeline>
+<codeline lineno="121" refid="classmlpack_1_1data_1_1PCAWhitening_1a3ababd597760bb1f9782ad2c17aadb41" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a3ababd597760bb1f9782ad2c17aadb41" kindref="member">Epsilon</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>epsilon;<sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="124" refid="classmlpack_1_1data_1_1PCAWhitening_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1PCAWhitening_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(eigenValues));</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(eigenVectors));</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(itemMean));</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(epsilon));</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Vector<sp/>which<sp/>holds<sp/>mean<sp/>of<sp/>each<sp/>feature.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>arma::vec<sp/>itemMean;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Mat<sp/>which<sp/>hold<sp/>the<sp/>eigenvectors.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>arma::mat<sp/>eigenVectors;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Regularization<sp/>Paramter.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>epsilon;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Vector<sp/>which<sp/>hold<sp/>the<sp/>eigenvalues.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>arma::vec<sp/>eigenValues;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>PCAWhitening</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/pca_whitening.hpp"/>
+  </compounddef>
+</doxygen>

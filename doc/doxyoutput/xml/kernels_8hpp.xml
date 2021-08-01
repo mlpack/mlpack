@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="kernels_8hpp" kind="file" language="C++">
+    <compoundname>kernels.hpp</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="133"></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/doc/policies/kernels.hpp"/>
+  </compounddef>
+</doxygen>

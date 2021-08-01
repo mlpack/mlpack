@@ -37,19 +37,22 @@ breathe_projects = { "mlpack": "../doxyoutput/xml/" }
 
 breathe_default_project = "mlpack"
 
+breathe_debug_trace_directives = True
+
 # Setup the exhale extension
 exhale_args = {
     # These arguments are required
     "containmentFolder":     "./api",
     "rootFileName":          "library_root.rst",
-    "rootFileTitle":         "Library API",
+    "rootFileTitle":         "mlpack API",
     "doxygenStripFromPath":  "./",
     # Suggested optional arguments
     "createTreeView":        True,
     # TIP: if using the sphinx-bootstrap-theme, you need
     # "treeViewIsBootstrap": True,
     "exhaleExecutesDoxygen": True,
-    "exhaleUseDoxyfile": True
+    "exhaleUseDoxyfile": True,
+    "generateBreatheFileDirectives" : True
 }
 
 # Tell sphinx what the primary language being documented is.

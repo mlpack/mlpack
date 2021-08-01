@@ -1,0 +1,23 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/cover_tree.hpp" name="/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/cover_tree.hpp">
+<area shape="rect" id="node2" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="1680,273,1816,300"/>
+<area shape="rect" id="node42" href="$statistic_8hpp.html" title="Definition of the policy type for the statistic class. " alt="" coords="1405,109,1510,136"/>
+<area shape="rect" id="node43" href="$first__point__is__root_8hpp.html" title="first_point_is_root.hpp" alt="" coords="946,191,1097,218"/>
+<area shape="rect" id="node45" href="$cover__tree_8hpp.html" title="../cover_tree.hpp" alt="" coords="1535,109,1655,136"/>
+<area shape="rect" id="node15" href="$arma__traits_8hpp.html" title="mlpack/core/util/arma\l_traits.hpp" alt="" coords="1128,355,1275,397"/>
+<area shape="rect" id="node24" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="2082,355,2222,397"/>
+<area shape="rect" id="node27" href="$is__loading_8hpp.html" title="mlpack/core/cereal\l/is_loading.hpp" alt="" coords="1834,541,1966,583"/>
+<area shape="rect" id="node28" href="$is__saving_8hpp.html" title="mlpack/core/cereal\l/is_saving.hpp" alt="" coords="1990,541,2122,583"/>
+<area shape="rect" id="node30" href="$array__wrapper_8hpp.html" title="mlpack/core/cereal\l/array_wrapper.hpp" alt="" coords="2300,541,2433,583"/>
+<area shape="rect" id="node31" href="$pointer__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_variant_wrapper.hpp" alt="" coords="2451,452,2640,493"/>
+<area shape="rect" id="node32" href="$pointer__wrapper_8hpp.html" title="pointer_wrapper.hpp" alt="" coords="2559,549,2697,575"/>
+<area shape="rect" id="node33" href="$pointer__vector__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_vector_variant\l_wrapper.hpp" alt="" coords="2525,348,2680,404"/>
+<area shape="rect" id="node34" href="$pointer__vector__wrapper_8hpp.html" title="pointer_vector_wrapper.hpp" alt="" coords="2795,459,2978,486"/>
+<area shape="rect" id="node35" href="$has__serialize_8hpp.html" title="mlpack/core/data/has\l_serialize.hpp" alt="" coords="3104,452,3251,493"/>
+<area shape="rect" id="node36" href="$arma__config__check_8hpp.html" title="mlpack/core/util/arma\l_config_check.hpp" alt="" coords="3205,355,3352,397"/>
+<area shape="rect" id="node38" href="$timers_8hpp.html" title="mlpack/core/util/timers.hpp" alt="" coords="3560,363,3739,389"/>
+<area shape="rect" id="node39" href="$deprecated_8hpp.html" title="mlpack/core/util/deprecated.hpp" alt="" coords="3763,363,3970,389"/>
+<area shape="rect" id="node40" href="$size__checks_8hpp.html" title="mlpack/core/util/size\l_checks.hpp" alt="" coords="3994,355,4137,397"/>
+<area shape="rect" id="node46" href="$cover__tree_2single__tree__traverser_8hpp.html" title="cover_tree/single_tree\l_traverser.hpp" alt="" coords="1842,184,1993,225"/>
+<area shape="rect" id="node48" href="$cover__tree_2dual__tree__traverser_8hpp.html" title="cover_tree/dual_tree\l_traverser.hpp" alt="" coords="1678,184,1818,225"/>
+<area shape="rect" id="node50" href="$cover__tree_2traits_8hpp.html" title="cover_tree/traits.hpp" alt="" coords="1121,191,1263,218"/>
+</map>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d5b6866e35aa9a05a7a312d572562d99" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/quic_svd</compoundname>
+    <innerfile refid="quic__svd_8hpp">quic_svd.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/quic_svd/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1cf_1_1SVDWrapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::SVDWrapper</compoundname>
+    <includes refid="svd__wrapper_8hpp" local="no">svd_wrapper.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class Factorizer</type>
+        <defval><ref refid="classmlpack_1_1cf_1_1DummyClass" kindref="compound">DummyClass</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1SVDWrapper_1aa165a3b22da62d19babab433f107d582" prot="private" static="no" mutable="no">
+        <type>Factorizer</type>
+        <definition>Factorizer factorizer</definition>
+        <argsstring></argsstring>
+        <name>factorizer</name>
+        <briefdescription>
+<para>svd factorizer </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SVDWrapper_1a062f6d1d0cbae52c35ee6cdc7c0e12e2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SVDWrapper</definition>
+        <argsstring>(const Factorizer &amp;factorizer=Factorizer())</argsstring>
+        <name>SVDWrapper</name>
+        <param>
+          <type>const Factorizer &amp;</type>
+          <declname>factorizer</declname>
+          <defval>Factorizer()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" bodystart="44" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SVDWrapper_1a9a4d773f77543202c714b0bd8871cd36" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Apply</definition>
+        <argsstring>(const arma::mat &amp;V, arma::mat &amp;W, arma::mat &amp;sigma, arma::mat &amp;H) const</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>sigma</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>Factorizer function which takes SVD of the given matrix and returns the frobenius norm of error. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>first unitary matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sigma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>eigenvalue matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>second unitary matrix</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>V = W * sigma * arma::trans(H) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="61" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SVDWrapper_1ac2389a00421a05b85aca1c1b7acf0341" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Apply</definition>
+        <argsstring>(const arma::mat &amp;V, size_t r, arma::mat &amp;W, arma::mat &amp;H) const</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>Factorizer function which computes SVD and returns matrices as required by CF module. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>rank </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>first unitary matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>second unitary matrix</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>V = W * H </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="76" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class acts as the wrapper for all SVD factorizers which are incompatible with CF module. </para>    </briefdescription>
+    <detaileddescription>
+<para>Normally SVD factrorizers implement Apply method which takes matrix V and factorizes it into P, sigma and Q where V = P * sigma * trans(Q). But CF module requires factrorization to be V = W * H. This class multiplies P and sigma and takes the first &apos;r&apos; eigenvectors out where &apos;r&apos; is the rank of factorization. Q matrix is transposed and trimmed to support the rank of factorization. The Factroizer class should implement Apply which takes matrices P, sigma, Q and V as their parameter respectively. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" bodystart="40" bodyend="84"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1SVDWrapper_1a9a4d773f77543202c714b0bd8871cd36" prot="public" virt="non-virtual"><scope>mlpack::cf::SVDWrapper</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1cf_1_1SVDWrapper_1ac2389a00421a05b85aca1c1b7acf0341" prot="public" virt="non-virtual"><scope>mlpack::cf::SVDWrapper</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1cf_1_1SVDWrapper_1aa165a3b22da62d19babab433f107d582" prot="private" virt="non-virtual"><scope>mlpack::cf::SVDWrapper</scope><name>factorizer</name></member>
+      <member refid="classmlpack_1_1cf_1_1SVDWrapper_1a062f6d1d0cbae52c35ee6cdc7c0e12e2" prot="public" virt="non-virtual"><scope>mlpack::cf::SVDWrapper</scope><name>SVDWrapper</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

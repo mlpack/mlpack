@@ -1,0 +1,179 @@
+\section{Overall\+Mean\+Normalization Class Reference}
+\label{classmlpack_1_1cf_1_1OverallMeanNormalization}\index{Overall\+Mean\+Normalization@{Overall\+Mean\+Normalization}}
+
+
+This normalization class performs overall mean normalization on raw ratings.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Overall\+Mean\+Normalization} ()
+\item 
+double \textbf{ Denormalize} (const size\+\_\+t, const size\+\_\+t, const double rating) const
+\begin{DoxyCompactList}\small\item\em Denormalize computed rating by adding mean. \end{DoxyCompactList}\item 
+void \textbf{ Denormalize} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&, arma\+::vec \&predictions) const
+\begin{DoxyCompactList}\small\item\em Denormalize computed rating by adding mean. \end{DoxyCompactList}\item 
+double \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Return mean. \end{DoxyCompactList}\item 
+void \textbf{ Normalize} (arma\+::mat \&data)
+\begin{DoxyCompactList}\small\item\em Normalize the data by subtracting the mean of all existing ratings. \end{DoxyCompactList}\item 
+void \textbf{ Normalize} (arma\+::sp\+\_\+mat \&cleaned\+Data)
+\begin{DoxyCompactList}\small\item\em Normalize the data by subtracting the mean of all existing ratings. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This normalization class performs overall mean normalization on raw ratings. 
+
+An example of how to use \doxyref{Overall\+Mean\+Normalization}{p.}{classmlpack_1_1cf_1_1OverallMeanNormalization} in CF is shown below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}
+\textcolor{comment}{// Users for whom recommendations are generated.}
+\textcolor{keyword}{extern} arma::Col<size\_t> users;
+arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}
+
+\textcolor{comment}{// Use OverallMeanNormalization as normalization method.}
+CFType<NMFPolicy, OverallMeanNormalization> cf(data);
+
+\textcolor{comment}{// Generate 10 recommendations for all users.}
+cf.GetRecommendations(10, recommendations);
+\end{DoxyCode}
+ 
+
+Definition at line 39 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a4f250b6f53764957972f247537e5a780}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Overall\+Mean\+Normalization@{Overall\+Mean\+Normalization}}
+\index{Overall\+Mean\+Normalization@{Overall\+Mean\+Normalization}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Overall\+Mean\+Normalization()}
+{\footnotesize\ttfamily \textbf{ Overall\+Mean\+Normalization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 43 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a1bf7d88b868311ad7ea9967146036e2e}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Denormalize (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{,  }\item[{const double}]{rating }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize computed rating by adding mean. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (user) User ID. \\
+\hline
+{\em $\ast$} & (item) Item ID. \\
+\hline
+{\em rating} & Computed rating before denormalization. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 103 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a8db4f270d31a4c519959d1a0bd01c7fc}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Denormalize (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{,  }\item[{arma\+::vec \&}]{predictions }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize computed rating by adding mean. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (combinations) User/\+Item combinations. \\
+\hline
+{\em predictions} & Predicted ratings for each user/item combination. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 116 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_ab201fbc06e6c2aaaa75cf1be856b4e02}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Mean@{Mean}}
+\index{Mean@{Mean}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Mean()}
+{\footnotesize\ttfamily double Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return mean. 
+
+
+
+Definition at line 125 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a87410cc06d847eef46d0dfdb137c6be7}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Normalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Normalize (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalize the data by subtracting the mean of all existing ratings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input dataset in the form of coordinate list. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a9656a2fd4841da15cf4b13ab57aa8000}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{Normalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Normalize (\begin{DoxyParamCaption}\item[{arma\+::sp\+\_\+mat \&}]{cleaned\+Data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalize the data by subtracting the mean of all existing ratings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cleaned\+Data} & Input data as a sparse matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 68 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1OverallMeanNormalization_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::cf\+::\+Overall\+Mean\+Normalization@{mlpack\+::cf\+::\+Overall\+Mean\+Normalization}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 134 of file overall\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/normalization/\textbf{ overall\+\_\+mean\+\_\+normalization.\+hpp}\end{DoxyCompactItemize}

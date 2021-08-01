@@ -1,0 +1,114 @@
+.TH "CVFunction< CVType, MLAlgorithm, TotalArgs, BoundArgs >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CVFunction< CVType, MLAlgorithm, TotalArgs, BoundArgs > \- This wrapper serves for adapting the interface of the cross-validation classes to the one that can be utilized by the mlpack optimizers\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCVFunction\fP (CVType &cv, \fBdata::DatasetMapper\fP< \fBdata::IncrementPolicy\fP, double > &datasetInfo, const double relativeDelta, const double minDelta, const BoundArgs &\&.\&.\&. args)"
+.br
+.RI "Initialize a \fBCVFunction\fP object\&. "
+.ti -1c
+.RI "MLAlgorithm & \fBBestModel\fP ()"
+.br
+.RI "Access and modify the best model so far\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters)"
+.br
+.RI "Run cross-validation with the bound and passed parameters\&. "
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, arma::mat &gradient)"
+.br
+.RI "Evaluate numerically the gradient of the \fBCVFunction\fP with the given parameters\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename CVType, typename MLAlgorithm, size_t TotalArgs, typename\&.\&.\&. BoundArgs>
+.br
+class mlpack::hpt::CVFunction< CVType, MLAlgorithm, TotalArgs, BoundArgs >"
+This wrapper serves for adapting the interface of the cross-validation classes to the one that can be utilized by the mlpack optimizers\&. 
+
+This class is not supposed to be used directly by users\&. To tune hyper-parameters see \fBHyperParameterTuner\fP\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fICVType\fP A cross-validation strategy\&. 
+.br
+\fIMLAlgorithm\fP The machine learning algorithm used in cross-validation\&. 
+.br
+\fITotalArgs\fP The total number of arguments that are supposed to be passed to the Evaluate method of a CVType object\&. 
+.br
+\fIBoundArgs\fP Types of arguments (wrapped into the BoundArg struct) that should be passed into the Evaluate method of a CVType object but are not going to be passed into the Evaluate method of a \fBCVFunction\fP object\&. 
+.RE
+.PP
+
+.PP
+Definition at line 39 of file cv_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCVFunction\fP (CVType & cv, \fBdata::DatasetMapper\fP< \fBdata::IncrementPolicy\fP, double > & datasetInfo, const double relativeDelta, const double minDelta, const BoundArgs &\&.\&.\&. args)"
+
+.PP
+Initialize a \fBCVFunction\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcv\fP A cross-validation object\&. 
+.br
+\fIdatasetInfo\fP Information on each parameter (categorical/numeric)\&. Contains mappings from optimizer-passed size_t indices to double values that should be used\&. 
+.br
+\fIrelativeDelta\fP Relative increase of arguments for calculation of partial derivatives (by the definition)\&. The exact increase for some particular argument is equal to the absolute value of the argument multiplied by the relative increase (see also the documentation for the minDelta parameter)\&. 
+.br
+\fIminDelta\fP Minimum increase of arguments for calculation of partial derivatives (by the definition)\&. This value is going to be used when it is greater than the increase calculated with the rules described in the documentation for the relativeDelta parameter\&. 
+.br
+\fIargs\fP Arguments that should be passed into the Evaluate method of the CVType object but are not going to be passed into the Evaluate method of this object\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "MLAlgorithm& BestModel ()\fC [inline]\fP"
+
+.PP
+Access and modify the best model so far\&. 
+.PP
+Definition at line 87 of file cv_function\&.hpp\&.
+.PP
+References CVFunction< CVType, MLAlgorithm, TotalArgs, BoundArgs >::Evaluate()\&.
+.SS "double Evaluate (const arma::mat & parameters)"
+
+.PP
+Run cross-validation with the bound and passed parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Arguments (rather than the bound arguments) that should be passed into the Evaluate method of the CVType object\&. 
+.RE
+.PP
+
+.PP
+Referenced by CVFunction< CVType, MLAlgorithm, TotalArgs, BoundArgs >::BestModel()\&.
+.SS "void Gradient (const arma::mat & parameters, arma::mat & gradient)"
+
+.PP
+Evaluate numerically the gradient of the \fBCVFunction\fP with the given parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Arguments (rather than the bound arguments) that should be passed into the Evaluate method of the CVType object\&. 
+.br
+\fIgradient\fP Vector to output the gradient into\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,270 @@
+.TH "SimpleCV< MLAlgorithm, Metric, MatType, PredictionsType, WeightsType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SimpleCV< MLAlgorithm, Metric, MatType, PredictionsType, WeightsType > \- \fBSimpleCV\fP splits data into two sets - training and validation sets - and then runs training on the training set and evaluates performance on the validation set\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, PredictionsInType &&ys)"
+.br
+.RI "This constructor can be used for regression algorithms and for binary classification algorithms\&. "
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, PredictionsInType &&ys, const size_t numClasses)"
+.br
+.RI "This constructor can be used for multiclass classification algorithms\&. "
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, const \fBdata::DatasetInfo\fP &datasetInfo, PredictionsInType &&ys, const size_t numClasses)"
+.br
+.RI "This constructor can be used for multiclass classification algorithms that can take a \fBdata::DatasetInfo\fP parameter\&. "
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType , typename WeightsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, PredictionsInType &&ys, WeightsInType &&weights)"
+.br
+.RI "This constructor can be used for regression and binary classification algorithms that support weighted learning\&. "
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType , typename WeightsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, PredictionsInType &&ys, const size_t numClasses, WeightsInType &&weights)"
+.br
+.RI "This constructor can be used for multiclass classification algorithms that support weighted learning\&. "
+.ti -1c
+.RI "template<typename MatInType , typename PredictionsInType , typename WeightsInType > \fBSimpleCV\fP (const double validationSize, MatInType &&xs, const \fBdata::DatasetInfo\fP &datasetInfo, PredictionsInType &&ys, const size_t numClasses, WeightsInType &&weights)"
+.br
+.RI "This constructor can be used for multiclass classification algorithms that can take a \fBdata::DatasetInfo\fP parameter and support weighted learning\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. MLAlgorithmArgs> double \fBEvaluate\fP (const MLAlgorithmArgs &\&.\&.\&. args)"
+.br
+.RI "Train on the training set and assess performance on the validation set by using the class Metric\&. "
+.ti -1c
+.RI "MLAlgorithm & \fBModel\fP ()"
+.br
+.RI "Access and modify the last trained model\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MLAlgorithm, typename Metric, typename MatType = arma::mat, typename PredictionsType = typename MetaInfoExtractor<MLAlgorithm, MatType>::PredictionsType, typename WeightsType = typename MetaInfoExtractor<MLAlgorithm, MatType,                 PredictionsType>::WeightsType>
+.br
+class mlpack::cv::SimpleCV< MLAlgorithm, Metric, MatType, PredictionsType, WeightsType >"
+\fBSimpleCV\fP splits data into two sets - training and validation sets - and then runs training on the training set and evaluates performance on the validation set\&. 
+
+To construct a \fBSimpleCV\fP object you need to pass the validationSize parameter and arguments that specify data\&. For example, SoftmaxRegression can be validated in the following way\&.
+.PP
+.PP
+.nf
+// 100-point 5-dimensional random dataset\&.
+arma::mat data = arma::randu<arma::mat>(5, 100);
+// Random labels in the [0, 4] interval\&.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));
+size_t numClasses = 5;
+
+double validationSize = 0\&.2;
+SimpleCV<SoftmaxRegression<>, Accuracy> cv(validationSize, data, labels,
+    numClasses);
+
+double lambda = 0\&.1;
+double softmaxAccuracy = cv\&.Evaluate(lambda);
+.fi
+.PP
+.PP
+In the example above, 80% of the passed dataset will be used for training, and remaining 20% will be used for calculating the accuracy metric\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMLAlgorithm\fP A machine learning algorithm\&. 
+.br
+\fIMetric\fP A metric to assess the quality of a trained model\&. 
+.br
+\fIMatType\fP The type of data\&. 
+.br
+\fIPredictionsType\fP The type of predictions (should be passed when the predictions type is a template parameter in Train methods of the given MLAlgorithm; arma::Row<size_t> will be used otherwise)\&. 
+.br
+\fIWeightsType\fP The type of weights (should be passed when weighted learning is supported, and the weights type is a template parameter in Train methods of the given MLAlgorithm; arma::vec will be used otherwise)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 68 of file simple_cv\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, PredictionsInType && ys)"
+
+.PP
+This constructor can be used for regression algorithms and for binary classification algorithms\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIys\fP Predictions (labels for classification algorithms and responses for regression algorithms) for each data point\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.RE
+.PP
+
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, PredictionsInType && ys, const size_t numClasses)"
+
+.PP
+This constructor can be used for multiclass classification algorithms\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIys\fP Labels for each data point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.RE
+.PP
+
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, const \fBdata::DatasetInfo\fP & datasetInfo, PredictionsInType && ys, const size_t numClasses)"
+
+.PP
+This constructor can be used for multiclass classification algorithms that can take a \fBdata::DatasetInfo\fP parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIdatasetInfo\fP Type information for each dimension of the dataset\&. 
+.br
+\fIys\fP Labels for each data point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.RE
+.PP
+
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, PredictionsInType && ys, WeightsInType && weights)"
+
+.PP
+This constructor can be used for regression and binary classification algorithms that support weighted learning\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIys\fP Predictions (labels for classification algorithms and responses for regression algorithms) for each data point\&. 
+.br
+\fIweights\fP Observation weights (for boosting)\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.br
+\fIWeightsInType\fP A type that can be converted to WeightsType\&. 
+.RE
+.PP
+
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, PredictionsInType && ys, const size_t numClasses, WeightsInType && weights)"
+
+.PP
+This constructor can be used for multiclass classification algorithms that support weighted learning\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIys\fP Labels for each data point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIweights\fP Observation weights (for boosting)\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.br
+\fIWeightsInType\fP A type that can be converted to WeightsType\&. 
+.RE
+.PP
+
+.SS "\fBSimpleCV\fP (const double validationSize, MatInType && xs, const \fBdata::DatasetInfo\fP & datasetInfo, PredictionsInType && ys, const size_t numClasses, WeightsInType && weights)"
+
+.PP
+This constructor can be used for multiclass classification algorithms that can take a \fBdata::DatasetInfo\fP parameter and support weighted learning\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalidationSize\fP A proportion (between 0 and 1) of data used as a validation set\&. 
+.br
+\fIxs\fP Data points to cross-validate on\&. 
+.br
+\fIdatasetInfo\fP Type information for each dimension of the dataset\&. 
+.br
+\fIys\fP Labels for each data point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIweights\fP Observation weights (for boosting)\&.
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatInType\fP A type that can be converted to MatType\&. 
+.br
+\fIPredictionsInType\fP A type that can be converted to PredictionsType\&. 
+.br
+\fIWeightsInType\fP A type that can be converted to WeightsType\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double Evaluate (const MLAlgorithmArgs &\&.\&.\&. args)"
+
+.PP
+Train on the training set and assess performance on the validation set by using the class Metric\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIargs\fP Arguments for the given MLAlgorithm taken by its constructor (in addition to the passed ones in the \fBSimpleCV\fP constructor)\&. 
+.RE
+.PP
+
+.SS "MLAlgorithm& Model ()"
+
+.PP
+Access and modify the last trained model\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

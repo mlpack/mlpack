@@ -1,0 +1,33 @@
+.TH "DeduceHyperParameterTypes< Args >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeduceHyperParameterTypes< Args > \- A type function for deducing types of hyper-parameters from types of arguments in the Optimize method in \fBHyperParameterTuner\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBResultHolder\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename\&.\&.\&. Args>
+.br
+struct mlpack::hpt::DeduceHyperParameterTypes< Args >"
+A type function for deducing types of hyper-parameters from types of arguments in the Optimize method in \fBHyperParameterTuner\fP\&. 
+
+We start by putting all types of the arguments into Args, and then process each of them one by one and put results into the internal struct \fBResultHolder\fP\&. By the end Args become empty, while \fBResultHolder\fP holds the tuple type of hyper-parameters\&.
+.PP
+Here we declare and define \fBDeduceHyperParameterTypes\fP for the end phase when Args are empty (all argument types have been processed)\&. 
+.PP
+Definition at line 34 of file deduce_hp_types\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,290 @@
+.TH "HoeffdingTreeModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HoeffdingTreeModel \- This class is a serializable Hoeffding tree model that can hold four different types of Hoeffding trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBHoeffdingTree\fP< \fBGiniImpurity\fP, \fBBinaryDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP > \fBGiniBinaryTreeType\fP"
+.br
+.RI "Convenience typedef for GINI_BINARY tree type\&. "
+.ti -1c
+.RI "typedef \fBHoeffdingTree\fP< \fBGiniImpurity\fP, \fBHoeffdingDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP > \fBGiniHoeffdingTreeType\fP"
+.br
+.RI "Convenience typedef for GINI_HOEFFDING tree type\&. "
+.ti -1c
+.RI "typedef \fBHoeffdingTree\fP< \fBHoeffdingInformationGain\fP, \fBBinaryDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP > \fBInfoBinaryTreeType\fP"
+.br
+.RI "Convenience typedef for INFO_BINARY tree type\&. "
+.ti -1c
+.RI "typedef \fBHoeffdingTree\fP< \fBHoeffdingInformationGain\fP, \fBHoeffdingDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP > \fBInfoHoeffdingTreeType\fP"
+.br
+.RI "Convenience typedef for INFO_HOEFFDING tree type\&. "
+.ti -1c
+.RI "enum \fBTreeType\fP { \fBGINI_HOEFFDING\fP, \fBGINI_BINARY\fP, \fBINFO_HOEFFDING\fP, \fBINFO_BINARY\fP }
+.RI "This enumerates the four types of trees we can hold\&. ""
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHoeffdingTreeModel\fP (const \fBTreeType\fP &type=\fBGINI_HOEFFDING\fP)"
+.br
+.RI "Construct the Hoeffding tree model, but don't initialize any tree\&. "
+.ti -1c
+.RI "\fBHoeffdingTreeModel\fP (const \fBHoeffdingTreeModel\fP &other)"
+.br
+.RI "Copy the Hoeffding tree model from the given other model\&. "
+.ti -1c
+.RI "\fBHoeffdingTreeModel\fP (\fBHoeffdingTreeModel\fP &&other)"
+.br
+.RI "Move the Hoeffding tree model from the given other model\&. "
+.ti -1c
+.RI "\fB~HoeffdingTreeModel\fP ()"
+.br
+.RI "Clean up the given model\&. "
+.ti -1c
+.RI "void \fBBuildModel\fP (const arma::mat &dataset, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const bool batchTraining, const double successProbability, const size_t maxSamples, const size_t checkInterval, const size_t minSamples, const size_t bins, const size_t observationsBeforeBinning)"
+.br
+.RI "Train the model on the given dataset with the given labels\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::Row< size_t > &predictions) const"
+.br
+.RI "Using the model, classify the given test points\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::Row< size_t > &predictions, arma::rowvec &probabilities) const"
+.br
+.RI "Using the model, classify the given test points, returning class probabilities\&. "
+.ti -1c
+.RI "size_t \fBNumNodes\fP () const"
+.br
+.RI "Get the number of nodes in the tree\&. "
+.ti -1c
+.RI "\fBHoeffdingTreeModel\fP & \fBoperator=\fP (const \fBHoeffdingTreeModel\fP &other)"
+.br
+.RI "Copy the Hoeffding tree model from the given other model\&. "
+.ti -1c
+.RI "\fBHoeffdingTreeModel\fP & \fBoperator=\fP (\fBHoeffdingTreeModel\fP &&other)"
+.br
+.RI "Move the Hoeffding tree model from the given other model\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the model\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &dataset, const arma::Row< size_t > &labels, const bool batchTraining)"
+.br
+.RI "Train in streaming mode on the given dataset\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is a serializable Hoeffding tree model that can hold four different types of Hoeffding trees\&. 
+
+It is meant to be used by the command-line program for Hoeffding trees\&. 
+.PP
+Definition at line 27 of file hoeffding_tree_model\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBHoeffdingTree\fP<\fBGiniImpurity\fP, \fBBinaryDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP> \fBGiniBinaryTreeType\fP"
+
+.PP
+Convenience typedef for GINI_BINARY tree type\&. 
+.PP
+Definition at line 44 of file hoeffding_tree_model\&.hpp\&.
+.SS "typedef \fBHoeffdingTree\fP<\fBGiniImpurity\fP, \fBHoeffdingDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP> \fBGiniHoeffdingTreeType\fP"
+
+.PP
+Convenience typedef for GINI_HOEFFDING tree type\&. 
+.PP
+Definition at line 41 of file hoeffding_tree_model\&.hpp\&.
+.SS "typedef \fBHoeffdingTree\fP<\fBHoeffdingInformationGain\fP, \fBBinaryDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP> \fBInfoBinaryTreeType\fP"
+
+.PP
+Convenience typedef for INFO_BINARY tree type\&. 
+.PP
+Definition at line 50 of file hoeffding_tree_model\&.hpp\&.
+.SS "typedef \fBHoeffdingTree\fP<\fBHoeffdingInformationGain\fP, \fBHoeffdingDoubleNumericSplit\fP, \fBHoeffdingCategoricalSplit\fP> \fBInfoHoeffdingTreeType\fP"
+
+.PP
+Convenience typedef for INFO_HOEFFDING tree type\&. 
+.PP
+Definition at line 47 of file hoeffding_tree_model\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBTreeType\fP"
+
+.PP
+This enumerates the four types of trees we can hold\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIGINI_HOEFFDING \fP\fP
+.TP
+\fB\fIGINI_BINARY \fP\fP
+.TP
+\fB\fIINFO_HOEFFDING \fP\fP
+.TP
+\fB\fIINFO_BINARY \fP\fP
+.PP
+Definition at line 31 of file hoeffding_tree_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBHoeffdingTreeModel\fP (const \fBTreeType\fP & type = \fC\fBGINI_HOEFFDING\fP\fP)"
+
+.PP
+Construct the Hoeffding tree model, but don't initialize any tree\&. Be sure to call \fBTrain()\fP before doing anything with the model!
+.PP
+\fBParameters:\fP
+.RS 4
+\fItype\fP Type of tree that will be used\&. 
+.RE
+.PP
+
+.SS "\fBHoeffdingTreeModel\fP (const \fBHoeffdingTreeModel\fP & other)"
+
+.PP
+Copy the Hoeffding tree model from the given other model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Hoeffding tree model to copy\&. 
+.RE
+.PP
+
+.SS "\fBHoeffdingTreeModel\fP (\fBHoeffdingTreeModel\fP && other)"
+
+.PP
+Move the Hoeffding tree model from the given other model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Hoeffding tree model to move\&. 
+.RE
+.PP
+
+.SS "~\fBHoeffdingTreeModel\fP ()"
+
+.PP
+Clean up the given model\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void BuildModel (const arma::mat & dataset, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const bool batchTraining, const double successProbability, const size_t maxSamples, const size_t checkInterval, const size_t minSamples, const size_t bins, const size_t observationsBeforeBinning)"
+
+.PP
+Train the model on the given dataset with the given labels\&. This method just passes to the appropriate HoeffdingTree<\&.\&.\&.> constructor, and will train with one pass over the dataset\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Information about dimensions of dataset\&. 
+.br
+\fIlabels\fP Labels for training set\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIbatchTraining\fP Whether or not to train in batch\&. 
+.br
+\fIsuccessProbability\fP Probability of success required in Hoeffding bound before a split can happen\&. 
+.br
+\fImaxSamples\fP Maximum number of samples before a split is forced\&. 
+.br
+\fIcheckInterval\fP Number of samples required before each split check\&. 
+.br
+\fIminSamples\fP If the node has seen this many points or fewer, no split will be allowed\&. 
+.br
+\fIbins\fP Number of bins, for Hoeffding numeric split\&. 
+.br
+\fIobservationsBeforeBinning\fP Number of observations before binning, for Hoeffding numeric split\&. 
+.RE
+.PP
+
+.SS "void Classify (const arma::mat & dataset, arma::Row< size_t > & predictions) const"
+
+.PP
+Using the model, classify the given test points\&. Be sure that \fBBuildModel()\fP has been called first!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to classify\&. 
+.br
+\fIpredictions\fP Vector to store predictions for test points in\&. 
+.RE
+.PP
+
+.SS "void Classify (const arma::mat & dataset, arma::Row< size_t > & predictions, arma::rowvec & probabilities) const"
+
+.PP
+Using the model, classify the given test points, returning class probabilities\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to classify\&. 
+.br
+\fIpredictions\fP Vector to store predictions for test points in\&. 
+.br
+\fIprobabilities\fP Vector to store probabilities for test points in\&. 
+.RE
+.PP
+
+.SS "size_t NumNodes () const"
+
+.PP
+Get the number of nodes in the tree\&. 
+.SS "\fBHoeffdingTreeModel\fP& operator= (const \fBHoeffdingTreeModel\fP & other)"
+
+.PP
+Copy the Hoeffding tree model from the given other model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Hoeffding tree model to copy\&. 
+.RE
+.PP
+
+.SS "\fBHoeffdingTreeModel\fP& operator= (\fBHoeffdingTreeModel\fP && other)"
+
+.PP
+Move the Hoeffding tree model from the given other model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Hoeffding tree model to move\&. 
+.RE
+.PP
+
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the model\&. 
+.PP
+Definition at line 169 of file hoeffding_tree_model\&.hpp\&.
+.PP
+References CEREAL_POINTER, HoeffdingTreeModel::GINI_BINARY, HoeffdingTreeModel::GINI_HOEFFDING, HoeffdingTreeModel::INFO_BINARY, and HoeffdingTreeModel::INFO_HOEFFDING\&.
+.SS "void Train (const arma::mat & dataset, const arma::Row< size_t > & labels, const bool batchTraining)"
+
+.PP
+Train in streaming mode on the given dataset\&. This takes one pass\&. Be sure that \fBBuildModel()\fP has been called first!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for training set\&. 
+.br
+\fIbatchTraining\fP Whether or not to train in batch\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

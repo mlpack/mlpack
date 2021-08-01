@@ -1,0 +1,190 @@
+.TH "BernoulliDistribution< DataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BernoulliDistribution< DataType > \- Multiple independent Bernoulli distributions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBernoulliDistribution\fP ()"
+.br
+.RI "Default constructor, which creates a Bernoulli distribution with zero dimension\&. "
+.ti -1c
+.RI "\fBBernoulliDistribution\fP (const DataType &param, const bool applyLogistic=true, const double eps=1e\-10)"
+.br
+.RI "Create multiple independent Bernoulli distributions whose p values are given by the param parameter\&. "
+.ti -1c
+.RI "const DataType & \fBLogits\fP () const"
+.br
+.RI "Return the logits matrix\&. "
+.ti -1c
+.RI "DataType & \fBLogits\fP ()"
+.br
+.RI "Return a modifiable copy of the pre probability matrix\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (const DataType &observation) const"
+.br
+.RI "Return the log probabilities of the given matrix of observations\&. "
+.ti -1c
+.RI "void \fBLogProbBackward\fP (const DataType &observation, DataType &output) const"
+.br
+.RI "Stores the gradient of the log probabilities of the observations in the output matrix\&. "
+.ti -1c
+.RI "double \fBProbability\fP (const DataType &observation) const"
+.br
+.RI "Return the probabilities of the given matrix of observations\&. "
+.ti -1c
+.RI "const DataType & \fBProbability\fP () const"
+.br
+.RI "Return the probability matrix\&. "
+.ti -1c
+.RI "DataType & \fBProbability\fP ()"
+.br
+.RI "Return a modifiable copy of the probability matrix\&. "
+.ti -1c
+.RI "DataType \fBSample\fP () const"
+.br
+.RI "Return a matrix of randomly generated samples according to the probability distributions defined by this object\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the distribution\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename DataType = arma::mat>
+.br
+class mlpack::ann::BernoulliDistribution< DataType >"
+Multiple independent Bernoulli distributions\&. 
+
+Bernoulli distribution is the discrete probability distribution of a random variable which takes the value 1 with probability p and the value 0 with probability q = 1 - p\&. In this implementation, the p values of the distributions are given by the param matrix\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIDataType\fP Type of the input data\&. (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file bernoulli_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBernoulliDistribution\fP ()"
+
+.PP
+Default constructor, which creates a Bernoulli distribution with zero dimension\&. 
+.SS "\fBBernoulliDistribution\fP (const DataType & param, const bool applyLogistic = \fCtrue\fP, const double eps = \fC1e\-10\fP)"
+
+.PP
+Create multiple independent Bernoulli distributions whose p values are given by the param parameter\&. Thus, we create nofRows * nofColumns distributions\&. The shape of the matrix of distributions is the same as the shape of the param matrix as each element of the param matrix parameterizes one Bernoulli distribution\&. This is used in the ANN module to define distribution for each feature in each batch, where number of features becomes nofRows and batch size becomes nofColumns\&.
+.PP
+applyLogistic has to be true if all the elements of param matrix are not in the range [0, 1]\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparam\fP The matrix of probabilities or pre probabilities of the multiple distributions\&. 
+.br
+\fIapplyLogistic\fP If true, we apply Logistic function to the param matrix (pre probability) to get probability\&. 
+.br
+\fIeps\fP The minimum value used for computing logarithms and denominators\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const DataType& Logits () const\fC [inline]\fP"
+
+.PP
+Return the logits matrix\&. 
+.PP
+Definition at line 108 of file bernoulli_distribution\&.hpp\&.
+.SS "DataType& Logits ()\fC [inline]\fP"
+
+.PP
+Return a modifiable copy of the pre probability matrix\&. 
+.PP
+Definition at line 111 of file bernoulli_distribution\&.hpp\&.
+.SS "double LogProbability (const DataType & observation) const"
+
+.PP
+Return the log probabilities of the given matrix of observations\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP The observation matrix\&. 
+.RE
+.PP
+
+.PP
+Referenced by BernoulliDistribution< DataType >::Probability()\&.
+.SS "void LogProbBackward (const DataType & observation, DataType & output) const"
+
+.PP
+Stores the gradient of the log probabilities of the observations in the output matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP The observation matrix\&. 
+.br
+\fIoutput\fP The output matrix where the gradients are stored\&. 
+.RE
+.PP
+
+.PP
+Referenced by BernoulliDistribution< DataType >::Probability()\&.
+.SS "double Probability (const DataType & observation) const\fC [inline]\fP"
+
+.PP
+Return the probabilities of the given matrix of observations\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP The observation matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file bernoulli_distribution\&.hpp\&.
+.PP
+References BernoulliDistribution< DataType >::LogProbability(), BernoulliDistribution< DataType >::LogProbBackward(), and BernoulliDistribution< DataType >::Sample()\&.
+.SS "const DataType& Probability () const\fC [inline]\fP"
+
+.PP
+Return the probability matrix\&. 
+.PP
+Definition at line 102 of file bernoulli_distribution\&.hpp\&.
+.SS "DataType& Probability ()\fC [inline]\fP"
+
+.PP
+Return a modifiable copy of the probability matrix\&. 
+.PP
+Definition at line 105 of file bernoulli_distribution\&.hpp\&.
+.SS "DataType Sample () const"
+
+.PP
+Return a matrix of randomly generated samples according to the probability distributions defined by this object\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Matrix(integer) of random samples from the multiple Bernoulli distributions\&. 
+.RE
+.PP
+
+.PP
+Referenced by BernoulliDistribution< DataType >::Probability()\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the distribution\&. 
+.PP
+Definition at line 117 of file bernoulli_distribution\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

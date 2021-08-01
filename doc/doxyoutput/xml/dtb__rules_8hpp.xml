@@ -1,0 +1,479 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dtb__rules_8hpp" kind="file" language="C++">
+    <compoundname>dtb_rules.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
+    <includes local="yes">dtb_rules_impl.hpp</includes>
+    <incdepgraph>
+      <node id="47674">
+        <label>list</label>
+      </node>
+      <node id="47671">
+        <label>atomic</label>
+      </node>
+      <node id="47661">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47637">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="47673">
+        <label>iomanip</label>
+      </node>
+      <node id="47646">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47647" relation="include">
+        </childnode>
+        <childnode refid="47649" relation="include">
+        </childnode>
+      </node>
+      <node id="47629">
+        <label>cstdint</label>
+      </node>
+      <node id="47638">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47645">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47668">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47658">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47625">
+        <label>cmath</label>
+      </node>
+      <node id="47644">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="47633">
+        <label>stdexcept</label>
+      </node>
+      <node id="47653">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47638" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47639" relation="include">
+        </childnode>
+      </node>
+      <node id="47677">
+        <label>string</label>
+      </node>
+      <node id="47665">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47666" relation="include">
+        </childnode>
+        <childnode refid="47632" relation="include">
+        </childnode>
+      </node>
+      <node id="47675">
+        <label>map</label>
+      </node>
+      <node id="47627">
+        <label>cfloat</label>
+      </node>
+      <node id="47657">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="47679">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="47641">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47664">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47665" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47648" relation="include">
+        </childnode>
+        <childnode refid="47666" relation="include">
+        </childnode>
+      </node>
+      <node id="47654">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="47652">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47638" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47639" relation="include">
+        </childnode>
+      </node>
+      <node id="47655">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47638" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47639" relation="include">
+        </childnode>
+      </node>
+      <node id="47643">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47663">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47639" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47651" relation="include">
+        </childnode>
+        <childnode refid="47660" relation="include">
+        </childnode>
+      </node>
+      <node id="47667">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47668" relation="include">
+        </childnode>
+      </node>
+      <node id="47669">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47624">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47625" relation="include">
+        </childnode>
+        <childnode refid="47626" relation="include">
+        </childnode>
+        <childnode refid="47627" relation="include">
+        </childnode>
+        <childnode refid="47628" relation="include">
+        </childnode>
+        <childnode refid="47629" relation="include">
+        </childnode>
+        <childnode refid="47630" relation="include">
+        </childnode>
+        <childnode refid="47631" relation="include">
+        </childnode>
+        <childnode refid="47632" relation="include">
+        </childnode>
+        <childnode refid="47633" relation="include">
+        </childnode>
+        <childnode refid="47634" relation="include">
+        </childnode>
+        <childnode refid="47635" relation="include">
+        </childnode>
+        <childnode refid="47636" relation="include">
+        </childnode>
+        <childnode refid="47637" relation="include">
+        </childnode>
+        <childnode refid="47638" relation="include">
+        </childnode>
+        <childnode refid="47639" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47642" relation="include">
+        </childnode>
+        <childnode refid="47643" relation="include">
+        </childnode>
+        <childnode refid="47644" relation="include">
+        </childnode>
+        <childnode refid="47645" relation="include">
+        </childnode>
+        <childnode refid="47646" relation="include">
+        </childnode>
+        <childnode refid="47650" relation="include">
+        </childnode>
+        <childnode refid="47651" relation="include">
+        </childnode>
+        <childnode refid="47652" relation="include">
+        </childnode>
+        <childnode refid="47653" relation="include">
+        </childnode>
+        <childnode refid="47654" relation="include">
+        </childnode>
+        <childnode refid="47655" relation="include">
+        </childnode>
+        <childnode refid="47656" relation="include">
+        </childnode>
+        <childnode refid="47662" relation="include">
+        </childnode>
+        <childnode refid="47663" relation="include">
+        </childnode>
+        <childnode refid="47660" relation="include">
+        </childnode>
+        <childnode refid="47664" relation="include">
+        </childnode>
+        <childnode refid="47667" relation="include">
+        </childnode>
+        <childnode refid="47669" relation="include">
+        </childnode>
+        <childnode refid="47670" relation="include">
+        </childnode>
+        <childnode refid="47679" relation="include">
+        </childnode>
+        <childnode refid="47680" relation="include">
+        </childnode>
+      </node>
+      <node id="47630">
+        <label>cstdio</label>
+      </node>
+      <node id="47634">
+        <label>tuple</label>
+      </node>
+      <node id="47639">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47656">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47639" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47643" relation="include">
+        </childnode>
+        <childnode refid="47657" relation="include">
+        </childnode>
+        <childnode refid="47658" relation="include">
+        </childnode>
+        <childnode refid="47659" relation="include">
+        </childnode>
+        <childnode refid="47660" relation="include">
+        </childnode>
+      </node>
+      <node id="47635">
+        <label>utility</label>
+      </node>
+      <node id="47659">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47650">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47647">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47648" relation="include">
+        </childnode>
+      </node>
+      <node id="47670">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47671" relation="include">
+        </childnode>
+        <childnode refid="47672" relation="include">
+        </childnode>
+        <childnode refid="47673" relation="include">
+        </childnode>
+        <childnode refid="47674" relation="include">
+        </childnode>
+        <childnode refid="47675" relation="include">
+        </childnode>
+        <childnode refid="47676" relation="include">
+        </childnode>
+        <childnode refid="47677" relation="include">
+        </childnode>
+        <childnode refid="47678" relation="include">
+        </childnode>
+      </node>
+      <node id="47648">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47623">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb_rules.hpp</label>
+        <link refid="dtb__rules_8hpp"/>
+        <childnode refid="47624" relation="include">
+        </childnode>
+        <childnode refid="47681" relation="include">
+        </childnode>
+        <childnode refid="47682" relation="include">
+        </childnode>
+      </node>
+      <node id="47662">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47660" relation="include">
+        </childnode>
+        <childnode refid="47656" relation="include">
+        </childnode>
+        <childnode refid="47663" relation="include">
+        </childnode>
+      </node>
+      <node id="47631">
+        <label>cstdlib</label>
+      </node>
+      <node id="47626">
+        <label>cctype</label>
+      </node>
+      <node id="47649">
+        <label>unordered_map</label>
+      </node>
+      <node id="47628">
+        <label>climits</label>
+      </node>
+      <node id="47676">
+        <label>mutex</label>
+      </node>
+      <node id="47672">
+        <label>chrono</label>
+      </node>
+      <node id="47681">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+      <node id="47680">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="47678">
+        <label>thread</label>
+      </node>
+      <node id="47666">
+        <label>type_traits</label>
+      </node>
+      <node id="47642">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="47636">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47660">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47638" relation="include">
+        </childnode>
+        <childnode refid="47639" relation="include">
+        </childnode>
+        <childnode refid="47640" relation="include">
+        </childnode>
+        <childnode refid="47641" relation="include">
+        </childnode>
+        <childnode refid="47661" relation="include">
+        </childnode>
+      </node>
+      <node id="47682">
+        <label>dtb_rules_impl.hpp</label>
+      </node>
+      <node id="47632">
+        <label>cstring</label>
+      </node>
+      <node id="47651">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47640">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1emst_1_1DTBRules" prot="public">mlpack::emst::DTBRules</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1emst">mlpack::emst</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Bill March (<ulink url="mailto:march@gatech.edu">march@gatech.edu</ulink>)</para></simplesect>
+Tree traverser rules for the DualTreeBoruvka algorithm.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_EMST_DTB_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_EMST_DTB_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="traversal__info_8hpp" kindref="compound">mlpack/core/tree/traversal_info.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">emst<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1emst_1_1DTBRules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1emst_1_1DTBRules" kindref="compound">DTBRules</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a35c2f81de4f2561c34326a7c360a3c4e" kindref="member">DTBRules</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSet,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1emst_1_1UnionFind" kindref="compound">UnionFind</ref>&amp;<sp/>connections,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>neighborsDistances,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>neighborsInComponent,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>neighborsOutComponent,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MetricType&amp;<sp/>metric);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1abac50f780bb5e1bc12dd0d16d850cacc" kindref="member">BaseCase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>referenceIndex);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a6f97dd07745e07a2d7ff3d4a42347e48" kindref="member">Rescore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a6f97dd07745e07a2d7ff3d4a42347e48" kindref="member">Rescore</ref>(TreeType&amp;<sp/>queryNode,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1emst_1_1DTBRules_1ab5f079db10d0a6813eefeb1115e894cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo&lt;TreeType&gt;</ref><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1emst_1_1DTBRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TraversalInfoType&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" kindref="member">TraversalInfo</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1emst_1_1DTBRules_1a4027bb90e756a4520d55978459c7f83e" refkind="member"><highlight class="normal"><sp/><sp/>TraversalInfoType&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a4027bb90e756a4520d55978459c7f83e" kindref="member">TraversalInfo</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1emst_1_1DTBRules_1a3f4bd5d0aa64ea090796725f7755287d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a3f4bd5d0aa64ea090796725f7755287d" kindref="member">BaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>baseCases;<sp/>}</highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1emst_1_1DTBRules_1ab93e60b3671ebddbe95a890f1e1b2768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1ab93e60b3671ebddbe95a890f1e1b2768" kindref="member">BaseCases</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>baseCases;<sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1emst_1_1DTBRules_1a4d1e40c0bf406280a237ca1b487e3c62" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a4d1e40c0bf406280a237ca1b487e3c62" kindref="member">Scores</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scores;<sp/>}</highlight></codeline>
+<codeline lineno="98" refid="classmlpack_1_1emst_1_1DTBRules_1a8c3486626c1d3c0a10cdb27a8faa198f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1DTBRules_1a8c3486626c1d3c0a10cdb27a8faa198f" kindref="member">Scores</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scores;<sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSet;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1emst_1_1UnionFind" kindref="compound">UnionFind</ref>&amp;<sp/>connections;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>arma::vec&amp;<sp/>neighborsDistances;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>neighborsInComponent;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>neighborsOutComponent;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>MetricType&amp;<sp/>metric;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>CalculateBound(TreeType&amp;<sp/>queryNode)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>TraversalInfoType<sp/>traversalInfo;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>baseCases;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>scores;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>DTBRules</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>emst</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;dtb_rules_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_rules.hpp"/>
+  </compounddef>
+</doxygen>

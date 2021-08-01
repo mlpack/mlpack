@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_8615cbd7f19b1235f5aa609b414bff06" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/svdplusplus</compoundname>
+    <innerfile refid="svdplusplus_8hpp">svdplusplus.hpp</innerfile>
+    <innerfile refid="svdplusplus__function_8hpp">svdplusplus_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/svdplusplus/"/>
+  </compounddef>
+</doxygen>

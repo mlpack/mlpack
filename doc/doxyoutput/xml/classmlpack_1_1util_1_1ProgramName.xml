@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1util_1_1ProgramName" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::util::ProgramName</compoundname>
+    <includes refid="program__doc_8hpp" local="no">program_doc.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1util_1_1ProgramName_1ae9799839096792e9fe742e17f46a12c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ProgramName</definition>
+        <argsstring>(const std::string &amp;programName)</argsstring>
+        <name>ProgramName</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="classmlpack_1_1util_1_1ProgramName" kindref="compound">ProgramName</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. A fatal error will be thrown if more than one is constructed.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>programName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="29" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="21" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="20" bodyend="30"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1util_1_1ProgramName_1ae9799839096792e9fe742e17f46a12c6" prot="public" virt="non-virtual"><scope>mlpack::util::ProgramName</scope><name>ProgramName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

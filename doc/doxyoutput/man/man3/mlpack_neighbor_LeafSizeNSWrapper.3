@@ -1,0 +1,99 @@
+.TH "LeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType > \- \fBLeafSizeNSWrapper\fP wraps any \fBNeighborSearch\fP types that take a leaf size for tree construction\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLeafSizeNSWrapper\fP (const \fBNeighborSearchMode\fP searchMode, const double epsilon)"
+.br
+.RI "Construct the \fBLeafSizeNSWrapper\fP by delegating to the \fBNSWrapper\fP constructor\&. "
+.ti -1c
+.RI "virtual \fB~LeafSizeNSWrapper\fP ()"
+.br
+.RI "Delete the \fBLeafSizeNSWrapper\fP\&. "
+.ti -1c
+.RI "virtual \fBLeafSizeNSWrapper\fP * \fBClone\fP () const"
+.br
+.RI "Return a copy of the \fBLeafSizeNSWrapper\fP\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize, const double)"
+.br
+.RI "Perform bichromatic search (e\&.g\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the \fBNeighborSearch\fP model\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize, const double, const double)"
+.br
+.RI "Train a model with the given parameters\&. "
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType, template< typename RuleType > class DualTreeTraversalType = TreeType<metric::EuclideanDistance,                      NeighborSearchStat<SortPolicy>,                      arma::mat>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<metric::EuclideanDistance,                      NeighborSearchStat<SortPolicy>,                      arma::mat>::template SingleTreeTraverser>
+.br
+class mlpack::neighbor::LeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >"
+\fBLeafSizeNSWrapper\fP wraps any \fBNeighborSearch\fP types that take a leaf size for tree construction\&. 
+
+The implementations of \fBTrain()\fP and \fBSearch()\fP take the leaf size into account\&. 
+.PP
+Definition at line 40 of file neighbor_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLeafSizeNSWrapper\fP (const \fBNeighborSearchMode\fP searchMode, const double epsilon)\fC [inline]\fP"
+
+.PP
+Construct the \fBLeafSizeNSWrapper\fP by delegating to the \fBNSWrapper\fP constructor\&. 
+.PP
+Definition at line 199 of file ns_model\&.hpp\&.
+.SS "virtual ~\fBLeafSizeNSWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Delete the \fBLeafSizeNSWrapper\fP\&. 
+.PP
+Definition at line 210 of file ns_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual \fBLeafSizeNSWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Return a copy of the \fBLeafSizeNSWrapper\fP\&. 
+.PP
+Reimplemented from \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
+.PP
+Definition at line 213 of file ns_model\&.hpp\&.
+.PP
+References NSWrapperBase::Search(), and NSWrapperBase::Train()\&.
+.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize, const double)\fC [virtual]\fP"
+
+.PP
+Perform bichromatic search (e\&.g\&. search with a separate query set)\&. This overload uses the leaf size, but ignores the other parameters\&. 
+.PP
+Reimplemented from \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the \fBNeighborSearch\fP model\&. 
+.PP
+Definition at line 236 of file ns_model\&.hpp\&.
+.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize, const double, const double)\fC [virtual]\fP"
+
+.PP
+Train a model with the given parameters\&. This overload uses leafSize but ignores the other parameters\&. 
+.PP
+Reimplemented from \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,109 @@
+\section{Similarity\+Interpolation Class Reference}
+\label{classmlpack_1_1cf_1_1SimilarityInterpolation}\index{Similarity\+Interpolation@{Similarity\+Interpolation}}
+
+
+With \doxyref{Similarity\+Interpolation}{p.}{classmlpack_1_1cf_1_1SimilarityInterpolation}, interpolation weights are based on similarities between query user and its neighbors.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Similarity\+Interpolation} ()
+\item 
+\textbf{ Similarity\+Interpolation} (const arma\+::sp\+\_\+mat \&)
+\begin{DoxyCompactList}\small\item\em This constructor is needed for interface consistency. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vector\+Type , typename Decomposition\+Policy $>$ }\\void \textbf{ Get\+Weights} (Vector\+Type \&\&weights, const Decomposition\+Policy \&, const size\+\_\+t, const arma\+::\+Col$<$ size\+\_\+t $>$ \&neighbors, const arma\+::vec \&similarities, const arma\+::sp\+\_\+mat \&)
+\begin{DoxyCompactList}\small\item\em Interpolation weights are computed as normalized similarities. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+With \doxyref{Similarity\+Interpolation}{p.}{classmlpack_1_1cf_1_1SimilarityInterpolation}, interpolation weights are based on similarities between query user and its neighbors. 
+
+All interpolation weights sum up to one.
+
+An example of how to use \doxyref{Similarity\+Interpolation}{p.}{classmlpack_1_1cf_1_1SimilarityInterpolation} in CF is shown below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}
+\textcolor{comment}{// Users for whom recommendations are generated.}
+\textcolor{keyword}{extern} arma::Col<size\_t> users;
+arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}
+
+CFType<> cf(data);
+
+\textcolor{comment}{// Generate 10 recommendations for all users.}
+cf.template GetRecommendations<
+    EuclideanSearch,
+    SimilarityInterpolation>(10, recommendations);
+\end{DoxyCode}
+ 
+
+Definition at line 41 of file similarity\+\_\+interpolation.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1SimilarityInterpolation_ab99374fec70d75cbdfbeca8e2dd1080f}} 
+\index{mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}!Similarity\+Interpolation@{Similarity\+Interpolation}}
+\index{Similarity\+Interpolation@{Similarity\+Interpolation}!mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}}
+\subsubsection{Similarity\+Interpolation()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Similarity\+Interpolation} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 45 of file similarity\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1SimilarityInterpolation_acd25ecec89988ea7753240516e798aec}} 
+\index{mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}!Similarity\+Interpolation@{Similarity\+Interpolation}}
+\index{Similarity\+Interpolation@{Similarity\+Interpolation}!mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}}
+\subsubsection{Similarity\+Interpolation()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Similarity\+Interpolation} (\begin{DoxyParamCaption}\item[{const arma\+::sp\+\_\+mat \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This constructor is needed for interface consistency. 
+
+
+
+Definition at line 50 of file similarity\+\_\+interpolation.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1SimilarityInterpolation_af7b773858d4545121a8a09195d0b7a2e}} 
+\index{mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}!Get\+Weights@{Get\+Weights}}
+\index{Get\+Weights@{Get\+Weights}!mlpack\+::cf\+::\+Similarity\+Interpolation@{mlpack\+::cf\+::\+Similarity\+Interpolation}}
+\subsubsection{Get\+Weights()}
+{\footnotesize\ttfamily void Get\+Weights (\begin{DoxyParamCaption}\item[{Vector\+Type \&\&}]{weights,  }\item[{const Decomposition\+Policy \&}]{,  }\item[{const size\+\_\+t}]{,  }\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{const arma\+::vec \&}]{similarities,  }\item[{const arma\+::sp\+\_\+mat \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Interpolation weights are computed as normalized similarities. 
+
+After getting the weights, CF algorithm multiplies each neighbor\textquotesingle{}s rating by its corresponding weight and sums them to get predicted rating.
+
+
+\begin{DoxyParams}{Parameters}
+{\em weights} & Resulting interpolation weights. The size of weights should be set to the number of neighbors before calling \doxyref{Get\+Weights()}{p.}{classmlpack_1_1cf_1_1SimilarityInterpolation_af7b773858d4545121a8a09195d0b7a2e}. \\
+\hline
+{\em $\ast$} & (decomposition) Decomposition object. \\
+\hline
+{\em $\ast$} & (query\+User) Queried user. \\
+\hline
+{\em neighbors} & Neighbors of queried user. \\
+\hline
+{\em similarities} & Similarities between query user and neighbors. \\
+\hline
+{\em $\ast$} & (cleaned\+Data) Sparse rating matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 67 of file similarity\+\_\+interpolation.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/interpolation\+\_\+policies/\textbf{ similarity\+\_\+interpolation.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,262 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1cv_1_1F1" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::F1</compoundname>
+    <includes refid="f1_8hpp" local="no">f1.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" kindref="member">AverageStrategy</ref></type>
+        <declname>AS</declname>
+        <defname>AS</defname>
+      </param>
+      <param>
+        <type>size_t</type>
+        <declname>PositiveClass</declname>
+        <defname>PositiveClass</defname>
+        <defval>1</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1F1_1a59117419810548f86c24651ffa3500d5" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool NeedsMinimization</definition>
+        <argsstring></argsstring>
+        <name>NeedsMinimization</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Information for hyper-parameter tuning code. </para>        </briefdescription>
+        <detaileddescription>
+<para>It indicates that we want to maximize the metric. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="64" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1F1_1a77b6a9eb952b01bfc5c0d854da700465" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MLAlgorithm</type>
+          </param>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(MLAlgorithm &amp;model, const DataType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>MLAlgorithm &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Run classification and calculate <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A classification model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column-major data containing test items. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ground truth (correct) labels for the test items. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="56" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1F1_1a89759ece9a77032498b43fbda1178cdc" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" kindref="member">AverageStrategy</ref></type>
+            <declname>_AS</declname>
+            <defname>_AS</defname>
+          </param>
+          <param>
+            <type>typename MLAlgorithm</type>
+          </param>
+          <param>
+            <type>typename DataType</type>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;_AS == <ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae27b0860dfa490c46dd387b06d21a04b" kindref="member">Binary</ref>&gt;</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(MLAlgorithm &amp;model, const DataType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>MLAlgorithm &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Run classification and calculate <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> for binary classification. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1F1_1a0f4c10631fb6e5792753d79fd0460342" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" kindref="member">AverageStrategy</ref></type>
+            <declname>_AS</declname>
+            <defname>_AS</defname>
+          </param>
+          <param>
+            <type>typename MLAlgorithm</type>
+          </param>
+          <param>
+            <type>typename DataType</type>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;_AS == <ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06ae919d9c95f0fd4a08f3c94e13a3f8a9f" kindref="member">Micro</ref>&gt;</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(MLAlgorithm &amp;model, const DataType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>MLAlgorithm &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Run classification and calculate microaveraged <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="86" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1F1_1a5c524b69c345d41dc4854c39739313e7" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06" kindref="member">AverageStrategy</ref></type>
+            <declname>_AS</declname>
+            <defname>_AS</defname>
+          </param>
+          <param>
+            <type>typename MLAlgorithm</type>
+          </param>
+          <param>
+            <type>typename DataType</type>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;_AS == <ref refid="namespacemlpack_1_1cv_1aff3913a61cbadcd7389264288e51ab06a74c916f3663a0877600e8ebec7f7fe5e" kindref="member">Macro</ref>&gt;</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(MLAlgorithm &amp;model, const DataType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>MLAlgorithm &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Run classification and calculate macroaveraged <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="99" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> is a metric of performance for classification algorithms that for binary classification is equal to <formula id="0">$ 2 * precision * recall / (precision + recall) $</formula>. </para>    </briefdescription>
+    <detaileddescription>
+<para>For multiclass classification the <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> metric can be used with the following strategies for averaging.<orderedlist>
+<listitem><para>Micro. The result is calculated by the above formula, but microaveraged precision and microaveraged recall are used.</para></listitem><listitem><para>Macro. <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> is calculated for each class (with values used for calculation of macroaveraged precision and macroaveraged recall), and then the <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> values are averaged.</para></listitem></orderedlist>
+</para><para>In the case of multiclass classification it is assumed that there are instances of every label from 0 to max(labels) among input data points.</para><para>The returned value for <ref refid="classmlpack_1_1cv_1_1F1" kindref="compound">F1</ref> will be zero if both precision and recall turn out to be zeros.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>AS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An average strategy. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PositiveClass</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In the case of binary classification (AS = Binary) positives are assumed to have labels equal to this value. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp" bodystart="45" bodyend="102"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1F1_1a77b6a9eb952b01bfc5c0d854da700465" prot="public" virt="non-virtual"><scope>mlpack::cv::F1</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1F1_1a89759ece9a77032498b43fbda1178cdc" prot="private" virt="non-virtual"><scope>mlpack::cv::F1</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1F1_1a0f4c10631fb6e5792753d79fd0460342" prot="private" virt="non-virtual"><scope>mlpack::cv::F1</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1F1_1a5c524b69c345d41dc4854c39739313e7" prot="private" virt="non-virtual"><scope>mlpack::cv::F1</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1F1_1a59117419810548f86c24651ffa3500d5" prot="public" virt="non-virtual"><scope>mlpack::cv::F1</scope><name>NeedsMinimization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

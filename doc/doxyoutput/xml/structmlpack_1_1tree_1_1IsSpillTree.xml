@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1tree_1_1IsSpillTree" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::tree::IsSpillTree</compoundname>
+    <includes refid="is__spill__tree_8hpp" local="no">is_spill_tree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename TreeType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1tree_1_1IsSpillTree_1a11ddd051208250c32dc4985abcafa86d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" bodystart="21" bodyend="24"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1tree_1_1IsSpillTree_1a11ddd051208250c32dc4985abcafa86d" prot="public" virt="non-virtual"><scope>mlpack::tree::IsSpillTree</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

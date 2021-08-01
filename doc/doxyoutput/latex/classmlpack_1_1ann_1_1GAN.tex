@@ -1,0 +1,644 @@
+\section{G\+AN$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1GAN}\index{G\+A\+N$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$@{G\+A\+N$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$}}
+
+
+The implementation of the standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} module.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ G\+AN} (Model generator, Model discriminator, Initialization\+Rule\+Type \&initialize\+Rule, Noise \&noise\+Function, const size\+\_\+t noise\+Dim, const size\+\_\+t batch\+Size, const size\+\_\+t generator\+Update\+Step, const size\+\_\+t pre\+Train\+Size, const double multiplier, const double clipping\+Parameter=0.\+01, const double lambda=10.\+0)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} class. \end{DoxyCompactList}\item 
+\textbf{ G\+AN} (const \textbf{ G\+AN} \&)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ G\+AN} (\textbf{ G\+AN} \&\&)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+const Model \& \textbf{ Discriminator} () const
+\begin{DoxyCompactList}\small\item\em Return the discriminator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. \end{DoxyCompactList}\item 
+Model \& \textbf{ Discriminator} ()
+\begin{DoxyCompactList}\small\item\em Modify the discriminator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ Standard\+G\+AN} $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ Policy, \textbf{ D\+C\+G\+AN} $>$\+::value, double $>$\+::type \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t i, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate function for the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+AN} $>$\+::value, double $>$\+::type \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t i, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate function for the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+A\+N\+GP} $>$\+::value, double $>$\+::type \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t i, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate function for the W\+G\+A\+N-\/\+GP. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type , typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ Standard\+G\+AN} $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ Policy, \textbf{ D\+C\+G\+AN} $>$\+::value, double $>$\+::type \textbf{ Evaluate\+With\+Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, Grad\+Type \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate\+With\+Gradient function for the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type , typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+AN} $>$\+::value, double $>$\+::type \textbf{ Evaluate\+With\+Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, Grad\+Type \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate\+With\+Gradient function for the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type , typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+A\+N\+GP} $>$\+::value, double $>$\+::type \textbf{ Evaluate\+With\+Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, Grad\+Type \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate\+With\+Gradient function for the W\+G\+A\+N-\/\+GP. \end{DoxyCompactList}\item 
+void \textbf{ Forward} (const arma\+::mat \&input)
+\begin{DoxyCompactList}\small\item\em This function does a forward pass through the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} network. \end{DoxyCompactList}\item 
+const Model \& \textbf{ Generator} () const
+\begin{DoxyCompactList}\small\item\em Return the generator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. \end{DoxyCompactList}\item 
+Model \& \textbf{ Generator} ()
+\begin{DoxyCompactList}\small\item\em Modify the generator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ Standard\+G\+AN} $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ Policy, \textbf{ D\+C\+G\+AN} $>$\+::value, void $>$\+::type \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, arma\+::mat \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Gradient function for Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+AN} $>$\+::value, void $>$\+::type \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, arma\+::mat \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Gradient function for \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Policy  = Policy\+Type$>$ }\\std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ Policy, \textbf{ W\+G\+A\+N\+GP} $>$\+::value, void $>$\+::type \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t i, arma\+::mat \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Gradient function for W\+G\+A\+N-\/\+GP. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Functions} () const
+\begin{DoxyCompactList}\small\item\em Return the number of separable functions (the number of predictor points). \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Return the parameters of the network. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters of the network. \end{DoxyCompactList}\item 
+void \textbf{ Predict} (arma\+::mat input, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em This function predicts the output of the network on the given input. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Predictors} () const
+\begin{DoxyCompactList}\small\item\em Get the matrix of data points (predictors). \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Predictors} ()
+\begin{DoxyCompactList}\small\item\em Modify the matrix of data points (predictors). \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\item 
+void \textbf{ Reset\+Data} (arma\+::mat train\+Data)
+\begin{DoxyCompactList}\small\item\em Initialize the generator, discriminator and weights of the model for training. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Responses} () const
+\begin{DoxyCompactList}\small\item\em Get the matrix of responses to the input data points. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Responses} ()
+\begin{DoxyCompactList}\small\item\em Modify the matrix of responses to the input data points. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the order of function visitation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type , typename... Callback\+Types$>$ }\\double \textbf{ Train} (arma\+::mat train\+Data, Optimizer\+Type \&Optimizer, Callback\+Types \&\&... callbacks)
+\begin{DoxyCompactList}\small\item\em Train function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Model, typename Initialization\+Rule\+Type, typename Noise, typename Policy\+Type = Standard\+G\+AN$>$\newline
+class mlpack\+::ann\+::\+G\+A\+N$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$}
+
+The implementation of the standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} module. 
+
+Generative Adversarial Networks (G\+A\+Ns) are a class of artificial intelligence algorithms used in unsupervised machine learning, implemented by a system of two neural networks contesting with each other in a zero-\/sum game framework. This technique can generate photographs that look at least superficially authentic to human observers, having many realistic characteristics. G\+A\+Ns have been used in Text-\/to-\/\+Image Synthesis, Medical Drug Discovery, High Resolution Imagery Generation, Neural Machine Translation and so on.
+
+For more information, see the following paper\+:
+
+
+\begin{DoxyCode}
+@article\{Goodfellow14,
+  author    = \{Ian J. Goodfellow, Jean Pouget-Abadi, Mehdi Mirza, Bing Xu,
+               David Warde-Farley, Sherjil Ozair, Aaron Courville and
+               Yoshua Bengio\},
+  title     = \{Generative Adversarial Nets\},
+  year      = \{2014\},
+  url       = \{http:\textcolor{comment}{//arxiv.org/abs/1406.2661\},}
+  eprint    = \{1406.2661\},
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Model} & The class type of Generator and Discriminator. \\
+\hline
+{\em Initialization\+Rule\+Type} & Type of Initializer. \\
+\hline
+{\em Noise} & The noise function to use. \\
+\hline
+{\em Policy\+Type} & The \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} variant to be used (\doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}, \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}, \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN} or \doxyref{W\+G\+A\+N\+GP}{p.}{classmlpack_1_1ann_1_1WGANGP}). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 63 of file gan.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_afd4728e4b8193b03b9ee774b833d3508}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!G\+AN@{G\+AN}}
+\index{G\+AN@{G\+AN}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{G\+A\+N()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ G\+AN} (\begin{DoxyParamCaption}\item[{Model}]{generator,  }\item[{Model}]{discriminator,  }\item[{Initialization\+Rule\+Type \&}]{initialize\+Rule,  }\item[{Noise \&}]{noise\+Function,  }\item[{const size\+\_\+t}]{noise\+Dim,  }\item[{const size\+\_\+t}]{batch\+Size,  }\item[{const size\+\_\+t}]{generator\+Update\+Step,  }\item[{const size\+\_\+t}]{pre\+Train\+Size,  }\item[{const double}]{multiplier,  }\item[{const double}]{clipping\+Parameter = {\ttfamily 0.01},  }\item[{const double}]{lambda = {\ttfamily 10.0} }\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em generator} & Generator network. \\
+\hline
+{\em discriminator} & Discriminator network. \\
+\hline
+{\em initialize\+Rule} & Initialization rule to use for initializing parameters. \\
+\hline
+{\em noise\+Function} & Function to be used for generating noise. \\
+\hline
+{\em noise\+Dim} & Dimension of noise vector to be created. \\
+\hline
+{\em batch\+Size} & Batch size to be used for training. \\
+\hline
+{\em generator\+Update\+Step} & Number of steps to train Discriminator before updating Generator. \\
+\hline
+{\em pre\+Train\+Size} & Number of pre-\/training steps of Discriminator. \\
+\hline
+{\em multiplier} & Ratio of learning rate of Discriminator to the Generator. \\
+\hline
+{\em clipping\+Parameter} & Weight range for enforcing Lipschitz constraint. \\
+\hline
+{\em lambda} & Parameter for setting the gradient penalty. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a0c66c15a1fd7ab0ce0f579e20c838abb}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!G\+AN@{G\+AN}}
+\index{G\+AN@{G\+AN}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{G\+A\+N()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ G\+AN} (\begin{DoxyParamCaption}\item[{const \textbf{ G\+AN}$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a0601671158b961d0b3f532beb0c070d7}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!G\+AN@{G\+AN}}
+\index{G\+AN@{G\+AN}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{G\+A\+N()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ G\+AN} (\begin{DoxyParamCaption}\item[{\textbf{ G\+AN}$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$ \&\&}]{ }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a81daab6e936bba0d45878d26df58aa9f}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Discriminator@{Discriminator}}
+\index{Discriminator@{Discriminator}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Discriminator()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Model\& Discriminator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the discriminator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. 
+
+
+
+Definition at line 312 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a52ce6e63f168b2f2a702b17f2225389a}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Discriminator@{Discriminator}}
+\index{Discriminator@{Discriminator}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Discriminator()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Model\& Discriminator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the discriminator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. 
+
+
+
+Definition at line 314 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a1960af22a953da7d4280f8717f80102b}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ Standard\+G\+AN}$>$\+::value $\vert$$\vert$ std\+::is\+\_\+same$<$Policy, \textbf{ D\+C\+G\+AN}$>$\+::value, double$>$\+::type Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate function for the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. 
+
+This function gives the performance of the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} or \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN} on the current input.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a6e686598c5a781cc1b0903a0f24e54f3}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+AN}$>$\+::value, double$>$\+::type Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate function for the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. 
+
+This function gives the performance of the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN} on the current input.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_ab15c3bf890c114b50dab1dce9c0a0ae5}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+A\+N\+GP}$>$\+::value, double$>$\+::type Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate function for the W\+G\+A\+N-\/\+GP. 
+
+This function gives the performance of the W\+G\+A\+N-\/\+GP on the current input.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a8852fa0ac9f2147801776c5aff61f22c}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}}
+\index{Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate\+With\+Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ Standard\+G\+AN}$>$\+::value $\vert$$\vert$ std\+::is\+\_\+same$<$Policy, \textbf{ D\+C\+G\+AN}$>$\+::value, double$>$\+::type Evaluate\+With\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate\+With\+Gradient function for the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. 
+
+This function gives the performance of the Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} or \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN} on the current input, while updating Gradients.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a5726150df7dbbde1aecf3d46cb155005}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}}
+\index{Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate\+With\+Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+AN}$>$\+::value, double$>$\+::type Evaluate\+With\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate\+With\+Gradient function for the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. 
+
+This function gives the performance of the \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN} on the current input, while updating Gradients.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a41c7fcfc409e29d086df197d78c9b92d}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}}
+\index{Evaluate\+With\+Gradient@{Evaluate\+With\+Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Evaluate\+With\+Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+A\+N\+GP}$>$\+::value, double$>$\+::type Evaluate\+With\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate\+With\+Gradient function for the W\+G\+A\+N-\/\+GP. 
+
+This function gives the performance of the W\+G\+A\+N-\/\+GP on the current input, while updating Gradients.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the network. \\
+\hline
+{\em i} & Index of the current input. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a0f1a354ec201efe4ce96126802cf9a2f}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{input }\end{DoxyParamCaption})}
+
+
+
+This function does a forward pass through the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Sampled noise. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a1b687745cb12ef7ef76449187dc50bb5}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Generator@{Generator}}
+\index{Generator@{Generator}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Generator()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Model\& Generator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the generator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. 
+
+
+
+Definition at line 308 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a8bf07503608839011670b808cdd17001}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Generator@{Generator}}
+\index{Generator@{Generator}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Generator()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Model\& Generator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the generator of the \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN}. 
+
+
+
+Definition at line 310 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a2e967aa7bd78aa8e5024899a44a303c9}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ Standard\+G\+AN}$>$\+::value $\vert$$\vert$ std\+::is\+\_\+same$<$Policy, \textbf{ D\+C\+G\+AN}$>$\+::value, void$>$\+::type Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{arma\+::mat \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Gradient function for Standard \doxyref{G\+AN}{p.}{classmlpack_1_1ann_1_1GAN} and \doxyref{D\+C\+G\+AN}{p.}{classmlpack_1_1ann_1_1DCGAN}. 
+
+This function passes the gradient based on which network is being trained, i.\+e., Generator or Discriminator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & present parameters of the network. \\
+\hline
+{\em i} & Index of the predictors. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a3053059f0001ebb407739820357d050d}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+AN}$>$\+::value, void$>$\+::type Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{arma\+::mat \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Gradient function for \doxyref{W\+G\+AN}{p.}{classmlpack_1_1ann_1_1WGAN}. 
+
+This function passes the gradient based on which network is being trained, i.\+e., Generator or Discriminator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & present parameters of the network. \\
+\hline
+{\em i} & Index of the predictors. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a488f9e118fd4fd3c25f29b81b839cf7a}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$std\+::is\+\_\+same$<$Policy, \textbf{ W\+G\+A\+N\+GP}$>$\+::value, void$>$\+::type Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{i,  }\item[{arma\+::mat \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Gradient function for W\+G\+A\+N-\/\+GP. 
+
+This function passes the gradient based on which network is being trained, i.\+e., Generator or Discriminator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & present parameters of the network. \\
+\hline
+{\em i} & Index of the predictors. \\
+\hline
+{\em gradient} & Variable to store the present gradient. \\
+\hline
+{\em batch\+Size} & Variable to store the present number of inputs. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a1fa76af34a6e3ea927b307f0c318ee4b}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Num\+Functions@{Num\+Functions}}
+\index{Num\+Functions@{Num\+Functions}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Num\+Functions()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Functions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of separable functions (the number of predictor points). 
+
+
+
+Definition at line 317 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_aa68d74dc1e86e4352e00a3cab83a0e4a}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the parameters of the network. 
+
+
+
+Definition at line 303 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a043f0ccd62e6711a18e0d81047be9a0a}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters of the network. 
+
+
+
+Definition at line 305 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a1c9a003262a7e893e46cf780ed5f359d}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Predict()}
+{\footnotesize\ttfamily void Predict (\begin{DoxyParamCaption}\item[{arma\+::mat}]{input,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+This function predicts the output of the network on the given input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input of the Generator network. \\
+\hline
+{\em output} & Result of the Discriminator network. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_af63d9ce84ba796336c0abce63ff9be1c}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Predictors@{Predictors}}
+\index{Predictors@{Predictors}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Predictors()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Predictors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the matrix of data points (predictors). 
+
+
+
+Definition at line 325 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a5b2b9103f156a387b74164f143e63ce7}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Predictors@{Predictors}}
+\index{Predictors@{Predictors}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Predictors()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Predictors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the matrix of data points (predictors). 
+
+
+
+Definition at line 327 of file gan.\+hpp.
+
+
+
+References G\+A\+N$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a935be322c1c9425a5ae7a0fe80421e83}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Reset\+Data@{Reset\+Data}}
+\index{Reset\+Data@{Reset\+Data}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Reset\+Data()}
+{\footnotesize\ttfamily void Reset\+Data (\begin{DoxyParamCaption}\item[{arma\+::mat}]{train\+Data }\end{DoxyParamCaption})}
+
+
+
+Initialize the generator, discriminator and weights of the model for training. 
+
+This function won\textquotesingle{}t actually trigger training process.
+
+
+\begin{DoxyParams}{Parameters}
+{\em train\+Data} & The data points of real distribution. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a5702d7dbe418472e341da9c8d8ff0e01}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Responses@{Responses}}
+\index{Responses@{Responses}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Responses()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Responses (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the matrix of responses to the input data points. 
+
+
+
+Definition at line 320 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a94a56f6f545988833a4ae9906f8aa197}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Responses@{Responses}}
+\index{Responses@{Responses}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Responses()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Responses (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the matrix of responses to the input data points. 
+
+
+
+Definition at line 322 of file gan.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+
+
+Referenced by G\+A\+N$<$ Model, Initialization\+Rule\+Type, Noise, Policy\+Type $>$\+::\+Predictors().
+
+\mbox{\label{classmlpack_1_1ann_1_1GAN_a2697cc8b37d7bca7c055228382a9b208}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Shuffle()}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the order of function visitation. 
+
+This may be called by the optimizer. \mbox{\label{classmlpack_1_1ann_1_1GAN_a4f7b5c4f299346d1fe308881a26696f0}} 
+\index{mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::ann\+::\+G\+AN@{mlpack\+::ann\+::\+G\+AN}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{arma\+::mat}]{train\+Data,  }\item[{Optimizer\+Type \&}]{Optimizer,  }\item[{Callback\+Types \&\&...}]{callbacks }\end{DoxyParamCaption})}
+
+
+
+Train function. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+{\em Callback\+Types} & Types of Callback functions. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em train\+Data} & The data points of real distribution. \\
+\hline
+{\em Optimizer} & Instantiated optimizer used to train the model. \\
+\hline
+{\em callbacks} & Callback function for ensmallen optimizer {\ttfamily Optimizer\+Type}. See {\tt https\+://www.\+ensmallen.\+org/docs.\+html\#callback-\/documentation}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final objective of the trained model (NaN or Inf on error). 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/gan/\textbf{ gan.\+hpp}\end{DoxyCompactItemize}

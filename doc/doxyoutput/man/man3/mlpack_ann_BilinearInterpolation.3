@@ -1,0 +1,270 @@
+.TH "BilinearInterpolation< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BilinearInterpolation< InputDataType, OutputDataType > \- Definition and Implementation of the Bilinear Interpolation Layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBilinearInterpolation\fP ()"
+.br
+.RI "Create the Bilinear Interpolation object\&. "
+.ti -1c
+.RI "\fBBilinearInterpolation\fP (const size_t inRowSize, const size_t inColSize, const size_t outRowSize, const size_t outColSize, const size_t depth)"
+.br
+.RI "The constructor for the Bilinear Interpolation\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gradient, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Forward pass through the layer\&. "
+.ti -1c
+.RI "size_t const  & \fBInColSize\fP () const"
+.br
+.RI "Get the column size of the input\&. "
+.ti -1c
+.RI "size_t & \fBInColSize\fP ()"
+.br
+.RI "Modify the column size of the input\&. "
+.ti -1c
+.RI "size_t const  & \fBInDepth\fP () const"
+.br
+.RI "Get the depth of the input\&. "
+.ti -1c
+.RI "size_t & \fBInDepth\fP ()"
+.br
+.RI "Modify the depth of the input\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.RI "Get the shape of the input\&. "
+.ti -1c
+.RI "size_t const  & \fBInRowSize\fP () const"
+.br
+.RI "Get the row size of the input\&. "
+.ti -1c
+.RI "size_t & \fBInRowSize\fP ()"
+.br
+.RI "Modify the row size of the input\&. "
+.ti -1c
+.RI "size_t const  & \fBOutColSize\fP () const"
+.br
+.RI "Get the column size of the output\&. "
+.ti -1c
+.RI "size_t & \fBOutColSize\fP ()"
+.br
+.RI "Modify the column size of the output\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "size_t const  & \fBOutRowSize\fP () const"
+.br
+.RI "Get the row size of the output\&. "
+.ti -1c
+.RI "size_t & \fBOutRowSize\fP ()"
+.br
+.RI "Modify the row size of the output\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::BilinearInterpolation< InputDataType, OutputDataType >"
+Definition and Implementation of the Bilinear Interpolation Layer\&. 
+
+Bilinear Interpolation is an mathematical technique, primarily used for scaling purposes\&. It is an extension of linear interpolation, for interpolating functions of two variables on a rectangular grid\&. The key idea is to perform linear interpolation first in one direction (e\&.g\&., along x-axis), and then again in the other direction (i\&.e\&., y-axis), on four different known points in the grid\&. This way, we represent any arbitrary point, present within the grid, as a function of those four points\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 39 of file bilinear_interpolation\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBilinearInterpolation\fP ()"
+
+.PP
+Create the Bilinear Interpolation object\&. 
+.SS "\fBBilinearInterpolation\fP (const size_t inRowSize, const size_t inColSize, const size_t outRowSize, const size_t outColSize, const size_t depth)"
+
+.PP
+The constructor for the Bilinear Interpolation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinRowSize\fP Number of input rows\&. 
+.br
+\fIinColSize\fP Number of input columns\&. 
+.br
+\fIoutRowSize\fP Number of output rows\&. 
+.br
+\fIoutColSize\fP Number of output columns\&. 
+.br
+\fIdepth\fP Number of input slices\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gradient, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&. Since the layer does not have any learn-able parameters, we just have to down-sample the gradient to make its size compatible with the input size\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (input) The input matrix\&. 
+.br
+\fIgradient\fP The computed backward gradient\&. 
+.br
+\fIoutput\fP The resulting down-sampled output\&. 
+.RE
+.PP
+
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 92 of file bilinear_interpolation\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 94 of file bilinear_interpolation\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Forward pass through the layer\&. The layer interpolates the matrix using the given Bilinear Interpolation method\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The input matrix\&. 
+.br
+\fIoutput\fP The resulting interpolated output matrix\&. 
+.RE
+.PP
+
+.SS "size_t const& InColSize () const\fC [inline]\fP"
+
+.PP
+Get the column size of the input\&. 
+.PP
+Definition at line 102 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t& InColSize ()\fC [inline]\fP"
+
+.PP
+Modify the column size of the input\&. 
+.PP
+Definition at line 104 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t const& InDepth () const\fC [inline]\fP"
+
+.PP
+Get the depth of the input\&. 
+.PP
+Definition at line 117 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t& InDepth ()\fC [inline]\fP"
+
+.PP
+Modify the depth of the input\&. 
+.PP
+Definition at line 119 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Get the shape of the input\&. 
+.PP
+Definition at line 122 of file bilinear_interpolation\&.hpp\&.
+.PP
+References BilinearInterpolation< InputDataType, OutputDataType >::serialize()\&.
+.SS "size_t const& InRowSize () const\fC [inline]\fP"
+
+.PP
+Get the row size of the input\&. 
+.PP
+Definition at line 97 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t& InRowSize ()\fC [inline]\fP"
+
+.PP
+Modify the row size of the input\&. 
+.PP
+Definition at line 99 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t const& OutColSize () const\fC [inline]\fP"
+
+.PP
+Get the column size of the output\&. 
+.PP
+Definition at line 112 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t& OutColSize ()\fC [inline]\fP"
+
+.PP
+Modify the column size of the output\&. 
+.PP
+Definition at line 114 of file bilinear_interpolation\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 87 of file bilinear_interpolation\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 89 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t const& OutRowSize () const\fC [inline]\fP"
+
+.PP
+Get the row size of the output\&. 
+.PP
+Definition at line 107 of file bilinear_interpolation\&.hpp\&.
+.SS "size_t& OutRowSize ()\fC [inline]\fP"
+
+.PP
+Modify the row size of the output\&. 
+.PP
+Definition at line 109 of file bilinear_interpolation\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by BilinearInterpolation< InputDataType, OutputDataType >::InputShape()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

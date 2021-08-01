@@ -1,0 +1,98 @@
+.TH "EdgePair" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+EdgePair \- An edge pair is simply two indices and a distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBEdgePair\fP (const size_t lesser, const size_t greater, const double dist)"
+.br
+.RI "Initialize an \fBEdgePair\fP with two indices and a distance\&. "
+.ti -1c
+.RI "double \fBDistance\fP () const"
+.br
+.RI "Get the distance\&. "
+.ti -1c
+.RI "double & \fBDistance\fP ()"
+.br
+.RI "Modify the distance\&. "
+.ti -1c
+.RI "size_t \fBGreater\fP () const"
+.br
+.RI "Get the greater index\&. "
+.ti -1c
+.RI "size_t & \fBGreater\fP ()"
+.br
+.RI "Modify the greater index\&. "
+.ti -1c
+.RI "size_t \fBLesser\fP () const"
+.br
+.RI "Get the lesser index\&. "
+.ti -1c
+.RI "size_t & \fBLesser\fP ()"
+.br
+.RI "Modify the lesser index\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+An edge pair is simply two indices and a distance\&. 
+
+It is used as the basic element of an edge list when computing a minimum spanning tree\&. 
+.PP
+Definition at line 28 of file edge_pair\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBEdgePair\fP (const size_t lesser, const size_t greater, const double dist)\fC [inline]\fP"
+
+.PP
+Initialize an \fBEdgePair\fP with two indices and a distance\&. The indices are called lesser and greater, implying that they be sorted before calling Init\&. However, this is not necessary for functionality; it is just a way to keep the edge list organized in other code\&. 
+.PP
+Definition at line 45 of file edge_pair\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double Distance () const\fC [inline]\fP"
+
+.PP
+Get the distance\&. 
+.PP
+Definition at line 63 of file edge_pair\&.hpp\&.
+.SS "double& Distance ()\fC [inline]\fP"
+
+.PP
+Modify the distance\&. 
+.PP
+Definition at line 65 of file edge_pair\&.hpp\&.
+.SS "size_t Greater () const\fC [inline]\fP"
+
+.PP
+Get the greater index\&. 
+.PP
+Definition at line 58 of file edge_pair\&.hpp\&.
+.SS "size_t& Greater ()\fC [inline]\fP"
+
+.PP
+Modify the greater index\&. 
+.PP
+Definition at line 60 of file edge_pair\&.hpp\&.
+.SS "size_t Lesser () const\fC [inline]\fP"
+
+.PP
+Get the lesser index\&. 
+.PP
+Definition at line 53 of file edge_pair\&.hpp\&.
+.SS "size_t& Lesser ()\fC [inline]\fP"
+
+.PP
+Modify the lesser index\&. 
+.PP
+Definition at line 55 of file edge_pair\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

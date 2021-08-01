@@ -1,0 +1,43 @@
+\section{/home/aakash/mlpack/src/mlpack/core/math/ccov.hpp File Reference}
+\label{ccov_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/math/ccov.\+hpp@{/home/aakash/mlpack/src/mlpack/core/math/ccov.\+hpp}}
+Include dependency graph for ccov.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ccov_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ccov_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::math}
+\begin{DoxyCompactList}\small\item\em Miscellaneous math routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\arma\+::\+Mat$<$ eT $>$ \textbf{ Column\+Covariance} (const arma\+::\+Mat$<$ eT $>$ \&A, const size\+\_\+t norm\+\_\+type=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\arma\+::\+Mat$<$ std\+::complex$<$ T $>$ $>$ \textbf{ Column\+Covariance} (const arma\+::\+Mat$<$ std\+::complex$<$ T $>$ $>$ \&A, const size\+\_\+t norm\+\_\+type=0)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin 
+
+Conrad Sanderson
+\end{DoxyAuthor}
+Column\+Covariance(\+X) is same as cov(trans(\+X)) but without the cost of computing trans(\+X)
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

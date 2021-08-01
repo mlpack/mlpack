@@ -1,0 +1,178 @@
+.TH "DTBRules< MetricType, TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DTBRules< MetricType, TreeType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::TraversalInfo\fP< TreeType > \fBTraversalInfoType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDTBRules\fP (const arma::mat &dataSet, \fBUnionFind\fP &connections, arma::vec &neighborsDistances, arma::Col< size_t > &neighborsInComponent, arma::Col< size_t > &neighborsOutComponent, MetricType &metric)"
+.br
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const"
+.br
+.RI "Get the number of base cases performed\&. "
+.ti -1c
+.RI "size_t & \fBBaseCases\fP ()"
+.br
+.RI "Modify the number of base cases performed\&. "
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore)"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBRescore\fP (TreeType &queryNode, TreeType &referenceNode, const double oldScore) const"
+.br
+.RI "Re-evaluate the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "double \fBScore\fP (TreeType &queryNode, TreeType &referenceNode)"
+.br
+.RI "Get the score for recursion order\&. "
+.ti -1c
+.RI "size_t \fBScores\fP () const"
+.br
+.RI "Get the number of node combinations that have been scored\&. "
+.ti -1c
+.RI "size_t & \fBScores\fP ()"
+.br
+.RI "Modify the number of node combinations that have been scored\&. "
+.ti -1c
+.RI "const \fBTraversalInfoType\fP & \fBTraversalInfo\fP () const"
+.br
+.ti -1c
+.RI "\fBTraversalInfoType\fP & \fBTraversalInfo\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename TreeType>
+.br
+class mlpack::emst::DTBRules< MetricType, TreeType >"
+
+.PP
+Definition at line 23 of file dtb_rules\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBtree::TraversalInfo\fP<TreeType> \fBTraversalInfoType\fP"
+
+.PP
+Definition at line 85 of file dtb_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDTBRules\fP (const arma::mat & dataSet, \fBUnionFind\fP & connections, arma::vec & neighborsDistances, arma::Col< size_t > & neighborsInComponent, arma::Col< size_t > & neighborsOutComponent, MetricType & metric)"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.SS "size_t BaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of base cases performed\&. 
+.PP
+Definition at line 91 of file dtb_rules\&.hpp\&.
+.SS "size_t& BaseCases ()\fC [inline]\fP"
+
+.PP
+Modify the number of base cases performed\&. 
+.PP
+Definition at line 93 of file dtb_rules\&.hpp\&.
+.SS "double Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore)"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Rescore (TreeType & queryNode, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.br
+\fIoldScore\fP Old score produced by Socre() (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "double Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.RE
+.PP
+
+.SS "double Score (TreeType & queryNode, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursionm while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.RE
+.PP
+
+.SS "size_t Scores () const\fC [inline]\fP"
+
+.PP
+Get the number of node combinations that have been scored\&. 
+.PP
+Definition at line 96 of file dtb_rules\&.hpp\&.
+.SS "size_t& Scores ()\fC [inline]\fP"
+
+.PP
+Modify the number of node combinations that have been scored\&. 
+.PP
+Definition at line 98 of file dtb_rules\&.hpp\&.
+.SS "const \fBTraversalInfoType\fP& TraversalInfo () const\fC [inline]\fP"
+
+.PP
+Definition at line 87 of file dtb_rules\&.hpp\&.
+.SS "\fBTraversalInfoType\fP& TraversalInfo ()\fC [inline]\fP"
+
+.PP
+Definition at line 88 of file dtb_rules\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

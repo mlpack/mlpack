@@ -1,0 +1,959 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1neighbor_1_1RASearchRules" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::RASearchRules</compoundname>
+    <includes refid="ra__search__rules_8hpp" local="no">ra_search_rules.hpp</includes>
+    <innerclass refid="structmlpack_1_1neighbor_1_1RASearchRules_1_1CandidateCmp" prot="private">mlpack::neighbor::RASearchRules::CandidateCmp</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename SortPolicy</type>
+      </param>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename TreeType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1RASearchRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo</ref>&lt; TreeType &gt;</type>
+        <definition>typedef tree::TraversalInfo&lt;TreeType&gt; TraversalInfoType</definition>
+        <argsstring></argsstring>
+        <name>TraversalInfoType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1RASearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" static="no">
+        <type>std::pair&lt; double, size_t &gt;</type>
+        <definition>typedef std::pair&lt;double, size_t&gt; Candidate</definition>
+        <argsstring></argsstring>
+        <name>Candidate</name>
+        <briefdescription>
+<para>Candidate represents a possible candidate neighbor (distance, index). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1RASearchRules_1a971deda91e33f8ac7c017c8caab84593" prot="private" static="no">
+        <type>std::priority_queue&lt; Candidate, std::vector&lt; Candidate &gt;, CandidateCmp &gt;</type>
+        <definition>typedef std::priority_queue&lt;Candidate, std::vector&lt;Candidate&gt;, CandidateCmp&gt; CandidateList</definition>
+        <argsstring></argsstring>
+        <name>CandidateList</name>
+        <briefdescription>
+<para>Use a priority queue to represent the list of candidate neighbors. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="269" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="269" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a2fd8d0cb021bd3b0175cff2fd44a4cda" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; CandidateList &gt;</type>
+        <definition>std::vector&lt;CandidateList&gt; candidates</definition>
+        <argsstring></argsstring>
+        <name>candidates</name>
+        <briefdescription>
+<para>Set of candidate neighbors for each point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a3c423bae8b44c1c33e948bf23decd7f9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool firstLeafExact</definition>
+        <argsstring></argsstring>
+        <name>firstLeafExact</name>
+        <briefdescription>
+<para>Whether to do exact computation on the first leaf before any sampling. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="284" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1af004d46789d32b9155f2c0eb5b771181" prot="private" static="no" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t k</definition>
+        <argsstring></argsstring>
+        <name>k</name>
+        <briefdescription>
+<para>Number of neighbors to search for. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" static="no" mutable="no">
+        <type>MetricType &amp;</type>
+        <definition>MetricType&amp; metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>The instantiated metric. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="278" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a2bdc3f689e08e41878a337cae4bb6743" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numDistComputations</definition>
+        <argsstring></argsstring>
+        <name>numDistComputations</name>
+        <briefdescription>
+<para>The number of distance calculations performed during search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="299" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a5d3ea5e5896059861a36abd897c02c59" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; numSamplesMade</definition>
+        <argsstring></argsstring>
+        <name>numSamplesMade</name>
+        <briefdescription>
+<para>The number of samples made for every query. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1ac9f55d152b8a58a0f22d9a759c0a2bd8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numSamplesReqd</definition>
+        <argsstring></argsstring>
+        <name>numSamplesReqd</name>
+        <briefdescription>
+<para>The minimum number of samples required per query. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="290" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1ad585c8d02ad487ba4559c4fefdf121cc" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; querySet</definition>
+        <argsstring></argsstring>
+        <name>querySet</name>
+        <briefdescription>
+<para>The query set. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a620a93f66bf649d3ac7143ee6e5af010" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; referenceSet</definition>
+        <argsstring></argsstring>
+        <name>referenceSet</name>
+        <briefdescription>
+<para>The reference set. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sameSet</definition>
+        <argsstring></argsstring>
+        <name>sameSet</name>
+        <briefdescription>
+<para>If the query and reference set are identical, this is true. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="302" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a75bf9c04028f0908231497715f1eda12" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sampleAtLeaves</definition>
+        <argsstring></argsstring>
+        <name>sampleAtLeaves</name>
+        <briefdescription>
+<para>Whether to sample at leaves or just use all of it. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="281" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1a6a041cac03b0e98176e3f0ece9c74777" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double samplingRatio</definition>
+        <argsstring></argsstring>
+        <name>samplingRatio</name>
+        <briefdescription>
+<para>The sampling ratio. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="296" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1abf4543b8d57210df462ad0940cf2fe9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t singleSampleLimit</definition>
+        <argsstring></argsstring>
+        <name>singleSampleLimit</name>
+        <briefdescription>
+<para>The limit on the largest node that can be approximated by sampling. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="287" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="287" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1RASearchRules_1aa987143b3965542c77c85c8212abedbe" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref></type>
+        <definition>TraversalInfoType traversalInfo</definition>
+        <argsstring></argsstring>
+        <name>traversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="304" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1aa215aa687871d891ee298e5be340cd32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RASearchRules</definition>
+        <argsstring>(const arma::mat &amp;referenceSet, const arma::mat &amp;querySet, const size_t k, MetricType &amp;metric, const double tau=5, const double alpha=0.95, const bool naive=false, const bool sampleAtLeaves=false, const bool firstLeafExact=false, const size_t singleSampleLimit=20, const bool sameSet=false)</argsstring>
+        <name>RASearchRules</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>MetricType &amp;</type>
+          <declname>metric</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>tau</declname>
+          <defval>5</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>alpha</declname>
+          <defval>0.95</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>sampleAtLeaves</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>firstLeafExact</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>singleSampleLimit</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>sameSet</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1neighbor_1_1RASearchRules" kindref="compound">RASearchRules</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is usually done from within the <ref refid="classmlpack_1_1neighbor_1_1RASearch" kindref="compound">RASearch</ref> class at search time.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated metric. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tau</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The rank-approximation in percentile of the data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alpha</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired success probability. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the rank-approximate search will be performed by directly sampling the whole set instead of using the stratified sampling on the tree. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sampleAtLeaves</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sample at leaves for faster but less accurate computation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstLeafExact</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Traverse to the first leaf without approximation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleSampleLimit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The limit on the largest node that can be approximated by sampling. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sameSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the query and reference set are taken to be the same, and a query point will not return itself in the results. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BaseCase</definition>
+        <argsstring>(const size_t queryIndex, const size_t referenceIndex)</argsstring>
+        <name>BaseCase</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>referenceIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the distance from the query point to the reference point. </para>        </briefdescription>
+        <detaileddescription>
+<para>This will update the list of candidates with the new point if appropriate.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of reference point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="85" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1add24e5e55e4b8555dbd941b137a44491" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GetResults</definition>
+        <argsstring>(arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <name>GetResults</name>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Store the list of candidates for each query point in the given matrices. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="76" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a469f61784f9cce8f2574c23823405768" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MinimumBaseCases</definition>
+        <argsstring>() const</argsstring>
+        <name>MinimumBaseCases</name>
+        <briefdescription>
+<para>Get the minimum number of base cases that must be performed for each query point for an acceptable result. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is only needed in defeatist search mode. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="247" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="247" bodyend="247"/>
+        <references refid="classmlpack_1_1neighbor_1_1RASearchRules_1a53d373b7aeee359b0e686f823c602b1c">RASearchRules&lt; SortPolicy, MetricType, TreeType &gt;::Score</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a04b73c5ab1e330598f52d8eeb307b93e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumDistComputations</definition>
+        <argsstring>()</argsstring>
+        <name>NumDistComputations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="230" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="230" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1af9de23bafc455c99bc6d96a00386b025" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumEffectiveSamples</definition>
+        <argsstring>()</argsstring>
+        <name>NumEffectiveSamples</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="231" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="231" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a6f97dd07745e07a2d7ff3d4a42347e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode, const double oldScore)</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>Re-evaluate the score for recursion order. </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.</para><para>For rank-approximation, it also checks if the number of samples left for a query to satisfy the rank constraint is small enough at this point of the algorithm, then this node is approximated by sampling and given a new score of &apos;DBL_MAX&apos;.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate node to be recursed into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldScore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Old score produced by <ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score()</ref> (or <ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1a6f97dd07745e07a2d7ff3d4a42347e48" kindref="member">Rescore()</ref>). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="155" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a355b654f0c696bfe4f7be6d98c96d1ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode, const double oldScore)</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>Re-evaluate the score for recursion order. </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.</para><para>For the rank-approximation, we check if the referenceNode can be approximated by sampling. If it can be, enough samples are made for every query in the queryNode. No further query-tree traversal is performed.</para><para>The &apos;NumSamplesMade&apos; query stat is propagated up the tree. And then if pruning occurs (by distance or by sampling), the &apos;NumSamplesMade&apos; stat is not propagated down the tree. If no pruning occurs, the stat is propagated down the tree.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate query node to recurse into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate reference node to recurse into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldScore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Old score produced by Socre() (or <ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1a6f97dd07745e07a2d7ff3d4a42347e48" kindref="member">Rescore()</ref>). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="225" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a53d373b7aeee359b0e686f823c602b1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order. </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para><para>For rank-approximation, the scoring function first checks if pruning by distance is possible. If yes, then the node is given the score of &apos;DBL_MAX&apos; and the expected number of samples from that node are added to the number of samples made for the query.</para><para>If no, then the function tries to see if the node can be pruned by approximation. If number of samples required from this node is small enough, then that number of samples are acquired from this node and the score is set to be &apos;DBL_MAX&apos;.</para><para>If the pruning by approximation is not possible either, the algorithm continues with the usual tree-traversal.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate node to be recursed into. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="109" column="1"/>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RASearchRules_1a469f61784f9cce8f2574c23823405768" compoundref="ra__search__rules_8hpp" startline="247" endline="247">RASearchRules&lt; SortPolicy, MetricType, TreeType &gt;::MinimumBaseCases</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a5ebec48c6a7d410c1792a778f0a99d1f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode, const double baseCaseResult)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>baseCaseResult</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order. </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para><para>For rank-approximation, the scoring function first checks if pruning by distance is possible. If yes, then the node is given the score of &apos;DBL_MAX&apos; and the expected number of samples from that node are added to the number of samples made for the query.</para><para>If no, then the function tries to see if the node can be pruned by approximation. If number of samples required from this node is small enough, then that number of samples are acquired from this node and the score is set to be &apos;DBL_MAX&apos;.</para><para>If the pruning by approximation is not possible either, the algorithm continues with the usual tree-traversal.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate node to be recursed into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>baseCaseResult</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Result of BaseCase(queryIndex, referenceNode). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="134" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a05b142945ef94221b628a75961f48b02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order. </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursionm while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para><para>For the rank-approximation, we check if the referenceNode can be approximated by sampling. If it can be, enough samples are made for every query in the queryNode. No further query-tree traversal is performed.</para><para>The &apos;NumSamplesMade&apos; query stat is propagated up the tree. And then if pruning occurs (by distance or by sampling), the &apos;NumSamplesMade&apos; stat is not propagated down the tree. If no pruning occurs, the stat is propagated down the tree.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate query node to recurse into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate reference node to recurse into. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="177" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1add6ee1729c77fa8df187140ec2086b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode, const double baseCaseResult)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>baseCaseResult</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order, passing the base case result (in the situation where it may be needed to calculate the recursion order). </para>        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para><para>For the rank-approximation, we check if the referenceNode can be approximated by sampling. If it can be, enough samples are made for every query in the queryNode. No further query-tree traversal is performed.</para><para>The &apos;NumSamplesMade&apos; query stat is propagated up the tree. And then if pruning occurs (by distance or by sampling), the &apos;NumSamplesMade&apos; stat is not propagated down the tree. If no pruning occurs, the stat is propagated down the tree.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate query node to recurse into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate reference node to recurse into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>baseCaseResult</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Result of BaseCase(queryIndex, referenceNode). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="199" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>const TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>() const</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="241" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="241" bodyend="241"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1RASearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>()</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="242" bodyend="242"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a64b3c9d35e4c5a3932c3b2b390c3ad04" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InsertNeighbor</definition>
+        <argsstring>(const size_t queryIndex, const size_t neighbor, const double distance)</argsstring>
+        <name>InsertNeighbor</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>neighbor</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>distance</declname>
+        </param>
+        <briefdescription>
+<para>Helper function to insert a point into the list of candidate points. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of point whose neighbors we are inserting into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of reference point which is being inserted. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distance from query point to reference point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="313" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a2f5ba61254ce56a96afe4b21e4b6d505" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode, const double distance, const double bestDistance)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>distance</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>bestDistance</declname>
+        </param>
+        <briefdescription>
+<para>Perform actual scoring for single-tree case. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="320" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RASearchRules_1a354096d4fe2cece92114d97d15a6cbf3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode, const double distance, const double bestDistance)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>distance</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>bestDistance</declname>
+        </param>
+        <briefdescription>
+<para>Perform actual scoring for dual-tree case. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="328" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1neighbor_1_1RASearchRules" kindref="compound">RASearchRules</ref> class is a template helper class used by <ref refid="classmlpack_1_1neighbor_1_1RASearch" kindref="compound">RASearch</ref> class when performing rank-approximate search via random-sampling. </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>SortPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sort policy for distances. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The metric to use for computation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TreeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree type to use; must adhere to the TreeType API. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_search_rules.hpp" bodystart="33" bodyend="335"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>BaseCase</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Candidate</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a971deda91e33f8ac7c017c8caab84593" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>CandidateList</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a2fd8d0cb021bd3b0175cff2fd44a4cda" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>candidates</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a3c423bae8b44c1c33e948bf23decd7f9" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>firstLeafExact</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1add24e5e55e4b8555dbd941b137a44491" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>GetResults</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a64b3c9d35e4c5a3932c3b2b390c3ad04" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>InsertNeighbor</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1af004d46789d32b9155f2c0eb5b771181" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>k</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a469f61784f9cce8f2574c23823405768" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>MinimumBaseCases</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a04b73c5ab1e330598f52d8eeb307b93e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>NumDistComputations</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a2bdc3f689e08e41878a337cae4bb6743" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>numDistComputations</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1af9de23bafc455c99bc6d96a00386b025" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>NumEffectiveSamples</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a5d3ea5e5896059861a36abd897c02c59" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>numSamplesMade</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1ac9f55d152b8a58a0f22d9a759c0a2bd8" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>numSamplesReqd</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1ad585c8d02ad487ba4559c4fefdf121cc" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>querySet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1aa215aa687871d891ee298e5be340cd32" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>RASearchRules</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a620a93f66bf649d3ac7143ee6e5af010" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>referenceSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a6f97dd07745e07a2d7ff3d4a42347e48" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a355b654f0c696bfe4f7be6d98c96d1ee" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>sameSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a75bf9c04028f0908231497715f1eda12" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>sampleAtLeaves</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a6a041cac03b0e98176e3f0ece9c74777" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>samplingRatio</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a53d373b7aeee359b0e686f823c602b1c" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a5ebec48c6a7d410c1792a778f0a99d1f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a05b142945ef94221b628a75961f48b02" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1add6ee1729c77fa8df187140ec2086b58" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a2f5ba61254ce56a96afe4b21e4b6d505" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a354096d4fe2cece92114d97d15a6cbf3" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1abf4543b8d57210df462ad0940cf2fe9d" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>singleSampleLimit</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1aa987143b3965542c77c85c8212abedbe" prot="private" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>traversalInfo</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RASearchRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RASearchRules</scope><name>TraversalInfoType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

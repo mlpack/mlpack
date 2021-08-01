@@ -1,0 +1,1040 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1svm_1_1LinearSVM" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svm::LinearSVM</compoundname>
+    <includes refid="linear__svm_8hpp" local="no">linear_svm.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVM_1a9ea1a8f5ef3e6d20b362385e1288c72c" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>The margin between the correct class and all other classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="310" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVM_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool fitIntercept</definition>
+        <argsstring></argsstring>
+        <name>fitIntercept</name>
+        <briefdescription>
+<para>Intercept term flag. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="312" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVM_1a3db359547eed8cfd48ca821d95f577af" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+<para>L2-Regularization constant. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="308" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVM_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>Number of classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="306" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVM_1ac475c49ee5a4f316e1dbc6b7dab47b6f" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+<para>Parameters after optimization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="304" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1aefdb800e39c4b1aa0e39dc7fd3ccee44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OptimizerType</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>CallbackTypes</declname>
+            <defname>CallbackTypes</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>LinearSVM</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const double lambda, const double delta, const bool fitIntercept, OptimizerType optimizer, CallbackTypes &amp;&amp;... callbacks)</argsstring>
+        <name>LinearSVM</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+        </param>
+        <param>
+          <type>OptimizerType</type>
+          <declname>optimizer</declname>
+        </param>
+        <param>
+          <type>CallbackTypes &amp;&amp;...</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1svm_1_1LinearSVM" kindref="compound">LinearSVM</ref> class with the provided data and labels. </para>        </briefdescription>
+        <detaileddescription>
+<para>This will train the model. Optionally, the parameter &apos;lambda&apos; can be passed, which controls the amount of L2-regularization in the objective function. By default, the model takes a small value.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OptimizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired differentiable separable optimizer </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>CallbackTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of callback functions. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training features. Each column associate with one sample </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Margin of difference between correct class and other classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>add intercept term or not. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optimizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback functions. See <ulink url="https://www.ensmallen.org/docs.html#callback-documentation">https://www.ensmallen.org/docs.html#callback-documentation</ulink>. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="102" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a1e14e0ede00adc904ff2b9010e68b95e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OptimizerType</type>
+            <defval>ens::L_BFGS</defval>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>LinearSVM</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses=2, const double lambda=0.0001, const double delta=1.0, const bool fitIntercept=false, OptimizerType optimizer=OptimizerType())</argsstring>
+        <name>LinearSVM</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>OptimizerType</type>
+          <declname>optimizer</declname>
+          <defval>OptimizerType()</defval>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1svm_1_1LinearSVM" kindref="compound">LinearSVM</ref> class with the provided data and labels. </para>        </briefdescription>
+        <detaileddescription>
+<para>This will train the model. Optionally, the parameter &apos;lambda&apos; can be passed, which controls the amount of L2-regularization in the objective function. By default, the model takes a small value.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OptimizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired differentiable separable optimizer </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training features. Each column associate with one sample </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Margin of difference between correct class and other classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>add intercept term or not. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optimizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="127" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1abff71f40e686b9ebb2f146fe5bb22fbf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LinearSVM</definition>
+        <argsstring>(const size_t inputSize, const size_t numClasses=0, const double lambda=0.0001, const double delta=1.0, const bool fitIntercept=false)</argsstring>
+        <name>LinearSVM</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inputSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the Linear SVM without performing training. </para>        </briefdescription>
+        <detaileddescription>
+<para>Default value of lambda is 0.0001. Be sure to use <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a8944b0e0826ea837bc05f1a8df82abc7" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a9cf32d6ddee61625f9e8aead727db5fd" kindref="member">Classify()</ref> or <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a697a12b762e4fc2cd730987074e262bd" kindref="member">ComputeAccuracy()</ref>, otherwise the results may be meaningless.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inputSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the input feature vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Margin of difference between correct class and other classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>add intercept term or not. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="146" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a38859740fdb69aa79fdde2aff515d680" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LinearSVM</definition>
+        <argsstring>(const size_t numClasses=0, const double lambda=0.0001, const double delta=1.0, const bool fitIntercept=false)</argsstring>
+        <name>LinearSVM</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the Linear SVM without performing training. </para>        </briefdescription>
+        <detaileddescription>
+<para>Default value of lambda is 0.0001. Be sure to use <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a8944b0e0826ea837bc05f1a8df82abc7" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a9cf32d6ddee61625f9e8aead727db5fd" kindref="member">Classify()</ref> or <ref refid="classmlpack_1_1svm_1_1LinearSVM_1a697a12b762e4fc2cd730987074e262bd" kindref="member">ComputeAccuracy()</ref>, otherwise the results may be meaningless.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Margin of difference between correct class and other classes. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>add intercept term or not. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="161" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a9cf32d6ddee61625f9e8aead727db5fd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;labels) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, returning the predicted labels for each point. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function calculates the probabilities for every class, given a data point. It then chooses the class which has the highest probability among all.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of points to classify. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted labels for each point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="175" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a8f598aa53127469e38b569c81366e2ec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;labels, arma::mat &amp;scores) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>scores</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, returning class scores and predicted class label for each point. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function calculates the scores for every class, given a data point. It then chooses the class which has the highest probability among all.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of data points to be classified. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted labels for each point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scores</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Class probabilities for each point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="189" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a5b66a913c48f241d0e675c88a843a621" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::mat &amp;scores) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>scores</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, returning class scores for each point. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of data points to be classified. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scores</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Class scores for each point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="199" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t Classify</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point. </para>        </briefdescription>
+        <detaileddescription>
+<para>The predicted class label is returned. The function calculates the scores for every class, given the point. It then chooses the class which has the highest probability among all.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to be classified. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Predicted class label of the point. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="211" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a697a12b762e4fc2cd730987074e262bd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ComputeAccuracy</definition>
+        <argsstring>(const MatType &amp;testData, const arma::Row&lt; size_t &gt; &amp;testLabels) const</argsstring>
+        <name>ComputeAccuracy</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>testData</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>testLabels</declname>
+        </param>
+        <briefdescription>
+<para>Computes accuracy of the learned model given the feature data and the labels associated with each data point. </para>        </briefdescription>
+        <detaileddescription>
+<para>Predictions are made using the provided data and are compared with the actual labels.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>testData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of data points using which predictions are made. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>testLabels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of labels associated with the data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Accuracy of the model. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="222" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a9fcb8a5caa7165245d5aa803b0a94a7c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Sets the margin between the correct class and all other classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="273" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="273" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1acb1f7d73ed8ec9121d6d0e45b560d8fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Gets the margin between the correct class and all other classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="275" bodyend="275"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a71c4a6c2db59e7a14196cc6e9846a29b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t FeatureSize</definition>
+        <argsstring>() const</argsstring>
+        <name>FeatureSize</name>
+        <briefdescription>
+<para>Gets the features size of the training data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="286" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="286" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a7d4773fa79c43c5e1935ff9c8439c352" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; FitIntercept</definition>
+        <argsstring>()</argsstring>
+        <name>FitIntercept</name>
+        <briefdescription>
+<para>Sets the intercept term flag. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="278" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="278" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1aaf66629b989a326453647f42443c6a0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Lambda</definition>
+        <argsstring>()</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Sets the regularization parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="268" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="268" bodyend="268"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a53535041275cedd0ec3de67ca032aa94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Lambda</definition>
+        <argsstring>() const</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Gets the regularization parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="270" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="270" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1ac9b6fde1dc1604ba744b1e6ab5b1d499" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumClasses</definition>
+        <argsstring>()</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Sets the number of classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="263" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumClasses</definition>
+        <argsstring>() const</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Gets the number of classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="265" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="265" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a043f0ccd62e6711a18e0d81047be9a0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Set the model parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="281" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="281" bodyend="281"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1aa68d74dc1e86e4352e00a3cab83a0e4a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the model parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="283" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the <ref refid="classmlpack_1_1svm_1_1LinearSVM" kindref="compound">LinearSVM</ref> model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="294" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="294" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a8944b0e0826ea837bc05f1a8df82abc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OptimizerType</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>CallbackTypes</declname>
+            <defname>CallbackTypes</defname>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, OptimizerType optimizer, CallbackTypes &amp;&amp;... callbacks)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>OptimizerType</type>
+          <declname>optimizer</declname>
+        </param>
+        <param>
+          <type>CallbackTypes &amp;&amp;...</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Train the Linear SVM with the given training data. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OptimizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>CallbackTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of Callback Functions. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training features. Each column associate with one sample. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optimizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback Functions. See <ulink url="https://www.ensmallen.org/docs.html#callback-documentation">https://www.ensmallen.org/docs.html#callback-documentation</ulink>. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Objective value of the final point. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="239" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVM_1a9073fc80751696f6541dd50096b77a56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OptimizerType</type>
+            <defval>ens::L_BFGS</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses=2, OptimizerType optimizer=OptimizerType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>OptimizerType</type>
+          <declname>optimizer</declname>
+          <defval>OptimizerType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the Linear SVM with the given training data. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OptimizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training features. Each column associate with one sample. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optimizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired optimizer. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Objective value of the final point. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="256" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1svm_1_1LinearSVM" kindref="compound">LinearSVM</ref> class implements an L2-regularized support vector machine model, and supports training with multiple optimizers and classification. </para>    </briefdescription>
+    <detaileddescription>
+<para>The class supports different observation types via the MatType template parameter; for instance, support vector classification can be performed on sparse datasets by specifying arma::sp_mat as the MatType parameter.</para><para>Linear SVM can be used for general classification tasks which will work on multiclass classification. More technical details about the model can be found from the following:</para><para><programlisting><codeline><highlight class="normal">@inproceedings{weston1999support,</highlight></codeline>
+<codeline><highlight class="normal">title<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{Support<sp/>vector<sp/>machines<sp/>for<sp/>multi-class<sp/>pattern</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>recognition.},</highlight></codeline>
+<codeline><highlight class="normal">author<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{Weston,<sp/>Jason<sp/>and<sp/>Watkins,<sp/>Chris},</highlight></codeline>
+<codeline><highlight class="normal">booktitle<sp/><sp/><sp/><sp/>=<sp/>{Proceedings<sp/>of<sp/>the<sp/>7th<sp/>European<sp/>Symposium<sp/>on<sp/>Artifical<sp/>Neural</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Networks<sp/>(ESANN<sp/>&apos;99)},</highlight></codeline>
+<codeline><highlight class="normal">volume<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{99},</highlight></codeline>
+<codeline><highlight class="normal">pages<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{219--224},</highlight></codeline>
+<codeline><highlight class="normal">year<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{1999}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">@article{cortes1995support,</highlight></codeline>
+<codeline><highlight class="normal">title<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{Support-vector<sp/>networks},</highlight></codeline>
+<codeline><highlight class="normal">author<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{Cortes,<sp/>Corinna<sp/>and<sp/>Vapnik,<sp/>Vladimir},</highlight></codeline>
+<codeline><highlight class="normal">journal<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{Machine<sp/>Learning},</highlight></codeline>
+<codeline><highlight class="normal">volume<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{20},</highlight></codeline>
+<codeline><highlight class="normal">number<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{3},</highlight></codeline>
+<codeline><highlight class="normal">pages<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{273--297},</highlight></codeline>
+<codeline><highlight class="normal">year<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{1995},</highlight></codeline>
+<codeline><highlight class="normal">publisher<sp/><sp/><sp/><sp/>=<sp/>{Springer}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>An example on how to use the interface is shown below:</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>train_data;<sp/>//<sp/>Training<sp/>data<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>labels;<sp/>//<sp/>Labels<sp/>associated<sp/>with<sp/>the<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>inputSize<sp/>=<sp/>1000;<sp/>//<sp/>Size<sp/>of<sp/>input<sp/>feature<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>numClasses<sp/>=<sp/>5;<sp/>//<sp/>Number<sp/>of<sp/>classes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Train<sp/>the<sp/>model<sp/>using<sp/>default<sp/>options.</highlight></codeline>
+<codeline><highlight class="normal">LinearSVM&lt;&gt;<sp/>lsvm(train_data,<sp/>labels,<sp/>inputSize,<sp/>numClasses,<sp/>lambda,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>delta,<sp/>L_BFGS());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>test_data;</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>predictions;</highlight></codeline>
+<codeline><highlight class="normal">lsvm.Classify(test_data,<sp/>predictions);</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of data matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm.hpp" bodystart="80" bodyend="313"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a9cf32d6ddee61625f9e8aead727db5fd" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a8f598aa53127469e38b569c81366e2ec" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a5b66a913c48f241d0e675c88a843a621" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1aa610310b354b7badd88041ca07883569" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a697a12b762e4fc2cd730987074e262bd" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>ComputeAccuracy</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a9ea1a8f5ef3e6d20b362385e1288c72c" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a9fcb8a5caa7165245d5aa803b0a94a7c" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1acb1f7d73ed8ec9121d6d0e45b560d8fa" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a71c4a6c2db59e7a14196cc6e9846a29b" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>FeatureSize</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>fitIntercept</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a7d4773fa79c43c5e1935ff9c8439c352" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>FitIntercept</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a3db359547eed8cfd48ca821d95f577af" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1aaf66629b989a326453647f42443c6a0c" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a53535041275cedd0ec3de67ca032aa94" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1aefdb800e39c4b1aa0e39dc7fd3ccee44" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>LinearSVM</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a1e14e0ede00adc904ff2b9010e68b95e" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>LinearSVM</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1abff71f40e686b9ebb2f146fe5bb22fbf" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>LinearSVM</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a38859740fdb69aa79fdde2aff515d680" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>LinearSVM</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1ac9b6fde1dc1604ba744b1e6ab5b1d499" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a043f0ccd62e6711a18e0d81047be9a0a" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1aa68d74dc1e86e4352e00a3cab83a0e4a" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1ac475c49ee5a4f316e1dbc6b7dab47b6f" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>parameters</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a8944b0e0826ea837bc05f1a8df82abc7" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVM_1a9073fc80751696f6541dd50096b77a56" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVM</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

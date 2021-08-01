@@ -1,0 +1,102 @@
+\section{Add\+Task Class Reference}
+\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1AddTask}\index{Add\+Task@{Add\+Task}}
+
+
+Generator of instances of the binary addition task.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Add\+Task} (const size\+\_\+t bit\+Len)
+\begin{DoxyCompactList}\small\item\em Creates an instance of the binary addition task. \end{DoxyCompactList}\item 
+void \textbf{ Generate} (arma\+::field$<$ arma\+::mat $>$ \&input, arma\+::field$<$ arma\+::mat $>$ \&labels, const size\+\_\+t batch\+Size, const bool fixed\+Length=false) const
+\begin{DoxyCompactList}\small\item\em Generate dataset of a given size. \end{DoxyCompactList}\item 
+void \textbf{ Generate} (arma\+::mat \&input, arma\+::mat \&labels, const size\+\_\+t batch\+Size) const
+\begin{DoxyCompactList}\small\item\em Generate dataset of a given size and store it in arma\+::mat object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Generator of instances of the binary addition task. 
+
+The parameters are\+:
+\begin{DoxyItemize}
+\item macimum binary length;
+\end{DoxyItemize}
+
+Every element of sequence is encoded as 1-\/dimensional vector (possible vector elements are \{0, 1, 0.\+5\} -\/ the latter corresponds to \textquotesingle{}+\textquotesingle{} sign\textquotesingle{}). Generated datasets are compliant with mlpack format -\/ every dataset element is shaped as a vector of length 3 $\ast$ (sequence length),
+
+Example of generated dataset (binary length = 2)\+:
+\begin{DoxyItemize}
+\item Input sequence\+: [0,1,0,0,0,1,0,1,0,1,0,0]
+\item Output sequences\+: [0,1,0,0,1,0] 
+\end{DoxyItemize}
+
+Definition at line 42 of file add.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1AddTask_a10777342b89a4cf899e781818398985c}} 
+\index{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}!Add\+Task@{Add\+Task}}
+\index{Add\+Task@{Add\+Task}!mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}}
+\subsubsection{Add\+Task()}
+{\footnotesize\ttfamily \textbf{ Add\+Task} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{bit\+Len }\end{DoxyParamCaption})}
+
+
+
+Creates an instance of the binary addition task. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bit\+Len} & Maximum binary length of added numbers. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1AddTask_ac51ef451121f38083af41f02236f03af}} 
+\index{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}!Generate@{Generate}}
+\index{Generate@{Generate}!mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}}
+\subsubsection{Generate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Generate (\begin{DoxyParamCaption}\item[{arma\+::field$<$ arma\+::mat $>$ \&}]{input,  }\item[{arma\+::field$<$ arma\+::mat $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{batch\+Size,  }\item[{const bool}]{fixed\+Length = {\ttfamily false} }\end{DoxyParamCaption}) const}
+
+
+
+Generate dataset of a given size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The variable to store input sequences. \\
+\hline
+{\em labels} & The variable to store output sequences. \\
+\hline
+{\em batch\+Size} & The dataset size. \\
+\hline
+{\em fixed\+Length} & Flag that indicates whether the method should return sequences of even length. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1AddTask_ae1dd5f431ebef64addfa8cbc82d9c2b2}} 
+\index{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}!Generate@{Generate}}
+\index{Generate@{Generate}!mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task@{mlpack\+::ann\+::augmented\+::tasks\+::\+Add\+Task}}
+\subsubsection{Generate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Generate (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{input,  }\item[{arma\+::mat \&}]{labels,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption}) const}
+
+
+
+Generate dataset of a given size and store it in arma\+::mat object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The variable to store input sequences. \\
+\hline
+{\em labels} & The variable to store output sequences. \\
+\hline
+{\em batch\+Size} & The dataset size. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/\textbf{ add.\+hpp}\end{DoxyCompactItemize}

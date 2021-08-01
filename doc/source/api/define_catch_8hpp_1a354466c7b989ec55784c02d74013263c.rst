@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1a354466c7b989ec55784c02d74013263c:
+
+Define CHECKED_IF
+=================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CHECKED_IF

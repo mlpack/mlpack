@@ -1,0 +1,49 @@
+.TH "LoadOutputParameterVisitor" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LoadOutputParameterVisitor \- \fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLoadOutputParameterVisitor\fP (std::vector< arma::mat > &parameter)"
+.br
+.RI "Restore the output parameter given a parameter set\&. "
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Restore the output parameter\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&. 
+.PP
+Definition at line 28 of file load_output_parameter_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLoadOutputParameterVisitor\fP (std::vector< arma::mat > & parameter)"
+
+.PP
+Restore the output parameter given a parameter set\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void operator() (LayerType * layer) const"
+
+.PP
+Restore the output parameter\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

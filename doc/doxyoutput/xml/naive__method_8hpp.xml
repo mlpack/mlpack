@@ -1,0 +1,482 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="naive__method_8hpp" kind="file" language="C++">
+    <compoundname>naive_method.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="kernel__pca_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp</includedby>
+    <incdepgraph>
+      <node id="50184">
+        <label>list</label>
+      </node>
+      <node id="50181">
+        <label>atomic</label>
+      </node>
+      <node id="50171">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="50147">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="50183">
+        <label>iomanip</label>
+      </node>
+      <node id="50156">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="50157" relation="include">
+        </childnode>
+        <childnode refid="50159" relation="include">
+        </childnode>
+      </node>
+      <node id="50139">
+        <label>cstdint</label>
+      </node>
+      <node id="50148">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="50155">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="50178">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="50168">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="50135">
+        <label>cmath</label>
+      </node>
+      <node id="50154">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="50143">
+        <label>stdexcept</label>
+      </node>
+      <node id="50163">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="50148" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50149" relation="include">
+        </childnode>
+      </node>
+      <node id="50187">
+        <label>string</label>
+      </node>
+      <node id="50175">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="50176" relation="include">
+        </childnode>
+        <childnode refid="50142" relation="include">
+        </childnode>
+      </node>
+      <node id="50185">
+        <label>map</label>
+      </node>
+      <node id="50137">
+        <label>cfloat</label>
+      </node>
+      <node id="50167">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="50189">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="50151">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="50174">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="50175" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50158" relation="include">
+        </childnode>
+        <childnode refid="50176" relation="include">
+        </childnode>
+      </node>
+      <node id="50164">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="50162">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="50148" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50149" relation="include">
+        </childnode>
+      </node>
+      <node id="50165">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="50148" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50149" relation="include">
+        </childnode>
+      </node>
+      <node id="50153">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="50173">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="50149" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50161" relation="include">
+        </childnode>
+        <childnode refid="50170" relation="include">
+        </childnode>
+      </node>
+      <node id="50177">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="50178" relation="include">
+        </childnode>
+      </node>
+      <node id="50133">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/naive_method.hpp</label>
+        <link refid="naive__method_8hpp"/>
+        <childnode refid="50134" relation="include">
+        </childnode>
+      </node>
+      <node id="50179">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="50134">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="50135" relation="include">
+        </childnode>
+        <childnode refid="50136" relation="include">
+        </childnode>
+        <childnode refid="50137" relation="include">
+        </childnode>
+        <childnode refid="50138" relation="include">
+        </childnode>
+        <childnode refid="50139" relation="include">
+        </childnode>
+        <childnode refid="50140" relation="include">
+        </childnode>
+        <childnode refid="50141" relation="include">
+        </childnode>
+        <childnode refid="50142" relation="include">
+        </childnode>
+        <childnode refid="50143" relation="include">
+        </childnode>
+        <childnode refid="50144" relation="include">
+        </childnode>
+        <childnode refid="50145" relation="include">
+        </childnode>
+        <childnode refid="50146" relation="include">
+        </childnode>
+        <childnode refid="50147" relation="include">
+        </childnode>
+        <childnode refid="50148" relation="include">
+        </childnode>
+        <childnode refid="50149" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50152" relation="include">
+        </childnode>
+        <childnode refid="50153" relation="include">
+        </childnode>
+        <childnode refid="50154" relation="include">
+        </childnode>
+        <childnode refid="50155" relation="include">
+        </childnode>
+        <childnode refid="50156" relation="include">
+        </childnode>
+        <childnode refid="50160" relation="include">
+        </childnode>
+        <childnode refid="50161" relation="include">
+        </childnode>
+        <childnode refid="50162" relation="include">
+        </childnode>
+        <childnode refid="50163" relation="include">
+        </childnode>
+        <childnode refid="50164" relation="include">
+        </childnode>
+        <childnode refid="50165" relation="include">
+        </childnode>
+        <childnode refid="50166" relation="include">
+        </childnode>
+        <childnode refid="50172" relation="include">
+        </childnode>
+        <childnode refid="50173" relation="include">
+        </childnode>
+        <childnode refid="50170" relation="include">
+        </childnode>
+        <childnode refid="50174" relation="include">
+        </childnode>
+        <childnode refid="50177" relation="include">
+        </childnode>
+        <childnode refid="50179" relation="include">
+        </childnode>
+        <childnode refid="50180" relation="include">
+        </childnode>
+        <childnode refid="50189" relation="include">
+        </childnode>
+        <childnode refid="50190" relation="include">
+        </childnode>
+      </node>
+      <node id="50140">
+        <label>cstdio</label>
+      </node>
+      <node id="50144">
+        <label>tuple</label>
+      </node>
+      <node id="50149">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="50166">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="50149" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50153" relation="include">
+        </childnode>
+        <childnode refid="50167" relation="include">
+        </childnode>
+        <childnode refid="50168" relation="include">
+        </childnode>
+        <childnode refid="50169" relation="include">
+        </childnode>
+        <childnode refid="50170" relation="include">
+        </childnode>
+      </node>
+      <node id="50145">
+        <label>utility</label>
+      </node>
+      <node id="50169">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="50160">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="50157">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="50158" relation="include">
+        </childnode>
+      </node>
+      <node id="50180">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="50181" relation="include">
+        </childnode>
+        <childnode refid="50182" relation="include">
+        </childnode>
+        <childnode refid="50183" relation="include">
+        </childnode>
+        <childnode refid="50184" relation="include">
+        </childnode>
+        <childnode refid="50185" relation="include">
+        </childnode>
+        <childnode refid="50186" relation="include">
+        </childnode>
+        <childnode refid="50187" relation="include">
+        </childnode>
+        <childnode refid="50188" relation="include">
+        </childnode>
+      </node>
+      <node id="50158">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="50172">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="50170" relation="include">
+        </childnode>
+        <childnode refid="50166" relation="include">
+        </childnode>
+        <childnode refid="50173" relation="include">
+        </childnode>
+      </node>
+      <node id="50141">
+        <label>cstdlib</label>
+      </node>
+      <node id="50136">
+        <label>cctype</label>
+      </node>
+      <node id="50159">
+        <label>unordered_map</label>
+      </node>
+      <node id="50138">
+        <label>climits</label>
+      </node>
+      <node id="50186">
+        <label>mutex</label>
+      </node>
+      <node id="50182">
+        <label>chrono</label>
+      </node>
+      <node id="50190">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="50188">
+        <label>thread</label>
+      </node>
+      <node id="50176">
+        <label>type_traits</label>
+      </node>
+      <node id="50152">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="50146">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="50170">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="50148" relation="include">
+        </childnode>
+        <childnode refid="50149" relation="include">
+        </childnode>
+        <childnode refid="50150" relation="include">
+        </childnode>
+        <childnode refid="50151" relation="include">
+        </childnode>
+        <childnode refid="50171" relation="include">
+        </childnode>
+      </node>
+      <node id="50142">
+        <label>cstring</label>
+      </node>
+      <node id="50161">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="50150">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="50192">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp</label>
+        <link refid="kernel__pca_8hpp"/>
+      </node>
+      <node id="50191">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/naive_method.hpp</label>
+        <link refid="naive__method_8hpp"/>
+        <childnode refid="50192" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1kpca_1_1NaiveKernelRule" prot="public">mlpack::kpca::NaiveKernelRule</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kpca">mlpack::kpca</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ajinkya Kale</para></simplesect>
+Use the naive method to construct the kernel matrix.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kpca<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType&gt;</highlight></codeline>
+<codeline lineno="22" refid="classmlpack_1_1kpca_1_1NaiveKernelRule" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kpca_1_1NaiveKernelRule" kindref="compound">NaiveKernelRule</ref></highlight></codeline>
+<codeline lineno="23"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1kpca_1_1NaiveKernelRule_1a38b9096fb257a933f5681831c9654671" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kpca_1_1NaiveKernelRule_1a38b9096fb257a933f5681831c9654671" kindref="member">ApplyKernelMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>transformedData,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>eigval,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>eigvec,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>rank<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>KernelType<sp/>kernel<sp/>=<sp/>KernelType())</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Construct<sp/>the<sp/>kernel<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>arma::mat<sp/>kernelMatrix;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Resize<sp/>the<sp/>kernel<sp/>matrix<sp/>to<sp/>the<sp/>right<sp/>size.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>kernelMatrix.set_size(data.n_cols,<sp/>data.n_cols);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Note<sp/>that<sp/>we<sp/>only<sp/>need<sp/>to<sp/>calculate<sp/>the<sp/>upper<sp/>triangular<sp/>part<sp/>of<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>kernel<sp/>matrix,<sp/>since<sp/>it<sp/>is<sp/>symmetric.<sp/>This<sp/>helps<sp/>minimize<sp/>the<sp/>number<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>kernel<sp/>evaluations.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>data.n_cols;<sp/>++i)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>i;<sp/>j<sp/>&lt;<sp/>data.n_cols;<sp/>++j)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Evaluate<sp/>the<sp/>kernel<sp/>on<sp/>these<sp/>two<sp/>points.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>kernelMatrix(i,<sp/>j)<sp/>=<sp/>kernel.Evaluate(data.unsafe_col(i),</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>data.unsafe_col(j));</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>to<sp/>the<sp/>lower<sp/>triangular<sp/>part<sp/>of<sp/>the<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>1;<sp/>i<sp/>&lt;<sp/>data.n_cols;<sp/>++i)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>i;<sp/>++j)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>kernelMatrix(i,<sp/>j)<sp/>=<sp/>kernelMatrix(j,<sp/>i);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>PCA<sp/>the<sp/>data<sp/>has<sp/>to<sp/>be<sp/>centered,<sp/>even<sp/>if<sp/>the<sp/>data<sp/>is<sp/>centered.<sp/>But<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>is<sp/>not<sp/>guaranteed<sp/>that<sp/>the<sp/>data,<sp/>when<sp/>mapped<sp/>to<sp/>the<sp/>kernel<sp/>space,<sp/>is<sp/>also</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>centered.<sp/>Since<sp/>we<sp/>actually<sp/>never<sp/>work<sp/>in<sp/>the<sp/>feature<sp/>space<sp/>we<sp/>cannot</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>center<sp/>the<sp/>data.<sp/>So,<sp/>we<sp/>perform<sp/>a<sp/>&quot;psuedo-centering&quot;<sp/>using<sp/>the<sp/>kernel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>arma::rowvec<sp/>rowMean<sp/>=<sp/>arma::sum(kernelMatrix,<sp/>0)<sp/>/<sp/>kernelMatrix.n_cols;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>kernelMatrix.each_col()<sp/>-=<sp/>arma::sum(kernelMatrix,<sp/>1)<sp/>/<sp/>kernelMatrix.n_cols;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>kernelMatrix.each_row()<sp/>-=<sp/>rowMean;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>kernelMatrix<sp/>+=<sp/>arma::sum(rowMean)<sp/>/<sp/>kernelMatrix.n_cols;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigendecompose<sp/>the<sp/>centered<sp/>kernel<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>kernelMatrix<sp/>=<sp/>arma::symmatu(kernelMatrix);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!arma::eig_sym(eigval,<sp/>eigvec,<sp/>kernelMatrix))</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Failed<sp/>to<sp/>construct<sp/>the<sp/>kernel<sp/>matrix.&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Swap<sp/>the<sp/>eigenvalues<sp/>since<sp/>they<sp/>are<sp/>ordered<sp/>backwards<sp/>(we<sp/>need<sp/>largest<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>smallest).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>floor(eigval.n_elem<sp/>/<sp/>2.0);<sp/>++i)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>eigval.swap_rows(i,<sp/>(eigval.n_elem<sp/>-<sp/>1)<sp/>-<sp/>i);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Flip<sp/>the<sp/>coefficients<sp/>to<sp/>produce<sp/>the<sp/>same<sp/>effect.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>eigvec<sp/>=<sp/>arma::fliplr(eigvec);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>transformedData<sp/>=<sp/>eigvec.t()<sp/>*<sp/>kernelMatrix;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>transformedData.each_col()<sp/>/=<sp/>arma::sqrt(eigval);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kpca</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/naive_method.hpp"/>
+  </compounddef>
+</doxygen>

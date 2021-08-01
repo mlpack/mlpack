@@ -1,0 +1,64 @@
+\section{/home/aakash/mlpack/src/mlpack/core/util/param\+\_\+data.hpp File Reference}
+\label{param__data_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/util/param\+\_\+data.\+hpp@{/home/aakash/mlpack/src/mlpack/core/util/param\+\_\+data.\+hpp}}
+Include dependency graph for param\+\_\+data.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{param__data_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{param__data_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Dataset\+Mapper$<$ Policy\+Type, Input\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Auxiliary information for a dataset, including mappings to/from strings (or other types) and the datatype of each dimension. \end{DoxyCompactList}\item 
+struct \textbf{ Param\+Data}
+\begin{DoxyCompactList}\small\item\em This structure holds all of the information about a single parameter, including its value (which is set when Parse\+Command\+Line() is called). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::util}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ T\+Y\+P\+E\+N\+A\+ME}(x)~(std\+::string(typeid(x).name()))
+\begin{DoxyCompactList}\small\item\em The T\+Y\+P\+E\+N\+A\+ME macro is used internally to convert a type into a string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This defines the structure that holds information for each command-\/line parameter, as well as utility functions it is used with.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Macro Definition Documentation}
+\mbox{\label{param__data_8hpp_ac909d914008cce49fa42ddd10b9b36c5}} 
+\index{param\+\_\+data.\+hpp@{param\+\_\+data.\+hpp}!T\+Y\+P\+E\+N\+A\+ME@{T\+Y\+P\+E\+N\+A\+ME}}
+\index{T\+Y\+P\+E\+N\+A\+ME@{T\+Y\+P\+E\+N\+A\+ME}!param\+\_\+data.\+hpp@{param\+\_\+data.\+hpp}}
+\subsubsection{T\+Y\+P\+E\+N\+A\+ME}
+{\footnotesize\ttfamily \#define T\+Y\+P\+E\+N\+A\+ME(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~(std\+::string(typeid(x).name()))}
+
+
+
+The T\+Y\+P\+E\+N\+A\+ME macro is used internally to convert a type into a string. 
+
+
+
+Definition at line 22 of file param\+\_\+data.\+hpp.
+

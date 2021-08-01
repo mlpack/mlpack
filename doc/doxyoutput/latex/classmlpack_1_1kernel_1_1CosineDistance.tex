@@ -1,0 +1,72 @@
+\section{Cosine\+Distance Class Reference}
+\label{classmlpack_1_1kernel_1_1CosineDistance}\index{Cosine\+Distance@{Cosine\+Distance}}
+
+
+The cosine distance (or cosine similarity).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the class (there\textquotesingle{}s nothing to save). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\static double \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Computes the cosine distance between two points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The cosine distance (or cosine similarity). 
+
+It is defined by
+
+\[ d(a, b) = \frac{a^T b}{|| a || || b ||} \]
+
+and this class assumes the standard L2 inner product. 
+
+Definition at line 31 of file cosine\+\_\+distance.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1CosineDistance_a9cf31d3d6cf687f6f78a15ec94f46380}} 
+\index{mlpack\+::kernel\+::\+Cosine\+Distance@{mlpack\+::kernel\+::\+Cosine\+Distance}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Cosine\+Distance@{mlpack\+::kernel\+::\+Cosine\+Distance}}
+\subsubsection{Evaluate()}
+{\footnotesize\ttfamily static double Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Computes the cosine distance between two points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+d(a, b). 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1kernel_1_1CosineDistance_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{mlpack\+::kernel\+::\+Cosine\+Distance@{mlpack\+::kernel\+::\+Cosine\+Distance}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::kernel\+::\+Cosine\+Distance@{mlpack\+::kernel\+::\+Cosine\+Distance}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the class (there\textquotesingle{}s nothing to save). 
+
+
+
+Definition at line 46 of file cosine\+\_\+distance.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/kernels/\textbf{ cosine\+\_\+distance.\+hpp}\end{DoxyCompactItemize}

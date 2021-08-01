@@ -1,0 +1,185 @@
+\section{S\+V\+D\+Plus\+Plus$<$ Optimizer\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1svd_1_1SVDPlusPlus}\index{S\+V\+D\+Plus\+Plus$<$ Optimizer\+Type $>$@{S\+V\+D\+Plus\+Plus$<$ Optimizer\+Type $>$}}
+
+
+S\+V\+D++ is a matrix decomposition tenique used in collaborative filtering.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ S\+V\+D\+Plus\+Plus} (const size\+\_\+t iterations=10, const double alpha=0.\+001, const double lambda=0.\+1)
+\begin{DoxyCompactList}\small\item\em Constructor of \doxyref{S\+V\+D\+Plus\+Plus}{p.}{classmlpack_1_1svd_1_1SVDPlusPlus}. \end{DoxyCompactList}\item 
+void \textbf{ Apply} (const arma\+::mat \&data, const arma\+::mat \&implicit\+Data, const size\+\_\+t rank, arma\+::mat \&u, arma\+::mat \&v, arma\+::vec \&p, arma\+::vec \&q, arma\+::mat \&y)
+\begin{DoxyCompactList}\small\item\em Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix. \end{DoxyCompactList}\item 
+void \textbf{ Apply} (const arma\+::mat \&data, const size\+\_\+t rank, arma\+::mat \&u, arma\+::mat \&v, arma\+::vec \&p, arma\+::vec \&q, arma\+::mat \&y)
+\begin{DoxyCompactList}\small\item\em Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Clean\+Data} (const arma\+::mat \&implicit\+Data, arma\+::sp\+\_\+mat \&cleaned\+Data, const arma\+::mat \&data)
+\begin{DoxyCompactList}\small\item\em Converts the User, Item matrix of implicit data to Item-\/\+User Table. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Optimizer\+Type = ens\+::\+Standard\+S\+GD$>$\newline
+class mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus$<$ Optimizer\+Type $>$}
+
+S\+V\+D++ is a matrix decomposition tenique used in collaborative filtering. 
+
+S\+V\+D++ is similar to \doxyref{Bias\+S\+VD}{p.}{classmlpack_1_1svd_1_1BiasSVD}, but it is a more expressive model because S\+V\+D++ also models implicit feedback. S\+V\+D++ outputs user/item latent vectors, user/item bias, and item vectors with regard to implicit feedback. Parameters are optmized by Stochastic Gradient Desent(\+S\+G\+D). The updates also penalize the learning of large feature values by means of regularization.
+
+For more information, see the following paper\+:
+
+
+\begin{DoxyCode}
+@inproceedings\{koren2008factorization,
+title=\{Factorization meets the neighborhood: a multifaceted collaborative
+       filtering model\},
+author=\{Koren, Yehuda\},
+booktitle=\{Proceedings of the 14th ACM SIGKDD international conference on
+           Knowledge discovery and data mining\},
+pages=\{426--434\},
+year=\{2008\},
+organization=\{ACM\}
+\}
+\end{DoxyCode}
+
+
+An example of how to use the interface is shown below\+:
+
+
+\begin{DoxyCode}
+arma::mat data; \textcolor{comment}{// Rating data in the form of coordinate list.}
+
+\textcolor{comment}{// Implicit feedback data in the form of coordinate list.}
+arma::mat implicitData;
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} rank = 10; \textcolor{comment}{// Rank used for the decomposition.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} iterations = 10; \textcolor{comment}{// Number of iterations used for optimization.}
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} alpha = 0.001 \textcolor{comment}{// Learning rate for the SGD optimizer.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} lambda = 0.1 \textcolor{comment}{// Regularization parameter for the optimization.}
+
+\textcolor{comment}{// Make a SVD++ object.}
+SVDPlusPlus<> svdPP(iterations, alpha, lambda);
+
+arma::mat u, v; \textcolor{comment}{// Item and User matrices.}
+arma::vec p, q; \textcolor{comment}{// Item and User bias.}
+arma::mat y;    \textcolor{comment}{// Item matrix with respect to implicit feedback.}
+
+\textcolor{comment}{// Use the Apply() method to get a factorization.}
+svdPP.Apply(data, implicitData, rank, u, v, p, q, y);
+\end{DoxyCode}
+ 
+
+Definition at line 76 of file svdplusplus.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlus_a1d617828d260997a17e4d930506a9596}} 
+\index{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}!S\+V\+D\+Plus\+Plus@{S\+V\+D\+Plus\+Plus}}
+\index{S\+V\+D\+Plus\+Plus@{S\+V\+D\+Plus\+Plus}!mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}}
+\subsubsection{S\+V\+D\+Plus\+Plus()}
+{\footnotesize\ttfamily \textbf{ S\+V\+D\+Plus\+Plus} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{iterations = {\ttfamily 10},  }\item[{const double}]{alpha = {\ttfamily 0.001},  }\item[{const double}]{lambda = {\ttfamily 0.1} }\end{DoxyParamCaption})}
+
+
+
+Constructor of \doxyref{S\+V\+D\+Plus\+Plus}{p.}{classmlpack_1_1svd_1_1SVDPlusPlus}. 
+
+By default S\+GD optimizer is used in \doxyref{S\+V\+D\+Plus\+Plus}{p.}{classmlpack_1_1svd_1_1SVDPlusPlus}. The optimizer uses a template specialization of Optimize().
+
+
+\begin{DoxyParams}{Parameters}
+{\em iterations} & Number of optimization iterations. \\
+\hline
+{\em alpha} & Learning rate for the S\+GD optimizer. \\
+\hline
+{\em lambda} & Regularization parameter for the optimization. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlus_af419d2631d74927653807942b3c5fa97}} 
+\index{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}}
+\subsubsection{Apply()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const arma\+::mat \&}]{implicit\+Data,  }\item[{const size\+\_\+t}]{rank,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::mat \&}]{v,  }\item[{arma\+::vec \&}]{p,  }\item[{arma\+::vec \&}]{q,  }\item[{arma\+::mat \&}]{y }\end{DoxyParamCaption})}
+
+
+
+Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Rating data matrix. \\
+\hline
+{\em implicit\+Data} & Implicit feedback. \\
+\hline
+{\em rank} & Rank parameter to be used for optimization. \\
+\hline
+{\em u} & Item matrix obtained on decomposition. \\
+\hline
+{\em v} & User matrix obtained on decomposition. \\
+\hline
+{\em p} & Item bias. \\
+\hline
+{\em q} & User bias. \\
+\hline
+{\em y} & Item matrix with respect to implicit feedback. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by S\+V\+D\+Plus\+Plus\+Policy\+::\+Apply().
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlus_a2e7d12e268021ca1160a4862844f7520}} 
+\index{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}}
+\subsubsection{Apply()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{rank,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::mat \&}]{v,  }\item[{arma\+::vec \&}]{p,  }\item[{arma\+::vec \&}]{q,  }\item[{arma\+::mat \&}]{y }\end{DoxyParamCaption})}
+
+
+
+Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix. 
+
+Whether a user rates an item is used as implicit feedback.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Rating data matrix. \\
+\hline
+{\em rank} & Rank parameter to be used for optimization. \\
+\hline
+{\em u} & Item matrix obtained on decomposition. \\
+\hline
+{\em v} & User matrix obtained on decomposition. \\
+\hline
+{\em p} & Item bias. \\
+\hline
+{\em q} & User bias. \\
+\hline
+{\em y} & Item matrix with respect to implicit feedback. Each column is a latent vector of an item with respect to implicit feedback. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlus_ac693882f80e29d39f18dd080e00a9403}} 
+\index{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}!Clean\+Data@{Clean\+Data}}
+\index{Clean\+Data@{Clean\+Data}!mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus@{mlpack\+::svd\+::\+S\+V\+D\+Plus\+Plus}}
+\subsubsection{Clean\+Data()}
+{\footnotesize\ttfamily static void Clean\+Data (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{implicit\+Data,  }\item[{arma\+::sp\+\_\+mat \&}]{cleaned\+Data,  }\item[{const arma\+::mat \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Converts the User, Item matrix of implicit data to Item-\/\+User Table. 
+
+
+
+Referenced by S\+V\+D\+Plus\+Plus\+Policy\+::\+Apply().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/svdplusplus/\textbf{ svdplusplus.\+hpp}\end{DoxyCompactItemize}

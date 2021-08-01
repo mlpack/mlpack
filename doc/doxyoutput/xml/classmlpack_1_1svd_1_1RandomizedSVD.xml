@@ -1,0 +1,557 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1svd_1_1RandomizedSVD" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svd::RandomizedSVD</compoundname>
+    <includes refid="randomized__svd_8hpp" local="no">randomized_svd.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1RandomizedSVD_1a974b448c3d0a13d483d36ef15de369b5" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double eps</definition>
+        <argsstring></argsstring>
+        <name>eps</name>
+        <briefdescription>
+<para>The value used for numerical stability. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1RandomizedSVD_1a813f2bfe6ce2949e7d7637edec16ccb1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t iteratedPower</definition>
+        <argsstring></argsstring>
+        <name>iteratedPower</name>
+        <briefdescription>
+<para>Locally stored size of the normalized power iterations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1RandomizedSVD_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>Locally stored number of iterations for the power method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1af70e8f0a731005cb119a615c99057f66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RandomizedSVD</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t iteratedPower=0, const size_t maxIterations=2, const size_t rank=0, const double eps=1e-7)</argsstring>
+        <name>RandomizedSVD</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>iteratedPower</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+          <defval>1e-7</defval>
+        </param>
+        <briefdescription>
+<para>Create object for the randomized SVD method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal &quot;Sigma&quot; matrix of singular values. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>iteratedPower</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the normalized power iterations (Default: rank + 2). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of iterations for the power method (Default: 2). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation (Default: number of rows.) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The eps coefficient to avoid division by zero (numerical stability). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="84" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1aade248977ba80c862ec357d2c33f5ddf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RandomizedSVD</definition>
+        <argsstring>(const size_t iteratedPower=0, const size_t maxIterations=2, const double eps=1e-7)</argsstring>
+        <name>RandomizedSVD</name>
+        <param>
+          <type>const size_t</type>
+          <declname>iteratedPower</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+          <defval>1e-7</defval>
+        </param>
+        <briefdescription>
+<para>Create object for the randomized SVD method. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>iteratedPower</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the normalized power iterations (Default: rank + 2). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of iterations for the power method (Default: 2). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The eps coefficient to avoid division by zero (numerical stability). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="103" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1ab1a789d5811597b03ad838edcfab055a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::sp_mat &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t rank)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+<para>Center the data to apply Principal Component Analysis on given sparse matrix dataset using randomized SVD. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sparse data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal &quot;Sigma&quot; matrix of singular values. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="117" column="1"/>
+        <referencedby refid="classmlpack_1_1cf_1_1RandomizedSVDPolicy_1ac34ecde0993c0456c23849a40b743931" compoundref="cf_2decomposition__policies_2randomized__svd__method_8hpp" startline="73" endline="91">RandomizedSVDPolicy::Apply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1a880f86693b7d486206c2f69ad8d9c59a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t rank)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+<para>Center the data to apply Principal Component Analysis on given matrix dataset using randomized SVD. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal &quot;Sigma&quot; matrix of singular values. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="133" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1adf076c4f0e7c5f7587da9a00f656e5b2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const MatType &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t rank, MatType rowMean)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <param>
+          <type>MatType</type>
+          <declname>rowMean</declname>
+        </param>
+        <briefdescription>
+<para>Apply Principal Component Analysis to the provided matrix data set using the randomized SVD. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal &quot;Sigma&quot; matrix of singular values. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rowMean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Centered mean value matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="151" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1af6d960193bb5db37e51416e12bf720de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Epsilon</definition>
+        <argsstring>() const</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Get the value used for decomposition stability. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="245" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="245" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1ab6a080993b32456443eced5df2f8b9b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Epsilon</definition>
+        <argsstring>()</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Modify the value used for decomposition stability. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="247" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="247" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1aa8e59edf3732bcceec0a214f9d049488" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t IteratedPower</definition>
+        <argsstring>() const</argsstring>
+        <name>IteratedPower</name>
+        <briefdescription>
+<para>Get the size of the normalized power iterations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="235" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="235" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1aa06eded3fc0ec2f6bae88acc0395da57" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; IteratedPower</definition>
+        <argsstring>()</argsstring>
+        <name>IteratedPower</name>
+        <briefdescription>
+<para>Modify the size of the normalized power iterations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="237" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="237" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the number of iterations for the power method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="240" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="240" bodyend="240"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedSVD_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Modify the number of iterations for the power method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="242" bodyend="242"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Randomized SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in &quot;Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions&quot;. </para>    </briefdescription>
+    <detaileddescription>
+<para>For more information, see the following.</para><para><programlisting><codeline><highlight class="normal">@article{Halko2011,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Halko,<sp/>N.<sp/>and<sp/>Martinsson,<sp/>P.<sp/>G.<sp/>and<sp/>Tropp,<sp/>J.<sp/>A.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{Finding<sp/>Structure<sp/>with<sp/>Randomness:<sp/>Probabilistic<sp/>Algorithms<sp/>for</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Constructing<sp/>Approximate<sp/>Matrix<sp/>Decompositions},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{SIAM<sp/>Rev.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/><sp/>=<sp/>{53},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2011},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">@article{Szlam2014,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Arthur<sp/>Szlam<sp/>Yuval<sp/>Kluger<sp/>and<sp/>Mark<sp/>Tygert},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{An<sp/>implementation<sp/>of<sp/>a<sp/>randomized<sp/>algorithm<sp/>for<sp/>principal</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>component<sp/>analysis},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{CoRR},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/><sp/>=<sp/>{abs/1412.3510},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2014},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>An example of how to use the interface is shown below:</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>data;<sp/>//<sp/>Rating<sp/>data<sp/>in<sp/>the<sp/>form<sp/>of<sp/>coordinate<sp/>list.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>rank<sp/>=<sp/>20;<sp/>//<sp/>Rank<sp/>used<sp/>for<sp/>the<sp/>decomposition.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Make<sp/>a<sp/>RandomizedSVD<sp/>object.</highlight></codeline>
+<codeline><highlight class="normal">RandomizedSVD<sp/>rSVD();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>u,<sp/>s,<sp/>v;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Use<sp/>the<sp/>Apply()<sp/>method<sp/>to<sp/>get<sp/>a<sp/>factorization.</highlight></codeline>
+<codeline><highlight class="normal">rSVD.Apply(data,<sp/>u,<sp/>s,<sp/>v,<sp/>rank);</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/randomized_svd/randomized_svd.hpp" bodystart="66" bodyend="258"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1ab1a789d5811597b03ad838edcfab055a" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1a880f86693b7d486206c2f69ad8d9c59a" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1adf076c4f0e7c5f7587da9a00f656e5b2" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1a974b448c3d0a13d483d36ef15de369b5" prot="private" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>eps</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1af6d960193bb5db37e51416e12bf720de" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1ab6a080993b32456443eced5df2f8b9b9" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1aa8e59edf3732bcceec0a214f9d049488" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>IteratedPower</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1aa06eded3fc0ec2f6bae88acc0395da57" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>IteratedPower</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1a813f2bfe6ce2949e7d7637edec16ccb1" prot="private" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>iteratedPower</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1af70e8f0a731005cb119a615c99057f66" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>RandomizedSVD</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedSVD_1aade248977ba80c862ec357d2c33f5ddf" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedSVD</scope><name>RandomizedSVD</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

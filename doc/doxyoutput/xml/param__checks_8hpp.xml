@@ -1,0 +1,448 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="param__checks_8hpp" kind="file" language="C++">
+    <compoundname>param_checks.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">param_checks_impl.hpp</includes>
+    <incdepgraph>
+      <node id="20726">
+        <label>list</label>
+      </node>
+      <node id="20723">
+        <label>atomic</label>
+      </node>
+      <node id="20713">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="20689">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="20725">
+        <label>iomanip</label>
+      </node>
+      <node id="20698">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="20699" relation="include">
+        </childnode>
+        <childnode refid="20701" relation="include">
+        </childnode>
+      </node>
+      <node id="20681">
+        <label>cstdint</label>
+      </node>
+      <node id="20690">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="20697">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="20720">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="20710">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="20677">
+        <label>cmath</label>
+      </node>
+      <node id="20696">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="20685">
+        <label>stdexcept</label>
+      </node>
+      <node id="20705">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="20690" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20691" relation="include">
+        </childnode>
+      </node>
+      <node id="20729">
+        <label>string</label>
+      </node>
+      <node id="20717">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="20718" relation="include">
+        </childnode>
+        <childnode refid="20684" relation="include">
+        </childnode>
+      </node>
+      <node id="20727">
+        <label>map</label>
+      </node>
+      <node id="20679">
+        <label>cfloat</label>
+      </node>
+      <node id="20709">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="20731">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="20693">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="20716">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="20717" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20700" relation="include">
+        </childnode>
+        <childnode refid="20718" relation="include">
+        </childnode>
+      </node>
+      <node id="20706">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="20704">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="20690" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20691" relation="include">
+        </childnode>
+      </node>
+      <node id="20707">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="20690" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20691" relation="include">
+        </childnode>
+      </node>
+      <node id="20695">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="20715">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="20691" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20703" relation="include">
+        </childnode>
+        <childnode refid="20712" relation="include">
+        </childnode>
+      </node>
+      <node id="20719">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="20720" relation="include">
+        </childnode>
+      </node>
+      <node id="20733">
+        <label>param_checks_impl.hpp</label>
+      </node>
+      <node id="20721">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="20676">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="20677" relation="include">
+        </childnode>
+        <childnode refid="20678" relation="include">
+        </childnode>
+        <childnode refid="20679" relation="include">
+        </childnode>
+        <childnode refid="20680" relation="include">
+        </childnode>
+        <childnode refid="20681" relation="include">
+        </childnode>
+        <childnode refid="20682" relation="include">
+        </childnode>
+        <childnode refid="20683" relation="include">
+        </childnode>
+        <childnode refid="20684" relation="include">
+        </childnode>
+        <childnode refid="20685" relation="include">
+        </childnode>
+        <childnode refid="20686" relation="include">
+        </childnode>
+        <childnode refid="20687" relation="include">
+        </childnode>
+        <childnode refid="20688" relation="include">
+        </childnode>
+        <childnode refid="20689" relation="include">
+        </childnode>
+        <childnode refid="20690" relation="include">
+        </childnode>
+        <childnode refid="20691" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20694" relation="include">
+        </childnode>
+        <childnode refid="20695" relation="include">
+        </childnode>
+        <childnode refid="20696" relation="include">
+        </childnode>
+        <childnode refid="20697" relation="include">
+        </childnode>
+        <childnode refid="20698" relation="include">
+        </childnode>
+        <childnode refid="20702" relation="include">
+        </childnode>
+        <childnode refid="20703" relation="include">
+        </childnode>
+        <childnode refid="20704" relation="include">
+        </childnode>
+        <childnode refid="20705" relation="include">
+        </childnode>
+        <childnode refid="20706" relation="include">
+        </childnode>
+        <childnode refid="20707" relation="include">
+        </childnode>
+        <childnode refid="20708" relation="include">
+        </childnode>
+        <childnode refid="20714" relation="include">
+        </childnode>
+        <childnode refid="20715" relation="include">
+        </childnode>
+        <childnode refid="20712" relation="include">
+        </childnode>
+        <childnode refid="20716" relation="include">
+        </childnode>
+        <childnode refid="20719" relation="include">
+        </childnode>
+        <childnode refid="20721" relation="include">
+        </childnode>
+        <childnode refid="20722" relation="include">
+        </childnode>
+        <childnode refid="20731" relation="include">
+        </childnode>
+        <childnode refid="20732" relation="include">
+        </childnode>
+      </node>
+      <node id="20675">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp</label>
+        <link refid="param__checks_8hpp"/>
+        <childnode refid="20676" relation="include">
+        </childnode>
+        <childnode refid="20733" relation="include">
+        </childnode>
+      </node>
+      <node id="20682">
+        <label>cstdio</label>
+      </node>
+      <node id="20686">
+        <label>tuple</label>
+      </node>
+      <node id="20691">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="20708">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="20691" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20695" relation="include">
+        </childnode>
+        <childnode refid="20709" relation="include">
+        </childnode>
+        <childnode refid="20710" relation="include">
+        </childnode>
+        <childnode refid="20711" relation="include">
+        </childnode>
+        <childnode refid="20712" relation="include">
+        </childnode>
+      </node>
+      <node id="20687">
+        <label>utility</label>
+      </node>
+      <node id="20711">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="20702">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="20699">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="20700" relation="include">
+        </childnode>
+      </node>
+      <node id="20722">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="20723" relation="include">
+        </childnode>
+        <childnode refid="20724" relation="include">
+        </childnode>
+        <childnode refid="20725" relation="include">
+        </childnode>
+        <childnode refid="20726" relation="include">
+        </childnode>
+        <childnode refid="20727" relation="include">
+        </childnode>
+        <childnode refid="20728" relation="include">
+        </childnode>
+        <childnode refid="20729" relation="include">
+        </childnode>
+        <childnode refid="20730" relation="include">
+        </childnode>
+      </node>
+      <node id="20700">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="20714">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="20712" relation="include">
+        </childnode>
+        <childnode refid="20708" relation="include">
+        </childnode>
+        <childnode refid="20715" relation="include">
+        </childnode>
+      </node>
+      <node id="20683">
+        <label>cstdlib</label>
+      </node>
+      <node id="20678">
+        <label>cctype</label>
+      </node>
+      <node id="20701">
+        <label>unordered_map</label>
+      </node>
+      <node id="20680">
+        <label>climits</label>
+      </node>
+      <node id="20728">
+        <label>mutex</label>
+      </node>
+      <node id="20724">
+        <label>chrono</label>
+      </node>
+      <node id="20732">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="20730">
+        <label>thread</label>
+      </node>
+      <node id="20718">
+        <label>type_traits</label>
+      </node>
+      <node id="20694">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="20688">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="20712">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="20690" relation="include">
+        </childnode>
+        <childnode refid="20691" relation="include">
+        </childnode>
+        <childnode refid="20692" relation="include">
+        </childnode>
+        <childnode refid="20693" relation="include">
+        </childnode>
+        <childnode refid="20713" relation="include">
+        </childnode>
+      </node>
+      <node id="20684">
+        <label>cstring</label>
+      </node>
+      <node id="20703">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="20692">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1util">mlpack::util</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+A set of utility functions to check parameter values for mlpack programs. These are meant to be used as the first part of an mlpackMain() function, to validate parameters.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_UTIL_PARAM_CHECKS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_UTIL_PARAM_CHECKS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">util<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1aa885d1e461234b74a7afaeffb9fa65e0" kindref="member">RequireOnlyOnePassed</ref>(</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>constraints,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fatal<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>customErrorMessage<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>allowNone<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1ae19bc258d5d2bc0f4c5ac52da8d2992e" kindref="member">RequireAtLeastOnePassed</ref>(</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>constraints,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fatal<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>customErrorMessage<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1a37ad0ecd07b5b006bf8135c2880779dd" kindref="member">RequireNoneOrAllPassed</ref>(</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>constraints,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fatal<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>customErrorMessage<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1a103bcfe2b3a7641fe3f3c59b2436bb63" kindref="member">RequireParamInSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;T&gt;&amp;<sp/></highlight><highlight class="keyword">set</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fatal,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>errorMessage);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1ae93b13d8041246b4d1d697d7f00155ca" kindref="member">RequireParamValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::function&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">(T)&gt;&amp;<sp/>conditional,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fatal,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>errorMessage);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1ab244b3b942d525edebe5d0e08b056bf1" kindref="member">ReportIgnoredParam</ref>(</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::pair&lt;std::string,<sp/>bool&gt;&gt;&amp;<sp/>constraints,</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1util_1ab244b3b942d525edebe5d0e08b056bf1" kindref="member">ReportIgnoredParam</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>reason);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>util</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;param_checks_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp"/>
+  </compounddef>
+</doxygen>

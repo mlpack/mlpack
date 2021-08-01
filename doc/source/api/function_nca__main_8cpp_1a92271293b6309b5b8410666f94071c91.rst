@@ -1,0 +1,13 @@
+.. _exhale_function_nca__main_8cpp_1a92271293b6309b5b8410666f94071c91:
+
+Function PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-)
+=========================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_nca_nca_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-)

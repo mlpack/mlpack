@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1amf_1_1AMF" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::AMF</compoundname>
+    <includes refid="amf_8hpp" local="no">amf.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>TerminationPolicyType</declname>
+        <defname>TerminationPolicyType</defname>
+        <defval><ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">SimpleResidueTermination</ref></defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>InitializationRuleType</declname>
+        <defname>InitializationRuleType</defname>
+        <defval><ref refid="classmlpack_1_1amf_1_1RandomAcolInitialization" kindref="compound">RandomAcolInitialization</ref>&lt;&gt;</defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>UpdateRuleType</declname>
+        <defname>UpdateRuleType</defname>
+        <defval><ref refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate" kindref="compound">NMFMultiplicativeDistanceUpdate</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1AMF_1aa5a26bf496845711392c497fad0d82b0" prot="private" static="no" mutable="no">
+        <type>InitializationRuleType</type>
+        <definition>InitializationRuleType initializationRule</definition>
+        <argsstring></argsstring>
+        <name>initializationRule</name>
+        <briefdescription>
+<para>Instantiated initialization Rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1AMF_1a4c5d95fa2fbb854da69c515c1f337066" prot="private" static="no" mutable="no">
+        <type>TerminationPolicyType</type>
+        <definition>TerminationPolicyType terminationPolicy</definition>
+        <argsstring></argsstring>
+        <name>terminationPolicy</name>
+        <briefdescription>
+<para>Termination policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1AMF_1a87f462d58e59e7894c4a675ad72ac716" prot="private" static="no" mutable="no">
+        <type>UpdateRuleType</type>
+        <definition>UpdateRuleType update</definition>
+        <argsstring></argsstring>
+        <name>update</name>
+        <briefdescription>
+<para>Instantiated update rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1aa79bd7ca717d85ef36baa40a1ea4319a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AMF</definition>
+        <argsstring>(const TerminationPolicyType &amp;terminationPolicy=TerminationPolicyType(), const InitializationRuleType &amp;initializeRule=InitializationRuleType(), const UpdateRuleType &amp;update=UpdateRuleType())</argsstring>
+        <name>AMF</name>
+        <param>
+          <type>const TerminationPolicyType &amp;</type>
+          <declname>terminationPolicy</declname>
+          <defval>TerminationPolicyType()</defval>
+        </param>
+        <param>
+          <type>const InitializationRuleType &amp;</type>
+          <declname>initializeRule</declname>
+          <defval>InitializationRuleType()</defval>
+        </param>
+        <param>
+          <type>const UpdateRuleType &amp;</type>
+          <declname>update</declname>
+          <defval>UpdateRuleType()</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> object and (optionally) set the parameters which <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> will run with. </para>        </briefdescription>
+        <detaileddescription>
+<para>The minimum residue refers to the root mean square of the difference between two subsequent iterations of the product W * H. A low residue indicates that subsequent iterations are not producing much change in W and H. Once the residue goes below the specified minimum residue, the algorithm terminates.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>initializeRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated InitializationRule object for initializing the W and H matrices. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>update</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated UpdateRule object; this parameter is useful when the update rule for the W and H vector has state that it needs to store (i.e. HUpdate() and WUpdate() are not static functions). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>terminationPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated TerminationPolicy object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="97" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1a535d2642e3234fbd1ebc6840b061c4da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Apply</definition>
+        <argsstring>(const MatType &amp;V, const size_t r, arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>Apply Alternating Matrix Factorization to the provided matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be output. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to output. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank r of the factorization. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="110" column="1"/>
+        <referencedby refid="classmlpack_1_1cf_1_1NMFPolicy_1a55d1dc4a735516d3138feb7687552721" compoundref="nmf__method_8hpp" startline="58" endline="82">NMFPolicy::Apply</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1BatchSVDPolicy_1a55d1dc4a735516d3138feb7687552721" compoundref="batch__svd__method_8hpp" startline="59" endline="85">BatchSVDPolicy::Apply</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1SVDCompletePolicy_1a55d1dc4a735516d3138feb7687552721" compoundref="svd__complete__method_8hpp" startline="60" endline="88">SVDCompletePolicy::Apply</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1SVDIncompletePolicy_1a55d1dc4a735516d3138feb7687552721" compoundref="svd__incomplete__method_8hpp" startline="60" endline="87">SVDIncompletePolicy::Apply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1ae36ae1d0d07bb71d6ad4aa3919de674b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const InitializationRuleType &amp;</type>
+        <definition>const InitializationRuleType&amp; InitializeRule</definition>
+        <argsstring>() const</argsstring>
+        <name>InitializeRule</name>
+        <briefdescription>
+<para>Access the initialization rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="122" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1ad4c0a310565e914c01e6beb9f9427567" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InitializationRuleType &amp;</type>
+        <definition>InitializationRuleType&amp; InitializeRule</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeRule</name>
+        <briefdescription>
+<para>Modify the initialization rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1ad905ffaf32e6780a28664a060d23e6b8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TerminationPolicyType &amp;</type>
+        <definition>const TerminationPolicyType&amp; TerminationPolicy</definition>
+        <argsstring>() const</argsstring>
+        <name>TerminationPolicy</name>
+        <briefdescription>
+<para>Access the termination policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="116" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1ae0b13308816da802c64d704544a7af71" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TerminationPolicyType &amp;</type>
+        <definition>TerminationPolicyType&amp; TerminationPolicy</definition>
+        <argsstring>()</argsstring>
+        <name>TerminationPolicy</name>
+        <briefdescription>
+<para>Modify the termination policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="119" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1ad51a399acff576b3da541487d6a76417" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const UpdateRuleType &amp;</type>
+        <definition>const UpdateRuleType&amp; Update</definition>
+        <argsstring>() const</argsstring>
+        <name>Update</name>
+        <briefdescription>
+<para>Access the update rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1AMF_1a3e8cca59296dfb97e73f5c07924ed644" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>UpdateRuleType &amp;</type>
+        <definition>UpdateRuleType&amp; Update</definition>
+        <argsstring>()</argsstring>
+        <name>Update</name>
+        <briefdescription>
+<para>Modify the update rule. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> (alternating matrix factorization) on the given matrix V. </para>    </briefdescription>
+    <detaileddescription>
+<para>Alternating matrix factorization decomposes V in the form <formula id="73">$ V \approx WH $</formula> where W is called the basis matrix and H is called the encoding matrix. V is taken to be of size n x m and the obtained W is n x r and H is r x m. The size r is called the rank of the factorization.</para><para>The implementation requires three template types; the first contains the policy used to determine when the algorithm has converged; the second contains the initialization rule for the W and H matrix; the last contains the update rule to be used during each iteration. This templatization allows the user to try various update rules, initialization rules, and termination policies (including ones not supplied with mlpack) for factorization. By default, the template parameters to <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> implement non-negative matrix factorization with the multiplicative distance update.</para><para>A simple example of how to run <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> (or NMF) is shown below.</para><para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>V;<sp/>//<sp/>Matrix<sp/>that<sp/>we<sp/>want<sp/>to<sp/>perform<sp/>LMF<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">size_t<sp/>r<sp/>=<sp/>10;<sp/>//<sp/>Rank<sp/>of<sp/>decomposition</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>W;<sp/>//<sp/>Basis<sp/>matrix</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>H;<sp/>//<sp/>Encoding<sp/>matrix</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">AMF&lt;&gt;<sp/>amf;<sp/>//<sp/>Default<sp/>options:<sp/>NMF<sp/>with<sp/>multiplicative<sp/>distance<sp/>update<sp/>rules.</highlight></codeline>
+<codeline><highlight class="normal">amf.Apply(V,<sp/>r,<sp/>W,<sp/>H);</highlight></codeline>
+</programlisting></para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TerminationPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The policy to use for determining when the factorization has converged. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>InitializationRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initialization rule for initializing W and H matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>UpdateRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The update rule for calculating W and H matrix at each iteration.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate" kindref="compound">NMFMultiplicativeDistanceUpdate</ref>, <ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">SimpleResidueTermination</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="78" bodyend="139"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1AMF_1aa79bd7ca717d85ef36baa40a1ea4319a" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>AMF</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1a535d2642e3234fbd1ebc6840b061c4da" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1aa5a26bf496845711392c497fad0d82b0" prot="private" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>initializationRule</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1ae36ae1d0d07bb71d6ad4aa3919de674b" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>InitializeRule</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1ad4c0a310565e914c01e6beb9f9427567" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>InitializeRule</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1ad905ffaf32e6780a28664a060d23e6b8" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>TerminationPolicy</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1ae0b13308816da802c64d704544a7af71" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>TerminationPolicy</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1a4c5d95fa2fbb854da69c515c1f337066" prot="private" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>terminationPolicy</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1a87f462d58e59e7894c4a675ad72ac716" prot="private" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>update</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1ad51a399acff576b3da541487d6a76417" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>Update</name></member>
+      <member refid="classmlpack_1_1amf_1_1AMF_1a3e8cca59296dfb97e73f5c07924ed644" prot="public" virt="non-virtual"><scope>mlpack::amf::AMF</scope><name>Update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

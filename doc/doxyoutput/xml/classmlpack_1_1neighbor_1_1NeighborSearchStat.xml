@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1neighbor_1_1NeighborSearchStat" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::NeighborSearchStat</compoundname>
+    <includes refid="neighbor__search__stat_8hpp" local="no">neighbor_search_stat.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>SortPolicy</declname>
+        <defname>SortPolicy</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a6379b8b4795547301a58233f14e5a68f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double auxBound</definition>
+        <argsstring></argsstring>
+        <name>auxBound</name>
+        <briefdescription>
+<para>The aux bound on the node&apos;s neighbor distances (B_aux). </para>        </briefdescription>
+        <detaileddescription>
+<para>This represents the best descendant candidate distance (used to calculate secondBound). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ab6c20428c27a1b75d552ecc8b17e4c70" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double firstBound</definition>
+        <argsstring></argsstring>
+        <name>firstBound</name>
+        <briefdescription>
+<para>The first bound on the node&apos;s neighbor distances (B_1). </para>        </briefdescription>
+        <detaileddescription>
+<para>This represents the worst candidate distance of any descendants of this node. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a43311ef4d36f89141f31a241205a27a2" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lastDistance</definition>
+        <argsstring></argsstring>
+        <name>lastDistance</name>
+        <briefdescription>
+<para>The last distance evaluation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a6e26f806468f7301e07260d5b1f9b38a" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double secondBound</definition>
+        <argsstring></argsstring>
+        <name>secondBound</name>
+        <briefdescription>
+<para>The second bound on the node&apos;s neighbor distances (B_2). </para>        </briefdescription>
+        <detaileddescription>
+<para>This represents a bound on the worst distance of any descendants of this node assembled using the best descendant candidate distance modified by the furthest descendant distance. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ae911ff9386cbf7f4b2f80b49baf65587" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearchStat</definition>
+        <argsstring>()</argsstring>
+        <name>NeighborSearchStat</name>
+        <briefdescription>
+<para>Initialize the statistic with the worst possible distance according to our sorting policy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="48" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a8d225f9b18a8723e0168142797bb8b65" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>NeighborSearchStat</definition>
+        <argsstring>(TreeType &amp;)</argsstring>
+        <name>NeighborSearchStat</name>
+        <param>
+          <type>TreeType &amp;</type>
+        </param>
+        <briefdescription>
+<para>Initialization for a fully initialized node. </para>        </briefdescription>
+        <detaileddescription>
+<para>In this case, we don&apos;t need to worry about the node. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="59" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a212cacc0ad25f0c3b409e19bd4062474" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double AuxBound</definition>
+        <argsstring>() const</argsstring>
+        <name>AuxBound</name>
+        <briefdescription>
+<para>Get the aux bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a06f9e5b8efdd5fb48920f5fe3dc79fec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; AuxBound</definition>
+        <argsstring>()</argsstring>
+        <name>AuxBound</name>
+        <briefdescription>
+<para>Modify the aux bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a1e5556b0247e4b4ecb9a4c6870879f9d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double FirstBound</definition>
+        <argsstring>() const</argsstring>
+        <name>FirstBound</name>
+        <briefdescription>
+<para>Get the first bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="77" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ac234f5fa604353c256d61cc97c760fa6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; FirstBound</definition>
+        <argsstring>()</argsstring>
+        <name>FirstBound</name>
+        <briefdescription>
+<para>Modify the first bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1acf3025848cf3628a9213763886101369" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LastDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>LastDistance</name>
+        <briefdescription>
+<para>Get the last distance calculation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a73c8a7f485e9b81d86b7b7b1b75a97af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LastDistance</definition>
+        <argsstring>()</argsstring>
+        <name>LastDistance</name>
+        <briefdescription>
+<para>Modify the last distance calculation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Reset statistic parameters to initial values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="68" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a66e0fa924e213b7bf07bd8bb6f8ae5d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double SecondBound</definition>
+        <argsstring>() const</argsstring>
+        <name>SecondBound</name>
+        <briefdescription>
+<para>Get the second bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a09a02c2295ba43118c88ace376e60892" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; SecondBound</definition>
+        <argsstring>()</argsstring>
+        <name>SecondBound</name>
+        <briefdescription>
+<para>Modify the second bound. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the statistic to/from an archive. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="95" bodyend="101"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Extra data for each node in the tree. </para>    </briefdescription>
+    <detaileddescription>
+<para>For neighbor searches, each node only needs to store a bound on neighbor distances. </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="1089">
+        <label>DualTreeKMeansStatistic</label>
+        <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
+        <childnode refid="1088" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1087">
+        <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+      </node>
+      <node id="1088">
+        <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+        <childnode refid="1087" relation="template-instance">
+          <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp" bodystart="26" bodyend="102"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a6379b8b4795547301a58233f14e5a68f" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>auxBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a212cacc0ad25f0c3b409e19bd4062474" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>AuxBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a06f9e5b8efdd5fb48920f5fe3dc79fec" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>AuxBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ab6c20428c27a1b75d552ecc8b17e4c70" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>firstBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a1e5556b0247e4b4ecb9a4c6870879f9d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>FirstBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ac234f5fa604353c256d61cc97c760fa6" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>FirstBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a43311ef4d36f89141f31a241205a27a2" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>lastDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1acf3025848cf3628a9213763886101369" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a73c8a7f485e9b81d86b7b7b1b75a97af" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ae911ff9386cbf7f4b2f80b49baf65587" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>NeighborSearchStat</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a8d225f9b18a8723e0168142797bb8b65" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>NeighborSearchStat</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a66e0fa924e213b7bf07bd8bb6f8ae5d2" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>SecondBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a09a02c2295ba43118c88ace376e60892" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>SecondBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a6e26f806468f7301e07260d5b1f9b38a" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>secondBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchStat</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

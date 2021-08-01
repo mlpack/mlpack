@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1GaussianInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::GaussianInitialization</compoundname>
+    <includes refid="gaussian__init_8hpp" local="no">gaussian_init.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1GaussianInitialization_1abb40a2ee28b839fb572e161c68141faf" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Mean of the gaussian. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1GaussianInitialization_1a15a0c65c166603403af08bd98b38f7fd" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double variance</definition>
+        <argsstring></argsstring>
+        <name>variance</name>
+        <briefdescription>
+<para>Variance of the gaussian. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GaussianInitialization_1a24cf98fa7ddd2bb1b828c41bd0caa7de" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GaussianInitialization</definition>
+        <argsstring>(const double mean=0, const double variance=1)</argsstring>
+        <name>GaussianInitialization</name>
+        <param>
+          <type>const double</type>
+          <declname>mean</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>variance</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the gaussian with the given mean and variance. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mean of the gaussian. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>variance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variance of the gaussian. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="37" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GaussianInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements weight matrix using a Gaussian Distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="51" bodyend="59"/>
+        <references refid="namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af" compoundref="random_8hpp" startline="127" endline="130">mlpack::math::RandNormal</references>
+        <referencedby refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a8a614fcc8aeff6f47c9f608762411e2a" compoundref="glorot__init_8hpp" startline="113" endline="123">GlorotInitializationType&lt; Uniform &gt;::Initialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GaussianInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements weight matrix using a Gaussian Distribution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="67" bodyend="73"/>
+        <references refid="namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af" compoundref="random_8hpp" startline="127" endline="130">mlpack::math::RandNormal</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GaussianInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W, const size_t rows, const size_t cols, const size_t slices)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>slices</declname>
+        </param>
+        <briefdescription>
+<para>Initialize randomly the elements of the specified weight 3rd order tensor. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of slices. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="84" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1GaussianInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize randomly the elements of the specified weight 3rd order tensor. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="102" bodyend="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize weigth matrix with a gaussian. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/gaussian_init.hpp" bodystart="28" bodyend="117"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1a24cf98fa7ddd2bb1b828c41bd0caa7de" prot="public" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>GaussianInitialization</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1abb40a2ee28b839fb572e161c68141faf" prot="private" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1GaussianInitialization_1a15a0c65c166603403af08bd98b38f7fd" prot="private" virt="non-virtual"><scope>mlpack::ann::GaussianInitialization</scope><name>variance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

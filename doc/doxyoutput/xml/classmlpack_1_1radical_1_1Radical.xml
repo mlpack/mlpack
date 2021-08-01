@@ -1,0 +1,426 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1radical_1_1Radical" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::radical::Radical</compoundname>
+    <includes refid="radical_8hpp" local="no">radical.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a80a8ed2f032afa3e9b62508c1c0eaf9f" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t angles</definition>
+        <argsstring></argsstring>
+        <name>angles</name>
+        <briefdescription>
+<para>Number of angles to consider in brute-force search during Radical2D. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1acbb22bd27c91d82b3596a33bc60f9efb" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat candidate</definition>
+        <argsstring></argsstring>
+        <name>candidate</name>
+        <briefdescription>
+<para>Internal matrix, held as member variable to prevent memory reallocations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a007b64e06504c20a853be59118f2182a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t m</definition>
+        <argsstring></argsstring>
+        <name>m</name>
+        <briefdescription>
+<para>Value of m to use for Vasicek&apos;s m-spacing estimator of entropy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1ac8e50bd49d185abe8b6730aa4dd232d0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double noiseStdDev</definition>
+        <argsstring></argsstring>
+        <name>noiseStdDev</name>
+        <briefdescription>
+<para>Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a69326f6bf5f671b5e26f48e67c3a5c23" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat perturbed</definition>
+        <argsstring></argsstring>
+        <name>perturbed</name>
+        <briefdescription>
+<para>Internal matrix, held as member variable to prevent memory reallocations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1adab2153f4c654d429d6a6d74bfab6e94" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t replicates</definition>
+        <argsstring></argsstring>
+        <name>replicates</name>
+        <briefdescription>
+<para>Number of Gaussian-perturbed replicates to use (per point) in Radical2D. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a321b321d4971797c24fc100d5b8a7f0d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sweeps</definition>
+        <argsstring></argsstring>
+        <name>sweeps</name>
+        <briefdescription>
+<para>Number of sweeps; each sweep calls Radical2D once for each pair of dimensions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a73314833d92799d972c9d4e4b8060c72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Radical</definition>
+        <argsstring>(const double noiseStdDev=0.175, const size_t replicates=30, const size_t angles=150, const size_t sweeps=0, const size_t m=0)</argsstring>
+        <name>Radical</name>
+        <param>
+          <type>const double</type>
+          <declname>noiseStdDev</declname>
+          <defval>0.175</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>replicates</declname>
+          <defval>30</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>angles</declname>
+          <defval>150</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>sweeps</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Set the parameters to RADICAL. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>noiseStdDev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>replicates</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of Gaussian-perturbed replicates to use (per point) in Radical2D </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>angles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of angles to consider in brute-force search during Radical2D </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sweeps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of sweeps. Each sweep calls Radical2D once for each pair of dimensions </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The variable m from Vasicek&apos;s m-spacing estimator of entropy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="59" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Angles</definition>
+        <argsstring>() const</argsstring>
+        <name>Angles</name>
+        <briefdescription>
+<para>Get the number of angles considered during brute-force search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Angles</definition>
+        <argsstring>()</argsstring>
+        <name>Angles</name>
+        <briefdescription>
+<para>Modify the number of angles considered during brute-force search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="107" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CopyAndPerturb</definition>
+        <argsstring>(arma::mat &amp;xNew, const arma::mat &amp;x) const</argsstring>
+        <name>CopyAndPerturb</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>xNew</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Make replicates of each data point (the number of replicates is set in either the constructor or with <ref refid="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" kindref="member">Replicates()</ref>) and perturb data with Gaussian noise with standard deviation noiseStdDev. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="89" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DoRadical</definition>
+        <argsstring>(const arma::mat &amp;matX, arma::mat &amp;matY, arma::mat &amp;matW)</argsstring>
+        <name>DoRadical</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>matX</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>matY</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>matW</declname>
+        </param>
+        <briefdescription>
+<para>Run RADICAL. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>matX</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data into the algorithm - a matrix where each column is a point and each row is a dimension. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Estimated independent components - a matrix where each column is a point and each row is an estimated independent component. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matW</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Estimated unmixing matrix, where matY = matW * matX. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double DoRadical2D</definition>
+        <argsstring>(const arma::mat &amp;matX)</argsstring>
+        <name>DoRadical2D</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>matX</declname>
+        </param>
+        <briefdescription>
+<para>Two-dimensional version of RADICAL. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="92" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double NoiseStdDev</definition>
+        <argsstring>() const</argsstring>
+        <name>NoiseStdDev</name>
+        <briefdescription>
+<para>Get the standard deviation of the additive Gaussian noise. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; NoiseStdDev</definition>
+        <argsstring>()</argsstring>
+        <name>NoiseStdDev</name>
+        <briefdescription>
+<para>Modify the standard deviation of the additive Gaussian noise. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Replicates</definition>
+        <argsstring>() const</argsstring>
+        <name>Replicates</name>
+        <briefdescription>
+<para>Get the number of Gaussian-perturbed replicates used per point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Replicates</definition>
+        <argsstring>()</argsstring>
+        <name>Replicates</name>
+        <briefdescription>
+<para>Modify the number of Gaussian-perturbed replicates used per point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1ae5e316ddee04b98e1bb8b8782e97d3fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Sweeps</definition>
+        <argsstring>() const</argsstring>
+        <name>Sweeps</name>
+        <briefdescription>
+<para>Get the number of sweeps. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Sweeps</definition>
+        <argsstring>()</argsstring>
+        <name>Sweeps</name>
+        <briefdescription>
+<para>Modify the number of sweeps. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="112" bodyend="112"/>
+        <references refid="namespacemlpack_1_1radical_1ad2cb37f7f394d92d8fa93e154713b841">mlpack::radical::WhitenFeatureMajorMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a5ab92b41fcbca46d43c3ba20e5a67fe8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Vasicek</definition>
+        <argsstring>(arma::vec &amp;x) const</argsstring>
+        <name>Vasicek</name>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Vasicek&apos;s m-spacing estimator of entropy, with overlap modification from (Learned-Miller and Fisher, 2003). </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Empirical sample (one-dimensional) over which to estimate entropy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="82" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An implementation of RADICAL, an algorithm for independent component analysis (ICA). </para>    </briefdescription>
+    <detaileddescription>
+<para>Let X be a matrix where each column is a point and each row a dimension. The goal is to find a square unmixing matrix W such that Y = W X and the rows of Y are independent components.</para><para>For more details, see the following paper:</para><para><programlisting><codeline><highlight class="normal">@article{learned2003ica,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/>=<sp/>{ICA<sp/>Using<sp/>Spacings<sp/>Estimates<sp/>of<sp/>Entropy},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/>=<sp/>{Learned-Miller,<sp/>E.G.<sp/>and<sp/>Fisher<sp/>III,<sp/>J.W.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{Journal<sp/>of<sp/>Machine<sp/>Learning<sp/>Research},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/>=<sp/>{4},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages<sp/>=<sp/>{1271--1295},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{2003}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="43" bodyend="136"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a80a8ed2f032afa3e9b62508c1c0eaf9f" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>angles</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Angles</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Angles</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1acbb22bd27c91d82b3596a33bc60f9efb" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>candidate</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>CopyAndPerturb</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical2D</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a007b64e06504c20a853be59118f2182a" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>m</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>NoiseStdDev</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>NoiseStdDev</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1ac8e50bd49d185abe8b6730aa4dd232d0" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>noiseStdDev</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a69326f6bf5f671b5e26f48e67c3a5c23" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>perturbed</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a73314833d92799d972c9d4e4b8060c72" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Radical</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1adab2153f4c654d429d6a6d74bfab6e94" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>replicates</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Replicates</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Replicates</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1ae5e316ddee04b98e1bb8b8782e97d3fa" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Sweeps</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Sweeps</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a321b321d4971797c24fc100d5b8a7f0d" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>sweeps</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a5ab92b41fcbca46d43c3ba20e5a67fe8" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Vasicek</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

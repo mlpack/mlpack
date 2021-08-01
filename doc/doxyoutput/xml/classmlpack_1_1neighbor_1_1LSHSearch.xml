@@ -1,0 +1,1402 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1neighbor_1_1LSHSearch" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::LSHSearch</compoundname>
+    <includes refid="lsh__search_8hpp" local="no">lsh_search.hpp</includes>
+    <innerclass refid="structmlpack_1_1neighbor_1_1LSHSearch_1_1CandidateCmp" prot="private">mlpack::neighbor::LSHSearch::CandidateCmp</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename SortPolicy</type>
+        <defval><ref refid="namespacemlpack_1_1neighbor_1af3f11fce33c041aa26b1c91107f71b0f" kindref="member">NearestNeighborSort</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1LSHSearch_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" static="no">
+        <type>std::pair&lt; double, size_t &gt;</type>
+        <definition>typedef std::pair&lt;double, size_t&gt; Candidate</definition>
+        <argsstring></argsstring>
+        <name>Candidate</name>
+        <briefdescription>
+<para>Candidate represents a possible candidate neighbor (distance, index). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="469" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="469" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1LSHSearch_1a971deda91e33f8ac7c017c8caab84593" prot="private" static="no">
+        <type>std::priority_queue&lt; Candidate, std::vector&lt; Candidate &gt;, CandidateCmp &gt;</type>
+        <definition>typedef std::priority_queue&lt;Candidate, std::vector&lt;Candidate&gt;, CandidateCmp&gt; CandidateList</definition>
+        <argsstring></argsstring>
+        <name>CandidateList</name>
+        <briefdescription>
+<para>Use a priority queue to represent the list of candidate neighbors. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="481" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="481" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a1f3732bca24682200e29aa41b066f6ee" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; bucketContentSize</definition>
+        <argsstring></argsstring>
+        <name>bucketContentSize</name>
+        <briefdescription>
+<para>The number of elements present in each hash bucket; should be secondHashSize. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="459" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="459" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1aab84d6c0e32d86aa8b563586347dc535" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; bucketRowInHashTable</definition>
+        <argsstring></argsstring>
+        <name>bucketRowInHashTable</name>
+        <briefdescription>
+<para>For a particular hash value, points to the row in secondHashTable corresponding to this value. </para>        </briefdescription>
+        <detaileddescription>
+<para>Length secondHashSize. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="463" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="463" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a69fe08640f3088d15aeb2642930c502b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bucketSize</definition>
+        <argsstring></argsstring>
+        <name>bucketSize</name>
+        <briefdescription>
+<para>The bucket size of the second hash. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="451" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="451" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a290e4dd397812645458b89e2d20cb11f" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t distanceEvaluations</definition>
+        <argsstring></argsstring>
+        <name>distanceEvaluations</name>
+        <briefdescription>
+<para>The number of distance evaluations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="466" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="466" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1af01e78334f0f89505ebf19f9aac6b0f9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double hashWidth</definition>
+        <argsstring></argsstring>
+        <name>hashWidth</name>
+        <briefdescription>
+<para>The hash width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="442" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="442" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a298e5686e2fd721fe9d60dbdaf7aa34b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numProj</definition>
+        <argsstring></argsstring>
+        <name>numProj</name>
+        <briefdescription>
+<para>The number of projections. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="431" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1abc4599bc9c59e64aa5d4531cdf1a88d1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numTables</definition>
+        <argsstring></argsstring>
+        <name>numTables</name>
+        <briefdescription>
+<para>The number of hash tables. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="433" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="433" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1ac00549c3a427d9e46bcb8ba54a8d2eda" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat offsets</definition>
+        <argsstring></argsstring>
+        <name>offsets</name>
+        <briefdescription>
+<para>The list of the offsets &apos;b&apos; for each of the projection for each table. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="439" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="439" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a728fbec8909337d60209e616eaf89c0d" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube projections</definition>
+        <argsstring></argsstring>
+        <name>projections</name>
+        <briefdescription>
+<para>The arma::cube containing the projection matrix of each table. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="436" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a71b5dcf2a2ac03735b9cf9e14ea547a7" prot="private" static="no" mutable="no">
+        <type>MatType</type>
+        <definition>MatType referenceSet</definition>
+        <argsstring></argsstring>
+        <name>referenceSet</name>
+        <briefdescription>
+<para>Reference dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="428" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="428" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a5b287a212549d568dd6c70194f40b850" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t secondHashSize</definition>
+        <argsstring></argsstring>
+        <name>secondHashSize</name>
+        <briefdescription>
+<para>The big prime representing the size of the second hash. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="445" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="445" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a6a1f93cea13a6889de6f7221d01399ca" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; arma::Col&lt; size_t &gt; &gt;</type>
+        <definition>std::vector&lt;arma::Col&lt;size_t&gt; &gt; secondHashTable</definition>
+        <argsstring></argsstring>
+        <name>secondHashTable</name>
+        <briefdescription>
+<para>The final hash table; should be (&lt; secondHashSize) vectors each with (&lt;= bucketSize) elements. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="455" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="455" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1LSHSearch_1a8e04b9895f4b1beaeaa7c4822731705d" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec secondHashWeights</definition>
+        <argsstring></argsstring>
+        <name>secondHashWeights</name>
+        <briefdescription>
+<para>The weights of the second hash. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="448" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="448" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a4cfb6dba5b3700cd827a6a2f2c9da539" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LSHSearch</definition>
+        <argsstring>(MatType referenceSet, const arma::cube &amp;projections, const double hashWidth=0.0, const size_t secondHashSize=99901, const size_t bucketSize=500)</argsstring>
+        <name>LSHSearch</name>
+        <param>
+          <type>MatType</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const arma::cube &amp;</type>
+          <declname>projections</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>hashWidth</declname>
+          <defval>0.0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>secondHashSize</declname>
+          <defval>99901</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>bucketSize</declname>
+          <defval>500</defval>
+        </param>
+        <briefdescription>
+<para>This function initializes the LSH class. </para>        </briefdescription>
+        <detaileddescription>
+<para>It builds the hash on the reference set with 2-stable distributions. See the individual functions performing the hashing for details on how the hashing is done. In order to avoid copying the reference set, it is suggested to pass that parameter with std::move().</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points and the set of queries. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>projections</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cube of projection tables. For a cube of size (a, b, c) we set numProj = a, numTables = c. b is the reference set dimensionality. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hashWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of hash for every table. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs. This should be a reasonable upper bound on the nearest-neighbor distance in general. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>secondHashSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the second hash table. This should be a large prime number. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bucketSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the bucket in the second hash table. This is the maximum number of points that can be hashed into single bucket. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large<mdash/>be careful!). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="97" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a8a0c00e059fcbba30170b84f55d16e4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LSHSearch</definition>
+        <argsstring>(MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth=0.0, const size_t secondHashSize=99901, const size_t bucketSize=500)</argsstring>
+        <name>LSHSearch</name>
+        <param>
+          <type>MatType</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numProj</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTables</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>hashWidth</declname>
+          <defval>0.0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>secondHashSize</declname>
+          <defval>99901</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>bucketSize</declname>
+          <defval>500</defval>
+        </param>
+        <briefdescription>
+<para>This function initializes the LSH class. </para>        </briefdescription>
+        <detaileddescription>
+<para>It builds the hash one the reference set using the provided projections. See the individual functions performing the hashing for details on how the hashing is done. In order to avoid copying the reference set, consider passing the set with std::move().</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points and the set of queries. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numProj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of projections in each hash table (anything between 10-50 might be a decent choice). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTables</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Total number of hash tables (anything between 10-20 should suffice). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hashWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of hash for every table. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs. This should be a reasonable upper bound on the nearest-neighbor distance in general. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>secondHashSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the second hash table. This should be a large prime number. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bucketSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the bucket in the second hash table. This is the maximum number of points that can be hashed into single bucket. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large<mdash/>be careful!). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="125" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a3f0dfc59a1df743a8e957e86f7b4d5cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LSHSearch</definition>
+        <argsstring>()</argsstring>
+        <name>LSHSearch</name>
+        <briefdescription>
+<para>Create an untrained LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para>Be sure to call <ref refid="classmlpack_1_1neighbor_1_1LSHSearch_1aab63c514ca5f72f3dccf3edfa239b4a3" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5cfd4af94030baa2f96d3765d94bfb67" kindref="member">Search()</ref>; otherwise, an exception will be thrown when <ref refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5cfd4af94030baa2f96d3765d94bfb67" kindref="member">Search()</ref> is called. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="136" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a7e18777df2330a993d90ca38052e811b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LSHSearch</definition>
+        <argsstring>(const LSHSearch &amp;other)</argsstring>
+        <name>LSHSearch</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other LSH model to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="143" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a38e414198da33966c5685761e203ced6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LSHSearch</definition>
+        <argsstring>(LSHSearch &amp;&amp;other)</argsstring>
+        <name>LSHSearch</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other LSH model to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="150" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a02905662835f4c07653df0773e0db6f3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t BucketSize</definition>
+        <argsstring>() const</argsstring>
+        <name>BucketSize</name>
+        <briefdescription>
+<para>Get the bucket size of the second hash. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="291" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="291" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1afafe9a518f2b8fb1643809a51af2dacf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t DistanceEvaluations</definition>
+        <argsstring>() const</argsstring>
+        <name>DistanceEvaluations</name>
+        <briefdescription>
+<para>Return the number of distance evaluations performed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="274" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="274" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1af9fadea5b764d312c040a70e5d6951ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; DistanceEvaluations</definition>
+        <argsstring>()</argsstring>
+        <name>DistanceEvaluations</name>
+        <briefdescription>
+<para>Modify the number of distance evaluations performed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="276" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="276" bodyend="276"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a1781bad06c46fac9a519e8cbc66c7758" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumProjections</definition>
+        <argsstring>() const</argsstring>
+        <name>NumProjections</name>
+        <briefdescription>
+<para>Get the number of projections. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="282" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="282" bodyend="282"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a84fb2bebd168520b625e4d451f336398" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Offsets</definition>
+        <argsstring>() const</argsstring>
+        <name>Offsets</name>
+        <briefdescription>
+<para>Get the offsets &apos;b&apos; for each of the projections. (One &apos;b&apos; per column.) </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="285" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="285" bodyend="285"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1af87212c7b6ef0dbd59bff8cf6e86a4cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;</type>
+        <definition>LSHSearch&amp; operator=</definition>
+        <argsstring>(const LSHSearch &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other LSH model to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="157" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a0d05ace1d0fd6395f7b1df3c20f55af9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;</type>
+        <definition>LSHSearch&amp; operator=</definition>
+        <argsstring>(LSHSearch &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other LSH model to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="164" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a63e14758f25866a71ca24ac6d5046232" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::cube &amp;</type>
+        <definition>const arma::cube&amp; Projections</definition>
+        <argsstring>()</argsstring>
+        <name>Projections</name>
+        <briefdescription>
+<para>Get the projection tables. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="298" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="298" bodyend="298"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1ab5c03969d08d7534de9a07d863e1019d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Projections</definition>
+        <argsstring>(const arma::cube &amp;projTables)</argsstring>
+        <name>Projections</name>
+        <param>
+          <type>const arma::cube &amp;</type>
+          <declname>projTables</declname>
+        </param>
+        <briefdescription>
+<para>Change the projection tables (this retrains the LSH model). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="301" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="301" bodyend="306"/>
+        <references refid="classmlpack_1_1neighbor_1_1LSHSearch_1aab63c514ca5f72f3dccf3edfa239b4a3">LSHSearch&lt; SortPolicy, MatType &gt;::Train</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a0a975940b302b4efec85bbe2d8b36251" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const MatType &amp;</type>
+        <definition>const MatType&amp; ReferenceSet</definition>
+        <argsstring>() const</argsstring>
+        <name>ReferenceSet</name>
+        <briefdescription>
+<para>Return the reference dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="279" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="279" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a5cfd4af94030baa2f96d3765d94bfb67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const MatType &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;resultingNeighbors, arma::mat &amp;distances, const size_t numTablesToSearch=0, const size_t T=0)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>resultingNeighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTablesToSearch</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>T</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Compute the nearest neighbors of the points in the given query set and store the output in the given matrices. </para>        </briefdescription>
+        <detaileddescription>
+<para>The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>resultingNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTablesToSearch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This parameter allows the user to have control over the number of hash tables to be searched. This allows the user to pick the number of tables it can afford for the time available without having to build hashing for every table size. By default, this is set to zero in which case all tables are considered. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of additional probing bins to examine with multiprobe LSH. If T = 0, classic single-probe LSH is run (default). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="220" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1aefffa95464b5cb9d6aabfc1fbe7b420d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;resultingNeighbors, arma::mat &amp;distances, const size_t numTablesToSearch=0, size_t T=0)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>resultingNeighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTablesToSearch</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>T</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Compute the nearest neighbors and store the output in the given matrices. </para>        </briefdescription>
+        <detaileddescription>
+<para>The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>resultingNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTablesToSearch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This parameter allows the user to have control over the number of hash tables to be searched. This allows the user to pick the number of tables it can afford for the time available without having to build hashing for every table size. By default, this is set to zero in which case all tables are considered. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of probing bins. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="246" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1ac4bdf7cfa1f81b5fc9db761f9505c2a7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; arma::Col&lt; size_t &gt; &gt; &amp;</type>
+        <definition>const std::vector&lt;arma::Col&lt;size_t&gt; &gt;&amp; SecondHashTable</definition>
+        <argsstring>() const</argsstring>
+        <name>SecondHashTable</name>
+        <briefdescription>
+<para>Get the second hash table. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="294" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="294" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1aadec61275f680335c8f795c21ee35b41" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; SecondHashWeights</definition>
+        <argsstring>() const</argsstring>
+        <name>SecondHashWeights</name>
+        <briefdescription>
+<para>Get the weights of the second hash. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="288" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="288" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the LSH model. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Archive to serialize to. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>serialize class version to provide backward compatibility </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="271" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1aab63c514ca5f72f3dccf3edfa239b4a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth=0.0, const size_t secondHashSize=99901, const size_t bucketSize=500, const arma::cube &amp;projection=arma::cube())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numProj</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numTables</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>hashWidth</declname>
+          <defval>0.0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>secondHashSize</declname>
+          <defval>99901</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>bucketSize</declname>
+          <defval>500</defval>
+        </param>
+        <param>
+          <type>const arma::cube &amp;</type>
+          <declname>projection</declname>
+          <defval>arma::cube()</defval>
+        </param>
+        <briefdescription>
+<para>Train the LSH model on the given dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>If a correctly-sized projection cube is not provided, this means building new hash tables. Otherwise, we use the projections provided by the user. In order to avoid copying the reference set, consider passing that parameter with std::move().</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points and the set of queries. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numProj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of projections in each hash table (anything between 10-50 might be a decent choice). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTables</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Total number of hash tables (anything between 10-20 should suffice). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hashWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of hash for every table. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs. This should be a reasonable upper bound on the nearest-neighbor distance in general. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>secondHashSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the second hash table. This should be a large prime number. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bucketSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the bucket in the second hash table. This is the maximum number of points that can be hashed into single bucket. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large<mdash/>be careful!). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>projection</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cube of projection tables. For a cube of size (a, b, c) we set numProj = a, numTables = c. b is the reference set dimensionality. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="191" column="1"/>
+        <referencedby refid="classmlpack_1_1neighbor_1_1LSHSearch_1ab5c03969d08d7534de9a07d863e1019d" compoundref="lsh__search_8hpp" startline="301" endline="306">LSHSearch&lt; SortPolicy, MatType &gt;::Projections</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a5e22f2820bf8ef0005b10d9f8d2c73b5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double ComputeRecall</definition>
+        <argsstring>(const arma::Mat&lt; size_t &gt; &amp;foundNeighbors, const arma::Mat&lt; size_t &gt; &amp;realNeighbors)</argsstring>
+        <name>ComputeRecall</name>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>foundNeighbors</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>realNeighbors</declname>
+        </param>
+        <briefdescription>
+<para>Compute the recall (% of neighbors found) given the neighbors returned by <ref refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5cfd4af94030baa2f96d3765d94bfb67" kindref="member">LSHSearch::Search</ref> and a &quot;ground truth&quot; set of neighbors. </para>        </briefdescription>
+        <detaileddescription>
+<para>The recall returned will be in the range [0, 1].</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>foundNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of neighbors to compute recall of. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>realNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of &quot;ground truth&quot; neighbors to compute recall against. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="261" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a585885917fa774ba52baaeb6c5ba7690" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BaseCase</definition>
+        <argsstring>(const size_t queryIndex, const arma::uvec &amp;referenceIndices, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances) const</argsstring>
+        <name>BaseCase</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const arma::uvec &amp;</type>
+          <declname>referenceIndices</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>This is a helper function that computes the distance of the query to the neighbor candidates and appropriately stores the best &apos;k&apos; candidates. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is specific to the monochromatic search case, where the query set is the reference set.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the query in question </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The vector of indices of candidate neighbors for the query. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix holding output neighbors. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix holding output distances. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="343" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a84e667968bbcce84a3b6d2d70b1c42ec" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BaseCase</definition>
+        <argsstring>(const size_t queryIndex, const arma::uvec &amp;referenceIndices, const size_t k, const MatType &amp;querySet, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances) const</argsstring>
+        <name>BaseCase</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const arma::uvec &amp;</type>
+          <declname>referenceIndices</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>This is a helper function that computes the distance of the query to the neighbor candidates and appropriately stores the best &apos;k&apos; candidates. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is specific to bichromatic search, where the query set is not the same as the reference set.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the query in question </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The vector of indices of candidate neighbors for the query. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix holding output neighbors. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix holding output distances. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="363" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a4a9b8dbf484676a3e3b186427f75cdc7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GetAdditionalProbingBins</definition>
+        <argsstring>(const arma::vec &amp;queryCode, const arma::vec &amp;queryCodeNotFloored, const size_t T, arma::mat &amp;additionalProbingBins) const</argsstring>
+        <name>GetAdditionalProbingBins</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>queryCode</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>queryCodeNotFloored</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>T</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>additionalProbingBins</declname>
+        </param>
+        <briefdescription>
+<para>This function implements the core idea behind Multiprobe LSH. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is called by ReturnIndicesFromTables when T &gt; 0. Given a query&apos;s code and its projection location, GetAdditionalProbingBins will calculate the T most likely alternative bin codes (other than queryCode) where a query&apos;s neighbors might be found in.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryCode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>vector containing the numProj-dimensional query code. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>queryCodeNotFloored</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>vector containing the projection location of the query. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>number of additional probing bins. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>additionalProbingBins</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>matrix. Each column will hold one additional bin. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="384" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1ac063d0553b62b229c2ca845343349f97" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool PerturbationExpand</definition>
+        <argsstring>(std::vector&lt; bool &gt; &amp;A) const</argsstring>
+        <name>PerturbationExpand</name>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <briefdescription>
+<para>Inline function used by GetAdditionalProbingBins. </para>        </briefdescription>
+        <detaileddescription>
+<para>The vector expansion operation adds the element [1 + (largest_element)] to a vector A, where largest_element is the largest element of A. Returns true if resulting vector is valid, otherwise false.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>perturbation set to expand. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="416" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1acba8ca82a90011ad89d51e76d3f04c4c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double PerturbationScore</definition>
+        <argsstring>(const std::vector&lt; bool &gt; &amp;A, const arma::vec &amp;scores) const</argsstring>
+        <name>PerturbationScore</name>
+        <param>
+          <type>const std::vector&lt; bool &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>scores</declname>
+        </param>
+        <briefdescription>
+<para>Returns the score of a perturbation vector generated by perturbation set A. </para>        </briefdescription>
+        <detaileddescription>
+<para>The score of a pertubation set (vector) is the sum of scores of the participating actions. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>perturbation set to compute the score of. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scores</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>vector containing score of each perturbation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="396" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1aaa3214090a628a17c1692d82cd775d1e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool PerturbationShift</definition>
+        <argsstring>(std::vector&lt; bool &gt; &amp;A) const</argsstring>
+        <name>PerturbationShift</name>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <briefdescription>
+<para>Inline function used by GetAdditionalProbingBins. </para>        </briefdescription>
+        <detaileddescription>
+<para>The vector shift operation replaces the largest element of a vector A with (largest element)<itemizedlist>
+<listitem><para>1. Returns true if resulting vector is valid, otherwise false.</para></listitem></itemizedlist>
+</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>perturbation set to shift. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="406" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1a3c4f5a5a4b20058c2f85c856dbac8f15" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool PerturbationValid</definition>
+        <argsstring>(const std::vector&lt; bool &gt; &amp;A) const</argsstring>
+        <name>PerturbationValid</name>
+        <param>
+          <type>const std::vector&lt; bool &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <briefdescription>
+<para>Return true if perturbation set A is valid. </para>        </briefdescription>
+        <detaileddescription>
+<para>A perturbation set is invalid if it contains two (or more) actions for the same dimension or dimensions that are larger than the queryCode&apos;s dimensions.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>perturbation set to validate. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="425" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LSHSearch_1acf5f2191c8e30951bc02338b91a14f14" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ReturnIndicesFromTable</definition>
+        <argsstring>(const VecType &amp;queryPoint, arma::uvec &amp;referenceIndices, size_t numTablesToSearch, const size_t T) const</argsstring>
+        <name>ReturnIndicesFromTable</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>queryPoint</declname>
+        </param>
+        <param>
+          <type>arma::uvec &amp;</type>
+          <declname>referenceIndices</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>numTablesToSearch</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>T</declname>
+        </param>
+        <briefdescription>
+<para>This function takes a query and hashes it into each of the hash tables to get keys for the query and then the key is hashed to a bucket of the second hash table and all the points (if any) in those buckets are collected as the potential neighbor candidates. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryPoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The query point currently being processed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of neighbor candidates obtained from hashing the query into all the hash tables and eventually into multiple buckets of the second hash table. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numTablesToSearch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of tables to perform the search in. If 0, all tables are searched. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of additional probing bins for multiprobe LSH. If 0, single-probe is used. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="325" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> class; this class builds a hash on the reference set and uses this hash to compute the distance-approximate nearest-neighbors of the given queries. </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>SortPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sort policy for distances; see NearestNeighborSort. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix to use to store the data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" line="73" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" bodystart="72" bodyend="482"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a585885917fa774ba52baaeb6c5ba7690" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>BaseCase</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a84e667968bbcce84a3b6d2d70b1c42ec" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>BaseCase</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a1f3732bca24682200e29aa41b066f6ee" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>bucketContentSize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1aab84d6c0e32d86aa8b563586347dc535" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>bucketRowInHashTable</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a02905662835f4c07653df0773e0db6f3" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>BucketSize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a69fe08640f3088d15aeb2642930c502b" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>bucketSize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Candidate</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a971deda91e33f8ac7c017c8caab84593" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>CandidateList</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5e22f2820bf8ef0005b10d9f8d2c73b5" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>ComputeRecall</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1afafe9a518f2b8fb1643809a51af2dacf" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>DistanceEvaluations</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1af9fadea5b764d312c040a70e5d6951ce" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>DistanceEvaluations</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a290e4dd397812645458b89e2d20cb11f" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>distanceEvaluations</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a4a9b8dbf484676a3e3b186427f75cdc7" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>GetAdditionalProbingBins</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1af01e78334f0f89505ebf19f9aac6b0f9" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>hashWidth</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a4cfb6dba5b3700cd827a6a2f2c9da539" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>LSHSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a8a0c00e059fcbba30170b84f55d16e4e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>LSHSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a3f0dfc59a1df743a8e957e86f7b4d5cb" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>LSHSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a7e18777df2330a993d90ca38052e811b" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>LSHSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a38e414198da33966c5685761e203ced6" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>LSHSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a298e5686e2fd721fe9d60dbdaf7aa34b" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>numProj</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a1781bad06c46fac9a519e8cbc66c7758" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>NumProjections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1abc4599bc9c59e64aa5d4531cdf1a88d1" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>numTables</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1ac00549c3a427d9e46bcb8ba54a8d2eda" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>offsets</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a84fb2bebd168520b625e4d451f336398" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Offsets</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1af87212c7b6ef0dbd59bff8cf6e86a4cb" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a0d05ace1d0fd6395f7b1df3c20f55af9" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1ac063d0553b62b229c2ca845343349f97" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>PerturbationExpand</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1acba8ca82a90011ad89d51e76d3f04c4c" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>PerturbationScore</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1aaa3214090a628a17c1692d82cd775d1e" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>PerturbationShift</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a3c4f5a5a4b20058c2f85c856dbac8f15" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>PerturbationValid</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a63e14758f25866a71ca24ac6d5046232" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Projections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1ab5c03969d08d7534de9a07d863e1019d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Projections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a728fbec8909337d60209e616eaf89c0d" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>projections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a71b5dcf2a2ac03735b9cf9e14ea547a7" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>referenceSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a0a975940b302b4efec85bbe2d8b36251" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>ReferenceSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1acf5f2191c8e30951bc02338b91a14f14" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>ReturnIndicesFromTable</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5cfd4af94030baa2f96d3765d94bfb67" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1aefffa95464b5cb9d6aabfc1fbe7b420d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a5b287a212549d568dd6c70194f40b850" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>secondHashSize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a6a1f93cea13a6889de6f7221d01399ca" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>secondHashTable</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1ac4bdf7cfa1f81b5fc9db761f9505c2a7" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>SecondHashTable</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1aadec61275f680335c8f795c21ee35b41" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>SecondHashWeights</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a8e04b9895f4b1beaeaa7c4822731705d" prot="private" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>secondHashWeights</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1aab63c514ca5f72f3dccf3edfa239b4a3" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LSHSearch</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

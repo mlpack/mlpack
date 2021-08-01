@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="qdafn_8hpp" kind="file" language="C++">
+    <compoundname>qdafn.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="gaussian__distribution_8hpp" local="no">mlpack/core/dists/gaussian_distribution.hpp</includes>
+    <includes local="yes">qdafn_impl.hpp</includes>
+    <incdepgraph>
+      <node id="44029">
+        <label>list</label>
+      </node>
+      <node id="44026">
+        <label>atomic</label>
+      </node>
+      <node id="44016">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="43992">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="44028">
+        <label>iomanip</label>
+      </node>
+      <node id="44001">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="44002" relation="include">
+        </childnode>
+        <childnode refid="44004" relation="include">
+        </childnode>
+      </node>
+      <node id="43984">
+        <label>cstdint</label>
+      </node>
+      <node id="43993">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="44000">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="44023">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="44013">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="43980">
+        <label>cmath</label>
+      </node>
+      <node id="43999">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="43988">
+        <label>stdexcept</label>
+      </node>
+      <node id="44008">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="43993" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="43994" relation="include">
+        </childnode>
+      </node>
+      <node id="44032">
+        <label>string</label>
+      </node>
+      <node id="44020">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44021" relation="include">
+        </childnode>
+        <childnode refid="43987" relation="include">
+        </childnode>
+      </node>
+      <node id="44030">
+        <label>map</label>
+      </node>
+      <node id="43982">
+        <label>cfloat</label>
+      </node>
+      <node id="44012">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="44034">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="43996">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="44019">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="44020" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="44003" relation="include">
+        </childnode>
+        <childnode refid="44021" relation="include">
+        </childnode>
+      </node>
+      <node id="44009">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="44007">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="43993" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="43994" relation="include">
+        </childnode>
+      </node>
+      <node id="44010">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="43993" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="43994" relation="include">
+        </childnode>
+      </node>
+      <node id="43998">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="44018">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="43994" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="44006" relation="include">
+        </childnode>
+        <childnode refid="44015" relation="include">
+        </childnode>
+      </node>
+      <node id="44022">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="44023" relation="include">
+        </childnode>
+      </node>
+      <node id="44024">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="43979">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="43980" relation="include">
+        </childnode>
+        <childnode refid="43981" relation="include">
+        </childnode>
+        <childnode refid="43982" relation="include">
+        </childnode>
+        <childnode refid="43983" relation="include">
+        </childnode>
+        <childnode refid="43984" relation="include">
+        </childnode>
+        <childnode refid="43985" relation="include">
+        </childnode>
+        <childnode refid="43986" relation="include">
+        </childnode>
+        <childnode refid="43987" relation="include">
+        </childnode>
+        <childnode refid="43988" relation="include">
+        </childnode>
+        <childnode refid="43989" relation="include">
+        </childnode>
+        <childnode refid="43990" relation="include">
+        </childnode>
+        <childnode refid="43991" relation="include">
+        </childnode>
+        <childnode refid="43992" relation="include">
+        </childnode>
+        <childnode refid="43993" relation="include">
+        </childnode>
+        <childnode refid="43994" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="43997" relation="include">
+        </childnode>
+        <childnode refid="43998" relation="include">
+        </childnode>
+        <childnode refid="43999" relation="include">
+        </childnode>
+        <childnode refid="44000" relation="include">
+        </childnode>
+        <childnode refid="44001" relation="include">
+        </childnode>
+        <childnode refid="44005" relation="include">
+        </childnode>
+        <childnode refid="44006" relation="include">
+        </childnode>
+        <childnode refid="44007" relation="include">
+        </childnode>
+        <childnode refid="44008" relation="include">
+        </childnode>
+        <childnode refid="44009" relation="include">
+        </childnode>
+        <childnode refid="44010" relation="include">
+        </childnode>
+        <childnode refid="44011" relation="include">
+        </childnode>
+        <childnode refid="44017" relation="include">
+        </childnode>
+        <childnode refid="44018" relation="include">
+        </childnode>
+        <childnode refid="44015" relation="include">
+        </childnode>
+        <childnode refid="44019" relation="include">
+        </childnode>
+        <childnode refid="44022" relation="include">
+        </childnode>
+        <childnode refid="44024" relation="include">
+        </childnode>
+        <childnode refid="44025" relation="include">
+        </childnode>
+        <childnode refid="44034" relation="include">
+        </childnode>
+        <childnode refid="44035" relation="include">
+        </childnode>
+      </node>
+      <node id="44037">
+        <label>qdafn_impl.hpp</label>
+      </node>
+      <node id="43985">
+        <label>cstdio</label>
+      </node>
+      <node id="43989">
+        <label>tuple</label>
+      </node>
+      <node id="43994">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="44011">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="43994" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="43998" relation="include">
+        </childnode>
+        <childnode refid="44012" relation="include">
+        </childnode>
+        <childnode refid="44013" relation="include">
+        </childnode>
+        <childnode refid="44014" relation="include">
+        </childnode>
+        <childnode refid="44015" relation="include">
+        </childnode>
+      </node>
+      <node id="43978">
+        <label>/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp</label>
+        <link refid="qdafn_8hpp"/>
+        <childnode refid="43979" relation="include">
+        </childnode>
+        <childnode refid="44036" relation="include">
+        </childnode>
+        <childnode refid="44037" relation="include">
+        </childnode>
+      </node>
+      <node id="43990">
+        <label>utility</label>
+      </node>
+      <node id="44014">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="44005">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="44002">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="44003" relation="include">
+        </childnode>
+      </node>
+      <node id="44025">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="44026" relation="include">
+        </childnode>
+        <childnode refid="44027" relation="include">
+        </childnode>
+        <childnode refid="44028" relation="include">
+        </childnode>
+        <childnode refid="44029" relation="include">
+        </childnode>
+        <childnode refid="44030" relation="include">
+        </childnode>
+        <childnode refid="44031" relation="include">
+        </childnode>
+        <childnode refid="44032" relation="include">
+        </childnode>
+        <childnode refid="44033" relation="include">
+        </childnode>
+      </node>
+      <node id="44003">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="44017">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="44015" relation="include">
+        </childnode>
+        <childnode refid="44011" relation="include">
+        </childnode>
+        <childnode refid="44018" relation="include">
+        </childnode>
+      </node>
+      <node id="43986">
+        <label>cstdlib</label>
+      </node>
+      <node id="43981">
+        <label>cctype</label>
+      </node>
+      <node id="44004">
+        <label>unordered_map</label>
+      </node>
+      <node id="43983">
+        <label>climits</label>
+      </node>
+      <node id="44031">
+        <label>mutex</label>
+      </node>
+      <node id="44027">
+        <label>chrono</label>
+      </node>
+      <node id="44035">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="44033">
+        <label>thread</label>
+      </node>
+      <node id="44021">
+        <label>type_traits</label>
+      </node>
+      <node id="43997">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="43991">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="44015">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="43993" relation="include">
+        </childnode>
+        <childnode refid="43994" relation="include">
+        </childnode>
+        <childnode refid="43995" relation="include">
+        </childnode>
+        <childnode refid="43996" relation="include">
+        </childnode>
+        <childnode refid="44016" relation="include">
+        </childnode>
+      </node>
+      <node id="43987">
+        <label>cstring</label>
+      </node>
+      <node id="44006">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="43995">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="44036">
+        <label>mlpack/core/dists/gaussian_distribution.hpp</label>
+        <link refid="gaussian__distribution_8hpp"/>
+        <childnode refid="43979" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1neighbor_1_1QDAFN" prot="public">mlpack::neighbor::QDAFN</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1neighbor">mlpack::neighbor</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+An implementation of the query-dependent approximate furthest neighbor algorithm specified in the following paper:</para><para><programlisting><codeline><highlight class="normal">@incollection{pagh2015approximate,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Approximate<sp/>furthest<sp/>neighbor<sp/>in<sp/>high<sp/>dimensions},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Pagh,<sp/>R.<sp/>and<sp/>Silvestri,<sp/>F.<sp/>and<sp/>Sivertsen,<sp/>J.<sp/>and<sp/>Skala,<sp/>M.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Similarity<sp/>Search<sp/>and<sp/>Applications},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={3--14},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2015},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>publisher={Springer}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="24"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_APPROX_KFN_QDAFN_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_APPROX_KFN_QDAFN_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gaussian__distribution_8hpp" kindref="compound">mlpack/core/dists/gaussian_distribution.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">neighbor<sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="34" refid="classmlpack_1_1neighbor_1_1QDAFN" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1neighbor_1_1QDAFN" kindref="compound">QDAFN</ref></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a4776f610347419ede2b9f2c3197cf662" kindref="member">QDAFN</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a4776f610347419ede2b9f2c3197cf662" kindref="member">QDAFN</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>referenceSet,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a025c46810d0d83a17834f3f8364b479e" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>referenceSet,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>querySet,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>distances);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1neighbor_1_1QDAFN_1a1781bad06c46fac9a519e8cbc66c7758" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a1781bad06c46fac9a519e8cbc66c7758" kindref="member">NumProjections</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>candidateSet.size();<sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1neighbor_1_1QDAFN_1a9d1760e2d90f9adcd1349c313e397b5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a9d1760e2d90f9adcd1349c313e397b5e" kindref="member">CandidateSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>candidateSet[t];<sp/>}</highlight></codeline>
+<codeline lineno="92" refid="classmlpack_1_1neighbor_1_1QDAFN_1a958b1a642bdb58840b4fd77de9e29609" refkind="member"><highlight class="normal"><sp/><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a958b1a642bdb58840b4fd77de9e29609" kindref="member">CandidateSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>candidateSet[t];<sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>arma::mat<sp/>lines;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>arma::mat<sp/>projections;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>arma::Mat&lt;size_t&gt;<sp/>sIndices;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>arma::mat<sp/>sValues;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Candidate<sp/>sets;<sp/>one<sp/>element<sp/>in<sp/>the<sp/>vector<sp/>for<sp/>each<sp/>table.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>std::vector&lt;MatType&gt;<sp/>candidateSet;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>neighbor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qdafn_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,689 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1MultiplyMerge" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::MultiplyMerge</compoundname>
+    <includes refid="layer__types_8hpp" local="no">layer_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>CustomLayers</declname>
+        <defname>CustomLayers</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeleteVisitor" kindref="compound">DeleteVisitor</ref></type>
+        <definition>DeleteVisitor deleteVisitor</definition>
+        <argsstring></argsstring>
+        <name>deleteVisitor</name>
+        <briefdescription>
+<para>Locally-stored delete visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="177" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="186" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref></type>
+        <definition>DeltaVisitor deltaVisitor</definition>
+        <argsstring></argsstring>
+        <name>deltaVisitor</name>
+        <briefdescription>
+<para>Locally-stored delta visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; empty</definition>
+        <argsstring></argsstring>
+        <name>empty</name>
+        <briefdescription>
+<para>Locally-stored empty list of modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="174" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="189" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1add4a998726ba4284e097ba6c7b343c96" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+<para>Parameter which indicates if the modules should be exposed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
+        <argsstring></argsstring>
+        <name>network</name>
+        <briefdescription>
+<para>Locally-stored network modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref></type>
+        <definition>OutputParameterVisitor outputParameterVisitor</definition>
+        <argsstring></argsstring>
+        <name>outputParameterVisitor</name>
+        <briefdescription>
+<para>Locally-stored output parameter visitor module object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a0b89d911332582bfc4cacb1b06040752" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ownsLayer</definition>
+        <argsstring></argsstring>
+        <name>ownsLayer</name>
+        <briefdescription>
+<para>We need this to know whether we should delete the layer in the destructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="168" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a3e6f76368abfbc8709f4c1346dfa6a20" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool run</definition>
+        <argsstring></argsstring>
+        <name>run</name>
+        <briefdescription>
+<para>Parameter which indicates if the Forward/Backward method should be called before merging the output. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="165" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored weight object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a4f28b10702c852a1d1a504eb0a843482" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MultiplyMerge</definition>
+        <argsstring>(const bool model=false, const bool run=true)</argsstring>
+        <name>MultiplyMerge</name>
+        <param>
+          <type>const bool</type>
+          <declname>model</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>run</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expose all the network modules. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>run</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Call the Forward/Backward method before the output is merged. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="51" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a8a7a3d7c540ddc8971aa0708f0319d3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MultiplyMerge</definition>
+        <argsstring>(const MultiplyMerge &amp;layer)</argsstring>
+        <name>MultiplyMerge</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy Constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1af9db6b813d2d2bd37193df6b4e1b6d98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MultiplyMerge</definition>
+        <argsstring>(MultiplyMerge &amp;&amp;layer)</argsstring>
+        <name>MultiplyMerge</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Move Constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1adfe520dcd7bb9a5d8af781c154d9f41a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~MultiplyMerge</definition>
+        <argsstring>()</argsstring>
+        <name>~MultiplyMerge</name>
+        <briefdescription>
+<para>Destructor to release allocated memory. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="66" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class LayerType</type>
+          </param>
+          <param>
+            <type>class...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Add</definition>
+        <argsstring>(Args... args)</argsstring>
+        <name>Add</name>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a503a807740e6c729be9efc89520db728" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Add</definition>
+        <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
+        <name>Add</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f, using the results from the feed forward pass. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="88" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="127" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a15104aebf957ca49a0e3828abda5417f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const InputType &amp;, OutputType &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const InputType &amp;</type>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="76" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="100" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt;&amp; Model</definition>
+        <argsstring>()</argsstring>
+        <name>Model</name>
+        <briefdescription>
+<para>Return the model modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="135" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a10ad199a97ab0b9b54aabf29a97ac1bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;</type>
+        <definition>MultiplyMerge&amp; operator=</definition>
+        <argsstring>(const MultiplyMerge &amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1accaa74478e55e3d55d63736c1b046f96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;</type>
+        <definition>MultiplyMerge&amp; operator=</definition>
+        <argsstring>(MultiplyMerge &amp;&amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="63" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="146" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="148" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="157" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1MultiplyMerge_1a7a2704698a50d9e00dfb083f3a863579" compoundref="multiply__merge_8hpp" startline="151" endline="151">MultiplyMerge&lt; InputDataType, OutputDataType, CustomLayers &gt;::WeightSize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get the size of the weights. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="151" bodyend="151"/>
+        <references refid="classmlpack_1_1ann_1_1MultiplyMerge_1a65cba07328997659bec80b9879b15a51">MultiplyMerge&lt; InputDataType, OutputDataType, CustomLayers &gt;::serialize</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> module class. </para>    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref> class multiplies the output of various modules element-wise.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>CustomLayers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Additional custom layers that can be added. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="205" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="205" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Add</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a503a807740e6c729be9efc89520db728" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Add</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>deleteVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>deltaVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>empty</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a15104aebf957ca49a0e3828abda5417f" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1aaf577db350e2130754490d8486fba215" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1add4a998726ba4284e097ba6c7b343c96" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>model</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Model</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a4f28b10702c852a1d1a504eb0a843482" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>MultiplyMerge</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a8a7a3d7c540ddc8971aa0708f0319d3c" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>MultiplyMerge</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1af9db6b813d2d2bd37193df6b4e1b6d98" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>MultiplyMerge</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1af8e080a320fdd3f532283b8305bd2391" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>network</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a10ad199a97ab0b9b54aabf29a97ac1bc" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1accaa74478e55e3d55d63736c1b046f96" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>outputParameterVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a0b89d911332582bfc4cacb1b06040752" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>ownsLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a3e6f76368abfbc8709f4c1346dfa6a20" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>run</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>weights</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>WeightSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1adfe520dcd7bb9a5d8af781c154d9f41a" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>~MultiplyMerge</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

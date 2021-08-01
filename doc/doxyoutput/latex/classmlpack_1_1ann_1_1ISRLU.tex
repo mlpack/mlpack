@@ -1,0 +1,233 @@
+\section{I\+S\+R\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1ISRLU}\index{I\+S\+R\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{I\+S\+R\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The \doxyref{I\+S\+R\+LU}{p.}{classmlpack_1_1ann_1_1ISRLU} activation function, defined by.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ I\+S\+R\+LU} (const double alpha=1.\+0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{I\+S\+R\+LU}{p.}{classmlpack_1_1ann_1_1ISRLU} object using the specified parameter. \end{DoxyCompactList}\item 
+double const  \& \textbf{ Alpha} () const
+\begin{DoxyCompactList}\small\item\em Get the non zero gradient. \end{DoxyCompactList}\item 
+double \& \textbf{ Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the non zero gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Backward} (const Data\+Type \&input, const Data\+Type \&gy, Data\+Type \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} ()
+\begin{DoxyCompactList}\small\item\em Get size of weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+I\+S\+R\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{I\+S\+R\+LU}{p.}{classmlpack_1_1ann_1_1ISRLU} activation function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x \ge 0 \\ x(\frac{1}{1 + \alpha x^2}) & : x < 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} x & : 1 \ge 0 \\ (\frac{1}{1 + \alpha x^2})^3 & : x < 0 \end{array} \right. \end{eqnarray*}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 60 of file isrlu.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a873c05cfe8dcf6f0afabac067d669476}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!I\+S\+R\+LU@{I\+S\+R\+LU}}
+\index{I\+S\+R\+LU@{I\+S\+R\+LU}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{I\+S\+R\+L\+U()}
+{\footnotesize\ttfamily \textbf{ I\+S\+R\+LU} (\begin{DoxyParamCaption}\item[{const double}]{alpha = {\ttfamily 1.0} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{I\+S\+R\+LU}{p.}{classmlpack_1_1ann_1_1ISRLU} object using the specified parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Scale parameter controls the value to which an \doxyref{I\+S\+R\+LU}{p.}{classmlpack_1_1ann_1_1ISRLU} saturates for negative inputs. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a21679485637bdec3078ec74d71572980}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double const\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the non zero gradient. 
+
+
+
+Definition at line 104 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_acbb0e4747a3a307bee88bad71e5eeaf1}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the non zero gradient. 
+
+
+
+Definition at line 106 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_aef8c56f1f8624bd006afec8b3bcda9d6}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{input,  }\item[{const Data\+Type \&}]{gy,  }\item[{Data\+Type \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation f(x). \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 99 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 101 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 94 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 96 of file isrlu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by I\+S\+R\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Weight\+Size().
+
+\mbox{\label{classmlpack_1_1ann_1_1ISRLU_a2b2aec754d2ebd0decd527a4ac196b90}} 
+\index{mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}!Weight\+Size@{Weight\+Size}}
+\index{Weight\+Size@{Weight\+Size}!mlpack\+::ann\+::\+I\+S\+R\+LU@{mlpack\+::ann\+::\+I\+S\+R\+LU}}
+\subsubsection{Weight\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get size of weights. 
+
+
+
+Definition at line 109 of file isrlu.\+hpp.
+
+
+
+References I\+S\+R\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ isrlu.\+hpp}\end{DoxyCompactItemize}

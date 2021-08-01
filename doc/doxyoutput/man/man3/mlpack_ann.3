@@ -1,0 +1,1116 @@
+.TH "mlpack::ann" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann \- Artificial Neural Network\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBaugmented\fP"
+.br
+.in -1c
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAdaptiveMaxPooling\fP"
+.br
+.RI "Implementation of the \fBAdaptiveMaxPooling\fP layer\&. "
+.ti -1c
+.RI "class \fBAdaptiveMeanPooling\fP"
+.br
+.RI "Implementation of the \fBAdaptiveMeanPooling\fP\&. "
+.ti -1c
+.RI "class \fBAdd\fP"
+.br
+.RI "Implementation of the \fBAdd\fP module class\&. "
+.ti -1c
+.RI "class \fBAddMerge\fP"
+.br
+.RI "Implementation of the \fBAddMerge\fP module class\&. "
+.ti -1c
+.RI "class \fBAddVisitor\fP"
+.br
+.RI "\fBAddVisitor\fP exposes the Add() method of the given module\&. "
+.ti -1c
+.RI "class \fBAlphaDropout\fP"
+.br
+.RI "The alpha - dropout layer is a regularizer that randomly with probability 'ratio' sets input values to alphaDash\&. "
+.ti -1c
+.RI "class \fBAtrousConvolution\fP"
+.br
+.RI "Implementation of the Atrous \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBBackwardVisitor\fP"
+.br
+.RI "\fBBackwardVisitor\fP executes the Backward() function given the input, error and delta parameter\&. "
+.ti -1c
+.RI "class \fBBaseLayer\fP"
+.br
+.RI "Implementation of the base layer\&. "
+.ti -1c
+.RI "class \fBBatchNorm\fP"
+.br
+.RI "Declaration of the Batch Normalization layer class\&. "
+.ti -1c
+.RI "class \fBBCELoss\fP"
+.br
+.RI "The binary-cross-entropy performance function measures the Binary Cross Entropy between the target and the output\&. "
+.ti -1c
+.RI "class \fBBernoulliDistribution\fP"
+.br
+.RI "Multiple independent Bernoulli distributions\&. "
+.ti -1c
+.RI "class \fBBiasSetVisitor\fP"
+.br
+.RI "\fBBiasSetVisitor\fP updates the module bias parameters given the parameters set\&. "
+.ti -1c
+.RI "class \fBBilinearInterpolation\fP"
+.br
+.RI "Definition and Implementation of the Bilinear Interpolation Layer\&. "
+.ti -1c
+.RI "class \fBBinaryRBM\fP"
+.br
+.RI "For more information, see the following paper: "
+.ti -1c
+.RI "class \fBBRNN\fP"
+.br
+.RI "Implementation of a standard bidirectional recurrent neural network container\&. "
+.ti -1c
+.RI "class \fBCELU\fP"
+.br
+.RI "The \fBCELU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBConcat\fP"
+.br
+.RI "Implementation of the \fBConcat\fP class\&. "
+.ti -1c
+.RI "class \fBConcatenate\fP"
+.br
+.RI "Implementation of the \fBConcatenate\fP module class\&. "
+.ti -1c
+.RI "class \fBConcatPerformance\fP"
+.br
+.RI "Implementation of the concat performance class\&. "
+.ti -1c
+.RI "class \fBConstant\fP"
+.br
+.RI "Implementation of the constant layer\&. "
+.ti -1c
+.RI "class \fBConstInitialization\fP"
+.br
+.RI "This class is used to initialize weight matrix with constant values\&. "
+.ti -1c
+.RI "class \fBConvolution\fP"
+.br
+.RI "Implementation of the \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBCopyVisitor\fP"
+.br
+.RI "This visitor is to support copy constructor for neural network module\&. "
+.ti -1c
+.RI "class \fBCosineEmbeddingLoss\fP"
+.br
+.RI "Cosine Embedding Loss function is used for measuring whether two inputs are similar or dissimilar, using the cosine distance, and is typically used for learning nonlinear embeddings or semi-supervised learning\&. "
+.ti -1c
+.RI "class \fBCReLU\fP"
+.br
+.RI "A concatenated ReLU has two outputs, one ReLU and one negative ReLU, concatenated together\&. "
+.ti -1c
+.RI "class \fBDCGAN\fP"
+.br
+.RI "For more information, see the following paper: "
+.ti -1c
+.RI "class \fBDeleteVisitor\fP"
+.br
+.RI "\fBDeleteVisitor\fP executes the destructor of the instantiated object\&. "
+.ti -1c
+.RI "class \fBDeltaVisitor\fP"
+.br
+.RI "\fBDeltaVisitor\fP exposes the delta parameter of the given module\&. "
+.ti -1c
+.RI "class \fBDeterministicSetVisitor\fP"
+.br
+.RI "\fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&. "
+.ti -1c
+.RI "class \fBDiceLoss\fP"
+.br
+.RI "The dice loss performance function measures the network's performance according to the dice coefficient between the input and target distributions\&. "
+.ti -1c
+.RI "class \fBDropConnect\fP"
+.br
+.RI "The \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&. "
+.ti -1c
+.RI "class \fBDropout\fP"
+.br
+.RI "The dropout layer is a regularizer that randomly with probability 'ratio' sets input values to zero and scales the remaining elements by factor 1 / (1 - ratio) rather than during test time so as to keep the expected sum same\&. "
+.ti -1c
+.RI "class \fBEarthMoverDistance\fP"
+.br
+.RI "The earth mover distance function measures the network's performance according to the Kantorovich-Rubinstein duality approximation\&. "
+.ti -1c
+.RI "class \fBElishFunction\fP"
+.br
+.RI "The ELiSH function, defined by\&. "
+.ti -1c
+.RI "class \fBElliotFunction\fP"
+.br
+.RI "The Elliot function, defined by\&. "
+.ti -1c
+.RI "class \fBELU\fP"
+.br
+.RI "The \fBELU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBEmptyLoss\fP"
+.br
+.RI "The empty loss does nothing, letting the user calculate the loss outside the model\&. "
+.ti -1c
+.RI "class \fBFastLSTM\fP"
+.br
+.RI "An implementation of a faster version of the Fast \fBLSTM\fP network layer\&. "
+.ti -1c
+.RI "class \fBFFN\fP"
+.br
+.RI "Implementation of a standard feed forward network\&. "
+.ti -1c
+.RI "class \fBFFTConvolution\fP"
+.br
+.RI "Computes the two-dimensional convolution through fft\&. "
+.ti -1c
+.RI "class \fBFlattenTSwish\fP"
+.br
+.RI "The Flatten T Swish activation function, defined by\&. "
+.ti -1c
+.RI "class \fBFlexibleReLU\fP"
+.br
+.RI "The \fBFlexibleReLU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBForwardVisitor\fP"
+.br
+.RI "\fBForwardVisitor\fP executes the Forward() function given the input and output parameter\&. "
+.ti -1c
+.RI "class \fBFullConvolution\fP"
+.br
+.ti -1c
+.RI "class \fBGAN\fP"
+.br
+.RI "The implementation of the standard \fBGAN\fP module\&. "
+.ti -1c
+.RI "class \fBGaussianFunction\fP"
+.br
+.RI "The gaussian function, defined by\&. "
+.ti -1c
+.RI "class \fBGaussianInitialization\fP"
+.br
+.RI "This class is used to initialize weigth matrix with a gaussian\&. "
+.ti -1c
+.RI "class \fBGELUFunction\fP"
+.br
+.RI "The GELU function, defined by\&. "
+.ti -1c
+.RI "class \fBGlimpse\fP"
+.br
+.RI "The glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. "
+.ti -1c
+.RI "class \fBGlorotInitializationType\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the Glorot Initialization method\&. "
+.ti -1c
+.RI "class \fBGradientSetVisitor\fP"
+.br
+.RI "\fBGradientSetVisitor\fP update the gradient parameter given the gradient set\&. "
+.ti -1c
+.RI "class \fBGradientUpdateVisitor\fP"
+.br
+.RI "\fBGradientUpdateVisitor\fP update the gradient parameter given the gradient set\&. "
+.ti -1c
+.RI "class \fBGradientVisitor\fP"
+.br
+.RI "SearchModeVisitor executes the Gradient() method of the given module using the input and delta parameter\&. "
+.ti -1c
+.RI "class \fBGradientZeroVisitor\fP"
+.br
+.ti -1c
+.RI "class \fBGRU\fP"
+.br
+.RI "An implementation of a gru network layer\&. "
+.ti -1c
+.RI "class \fBHardShrink\fP"
+.br
+.RI "Hard Shrink operator is defined as,\&. "
+.ti -1c
+.RI "class \fBHardSigmoidFunction\fP"
+.br
+.RI "The hard sigmoid function, defined by\&. "
+.ti -1c
+.RI "class \fBHardSwishFunction\fP"
+.br
+.RI "The Hard Swish function, defined by\&. "
+.ti -1c
+.RI "class \fBHardTanH\fP"
+.br
+.RI "The Hard Tanh activation function, defined by\&. "
+.ti -1c
+.RI "class \fBHeInitialization\fP"
+.br
+.RI "This class is used to initialize weight matrix with the He initialization rule given by He et\&. "
+.ti -1c
+.RI "class \fBHighway\fP"
+.br
+.RI "Implementation of the \fBHighway\fP layer\&. "
+.ti -1c
+.RI "class \fBHingeEmbeddingLoss\fP"
+.br
+.RI "The Hinge Embedding loss function is often used to compute the loss between y_true and y_pred\&. "
+.ti -1c
+.RI "class \fBHingeLoss\fP"
+.br
+.RI "Computes the hinge loss between $y_true$ and $y_pred$\&. "
+.ti -1c
+.RI "class \fBHuberLoss\fP"
+.br
+.RI "The Huber loss is a loss function used in robust regression, that is less sensitive to outliers in data than the squared error loss\&. "
+.ti -1c
+.RI "class \fBIdentityFunction\fP"
+.br
+.RI "The identity function, defined by\&. "
+.ti -1c
+.RI "class \fBInitTraits\fP"
+.br
+.RI "This is a template class that can provide information about various initialization methods\&. "
+.ti -1c
+.RI "class \fBInitTraits< KathirvalavakumarSubavathiInitialization >\fP"
+.br
+.RI "Initialization traits of the kathirvalavakumar subavath initialization rule\&. "
+.ti -1c
+.RI "class \fBInitTraits< NguyenWidrowInitialization >\fP"
+.br
+.RI "Initialization traits of the Nguyen-Widrow initialization rule\&. "
+.ti -1c
+.RI "class \fBInShapeVisitor\fP"
+.br
+.RI "\fBInShapeVisitor\fP returns the input shape a Layer expects\&. "
+.ti -1c
+.RI "class \fBInvQuadFunction\fP"
+.br
+.RI "The Inverse Quadratic function, defined by\&. "
+.ti -1c
+.RI "class \fBISRLU\fP"
+.br
+.RI "The \fBISRLU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBJoin\fP"
+.br
+.RI "Implementation of the \fBJoin\fP module class\&. "
+.ti -1c
+.RI "class \fBKathirvalavakumarSubavathiInitialization\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the method proposed by T\&. "
+.ti -1c
+.RI "class \fBKLDivergence\fP"
+.br
+.RI "The Kullback–Leibler divergence is often used for continuous distributions (direct regression)\&. "
+.ti -1c
+.RI "class \fBL1Loss\fP"
+.br
+.RI "The L1 loss is a loss function that measures the mean absolute error (MAE) between each element in the input x and target y\&. "
+.ti -1c
+.RI "class \fBLayerNorm\fP"
+.br
+.RI "Declaration of the Layer Normalization class\&. "
+.ti -1c
+.RI "class \fBLayerTraits\fP"
+.br
+.RI "This is a template class that can provide information about various layers\&. "
+.ti -1c
+.RI "class \fBLeakyReLU\fP"
+.br
+.RI "The \fBLeakyReLU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBLecunNormalInitialization\fP"
+.br
+.RI "This class is used to initialize weight matrix with the Lecun Normalization initialization rule\&. "
+.ti -1c
+.RI "class \fBLinear\fP"
+.br
+.RI "Implementation of the \fBLinear\fP layer class\&. "
+.ti -1c
+.RI "class \fBLinear3D\fP"
+.br
+.RI "Implementation of the \fBLinear3D\fP layer class\&. "
+.ti -1c
+.RI "class \fBLinearNoBias\fP"
+.br
+.RI "Implementation of the \fBLinearNoBias\fP class\&. "
+.ti -1c
+.RI "class \fBLiSHTFunction\fP"
+.br
+.RI "The LiSHT function, defined by\&. "
+.ti -1c
+.RI "class \fBLoadOutputParameterVisitor\fP"
+.br
+.RI "\fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&. "
+.ti -1c
+.RI "class \fBLogCoshLoss\fP"
+.br
+.RI "The Log-Hyperbolic-Cosine loss function is often used to improve variational auto encoder\&. "
+.ti -1c
+.RI "class \fBLogisticFunction\fP"
+.br
+.RI "The logistic function, defined by\&. "
+.ti -1c
+.RI "class \fBLogSoftMax\fP"
+.br
+.RI "Implementation of the log softmax layer\&. "
+.ti -1c
+.RI "class \fBLookup\fP"
+.br
+.RI "The \fBLookup\fP class stores word embeddings and retrieves them using tokens\&. "
+.ti -1c
+.RI "class \fBLossVisitor\fP"
+.br
+.RI "\fBLossVisitor\fP exposes the Loss() method of the given module\&. "
+.ti -1c
+.RI "class \fBLpPooling\fP"
+.br
+.RI "Implementation of the LPPooling\&. "
+.ti -1c
+.RI "class \fBLRegularizer\fP"
+.br
+.RI "The L_p regularizer for arbitrary integer p\&. "
+.ti -1c
+.RI "class \fBLSTM\fP"
+.br
+.RI "Implementation of the \fBLSTM\fP module class\&. "
+.ti -1c
+.RI "class \fBMarginRankingLoss\fP"
+.br
+.RI "Margin ranking loss measures the loss given inputs and a label vector with values of 1 or -1\&. "
+.ti -1c
+.RI "class \fBMaxPooling\fP"
+.br
+.RI "Implementation of the \fBMaxPooling\fP layer\&. "
+.ti -1c
+.RI "class \fBMaxPoolingRule\fP"
+.br
+.ti -1c
+.RI "class \fBMeanAbsolutePercentageError\fP"
+.br
+.RI "The mean absolute percentage error performance function measures the network's performance according to the mean of the absolute difference between input and target divided by target\&. "
+.ti -1c
+.RI "class \fBMeanBiasError\fP"
+.br
+.RI "The mean bias error performance function measures the network's performance according to the mean of errors\&. "
+.ti -1c
+.RI "class \fBMeanPooling\fP"
+.br
+.RI "Implementation of the \fBMeanPooling\fP\&. "
+.ti -1c
+.RI "class \fBMeanPoolingRule\fP"
+.br
+.ti -1c
+.RI "class \fBMeanSquaredError\fP"
+.br
+.RI "The mean squared error performance function measures the network's performance according to the mean of squared errors\&. "
+.ti -1c
+.RI "class \fBMeanSquaredLogarithmicError\fP"
+.br
+.RI "The mean squared logarithmic error performance function measures the network's performance according to the mean of squared logarithmic errors\&. "
+.ti -1c
+.RI "class \fBMiniBatchDiscrimination\fP"
+.br
+.RI "Implementation of the \fBMiniBatchDiscrimination\fP layer\&. "
+.ti -1c
+.RI "class \fBMishFunction\fP"
+.br
+.RI "The Mish function, defined by\&. "
+.ti -1c
+.RI "class \fBMultiheadAttention\fP"
+.br
+.RI "Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions\&. "
+.ti -1c
+.RI "class \fBMultiplyConstant\fP"
+.br
+.RI "Implementation of the multiply constant layer\&. "
+.ti -1c
+.RI "class \fBMultiplyMerge\fP"
+.br
+.RI "Implementation of the \fBMultiplyMerge\fP module class\&. "
+.ti -1c
+.RI "class \fBMultiQuadFunction\fP"
+.br
+.RI "The Multi Quadratic function, defined by\&. "
+.ti -1c
+.RI "class \fBNaiveConvolution\fP"
+.br
+.RI "Computes the two-dimensional convolution\&. "
+.ti -1c
+.RI "class \fBNegativeLogLikelihood\fP"
+.br
+.RI "Implementation of the negative log likelihood layer\&. "
+.ti -1c
+.RI "class \fBNetworkInitialization\fP"
+.br
+.RI "This class is used to initialize the network with the given initialization rule\&. "
+.ti -1c
+.RI "class \fBNguyenWidrowInitialization\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the Nguyen-Widrow method\&. "
+.ti -1c
+.RI "class \fBNoisyLinear\fP"
+.br
+.RI "Implementation of the \fBNoisyLinear\fP layer class\&. "
+.ti -1c
+.RI "class \fBNoRegularizer\fP"
+.br
+.RI "Implementation of the \fBNoRegularizer\fP\&. "
+.ti -1c
+.RI "class \fBNormalDistribution\fP"
+.br
+.RI "Implementation of the Normal Distribution function\&. "
+.ti -1c
+.RI "class \fBOivsInitialization\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the oivs method\&. "
+.ti -1c
+.RI "class \fBOrthogonalInitialization\fP"
+.br
+.RI "This class is used to initialize the weight matrix with the orthogonal matrix initialization\&. "
+.ti -1c
+.RI "class \fBOrthogonalRegularizer\fP"
+.br
+.RI "Implementation of the \fBOrthogonalRegularizer\fP\&. "
+.ti -1c
+.RI "class \fBOutputHeightVisitor\fP"
+.br
+.RI "\fBOutputHeightVisitor\fP exposes the OutputHeight() method of the given module\&. "
+.ti -1c
+.RI "class \fBOutputParameterVisitor\fP"
+.br
+.RI "\fBOutputParameterVisitor\fP exposes the output parameter of the given module\&. "
+.ti -1c
+.RI "class \fBOutputWidthVisitor\fP"
+.br
+.RI "\fBOutputWidthVisitor\fP exposes the OutputWidth() method of the given module\&. "
+.ti -1c
+.RI "class \fBPadding\fP"
+.br
+.RI "Implementation of the \fBPadding\fP module class\&. "
+.ti -1c
+.RI "class \fBParametersSetVisitor\fP"
+.br
+.RI "\fBParametersSetVisitor\fP update the parameters set using the given matrix\&. "
+.ti -1c
+.RI "class \fBParametersVisitor\fP"
+.br
+.RI "\fBParametersVisitor\fP exposes the parameters set of the given module and stores the parameters set into the given matrix\&. "
+.ti -1c
+.RI "class \fBPixelShuffle\fP"
+.br
+.RI "Implementation of the \fBPixelShuffle\fP layer\&. "
+.ti -1c
+.RI "class \fBPoisson1Function\fP"
+.br
+.RI "The Poisson one function, defined by\&. "
+.ti -1c
+.RI "class \fBPoissonNLLLoss\fP"
+.br
+.RI "Implementation of the Poisson negative log likelihood loss\&. "
+.ti -1c
+.RI "class \fBPositionalEncoding\fP"
+.br
+.RI "Positional Encoding injects some information about the relative or absolute position of the tokens in the sequence\&. "
+.ti -1c
+.RI "class \fBPReLU\fP"
+.br
+.RI "The \fBPReLU\fP activation function, defined by (where alpha is trainable) "
+.ti -1c
+.RI "class \fBQuadraticFunction\fP"
+.br
+.RI "The Quadratic function, defined by\&. "
+.ti -1c
+.RI "class \fBRandomInitialization\fP"
+.br
+.RI "This class is used to initialize randomly the weight matrix\&. "
+.ti -1c
+.RI "class \fBRBF\fP"
+.br
+.RI "Implementation of the Radial Basis Function layer\&. "
+.ti -1c
+.RI "class \fBRBM\fP"
+.br
+.RI "The implementation of the \fBRBM\fP module\&. "
+.ti -1c
+.RI "class \fBReconstructionLoss\fP"
+.br
+.RI "The reconstruction loss performance function measures the network's performance equal to the negative log probability of the target with the input distribution\&. "
+.ti -1c
+.RI "class \fBRectifierFunction\fP"
+.br
+.RI "The rectifier function, defined by\&. "
+.ti -1c
+.RI "class \fBRecurrent\fP"
+.br
+.RI "Implementation of the RecurrentLayer class\&. "
+.ti -1c
+.RI "class \fBRecurrentAttention\fP"
+.br
+.RI "This class implements the \fBRecurrent\fP Model for Visual Attention, using a variety of possible layer implementations\&. "
+.ti -1c
+.RI "class \fBReinforceNormal\fP"
+.br
+.RI "Implementation of the reinforce normal layer\&. "
+.ti -1c
+.RI "class \fBReparametrization\fP"
+.br
+.RI "Implementation of the \fBReparametrization\fP layer class\&. "
+.ti -1c
+.RI "class \fBResetCellVisitor\fP"
+.br
+.RI "\fBResetCellVisitor\fP executes the ResetCell() function\&. "
+.ti -1c
+.RI "class \fBResetVisitor\fP"
+.br
+.RI "\fBResetVisitor\fP executes the Reset() function\&. "
+.ti -1c
+.RI "class \fBRewardSetVisitor\fP"
+.br
+.RI "\fBRewardSetVisitor\fP set the reward parameter given the reward value\&. "
+.ti -1c
+.RI "class \fBRNN\fP"
+.br
+.RI "Implementation of a standard recurrent neural network container\&. "
+.ti -1c
+.RI "class \fBRunSetVisitor\fP"
+.br
+.RI "\fBRunSetVisitor\fP set the run parameter given the run value\&. "
+.ti -1c
+.RI "class \fBSaveOutputParameterVisitor\fP"
+.br
+.RI "\fBSaveOutputParameterVisitor\fP saves the output parameter into the given parameter set\&. "
+.ti -1c
+.RI "class \fBSelect\fP"
+.br
+.RI "The select module selects the specified column from a given input matrix\&. "
+.ti -1c
+.RI "class \fBSequential\fP"
+.br
+.RI "Implementation of the \fBSequential\fP class\&. "
+.ti -1c
+.RI "class \fBSetInputHeightVisitor\fP"
+.br
+.RI "\fBSetInputHeightVisitor\fP updates the input height parameter with the given input height\&. "
+.ti -1c
+.RI "class \fBSetInputWidthVisitor\fP"
+.br
+.RI "\fBSetInputWidthVisitor\fP updates the input width parameter with the given input width\&. "
+.ti -1c
+.RI "class \fBSigmoidCrossEntropyError\fP"
+.br
+.RI "The \fBSigmoidCrossEntropyError\fP performance function measures the network's performance according to the cross-entropy function between the input and target distributions\&. "
+.ti -1c
+.RI "class \fBSILUFunction\fP"
+.br
+.RI "The SILU function, defined by\&. "
+.ti -1c
+.RI "class \fBSoftMarginLoss\fP"
+.br
+.ti -1c
+.RI "class \fBSoftmax\fP"
+.br
+.RI "Implementation of the \fBSoftmax\fP layer\&. "
+.ti -1c
+.RI "class \fBSoftmin\fP"
+.br
+.RI "Implementation of the \fBSoftmin\fP layer\&. "
+.ti -1c
+.RI "class \fBSoftplusFunction\fP"
+.br
+.RI "The softplus function, defined by\&. "
+.ti -1c
+.RI "class \fBSoftShrink\fP"
+.br
+.RI "Soft Shrink operator is defined as, \begin{eqnarray*} f(x) &=& \begin{cases} x - \lambda & : x > \lambda \\ x + \lambda & : x < -\lambda \\ 0 & : otherwise. \\ \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > \lambda \\ 1 & : x < -\lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}\&. "
+.ti -1c
+.RI "class \fBSoftsignFunction\fP"
+.br
+.RI "The softsign function, defined by\&. "
+.ti -1c
+.RI "class \fBSpatialDropout\fP"
+.br
+.RI "Implementation of the \fBSpatialDropout\fP layer\&. "
+.ti -1c
+.RI "class \fBSpikeSlabRBM\fP"
+.br
+.RI "For more information, see the following paper: "
+.ti -1c
+.RI "class \fBSplineFunction\fP"
+.br
+.RI "The Spline function, defined by\&. "
+.ti -1c
+.RI "class \fBStandardGAN\fP"
+.br
+.RI "For more information, see the following paper: "
+.ti -1c
+.RI "class \fBSubview\fP"
+.br
+.RI "Implementation of the subview layer\&. "
+.ti -1c
+.RI "class \fBSVDConvolution\fP"
+.br
+.RI "Computes the two-dimensional convolution using singular value decomposition\&. "
+.ti -1c
+.RI "class \fBSwishFunction\fP"
+.br
+.RI "The swish function, defined by\&. "
+.ti -1c
+.RI "class \fBTanhExpFunction\fP"
+.br
+.RI "The TanhExp function, defined by\&. "
+.ti -1c
+.RI "class \fBTanhFunction\fP"
+.br
+.RI "The tanh function, defined by\&. "
+.ti -1c
+.RI "class \fBTransposedConvolution\fP"
+.br
+.RI "Implementation of the Transposed \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBTripletMarginLoss\fP"
+.br
+.RI "The Triplet Margin Loss performance function measures the network's performance according to the relative distance from the anchor input of the positive (truthy) and negative (falsy) inputs\&. "
+.ti -1c
+.RI "class \fBValidConvolution\fP"
+.br
+.ti -1c
+.RI "class \fBVirtualBatchNorm\fP"
+.br
+.RI "Declaration of the \fBVirtualBatchNorm\fP layer class\&. "
+.ti -1c
+.RI "class \fBVRClassReward\fP"
+.br
+.RI "Implementation of the variance reduced classification reinforcement layer\&. "
+.ti -1c
+.RI "class \fBWeightNorm\fP"
+.br
+.RI "Declaration of the \fBWeightNorm\fP layer class\&. "
+.ti -1c
+.RI "class \fBWeightSetVisitor\fP"
+.br
+.RI "\fBWeightSetVisitor\fP update the module parameters given the parameters set\&. "
+.ti -1c
+.RI "class \fBWeightSizeVisitor\fP"
+.br
+.RI "\fBWeightSizeVisitor\fP returns the number of weights of the given module\&. "
+.ti -1c
+.RI "class \fBWGAN\fP"
+.br
+.RI "For more information, see the following paper: "
+.ti -1c
+.RI "class \fBWGANGP\fP"
+.br
+.RI "For more information, see the following paper: "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBCrossEntropyError\fP = \fBBCELoss\fP< InputDataType, OutputDataType >"
+.br
+.RI "Adding alias of \fBBCELoss\fP\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBCustomLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Sigmoid layer\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = ElishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBElishFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard ELiSH-Layer using the ELiSH activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = ElliotFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBElliotFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Elliot-Layer using the Elliot activation function\&. "
+.ti -1c
+.RI "template<typename MatType  = arma::mat> using \fBEmbedding\fP = \fBLookup\fP< MatType, MatType >"
+.br
+.ti -1c
+.RI "template<class ActivationFunction  = GaussianFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBGaussianFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Gaussian-Layer using the Gaussian activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = GELUFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBGELUFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard GELU-Layer using the GELU activation function\&. "
+.ti -1c
+.RI "using \fBGlorotInitialization\fP = \fBGlorotInitializationType\fP< false >"
+.br
+.RI "GlorotInitialization uses uniform distribution\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = HardSigmoidFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBHardSigmoidLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard HardSigmoid-Layer using the HardSigmoid activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = HardSwishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBHardSwishFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard HardSwish-Layer using the HardSwish activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = IdentityFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBIdentityLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Identity-Layer using the identity activation function\&. "
+.ti -1c
+.RI "typedef \fBLRegularizer\fP< 1 > \fBL1Regularizer\fP"
+.br
+.RI "The L1 Regularizer\&. "
+.ti -1c
+.RI "typedef \fBLRegularizer\fP< 2 > \fBL2Regularizer\fP"
+.br
+.RI "The L2 Regularizer\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. CustomLayers> using \fBLayerTypes\fP = boost::variant< \fBAdaptiveMaxPooling\fP< arma::mat, arma::mat > *, \fBAdaptiveMeanPooling\fP< arma::mat, arma::mat > *, \fBAdd\fP< arma::mat, arma::mat > *, \fBAddMerge\fP< arma::mat, arma::mat > *, \fBAlphaDropout\fP< arma::mat, arma::mat > *, \fBAtrousConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBLogisticFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBIdentityFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBTanhFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBSoftplusFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBRectifierFunction\fP, arma::mat, arma::mat > *, \fBBatchNorm\fP< arma::mat, arma::mat > *, \fBBilinearInterpolation\fP< arma::mat, arma::mat > *, \fBCELU\fP< arma::mat, arma::mat > *, \fBConcat\fP< arma::mat, arma::mat > *, \fBConcatenate\fP< arma::mat, arma::mat > *, \fBConcatPerformance\fP< \fBNegativeLogLikelihood\fP< arma::mat, arma::mat >, arma::mat, arma::mat > *, \fBConstant\fP< arma::mat, arma::mat > *, \fBConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBCReLU\fP< arma::mat, arma::mat > *, \fBDropConnect\fP< arma::mat, arma::mat > *, \fBDropout\fP< arma::mat, arma::mat > *, \fBELU\fP< arma::mat, arma::mat > *, \fBFastLSTM\fP< arma::mat, arma::mat > *, \fBFlexibleReLU\fP< arma::mat, arma::mat > *, \fBGRU\fP< arma::mat, arma::mat > *, \fBHardTanH\fP< arma::mat, arma::mat > *, \fBJoin\fP< arma::mat, arma::mat > *, \fBLayerNorm\fP< arma::mat, arma::mat > *, \fBLeakyReLU\fP< arma::mat, arma::mat > *, \fBLinear\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLinearNoBias\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLogSoftMax\fP< arma::mat, arma::mat > *, \fBLookup\fP< arma::mat, arma::mat > *, \fBLSTM\fP< arma::mat, arma::mat > *, \fBMaxPooling\fP< arma::mat, arma::mat > *, \fBMeanPooling\fP< arma::mat, arma::mat > *, \fBMiniBatchDiscrimination\fP< arma::mat, arma::mat > *, \fBMultiplyConstant\fP< arma::mat, arma::mat > *, \fBMultiplyMerge\fP< arma::mat, arma::mat > *, \fBNegativeLogLikelihood\fP< arma::mat, arma::mat > *, \fBNoisyLinear\fP< arma::mat, arma::mat > *, \fBPadding\fP< arma::mat, arma::mat > *, \fBPReLU\fP< arma::mat, arma::mat > *, \fBSoftmax\fP< arma::mat, arma::mat > *, \fBSpatialDropout\fP< arma::mat, arma::mat > *, \fBTransposedConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBWeightNorm\fP< arma::mat, arma::mat > *, \fBMoreTypes\fP, CustomLayers *\&.\&.\&. >"
+.br
+.ti -1c
+.RI "template<class ActivationFunction  = LiSHTFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBLiSHTFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard LiSHT-Layer using the LiSHT activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = MishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBMishFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Mish-Layer using the Mish activation function\&. "
+.ti -1c
+.RI "using \fBMoreTypes\fP = boost::variant< \fBLinear3D\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLpPooling\fP< arma::mat, arma::mat > *, \fBPixelShuffle\fP< arma::mat, arma::mat > *, \fBGlimpse\fP< arma::mat, arma::mat > *, \fBHighway\fP< arma::mat, arma::mat > *, \fBMultiheadAttention\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBRecurrent\fP< arma::mat, arma::mat > *, \fBRecurrentAttention\fP< arma::mat, arma::mat > *, \fBReinforceNormal\fP< arma::mat, arma::mat > *, \fBReparametrization\fP< arma::mat, arma::mat > *, \fBSelect\fP< arma::mat, arma::mat > *, \fBSequential\fP< arma::mat, arma::mat, false > *, \fBSequential\fP< arma::mat, arma::mat, true > *, \fBSubview\fP< arma::mat, arma::mat > *, \fBVRClassReward\fP< arma::mat, arma::mat > *, \fBVirtualBatchNorm\fP< arma::mat, arma::mat > *, \fBRBF\fP< arma::mat, arma::mat, \fBGaussianFunction\fP > *, \fBBaseLayer\fP< \fBGaussianFunction\fP, arma::mat, arma::mat > *, \fBPositionalEncoding\fP< arma::mat, arma::mat > *, \fBISRLU\fP< arma::mat, arma::mat > *>"
+.br
+.ti -1c
+.RI "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBReLULayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard rectified linear unit non-linearity layer\&. "
+.ti -1c
+.RI "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat, typename\&.\&.\&. CustomLayers> using \fBResidual\fP = \fBSequential\fP< InputDataType, OutputDataType, true, CustomLayers\&.\&.\&. >"
+.br
+.ti -1c
+.RI "using \fBSELU\fP = \fBELU\fP< arma::mat, arma::mat >"
+.br
+.ti -1c
+.RI "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSigmoidLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Sigmoid-Layer using the logistic activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SILUFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSILUFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard SILU-Layer using the SILU activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SoftplusFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSoftPlusLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Softplus-Layer using the Softplus activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SwishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSwishFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Swish-Layer using the Swish activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = TanhExpFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBTanhExpFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard TanhExp-Layer using the TanhExp activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = TanhFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBTanHLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard hyperbolic tangent layer\&. "
+.ti -1c
+.RI "using \fBXavierInitialization\fP = \fBGlorotInitializationType\fP< true >"
+.br
+.RI "XavierInitilization is the popular name for this method\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBCheckInputShape\fP (const T &network, const size_t inputShape, const std::string &functionName)"
+.br
+.ti -1c
+.RI "\fBHAS_ANY_METHOD_FORM\fP (Model, HasModelCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_ANY_METHOD_FORM\fP (InputShape, HasInputShapeCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Gradient, HasGradientCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Deterministic, HasDeterministicCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Parameters, HasParametersCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (\fBAdd\fP, HasAddCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Location, HasLocationCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Reset, HasResetCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (ResetCell, HasResetCellCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Reward, HasRewardCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (InputWidth, HasInputWidth)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (InputHeight, HasInputHeight)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Rho, HasRho)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Loss, HasLoss)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Run, HasRunCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Bias, HasBiasCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (MaxIterations, HasMaxIterations)"
+.br
+.ti -1c
+.RI "template<typename ModelType > double \fBInceptionScore\fP (ModelType Model, arma::mat images, size_t splits=1)"
+.br
+.RI "Function that computes Inception Score for a set of images produced by a \fBGAN\fP\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Artificial Neural Network\&. 
+
+Artifical Neural Network\&.
+.SH "Typedef Documentation"
+.PP 
+.SS "using \fBCrossEntropyError\fP =  \fBBCELoss\fP< InputDataType, OutputDataType>"
+
+.PP
+Adding alias of \fBBCELoss\fP\&. 
+.PP
+Definition at line 110 of file binary_cross_entropy_loss\&.hpp\&.
+.SS "using \fBCustomLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Sigmoid layer\&. 
+.PP
+Definition at line 31 of file custom_layer\&.hpp\&.
+.SS "using \fBElishFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard ELiSH-Layer using the ELiSH activation function\&. 
+.PP
+Definition at line 273 of file base_layer\&.hpp\&.
+.SS "using \fBElliotFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Elliot-Layer using the Elliot activation function\&. 
+.PP
+Definition at line 262 of file base_layer\&.hpp\&.
+.SS "using \fBEmbedding\fP =  \fBLookup\fP<MatType, MatType>"
+
+.PP
+Definition at line 142 of file lookup\&.hpp\&.
+.SS "using \fBGaussianFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Gaussian-Layer using the Gaussian activation function\&. 
+.PP
+Definition at line 284 of file base_layer\&.hpp\&.
+.SS "using \fBGELUFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard GELU-Layer using the GELU activation function\&. 
+.PP
+Definition at line 251 of file base_layer\&.hpp\&.
+.SS "using \fBGlorotInitialization\fP =  \fBGlorotInitializationType\fP<false>"
+
+.PP
+GlorotInitialization uses uniform distribution\&. 
+.PP
+Definition at line 200 of file glorot_init\&.hpp\&.
+.SS "using \fBHardSigmoidLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard HardSigmoid-Layer using the HardSigmoid activation function\&. 
+.PP
+Definition at line 207 of file base_layer\&.hpp\&.
+.SS "using \fBHardSwishFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard HardSwish-Layer using the HardSwish activation function\&. 
+.PP
+Definition at line 295 of file base_layer\&.hpp\&.
+.SS "using \fBIdentityLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Identity-Layer using the identity activation function\&. 
+.PP
+Definition at line 163 of file base_layer\&.hpp\&.
+.SS "typedef \fBLRegularizer\fP<1> \fBL1Regularizer\fP"
+
+.PP
+The L1 Regularizer\&. 
+.PP
+Definition at line 62 of file lregularizer\&.hpp\&.
+.SS "typedef \fBLRegularizer\fP<2> \fBL2Regularizer\fP"
+
+.PP
+The L2 Regularizer\&. 
+.PP
+Definition at line 67 of file lregularizer\&.hpp\&.
+.SS "using \fBLayerTypes\fP =  boost::variant< \fBAdaptiveMaxPooling\fP<arma::mat, arma::mat>*, \fBAdaptiveMeanPooling\fP<arma::mat, arma::mat>*, \fBAdd\fP<arma::mat, arma::mat>*, \fBAddMerge\fP<arma::mat, arma::mat>*, \fBAlphaDropout\fP<arma::mat, arma::mat>*, \fBAtrousConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBLogisticFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBIdentityFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBTanhFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBSoftplusFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBRectifierFunction\fP, arma::mat, arma::mat>*, \fBBatchNorm\fP<arma::mat, arma::mat>*, \fBBilinearInterpolation\fP<arma::mat, arma::mat>*, \fBCELU\fP<arma::mat, arma::mat>*, \fBConcat\fP<arma::mat, arma::mat>*, \fBConcatenate\fP<arma::mat, arma::mat>*, \fBConcatPerformance\fP<\fBNegativeLogLikelihood\fP<arma::mat, arma::mat>, arma::mat, arma::mat>*, \fBConstant\fP<arma::mat, arma::mat>*, \fBConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBCReLU\fP<arma::mat, arma::mat>*, \fBDropConnect\fP<arma::mat, arma::mat>*, \fBDropout\fP<arma::mat, arma::mat>*, \fBELU\fP<arma::mat, arma::mat>*, \fBFastLSTM\fP<arma::mat, arma::mat>*, \fBFlexibleReLU\fP<arma::mat, arma::mat>*, \fBGRU\fP<arma::mat, arma::mat>*, \fBHardTanH\fP<arma::mat, arma::mat>*, \fBJoin\fP<arma::mat, arma::mat>*, \fBLayerNorm\fP<arma::mat, arma::mat>*, \fBLeakyReLU\fP<arma::mat, arma::mat>*, \fBLinear\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLinearNoBias\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLogSoftMax\fP<arma::mat, arma::mat>*, \fBLookup\fP<arma::mat, arma::mat>*, \fBLSTM\fP<arma::mat, arma::mat>*, \fBMaxPooling\fP<arma::mat, arma::mat>*, \fBMeanPooling\fP<arma::mat, arma::mat>*, \fBMiniBatchDiscrimination\fP<arma::mat, arma::mat>*, \fBMultiplyConstant\fP<arma::mat, arma::mat>*, \fBMultiplyMerge\fP<arma::mat, arma::mat>*, \fBNegativeLogLikelihood\fP<arma::mat, arma::mat>*, \fBNoisyLinear\fP<arma::mat, arma::mat>*, \fBPadding\fP<arma::mat, arma::mat>*, \fBPReLU\fP<arma::mat, arma::mat>*, \fBSoftmax\fP<arma::mat, arma::mat>*, \fBSpatialDropout\fP<arma::mat, arma::mat>*, \fBTransposedConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBWeightNorm\fP<arma::mat, arma::mat>*, \fBMoreTypes\fP, CustomLayers*\&.\&.\&. >"
+
+.PP
+Definition at line 306 of file layer_types\&.hpp\&.
+.SS "using \fBLiSHTFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard LiSHT-Layer using the LiSHT activation function\&. 
+.PP
+Definition at line 240 of file base_layer\&.hpp\&.
+.SS "using \fBMishFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Mish-Layer using the Mish activation function\&. 
+.PP
+Definition at line 229 of file base_layer\&.hpp\&.
+.SS "using \fBMoreTypes\fP =  boost::variant< \fBLinear3D\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLpPooling\fP<arma::mat, arma::mat>*, \fBPixelShuffle\fP<arma::mat, arma::mat>*, \fBGlimpse\fP<arma::mat, arma::mat>*, \fBHighway\fP<arma::mat, arma::mat>*, \fBMultiheadAttention\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBRecurrent\fP<arma::mat, arma::mat>*, \fBRecurrentAttention\fP<arma::mat, arma::mat>*, \fBReinforceNormal\fP<arma::mat, arma::mat>*, \fBReparametrization\fP<arma::mat, arma::mat>*, \fBSelect\fP<arma::mat, arma::mat>*, \fBSequential\fP<arma::mat, arma::mat, false>*, \fBSequential\fP<arma::mat, arma::mat, true>*, \fBSubview\fP<arma::mat, arma::mat>*, \fBVRClassReward\fP<arma::mat, arma::mat>*, \fBVirtualBatchNorm\fP<arma::mat, arma::mat>*, \fBRBF\fP<arma::mat, arma::mat, \fBGaussianFunction\fP>*, \fBBaseLayer\fP<\fBGaussianFunction\fP, arma::mat, arma::mat>*, \fBPositionalEncoding\fP<arma::mat, arma::mat>*, \fBISRLU\fP<arma::mat, arma::mat>* >"
+
+.PP
+Definition at line 244 of file layer_types\&.hpp\&.
+.SS "using \fBReLULayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard rectified linear unit non-linearity layer\&. 
+.PP
+Definition at line 174 of file base_layer\&.hpp\&.
+.SS "using \fBResidual\fP =  \fBSequential\fP< InputDataType, OutputDataType, true, CustomLayers\&.\&.\&.>"
+
+.PP
+Definition at line 261 of file sequential\&.hpp\&.
+.SS "using \fBSELU\fP =  \fBELU\fP<arma::mat, arma::mat>"
+
+.PP
+Definition at line 207 of file elu\&.hpp\&.
+.SS "using \fBSigmoidLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Sigmoid-Layer using the logistic activation function\&. 
+.PP
+Definition at line 152 of file base_layer\&.hpp\&.
+.SS "using \fBSILUFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+
+.PP
+Standard SILU-Layer using the SILU activation function\&. 
+.PP
+Definition at line 318 of file base_layer\&.hpp\&.
+.SS "using \fBSoftPlusLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Softplus-Layer using the Softplus activation function\&. 
+.PP
+Definition at line 196 of file base_layer\&.hpp\&.
+.SS "using \fBSwishFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Swish-Layer using the Swish activation function\&. 
+.PP
+Definition at line 218 of file base_layer\&.hpp\&.
+.SS "using \fBTanhExpFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard TanhExp-Layer using the TanhExp activation function\&. 
+.PP
+Definition at line 306 of file base_layer\&.hpp\&.
+.SS "using \fBTanHLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard hyperbolic tangent layer\&. 
+.PP
+Definition at line 185 of file base_layer\&.hpp\&.
+.SS "using \fBXavierInitialization\fP =  \fBGlorotInitializationType\fP<true>"
+
+.PP
+XavierInitilization is the popular name for this method\&. 
+.PP
+Definition at line 195 of file glorot_init\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::ann::CheckInputShape (const T & network, const size_t inputShape, const std::string & functionName)"
+
+.PP
+Definition at line 25 of file check_input_shape\&.hpp\&.
+.SS "mlpack::ann::HAS_ANY_METHOD_FORM (Model, HasModelCheck)"
+
+.SS "mlpack::ann::HAS_ANY_METHOD_FORM (InputShape, HasInputShapeCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Gradient, HasGradientCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Deterministic, HasDeterministicCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Parameters, HasParametersCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (\fBAdd\fP, HasAddCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Location, HasLocationCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Reset, HasResetCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (ResetCell, HasResetCellCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Reward, HasRewardCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (InputWidth, HasInputWidth)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (InputHeight, HasInputHeight)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Rho, HasRho)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Loss, HasLoss)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Run, HasRunCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Bias, HasBiasCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (MaxIterations, HasMaxIterations)"
+
+.SS "double mlpack::ann::InceptionScore (ModelType Model, arma::mat images, size_t splits = \fC1\fP)"
+
+.PP
+Function that computes Inception Score for a set of images produced by a \fBGAN\fP\&. For more information, see the following\&.
+.PP
+.PP
+.nf
+@article{Goodfellow2016,
+  author  = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba, Vicki Cheung,
+             Alec Radford, Xi Chen},
+  title   = {Improved Techniques for Training GANs},
+  year    = {2016},
+  url     = {https://arxiv\&.org/abs/1606\&.03498},
+}
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIModel\fP Model for evaluating the quality of images\&. 
+.br
+\fIimages\fP Images generated by \fBGAN\fP\&. 
+.br
+\fIsplits\fP Number of splits to perform (default: 1)\&. 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

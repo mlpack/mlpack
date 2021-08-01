@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1IncrementPolicy" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::IncrementPolicy</compoundname>
+    <includes refid="increment__policy_8hpp" local="no">increment_policy.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1IncrementPolicy_1af69dde245ce7bff33371d70e40886cdb" prot="public" static="no">
+        <type>size_t</type>
+        <definition>using MappedType =  size_t</definition>
+        <argsstring></argsstring>
+        <name>MappedType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1IncrementPolicy_1a6ef7d83a1da0e9f1d02b61f62e852079" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool NeedsFirstPass</definition>
+        <argsstring></argsstring>
+        <name>NeedsFirstPass</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>We do need a first pass over the data to set the dimension types right. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1IncrementPolicy_1afc393f5bf34f1a794dac579c0d372651" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool forceAllMappings</definition>
+        <argsstring></argsstring>
+        <name>forceAllMappings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1IncrementPolicy_1a2dd7eacb1bec6fc7c6e71e7e9bc159e0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>IncrementPolicy</definition>
+        <argsstring>(const bool forceAllMappings=false)</argsstring>
+        <name>IncrementPolicy</name>
+        <param>
+          <type>const bool</type>
+          <declname>forceAllMappings</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="36" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1IncrementPolicy_1abee97eb223d917dcd8f4da68e59cee46" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename InputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void MapFirstPass</definition>
+        <argsstring>(const InputType &amp;input, const size_t dim, std::vector&lt; Datatype &gt; &amp;types)</argsstring>
+        <name>MapFirstPass</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dim</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref> &gt; &amp;</type>
+          <declname>types</declname>
+        </param>
+        <briefdescription>
+<para>Determine if the dimension is numeric or categorical. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="49" bodyend="74"/>
+        <references refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" compoundref="datatype_8hpp" startline="27">mlpack::data::categorical</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1IncrementPolicy_1ab39961e90a7e1a33d0f1ab3d4004b807" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MapType</type>
+          </param>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename InputType</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T MapString</definition>
+        <argsstring>(const InputType &amp;input, const size_t dimension, MapType &amp;maps, std::vector&lt; Datatype &gt; &amp;types)</argsstring>
+        <name>MapString</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <param>
+          <type>MapType &amp;</type>
+          <declname>maps</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref> &gt; &amp;</type>
+          <declname>types</declname>
+        </param>
+        <briefdescription>
+<para>Given the input and the dimension to which the it belongs, and the maps and types given by the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> class, returns its numeric mapping. </para>        </briefdescription>
+        <detaileddescription>
+<para>If no mapping yet exists, the input is added to the list of mappings for the given dimension. This function is used as a helper function for <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> class.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MapType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of unordered_map that contains mapped value pairs </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input to find/create mapping for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the dimension of the input. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unordered map given by the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing the type information about each dimensions. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="90" bodyend="143"/>
+        <references refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a2992a7ab833605792145cd40762644c7" compoundref="datatype_8hpp" startline="27">mlpack::data::categorical</references>
+        <references refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6a1b5484703e716389553255e6f11f12ec" compoundref="datatype_8hpp" startline="26">mlpack::data::numeric</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1data_1_1IncrementPolicy" kindref="compound">IncrementPolicy</ref> is used as a helper class for <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para>It tells how the strings should be mapped. Purpose of this policy is to map all dimension if one of the variables in a dimension turns out to be a categorical variable. <ref refid="classmlpack_1_1data_1_1IncrementPolicy" kindref="compound">IncrementPolicy</ref> maps strings to incrementing unsigned integers (size_t). The first input to be mapped will be mapped to 0, the next to 1 and so on.</para><para>If the &apos;forceAllMappings&apos; parameter is set to true, this will always map. Otherwise, inputs will only be mapped if they cannot be cast to the output type via a stringstream extraction. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/map_policies/increment_policy.hpp" bodystart="33" bodyend="148"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1afc393f5bf34f1a794dac579c0d372651" prot="private" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>forceAllMappings</name></member>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1a2dd7eacb1bec6fc7c6e71e7e9bc159e0" prot="public" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>IncrementPolicy</name></member>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1abee97eb223d917dcd8f4da68e59cee46" prot="public" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>MapFirstPass</name></member>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1af69dde245ce7bff33371d70e40886cdb" prot="public" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>MappedType</name></member>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1ab39961e90a7e1a33d0f1ab3d4004b807" prot="public" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>MapString</name></member>
+      <member refid="classmlpack_1_1data_1_1IncrementPolicy_1a6ef7d83a1da0e9f1d02b61f62e852079" prot="public" virt="non-virtual"><scope>mlpack::data::IncrementPolicy</scope><name>NeedsFirstPass</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

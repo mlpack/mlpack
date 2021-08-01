@@ -1,0 +1,132 @@
+\section{mlpack\+:\+:cv Namespace Reference}
+\label{namespacemlpack_1_1cv}\index{mlpack\+::cv@{mlpack\+::cv}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Accuracy}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Accuracy}{p.}{classmlpack_1_1cv_1_1Accuracy} is a metric of performance for classification algorithms that is equal to a proportion of correctly labeled test items among all ones for given test items. \end{DoxyCompactList}\item 
+class \textbf{ C\+V\+Base}
+\begin{DoxyCompactList}\small\item\em An auxiliary class for cross-\/validation. \end{DoxyCompactList}\item 
+class \textbf{ F1}
+\begin{DoxyCompactList}\small\item\em \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1} is a metric of performance for classification algorithms that for binary classification is equal to $ 2 * precision * recall / (precision + recall) $. \end{DoxyCompactList}\item 
+class \textbf{ K\+Fold\+CV}
+\begin{DoxyCompactList}\small\item\em The class \doxyref{K\+Fold\+CV}{p.}{classmlpack_1_1cv_1_1KFoldCV} implements k-\/fold cross-\/validation for regression and classification algorithms. \end{DoxyCompactList}\item 
+class \textbf{ Meta\+Info\+Extractor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Meta\+Info\+Extractor}{p.}{classmlpack_1_1cv_1_1MetaInfoExtractor} is a tool for extracting meta information about a given machine learning algorithm. \end{DoxyCompactList}\item 
+class \textbf{ M\+SE}
+\begin{DoxyCompactList}\small\item\em The Mean\+Squared\+Error is a metric of performance for regression algorithms that is equal to the mean squared error between predicted values and ground truth (correct) values for given test items. \end{DoxyCompactList}\item 
+struct \textbf{ Not\+Found\+Method\+Form}
+\item 
+class \textbf{ Precision}
+\begin{DoxyCompactList}\small\item\em \doxyref{Precision}{p.}{classmlpack_1_1cv_1_1Precision} is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively. \end{DoxyCompactList}\item 
+class \textbf{ R2\+Score}
+\begin{DoxyCompactList}\small\item\em The R2 Score is a metric of performance for regression algorithms that represents the proportion of variance (here y) that has been explained by the independent variables in the model. \end{DoxyCompactList}\item 
+class \textbf{ Recall}
+\begin{DoxyCompactList}\small\item\em \doxyref{Recall}{p.}{classmlpack_1_1cv_1_1Recall} is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fn) $, where $ tp $ and $ fn $ are the numbers of true positives and false negatives respectively. \end{DoxyCompactList}\item 
+struct \textbf{ Select\+Method\+Form}
+\begin{DoxyCompactList}\small\item\em A type function that selects a right method form. \end{DoxyCompactList}\item 
+struct \textbf{ Select\+Method\+Form$<$ M\+L\+Algorithm $>$}
+\item 
+struct \textbf{ Select\+Method\+Form$<$ M\+L\+Algorithm, Has\+Method\+Form, H\+M\+Fs... $>$}
+\item 
+class \textbf{ Silhouette\+Score}
+\begin{DoxyCompactList}\small\item\em The Silhouette Score is a metric of performance for clustering that represents the quality of clusters made as a result. \end{DoxyCompactList}\item 
+class \textbf{ Simple\+CV}
+\begin{DoxyCompactList}\small\item\em \doxyref{Simple\+CV}{p.}{classmlpack_1_1cv_1_1SimpleCV} splits data into two sets -\/ training and validation sets -\/ and then runs training on the training set and evaluates performance on the validation set. \end{DoxyCompactList}\item 
+struct \textbf{ Train\+Form}
+\begin{DoxyCompactList}\small\item\em A wrapper struct for holding a Train form. \end{DoxyCompactList}\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, void, false, false $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, void, false, true $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, void, true, false $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, void, true, true $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, W\+T, false, false $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, W\+T, false, true $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, W\+T, true, false $>$}
+\item 
+struct \textbf{ Train\+Form$<$ M\+T, P\+T, W\+T, true, true $>$}
+\item 
+struct \textbf{ Train\+Form\+Base4}
+\item 
+struct \textbf{ Train\+Form\+Base5}
+\item 
+struct \textbf{ Train\+Form\+Base6}
+\item 
+struct \textbf{ Train\+Form\+Base7}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Average\+Strategy} \{ \newline
+\textbf{ Binary}, 
+\newline
+\textbf{ Micro}, 
+\newline
+\textbf{ Macro}
+ \}\begin{DoxyCompactList}\small\item\em This enum declares possible strategies for averaging that can be used in some metrics like precision, recall, and F1. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Data\+Type , typename Metric $>$ }\\Data\+Type \textbf{ Pairwise\+Distances} (const Data\+Type \&data, const Metric \&metric)
+\begin{DoxyCompactList}\small\item\em Pairwise distance of the given data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\label{namespacemlpack_1_1cv_aff3913a61cbadcd7389264288e51ab06}} 
+\index{mlpack\+::cv@{mlpack\+::cv}!Average\+Strategy@{Average\+Strategy}}
+\index{Average\+Strategy@{Average\+Strategy}!mlpack\+::cv@{mlpack\+::cv}}
+\subsubsection{Average\+Strategy}
+{\footnotesize\ttfamily enum \textbf{ Average\+Strategy}}
+
+
+
+This enum declares possible strategies for averaging that can be used in some metrics like precision, recall, and \doxyref{F1}{p.}{classmlpack_1_1cv_1_1F1}. 
+
+The \char`\"{}\+Binary\char`\"{} strategy means binary classification is going to be used, and there is no need to average. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Binary@{Binary}!mlpack\+::cv@{mlpack\+::cv}}\index{mlpack\+::cv@{mlpack\+::cv}!Binary@{Binary}}}\mbox{\label{namespacemlpack_1_1cv_aff3913a61cbadcd7389264288e51ab06ae27b0860dfa490c46dd387b06d21a04b}} 
+Binary&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Micro@{Micro}!mlpack\+::cv@{mlpack\+::cv}}\index{mlpack\+::cv@{mlpack\+::cv}!Micro@{Micro}}}\mbox{\label{namespacemlpack_1_1cv_aff3913a61cbadcd7389264288e51ab06ae919d9c95f0fd4a08f3c94e13a3f8a9f}} 
+Micro&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Macro@{Macro}!mlpack\+::cv@{mlpack\+::cv}}\index{mlpack\+::cv@{mlpack\+::cv}!Macro@{Macro}}}\mbox{\label{namespacemlpack_1_1cv_aff3913a61cbadcd7389264288e51ab06a74c916f3663a0877600e8ebec7f7fe5e}} 
+Macro&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 25 of file average\+\_\+strategy.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1cv_a5197899946f07e19aabd0f2526a4ec62}} 
+\index{mlpack\+::cv@{mlpack\+::cv}!Pairwise\+Distances@{Pairwise\+Distances}}
+\index{Pairwise\+Distances@{Pairwise\+Distances}!mlpack\+::cv@{mlpack\+::cv}}
+\subsubsection{Pairwise\+Distances()}
+{\footnotesize\ttfamily Data\+Type mlpack\+::cv\+::\+Pairwise\+Distances (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{data,  }\item[{const Metric \&}]{metric }\end{DoxyParamCaption})}
+
+
+
+Pairwise distance of the given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Column-\/major matrix. \\
+\hline
+{\em metric} & Distance metric to be used. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 29 of file facilities.\+hpp.
+

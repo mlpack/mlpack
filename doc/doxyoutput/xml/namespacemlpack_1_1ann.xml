@@ -1,0 +1,956 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1ann" kind="namespace" language="C++">
+    <compoundname>mlpack::ann</compoundname>
+    <innerclass refid="classmlpack_1_1ann_1_1AdaptiveMaxPooling" prot="public">mlpack::ann::AdaptiveMaxPooling</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1AdaptiveMeanPooling" prot="public">mlpack::ann::AdaptiveMeanPooling</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Add" prot="public">mlpack::ann::Add</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1AddMerge" prot="public">mlpack::ann::AddMerge</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1AddVisitor" prot="public">mlpack::ann::AddVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1AlphaDropout" prot="public">mlpack::ann::AlphaDropout</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1AtrousConvolution" prot="public">mlpack::ann::AtrousConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BackwardVisitor" prot="public">mlpack::ann::BackwardVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BaseLayer" prot="public">mlpack::ann::BaseLayer</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BatchNorm" prot="public">mlpack::ann::BatchNorm</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BCELoss" prot="public">mlpack::ann::BCELoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BernoulliDistribution" prot="public">mlpack::ann::BernoulliDistribution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BiasSetVisitor" prot="public">mlpack::ann::BiasSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BilinearInterpolation" prot="public">mlpack::ann::BilinearInterpolation</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BinaryRBM" prot="public">mlpack::ann::BinaryRBM</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1BRNN" prot="public">mlpack::ann::BRNN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1CELU" prot="public">mlpack::ann::CELU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Concat" prot="public">mlpack::ann::Concat</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Concatenate" prot="public">mlpack::ann::Concatenate</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ConcatPerformance" prot="public">mlpack::ann::ConcatPerformance</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Constant" prot="public">mlpack::ann::Constant</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ConstInitialization" prot="public">mlpack::ann::ConstInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Convolution" prot="public">mlpack::ann::Convolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1CopyVisitor" prot="public">mlpack::ann::CopyVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1CosineEmbeddingLoss" prot="public">mlpack::ann::CosineEmbeddingLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1CReLU" prot="public">mlpack::ann::CReLU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DCGAN" prot="public">mlpack::ann::DCGAN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DeleteVisitor" prot="public">mlpack::ann::DeleteVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DeltaVisitor" prot="public">mlpack::ann::DeltaVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DeterministicSetVisitor" prot="public">mlpack::ann::DeterministicSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DiceLoss" prot="public">mlpack::ann::DiceLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1DropConnect" prot="public">mlpack::ann::DropConnect</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Dropout" prot="public">mlpack::ann::Dropout</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1EarthMoverDistance" prot="public">mlpack::ann::EarthMoverDistance</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ElishFunction" prot="public">mlpack::ann::ElishFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ElliotFunction" prot="public">mlpack::ann::ElliotFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ELU" prot="public">mlpack::ann::ELU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1EmptyLoss" prot="public">mlpack::ann::EmptyLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FastLSTM" prot="public">mlpack::ann::FastLSTM</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FFN" prot="public">mlpack::ann::FFN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FFTConvolution" prot="public">mlpack::ann::FFTConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FlattenTSwish" prot="public">mlpack::ann::FlattenTSwish</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FlexibleReLU" prot="public">mlpack::ann::FlexibleReLU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ForwardVisitor" prot="public">mlpack::ann::ForwardVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1FullConvolution" prot="public">mlpack::ann::FullConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GAN" prot="public">mlpack::ann::GAN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GaussianFunction" prot="public">mlpack::ann::GaussianFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GaussianInitialization" prot="public">mlpack::ann::GaussianInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GELUFunction" prot="public">mlpack::ann::GELUFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Glimpse" prot="public">mlpack::ann::Glimpse</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GlorotInitializationType" prot="public">mlpack::ann::GlorotInitializationType</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GradientSetVisitor" prot="public">mlpack::ann::GradientSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GradientUpdateVisitor" prot="public">mlpack::ann::GradientUpdateVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GradientVisitor" prot="public">mlpack::ann::GradientVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GradientZeroVisitor" prot="public">mlpack::ann::GradientZeroVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1GRU" prot="public">mlpack::ann::GRU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HardShrink" prot="public">mlpack::ann::HardShrink</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HardSigmoidFunction" prot="public">mlpack::ann::HardSigmoidFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HardSwishFunction" prot="public">mlpack::ann::HardSwishFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HardTanH" prot="public">mlpack::ann::HardTanH</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HeInitialization" prot="public">mlpack::ann::HeInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Highway" prot="public">mlpack::ann::Highway</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HingeEmbeddingLoss" prot="public">mlpack::ann::HingeEmbeddingLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HingeLoss" prot="public">mlpack::ann::HingeLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1HuberLoss" prot="public">mlpack::ann::HuberLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1IdentityFunction" prot="public">mlpack::ann::IdentityFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1InitTraits" prot="public">mlpack::ann::InitTraits</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1InitTraits_3_01KathirvalavakumarSubavathiInitialization_01_4" prot="public">mlpack::ann::InitTraits&lt; KathirvalavakumarSubavathiInitialization &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1InitTraits_3_01NguyenWidrowInitialization_01_4" prot="public">mlpack::ann::InitTraits&lt; NguyenWidrowInitialization &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1InShapeVisitor" prot="public">mlpack::ann::InShapeVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1InvQuadFunction" prot="public">mlpack::ann::InvQuadFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ISRLU" prot="public">mlpack::ann::ISRLU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Join" prot="public">mlpack::ann::Join</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1KathirvalavakumarSubavathiInitialization" prot="public">mlpack::ann::KathirvalavakumarSubavathiInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1KLDivergence" prot="public">mlpack::ann::KLDivergence</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1L1Loss" prot="public">mlpack::ann::L1Loss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LayerNorm" prot="public">mlpack::ann::LayerNorm</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LayerTraits" prot="public">mlpack::ann::LayerTraits</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LeakyReLU" prot="public">mlpack::ann::LeakyReLU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LecunNormalInitialization" prot="public">mlpack::ann::LecunNormalInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Linear" prot="public">mlpack::ann::Linear</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Linear3D" prot="public">mlpack::ann::Linear3D</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LinearNoBias" prot="public">mlpack::ann::LinearNoBias</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LiSHTFunction" prot="public">mlpack::ann::LiSHTFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LoadOutputParameterVisitor" prot="public">mlpack::ann::LoadOutputParameterVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LogCoshLoss" prot="public">mlpack::ann::LogCoshLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LogisticFunction" prot="public">mlpack::ann::LogisticFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LogSoftMax" prot="public">mlpack::ann::LogSoftMax</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Lookup" prot="public">mlpack::ann::Lookup</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LossVisitor" prot="public">mlpack::ann::LossVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LpPooling" prot="public">mlpack::ann::LpPooling</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LRegularizer" prot="public">mlpack::ann::LRegularizer</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1LSTM" prot="public">mlpack::ann::LSTM</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MarginRankingLoss" prot="public">mlpack::ann::MarginRankingLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MaxPooling" prot="public">mlpack::ann::MaxPooling</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MaxPoolingRule" prot="public">mlpack::ann::MaxPoolingRule</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanAbsolutePercentageError" prot="public">mlpack::ann::MeanAbsolutePercentageError</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanBiasError" prot="public">mlpack::ann::MeanBiasError</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanPooling" prot="public">mlpack::ann::MeanPooling</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanPoolingRule" prot="public">mlpack::ann::MeanPoolingRule</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanSquaredError" prot="public">mlpack::ann::MeanSquaredError</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError" prot="public">mlpack::ann::MeanSquaredLogarithmicError</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MiniBatchDiscrimination" prot="public">mlpack::ann::MiniBatchDiscrimination</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MishFunction" prot="public">mlpack::ann::MishFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MultiheadAttention" prot="public">mlpack::ann::MultiheadAttention</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MultiplyConstant" prot="public">mlpack::ann::MultiplyConstant</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MultiplyMerge" prot="public">mlpack::ann::MultiplyMerge</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1MultiQuadFunction" prot="public">mlpack::ann::MultiQuadFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NaiveConvolution" prot="public">mlpack::ann::NaiveConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NegativeLogLikelihood" prot="public">mlpack::ann::NegativeLogLikelihood</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NetworkInitialization" prot="public">mlpack::ann::NetworkInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization" prot="public">mlpack::ann::NguyenWidrowInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NoisyLinear" prot="public">mlpack::ann::NoisyLinear</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NoRegularizer" prot="public">mlpack::ann::NoRegularizer</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1NormalDistribution" prot="public">mlpack::ann::NormalDistribution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OivsInitialization" prot="public">mlpack::ann::OivsInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OrthogonalInitialization" prot="public">mlpack::ann::OrthogonalInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OrthogonalRegularizer" prot="public">mlpack::ann::OrthogonalRegularizer</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OutputHeightVisitor" prot="public">mlpack::ann::OutputHeightVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OutputParameterVisitor" prot="public">mlpack::ann::OutputParameterVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1OutputWidthVisitor" prot="public">mlpack::ann::OutputWidthVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Padding" prot="public">mlpack::ann::Padding</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ParametersSetVisitor" prot="public">mlpack::ann::ParametersSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ParametersVisitor" prot="public">mlpack::ann::ParametersVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1PixelShuffle" prot="public">mlpack::ann::PixelShuffle</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Poisson1Function" prot="public">mlpack::ann::Poisson1Function</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1PoissonNLLLoss" prot="public">mlpack::ann::PoissonNLLLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1PositionalEncoding" prot="public">mlpack::ann::PositionalEncoding</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1PReLU" prot="public">mlpack::ann::PReLU</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1QuadraticFunction" prot="public">mlpack::ann::QuadraticFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RandomInitialization" prot="public">mlpack::ann::RandomInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RBF" prot="public">mlpack::ann::RBF</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RBM" prot="public">mlpack::ann::RBM</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ReconstructionLoss" prot="public">mlpack::ann::ReconstructionLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RectifierFunction" prot="public">mlpack::ann::RectifierFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Recurrent" prot="public">mlpack::ann::Recurrent</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RecurrentAttention" prot="public">mlpack::ann::RecurrentAttention</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ReinforceNormal" prot="public">mlpack::ann::ReinforceNormal</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Reparametrization" prot="public">mlpack::ann::Reparametrization</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ResetCellVisitor" prot="public">mlpack::ann::ResetCellVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ResetVisitor" prot="public">mlpack::ann::ResetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RewardSetVisitor" prot="public">mlpack::ann::RewardSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RNN" prot="public">mlpack::ann::RNN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1RunSetVisitor" prot="public">mlpack::ann::RunSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SaveOutputParameterVisitor" prot="public">mlpack::ann::SaveOutputParameterVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Select" prot="public">mlpack::ann::Select</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Sequential" prot="public">mlpack::ann::Sequential</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SetInputHeightVisitor" prot="public">mlpack::ann::SetInputHeightVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SetInputWidthVisitor" prot="public">mlpack::ann::SetInputWidthVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SigmoidCrossEntropyError" prot="public">mlpack::ann::SigmoidCrossEntropyError</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SILUFunction" prot="public">mlpack::ann::SILUFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SoftMarginLoss" prot="public">mlpack::ann::SoftMarginLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Softmax" prot="public">mlpack::ann::Softmax</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Softmin" prot="public">mlpack::ann::Softmin</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SoftplusFunction" prot="public">mlpack::ann::SoftplusFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SoftShrink" prot="public">mlpack::ann::SoftShrink</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SoftsignFunction" prot="public">mlpack::ann::SoftsignFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SpatialDropout" prot="public">mlpack::ann::SpatialDropout</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SpikeSlabRBM" prot="public">mlpack::ann::SpikeSlabRBM</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SplineFunction" prot="public">mlpack::ann::SplineFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1StandardGAN" prot="public">mlpack::ann::StandardGAN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1Subview" prot="public">mlpack::ann::Subview</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SVDConvolution" prot="public">mlpack::ann::SVDConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1SwishFunction" prot="public">mlpack::ann::SwishFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1TanhExpFunction" prot="public">mlpack::ann::TanhExpFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1TanhFunction" prot="public">mlpack::ann::TanhFunction</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1TransposedConvolution" prot="public">mlpack::ann::TransposedConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1TripletMarginLoss" prot="public">mlpack::ann::TripletMarginLoss</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1ValidConvolution" prot="public">mlpack::ann::ValidConvolution</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1VirtualBatchNorm" prot="public">mlpack::ann::VirtualBatchNorm</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1VRClassReward" prot="public">mlpack::ann::VRClassReward</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1WeightNorm" prot="public">mlpack::ann::WeightNorm</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1WeightSetVisitor" prot="public">mlpack::ann::WeightSetVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1WeightSizeVisitor" prot="public">mlpack::ann::WeightSizeVisitor</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1WGAN" prot="public">mlpack::ann::WGAN</innerclass>
+    <innerclass refid="classmlpack_1_1ann_1_1WGANGP" prot="public">mlpack::ann::WGANGP</innerclass>
+    <innernamespace refid="namespacemlpack_1_1ann_1_1augmented">mlpack::ann::augmented</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ac9d51e01837cbec9de586990aa8123d2" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BCELoss" kindref="compound">BCELoss</ref>&lt; InputDataType, OutputDataType &gt;</type>
+        <definition>using CrossEntropyError =  BCELoss&lt; InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>CrossEntropyError</name>
+        <briefdescription>
+<para>Adding alias of <ref refid="classmlpack_1_1ann_1_1BCELoss" kindref="compound">BCELoss</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ab8ac0d1eb11983be1bc7419ce15e91bf" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using CustomLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>CustomLayer</name>
+        <briefdescription>
+<para>Standard Sigmoid layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1aba712c4fa3b49cf06a01ef6867b958fb" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using ElishFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>ElishFunctionLayer</name>
+        <briefdescription>
+<para>Standard ELiSH-Layer using the ELiSH activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a35264d115715479bbc952816fb070e99" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using ElliotFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>ElliotFunctionLayer</name>
+        <briefdescription>
+<para>Standard Elliot-Layer using the Elliot activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="261" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1aaf3ea313e70c222598e17bf4e23dd451" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref>&lt; MatType, MatType &gt;</type>
+        <definition>using Embedding =  Lookup&lt;MatType, MatType&gt;</definition>
+        <argsstring></argsstring>
+        <name>Embedding</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a56fb7042c8f1db823cd8ec97b7df6616" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using GaussianFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>GaussianFunctionLayer</name>
+        <briefdescription>
+<para>Standard Gaussian-Layer using the Gaussian activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a69253ae519ed598c1bf8b5e3368f6ba4" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using GELUFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>GELUFunctionLayer</name>
+        <briefdescription>
+<para>Standard GELU-Layer using the GELU activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="250" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a003150a66fa8a2cc2a3650e2384a1dfc" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1GlorotInitializationType" kindref="compound">GlorotInitializationType</ref>&lt; false &gt;</type>
+        <definition>using GlorotInitialization =  GlorotInitializationType&lt;false&gt;</definition>
+        <argsstring></argsstring>
+        <name>GlorotInitialization</name>
+        <briefdescription>
+<para>GlorotInitialization uses uniform distribution. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ae5bb0281a40f808dda254ea8d16d6acf" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using HardSigmoidLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>HardSigmoidLayer</name>
+        <briefdescription>
+<para>Standard HardSigmoid-Layer using the HardSigmoid activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="206" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a980da46588164257c981febf80bc14ce" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using HardSwishFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>HardSwishFunctionLayer</name>
+        <briefdescription>
+<para>Standard HardSwish-Layer using the HardSwish activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="294" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a41e9b25c5b33b7de07a0eac6c46dc085" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using IdentityLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>IdentityLayer</name>
+        <briefdescription>
+<para>Standard Identity-Layer using the identity activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a137169a12d6f400a718d7383f3365112" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1LRegularizer" kindref="compound">LRegularizer</ref>&lt; 1 &gt;</type>
+        <definition>typedef LRegularizer&lt;1&gt; L1Regularizer</definition>
+        <argsstring></argsstring>
+        <name>L1Regularizer</name>
+        <briefdescription>
+<para>The L1 Regularizer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/lregularizer.hpp" line="62" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/lregularizer.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ac3b4459576bd0564e145e049ee1549ce" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1LRegularizer" kindref="compound">LRegularizer</ref>&lt; 2 &gt;</type>
+        <definition>typedef LRegularizer&lt;2&gt; L2Regularizer</definition>
+        <argsstring></argsstring>
+        <name>L2Regularizer</name>
+        <briefdescription>
+<para>The L2 Regularizer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/lregularizer.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/lregularizer.hpp" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" prot="public" static="no">
+        <type>boost::variant&lt; <ref refid="classmlpack_1_1ann_1_1AdaptiveMaxPooling" kindref="compound">AdaptiveMaxPooling</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1AdaptiveMeanPooling" kindref="compound">AdaptiveMeanPooling</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Add" kindref="compound">Add</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1AddMerge" kindref="compound">AddMerge</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1AlphaDropout" kindref="compound">AlphaDropout</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1AtrousConvolution" kindref="compound">AtrousConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1LogisticFunction" kindref="compound">LogisticFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1IdentityFunction" kindref="compound">IdentityFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1TanhFunction" kindref="compound">TanhFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1SoftplusFunction" kindref="compound">SoftplusFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1RectifierFunction" kindref="compound">RectifierFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BatchNorm" kindref="compound">BatchNorm</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1BilinearInterpolation" kindref="compound">BilinearInterpolation</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1CELU" kindref="compound">CELU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Concat" kindref="compound">Concat</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1ConcatPerformance" kindref="compound">ConcatPerformance</ref>&lt; <ref refid="classmlpack_1_1ann_1_1NegativeLogLikelihood" kindref="compound">NegativeLogLikelihood</ref>&lt; arma::mat, arma::mat &gt;, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Constant" kindref="compound">Constant</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1CReLU" kindref="compound">CReLU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1DropConnect" kindref="compound">DropConnect</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Dropout" kindref="compound">Dropout</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1ELU" kindref="compound">ELU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1FastLSTM" kindref="compound">FastLSTM</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1FlexibleReLU" kindref="compound">FlexibleReLU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1GRU" kindref="compound">GRU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1HardTanH" kindref="compound">HardTanH</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Join" kindref="compound">Join</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1LayerNorm" kindref="compound">LayerNorm</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1LeakyReLU" kindref="compound">LeakyReLU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Linear" kindref="compound">Linear</ref>&lt; arma::mat, arma::mat, <ref refid="classmlpack_1_1ann_1_1NoRegularizer" kindref="compound">NoRegularizer</ref> &gt; *, <ref refid="classmlpack_1_1ann_1_1LinearNoBias" kindref="compound">LinearNoBias</ref>&lt; arma::mat, arma::mat, <ref refid="classmlpack_1_1ann_1_1NoRegularizer" kindref="compound">NoRegularizer</ref> &gt; *, <ref refid="classmlpack_1_1ann_1_1LogSoftMax" kindref="compound">LogSoftMax</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Lookup" kindref="compound">Lookup</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1LSTM" kindref="compound">LSTM</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MaxPooling" kindref="compound">MaxPooling</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MeanPooling" kindref="compound">MeanPooling</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MiniBatchDiscrimination" kindref="compound">MiniBatchDiscrimination</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MultiplyConstant" kindref="compound">MultiplyConstant</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MultiplyMerge" kindref="compound">MultiplyMerge</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1NegativeLogLikelihood" kindref="compound">NegativeLogLikelihood</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1NoisyLinear" kindref="compound">NoisyLinear</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">Padding</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1PReLU" kindref="compound">PReLU</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Softmax" kindref="compound">Softmax</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1SpatialDropout" kindref="compound">SpatialDropout</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1TransposedConvolution" kindref="compound">TransposedConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, <ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt; <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref>, CustomLayers *... &gt;</type>
+        <definition>using LayerTypes =  boost::variant&lt; AdaptiveMaxPooling&lt;arma::mat, arma::mat&gt;*, AdaptiveMeanPooling&lt;arma::mat, arma::mat&gt;*, Add&lt;arma::mat, arma::mat&gt;*, AddMerge&lt;arma::mat, arma::mat&gt;*, AlphaDropout&lt;arma::mat, arma::mat&gt;*, AtrousConvolution&lt;NaiveConvolution&lt;ValidConvolution&gt;, NaiveConvolution&lt;FullConvolution&gt;, NaiveConvolution&lt;ValidConvolution&gt;, arma::mat, arma::mat&gt;*, BaseLayer&lt;LogisticFunction, arma::mat, arma::mat&gt;*, BaseLayer&lt;IdentityFunction, arma::mat, arma::mat&gt;*, BaseLayer&lt;TanhFunction, arma::mat, arma::mat&gt;*, BaseLayer&lt;SoftplusFunction, arma::mat, arma::mat&gt;*, BaseLayer&lt;RectifierFunction, arma::mat, arma::mat&gt;*, BatchNorm&lt;arma::mat, arma::mat&gt;*, BilinearInterpolation&lt;arma::mat, arma::mat&gt;*, CELU&lt;arma::mat, arma::mat&gt;*, Concat&lt;arma::mat, arma::mat&gt;*, Concatenate&lt;arma::mat, arma::mat&gt;*, ConcatPerformance&lt;NegativeLogLikelihood&lt;arma::mat, arma::mat&gt;, arma::mat, arma::mat&gt;*, Constant&lt;arma::mat, arma::mat&gt;*, Convolution&lt;NaiveConvolution&lt;ValidConvolution&gt;, NaiveConvolution&lt;FullConvolution&gt;, NaiveConvolution&lt;ValidConvolution&gt;, arma::mat, arma::mat&gt;*, CReLU&lt;arma::mat, arma::mat&gt;*, DropConnect&lt;arma::mat, arma::mat&gt;*, Dropout&lt;arma::mat, arma::mat&gt;*, ELU&lt;arma::mat, arma::mat&gt;*, FastLSTM&lt;arma::mat, arma::mat&gt;*, FlexibleReLU&lt;arma::mat, arma::mat&gt;*, GRU&lt;arma::mat, arma::mat&gt;*, HardTanH&lt;arma::mat, arma::mat&gt;*, Join&lt;arma::mat, arma::mat&gt;*, LayerNorm&lt;arma::mat, arma::mat&gt;*, LeakyReLU&lt;arma::mat, arma::mat&gt;*, Linear&lt;arma::mat, arma::mat, NoRegularizer&gt;*, LinearNoBias&lt;arma::mat, arma::mat, NoRegularizer&gt;*, LogSoftMax&lt;arma::mat, arma::mat&gt;*, Lookup&lt;arma::mat, arma::mat&gt;*, LSTM&lt;arma::mat, arma::mat&gt;*, MaxPooling&lt;arma::mat, arma::mat&gt;*, MeanPooling&lt;arma::mat, arma::mat&gt;*, MiniBatchDiscrimination&lt;arma::mat, arma::mat&gt;*, MultiplyConstant&lt;arma::mat, arma::mat&gt;*, MultiplyMerge&lt;arma::mat, arma::mat&gt;*, NegativeLogLikelihood&lt;arma::mat, arma::mat&gt;*, NoisyLinear&lt;arma::mat, arma::mat&gt;*, Padding&lt;arma::mat, arma::mat&gt;*, PReLU&lt;arma::mat, arma::mat&gt;*, Softmax&lt;arma::mat, arma::mat&gt;*, SpatialDropout&lt;arma::mat, arma::mat&gt;*, TransposedConvolution&lt;NaiveConvolution&lt;ValidConvolution&gt;, NaiveConvolution&lt;ValidConvolution&gt;, NaiveConvolution&lt;ValidConvolution&gt;, arma::mat, arma::mat&gt;*, WeightNorm&lt;arma::mat, arma::mat&gt;*, MoreTypes, CustomLayers*... &gt;</definition>
+        <argsstring></argsstring>
+        <name>LayerTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="247" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1aebe38e4259931f33c44701ba75d6240d" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using LiSHTFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>LiSHTFunctionLayer</name>
+        <briefdescription>
+<para>Standard LiSHT-Layer using the LiSHT activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a52aa33cac06fc8dbf5eefcb4e1858fea" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using MishFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>MishFunctionLayer</name>
+        <briefdescription>
+<para>Standard Mish-Layer using the Mish activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="228" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" prot="public" static="no">
+        <type>boost::variant&lt; <ref refid="classmlpack_1_1ann_1_1Linear3D" kindref="compound">Linear3D</ref>&lt; arma::mat, arma::mat, <ref refid="classmlpack_1_1ann_1_1NoRegularizer" kindref="compound">NoRegularizer</ref> &gt; *, <ref refid="classmlpack_1_1ann_1_1LpPooling" kindref="compound">LpPooling</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Glimpse" kindref="compound">Glimpse</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Highway" kindref="compound">Highway</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1MultiheadAttention" kindref="compound">MultiheadAttention</ref>&lt; arma::mat, arma::mat, <ref refid="classmlpack_1_1ann_1_1NoRegularizer" kindref="compound">NoRegularizer</ref> &gt; *, <ref refid="classmlpack_1_1ann_1_1Recurrent" kindref="compound">Recurrent</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1RecurrentAttention" kindref="compound">RecurrentAttention</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1ReinforceNormal" kindref="compound">ReinforceNormal</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Reparametrization" kindref="compound">Reparametrization</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Select" kindref="compound">Select</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref>&lt; arma::mat, arma::mat, false &gt; *, <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref>&lt; arma::mat, arma::mat, true &gt; *, <ref refid="classmlpack_1_1ann_1_1Subview" kindref="compound">Subview</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1VRClassReward" kindref="compound">VRClassReward</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1VirtualBatchNorm" kindref="compound">VirtualBatchNorm</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1RBF" kindref="compound">RBF</ref>&lt; arma::mat, arma::mat, <ref refid="classmlpack_1_1ann_1_1GaussianFunction" kindref="compound">GaussianFunction</ref> &gt; *, <ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; <ref refid="classmlpack_1_1ann_1_1GaussianFunction" kindref="compound">GaussianFunction</ref>, arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1PositionalEncoding" kindref="compound">PositionalEncoding</ref>&lt; arma::mat, arma::mat &gt; *, <ref refid="classmlpack_1_1ann_1_1ISRLU" kindref="compound">ISRLU</ref>&lt; arma::mat, arma::mat &gt; *&gt;</type>
+        <definition>using MoreTypes =  boost::variant&lt; Linear3D&lt;arma::mat, arma::mat, NoRegularizer&gt;*, LpPooling&lt;arma::mat, arma::mat&gt;*, PixelShuffle&lt;arma::mat, arma::mat&gt;*, Glimpse&lt;arma::mat, arma::mat&gt;*, Highway&lt;arma::mat, arma::mat&gt;*, MultiheadAttention&lt;arma::mat, arma::mat, NoRegularizer&gt;*, Recurrent&lt;arma::mat, arma::mat&gt;*, RecurrentAttention&lt;arma::mat, arma::mat&gt;*, ReinforceNormal&lt;arma::mat, arma::mat&gt;*, Reparametrization&lt;arma::mat, arma::mat&gt;*, Select&lt;arma::mat, arma::mat&gt;*, Sequential&lt;arma::mat, arma::mat, false&gt;*, Sequential&lt;arma::mat, arma::mat, true&gt;*, Subview&lt;arma::mat, arma::mat&gt;*, VRClassReward&lt;arma::mat, arma::mat&gt;*, VirtualBatchNorm&lt;arma::mat, arma::mat&gt;*, RBF&lt;arma::mat, arma::mat, GaussianFunction&gt;*, BaseLayer&lt;GaussianFunction, arma::mat, arma::mat&gt;*, PositionalEncoding&lt;arma::mat, arma::mat&gt;*, ISRLU&lt;arma::mat, arma::mat&gt;* &gt;</definition>
+        <argsstring></argsstring>
+        <name>MoreTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="223" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a06b6e29ab52ee62d0bccbf108d64d1a2" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using ReLULayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>ReLULayer</name>
+        <briefdescription>
+<para>Standard rectified linear unit non-linearity layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ac4f089366ec4066e82d7c4ecae664a46" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref>&lt; InputDataType, OutputDataType, true, CustomLayers... &gt;</type>
+        <definition>using Residual =  Sequential&lt; InputDataType, OutputDataType, true, CustomLayers...&gt;</definition>
+        <argsstring></argsstring>
+        <name>Residual</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ac08f9682be904369ec09e68b43b09fad" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1ELU" kindref="compound">ELU</ref>&lt; arma::mat, arma::mat &gt;</type>
+        <definition>using SELU =  ELU&lt;arma::mat, arma::mat&gt;</definition>
+        <argsstring></argsstring>
+        <name>SELU</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/elu.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/elu.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1ad4f35bf0f4f5e2750668e17c2d07a27b" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using SigmoidLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>SigmoidLayer</name>
+        <briefdescription>
+<para>Standard Sigmoid-Layer using the logistic activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1aefb7029510e09a06ddaef3ca52f77ba6" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using SILUFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType &gt;</definition>
+        <argsstring></argsstring>
+        <name>SILUFunctionLayer</name>
+        <briefdescription>
+<para>Standard SILU-Layer using the SILU activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="316" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a3b84f714a815d838e34c11a59480cd1c" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using SoftPlusLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>SoftPlusLayer</name>
+        <briefdescription>
+<para>Standard Softplus-Layer using the Softplus activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a8ea44af9d438cf5fc4098a0edc9e74a4" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using SwishFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>SwishFunctionLayer</name>
+        <briefdescription>
+<para>Standard Swish-Layer using the Swish activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="217" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a48b0b3ad6afd2fd3258be418019d9fcb" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using TanhExpFunctionLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>TanhExpFunctionLayer</name>
+        <briefdescription>
+<para>Standard TanhExp-Layer using the TanhExp activation function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="305" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1acc8e7f6b94728a4a6eb310677b5bc532" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1BaseLayer" kindref="compound">BaseLayer</ref>&lt; ActivationFunction, InputDataType, OutputDataType &gt;</type>
+        <definition>using TanHLayer =  BaseLayer&lt; ActivationFunction, InputDataType, OutputDataType&gt;</definition>
+        <argsstring></argsstring>
+        <name>TanHLayer</name>
+        <briefdescription>
+<para>Standard hyperbolic tangent layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1ann_1a4f99a527ad82262756bb7e3785e8201a" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1ann_1_1GlorotInitializationType" kindref="compound">GlorotInitializationType</ref>&lt; true &gt;</type>
+        <definition>using XavierInitialization =  GlorotInitializationType&lt;true&gt;</definition>
+        <argsstring></argsstring>
+        <name>XavierInitialization</name>
+        <briefdescription>
+<para>XavierInitilization is the popular name for this method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/glorot_init.hpp" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a0812ae5ed2e1ef94937116918ba881a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::ann::CheckInputShape</definition>
+        <argsstring>(const T &amp;network, const size_t inputShape, const std::string &amp;functionName)</argsstring>
+        <name>CheckInputShape</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>network</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputShape</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/util/check_input_shape.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/util/check_input_shape.hpp" bodystart="25" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a5aeaf3e16247ebd569074c32cab63c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_ANY_METHOD_FORM</definition>
+        <argsstring>(Model, HasModelCheck)</argsstring>
+        <name>HAS_ANY_METHOD_FORM</name>
+        <param>
+          <type>Model</type>
+        </param>
+        <param>
+          <type>HasModelCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="77" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1aa333dabed73cee663a9adb47c167570e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_ANY_METHOD_FORM</definition>
+        <argsstring>(InputShape, HasInputShapeCheck)</argsstring>
+        <name>HAS_ANY_METHOD_FORM</name>
+        <param>
+          <type>InputShape</type>
+        </param>
+        <param>
+          <type>HasInputShapeCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="125" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Gradient, HasGradientCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Gradient</type>
+        </param>
+        <param>
+          <type>HasGradientCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1ae95d86bb222cc89639472577da586357" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Deterministic, HasDeterministicCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Deterministic</type>
+        </param>
+        <param>
+          <type>HasDeterministicCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="65" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1add5ad48dbc07b098c8df806a7d100de7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Parameters, HasParametersCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Parameters</type>
+        </param>
+        <param>
+          <type>HasParametersCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="69" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a923497f92d9b28cfe7143d40e00c6bfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Add, HasAddCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Add" kindref="compound">Add</ref></type>
+        </param>
+        <param>
+          <type>HasAddCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="73" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a9ddaef84cd236998b57624b9b4d2eebe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Location, HasLocationCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Location</type>
+        </param>
+        <param>
+          <type>HasLocationCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="81" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a7af914cacab417f183e2fc0051a5345a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Reset, HasResetCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Reset</type>
+        </param>
+        <param>
+          <type>HasResetCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="85" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a5278fc5426da6ac56df6540dabd508e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(ResetCell, HasResetCellCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>ResetCell</type>
+        </param>
+        <param>
+          <type>HasResetCellCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="89" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1ad4b16a6a10d1b1d3999d177f03b1f4a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Reward, HasRewardCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Reward</type>
+        </param>
+        <param>
+          <type>HasRewardCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="93" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a4dfcd41ff0d3c6ea37dda6c9a35c832f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(InputWidth, HasInputWidth)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>InputWidth</type>
+        </param>
+        <param>
+          <type>HasInputWidth</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="97" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1addfd94f5ac2aa2225484ddddb06b8320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(InputHeight, HasInputHeight)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>InputHeight</type>
+        </param>
+        <param>
+          <type>HasInputHeight</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="101" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a1e25664538ca94074ff5636b85902c8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Rho, HasRho)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Rho</type>
+        </param>
+        <param>
+          <type>HasRho</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="105" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1af302c82cfb8bb5c0871c8a876e70adcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Loss, HasLoss)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Loss</type>
+        </param>
+        <param>
+          <type>HasLoss</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="109" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1af4586b834d3c6bd15695550314404738" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Run, HasRunCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Run</type>
+        </param>
+        <param>
+          <type>HasRunCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="113" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1aa339cfab0c5987cfec78736f19e50373" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(Bias, HasBiasCheck)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>Bias</type>
+        </param>
+        <param>
+          <type>HasBiasCheck</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="117" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1a8e7950714181dc8adf55752f45467dd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::ann::HAS_MEM_FUNC</definition>
+        <argsstring>(MaxIterations, HasMaxIterations)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>MaxIterations</type>
+        </param>
+        <param>
+          <type>HasMaxIterations</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp" line="121" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1ann_1ad1c987f983baef10e712bde7a3f36c98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ModelType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double mlpack::ann::InceptionScore</definition>
+        <argsstring>(ModelType Model, arma::mat images, size_t splits=1)</argsstring>
+        <name>InceptionScore</name>
+        <param>
+          <type>ModelType</type>
+          <declname>Model</declname>
+        </param>
+        <param>
+          <type>arma::mat</type>
+          <declname>images</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>splits</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Function that computes Inception Score for a set of images produced by a <ref refid="classmlpack_1_1ann_1_1GAN" kindref="compound">GAN</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>For more information, see the following.</para><para><programlisting><codeline><highlight class="normal">@article{Goodfellow2016,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Tim<sp/>Salimans,<sp/>Ian<sp/>Goodfellow,<sp/>Wojciech<sp/>Zaremba,<sp/>Vicki<sp/>Cheung,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Alec<sp/>Radford,<sp/>Xi<sp/>Chen},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{Improved<sp/>Techniques<sp/>for<sp/>Training<sp/>GANs},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2016},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1606.03498},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>Model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model for evaluating the quality of images. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>images</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Images generated by <ref refid="classmlpack_1_1ann_1_1GAN" kindref="compound">GAN</ref>. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>splits</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of splits to perform (default: 1). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/gan/metrics/inception_score.hpp" line="40" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Artificial Neural Network. </para>    </briefdescription>
+    <detaileddescription>
+<para>Artifical Neural Network.</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/elish_function.hpp" line="32" column="1"/>
+  </compounddef>
+</doxygen>

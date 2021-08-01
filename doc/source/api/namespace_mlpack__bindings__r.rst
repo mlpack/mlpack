@@ -1,0 +1,171 @@
+
+.. _namespace_mlpack__bindings__r:
+
+Namespace mlpack::bindings::r
+=============================
+
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+
+
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classmlpack_1_1bindings_1_1r_1_1ROption`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a6b49a2adbbcd41e406784ca9c216da92`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac5ab8731e5aa33f96e3da403567b2de4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ab17146d00613cb7f6525f4fb0ca557bf`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1abeaa1f0fac00fc9c3b875c18fb6de04c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a99f759b31c110574a572345aa0c2c8f9`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aefd22c9c4987eaebed12bd7309723b84`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a6d745f299b5efade5bf040f1f48dcfb9`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a904be5ad6a2925c9bbebd70169ad60f7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a1d8258435d8732dc06eb707df901b4e9`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a3c5c752fef2705bf481e3bc241c7f6cb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1abd529ea2647effe4f28dad6a298a16c3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aa1c1d6dfc0a8dafd300c542ae9f242cd`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ab6531e3b1e2469bc20013d695f70f91c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aebea0c84a2dd1b292dd632336b77eddb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a3f4b5c8fa83a36a646882dba8bbf4e2a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a83c0e5a39f2defa15eb489bcc9f2e7dd`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aec8bb71884c43046e6187c272200d0be`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ab1fa40df4821ddd5121a1c136261241f`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a0da4ea3c9c67b383f4dab4d12c9cf588`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a55bfbf19a87f67b1b8d556f00c8cb4d3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ad5b19dd6ee3690eed34f7612ecf02036`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a2c512d01161e204d511b7cac6cfd8f64`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a7325d0bdbe096fc2bede57cded74ba7c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a96d01a05e1335c3058b32d0213f5202e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a69892479f6cd19fc81196dc94962bb9c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1af4ada6677c0211647c87206167c253b7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a4d76df033b4bf6ada31210404131e647`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a6b92759da3690f6365505d6e668f8811`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1afb3d3cf517eceeb69b87b10b93a7eaf4`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ab55d2664c4b168b17b914b0d90ba52bb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ad382d71f08d41f1cd5878e56d49e9882`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a52b0f14ae78bf707b66b3678434395ff`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a78981a0295615f67b6a0cc40534cbfce`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac1f913db71701ae166576f3ecb9c2f15`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aa1fafc76127c0f3274ab44aba5e7457b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a45c55be23b65b000e4ad48918b82727e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a389aac3ea69ce80a583af53338d6b710`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1acf455e659195a2f7e72570d6e256de73`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a9679ac271579f85d3f1d21fe2101409e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aff198996c9c6ce5cbbe21d8aaad07d42`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ae470d9cee45e044255fd4150cb11f144`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ad39e71fa76b4da1db0cc0af50cb0940d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a05875eeb5bcf3f2db4c1f035fcd8886c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a9956ff799780136c3bf4b23cfb966b2c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a4b2e46accffc077a020a44fe67f4087e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ab9b7227621d38bf6029b9386662c5d9b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac27fea289c602b0e9df55fbf038fe6b8`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a46235d9f2d7b597d7b29f018ae7ee3a6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a9dcd69f688c04daa0be2778b4e7c1a43`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a2d046b647ff99b98e9a6e89b4aeb0ce3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a2cc5a5f810369dec4fd01564fc819e4c`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a8cb4cf05bce5323880019bf8355c7f70`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a321bdda915f34ddfd7ce21134cc9be5b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1acea785724683c00bf3878213265b240b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a298d5177cf1b1b7f8c6ba9ee4d78535e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a797ceea51979ea18ff855bfcac47f20a`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac99f01549741d73839ed0fbe8957a0fe`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a0c037e0d4c235234072f4ed45005f5e3`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1af936aeb99c473be5b56367bd4722addc`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac9dfc0f41352071820158a5a4eb77748`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a7c0738a96bd71243efc6b92152ccfd23`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a9c44a394718d0fc8067504c620f0139b`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1add19c5c4f0fb82511c373a7a19c99bea`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac84c9dec5a4cc9e7adf78389899c0d5e`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a7dcf29f4e381305eab03c18b70127825`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ae06448d0dbd4b6c43acc841cca5f7014`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1ac830311fc430722d7ea0b13128fbb3f5`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a2a98e625ee2e5294ff1fffcb329143b6`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a1802987f990a2968a3348d884ec665fb`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1aec3cc6e45887ab2b60f5adca87ca508d`
+
+- :ref:`exhale_function_namespacemlpack_1_1bindings_1_1r_1a8e875c191ac4c5f5d4cb050389de4d1b`

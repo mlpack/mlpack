@@ -1,0 +1,641 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="furthest__neighbor__sort_8hpp" kind="file" language="C++">
+    <compoundname>furthest_neighbor_sort.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">furthest_neighbor_sort_impl.hpp</includes>
+    <includedby refid="methods_2neighbor__search_2typedef_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</includedby>
+    <includedby refid="ra__typedef_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/rann/ra_typedef.hpp</includedby>
+    <incdepgraph>
+      <node id="52959">
+        <label>list</label>
+      </node>
+      <node id="52956">
+        <label>atomic</label>
+      </node>
+      <node id="52946">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="52922">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="52958">
+        <label>iomanip</label>
+      </node>
+      <node id="52931">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="52932" relation="include">
+        </childnode>
+        <childnode refid="52934" relation="include">
+        </childnode>
+      </node>
+      <node id="52914">
+        <label>cstdint</label>
+      </node>
+      <node id="52923">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="52930">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="52953">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="52943">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="52910">
+        <label>cmath</label>
+      </node>
+      <node id="52929">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="52918">
+        <label>stdexcept</label>
+      </node>
+      <node id="52938">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="52923" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52924" relation="include">
+        </childnode>
+      </node>
+      <node id="52962">
+        <label>string</label>
+      </node>
+      <node id="52950">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="52951" relation="include">
+        </childnode>
+        <childnode refid="52917" relation="include">
+        </childnode>
+      </node>
+      <node id="52960">
+        <label>map</label>
+      </node>
+      <node id="52912">
+        <label>cfloat</label>
+      </node>
+      <node id="52942">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="52964">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="52926">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="52949">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="52950" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52933" relation="include">
+        </childnode>
+        <childnode refid="52951" relation="include">
+        </childnode>
+      </node>
+      <node id="52939">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52937">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="52923" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52924" relation="include">
+        </childnode>
+      </node>
+      <node id="52940">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="52923" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52924" relation="include">
+        </childnode>
+      </node>
+      <node id="52928">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="52948">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="52924" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52936" relation="include">
+        </childnode>
+        <childnode refid="52945" relation="include">
+        </childnode>
+      </node>
+      <node id="52952">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="52953" relation="include">
+        </childnode>
+      </node>
+      <node id="52954">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="52909">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="52910" relation="include">
+        </childnode>
+        <childnode refid="52911" relation="include">
+        </childnode>
+        <childnode refid="52912" relation="include">
+        </childnode>
+        <childnode refid="52913" relation="include">
+        </childnode>
+        <childnode refid="52914" relation="include">
+        </childnode>
+        <childnode refid="52915" relation="include">
+        </childnode>
+        <childnode refid="52916" relation="include">
+        </childnode>
+        <childnode refid="52917" relation="include">
+        </childnode>
+        <childnode refid="52918" relation="include">
+        </childnode>
+        <childnode refid="52919" relation="include">
+        </childnode>
+        <childnode refid="52920" relation="include">
+        </childnode>
+        <childnode refid="52921" relation="include">
+        </childnode>
+        <childnode refid="52922" relation="include">
+        </childnode>
+        <childnode refid="52923" relation="include">
+        </childnode>
+        <childnode refid="52924" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52927" relation="include">
+        </childnode>
+        <childnode refid="52928" relation="include">
+        </childnode>
+        <childnode refid="52929" relation="include">
+        </childnode>
+        <childnode refid="52930" relation="include">
+        </childnode>
+        <childnode refid="52931" relation="include">
+        </childnode>
+        <childnode refid="52935" relation="include">
+        </childnode>
+        <childnode refid="52936" relation="include">
+        </childnode>
+        <childnode refid="52937" relation="include">
+        </childnode>
+        <childnode refid="52938" relation="include">
+        </childnode>
+        <childnode refid="52939" relation="include">
+        </childnode>
+        <childnode refid="52940" relation="include">
+        </childnode>
+        <childnode refid="52941" relation="include">
+        </childnode>
+        <childnode refid="52947" relation="include">
+        </childnode>
+        <childnode refid="52948" relation="include">
+        </childnode>
+        <childnode refid="52945" relation="include">
+        </childnode>
+        <childnode refid="52949" relation="include">
+        </childnode>
+        <childnode refid="52952" relation="include">
+        </childnode>
+        <childnode refid="52954" relation="include">
+        </childnode>
+        <childnode refid="52955" relation="include">
+        </childnode>
+        <childnode refid="52964" relation="include">
+        </childnode>
+        <childnode refid="52965" relation="include">
+        </childnode>
+      </node>
+      <node id="52966">
+        <label>furthest_neighbor_sort_impl.hpp</label>
+      </node>
+      <node id="52915">
+        <label>cstdio</label>
+      </node>
+      <node id="52919">
+        <label>tuple</label>
+      </node>
+      <node id="52924">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="52941">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="52924" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52928" relation="include">
+        </childnode>
+        <childnode refid="52942" relation="include">
+        </childnode>
+        <childnode refid="52943" relation="include">
+        </childnode>
+        <childnode refid="52944" relation="include">
+        </childnode>
+        <childnode refid="52945" relation="include">
+        </childnode>
+      </node>
+      <node id="52920">
+        <label>utility</label>
+      </node>
+      <node id="52944">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="52935">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="52932">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="52933" relation="include">
+        </childnode>
+      </node>
+      <node id="52955">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="52956" relation="include">
+        </childnode>
+        <childnode refid="52957" relation="include">
+        </childnode>
+        <childnode refid="52958" relation="include">
+        </childnode>
+        <childnode refid="52959" relation="include">
+        </childnode>
+        <childnode refid="52960" relation="include">
+        </childnode>
+        <childnode refid="52961" relation="include">
+        </childnode>
+        <childnode refid="52962" relation="include">
+        </childnode>
+        <childnode refid="52963" relation="include">
+        </childnode>
+      </node>
+      <node id="52933">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="52947">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="52945" relation="include">
+        </childnode>
+        <childnode refid="52941" relation="include">
+        </childnode>
+        <childnode refid="52948" relation="include">
+        </childnode>
+      </node>
+      <node id="52916">
+        <label>cstdlib</label>
+      </node>
+      <node id="52911">
+        <label>cctype</label>
+      </node>
+      <node id="52908">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp</label>
+        <link refid="furthest__neighbor__sort_8hpp"/>
+        <childnode refid="52909" relation="include">
+        </childnode>
+        <childnode refid="52966" relation="include">
+        </childnode>
+      </node>
+      <node id="52934">
+        <label>unordered_map</label>
+      </node>
+      <node id="52913">
+        <label>climits</label>
+      </node>
+      <node id="52961">
+        <label>mutex</label>
+      </node>
+      <node id="52957">
+        <label>chrono</label>
+      </node>
+      <node id="52965">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="52963">
+        <label>thread</label>
+      </node>
+      <node id="52951">
+        <label>type_traits</label>
+      </node>
+      <node id="52927">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="52921">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="52945">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="52923" relation="include">
+        </childnode>
+        <childnode refid="52924" relation="include">
+        </childnode>
+        <childnode refid="52925" relation="include">
+        </childnode>
+        <childnode refid="52926" relation="include">
+        </childnode>
+        <childnode refid="52946" relation="include">
+        </childnode>
+      </node>
+      <node id="52917">
+        <label>cstring</label>
+      </node>
+      <node id="52936">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="52925">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="52983">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="52984" relation="include">
+        </childnode>
+      </node>
+      <node id="52968">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="52969" relation="include">
+        </childnode>
+      </node>
+      <node id="52973">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="52975">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="52972">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="52970">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="52971" relation="include">
+        </childnode>
+        <childnode refid="52973" relation="include">
+        </childnode>
+        <childnode refid="52974" relation="include">
+        </childnode>
+        <childnode refid="52976" relation="include">
+        </childnode>
+      </node>
+      <node id="52978">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="52986">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_typedef.hpp</label>
+        <link refid="ra__typedef_8hpp"/>
+        <childnode refid="52987" relation="include">
+        </childnode>
+      </node>
+      <node id="52981">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="52976">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="52977" relation="include">
+        </childnode>
+      </node>
+      <node id="52985">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="52987">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_search.hpp</label>
+        <link refid="ra__search_8hpp"/>
+        <childnode refid="52988" relation="include">
+        </childnode>
+        <childnode refid="52986" relation="include">
+        </childnode>
+      </node>
+      <node id="52982">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="52983" relation="include">
+        </childnode>
+      </node>
+      <node id="52979">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="52970" relation="include">
+        </childnode>
+      </node>
+      <node id="52984">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="52971">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="52972" relation="include">
+        </childnode>
+      </node>
+      <node id="52988">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="52977">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="52974">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="52975" relation="include">
+        </childnode>
+      </node>
+      <node id="52969">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="52970" relation="include">
+        </childnode>
+        <childnode refid="52978" relation="include">
+        </childnode>
+        <childnode refid="52979" relation="include">
+        </childnode>
+        <childnode refid="52980" relation="include">
+        </childnode>
+        <childnode refid="52981" relation="include">
+        </childnode>
+        <childnode refid="52982" relation="include">
+        </childnode>
+        <childnode refid="52968" relation="include">
+        </childnode>
+        <childnode refid="52985" relation="include">
+        </childnode>
+      </node>
+      <node id="52980">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="52967">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp</label>
+        <link refid="furthest__neighbor__sort_8hpp"/>
+        <childnode refid="52968" relation="include">
+        </childnode>
+        <childnode refid="52986" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1neighbor_1_1FurthestNS" prot="public">mlpack::neighbor::FurthestNS</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1neighbor">mlpack::neighbor</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Implementation of the SortPolicy class for NeighborSearch; in this case, the furthest neighbors are those that are most important.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_FURTHEST_NEIGHBOR_SORT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_FURTHEST_NEIGHBOR_SORT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">neighbor<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classmlpack_1_1neighbor_1_1FurthestNS" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1neighbor_1_1FurthestNS" kindref="compound">FurthestNS</ref></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a412d62a94fad8425114314285bf573ec" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a412d62a94fad8425114314285bf573ec" kindref="member">IsBetter</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ref)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(value<sp/>&gt;=<sp/>ref);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1ab3488bd4db6360aa8b81c01a8ccd160b" kindref="member">BestNodeToNodeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>queryNode,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1ab3488bd4db6360aa8b81c01a8ccd160b" kindref="member">BestNodeToNodeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>queryNode,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>centerToCenterDistance);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1ab3488bd4db6360aa8b81c01a8ccd160b" kindref="member">BestNodeToNodeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>queryNode,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceChildNode,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>centerToCenterDistance);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3b7936770cdc5aa5774be12a70ea4c48" kindref="member">BestPointToNodeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>queryPoint,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3b7936770cdc5aa5774be12a70ea4c48" kindref="member">BestPointToNodeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>queryPoint,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>pointToCenterDistance);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1neighbor_1_1FurthestNS_1ad5705d2f8301e6ecf09ac1c1be9cbb09" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1ad5705d2f8301e6ecf09ac1c1be9cbb09" kindref="member">GetBestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>queryPoint,<sp/>TreeType&amp;<sp/>referenceNode)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>referenceNode.GetFurthestChild(queryPoint);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="117" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a6765bea9cdad09d6d8109b030bdd8d13" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a6765bea9cdad09d6d8109b030bdd8d13" kindref="member">GetBestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>referenceNode.GetFurthestChild(queryNode);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="classmlpack_1_1neighbor_1_1FurthestNS_1acd1717b7877007f086da8ffaf3ad44f0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1acd1717b7877007f086da8ffaf3ad44f0" kindref="member">WorstDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a9401e4c5bc0469cfc6d6ba9a38ae2232" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a9401e4c5bc0469cfc6d6ba9a38ae2232" kindref="member">BestDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DBL_MAX;<sp/>}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3815f7d4249f21f143c0fd4dc6926b4e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3815f7d4249f21f143c0fd4dc6926b4e" kindref="member">CombineBest</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/>DBL_MAX<sp/>||<sp/>b<sp/>==<sp/>DBL_MAX)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>+<sp/>b;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a2d925d236656a7aa6fe93598b0eebd9b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a2d925d236656a7aa6fe93598b0eebd9b" kindref="member">CombineWorst</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::max(a<sp/>-<sp/>b,<sp/>0.0);<sp/>}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="classmlpack_1_1neighbor_1_1FurthestNS_1ac005ea5fc8e296ab86ea247d7de5b747" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1ac005ea5fc8e296ab86ea247d7de5b747" kindref="member">Relax</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>epsilon)</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(value<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(value<sp/>==<sp/>DBL_MAX<sp/>||<sp/>epsilon<sp/>&gt;=<sp/>1)</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(1<sp/>/<sp/>(1<sp/>-<sp/>epsilon))<sp/>*<sp/>value;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" kindref="member">ConvertToScore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance)</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(distance<sp/>==<sp/>DBL_MAX)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(distance<sp/>==<sp/>0.0)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(1.0<sp/>/<sp/>distance);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="classmlpack_1_1neighbor_1_1FurthestNS_1aa48361089e2ea1bf224936e4e9a0346d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1aa48361089e2ea1bf224936e4e9a0346d" kindref="member">ConvertToDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>score)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" kindref="member">ConvertToScore</ref>(score);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="197"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Due<sp/>to<sp/>an<sp/>internal<sp/>MinGW<sp/>compiler<sp/>bug<sp/>(string<sp/>table<sp/>overflow)<sp/>we<sp/>have<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="comment">//<sp/>truncate<sp/>the<sp/>class<sp/>name.<sp/>For<sp/>backward<sp/>compatibility<sp/>we<sp/>setup<sp/>an<sp/>alias<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="namespacemlpack_1_1neighbor_1a690bbbab38fc719071a5c019acd2f947" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS" kindref="compound">FurthestNeighborSort</ref><sp/>=<sp/><ref refid="classmlpack_1_1neighbor_1_1FurthestNS" kindref="compound">FurthestNS</ref>;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>neighbor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation<sp/>of<sp/>templated<sp/>functions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;furthest_neighbor_sort_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp"/>
+  </compounddef>
+</doxygen>

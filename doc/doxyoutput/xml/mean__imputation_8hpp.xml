@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="mean__imputation_8hpp" kind="file" language="C++">
+    <compoundname>mean_imputation.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="7500">
+        <label>list</label>
+      </node>
+      <node id="7497">
+        <label>atomic</label>
+      </node>
+      <node id="7487">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="7463">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="7499">
+        <label>iomanip</label>
+      </node>
+      <node id="7472">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="7473" relation="include">
+        </childnode>
+        <childnode refid="7475" relation="include">
+        </childnode>
+      </node>
+      <node id="7455">
+        <label>cstdint</label>
+      </node>
+      <node id="7464">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="7471">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="7494">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="7484">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="7451">
+        <label>cmath</label>
+      </node>
+      <node id="7470">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="7459">
+        <label>stdexcept</label>
+      </node>
+      <node id="7479">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="7464" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7465" relation="include">
+        </childnode>
+      </node>
+      <node id="7503">
+        <label>string</label>
+      </node>
+      <node id="7491">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="7492" relation="include">
+        </childnode>
+        <childnode refid="7458" relation="include">
+        </childnode>
+      </node>
+      <node id="7501">
+        <label>map</label>
+      </node>
+      <node id="7453">
+        <label>cfloat</label>
+      </node>
+      <node id="7483">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="7505">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="7467">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="7490">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="7491" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7474" relation="include">
+        </childnode>
+        <childnode refid="7492" relation="include">
+        </childnode>
+      </node>
+      <node id="7480">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="7478">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="7464" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7465" relation="include">
+        </childnode>
+      </node>
+      <node id="7481">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="7464" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7465" relation="include">
+        </childnode>
+      </node>
+      <node id="7469">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="7489">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="7465" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7477" relation="include">
+        </childnode>
+        <childnode refid="7486" relation="include">
+        </childnode>
+      </node>
+      <node id="7493">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="7494" relation="include">
+        </childnode>
+      </node>
+      <node id="7495">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="7450">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="7451" relation="include">
+        </childnode>
+        <childnode refid="7452" relation="include">
+        </childnode>
+        <childnode refid="7453" relation="include">
+        </childnode>
+        <childnode refid="7454" relation="include">
+        </childnode>
+        <childnode refid="7455" relation="include">
+        </childnode>
+        <childnode refid="7456" relation="include">
+        </childnode>
+        <childnode refid="7457" relation="include">
+        </childnode>
+        <childnode refid="7458" relation="include">
+        </childnode>
+        <childnode refid="7459" relation="include">
+        </childnode>
+        <childnode refid="7460" relation="include">
+        </childnode>
+        <childnode refid="7461" relation="include">
+        </childnode>
+        <childnode refid="7462" relation="include">
+        </childnode>
+        <childnode refid="7463" relation="include">
+        </childnode>
+        <childnode refid="7464" relation="include">
+        </childnode>
+        <childnode refid="7465" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7468" relation="include">
+        </childnode>
+        <childnode refid="7469" relation="include">
+        </childnode>
+        <childnode refid="7470" relation="include">
+        </childnode>
+        <childnode refid="7471" relation="include">
+        </childnode>
+        <childnode refid="7472" relation="include">
+        </childnode>
+        <childnode refid="7476" relation="include">
+        </childnode>
+        <childnode refid="7477" relation="include">
+        </childnode>
+        <childnode refid="7478" relation="include">
+        </childnode>
+        <childnode refid="7479" relation="include">
+        </childnode>
+        <childnode refid="7480" relation="include">
+        </childnode>
+        <childnode refid="7481" relation="include">
+        </childnode>
+        <childnode refid="7482" relation="include">
+        </childnode>
+        <childnode refid="7488" relation="include">
+        </childnode>
+        <childnode refid="7489" relation="include">
+        </childnode>
+        <childnode refid="7486" relation="include">
+        </childnode>
+        <childnode refid="7490" relation="include">
+        </childnode>
+        <childnode refid="7493" relation="include">
+        </childnode>
+        <childnode refid="7495" relation="include">
+        </childnode>
+        <childnode refid="7496" relation="include">
+        </childnode>
+        <childnode refid="7505" relation="include">
+        </childnode>
+        <childnode refid="7506" relation="include">
+        </childnode>
+      </node>
+      <node id="7456">
+        <label>cstdio</label>
+      </node>
+      <node id="7460">
+        <label>tuple</label>
+      </node>
+      <node id="7465">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="7482">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="7465" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7469" relation="include">
+        </childnode>
+        <childnode refid="7483" relation="include">
+        </childnode>
+        <childnode refid="7484" relation="include">
+        </childnode>
+        <childnode refid="7485" relation="include">
+        </childnode>
+        <childnode refid="7486" relation="include">
+        </childnode>
+      </node>
+      <node id="7461">
+        <label>utility</label>
+      </node>
+      <node id="7485">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="7476">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="7473">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="7474" relation="include">
+        </childnode>
+      </node>
+      <node id="7496">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="7497" relation="include">
+        </childnode>
+        <childnode refid="7498" relation="include">
+        </childnode>
+        <childnode refid="7499" relation="include">
+        </childnode>
+        <childnode refid="7500" relation="include">
+        </childnode>
+        <childnode refid="7501" relation="include">
+        </childnode>
+        <childnode refid="7502" relation="include">
+        </childnode>
+        <childnode refid="7503" relation="include">
+        </childnode>
+        <childnode refid="7504" relation="include">
+        </childnode>
+      </node>
+      <node id="7474">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="7488">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="7486" relation="include">
+        </childnode>
+        <childnode refid="7482" relation="include">
+        </childnode>
+        <childnode refid="7489" relation="include">
+        </childnode>
+      </node>
+      <node id="7457">
+        <label>cstdlib</label>
+      </node>
+      <node id="7452">
+        <label>cctype</label>
+      </node>
+      <node id="7475">
+        <label>unordered_map</label>
+      </node>
+      <node id="7454">
+        <label>climits</label>
+      </node>
+      <node id="7502">
+        <label>mutex</label>
+      </node>
+      <node id="7498">
+        <label>chrono</label>
+      </node>
+      <node id="7506">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="7504">
+        <label>thread</label>
+      </node>
+      <node id="7492">
+        <label>type_traits</label>
+      </node>
+      <node id="7468">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="7462">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="7486">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="7464" relation="include">
+        </childnode>
+        <childnode refid="7465" relation="include">
+        </childnode>
+        <childnode refid="7466" relation="include">
+        </childnode>
+        <childnode refid="7467" relation="include">
+        </childnode>
+        <childnode refid="7487" relation="include">
+        </childnode>
+      </node>
+      <node id="7449">
+        <label>/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/mean_imputation.hpp</label>
+        <link refid="mean__imputation_8hpp"/>
+        <childnode refid="7450" relation="include">
+        </childnode>
+      </node>
+      <node id="7458">
+        <label>cstring</label>
+      </node>
+      <node id="7477">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="7466">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1data_1_1MeanImputation" prot="public">mlpack::data::MeanImputation</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Keon Kim</para></simplesect>
+Definition and Implementation of the MeanImputation class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEAN_IMPUTATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_DATA_IMPUTE_STRATEGIES_MEAN_IMPUTATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="24" refid="classmlpack_1_1data_1_1MeanImputation" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1data_1_1MeanImputation" kindref="compound">MeanImputation</ref></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="37" refid="classmlpack_1_1data_1_1MeanImputation_1a94b8353ed4d68b10e2dd59d5e7dc15ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1data_1_1MeanImputation_1a94b8353ed4d68b10e2dd59d5e7dc15ca" kindref="member">Impute</ref>(arma::Mat&lt;T&gt;&amp;<sp/>input,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>mappedValue,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimension,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>columnMajor<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>elems<sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>excluding<sp/>nan<sp/>or<sp/>missing<sp/>target</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>PairType<sp/>=<sp/>std::pair&lt;size_t,<sp/>size_t&gt;;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>dimensions<sp/>and<sp/>indexes<sp/>are<sp/>saved<sp/>as<sp/>pairs<sp/>inside<sp/>this<sp/>vector.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;PairType&gt;<sp/>targets;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>calculate<sp/>number<sp/>of<sp/>elements<sp/>and<sp/>sum<sp/>of<sp/>them<sp/>excluding<sp/>mapped<sp/>value<sp/>or</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>nan.<sp/>while<sp/>doing<sp/>that,<sp/>remember<sp/>where<sp/>mappedValue<sp/>or<sp/>NaN<sp/>exists.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(columnMajor)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>input.n_cols;<sp/>++i)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(input(dimension,<sp/>i)<sp/>==<sp/>mappedValue<sp/>||</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::isnan(input(dimension,<sp/>i)))</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>targets.emplace_back(dimension,<sp/>i);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>elems++;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sum<sp/>+=<sp/>input(dimension,<sp/>i);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>input.n_rows;<sp/>++i)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(input(i,<sp/>dimension)<sp/>==<sp/>mappedValue<sp/>||</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::isnan(input(i,<sp/>dimension)))</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>targets.emplace_back(i,<sp/>dimension);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>elems++;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sum<sp/>+=<sp/>input(i,<sp/>dimension);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(elems<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;it<sp/>is<sp/>impossible<sp/>to<sp/>calculate<sp/>mean;<sp/>no<sp/>valid<sp/>elements<sp/>in<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;the<sp/>dimension&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>calculate<sp/>mean;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean<sp/>=<sp/>sum<sp/>/<sp/>elems;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>replace<sp/>the<sp/>calculated<sp/>mean<sp/>to<sp/>the<sp/>missing<sp/>variables</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>only<sp/>needs<sp/>to<sp/>loop<sp/>through<sp/>targets<sp/>vector,<sp/>not<sp/>the<sp/>whole<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PairType&amp;<sp/>target<sp/>:<sp/>targets)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>input(target.first,<sp/>target.second)<sp/>=<sp/>mean;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>MeanImputation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/mean_imputation.hpp"/>
+  </compounddef>
+</doxygen>

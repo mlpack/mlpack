@@ -1,0 +1,152 @@
+.TH "IncompleteIncrementalTermination< TerminationPolicy >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IncompleteIncrementalTermination< TerminationPolicy > \- This class acts as a wrapper for basic termination policies to be used by \fBSVDIncompleteIncrementalLearning\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIncompleteIncrementalTermination\fP (TerminationPolicy tPolicy=TerminationPolicy())"
+.br
+.RI "Empty constructor\&. "
+.ti -1c
+.RI "const double & \fBIndex\fP () const"
+.br
+.RI "Get current value of residue\&. "
+.ti -1c
+.RI "template<class MatType > void \fBInitialize\fP (const MatType &V)"
+.br
+.RI "Initializes the termination policy before stating the factorization\&. "
+.ti -1c
+.RI "bool \fBIsConverged\fP (arma::mat &W, arma::mat &H)"
+.br
+.RI "Check if termination criterio is met\&. "
+.ti -1c
+.RI "const size_t & \fBIteration\fP () const"
+.br
+.RI "Get current iteration count\&. "
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const"
+.br
+.RI "Access maximum number of iterations\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Modify maximum number of iterations\&. "
+.ti -1c
+.RI "const TerminationPolicy & \fBTPolicy\fP () const"
+.br
+.RI "Access the wrapped termination policy\&. "
+.ti -1c
+.RI "TerminationPolicy & \fBTPolicy\fP ()"
+.br
+.RI "Modify the wrapped termination policy\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class TerminationPolicy>
+.br
+class mlpack::amf::IncompleteIncrementalTermination< TerminationPolicy >"
+This class acts as a wrapper for basic termination policies to be used by \fBSVDIncompleteIncrementalLearning\fP\&. 
+
+This class calls the wrapped class functions after every n calls to main class functions where n is the number of rows\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBAMF\fP, \fBSVDIncompleteIncrementalLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file incomplete_incremental_termination\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBIncompleteIncrementalTermination\fP (TerminationPolicy tPolicy = \fCTerminationPolicy()\fP)\fC [inline]\fP"
+
+.PP
+Empty constructor\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItPolicy\fP object of wrapped class\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file incomplete_incremental_termination\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const double& Index () const\fC [inline]\fP"
+
+.PP
+Get current value of residue\&. 
+.PP
+Definition at line 76 of file incomplete_incremental_termination\&.hpp\&.
+.SS "void Initialize (const MatType & V)\fC [inline]\fP"
+
+.PP
+Initializes the termination policy before stating the factorization\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file incomplete_incremental_termination\&.hpp\&.
+.SS "bool IsConverged (arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Check if termination criterio is met\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Basis matrix of output\&. 
+.br
+\fIH\fP Encoding matrix of output\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file incomplete_incremental_termination\&.hpp\&.
+.SS "const size_t& Iteration () const\fC [inline]\fP"
+
+.PP
+Get current iteration count\&. 
+.PP
+Definition at line 79 of file incomplete_incremental_termination\&.hpp\&.
+.SS "size_t MaxIterations () const\fC [inline]\fP"
+
+.PP
+Access maximum number of iterations\&. 
+.PP
+Definition at line 82 of file incomplete_incremental_termination\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify maximum number of iterations\&. 
+.PP
+Definition at line 84 of file incomplete_incremental_termination\&.hpp\&.
+.SS "const TerminationPolicy& TPolicy () const\fC [inline]\fP"
+
+.PP
+Access the wrapped termination policy\&. 
+.PP
+Definition at line 87 of file incomplete_incremental_termination\&.hpp\&.
+.SS "TerminationPolicy& TPolicy ()\fC [inline]\fP"
+
+.PP
+Modify the wrapped termination policy\&. 
+.PP
+Definition at line 89 of file incomplete_incremental_termination\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1ae25889c34b72704724f5797b6103c463:
+
+Define CATCH_REC_NEXT0
+======================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CATCH_REC_NEXT0

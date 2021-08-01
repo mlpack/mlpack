@@ -1,0 +1,716 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="octree_2octree_8hpp" kind="file" language="C++">
+    <compoundname>octree.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="hrectbound_8hpp" local="yes">../hrectbound.hpp</includes>
+    <includes refid="statistic_8hpp" local="yes">../statistic.hpp</includes>
+    <includes local="yes">octree_impl.hpp</includes>
+    <includedby refid="octree_2dual__tree__traverser_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp</includedby>
+    <includedby refid="octree_2single__tree__traverser_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/octree/single_tree_traverser.hpp</includedby>
+    <includedby refid="octree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/octree.hpp</includedby>
+    <incdepgraph>
+      <node id="16991">
+        <label>list</label>
+      </node>
+      <node id="16988">
+        <label>atomic</label>
+      </node>
+      <node id="16978">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="16954">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="16990">
+        <label>iomanip</label>
+      </node>
+      <node id="17002">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="17001">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="16963">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="16964" relation="include">
+        </childnode>
+        <childnode refid="16966" relation="include">
+        </childnode>
+      </node>
+      <node id="16946">
+        <label>cstdint</label>
+      </node>
+      <node id="16955">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="16962">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="16985">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="16940">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree/octree.hpp</label>
+        <link refid="octree_2octree_8hpp"/>
+        <childnode refid="16941" relation="include">
+        </childnode>
+        <childnode refid="16998" relation="include">
+        </childnode>
+        <childnode refid="17004" relation="include">
+        </childnode>
+        <childnode refid="17005" relation="include">
+        </childnode>
+      </node>
+      <node id="17004">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="16975">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="16942">
+        <label>cmath</label>
+      </node>
+      <node id="16961">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="16950">
+        <label>stdexcept</label>
+      </node>
+      <node id="16970">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16955" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16956" relation="include">
+        </childnode>
+      </node>
+      <node id="16999">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="16994">
+        <label>string</label>
+      </node>
+      <node id="16982">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="16983" relation="include">
+        </childnode>
+        <childnode refid="16949" relation="include">
+        </childnode>
+      </node>
+      <node id="16992">
+        <label>map</label>
+      </node>
+      <node id="16944">
+        <label>cfloat</label>
+      </node>
+      <node id="16974">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="16996">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="16958">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="16981">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="16982" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16965" relation="include">
+        </childnode>
+        <childnode refid="16983" relation="include">
+        </childnode>
+      </node>
+      <node id="16971">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="16969">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16955" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16956" relation="include">
+        </childnode>
+      </node>
+      <node id="16972">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16955" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16956" relation="include">
+        </childnode>
+      </node>
+      <node id="16960">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="16980">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="16956" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16968" relation="include">
+        </childnode>
+        <childnode refid="16977" relation="include">
+        </childnode>
+      </node>
+      <node id="16984">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="16985" relation="include">
+        </childnode>
+      </node>
+      <node id="16986">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="16941">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="16942" relation="include">
+        </childnode>
+        <childnode refid="16943" relation="include">
+        </childnode>
+        <childnode refid="16944" relation="include">
+        </childnode>
+        <childnode refid="16945" relation="include">
+        </childnode>
+        <childnode refid="16946" relation="include">
+        </childnode>
+        <childnode refid="16947" relation="include">
+        </childnode>
+        <childnode refid="16948" relation="include">
+        </childnode>
+        <childnode refid="16949" relation="include">
+        </childnode>
+        <childnode refid="16950" relation="include">
+        </childnode>
+        <childnode refid="16951" relation="include">
+        </childnode>
+        <childnode refid="16952" relation="include">
+        </childnode>
+        <childnode refid="16953" relation="include">
+        </childnode>
+        <childnode refid="16954" relation="include">
+        </childnode>
+        <childnode refid="16955" relation="include">
+        </childnode>
+        <childnode refid="16956" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16959" relation="include">
+        </childnode>
+        <childnode refid="16960" relation="include">
+        </childnode>
+        <childnode refid="16961" relation="include">
+        </childnode>
+        <childnode refid="16962" relation="include">
+        </childnode>
+        <childnode refid="16963" relation="include">
+        </childnode>
+        <childnode refid="16967" relation="include">
+        </childnode>
+        <childnode refid="16968" relation="include">
+        </childnode>
+        <childnode refid="16969" relation="include">
+        </childnode>
+        <childnode refid="16970" relation="include">
+        </childnode>
+        <childnode refid="16971" relation="include">
+        </childnode>
+        <childnode refid="16972" relation="include">
+        </childnode>
+        <childnode refid="16973" relation="include">
+        </childnode>
+        <childnode refid="16979" relation="include">
+        </childnode>
+        <childnode refid="16980" relation="include">
+        </childnode>
+        <childnode refid="16977" relation="include">
+        </childnode>
+        <childnode refid="16981" relation="include">
+        </childnode>
+        <childnode refid="16984" relation="include">
+        </childnode>
+        <childnode refid="16986" relation="include">
+        </childnode>
+        <childnode refid="16987" relation="include">
+        </childnode>
+        <childnode refid="16996" relation="include">
+        </childnode>
+        <childnode refid="16997" relation="include">
+        </childnode>
+      </node>
+      <node id="16947">
+        <label>cstdio</label>
+      </node>
+      <node id="16951">
+        <label>tuple</label>
+      </node>
+      <node id="16956">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="16973">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="16956" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16960" relation="include">
+        </childnode>
+        <childnode refid="16974" relation="include">
+        </childnode>
+        <childnode refid="16975" relation="include">
+        </childnode>
+        <childnode refid="16976" relation="include">
+        </childnode>
+        <childnode refid="16977" relation="include">
+        </childnode>
+      </node>
+      <node id="16998">
+        <label>../hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="16941" relation="include">
+        </childnode>
+        <childnode refid="16999" relation="include">
+        </childnode>
+        <childnode refid="17000" relation="include">
+        </childnode>
+        <childnode refid="17002" relation="include">
+        </childnode>
+        <childnode refid="17003" relation="include">
+        </childnode>
+      </node>
+      <node id="16952">
+        <label>utility</label>
+      </node>
+      <node id="16976">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="16967">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="16964">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="16965" relation="include">
+        </childnode>
+      </node>
+      <node id="16987">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="16988" relation="include">
+        </childnode>
+        <childnode refid="16989" relation="include">
+        </childnode>
+        <childnode refid="16990" relation="include">
+        </childnode>
+        <childnode refid="16991" relation="include">
+        </childnode>
+        <childnode refid="16992" relation="include">
+        </childnode>
+        <childnode refid="16993" relation="include">
+        </childnode>
+        <childnode refid="16994" relation="include">
+        </childnode>
+        <childnode refid="16995" relation="include">
+        </childnode>
+      </node>
+      <node id="16965">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="16979">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="16977" relation="include">
+        </childnode>
+        <childnode refid="16973" relation="include">
+        </childnode>
+        <childnode refid="16980" relation="include">
+        </childnode>
+      </node>
+      <node id="16948">
+        <label>cstdlib</label>
+      </node>
+      <node id="16943">
+        <label>cctype</label>
+      </node>
+      <node id="17005">
+        <label>octree_impl.hpp</label>
+      </node>
+      <node id="16966">
+        <label>unordered_map</label>
+      </node>
+      <node id="16945">
+        <label>climits</label>
+      </node>
+      <node id="16993">
+        <label>mutex</label>
+      </node>
+      <node id="16989">
+        <label>chrono</label>
+      </node>
+      <node id="17003">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="16997">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="16995">
+        <label>thread</label>
+      </node>
+      <node id="16983">
+        <label>type_traits</label>
+      </node>
+      <node id="16959">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="16953">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="16977">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16955" relation="include">
+        </childnode>
+        <childnode refid="16956" relation="include">
+        </childnode>
+        <childnode refid="16957" relation="include">
+        </childnode>
+        <childnode refid="16958" relation="include">
+        </childnode>
+        <childnode refid="16978" relation="include">
+        </childnode>
+      </node>
+      <node id="16949">
+        <label>cstring</label>
+      </node>
+      <node id="16968">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="16957">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="17000">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="16941" relation="include">
+        </childnode>
+        <childnode refid="17001" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="17006">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree/octree.hpp</label>
+        <link refid="octree_2octree_8hpp"/>
+        <childnode refid="17007" relation="include">
+        </childnode>
+        <childnode refid="17014" relation="include">
+        </childnode>
+        <childnode refid="17008" relation="include">
+        </childnode>
+      </node>
+      <node id="17012">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="17010">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="17013">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="17009">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="17011">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="17012" relation="include">
+        </childnode>
+      </node>
+      <node id="17008">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree.hpp</label>
+        <link refid="octree_8hpp"/>
+        <childnode refid="17009" relation="include">
+        </childnode>
+        <childnode refid="17010" relation="include">
+        </childnode>
+        <childnode refid="17011" relation="include">
+        </childnode>
+        <childnode refid="17013" relation="include">
+        </childnode>
+      </node>
+      <node id="17007">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree/dual_tree_traverser.hpp</label>
+        <link refid="octree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="17008" relation="include">
+        </childnode>
+      </node>
+      <node id="17014">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree/single_tree_traverser.hpp</label>
+        <link refid="octree_2single__tree__traverser_8hpp"/>
+        <childnode refid="17008" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1Octree" prot="public">mlpack::tree::Octree</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser" prot="public">mlpack::tree::Octree::DualTreeTraverser</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser" prot="public">mlpack::tree::Octree::SingleTreeTraverser</innerclass>
+    <innerclass refid="structmlpack_1_1tree_1_1Octree_1_1SplitType" prot="private">mlpack::tree::Octree::SplitType</innerclass>
+    <innerclass refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo" prot="public">mlpack::tree::Octree::SplitType::SplitInfo</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Definition of generalized octree (Octree).</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_OCTREE_OCTREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_OCTREE_OCTREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../hrectbound.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../statistic.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType<sp/>=<sp/><ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref>,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>StatisticType<sp/>=<sp/>EmptyStatistic,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="25" refid="classmlpack_1_1tree_1_1Octree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1tree_1_1Octree_1a57758caa2e58c3fe05d1284eeabae523" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>MatType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a57758caa2e58c3fe05d1284eeabae523" kindref="member">Mat</ref>;</highlight></codeline>
+<codeline lineno="31" refid="classmlpack_1_1tree_1_1Octree_1a227d0c7e23e98fcd6c81ecab357a791f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType::elem_type<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RuleType&gt;</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser" kindref="compound">SingleTreeTraverser</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RuleType&gt;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser" kindref="compound">DualTreeTraverser</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>std::vector&lt;Octree*&gt;<sp/>children;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref><sp/>bound;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>MatType*<sp/>dataset;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*<sp/>parent;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>StatisticType<sp/>stat;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>ElemType<sp/>parentDistance;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>ElemType<sp/>furthestDescendantDistance;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>MetricType<sp/>metric;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>newFromOld,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(MatType&amp;&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(MatType&amp;&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(MatType&amp;&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>newFromOld,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(<ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*<sp/>parent,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>center,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>width,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(<ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*<sp/>parent,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>center,</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>width,</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(<ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6bfe693e8d99d8e44383a696a6a0b486" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6bfe693e8d99d8e44383a696a6a0b486" kindref="member">operator=</ref>(<ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>(</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Archive&amp;<sp/>ar,</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;cereal::is_loading&lt;Archive&gt;()&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1ad8533c57bb339999b1386cffc4a4fe91" kindref="member">~Octree</ref>();</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="classmlpack_1_1tree_1_1Octree_1a4c3764c98d5804083a9ec2c867eb9366" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a4c3764c98d5804083a9ec2c867eb9366" kindref="member">Dataset</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*dataset;<sp/>}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="classmlpack_1_1tree_1_1Octree_1ac0345342726dd74a225568b2def9cdd3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1ac0345342726dd74a225568b2def9cdd3" kindref="member">Parent</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parent;<sp/>}</highlight></codeline>
+<codeline lineno="258" refid="classmlpack_1_1tree_1_1Octree_1a06f4d6cad44b489b665a563647840bff" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a06f4d6cad44b489b665a563647840bff" kindref="member">Parent</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parent;<sp/>}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261" refid="classmlpack_1_1tree_1_1Octree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" kindref="member">Bound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="263" refid="classmlpack_1_1tree_1_1Octree_1a8a0a35d824602c0e21a8d21638cfd6ad" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a8a0a35d824602c0e21a8d21638cfd6ad" kindref="member">Bound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266" refid="classmlpack_1_1tree_1_1Octree_1ad8b29c84ac793742cd15834f9f4c4f31" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StatisticType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1ad8b29c84ac793742cd15834f9f4c4f31" kindref="member">Stat</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stat;<sp/>}</highlight></codeline>
+<codeline lineno="268" refid="classmlpack_1_1tree_1_1Octree_1aac2d3c104b89109f3df4a9a8cad244da" refkind="member"><highlight class="normal"><sp/><sp/>StatisticType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1aac2d3c104b89109f3df4a9a8cad244da" kindref="member">Stat</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stat;<sp/>}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a1f7ec083be66d58a3e02e12956bf005e" kindref="member">NumChildren</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="classmlpack_1_1tree_1_1Octree_1ab7cdd810a507e4a0aa262ea0fa8a322c" refkind="member"><highlight class="normal"><sp/><sp/>MetricType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1ab7cdd810a507e4a0aa262ea0fa8a322c" kindref="member">Metric</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>MetricType();<sp/>}</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1abc9efb62f9749ab6507249a90d86361b" kindref="member">GetNearestChild</ref>(</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1af7fe6fafdfef4cd49d272fdfa6aeeb7d" kindref="member">GetFurthestChild</ref>(</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297" refid="classmlpack_1_1tree_1_1Octree_1aa0f4813924e6cdee43b45050bb947abe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1aa0f4813924e6cdee43b45050bb947abe" kindref="member">IsLeaf</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a1f7ec083be66d58a3e02e12956bf005e" kindref="member">NumChildren</ref>()<sp/>==<sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1abc9efb62f9749ab6507249a90d86361b" kindref="member">GetNearestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>queryNode)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1af7fe6fafdfef4cd49d272fdfa6aeeb7d" kindref="member">GetFurthestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>queryNode)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1acbe82a6439f71405b5801ca7d941cbfb" kindref="member">FurthestPointDistance</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1adc597088eadfcfa3060336d0484ab573" kindref="member">FurthestDescendantDistance</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a20a4e92da6066eb335a576b7f9cd0415" kindref="member">MinimumBoundDistance</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331" refid="classmlpack_1_1tree_1_1Octree_1af44ed4e7bfea088689caed082da67e17" refkind="member"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1af44ed4e7bfea088689caed082da67e17" kindref="member">ParentDistance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parentDistance;<sp/>}</highlight></codeline>
+<codeline lineno="334" refid="classmlpack_1_1tree_1_1Octree_1aa22ead21ac809efb970b90ec014dc318" refkind="member"><highlight class="normal"><sp/><sp/>ElemType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1aa22ead21ac809efb970b90ec014dc318" kindref="member">ParentDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parentDistance;<sp/>}</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340" refid="classmlpack_1_1tree_1_1Octree_1a0668c313d2dd2b9a8d7de5095fb02680" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a0668c313d2dd2b9a8d7de5095fb02680" kindref="member">Child</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>child)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*children[child];<sp/>}</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346" refid="classmlpack_1_1tree_1_1Octree_1a6986077035a6d402c1a4b7d34467ed49" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6986077035a6d402c1a4b7d34467ed49" kindref="member">Child</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>child)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*children[child];<sp/>}</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352" refid="classmlpack_1_1tree_1_1Octree_1a36fdff8e6d4d68634b22458326eaaa4c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>*&amp;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a36fdff8e6d4d68634b22458326eaaa4c" kindref="member">ChildPtr</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>child)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>children[child];<sp/>}</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a352077c26368da0ee570c0b7f062b1e3" kindref="member">NumPoints</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a2a85eb34222f1fc073940e8c89274e81" kindref="member">NumDescendants</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1aa732ea3eeb38529c549fd4d15d8655be" kindref="member">Descendant</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a559eede5ea60f68634f8e7e72c3c68d2" kindref="member">Point</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a52189034235a921f63e3531ce2c5131b" kindref="member">MinDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>other)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a164f185be46809ad05820d8b179150e6" kindref="member">MaxDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>other)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/>math::RangeType&lt;ElemType&gt;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6ab7c54d047346131ebea90f285068b6" kindref="member">RangeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree" kindref="compound">Octree</ref>&amp;<sp/>other)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a52189034235a921f63e3531ce2c5131b" kindref="member">MinDistance</ref>(</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/>ElemType<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a164f185be46809ad05820d8b179150e6" kindref="member">MaxDistance</ref>(</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/>math::RangeType&lt;ElemType&gt;<sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6ab7c54d047346131ebea90f285068b6" kindref="member">RangeDistance</ref>(</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"></highlight></codeline>
+<codeline lineno="397" refid="classmlpack_1_1tree_1_1Octree_1aa800439660375c0253008cafa648da78" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1aa800439660375c0253008cafa648da78" kindref="member">Center</ref>(arma::vec&amp;<sp/>center)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1ac519e0ecb1bbd517724a93b4b57cc399" kindref="member">Center</ref>(center);<sp/>}</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"></highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"></highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1Octree_1a6a0f63e3f15fc571cd678d81096f51f4" kindref="member">Octree</ref>();</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"></highlight></codeline>
+<codeline lineno="413" refid="classmlpack_1_1tree_1_1Octree_1ab2f44cbb59a08132f4c843e5225bba0e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">cereal::access;</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"></highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SplitNode(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>center,</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>width,</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize);</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"></highlight></codeline>
+<codeline lineno="437"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SplitNode(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>center,</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>width,</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew,</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize);</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"></highlight></codeline>
+<codeline lineno="445"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">SplitType</highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="447" refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo" kindref="compound">SplitInfo</ref></highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="450" refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a8ab85a36e62db3fd1923e92498c79351" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a8ab85a36e62db3fd1923e92498c79351" kindref="member">SplitInfo</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a226b76c80d55a5f80f18e7aa1c9eeaa8" kindref="member">d</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>c)<sp/>:<sp/>d(d),<sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1af15fc5b3dfdc257682cdea237f488f73" kindref="member">center</ref>(c)<sp/>{}</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453" refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a226b76c80d55a5f80f18e7aa1c9eeaa8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a226b76c80d55a5f80f18e7aa1c9eeaa8" kindref="member">d</ref>;</highlight></codeline>
+<codeline lineno="455" refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1af15fc5b3dfdc257682cdea237f488f73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1af15fc5b3dfdc257682cdea237f488f73" kindref="member">center</ref>;</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"></highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AssignToLeftNode(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo" kindref="compound">SplitInfo</ref>&amp;<sp/>s)</highlight></codeline>
+<codeline lineno="460"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>point[s.<ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a226b76c80d55a5f80f18e7aa1c9eeaa8" kindref="member">d</ref>]<sp/>&lt;<sp/>s.<ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1af15fc5b3dfdc257682cdea237f488f73" kindref="member">center</ref>[s.<ref refid="structmlpack_1_1tree_1_1Octree_1_1SplitType_1_1SplitInfo_1a226b76c80d55a5f80f18e7aa1c9eeaa8" kindref="member">d</ref>];</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="464"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="465"><highlight class="normal"></highlight></codeline>
+<codeline lineno="466"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="467"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="468"><highlight class="normal"></highlight></codeline>
+<codeline lineno="469"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="470"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;octree_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="472"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/octree/octree.hpp"/>
+  </compounddef>
+</doxygen>

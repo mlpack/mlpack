@@ -1,0 +1,521 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1Subview" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Subview</compoundname>
+    <includes refid="subview_8hpp" local="no">subview.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1aa228d2bf2b576562f4378fa5f00a3b41" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t beginCol</definition>
+        <argsstring></argsstring>
+        <name>beginCol</name>
+        <briefdescription>
+<para>Starting column index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="179" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1a35ea3b1a852d8017a1b97207cce3637a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t beginRow</definition>
+        <argsstring></argsstring>
+        <name>beginRow</name>
+        <briefdescription>
+<para>Starting row index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="185" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1aa1c72e2315b09a2108f27cf67c046161" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t endCol</definition>
+        <argsstring></argsstring>
+        <name>endCol</name>
+        <briefdescription>
+<para>Ending column index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1a6e6603144993e5f33171fdb1c0347f73" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t endRow</definition>
+        <argsstring></argsstring>
+        <name>endRow</name>
+        <briefdescription>
+<para>Ending row index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inSize</definition>
+        <argsstring></argsstring>
+        <name>inSize</name>
+        <briefdescription>
+<para>Width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Subview_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="188" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="188" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1aec7c4a92afcb63c76471ab099ab22d05" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Subview</definition>
+        <argsstring>(const size_t inSize=1, const size_t beginRow=0, const size_t endRow=0, const size_t beginCol=0, const size_t endCol=0)</argsstring>
+        <name>Subview</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inSize</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>beginRow</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>endRow</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>beginCol</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>endCol</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Subview" kindref="compound">Subview</ref> layer object using the specified range of input to accept. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of sample. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>beginRow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Starting row index. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>endRow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ending row index. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>beginCol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Starting column index. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>endCol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ending column index. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="47" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="115" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1af43f2bc2b564ed9c1bd3ec8140a776e1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; BeginCol</definition>
+        <argsstring>() const</argsstring>
+        <name>BeginCol</name>
+        <briefdescription>
+<para>Get the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="146" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1ac54a663d2fb190b7b4cae558832ea0d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; BeginCol</definition>
+        <argsstring>()</argsstring>
+        <name>BeginCol</name>
+        <briefdescription>
+<para>Modify the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="148" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1ae0a4a3f199f56dc3caf36950d14ea5e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; BeginRow</definition>
+        <argsstring>() const</argsstring>
+        <name>BeginRow</name>
+        <briefdescription>
+<para>Get the starting row index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1ab02e9299dee2ff742c921b97cfc9fa1c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; BeginRow</definition>
+        <argsstring>()</argsstring>
+        <name>BeginRow</name>
+        <briefdescription>
+<para>Modify the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="138" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1afae677943bad29ddf1fc1350f657d28d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; EndCol</definition>
+        <argsstring>() const</argsstring>
+        <name>EndCol</name>
+        <briefdescription>
+<para>Get the ending column index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="151" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a9f8ff3e588bc97b5a0655a6e7365c5f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; EndCol</definition>
+        <argsstring>()</argsstring>
+        <name>EndCol</name>
+        <briefdescription>
+<para>Modify the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="153" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a0e3d132608c9b4e6aaf04421e52c374a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; EndRow</definition>
+        <argsstring>() const</argsstring>
+        <name>EndRow</name>
+        <briefdescription>
+<para>Get the ending row index of subview vector or matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="141" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a49c81f90f0eaeefbb0273eaaf1541159" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; EndRow</definition>
+        <argsstring>()</argsstring>
+        <name>EndRow</name>
+        <briefdescription>
+<para>Modify the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="143" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a09440df0a90bdcc766e56e097d91205b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const InputType &amp;input, OutputType &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="69" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1adc2669016a821704c4c4aeb4651e9e87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InSize</name>
+        <briefdescription>
+<para>Get the width of each sample. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="133" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Subview_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="159" bodyend="166"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the subview layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>The subview layer modifies the input to a submatrix of required size.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/subview.hpp" bodystart="34" bodyend="189"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1aa228d2bf2b576562f4378fa5f00a3b41" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>beginCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1af43f2bc2b564ed9c1bd3ec8140a776e1" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>BeginCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ac54a663d2fb190b7b4cae558832ea0d8" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>BeginCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a35ea3b1a852d8017a1b97207cce3637a" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>beginRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ae0a4a3f199f56dc3caf36950d14ea5e7" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>BeginRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ab02e9299dee2ff742c921b97cfc9fa1c" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>BeginRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1afae677943bad29ddf1fc1350f657d28d" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>EndCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a9f8ff3e588bc97b5a0655a6e7365c5f0" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>EndCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1aa1c72e2315b09a2108f27cf67c046161" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>endCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a0e3d132608c9b4e6aaf04421e52c374a" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>EndRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a49c81f90f0eaeefbb0273eaaf1541159" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>EndRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a6e6603144993e5f33171fdb1c0347f73" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>endRow</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a09440df0a90bdcc766e56e097d91205b" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1ad8790e1135ba331e561e2151f527a9d7" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>inSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1adc2669016a821704c4c4aeb4651e9e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>InSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Subview_1aec7c4a92afcb63c76471ab099ab22d05" prot="public" virt="non-virtual"><scope>mlpack::ann::Subview</scope><name>Subview</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

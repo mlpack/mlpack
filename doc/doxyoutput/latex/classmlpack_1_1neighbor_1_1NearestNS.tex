@@ -1,0 +1,306 @@
+\section{Nearest\+NS Class Reference}
+\label{classmlpack_1_1neighbor_1_1NearestNS}\index{Nearest\+NS@{Nearest\+NS}}
+
+
+This class implements the necessary methods for the Sort\+Policy template parameter of the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Best\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Return what should represent the best possible distance with this particular sort policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static double \textbf{ Best\+Node\+To\+Node\+Distance} (const Tree\+Type $\ast$query\+Node, const Tree\+Type $\ast$reference\+Node)
+\begin{DoxyCompactList}\small\item\em Return the best possible distance between two nodes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static double \textbf{ Best\+Node\+To\+Node\+Distance} (const Tree\+Type $\ast$query\+Node, const Tree\+Type $\ast$reference\+Node, const double center\+To\+Center\+Distance)
+\begin{DoxyCompactList}\small\item\em Return the best possible distance between two nodes, given that the distance between the centers of the two nodes has already been calculated. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static double \textbf{ Best\+Node\+To\+Node\+Distance} (const Tree\+Type $\ast$query\+Node, const Tree\+Type $\ast$reference\+Node, const Tree\+Type $\ast$reference\+Child\+Node, const double center\+To\+Center\+Distance)
+\begin{DoxyCompactList}\small\item\em Return the best possible distance between the query node and the reference child node given the base case distance between the query node and the reference node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type , typename Tree\+Type $>$ }\\static double \textbf{ Best\+Point\+To\+Node\+Distance} (const Vec\+Type \&query\+Point, const Tree\+Type $\ast$reference\+Node)
+\begin{DoxyCompactList}\small\item\em Return the best possible distance between a node and a point. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type , typename Tree\+Type $>$ }\\static double \textbf{ Best\+Point\+To\+Node\+Distance} (const Vec\+Type \&query\+Point, const Tree\+Type $\ast$reference\+Node, const double point\+To\+Center\+Distance)
+\begin{DoxyCompactList}\small\item\em Return the best possible distance between a point and a node, given that the distance between the point and the center of the node has already been calculated. \end{DoxyCompactList}\item 
+static double \textbf{ Combine\+Best} (const double a, const double b)
+\begin{DoxyCompactList}\small\item\em Return the best combination of the two distances. \end{DoxyCompactList}\item 
+static double \textbf{ Combine\+Worst} (const double a, const double b)
+\begin{DoxyCompactList}\small\item\em Return the worst combination of the two distances. \end{DoxyCompactList}\item 
+static double \textbf{ Convert\+To\+Distance} (const double score)
+\begin{DoxyCompactList}\small\item\em Convert the given score to a distance. \end{DoxyCompactList}\item 
+static double \textbf{ Convert\+To\+Score} (const double distance)
+\begin{DoxyCompactList}\small\item\em Convert the given distance into a score. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type , typename Tree\+Type $>$ }\\static size\+\_\+t \textbf{ Get\+Best\+Child} (const Vec\+Type \&query\+Point, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Return the best child according to this sort policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t \textbf{ Get\+Best\+Child} (const Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Return the best child according to this sort policy. \end{DoxyCompactList}\item 
+static bool \textbf{ Is\+Better} (const double value, const double ref)
+\begin{DoxyCompactList}\small\item\em Return whether or not value is \char`\"{}better\char`\"{} than ref. \end{DoxyCompactList}\item 
+static double \textbf{ Relax} (const double value, const double epsilon)
+\begin{DoxyCompactList}\small\item\em Return the given value relaxed. \end{DoxyCompactList}\item 
+static double \textbf{ Worst\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Return what should represent the worst possible distance with this particular sort policy. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class implements the necessary methods for the Sort\+Policy template parameter of the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class. 
+
+The sorting policy here is that the minimum distance is the best (so, when used with \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch}, the output is nearest neighbors).
+
+This class is also meant to serve as a guide to implement a custom Sort\+Policy. All of the methods implemented here must be implemented by any other Sort\+Policy classes. 
+
+Definition at line 31 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a9401e4c5bc0469cfc6d6ba9a38ae2232}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Distance@{Best\+Distance}}
+\index{Best\+Distance@{Best\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Distance()}
+{\footnotesize\ttfamily static double Best\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return what should represent the best possible distance with this particular sort policy. 
+
+In our case, this should be the minimum possible distance, 0.\+0.
+
+\begin{DoxyReturn}{Returns}
+0.\+0 
+\end{DoxyReturn}
+
+
+Definition at line 142 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_ab3488bd4db6360aa8b81c01a8ccd160b}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}}
+\index{Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Node\+To\+Node\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily static double Best\+Node\+To\+Node\+Distance (\begin{DoxyParamCaption}\item[{const Tree\+Type $\ast$}]{query\+Node,  }\item[{const Tree\+Type $\ast$}]{reference\+Node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return the best possible distance between two nodes. 
+
+In our case, this is the minimum distance between the two tree nodes using the given distance function. 
+
+Referenced by Nearest\+N\+S\+::\+Is\+Better().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a210421d3cace586032391cc41a6de405}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}}
+\index{Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Node\+To\+Node\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily static double Best\+Node\+To\+Node\+Distance (\begin{DoxyParamCaption}\item[{const Tree\+Type $\ast$}]{query\+Node,  }\item[{const Tree\+Type $\ast$}]{reference\+Node,  }\item[{const double}]{center\+To\+Center\+Distance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return the best possible distance between two nodes, given that the distance between the centers of the two nodes has already been calculated. 
+
+This is used in conjunction with trees that have self-\/children (like cover trees). \mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a2eba13ccfd4831fcaa4e0a51e7a66c5f}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}}
+\index{Best\+Node\+To\+Node\+Distance@{Best\+Node\+To\+Node\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Node\+To\+Node\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily static double Best\+Node\+To\+Node\+Distance (\begin{DoxyParamCaption}\item[{const Tree\+Type $\ast$}]{query\+Node,  }\item[{const Tree\+Type $\ast$}]{reference\+Node,  }\item[{const Tree\+Type $\ast$}]{reference\+Child\+Node,  }\item[{const double}]{center\+To\+Center\+Distance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return the best possible distance between the query node and the reference child node given the base case distance between the query node and the reference node. 
+
+Tree\+Type\+::\+Parent\+Distance() must be implemented to use this.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Query node. \\
+\hline
+{\em reference\+Node} & Reference node. \\
+\hline
+{\em reference\+Child\+Node} & Child of reference node which is being inspected. \\
+\hline
+{\em center\+To\+Center\+Distance} & Distance between centers of query node and reference node. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a3b7936770cdc5aa5774be12a70ea4c48}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Point\+To\+Node\+Distance@{Best\+Point\+To\+Node\+Distance}}
+\index{Best\+Point\+To\+Node\+Distance@{Best\+Point\+To\+Node\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Point\+To\+Node\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Best\+Point\+To\+Node\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{query\+Point,  }\item[{const Tree\+Type $\ast$}]{reference\+Node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return the best possible distance between a node and a point. 
+
+In our case, this is the minimum distance between the tree node and the point using the given distance function. 
+
+Referenced by Nearest\+N\+S\+::\+Is\+Better().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a99e612ac4aa750029c0561091f3cb75e}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Best\+Point\+To\+Node\+Distance@{Best\+Point\+To\+Node\+Distance}}
+\index{Best\+Point\+To\+Node\+Distance@{Best\+Point\+To\+Node\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Best\+Point\+To\+Node\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static double Best\+Point\+To\+Node\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{query\+Point,  }\item[{const Tree\+Type $\ast$}]{reference\+Node,  }\item[{const double}]{point\+To\+Center\+Distance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return the best possible distance between a point and a node, given that the distance between the point and the center of the node has already been calculated. 
+
+This is used in conjunction with trees that have self-\/children (like cover trees). \mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a3815f7d4249f21f143c0fd4dc6926b4e}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Combine\+Best@{Combine\+Best}}
+\index{Combine\+Best@{Combine\+Best}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Combine\+Best()}
+{\footnotesize\ttfamily static double Combine\+Best (\begin{DoxyParamCaption}\item[{const double}]{a,  }\item[{const double}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the best combination of the two distances. 
+
+
+
+Definition at line 147 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a2d925d236656a7aa6fe93598b0eebd9b}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Combine\+Worst@{Combine\+Worst}}
+\index{Combine\+Worst@{Combine\+Worst}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Combine\+Worst()}
+{\footnotesize\ttfamily static double Combine\+Worst (\begin{DoxyParamCaption}\item[{const double}]{a,  }\item[{const double}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the worst combination of the two distances. 
+
+
+
+Definition at line 155 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_aa48361089e2ea1bf224936e4e9a0346d}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Convert\+To\+Distance@{Convert\+To\+Distance}}
+\index{Convert\+To\+Distance@{Convert\+To\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Convert\+To\+Distance()}
+{\footnotesize\ttfamily static double Convert\+To\+Distance (\begin{DoxyParamCaption}\item[{const double}]{score }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Convert the given score to a distance. 
+
+This is the inverse of the operation provided by \doxyref{Convert\+To\+Score()}{p.}{classmlpack_1_1neighbor_1_1NearestNS_a083b68fea1178ece3b6e5376ac31c9e3}. For nearest neighbor search, there is no need for any change. 
+
+Definition at line 192 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a083b68fea1178ece3b6e5376ac31c9e3}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Convert\+To\+Score@{Convert\+To\+Score}}
+\index{Convert\+To\+Score@{Convert\+To\+Score}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Convert\+To\+Score()}
+{\footnotesize\ttfamily static double Convert\+To\+Score (\begin{DoxyParamCaption}\item[{const double}]{distance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Convert the given distance into a score. 
+
+Lower scores are better, so in the case of nearest neighbor sort where lower distances are better, we just return the distance. 
+
+Definition at line 182 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_ad5705d2f8301e6ecf09ac1c1be9cbb09}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Get\+Best\+Child@{Get\+Best\+Child}}
+\index{Get\+Best\+Child@{Get\+Best\+Child}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Get\+Best\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static size\+\_\+t Get\+Best\+Child (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{query\+Point,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the best child according to this sort policy. 
+
+In this case it will return the one with the minimum distance. 
+
+Definition at line 111 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a6765bea9cdad09d6d8109b030bdd8d13}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Get\+Best\+Child@{Get\+Best\+Child}}
+\index{Get\+Best\+Child@{Get\+Best\+Child}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Get\+Best\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static size\+\_\+t Get\+Best\+Child (\begin{DoxyParamCaption}\item[{const Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the best child according to this sort policy. 
+
+In this case it will return the one with the minimum distance. 
+
+Definition at line 121 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_a412d62a94fad8425114314285bf573ec}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Is\+Better@{Is\+Better}}
+\index{Is\+Better@{Is\+Better}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Is\+Better()}
+{\footnotesize\ttfamily static bool Is\+Better (\begin{DoxyParamCaption}\item[{const double}]{value,  }\item[{const double}]{ref }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return whether or not value is \char`\"{}better\char`\"{} than ref. 
+
+In this case, that means that the value is less than or equal to the reference.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Value to compare \\
+\hline
+{\em ref} & Value to compare with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool indicating whether or not (value $<$= ref). 
+\end{DoxyReturn}
+
+
+Definition at line 43 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+
+
+References Nearest\+N\+S\+::\+Best\+Node\+To\+Node\+Distance(), and Nearest\+N\+S\+::\+Best\+Point\+To\+Node\+Distance().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_ac005ea5fc8e296ab86ea247d7de5b747}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Relax@{Relax}}
+\index{Relax@{Relax}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Relax()}
+{\footnotesize\ttfamily static double Relax (\begin{DoxyParamCaption}\item[{const double}]{value,  }\item[{const double}]{epsilon }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the given value relaxed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Value to relax. \\
+\hline
+{\em epsilon} & Relative error (non-\/negative).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double Value relaxed. 
+\end{DoxyReturn}
+
+
+Definition at line 170 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NearestNS_acd1717b7877007f086da8ffaf3ad44f0}} 
+\index{mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}!Worst\+Distance@{Worst\+Distance}}
+\index{Worst\+Distance@{Worst\+Distance}!mlpack\+::neighbor\+::\+Nearest\+NS@{mlpack\+::neighbor\+::\+Nearest\+NS}}
+\subsubsection{Worst\+Distance()}
+{\footnotesize\ttfamily static double Worst\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return what should represent the worst possible distance with this particular sort policy. 
+
+In our case, this should be the maximum possible distance, D\+B\+L\+\_\+\+M\+AX.
+
+\begin{DoxyReturn}{Returns}
+D\+B\+L\+\_\+\+M\+AX 
+\end{DoxyReturn}
+
+
+Definition at line 133 of file nearest\+\_\+neighbor\+\_\+sort.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/sort\+\_\+policies/\textbf{ nearest\+\_\+neighbor\+\_\+sort.\+hpp}\end{DoxyCompactItemize}

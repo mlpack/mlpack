@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1range_1_1RSWrapperBase" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>mlpack::range::RSWrapperBase</compoundname>
+    <derivedcompoundref refid="classmlpack_1_1range_1_1RSWrapper" prot="public" virt="non-virtual">RSWrapper&lt; TreeType &gt;</derivedcompoundref>
+    <includes refid="rs__model_8hpp" local="no">rs_model.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a3f8141df2cfd91fd784febc7a67b6fbb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RSWrapperBase</definition>
+        <argsstring>()</argsstring>
+        <name>RSWrapperBase</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>The base class does not hold anything, so this constructor does nothing. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="39" bodyend="39"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a94063ea7b8e448ead466995134bac09d">RSWrapperBase::Clone</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual ~RSWrapperBase</definition>
+        <argsstring>()</argsstring>
+        <name>~RSWrapperBase</name>
+        <briefdescription>
+<para>Destruct the <ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> (nothing to do). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="46" bodyend="46"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e">RSWrapperBase::Dataset</references>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08">RSWrapperBase::Naive</references>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc">RSWrapperBase::Search</references>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce">RSWrapperBase::SingleMode</references>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">RSWrapperBase::Train</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a94063ea7b8e448ead466995134bac09d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> *</type>
+        <definition>virtual RSWrapperBase* Clone</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Clone</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1a84a6ccc6add7d5bf6a055fb02d16a375">Clone</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1adaf440057041622abd2d1d527b627d25">Clone</reimplementedby>
+        <briefdescription>
+<para>Create a new <ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> that is the same as this one. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function will properly handle polymorphism. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="43" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a3f8141df2cfd91fd784febc7a67b6fbb" compoundref="rs__model_8hpp" startline="39" endline="39">RSWrapperBase::RSWrapperBase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>virtual const arma::mat&amp; Dataset</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Dataset</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1aff320b9a86b77a150e630c01d5888273">Dataset</reimplementedby>
+        <briefdescription>
+<para>Get the dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="49" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" compoundref="rs__model_8hpp" startline="46" endline="46">RSWrapperBase::~RSWrapperBase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool</type>
+        <definition>virtual bool Naive</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Naive</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1a343230e7d7344e3f7d5f5f2eb89cf2c5">Naive</reimplementedby>
+        <briefdescription>
+<para>Get whether naive search is being used. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="57" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" compoundref="rs__model_8hpp" startline="46" endline="46">RSWrapperBase::~RSWrapperBase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1af7b975b8b5777ab38621d5d7ccd90aae" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool &amp;</type>
+        <definition>virtual bool&amp; Naive</definition>
+        <argsstring>()=0</argsstring>
+        <name>Naive</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1af7d397adca3f411b4e2d2f977b280ce6">Naive</reimplementedby>
+        <briefdescription>
+<para>Modify whether naive search is being used. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="59" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Search</definition>
+        <argsstring>(arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances, const size_t leafSize)=0</argsstring>
+        <name>Search</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1a8113f151289737cd35dd9eaf38e32eb8">Search</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a0b90d9dc1269d8b8f186e6053b12fbe3">Search</reimplementedby>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const math::Range &amp;</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; double &gt;&gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>leafSize</declname>
+        </param>
+        <briefdescription>
+<para>Perform bichromatic range search (i.e. </para>        </briefdescription>
+        <detaileddescription>
+<para>a search with a separate query set). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="67" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1adaf440057041622abd2d1d527b627d25" compoundref="rs__model_8hpp" startline="172" endline="175">LeafSizeRSWrapper&lt; TreeType &gt;::Clone</referencedby>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="rs__model_8hpp" startline="114" endline="114">RSWrapper&lt; TreeType &gt;::Naive</referencedby>
+        <referencedby refid="classmlpack_1_1range_1_1RSModel_1a8111114602e748b38c0875f82f323544" compoundref="rs__model_8hpp" startline="301" endline="301">RSModel::RandomBasis</referencedby>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" compoundref="rs__model_8hpp" startline="46" endline="46">RSWrapperBase::~RSWrapperBase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a6dbe6c455e8b22c78913c91fb8f7f5cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Search</definition>
+        <argsstring>(const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)=0</argsstring>
+        <name>Search</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1af3b8f6601dfb1c6fff4d3fc554eea5c4">Search</reimplementedby>
+        <param>
+          <type>const math::Range &amp;</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; double &gt;&gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Perform monochromatic range search (i.e. </para>        </briefdescription>
+        <detaileddescription>
+<para>a search with the reference set as the query set). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="75" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool</type>
+        <definition>virtual bool SingleMode</definition>
+        <argsstring>() const =0</argsstring>
+        <name>SingleMode</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1a7477b3e8499a6158bbe177e7f30d4947">SingleMode</reimplementedby>
+        <briefdescription>
+<para>Get whether single-tree search is being used. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="52" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" compoundref="rs__model_8hpp" startline="46" endline="46">RSWrapperBase::~RSWrapperBase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool &amp;</type>
+        <definition>virtual bool&amp; SingleMode</definition>
+        <argsstring>()=0</argsstring>
+        <name>SingleMode</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1adadacd63ddeadf138d834b1fdc632773">SingleMode</reimplementedby>
+        <briefdescription>
+<para>Modify whether single-tree search is being used. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Train</definition>
+        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize)=0</argsstring>
+        <name>Train</name>
+        <reimplementedby refid="classmlpack_1_1range_1_1RSWrapper_1aab4ee663331b914daad05f6f7c22ee9b">Train</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a6804dc4af719ba3162ad5f15dbe5553d">Train</reimplementedby>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>leafSize</declname>
+        </param>
+        <briefdescription>
+<para>Train the model (build the reference tree if needed). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="62" column="1"/>
+        <referencedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1adaf440057041622abd2d1d527b627d25" compoundref="rs__model_8hpp" startline="172" endline="175">LeafSizeRSWrapper&lt; TreeType &gt;::Clone</referencedby>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="rs__model_8hpp" startline="114" endline="114">RSWrapper&lt; TreeType &gt;::Naive</referencedby>
+        <referencedby refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" compoundref="rs__model_8hpp" startline="46" endline="46">RSWrapperBase::~RSWrapperBase</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> is a base wrapper class for holding all <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> types supported by <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para>All <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support. </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="1195">
+        <label>LeafSizeRSWrapper&lt; TreeType &gt;</label>
+        <link refid="classmlpack_1_1range_1_1LeafSizeRSWrapper"/>
+        <childnode refid="1194" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1193">
+        <label>RSWrapperBase</label>
+        <link refid="classmlpack_1_1range_1_1RSWrapperBase"/>
+      </node>
+      <node id="1194">
+        <label>RSWrapper&lt; TreeType &gt;</label>
+        <link refid="classmlpack_1_1range_1_1RSWrapper"/>
+        <childnode refid="1193" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="34" bodyend="78"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a94063ea7b8e448ead466995134bac09d" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Clone</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1af7b975b8b5777ab38621d5d7ccd90aae" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a3f8141df2cfd91fd784febc7a67b6fbb" prot="public" virt="non-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>RSWrapperBase</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a6dbe6c455e8b22c78913c91fb8f7f5cf" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" prot="public" virt="pure-virtual"><scope>mlpack::range::RSWrapperBase</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" prot="public" virt="virtual"><scope>mlpack::range::RSWrapperBase</scope><name>~RSWrapperBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

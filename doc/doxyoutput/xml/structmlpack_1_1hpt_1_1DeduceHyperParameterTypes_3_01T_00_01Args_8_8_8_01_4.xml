@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;</compoundname>
+    <includes refid="deduce__hp__types_8hpp" local="no">deduce_hp_types.hpp</includes>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1IsCollectionType" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::IsCollectionType</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHolder" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHolder</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType_3_01ArithmeticType_00_01true_01_4" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType&lt; ArithmeticType, true &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType_3_01CollectionType_00_01false_01_4" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType&lt; CollectionType, false &gt;</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>Args</declname>
+        <defname>Args</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1a885638d120e5be68a073bad43a0a7c38" prot="public" static="no">
+        <type>typename ResultHolder&lt;&gt;::<ref refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1a885638d120e5be68a073bad43a0a7c38" kindref="member">TupleType</ref></type>
+        <definition>using TupleType =  typename ResultHolder&lt;&gt;::TupleType</definition>
+        <argsstring></argsstring>
+        <name>TupleType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Defining <ref refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes" kindref="compound">DeduceHyperParameterTypes</ref> for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="49" bodyend="101"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1a885638d120e5be68a073bad43a0a7c38" prot="public" virt="non-virtual"><scope>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;</scope><name>TupleType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

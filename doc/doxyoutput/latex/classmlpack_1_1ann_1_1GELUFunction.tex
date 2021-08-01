@@ -1,0 +1,129 @@
+\section{G\+E\+L\+U\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1GELUFunction}\index{G\+E\+L\+U\+Function@{G\+E\+L\+U\+Function}}
+
+
+The G\+E\+LU function, defined by.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the G\+E\+LU function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the G\+E\+LU function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the G\+E\+LU function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the G\+E\+LU function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The G\+E\+LU function, defined by. 
+
+\begin{eqnarray*} f(x) = 0.5 * x * {1 + tanh[(2/pi)^(1/2) * (x + 0.044715 * x^3)]} \\ f'(x) = 0.5 * tanh(0.0356774 * x^3) + 0.797885 * x) + (0.0535161x^3 + 0.398942 * x) * sech^2(0.0356774 * x^3+0.797885 * x) + 0.5\\ \end{eqnarray*} 
+
+Definition at line 31 of file gelu\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GELUFunction_a163d34fd09f8edf457164f5033c635cf}} 
+\index{mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivative of the G\+E\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 65 of file gelu\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GELUFunction_ad442502c34b67303b74c735641dab790}} 
+\index{mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}}
+\subsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{y,  }\item[{Output\+Vec\+Type \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the G\+E\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 80 of file gelu\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GELUFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the G\+E\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 40 of file gelu\+\_\+function.\+hpp.
+
+
+
+References M\+\_\+\+PI.
+
+\mbox{\label{classmlpack_1_1ann_1_1GELUFunction_af6cf5da90eb6312e3e25c9b8bd9c3527}} 
+\index{mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+G\+E\+L\+U\+Function@{mlpack\+::ann\+::\+G\+E\+L\+U\+Function}}
+\subsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the G\+E\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 53 of file gelu\+\_\+function.\+hpp.
+
+
+
+References M\+\_\+\+PI.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ gelu\+\_\+function.\+hpp}\end{DoxyCompactItemize}

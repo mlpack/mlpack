@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1RTreeSplit" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::RTreeSplit</compoundname>
+    <includes refid="r__tree__split_8hpp" local="no">r_tree_split.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1af73652d9536a1715364bbb0e4a9ba04e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void SplitLeafNode</definition>
+        <argsstring>(TreeType *tree, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>SplitLeafNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Split a leaf node using the &quot;default&quot; algorithm. </para>        </briefdescription>
+        <detaileddescription>
+<para>If necessary, this split will propagate upwards through the tree. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="34" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1a73ff1eaa94449d763847fff1f537922f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool SplitNonLeafNode</definition>
+        <argsstring>(TreeType *tree, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>SplitNonLeafNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Split a non-leaf node using the &quot;default&quot; algorithm. </para>        </briefdescription>
+        <detaileddescription>
+<para>If this is a root node, the tree increases in depth. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="41" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1a32c35fe6746a0b03045085af70e7ad10" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void AssignNodeDestNode</definition>
+        <argsstring>(TreeType *oldTree, TreeType *treeOne, TreeType *treeTwo, const int intI, const int intJ)</argsstring>
+        <name>AssignNodeDestNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>oldTree</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>treeOne</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>treeTwo</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>intI</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>intJ</declname>
+        </param>
+        <briefdescription>
+<para>Assign nodes to the two new nodes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="70" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1a4d4b25afb298920c27394415fc058e77" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void AssignPointDestNode</definition>
+        <argsstring>(TreeType *oldTree, TreeType *treeOne, TreeType *treeTwo, const int intI, const int intJ)</argsstring>
+        <name>AssignPointDestNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>oldTree</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>treeOne</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>treeTwo</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>intI</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>intJ</declname>
+        </param>
+        <briefdescription>
+<para>Assign points to the two new nodes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="60" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1ac976733c5017b50a3eaaefd2c7e536b5" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void GetBoundSeeds</definition>
+        <argsstring>(const TreeType *tree, int &amp;i, int &amp;j)</argsstring>
+        <name>GetBoundSeeds</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>int &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int &amp;</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+<para>Get the seeds for splitting a non-leaf node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1ac8876b253109fc900fc0a3fd832b8415" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void GetPointSeeds</definition>
+        <argsstring>(const TreeType *tree, int &amp;i, int &amp;j)</argsstring>
+        <name>GetPointSeeds</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>int &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int &amp;</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+<para>Get the seeds for splitting a leaf node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="48" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RTreeSplit_1ad6cd53f562619e04c67c12c67e26a199" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void InsertNodeIntoTree</definition>
+        <argsstring>(TreeType *destTree, TreeType *srcNode)</argsstring>
+        <name>InsertNodeIntoTree</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>destTree</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>srcNode</declname>
+        </param>
+        <briefdescription>
+<para>Insert a node into another node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="80" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A Rectangle Tree has new points inserted at the bottom. </para>    </briefdescription>
+    <detaileddescription>
+<para>When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" bodystart="26" bodyend="81"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1a32c35fe6746a0b03045085af70e7ad10" prot="private" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>AssignNodeDestNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1a4d4b25afb298920c27394415fc058e77" prot="private" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>AssignPointDestNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1ac976733c5017b50a3eaaefd2c7e536b5" prot="private" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>GetBoundSeeds</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1ac8876b253109fc900fc0a3fd832b8415" prot="private" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>GetPointSeeds</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1ad6cd53f562619e04c67c12c67e26a199" prot="private" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>InsertNodeIntoTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1af73652d9536a1715364bbb0e4a9ba04e" prot="public" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>SplitLeafNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RTreeSplit_1a73ff1eaa94449d763847fff1f537922f" prot="public" virt="non-virtual"><scope>mlpack::tree::RTreeSplit</scope><name>SplitNonLeafNode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

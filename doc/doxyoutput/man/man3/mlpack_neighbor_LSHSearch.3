@@ -1,0 +1,374 @@
+.TH "LSHSearch< SortPolicy, MatType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LSHSearch< SortPolicy, MatType > \- The \fBLSHSearch\fP class; this class builds a hash on the reference set and uses this hash to compute the distance-approximate nearest-neighbors of the given queries\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLSHSearch\fP (MatType referenceSet, const arma::cube &projections, const double hashWidth=0\&.0, const size_t secondHashSize=99901, const size_t bucketSize=500)"
+.br
+.RI "This function initializes the LSH class\&. "
+.ti -1c
+.RI "\fBLSHSearch\fP (MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth=0\&.0, const size_t secondHashSize=99901, const size_t bucketSize=500)"
+.br
+.RI "This function initializes the LSH class\&. "
+.ti -1c
+.RI "\fBLSHSearch\fP ()"
+.br
+.RI "Create an untrained LSH model\&. "
+.ti -1c
+.RI "\fBLSHSearch\fP (const \fBLSHSearch\fP &other)"
+.br
+.RI "Copy the given LSH model\&. "
+.ti -1c
+.RI "\fBLSHSearch\fP (\fBLSHSearch\fP &&other)"
+.br
+.RI "Take ownership of the given LSH model\&. "
+.ti -1c
+.RI "size_t \fBBucketSize\fP () const"
+.br
+.RI "Get the bucket size of the second hash\&. "
+.ti -1c
+.RI "size_t \fBDistanceEvaluations\fP () const"
+.br
+.RI "Return the number of distance evaluations performed\&. "
+.ti -1c
+.RI "size_t & \fBDistanceEvaluations\fP ()"
+.br
+.RI "Modify the number of distance evaluations performed\&. "
+.ti -1c
+.RI "size_t \fBNumProjections\fP () const"
+.br
+.RI "Get the number of projections\&. "
+.ti -1c
+.RI "const arma::mat & \fBOffsets\fP () const"
+.br
+.RI "Get the offsets 'b' for each of the projections\&. (One 'b' per column\&.) "
+.ti -1c
+.RI "\fBLSHSearch\fP & \fBoperator=\fP (const \fBLSHSearch\fP &other)"
+.br
+.RI "Copy the given LSH model\&. "
+.ti -1c
+.RI "\fBLSHSearch\fP & \fBoperator=\fP (\fBLSHSearch\fP &&other)"
+.br
+.RI "Take ownership of the given LSH model\&. "
+.ti -1c
+.RI "const arma::cube & \fBProjections\fP ()"
+.br
+.RI "Get the projection tables\&. "
+.ti -1c
+.RI "void \fBProjections\fP (const arma::cube &projTables)"
+.br
+.RI "Change the projection tables (this retrains the LSH model)\&. "
+.ti -1c
+.RI "const MatType & \fBReferenceSet\fP () const"
+.br
+.RI "Return the reference dataset\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const size_t k, arma::Mat< size_t > &resultingNeighbors, arma::mat &distances, const size_t numTablesToSearch=0, const size_t T=0)"
+.br
+.RI "Compute the nearest neighbors of the points in the given query set and store the output in the given matrices\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &resultingNeighbors, arma::mat &distances, const size_t numTablesToSearch=0, size_t T=0)"
+.br
+.RI "Compute the nearest neighbors and store the output in the given matrices\&. "
+.ti -1c
+.RI "const std::vector< arma::Col< size_t > > & \fBSecondHashTable\fP () const"
+.br
+.RI "Get the second hash table\&. "
+.ti -1c
+.RI "const arma::vec & \fBSecondHashWeights\fP () const"
+.br
+.RI "Get the weights of the second hash\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the LSH model\&. "
+.ti -1c
+.RI "void \fBTrain\fP (MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth=0\&.0, const size_t secondHashSize=99901, const size_t bucketSize=500, const arma::cube &projection=arma::cube())"
+.br
+.RI "Train the LSH model on the given dataset\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBComputeRecall\fP (const arma::Mat< size_t > &foundNeighbors, const arma::Mat< size_t > &realNeighbors)"
+.br
+.RI "Compute the recall (% of neighbors found) given the neighbors returned by \fBLSHSearch::Search\fP and a 'ground truth' set of neighbors\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MatType = arma::mat>
+.br
+class mlpack::neighbor::LSHSearch< SortPolicy, MatType >"
+The \fBLSHSearch\fP class; this class builds a hash on the reference set and uses this hash to compute the distance-approximate nearest-neighbors of the given queries\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances; see NearestNeighborSort\&. 
+.br
+\fIMatType\fP Type of matrix to use to store the data\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file lsh_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLSHSearch\fP (MatType referenceSet, const arma::cube & projections, const double hashWidth = \fC0\&.0\fP, const size_t secondHashSize = \fC99901\fP, const size_t bucketSize = \fC500\fP)"
+
+.PP
+This function initializes the LSH class\&. It builds the hash on the reference set with 2-stable distributions\&. See the individual functions performing the hashing for details on how the hashing is done\&. In order to avoid copying the reference set, it is suggested to pass that parameter with std::move()\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points and the set of queries\&. 
+.br
+\fIprojections\fP Cube of projection tables\&. For a cube of size (a, b, c) we set numProj = a, numTables = c\&. b is the reference set dimensionality\&. 
+.br
+\fIhashWidth\fP The width of hash for every table\&. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs\&. This should be a reasonable upper bound on the nearest-neighbor distance in general\&. 
+.br
+\fIsecondHashSize\fP The size of the second hash table\&. This should be a large prime number\&. 
+.br
+\fIbucketSize\fP The size of the bucket in the second hash table\&. This is the maximum number of points that can be hashed into single bucket\&. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large---be careful!)\&. 
+.RE
+.PP
+
+.SS "\fBLSHSearch\fP (MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth = \fC0\&.0\fP, const size_t secondHashSize = \fC99901\fP, const size_t bucketSize = \fC500\fP)"
+
+.PP
+This function initializes the LSH class\&. It builds the hash one the reference set using the provided projections\&. See the individual functions performing the hashing for details on how the hashing is done\&. In order to avoid copying the reference set, consider passing the set with std::move()\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points and the set of queries\&. 
+.br
+\fInumProj\fP Number of projections in each hash table (anything between 10-50 might be a decent choice)\&. 
+.br
+\fInumTables\fP Total number of hash tables (anything between 10-20 should suffice)\&. 
+.br
+\fIhashWidth\fP The width of hash for every table\&. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs\&. This should be a reasonable upper bound on the nearest-neighbor distance in general\&. 
+.br
+\fIsecondHashSize\fP The size of the second hash table\&. This should be a large prime number\&. 
+.br
+\fIbucketSize\fP The size of the bucket in the second hash table\&. This is the maximum number of points that can be hashed into single bucket\&. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large---be careful!)\&. 
+.RE
+.PP
+
+.SS "\fBLSHSearch\fP ()"
+
+.PP
+Create an untrained LSH model\&. Be sure to call \fBTrain()\fP before calling \fBSearch()\fP; otherwise, an exception will be thrown when \fBSearch()\fP is called\&. 
+.SS "\fBLSHSearch\fP (const \fBLSHSearch\fP< SortPolicy, MatType > & other)"
+
+.PP
+Copy the given LSH model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Other LSH model to copy\&. 
+.RE
+.PP
+
+.SS "\fBLSHSearch\fP (\fBLSHSearch\fP< SortPolicy, MatType > && other)"
+
+.PP
+Take ownership of the given LSH model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Other LSH model to take ownership of\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t BucketSize () const\fC [inline]\fP"
+
+.PP
+Get the bucket size of the second hash\&. 
+.PP
+Definition at line 291 of file lsh_search\&.hpp\&.
+.SS "static double ComputeRecall (const arma::Mat< size_t > & foundNeighbors, const arma::Mat< size_t > & realNeighbors)\fC [static]\fP"
+
+.PP
+Compute the recall (% of neighbors found) given the neighbors returned by \fBLSHSearch::Search\fP and a 'ground truth' set of neighbors\&. The recall returned will be in the range [0, 1]\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfoundNeighbors\fP Set of neighbors to compute recall of\&. 
+.br
+\fIrealNeighbors\fP Set of 'ground truth' neighbors to compute recall against\&. 
+.RE
+.PP
+
+.SS "size_t DistanceEvaluations () const\fC [inline]\fP"
+
+.PP
+Return the number of distance evaluations performed\&. 
+.PP
+Definition at line 274 of file lsh_search\&.hpp\&.
+.SS "size_t& DistanceEvaluations ()\fC [inline]\fP"
+
+.PP
+Modify the number of distance evaluations performed\&. 
+.PP
+Definition at line 276 of file lsh_search\&.hpp\&.
+.SS "size_t NumProjections () const\fC [inline]\fP"
+
+.PP
+Get the number of projections\&. 
+.PP
+Definition at line 282 of file lsh_search\&.hpp\&.
+.SS "const arma::mat& Offsets () const\fC [inline]\fP"
+
+.PP
+Get the offsets 'b' for each of the projections\&. (One 'b' per column\&.) 
+.PP
+Definition at line 285 of file lsh_search\&.hpp\&.
+.SS "\fBLSHSearch\fP& operator= (const \fBLSHSearch\fP< SortPolicy, MatType > & other)"
+
+.PP
+Copy the given LSH model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Other LSH model to copy\&. 
+.RE
+.PP
+
+.SS "\fBLSHSearch\fP& operator= (\fBLSHSearch\fP< SortPolicy, MatType > && other)"
+
+.PP
+Take ownership of the given LSH model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Other LSH model to take ownership of\&. 
+.RE
+.PP
+
+.SS "const arma::cube& Projections ()\fC [inline]\fP"
+
+.PP
+Get the projection tables\&. 
+.PP
+Definition at line 298 of file lsh_search\&.hpp\&.
+.SS "void Projections (const arma::cube & projTables)\fC [inline]\fP"
+
+.PP
+Change the projection tables (this retrains the LSH model)\&. 
+.PP
+Definition at line 301 of file lsh_search\&.hpp\&.
+.PP
+References LSHSearch< SortPolicy, MatType >::Train()\&.
+.SS "const MatType& ReferenceSet () const\fC [inline]\fP"
+
+.PP
+Return the reference dataset\&. 
+.PP
+Definition at line 279 of file lsh_search\&.hpp\&.
+.SS "void Search (const MatType & querySet, const size_t k, arma::Mat< size_t > & resultingNeighbors, arma::mat & distances, const size_t numTablesToSearch = \fC0\fP, const size_t T = \fC0\fP)"
+
+.PP
+Compute the nearest neighbors of the points in the given query set and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquerySet\fP Set of query points\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIresultingNeighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.br
+\fInumTablesToSearch\fP This parameter allows the user to have control over the number of hash tables to be searched\&. This allows the user to pick the number of tables it can afford for the time available without having to build hashing for every table size\&. By default, this is set to zero in which case all tables are considered\&. 
+.br
+\fIT\fP The number of additional probing bins to examine with multiprobe LSH\&. If T = 0, classic single-probe LSH is run (default)\&. 
+.RE
+.PP
+
+.SS "void Search (const size_t k, arma::Mat< size_t > & resultingNeighbors, arma::mat & distances, const size_t numTablesToSearch = \fC0\fP, size_t T = \fC0\fP)"
+
+.PP
+Compute the nearest neighbors and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIresultingNeighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.br
+\fInumTablesToSearch\fP This parameter allows the user to have control over the number of hash tables to be searched\&. This allows the user to pick the number of tables it can afford for the time available without having to build hashing for every table size\&. By default, this is set to zero in which case all tables are considered\&. 
+.br
+\fIT\fP Number of probing bins\&. 
+.RE
+.PP
+
+.SS "const std::vector<arma::Col<size_t> >& SecondHashTable () const\fC [inline]\fP"
+
+.PP
+Get the second hash table\&. 
+.PP
+Definition at line 294 of file lsh_search\&.hpp\&.
+.SS "const arma::vec& SecondHashWeights () const\fC [inline]\fP"
+
+.PP
+Get the weights of the second hash\&. 
+.PP
+Definition at line 288 of file lsh_search\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the LSH model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIar\fP Archive to serialize to\&. 
+.br
+\fIversion\fP serialize class version to provide backward compatibility 
+.RE
+.PP
+
+.SS "void Train (MatType referenceSet, const size_t numProj, const size_t numTables, const double hashWidth = \fC0\&.0\fP, const size_t secondHashSize = \fC99901\fP, const size_t bucketSize = \fC500\fP, const arma::cube & projection = \fCarma::cube()\fP)"
+
+.PP
+Train the LSH model on the given dataset\&. If a correctly-sized projection cube is not provided, this means building new hash tables\&. Otherwise, we use the projections provided by the user\&. In order to avoid copying the reference set, consider passing that parameter with std::move()\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points and the set of queries\&. 
+.br
+\fInumProj\fP Number of projections in each hash table (anything between 10-50 might be a decent choice)\&. 
+.br
+\fInumTables\fP Total number of hash tables (anything between 10-20 should suffice)\&. 
+.br
+\fIhashWidth\fP The width of hash for every table\&. If 0 (the default) is provided, then the hash width is automatically obtained by computing the average pairwise distance of 25 pairs\&. This should be a reasonable upper bound on the nearest-neighbor distance in general\&. 
+.br
+\fIsecondHashSize\fP The size of the second hash table\&. This should be a large prime number\&. 
+.br
+\fIbucketSize\fP The size of the bucket in the second hash table\&. This is the maximum number of points that can be hashed into single bucket\&. A value of 0 indicates that there is no limit (so the second hash table can be arbitrarily large---be careful!)\&. 
+.br
+\fIprojection\fP Cube of projection tables\&. For a cube of size (a, b, c) we set numProj = a, numTables = c\&. b is the reference set dimensionality\&. 
+.RE
+.PP
+
+.PP
+Referenced by LSHSearch< SortPolicy, MatType >::Projections()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

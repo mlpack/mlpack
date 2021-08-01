@@ -1,0 +1,1747 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1math" kind="namespace" language="C++">
+    <compoundname>mlpack::math</compoundname>
+    <innerclass refid="classmlpack_1_1math_1_1ColumnsToBlocks" prot="public">mlpack::math::ColumnsToBlocks</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacemlpack_1_1math_1a56ce900a37460cea29bd0359aeaaff34" prot="public" static="no" mutable="no">
+        <type>MLPACK_EXPORT std::mt19937</type>
+        <definition>MLPACK_EXPORT std::mt19937 randGen</definition>
+        <argsstring></argsstring>
+        <name>randGen</name>
+        <briefdescription>
+<para>MLPACK_EXPORT is required for global variables; it exports the symbols correctly on Windows. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="27" column="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacemlpack_1_1math_1a109a494ed74138c2d02d64bb3ebe6f9f" prot="public" static="no" mutable="no">
+        <type>MLPACK_EXPORT std::normal_distribution</type>
+        <definition>MLPACK_EXPORT std::normal_distribution randNormalDist</definition>
+        <argsstring></argsstring>
+        <name>randNormalDist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="31" column="1"/>
+        <referencedby refid="namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af" compoundref="random_8hpp" startline="127" endline="130">RandNormal</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacemlpack_1_1math_1a7793dcf6af53048459e80aa26780afa0" prot="public" static="no" mutable="no">
+        <type>MLPACK_EXPORT std::uniform_real_distribution</type>
+        <definition>MLPACK_EXPORT std::uniform_real_distribution randUniformDist</definition>
+        <argsstring></argsstring>
+        <name>randUniformDist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="29" column="1"/>
+        <referencedby refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" compoundref="random_8hpp" startline="110" endline="113">RandInt</referencedby>
+        <referencedby refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" compoundref="random_8hpp" startline="83" endline="86">Random</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ae537d6afdea1348abf317d7761319a14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T::elem_type</type>
+        <definition>T::elem_type mlpack::math::AccuLog</definition>
+        <argsstring>(const T &amp;x)</argsstring>
+        <name>AccuLog</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Log-sum a vector of log values. </para>        </briefdescription>
+        <detaileddescription>
+<para>(T should be an Armadillo type.)</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>vector of log values </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>log(e^x0 + e^x1 + ...) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/log_add.hpp" line="37" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1af20ca29adeac02601e8f4386bda3588e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Center</definition>
+        <argsstring>(const arma::mat &amp;x, arma::mat &amp;xCentered)</argsstring>
+        <name>Center</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>xCentered</declname>
+        </param>
+        <briefdescription>
+<para>Creates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xCentered</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to write centered output into </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="37" column="1"/>
+        <referencedby refid="classmlpack_1_1kpca_1_1NystroemKernelRule_1a9043568ae7d441d997df28a9963c2c39" compoundref="kernel__pca_2kernel__rules_2nystroem__method_8hpp" startline="40" endline="82">NystroemKernelRule&lt; KernelType, PointSelectionPolicy &gt;::ApplyKernelMatrix</referencedby>
+        <referencedby refid="classmlpack_1_1bound_1_1HRectBound_1acc71d930ed90e73b2bc0c360835c5371" compoundref="hrectbound_8hpp" startline="113" endline="113">HRectBound&lt; MetricType &gt;::Metric</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a6d16c12e401f859c53595d709892b2a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::ClampNonNegative</definition>
+        <argsstring>(const double d)</argsstring>
+        <name>ClampNonNegative</name>
+        <param>
+          <type>const double</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Forces a number to be non-negative, turning negative numbers into zero. </para>        </briefdescription>
+        <detaileddescription>
+<para>Avoids branching costs (this is a measurable improvement).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Double to clamp. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if d &lt; 0, d otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" bodystart="28" bodyend="31"/>
+        <referencedby refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" compoundref="clamp_8hpp" startline="53" endline="62">ClampRange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a10bd2254595feb073cdfd55e31c1231b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::ClampNonPositive</definition>
+        <argsstring>(const double d)</argsstring>
+        <name>ClampNonPositive</name>
+        <param>
+          <type>const double</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Forces a number to be non-positive, turning positive numbers into zero. </para>        </briefdescription>
+        <detaileddescription>
+<para>Avoids branching costs (this is a measurable improvement).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Double to clamp. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if d &gt; 0, d otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" bodystart="40" bodyend="43"/>
+        <referencedby refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" compoundref="clamp_8hpp" startline="53" endline="62">ClampRange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::ClampRange</definition>
+        <argsstring>(double value, const double rangeMin, const double rangeMax)</argsstring>
+        <name>ClampRange</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>rangeMin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>rangeMax</declname>
+        </param>
+        <briefdescription>
+<para>Clamp a number between a particular range. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number to clamp. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rangeMin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The first of the range. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rangeMax</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The last of the range. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>max(rangeMin, min(rangeMax, d)). </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/clamp.hpp" bodystart="53" bodyend="62"/>
+        <references refid="namespacemlpack_1_1math_1a6d16c12e401f859c53595d709892b2a2" compoundref="clamp_8hpp" startline="28" endline="31">ClampNonNegative</references>
+        <references refid="namespacemlpack_1_1math_1a10bd2254595feb073cdfd55e31c1231b" compoundref="clamp_8hpp" startline="40" endline="43">ClampNonPositive</references>
+        <referencedby refid="classmlpack_1_1rl_1_1RewardClipping_1a311ac19edc537dee94f37b7cce93d908" compoundref="reward__clipping_8hpp" startline="88" endline="96">RewardClipping&lt; EnvironmentType &gt;::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1ContinuousMountainCar_1a311ac19edc537dee94f37b7cce93d908" compoundref="continuous__mountain__car_8hpp" startline="132" endline="163">ContinuousMountainCar::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" compoundref="mountain__car_8hpp" startline="133" endline="165">MountainCar::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Pendulum_1a311ac19edc537dee94f37b7cce93d908" compoundref="pendulum_8hpp" startline="140" endline="176">Pendulum::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a61d04fbb64cb618da2dc4305b1e7024f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ClearAlias</definition>
+        <argsstring>(arma::Mat&lt; ElemType &gt; &amp;mat)</argsstring>
+        <name>ClearAlias</name>
+        <param>
+          <type>arma::Mat&lt; ElemType &gt; &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+<para>Clear an alias so that no data is overwritten. </para>        </briefdescription>
+        <detaileddescription>
+<para>This resets the matrix if it is an alias (and does nothing otherwise). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="110" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1aa25733e8424870f1be6b1eb0492503a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ClearAlias</definition>
+        <argsstring>(arma::SpMat&lt; ElemType &gt; &amp;)</argsstring>
+        <name>ClearAlias</name>
+        <param>
+          <type>arma::SpMat&lt; ElemType &gt; &amp;</type>
+        </param>
+        <briefdescription>
+<para>Clear an alias for a sparse matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>This does nothing because no sparse matrices can have aliases. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="121" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a5b2ddc31187ec7a449b6ebcd71b2e52b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Mat&lt; eT &gt;</type>
+        <definition>arma::Mat&lt;eT&gt; mlpack::math::ColumnCovariance</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;A, const size_t norm_type=0)</argsstring>
+        <name>ColumnCovariance</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>norm_type</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/ccov.hpp" line="25" column="1"/>
+        <referencedby refid="classmlpack_1_1data_1_1PCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" compoundref="pca__whitening_8hpp" startline="71" endline="78">PCAWhitening::Fit</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1afe55df16c60f2f3ae0a4e37320821e83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Mat&lt; std::complex&lt; T &gt; &gt;</type>
+        <definition>arma::Mat&lt; std::complex&lt;T&gt; &gt; mlpack::math::ColumnCovariance</definition>
+        <argsstring>(const arma::Mat&lt; std::complex&lt; T &gt; &gt; &amp;A, const size_t norm_type=0)</argsstring>
+        <name>ColumnCovariance</name>
+        <param>
+          <type>const arma::Mat&lt; std::complex&lt; T &gt; &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>norm_type</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/ccov.hpp" line="30" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ac9cdbda323da580d360c4532db71f9f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::CustomRandomSeed</definition>
+        <argsstring>(const size_t seed)</argsstring>
+        <name>CustomRandomSeed</name>
+        <param>
+          <type>const size_t</type>
+          <declname>seed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="72" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a1ca2678f931cc4bba542a17136d98437" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::FixedRandomSeed</definition>
+        <argsstring>()</argsstring>
+        <name>FixedRandomSeed</name>
+        <briefdescription>
+<para>Set the random seed to a fixed number. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function is used in binding tests to set a fixed random seed before calling mlpack(). In this way we can test whether a certain parameter makes a difference to execution of CLI binding. Refer to pull request #1306 for discussion on this function. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="64" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="64" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a973f88fb3695c2d92af88f354742697e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T mlpack::math::LogAdd</definition>
+        <argsstring>(T x, T y)</argsstring>
+        <name>LogAdd</name>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Internal log-addition. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>log value </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>log value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>log(e^x + e^y) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/log_add.hpp" line="28" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1aba4fbea089adba32a303aa9ed06b55c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>InPlace</declname>
+            <defname>InPlace</defname>
+            <defval>false</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::LogSumExp</definition>
+        <argsstring>(const T &amp;x, arma::Col&lt; typename T::elem_type &gt; &amp;y)</argsstring>
+        <name>LogSumExp</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::Col&lt; typename T::elem_type &gt; &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Compute the sum of exponentials of each element in each column, then compute the log of that. </para>        </briefdescription>
+        <detaileddescription>
+<para>If InPlace is true, then the values of <computeroutput>y</computeroutput> will also be added to the sum.</para><para>That is, if InPlace is false, then this method will set <computeroutput>y</computeroutput> such that: <verbatim>`y_i = log(sum(exp(x.col(i))))`
+</verbatim></para><para>and if InPlace is true, then <computeroutput>y</computeroutput> will be set such that: <verbatim>`y_i = log(sum(exp(x.col(i))) + exp(y_i))`.</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/log_add.hpp" line="53" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ac1a42cc6cfc3318eae5b0b1948b4f5e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>InPlace</declname>
+            <defname>InPlace</defname>
+            <defval>false</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::LogSumExpT</definition>
+        <argsstring>(const T &amp;x, arma::Col&lt; typename T::elem_type &gt; &amp;y)</argsstring>
+        <name>LogSumExpT</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::Col&lt; typename T::elem_type &gt; &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Compute the sum of exponentials of each element in each row, then compute the log of that. </para>        </briefdescription>
+        <detaileddescription>
+<para>If InPlace is true, then the values of <computeroutput>y</computeroutput> will also be added to the sum.</para><para>That is, if InPlace is false, then this method will set <computeroutput>y</computeroutput> such that: <verbatim>`y_i = log(sum(exp(x.row(i))))`
+</verbatim></para><para>and if InPlace is true, then <computeroutput>y</computeroutput> will be set such that: <verbatim>`y_i = log(sum(exp(x.row(i))) + exp(y_i))`.</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/log_add.hpp" line="69" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ae977d6bbdbe1e2a26017645a7ee18433" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Cube&lt; ElemType &gt;</type>
+        <definition>arma::Cube&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(arma::Cube&lt; ElemType &gt; &amp;input, const bool strict=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>arma::Cube&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>strict</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make an alias of a dense cube. </para>        </briefdescription>
+        <detaileddescription>
+<para>If strict is true, then the alias cannot be resized or pointed at new memory. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="24" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a6611a3cfd0aad124d0ca5bf45b44801c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Mat&lt; ElemType &gt;</type>
+        <definition>arma::Mat&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(arma::Mat&lt; ElemType &gt; &amp;input, const bool strict=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>arma::Mat&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>strict</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make an alias of a dense matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>If strict is true, then the alias cannot be resized or pointed at new memory. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="37" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ae0f2bc84fae09e2232931990bcb3fc08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Row&lt; ElemType &gt;</type>
+        <definition>arma::Row&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(arma::Row&lt; ElemType &gt; &amp;input, const bool strict=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>arma::Row&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>strict</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make an alias of a dense row. </para>        </briefdescription>
+        <detaileddescription>
+<para>If strict is true, then the alias cannot be resized or pointed at new memory. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="50" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1acd2b618f5a0ec77ccb94cf43a06846e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Col&lt; ElemType &gt;</type>
+        <definition>arma::Col&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(arma::Col&lt; ElemType &gt; &amp;input, const bool strict=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>arma::Col&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>strict</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make an alias of a dense column. </para>        </briefdescription>
+        <detaileddescription>
+<para>If strict is true, then the alias cannot be resized or pointed at new memory. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="62" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="62" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a327a59b10b6b84ea4c3eec3469644bec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::SpMat&lt; ElemType &gt;</type>
+        <definition>arma::SpMat&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(const arma::SpMat&lt; ElemType &gt; &amp;input, const bool=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>const arma::SpMat&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make a copy of a sparse matrix (an alias is not possible). </para>        </briefdescription>
+        <detaileddescription>
+<para>The strict parameter is ignored. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="74" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a6b3f7eb08a72a99cd338824b85276e0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::SpRow&lt; ElemType &gt;</type>
+        <definition>arma::SpRow&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(const arma::SpRow&lt; ElemType &gt; &amp;input, const bool=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>const arma::SpRow&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make a copy of a sparse row (an alias is not possible). </para>        </briefdescription>
+        <detaileddescription>
+<para>The strict parameter is ignored. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="86" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a42a8a4c43e657af6d3557fdaa3082f93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::SpCol&lt; ElemType &gt;</type>
+        <definition>arma::SpCol&lt;ElemType&gt; mlpack::math::MakeAlias</definition>
+        <argsstring>(const arma::SpCol&lt; ElemType &gt; &amp;input, const bool=true)</argsstring>
+        <name>MakeAlias</name>
+        <param>
+          <type>const arma::SpCol&lt; ElemType &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Make a copy of a sparse column (an alias is not possible). </para>        </briefdescription>
+        <detaileddescription>
+<para>The strict parameter is ignored. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/make_alias.hpp" bodystart="98" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a047dc14951af6707554936acb575ecdd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename CubeType</type>
+          </param>
+        </templateparamlist>
+        <type>CubeType</type>
+        <definition>CubeType mlpack::math::MultiplyCube2Cube</definition>
+        <argsstring>(const CubeType &amp;cubeA, const CubeType &amp;cubeB, const bool aTranspose=false, const bool bTranspose=false)</argsstring>
+        <name>MultiplyCube2Cube</name>
+        <param>
+          <type>const CubeType &amp;</type>
+          <declname>cubeA</declname>
+        </param>
+        <param>
+          <type>const CubeType &amp;</type>
+          <declname>cubeB</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>aTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>bTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Matrix multiplication of slices of two cubes. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function expects both cubes to have the same number of slices. For example, a valid operation would be: cube A of shape (m, p, s) multiplied by cube B of shape (p, n, s) resulting in a cube of shape (m, n, s).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cubeA</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First cube. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cubeB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second cube. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether slices of first cube have to be transposed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether slices of second cube have to be transposed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/multiply_slices.hpp" line="33" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a75d67d2fe4e1046bfdc903f32a4b0230" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename CubeType</type>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>CubeType</type>
+        <definition>CubeType mlpack::math::MultiplyCube2Mat</definition>
+        <argsstring>(const CubeType &amp;cubeA, const MatType &amp;matB, const bool aTranspose=false, const bool bTranspose=false)</argsstring>
+        <name>MultiplyCube2Mat</name>
+        <param>
+          <type>const CubeType &amp;</type>
+          <declname>cubeA</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>matB</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>aTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>bTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Matrix multiplication of all slices of a cube with a matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function is used when the first object is a cube and the second object is a matrix. For example, a valid operation would be: cube A of shape (m, p, s) multiplied by a matrix of shape (p, n) resulting in a cube of shape (m, n, s).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cubeA</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cube as the first operand. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix as the second operand. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether slices of cube have to be transposed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether matrix has to be transposed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/multiply_slices.hpp" line="67" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a6921a2dfaeb07fc6c47616b9fabdffce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename CubeType</type>
+          </param>
+        </templateparamlist>
+        <type>CubeType</type>
+        <definition>CubeType mlpack::math::MultiplyMat2Cube</definition>
+        <argsstring>(const MatType &amp;matA, const CubeType &amp;cubeB, const bool aTranspose=false, const bool bTranspose=false)</argsstring>
+        <name>MultiplyMat2Cube</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>matA</declname>
+        </param>
+        <param>
+          <type>const CubeType &amp;</type>
+          <declname>cubeB</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>aTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>bTranspose</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Matrix multiplication of a matrix and all the slices of a cube. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function is used when the first object is a matrix and the second object is a cube. For example, a valid operation would be: matrix A of shape (m, p) multiplied by cube B of shape (p, n, s) resulting in a cube of shape (m, n, s).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>matA</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix as the first operand. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cubeB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cube as the second operand. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether matrix has to be transposed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bTranspose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether slices of cube have to be transposed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/multiply_slices.hpp" line="50" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a9f6fa0072288d9c1139394683e0c3636" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::ObtainDistinctSamples</definition>
+        <argsstring>(const size_t loInclusive, const size_t hiExclusive, const size_t maxNumSamples, arma::uvec &amp;distinctSamples)</argsstring>
+        <name>ObtainDistinctSamples</name>
+        <param>
+          <type>const size_t</type>
+          <declname>loInclusive</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>hiExclusive</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxNumSamples</declname>
+        </param>
+        <param>
+          <type>arma::uvec &amp;</type>
+          <declname>distinctSamples</declname>
+        </param>
+        <briefdescription>
+<para>Obtains no more than maxNumSamples distinct samples. </para>        </briefdescription>
+        <detaileddescription>
+<para>Each sample belongs to [loInclusive, hiExclusive).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>loInclusive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The lower bound (inclusive). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hiExclusive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The high bound (exclusive). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxNumSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum number of samples to obtain. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distinctSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The samples that will be obtained. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="153" bodyend="180"/>
+        <references refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" compoundref="random_8hpp" startline="110" endline="113">RandInt</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a33495d8fdb79a9b5783d683cf11b0d6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Orthogonalize</definition>
+        <argsstring>(const arma::mat &amp;x, arma::mat &amp;W)</argsstring>
+        <name>Orthogonalize</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Orthogonalize x and return the result in W, using eigendecomposition. </para>        </briefdescription>
+        <detaileddescription>
+<para>We will be using the formula <formula id="58">$ W = x (x^T x)^{-0.5} $</formula>. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="58" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a532da68daa876aaa1060fbe54eaa3722" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Orthogonalize</definition>
+        <argsstring>(arma::mat &amp;x)</argsstring>
+        <name>Orthogonalize</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Orthogonalize x in-place. </para>        </briefdescription>
+        <detaileddescription>
+<para>This could be sped up by a custom implementation. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a6b25c05d1e1c066d6b33aa55bdfd39f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::RandBernoulli</definition>
+        <argsstring>(const double input)</argsstring>
+        <name>RandBernoulli</name>
+        <param>
+          <type>const double</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Generates a 0/1 specified by the input. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="99" bodyend="105"/>
+        <references refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" compoundref="random_8hpp" startline="83" endline="86">Random</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int mlpack::math::RandInt</definition>
+        <argsstring>(const int hiExclusive)</argsstring>
+        <name>RandInt</name>
+        <param>
+          <type>const int</type>
+          <declname>hiExclusive</declname>
+        </param>
+        <briefdescription>
+<para>Generates a uniform random integer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="110" bodyend="113"/>
+        <references refid="namespacemlpack_1_1math_1a7793dcf6af53048459e80aa26780afa0">randUniformDist</references>
+        <referencedby refid="classmlpack_1_1tree_1_1RandomDimensionSelect_1ac50a3a009687e641fd8249e011f628d4" compoundref="random__dimension__select_8hpp" startline="33" endline="33">RandomDimensionSelect::Begin</referencedby>
+        <referencedby refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1aeb8e77df2c5b714e547bb7e9635b29f9" compoundref="multiple__random__dimension__select_8hpp" startline="40" endline="77">MultipleRandomDimensionSelect::Begin</referencedby>
+        <referencedby refid="classmlpack_1_1kmeans_1_1SampleInitialization_1a8ee4dff98d318a0f5586140c5846ef39" compoundref="sample__initialization_8hpp" startline="38" endline="49">SampleInitialization::Cluster</referencedby>
+        <referencedby refid="classKMeansPlusPlusInitialization_1a8ee4dff98d318a0f5586140c5846ef39" compoundref="kmeans__plus__plus__initialization_8hpp" startline="47" endline="100">KMeansPlusPlusInitialization::Cluster</referencedby>
+        <referencedby refid="classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer_1adea2ca6a95e9508c74ae836538ce4be8" compoundref="data__dependent__random__initializer_8hpp" startline="38" endline="56">DataDependentRandomInitializer::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1RandomAcolInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" compoundref="random__acol__init_8hpp" startline="52" endline="84">RandomAcolInitialization&lt; columnsToAverage &gt;::Initialize</referencedby>
+        <referencedby refid="namespacemlpack_1_1math_1a9f6fa0072288d9c1139394683e0c3636" compoundref="random_8hpp" startline="153" endline="180">ObtainDistinctSamples</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1GreedyPolicy_1ab0b01a3a4864c348b0c97ba92bae45c4" compoundref="greedy__policy_8hpp" startline="65" endline="85">GreedyPolicy&lt; EnvironmentType &gt;::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1kernel_1_1RandomSelection_1aa80002884200d7b328b897a56b158192" compoundref="random__selection_8hpp" startline="32" endline="39">RandomSelection::Select</referencedby>
+        <referencedby refid="classmlpack_1_1dbscan_1_1RandomPointSelection_1a640a2e01689f58d88ac361757c7579c6" compoundref="random__point__selection_8hpp" startline="33" endline="59">RandomPointSelection::Select</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a2befbd48db5691a0ed3b87bb4b423095" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int mlpack::math::RandInt</definition>
+        <argsstring>(const int lo, const int hiExclusive)</argsstring>
+        <name>RandInt</name>
+        <param>
+          <type>const int</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>hiExclusive</declname>
+        </param>
+        <briefdescription>
+<para>Generates a uniform random integer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="118" bodyend="122"/>
+        <references refid="namespacemlpack_1_1math_1a7793dcf6af53048459e80aa26780afa0">randUniformDist</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::RandNormal</definition>
+        <argsstring>()</argsstring>
+        <name>RandNormal</name>
+        <briefdescription>
+<para>Generates a normally distributed random number with mean 0 and variance 1. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="127" bodyend="130"/>
+        <references refid="namespacemlpack_1_1math_1a109a494ed74138c2d02d64bb3ebe6f9f">randNormalDist</references>
+        <referencedby refid="classmlpack_1_1ann_1_1GaussianInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="gaussian__init_8hpp" startline="51" endline="59">GaussianInitialization::Initialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a731e1fe0fb09c263299222a594a73e7f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::RandNormal</definition>
+        <argsstring>(const double mean, const double variance)</argsstring>
+        <name>RandNormal</name>
+        <param>
+          <type>const double</type>
+          <declname>mean</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>variance</declname>
+        </param>
+        <briefdescription>
+<para>Generates a normally distributed random number with specified mean and variance. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mean of distribution. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>variance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variance of distribution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="139" bodyend="142"/>
+        <references refid="namespacemlpack_1_1math_1a109a494ed74138c2d02d64bb3ebe6f9f">randNormalDist</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+<para>Generates a uniform random number between 0 and 1. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="83" bodyend="86"/>
+        <references refid="namespacemlpack_1_1math_1a7793dcf6af53048459e80aa26780afa0">randUniformDist</references>
+        <referencedby refid="classKMeansPlusPlusInitialization_1a8ee4dff98d318a0f5586140c5846ef39" compoundref="kmeans__plus__plus__initialization_8hpp" startline="47" endline="100">KMeansPlusPlusInitialization::Cluster</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1ContinuousMountainCar_1aa9f537249fa0c1e62b38197996ab4c6a" compoundref="continuous__mountain__car_8hpp" startline="185" endline="192">ContinuousMountainCar::InitialSample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Pendulum_1aa9f537249fa0c1e62b38197996ab4c6a" compoundref="pendulum_8hpp" startline="197" endline="205">Pendulum::InitialSample</referencedby>
+        <referencedby refid="mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6" compoundref="mock__categorical__data_8hpp" startline="20" endline="114">MockCategoricalData</referencedby>
+        <referencedby refid="namespacemlpack_1_1math_1a6b25c05d1e1c066d6b33aa55bdfd39f6" compoundref="random_8hpp" startline="99" endline="105">RandBernoulli</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1GreedyPolicy_1ab0b01a3a4864c348b0c97ba92bae45c4" compoundref="greedy__policy_8hpp" startline="65" endline="85">GreedyPolicy&lt; EnvironmentType &gt;::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" compoundref="acrobot_8hpp" startline="322" endline="326">Acrobot::Torque</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a73063c4b5f50db033266cd16afaceca9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double mlpack::math::Random</definition>
+        <argsstring>(const double lo, const double hi)</argsstring>
+        <name>Random</name>
+        <param>
+          <type>const double</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+<para>Generates a uniform random number in the specified range. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="91" bodyend="94"/>
+        <references refid="namespacemlpack_1_1math_1a7793dcf6af53048459e80aa26780afa0">randUniformDist</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ae197a3d057c10401e3a1f30f94ff0934" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::RandomBasis</definition>
+        <argsstring>(arma::mat &amp;basis, const size_t d)</argsstring>
+        <name>RandomBasis</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Create a random d-dimensional orthogonal basis, storing it in the given matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>basis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store basis in. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired number of dimensions in the basis. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random_basis.hpp" line="27" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a99560c3cf9c2db393309a31933b8d480" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::RandomSeed</definition>
+        <argsstring>(const size_t seed)</argsstring>
+        <name>RandomSeed</name>
+        <param>
+          <type>const size_t</type>
+          <declname>seed</declname>
+        </param>
+        <briefdescription>
+<para>Set the random seed used by the random functions (<ref refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" kindref="member">Random()</ref> and <ref refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" kindref="member">RandInt()</ref>). </para>        </briefdescription>
+        <detaileddescription>
+<para>The seed is casted to a 32-bit integer before being given to the random number generator, but a size_t is taken as a parameter for API consistency.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>seed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Seed for the random number generator. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/random.hpp" bodystart="40" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a27732f0088e81d179a8e6c92c4f9c4b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::RandVector</definition>
+        <argsstring>(arma::vec &amp;v)</argsstring>
+        <name>RandVector</name>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Overwrites a dimension-N vector to a random vector on the unit sphere in R^N. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ac03fe146911a97bef099efc9e99296ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::RemoveRows</definition>
+        <argsstring>(const arma::mat &amp;input, const std::vector&lt; size_t &gt; &amp;rowsToRemove, arma::mat &amp;output)</argsstring>
+        <name>RemoveRows</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; size_t &gt; &amp;</type>
+          <declname>rowsToRemove</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Remove a certain set of rows in a matrix while copying to a second matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to copy. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rowsToRemove</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing indices of rows to be removed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to copy non-removed rows into. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="73" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a9fd573f30f3cd68f82f51ba57506d169" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ShuffleData</definition>
+        <argsstring>(const MatType &amp;inputPoints, const LabelsType &amp;inputLabels, MatType &amp;outputPoints, LabelsType &amp;outputLabels, const std::enable_if_t&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *=0)</argsstring>
+        <name>ShuffleData</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>inputPoints</declname>
+        </param>
+        <param>
+          <type>const LabelsType &amp;</type>
+          <declname>inputLabels</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>outputPoints</declname>
+        </param>
+        <param>
+          <type>LabelsType &amp;</type>
+          <declname>outputLabels</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Shuffle a dataset and associated labels (or responses). </para>        </briefdescription>
+        <detaileddescription>
+<para>It is expected that inputPoints and inputLabels have the same number of columns (so, be sure that inputLabels, if it is a vector, is a row vector).</para><para>Shuffled data will be output into outputPoints and outputLabels. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" bodystart="28" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a3d51da0ee510a507855d587b91645a2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ShuffleData</definition>
+        <argsstring>(const MatType &amp;inputPoints, const LabelsType &amp;inputLabels, MatType &amp;outputPoints, LabelsType &amp;outputLabels, const std::enable_if_t&lt; arma::is_SpMat&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *=0)</argsstring>
+        <name>ShuffleData</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>inputPoints</declname>
+        </param>
+        <param>
+          <type>const LabelsType &amp;</type>
+          <declname>inputLabels</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>outputPoints</declname>
+        </param>
+        <param>
+          <type>LabelsType &amp;</type>
+          <declname>outputLabels</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_SpMat&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Shuffle a sparse dataset and associated labels (or responses). </para>        </briefdescription>
+        <detaileddescription>
+<para>It is expected that inputPoints and inputLabels have the same number of columns (so, be sure that inputLabels, if it is a vector, is a row vector).</para><para>Shuffled data will be output into outputPoints and outputLabels. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" bodystart="51" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1ae867d408a4e6bd4f6c6efa6ad46f699d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ShuffleData</definition>
+        <argsstring>(const MatType &amp;inputPoints, const LabelsType &amp;inputLabels, MatType &amp;outputPoints, LabelsType &amp;outputLabels, const std::enable_if_t&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt; arma::is_Cube&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt; arma::is_Cube&lt; LabelsType &gt;::value &gt; *=0)</argsstring>
+        <name>ShuffleData</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>inputPoints</declname>
+        </param>
+        <param>
+          <type>const LabelsType &amp;</type>
+          <declname>inputLabels</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>outputPoints</declname>
+        </param>
+        <param>
+          <type>LabelsType &amp;</type>
+          <declname>outputLabels</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_Cube&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_Cube&lt; LabelsType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Shuffle a cube-shaped dataset and associated labels (or responses) which are also cube-shaped. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is expected that inputPoints and inputLabels have the same number of columns.</para><para>Shuffled data will be output into outputPoints and outputLabels. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" bodystart="103" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a4e6818ee1202660968eeda80040b5d0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ShuffleData</definition>
+        <argsstring>(const MatType &amp;inputPoints, const LabelsType &amp;inputLabels, const WeightsType &amp;inputWeights, MatType &amp;outputPoints, LabelsType &amp;outputLabels, WeightsType &amp;outputWeights, const std::enable_if_t&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *=0)</argsstring>
+        <name>ShuffleData</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>inputPoints</declname>
+        </param>
+        <param>
+          <type>const LabelsType &amp;</type>
+          <declname>inputLabels</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>inputWeights</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>outputPoints</declname>
+        </param>
+        <param>
+          <type>LabelsType &amp;</type>
+          <declname>outputLabels</declname>
+        </param>
+        <param>
+          <type>WeightsType &amp;</type>
+          <declname>outputWeights</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_SpMat&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Shuffle a dataset and associated labels (or responses) and weights. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is expected that inputPoints and inputLabels and inputWeights have the same number of columns (so, be sure that inputLabels, if it is a vector, is a row vector).</para><para>Shuffled data will be output into outputPoints and outputLabels and outputWeights. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" bodystart="160" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a522c0905bf5015a7eebac8fdddb6452b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::math::ShuffleData</definition>
+        <argsstring>(const MatType &amp;inputPoints, const LabelsType &amp;inputLabels, const WeightsType &amp;inputWeights, MatType &amp;outputPoints, LabelsType &amp;outputLabels, WeightsType &amp;outputWeights, const std::enable_if_t&lt; arma::is_SpMat&lt; MatType &gt;::value &gt; *=0, const std::enable_if_t&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *=0)</argsstring>
+        <name>ShuffleData</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>inputPoints</declname>
+        </param>
+        <param>
+          <type>const LabelsType &amp;</type>
+          <declname>inputLabels</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>inputWeights</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>outputPoints</declname>
+        </param>
+        <param>
+          <type>LabelsType &amp;</type>
+          <declname>outputLabels</declname>
+        </param>
+        <param>
+          <type>WeightsType &amp;</type>
+          <declname>outputWeights</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_SpMat&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!arma::is_Cube&lt; MatType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Shuffle a sparse dataset and associated labels (or responses) and weights. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is expected that inputPoints and inputLabels and inputWeights have the same number of columns (so, be sure that inputLabels, if it is a vector, is a row vector).</para><para>Shuffled data will be output into outputPoints and outputLabels and outputWeights. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" line="188" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/shuffle_data.hpp" bodystart="188" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a5a69e6e582ac415528f3a219e5336b83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T mlpack::math::Sign</definition>
+        <argsstring>(const T x)</argsstring>
+        <name>Sign</name>
+        <param>
+          <type>const T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Signum function. </para>        </briefdescription>
+        <detaileddescription>
+<para>Return 1 if x&gt;0; return 0 if x=0; return -1 if x&lt;0. Return type are the same as input type.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of any type. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" bodystart="128" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1acf1d819071707267cdce9c78abd32e2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Smat</definition>
+        <argsstring>(const arma::vec &amp;input, arma::mat &amp;output)</argsstring>
+        <name>Smat</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>The inverse of Svec. </para>        </briefdescription>
+        <detaileddescription>
+<para>That is, Smat(Svec(A)) == A.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A symmetric matrix </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="96" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a76535efa4f447182fed1a2ad789d5340" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Svec</definition>
+        <argsstring>(const arma::mat &amp;input, arma::vec &amp;output)</argsstring>
+        <name>Svec</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Upper triangular representation of a symmetric matrix, scaled such that, dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B. </para>        </briefdescription>
+        <detaileddescription>
+<para>Specifically,</para><para>Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n, ..., K_nn ]^T</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A symmetric matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="86" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a2e46372873806bdfef7d596dcc78a5ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::Svec</definition>
+        <argsstring>(const arma::sp_mat &amp;input, arma::sp_vec &amp;output)</argsstring>
+        <name>Svec</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::sp_vec &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="88" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a630a16e49385717a8fef7d25d0093c37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t mlpack::math::SvecIndex</definition>
+        <argsstring>(size_t i, size_t j, size_t n)</argsstring>
+        <name>SvecIndex</name>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>j</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Return the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>j</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="106" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a99efc34a8a0f9ed477baf86cb62adb3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::SymKronId</definition>
+        <argsstring>(const arma::mat &amp;A, arma::mat &amp;op)</argsstring>
+        <name>SymKronId</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+<para>If A is a symmetric matrix, then SymKronId returns an operator Op such that. </para>        </briefdescription>
+        <detaileddescription>
+<para>Op * svec(X) == svec(0.5 * (AX + XA))</para><para>for every symmetric matrix X</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>op</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="118" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a1afb9b62743ad2c961a4f240d8694e1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::VectorPower</definition>
+        <argsstring>(arma::vec &amp;vec, const double power)</argsstring>
+        <name>VectorPower</name>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>vec</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>power</declname>
+        </param>
+        <briefdescription>
+<para>Auxiliary function to raise vector elements to a specific power. </para>        </briefdescription>
+        <detaileddescription>
+<para>The sign is ignored in the power operation and then re-added. Useful for eigenvalues. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="28" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1math_1a9498ec73c0c6b0f151a10b2357a11468" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::math::WhitenUsingSVD</definition>
+        <argsstring>(const arma::mat &amp;x, arma::mat &amp;xWhitened, arma::mat &amp;whiteningMatrix)</argsstring>
+        <name>WhitenUsingSVD</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>xWhitened</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>whiteningMatrix</declname>
+        </param>
+        <briefdescription>
+<para>Whitens a matrix using the singular value decomposition of the covariance matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>Whitening means the covariance matrix of the result is the identity matrix. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/lin_alg.hpp" line="44" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Miscellaneous math routines. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/math/ccov.hpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

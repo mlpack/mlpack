@@ -1,0 +1,98 @@
+\section{Q\+U\+I\+C\+\_\+\+S\+VD Class Reference}
+\label{classmlpack_1_1svd_1_1QUIC__SVD}\index{Q\+U\+I\+C\+\_\+\+S\+VD@{Q\+U\+I\+C\+\_\+\+S\+VD}}
+
+
+Q\+U\+I\+C-\/\+S\+VD is a matrix factorization technique, which operates in a subspace such that A\textquotesingle{}s approximation in that subspace has minimum error(A being the data matrix).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Q\+U\+I\+C\+\_\+\+S\+VD} (const arma\+::mat \&dataset, arma\+::mat \&u, arma\+::mat \&v, arma\+::mat \&sigma, const double epsilon=0.\+03, const double delta=0.\+1)
+\begin{DoxyCompactList}\small\item\em Constructor which implements the Q\+U\+I\+C-\/\+S\+VD algorithm. \end{DoxyCompactList}\item 
+void \textbf{ Extract\+S\+VD} (arma\+::mat \&u, arma\+::mat \&v, arma\+::mat \&sigma)
+\begin{DoxyCompactList}\small\item\em This function uses the vector subspace created using a cosine tree to calculate an approximate S\+VD of the original matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Q\+U\+I\+C-\/\+S\+VD is a matrix factorization technique, which operates in a subspace such that A\textquotesingle{}s approximation in that subspace has minimum error(A being the data matrix). 
+
+The subspace is constructed using a cosine tree, which ensures minimum representative rank(and thus a fast running time). It follows a splitting policy based on Length-\/squared(LS) sampling and constructs the child nodes based on the absolute cosines of the remaining points relative to the pivot. The centroids of the points in the child nodes are added to the subspace span in each step. Each node is then placed into a queue prioritized by its residual error. The subspace approximation error of A after each step is calculated using a Monte Carlo estimate. If the error is below a certain threshold, the method proceeds to calculate the Singular Value Decomposition in the obtained subspace. Otherwise, the same procedure is repeated until we obtain a subspace of sufficiently low error. Technical details can be found in the following paper\+:
+
+{\tt http\+://www.\+cc.\+gatech.\+edu/$\sim$isbell/papers/isbell-\/quicsvd-\/nips-\/2008.\+pdf}
+
+An example of how to use the interface is shown below\+:
+
+
+\begin{DoxyCode}
+arma::mat data; \textcolor{comment}{// Data matrix.}
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} epsilon = 0.01; \textcolor{comment}{// Relative error limit of data in subspace.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} delta = 0.1 \textcolor{comment}{// Lower error bound for Monte Carlo estimate.}
+
+arma::mat u, v, sigma; \textcolor{comment}{// Matrices for the factors. data = u * sigma * v.t()}
+
+\textcolor{comment}{// Get the factorization in the constructor.}
+QUIC_SVD(data, u, v, sigma, epsilon, delta);
+\end{DoxyCode}
+ 
+
+Definition at line 53 of file quic\+\_\+svd.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1QUIC__SVD_afc9e4cc0d239c3577ed2bdfaf8015c30}} 
+\index{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD@{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD}!Q\+U\+I\+C\+\_\+\+S\+VD@{Q\+U\+I\+C\+\_\+\+S\+VD}}
+\index{Q\+U\+I\+C\+\_\+\+S\+VD@{Q\+U\+I\+C\+\_\+\+S\+VD}!mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD@{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD}}
+\subsubsection{Q\+U\+I\+C\+\_\+\+S\+V\+D()}
+{\footnotesize\ttfamily \textbf{ Q\+U\+I\+C\+\_\+\+S\+VD} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{dataset,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::mat \&}]{v,  }\item[{arma\+::mat \&}]{sigma,  }\item[{const double}]{epsilon = {\ttfamily 0.03},  }\item[{const double}]{delta = {\ttfamily 0.1} }\end{DoxyParamCaption})}
+
+
+
+Constructor which implements the Q\+U\+I\+C-\/\+S\+VD algorithm. 
+
+The function calls the Cosine\+Tree constructor to create a subspace basis, where the original matrix\textquotesingle{}s projection has minimum reconstruction error. The constructor then uses the \doxyref{Extract\+S\+V\+D()}{p.}{classmlpack_1_1svd_1_1QUIC__SVD_a07a627ca0943a4fbd483466d89b0c8e5} function to calculate the S\+VD of the original dataset in that subspace.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Matrix for which S\+VD is calculated. \\
+\hline
+{\em u} & First unitary matrix. \\
+\hline
+{\em v} & Second unitary matrix. \\
+\hline
+{\em sigma} & Diagonal matrix of singular values. \\
+\hline
+{\em epsilon} & Error tolerance fraction for calculated subspace. \\
+\hline
+{\em delta} & Cumulative probability for Monte Carlo error lower bound. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1QUIC__SVD_a07a627ca0943a4fbd483466d89b0c8e5}} 
+\index{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD@{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD}!Extract\+S\+VD@{Extract\+S\+VD}}
+\index{Extract\+S\+VD@{Extract\+S\+VD}!mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD@{mlpack\+::svd\+::\+Q\+U\+I\+C\+\_\+\+S\+VD}}
+\subsubsection{Extract\+S\+V\+D()}
+{\footnotesize\ttfamily void Extract\+S\+VD (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{u,  }\item[{arma\+::mat \&}]{v,  }\item[{arma\+::mat \&}]{sigma }\end{DoxyParamCaption})}
+
+
+
+This function uses the vector subspace created using a cosine tree to calculate an approximate S\+VD of the original matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em u} & First unitary matrix. \\
+\hline
+{\em v} & Second unitary matrix. \\
+\hline
+{\em sigma} & Diagonal matrix of singular values. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/quic\+\_\+svd/\textbf{ quic\+\_\+svd.\+hpp}\end{DoxyCompactItemize}

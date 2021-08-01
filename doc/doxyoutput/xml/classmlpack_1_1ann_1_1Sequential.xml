@@ -1,0 +1,807 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1Sequential" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Sequential</compoundname>
+    <includes refid="layer__types_8hpp" local="no">layer_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>InputDataType</declname>
+        <defname>InputDataType</defname>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>OutputDataType</declname>
+        <defname>OutputDataType</defname>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>Residual</declname>
+        <defname>Residual</defname>
+        <defval>false</defval>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>CustomLayers</declname>
+        <defname>CustomLayers</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a44acc65c2a210407f1d1e148d37c4de7" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1CopyVisitor" kindref="compound">CopyVisitor</ref>&lt; CustomLayers... &gt;</type>
+        <definition>CopyVisitor&lt;CustomLayers...&gt; copyVisitor</definition>
+        <argsstring></argsstring>
+        <name>copyVisitor</name>
+        <briefdescription>
+<para>Locally-stored copy visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="240" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeleteVisitor" kindref="compound">DeleteVisitor</ref></type>
+        <definition>DeleteVisitor deleteVisitor</definition>
+        <argsstring></argsstring>
+        <name>deleteVisitor</name>
+        <briefdescription>
+<para>Locally-stored delete visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="216" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a485828065bb182ff026080c251fa30cb" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="222" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref></type>
+        <definition>DeltaVisitor deltaVisitor</definition>
+        <argsstring></argsstring>
+        <name>deltaVisitor</name>
+        <briefdescription>
+<para>Locally-stored delta visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; empty</definition>
+        <argsstring></argsstring>
+        <name>empty</name>
+        <briefdescription>
+<para>Locally-stored empty list of modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="219" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1ab0363181a4587dea6da67d3d13f75479" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="231" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t height</definition>
+        <argsstring></argsstring>
+        <name>height</name>
+        <briefdescription>
+<para>The input height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="246" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a0a54df62a3b0f5d0e5a0f98d4bed0ba7" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="225" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1add4a998726ba4284e097ba6c7b343c96" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+<para>Parameter which indicates if the modules should be exposed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="198" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
+        <argsstring></argsstring>
+        <name>network</name>
+        <briefdescription>
+<para>Locally-stored network modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1abd24d500081b1de00513cf2fc9cee83f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor" kindref="compound">OutputHeightVisitor</ref></type>
+        <definition>OutputHeightVisitor outputHeightVisitor</definition>
+        <argsstring></argsstring>
+        <name>outputHeightVisitor</name>
+        <briefdescription>
+<para>Locally-stored output height visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="237" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a3c4f390e15f61d10caafccbb37bd5be8" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="228" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref></type>
+        <definition>OutputParameterVisitor outputParameterVisitor</definition>
+        <argsstring></argsstring>
+        <name>outputParameterVisitor</name>
+        <briefdescription>
+<para>Locally-stored output parameter visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1ad3606b38a6688053937ab6abe95cc44a" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1OutputWidthVisitor" kindref="compound">OutputWidthVisitor</ref></type>
+        <definition>OutputWidthVisitor outputWidthVisitor</definition>
+        <argsstring></argsstring>
+        <name>outputWidthVisitor</name>
+        <briefdescription>
+<para>Locally-stored output width visitor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="234" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a82a99cd0f62d750568aafc16aa7f74a8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ownsLayers</definition>
+        <argsstring></argsstring>
+        <name>ownsLayers</name>
+        <briefdescription>
+<para>Whether we are responsible for deleting the layers held in this module. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="249" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1ac475c49ee5a4f316e1dbc6b7dab47b6f" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+<para>Locally-stored model parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool reset</definition>
+        <argsstring></argsstring>
+        <name>reset</name>
+        <briefdescription>
+<para>Indicator if we already initialized the model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="201" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Sequential_1a02bed8590a9ddf520e58a060059518ec" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t width</definition>
+        <argsstring></argsstring>
+        <name>width</name>
+        <briefdescription>
+<para>The input width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="243" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a01b828c8a9d0398c7d899fe5a0159cf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Sequential</definition>
+        <argsstring>(const bool model=true)</argsstring>
+        <name>Sequential</name>
+        <param>
+          <type>const bool</type>
+          <declname>model</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expose the all network modules. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="81" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a54e8b8c60e747977fcb5d1d33181d2d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Sequential</definition>
+        <argsstring>(const bool model, const bool ownsLayers)</argsstring>
+        <name>Sequential</name>
+        <param>
+          <type>const bool</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>ownsLayers</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> object using the specified parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expose all the network modules. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ownsLayers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then this module will delete its layers when deallocated. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="90" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a146eb0ef8b57693cf58802961b1a1601" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Sequential</definition>
+        <argsstring>(const Sequential &amp;layer)</argsstring>
+        <name>Sequential</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="93" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a104b6c42467bc2edb7c514afca99bcec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~Sequential</definition>
+        <argsstring>()</argsstring>
+        <name>~Sequential</name>
+        <briefdescription>
+<para>Destroy the <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="99" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class LayerType</type>
+          </param>
+          <param>
+            <type>class...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Add</definition>
+        <argsstring>(Args... args)</argsstring>
+        <name>Add</name>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="143" bodyend="143"/>
+        <referencedby refid="classmlpack_1_1rl_1_1DuelingDQN_1a19f74770618d675330602748306a4147" compoundref="dueling__dqn_8hpp" startline="60" endline="72">DuelingDQN&lt; OutputLayerType, InitType, CompleteNetworkType, FeatureNetworkType, AdvantageNetworkType, ValueNetworkType &gt;::DuelingDQN</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a503a807740e6c729be9efc89520db728" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Add</definition>
+        <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
+        <name>Add</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="150" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="121" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a6126fc05a10e2e988ea7e75aada214fd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat const  &amp;</type>
+        <definition>arma::mat const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="179" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="179" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a49c3606024580071e0c65e2e4d080e1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="181" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="109" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a505acb56ef67da2fc73190d3d4931969" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="133" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a13444d1f198ceeef85e7a288a7d1d9c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat const  &amp;</type>
+        <definition>arma::mat const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="184" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a59e16b7142696049a5543ff35547ebd9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="186" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="186" bodyend="186"/>
+        <references refid="classmlpack_1_1ann_1_1Sequential_1a13ab93f234244a68f6ade76287284447">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::InputShape</references>
+        <references refid="classmlpack_1_1ann_1_1Sequential_1a65cba07328997659bec80b9879b15a51">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a9b1735296084fc571524101988744884" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat const  &amp;</type>
+        <definition>arma::mat const&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a818d585c592c80d8e8c101f67bc389ad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="188" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Sequential_1a59e16b7142696049a5543ff35547ebd9" compoundref="sequential_8hpp" startline="186" endline="186">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Gradient</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+        <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt;&amp; Model</definition>
+        <argsstring>()</argsstring>
+        <name>Model</name>
+        <briefdescription>
+<para>Return the model modules. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="153" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a806923a7f052d5b9a0966407899fc104" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> &amp;</type>
+        <definition>Sequential&amp; operator=</definition>
+        <argsstring>(const Sequential &amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="96" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a712dc230c489d0caf3175cbdfc59639f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat const  &amp;</type>
+        <definition>arma::mat const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="174" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a28ce681558d0bf02302f868d1c811f2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1aa68d74dc1e86e4352e00a3cab83a0e4a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Return the initial point for the optimization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a043f0ccd62e6711a18e0d81047be9a0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the initial point for the optimization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Sequential_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp" line="194" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Sequential_1a59e16b7142696049a5543ff35547ebd9" compoundref="sequential_8hpp" startline="186" endline="186">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Gradient</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1Sequential" kindref="compound">Sequential</ref> class. </para>    </briefdescription>
+    <detaileddescription>
+<para>The sequential class works as a feed-forward fully connected network container which plugs various layers together.</para><para>This class can also be used as a container for a residual block. In that case, the sizes of the input and output matrices of this class should be equal. A typedef has been added for use as a Residual&lt;&gt; class.</para><para>For more information, refer the following paper.</para><para><programlisting><codeline><highlight class="normal">@article{He15,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Kaiming<sp/>He,<sp/>Xiangyu<sp/>Zhang,<sp/>Shaoqing<sp/>Ren,<sp/>Jian<sp/>Sun},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Deep<sp/>Residual<sp/>Learning<sp/>for<sp/>Image<sp/>Recognition},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2015},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1512.03385},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1512.03385},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>Note: If this class is used as the first layer of a network, it should be preceded by IdentityLayer&lt;&gt;.</para><para>Note: This class should at least have two layers for a call to its <ref refid="classmlpack_1_1ann_1_1Sequential_1a59e16b7142696049a5543ff35547ebd9" kindref="member">Gradient()</ref> function.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Residual</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, use the object as a Residual block. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="141" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Add</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a503a807740e6c729be9efc89520db728" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Add</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a44acc65c2a210407f1d1e148d37c4de7" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>copyVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1abbabe3c59b3519f27cb9f29d2c24ec20" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>deleteVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a485828065bb182ff026080c251fa30cb" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a6126fc05a10e2e988ea7e75aada214fd" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a49c3606024580071e0c65e2e4d080e1e" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>deltaVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>empty</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1ab0363181a4587dea6da67d3d13f75479" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a505acb56ef67da2fc73190d3d4931969" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a13444d1f198ceeef85e7a288a7d1d9c2" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a59e16b7142696049a5543ff35547ebd9" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>height</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a0a54df62a3b0f5d0e5a0f98d4bed0ba7" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a9b1735296084fc571524101988744884" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a818d585c592c80d8e8c101f67bc389ad" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1add4a998726ba4284e097ba6c7b343c96" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>model</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Model</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1af8e080a320fdd3f532283b8305bd2391" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>network</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a806923a7f052d5b9a0966407899fc104" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1abd24d500081b1de00513cf2fc9cee83f" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>outputHeightVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a712dc230c489d0caf3175cbdfc59639f" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a28ce681558d0bf02302f868d1c811f2a" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a3c4f390e15f61d10caafccbb37bd5be8" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>outputParameterVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1ad3606b38a6688053937ab6abe95cc44a" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>outputWidthVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a82a99cd0f62d750568aafc16aa7f74a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>ownsLayers</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1ac475c49ee5a4f316e1dbc6b7dab47b6f" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1aa68d74dc1e86e4352e00a3cab83a0e4a" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a043f0ccd62e6711a18e0d81047be9a0a" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a01b828c8a9d0398c7d899fe5a0159cf0" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Sequential</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a54e8b8c60e747977fcb5d1d33181d2d6" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Sequential</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a146eb0ef8b57693cf58802961b1a1601" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>Sequential</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a02bed8590a9ddf520e58a060059518ec" prot="private" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>width</name></member>
+      <member refid="classmlpack_1_1ann_1_1Sequential_1a104b6c42467bc2edb7c514afca99bcec" prot="public" virt="non-virtual"><scope>mlpack::ann::Sequential</scope><name>~Sequential</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,58 @@
+.TH "RStarTreeSplit" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RStarTreeSplit \- A Rectangle Tree has new points inserted at the bottom\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static void \fBPickLeafSplit\fP (TreeType *tree, size_t &bestAxis, size_t &bestIndex)"
+.br
+.RI "Given a node, return the best dimension and the best index to split on\&. "
+.ti -1c
+.RI "template<typename TreeType > static size_t \fBReinsertPoints\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "Reinsert any points into the tree, if needed\&. "
+.ti -1c
+.RI "template<typename TreeType > static void \fBSplitLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "Split a leaf node using the algorithm described in "The R*-tree: An Efficient and Robust Access method for Points and Rectangles\&. "
+.ti -1c
+.RI "template<typename TreeType > static bool \fBSplitNonLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "Split a non-leaf node using the 'default' algorithm\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A Rectangle Tree has new points inserted at the bottom\&. 
+
+When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary\&. 
+.PP
+Definition at line 26 of file r_star_tree_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void PickLeafSplit (TreeType * tree, size_t & bestAxis, size_t & bestIndex)\fC [static]\fP"
+
+.PP
+Given a node, return the best dimension and the best index to split on\&. 
+.SS "static size_t ReinsertPoints (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Reinsert any points into the tree, if needed\&. This returns the number of points reinserted\&. 
+.SS "static void SplitLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a leaf node using the algorithm described in "The R*-tree: An Efficient and Robust Access method for Points and Rectangles\&. " If necessary, this split will propagate upwards through the tree\&. 
+.SS "static bool SplitNonLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a non-leaf node using the 'default' algorithm\&. If this is a root node, the tree increases in depth\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

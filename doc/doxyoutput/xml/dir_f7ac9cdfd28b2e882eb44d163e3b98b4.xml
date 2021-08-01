@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_f7ac9cdfd28b2e882eb44d163e3b98b4" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core</compoundname>
+    <innerdir refid="dir_0943fc26809aa3eb53d8919f6d72c8ee">/home/aakash/mlpack/src/mlpack/core/cereal</innerdir>
+    <innerdir refid="dir_29e6e7106bf5eaf4400485142c6c95d8">/home/aakash/mlpack/src/mlpack/core/cv</innerdir>
+    <innerdir refid="dir_96b57488436375c38fa22c0899d60308">/home/aakash/mlpack/src/mlpack/core/data</innerdir>
+    <innerdir refid="dir_1d29dda40ef36f6615cae6f86e87bfd7">/home/aakash/mlpack/src/mlpack/core/dists</innerdir>
+    <innerdir refid="dir_017cea893c7ca6a9a2808f6f628c6dd8">/home/aakash/mlpack/src/mlpack/core/hpt</innerdir>
+    <innerdir refid="dir_b554345f14f7af9192a000ede2774b80">/home/aakash/mlpack/src/mlpack/core/kernels</innerdir>
+    <innerdir refid="dir_c99ddc62a84c9c2eac1febe115accba9">/home/aakash/mlpack/src/mlpack/core/math</innerdir>
+    <innerdir refid="dir_4efb564a11712fe6ab1802c27ccee872">/home/aakash/mlpack/src/mlpack/core/metrics</innerdir>
+    <innerdir refid="dir_d361cbf9654077cd65f7968e3f8eccf6">/home/aakash/mlpack/src/mlpack/core/tree</innerdir>
+    <innerdir refid="dir_e173a4984165953811b5143e3b27486f">/home/aakash/mlpack/src/mlpack/core/util</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/"/>
+  </compounddef>
+</doxygen>

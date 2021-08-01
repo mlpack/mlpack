@@ -1,0 +1,53 @@
+\section{Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$ Struct Template Reference}
+\label{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4}\index{Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$@{Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$}}
+
+
+Defining \doxyref{Deduce\+Hyper\+Parameter\+Types}{p.}{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes} for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Is\+Collection\+Type}
+\begin{DoxyCompactList}\small\item\em A type function to check whether Type is a collection type (for that it should define value\+\_\+type). \end{DoxyCompactList}\item 
+struct \textbf{ Result\+Holder}
+\item 
+struct \textbf{ Result\+H\+P\+Type}
+\begin{DoxyCompactList}\small\item\em A type function to deduce the result hyper-\/parameter type for Argument\+Type. \end{DoxyCompactList}\item 
+struct \textbf{ Result\+H\+P\+Type$<$ Arithmetic\+Type, true $>$}
+\item 
+struct \textbf{ Result\+H\+P\+Type$<$ Collection\+Type, false $>$}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Tuple\+Type} = typename Result\+Holder$<$$>$\+::\textbf{ Tuple\+Type}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T, typename... Args$>$\newline
+struct mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$}
+
+Defining \doxyref{Deduce\+Hyper\+Parameter\+Types}{p.}{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes} for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type. 
+
+Definition at line 49 of file deduce\+\_\+hp\+\_\+types.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_a885638d120e5be68a073bad43a0a7c38}} 
+\index{mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$@{mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$}!Tuple\+Type@{Tuple\+Type}}
+\index{Tuple\+Type@{Tuple\+Type}!mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$@{mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ T, Args... $>$}}
+\subsubsection{Tuple\+Type}
+{\footnotesize\ttfamily using \textbf{ Tuple\+Type} =  typename Result\+Holder$<$$>$\+::\textbf{ Tuple\+Type}}
+
+
+
+Definition at line 100 of file deduce\+\_\+hp\+\_\+types.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/hpt/\textbf{ deduce\+\_\+hp\+\_\+types.\+hpp}\end{DoxyCompactItemize}

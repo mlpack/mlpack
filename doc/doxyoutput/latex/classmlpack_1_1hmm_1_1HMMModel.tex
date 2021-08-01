@@ -1,0 +1,252 @@
+\section{H\+M\+M\+Model Class Reference}
+\label{classmlpack_1_1hmm_1_1HMMModel}\index{H\+M\+M\+Model@{H\+M\+M\+Model}}
+
+
+A serializable \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} model that also stores the type.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ H\+M\+M\+Model} (const \textbf{ H\+M\+M\+Type} type=H\+M\+M\+Type\+::\+Discrete\+H\+MM)
+\begin{DoxyCompactList}\small\item\em Construct a model of the given type. \end{DoxyCompactList}\item 
+\textbf{ H\+M\+M\+Model} (const \textbf{ H\+M\+M\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy another model. \end{DoxyCompactList}\item 
+\textbf{ H\+M\+M\+Model} (\textbf{ H\+M\+M\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of another model. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+H\+M\+M\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean memory. \end{DoxyCompactList}\item 
+\textbf{ H\+MM}$<$ \textbf{ gmm\+::\+Diagonal\+G\+MM} $>$ $\ast$ \textbf{ Diag\+G\+M\+M\+H\+MM} ()
+\item 
+\textbf{ H\+MM}$<$ \textbf{ distribution\+::\+Discrete\+Distribution} $>$ $\ast$ \textbf{ Discrete\+H\+MM} ()
+\begin{DoxyCompactList}\small\item\em Accessor methods for discrete\+H\+MM, gaussian\+H\+MM, gmm\+H\+MM, and diag\+G\+M\+M\+H\+MM. \end{DoxyCompactList}\item 
+\textbf{ H\+MM}$<$ \textbf{ distribution\+::\+Gaussian\+Distribution} $>$ $\ast$ \textbf{ Gaussian\+H\+MM} ()
+\item 
+\textbf{ H\+MM}$<$ \textbf{ gmm\+::\+G\+MM} $>$ $\ast$ \textbf{ G\+M\+M\+H\+MM} ()
+\item 
+\textbf{ H\+M\+M\+Model} \& \textbf{ operator=} (const \textbf{ H\+M\+M\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ H\+M\+M\+Model} \& \textbf{ operator=} (\textbf{ H\+M\+M\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Action\+Type , typename Extra\+Info\+Type $>$ }\\void \textbf{ Perform\+Action} (Extra\+Info\+Type $\ast$x)
+\begin{DoxyCompactList}\small\item\em Given a functor type, perform that functor with the optional extra info on the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+\textbf{ H\+M\+M\+Type} \textbf{ Type} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A serializable \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} model that also stores the type. 
+
+Definition at line 33 of file hmm\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a390e8b55464a25c9106acf1ec5ad1488}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!H\+M\+M\+Model@{H\+M\+M\+Model}}
+\index{H\+M\+M\+Model@{H\+M\+M\+Model}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{H\+M\+M\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ H\+M\+M\+Type}}]{type = {\ttfamily HMMType\+:\+:DiscreteHMM} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a model of the given type. 
+
+
+
+Definition at line 49 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Diagonal\+Gaussian\+Mixture\+Model\+H\+MM, mlpack\+::hmm\+::\+Discrete\+H\+MM, mlpack\+::hmm\+::\+Gaussian\+H\+MM, and mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_aa24c85f7311a3b2c0e56e6c0af64a100}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!H\+M\+M\+Model@{H\+M\+M\+Model}}
+\index{H\+M\+M\+Model@{H\+M\+M\+Model}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{H\+M\+M\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ H\+M\+M\+Model} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy another model. 
+
+
+
+Definition at line 67 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Diagonal\+Gaussian\+Mixture\+Model\+H\+MM, mlpack\+::hmm\+::\+Discrete\+H\+MM, mlpack\+::hmm\+::\+Gaussian\+H\+MM, and mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a58c371f45d81ee7e8158eb77a24fd935}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!H\+M\+M\+Model@{H\+M\+M\+Model}}
+\index{H\+M\+M\+Model@{H\+M\+M\+Model}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{H\+M\+M\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ H\+M\+M\+Model} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Take ownership of another model. 
+
+
+
+Definition at line 87 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Discrete\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a4fd07df52b6b55fe5b479af8e0ed0c02}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!````~H\+M\+M\+Model@{$\sim$\+H\+M\+M\+Model}}
+\index{````~H\+M\+M\+Model@{$\sim$\+H\+M\+M\+Model}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{$\sim$\+H\+M\+M\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ H\+M\+M\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clean memory. 
+
+
+
+Definition at line 153 of file hmm\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_af3732737f455722f698f56a63724a278}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!Diag\+G\+M\+M\+H\+MM@{Diag\+G\+M\+M\+H\+MM}}
+\index{Diag\+G\+M\+M\+H\+MM@{Diag\+G\+M\+M\+H\+MM}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{Diag\+G\+M\+M\+H\+M\+M()}
+{\footnotesize\ttfamily \textbf{ H\+MM}$<$\textbf{ gmm\+::\+Diagonal\+G\+MM}$>$$\ast$ Diag\+G\+M\+M\+H\+MM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 234 of file hmm\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a72e392b1ce6bc20b0cc1dd7678737ca7}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!Discrete\+H\+MM@{Discrete\+H\+MM}}
+\index{Discrete\+H\+MM@{Discrete\+H\+MM}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{Discrete\+H\+M\+M()}
+{\footnotesize\ttfamily \textbf{ H\+MM}$<$\textbf{ distribution\+::\+Discrete\+Distribution}$>$$\ast$ Discrete\+H\+MM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Accessor methods for discrete\+H\+MM, gaussian\+H\+MM, gmm\+H\+MM, and diag\+G\+M\+M\+H\+MM. 
+
+Note that an instatiation of this class will only contain one type of \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (as indicated by the \char`\"{}type\char`\"{} instance variable) -\/ the other two pointers will be N\+U\+LL.
+
+For instance, if the \doxyref{H\+M\+M\+Model}{p.}{classmlpack_1_1hmm_1_1HMMModel} object holds a discrete \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM}, then\+: type --$>$ Discrete\+H\+MM gaussian\+H\+MM --$>$ N\+U\+LL gmm\+H\+MM --$>$ N\+U\+LL diag\+G\+M\+M\+H\+MM --$>$ N\+U\+LL discrete\+H\+MM --$>$ H\+M\+M$<$\+Discrete\+Distribution$>$ object and hence, calls to \doxyref{G\+M\+M\+H\+M\+M()}{p.}{classmlpack_1_1hmm_1_1HMMModel_ad1de8c5e86d191107b69aa94d5e3454a}, \doxyref{Diag\+G\+M\+M\+H\+M\+M()}{p.}{classmlpack_1_1hmm_1_1HMMModel_af3732737f455722f698f56a63724a278} and \doxyref{Gaussian\+H\+M\+M()}{p.}{classmlpack_1_1hmm_1_1HMMModel_a6f3b808adcc4b8860d3a0ffa5cd5edf2} will return N\+U\+LL. Only the call to \doxyref{Discrete\+H\+M\+M()}{p.}{classmlpack_1_1hmm_1_1HMMModel_a72e392b1ce6bc20b0cc1dd7678737ca7} will return a non N\+U\+LL pointer.
+
+Hence, in practice, a user should be careful to first check the type of \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (by calling the \doxyref{Type()}{p.}{classmlpack_1_1hmm_1_1HMMModel_addcc3610a14299b695cf108a2be94a95} accessor) and then perform subsequent actions, to avoid null pointer dereferences. 
+
+Definition at line 231 of file hmm\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a6f3b808adcc4b8860d3a0ffa5cd5edf2}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!Gaussian\+H\+MM@{Gaussian\+H\+MM}}
+\index{Gaussian\+H\+MM@{Gaussian\+H\+MM}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{Gaussian\+H\+M\+M()}
+{\footnotesize\ttfamily \textbf{ H\+MM}$<$\textbf{ distribution\+::\+Gaussian\+Distribution}$>$$\ast$ Gaussian\+H\+MM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 232 of file hmm\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_ad1de8c5e86d191107b69aa94d5e3454a}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!G\+M\+M\+H\+MM@{G\+M\+M\+H\+MM}}
+\index{G\+M\+M\+H\+MM@{G\+M\+M\+H\+MM}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{G\+M\+M\+H\+M\+M()}
+{\footnotesize\ttfamily \textbf{ H\+MM}$<$\textbf{ gmm\+::\+G\+MM}$>$$\ast$ G\+M\+M\+H\+MM (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 233 of file hmm\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_acd95a7ce40a4c99a45a784b1927c948b}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ H\+M\+M\+Model} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy assignment operator. 
+
+
+
+Definition at line 102 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Diagonal\+Gaussian\+Mixture\+Model\+H\+MM, mlpack\+::hmm\+::\+Discrete\+H\+MM, mlpack\+::hmm\+::\+Gaussian\+H\+MM, and mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a7a1ad87855c1fc4132b2b1092154fc54}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ H\+M\+M\+Model} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Move assignment operator. 
+
+
+
+Definition at line 133 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Discrete\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a894b9bd55c11b70c9cfbf6e078bb89d8}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!Perform\+Action@{Perform\+Action}}
+\index{Perform\+Action@{Perform\+Action}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{Perform\+Action()}
+{\footnotesize\ttfamily void Perform\+Action (\begin{DoxyParamCaption}\item[{Extra\+Info\+Type $\ast$}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a functor type, perform that functor with the optional extra info on the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM}. 
+
+
+
+Definition at line 167 of file hmm\+\_\+model.\+hpp.
+
+
+
+References mlpack\+::hmm\+::\+Diagonal\+Gaussian\+Mixture\+Model\+H\+MM, mlpack\+::hmm\+::\+Discrete\+H\+MM, mlpack\+::hmm\+::\+Gaussian\+H\+MM, and mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the model. 
+
+
+
+Definition at line 181 of file hmm\+\_\+model.\+hpp.
+
+
+
+References C\+E\+R\+E\+A\+L\+\_\+\+P\+O\+I\+N\+T\+ER, mlpack\+::hmm\+::\+Diagonal\+Gaussian\+Mixture\+Model\+H\+MM, mlpack\+::hmm\+::\+Discrete\+H\+MM, mlpack\+::hmm\+::\+Gaussian\+H\+MM, and mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM.
+
+\mbox{\label{classmlpack_1_1hmm_1_1HMMModel_addcc3610a14299b695cf108a2be94a95}} 
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}!Type@{Type}}
+\index{Type@{Type}!mlpack\+::hmm\+::\+H\+M\+M\+Model@{mlpack\+::hmm\+::\+H\+M\+M\+Model}}
+\subsubsection{Type()}
+{\footnotesize\ttfamily \textbf{ H\+M\+M\+Type} Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 210 of file hmm\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/hmm/\textbf{ hmm\+\_\+model.\+hpp}\end{DoxyCompactItemize}

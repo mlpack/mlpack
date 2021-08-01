@@ -1,0 +1,65 @@
+.TH "CosineDistance" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CosineDistance \- The cosine distance (or cosine similarity)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the class (there's nothing to save)\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > static double \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b)"
+.br
+.RI "Computes the cosine distance between two points\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The cosine distance (or cosine similarity)\&. 
+
+It is defined by
+.PP
+\[ d(a, b) = \frac{a^T b}{|| a || || b ||} \].PP
+and this class assumes the standard L2 inner product\&. 
+.PP
+Definition at line 31 of file cosine_distance\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (const VecTypeA & a, const VecTypeB & b)\fC [static]\fP"
+
+.PP
+Computes the cosine distance between two points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+d(a, b)\&. 
+.RE
+.PP
+
+.SS "void serialize (Archive &, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the class (there's nothing to save)\&. 
+.PP
+Definition at line 46 of file cosine_distance\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

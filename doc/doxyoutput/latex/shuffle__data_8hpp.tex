@@ -1,0 +1,47 @@
+\section{/home/aakash/mlpack/src/mlpack/core/math/shuffle\+\_\+data.hpp File Reference}
+\label{shuffle__data_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/math/shuffle\+\_\+data.\+hpp@{/home/aakash/mlpack/src/mlpack/core/math/shuffle\+\_\+data.\+hpp}}
+Include dependency graph for shuffle\+\_\+data.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{shuffle__data_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{shuffle__data_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::math}
+\begin{DoxyCompactList}\small\item\em Miscellaneous math routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a dataset and associated labels (or responses). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a sparse dataset and associated labels (or responses). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Labels\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a cube-\/shaped dataset and associated labels (or responses) which are also cube-\/shaped. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, const Weights\+Type \&input\+Weights, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, Weights\+Type \&output\+Weights, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a dataset and associated labels (or responses) and weights. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, const Weights\+Type \&input\+Weights, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, Weights\+Type \&output\+Weights, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a sparse dataset and associated labels (or responses) and weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Given data points and labels, shuffle their ordering.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

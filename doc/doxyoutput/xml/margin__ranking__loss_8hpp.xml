@@ -1,0 +1,451 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="margin__ranking__loss_8hpp" kind="file" language="C++">
+    <compoundname>margin_ranking_loss.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">margin_ranking_loss_impl.hpp</includes>
+    <incdepgraph>
+      <node id="39758">
+        <label>list</label>
+      </node>
+      <node id="39755">
+        <label>atomic</label>
+      </node>
+      <node id="39745">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="39721">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="39757">
+        <label>iomanip</label>
+      </node>
+      <node id="39730">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="39731" relation="include">
+        </childnode>
+        <childnode refid="39733" relation="include">
+        </childnode>
+      </node>
+      <node id="39713">
+        <label>cstdint</label>
+      </node>
+      <node id="39722">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="39707">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp</label>
+        <link refid="margin__ranking__loss_8hpp"/>
+        <childnode refid="39708" relation="include">
+        </childnode>
+        <childnode refid="39765" relation="include">
+        </childnode>
+      </node>
+      <node id="39729">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="39752">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="39742">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="39709">
+        <label>cmath</label>
+      </node>
+      <node id="39728">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="39717">
+        <label>stdexcept</label>
+      </node>
+      <node id="39737">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="39722" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39723" relation="include">
+        </childnode>
+      </node>
+      <node id="39761">
+        <label>string</label>
+      </node>
+      <node id="39749">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="39750" relation="include">
+        </childnode>
+        <childnode refid="39716" relation="include">
+        </childnode>
+      </node>
+      <node id="39759">
+        <label>map</label>
+      </node>
+      <node id="39711">
+        <label>cfloat</label>
+      </node>
+      <node id="39741">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="39763">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="39725">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="39748">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="39749" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39732" relation="include">
+        </childnode>
+        <childnode refid="39750" relation="include">
+        </childnode>
+      </node>
+      <node id="39738">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="39736">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="39722" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39723" relation="include">
+        </childnode>
+      </node>
+      <node id="39739">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="39722" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39723" relation="include">
+        </childnode>
+      </node>
+      <node id="39727">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="39765">
+        <label>margin_ranking_loss_impl.hpp</label>
+      </node>
+      <node id="39747">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="39723" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39735" relation="include">
+        </childnode>
+        <childnode refid="39744" relation="include">
+        </childnode>
+      </node>
+      <node id="39751">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="39752" relation="include">
+        </childnode>
+      </node>
+      <node id="39753">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="39708">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="39709" relation="include">
+        </childnode>
+        <childnode refid="39710" relation="include">
+        </childnode>
+        <childnode refid="39711" relation="include">
+        </childnode>
+        <childnode refid="39712" relation="include">
+        </childnode>
+        <childnode refid="39713" relation="include">
+        </childnode>
+        <childnode refid="39714" relation="include">
+        </childnode>
+        <childnode refid="39715" relation="include">
+        </childnode>
+        <childnode refid="39716" relation="include">
+        </childnode>
+        <childnode refid="39717" relation="include">
+        </childnode>
+        <childnode refid="39718" relation="include">
+        </childnode>
+        <childnode refid="39719" relation="include">
+        </childnode>
+        <childnode refid="39720" relation="include">
+        </childnode>
+        <childnode refid="39721" relation="include">
+        </childnode>
+        <childnode refid="39722" relation="include">
+        </childnode>
+        <childnode refid="39723" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39726" relation="include">
+        </childnode>
+        <childnode refid="39727" relation="include">
+        </childnode>
+        <childnode refid="39728" relation="include">
+        </childnode>
+        <childnode refid="39729" relation="include">
+        </childnode>
+        <childnode refid="39730" relation="include">
+        </childnode>
+        <childnode refid="39734" relation="include">
+        </childnode>
+        <childnode refid="39735" relation="include">
+        </childnode>
+        <childnode refid="39736" relation="include">
+        </childnode>
+        <childnode refid="39737" relation="include">
+        </childnode>
+        <childnode refid="39738" relation="include">
+        </childnode>
+        <childnode refid="39739" relation="include">
+        </childnode>
+        <childnode refid="39740" relation="include">
+        </childnode>
+        <childnode refid="39746" relation="include">
+        </childnode>
+        <childnode refid="39747" relation="include">
+        </childnode>
+        <childnode refid="39744" relation="include">
+        </childnode>
+        <childnode refid="39748" relation="include">
+        </childnode>
+        <childnode refid="39751" relation="include">
+        </childnode>
+        <childnode refid="39753" relation="include">
+        </childnode>
+        <childnode refid="39754" relation="include">
+        </childnode>
+        <childnode refid="39763" relation="include">
+        </childnode>
+        <childnode refid="39764" relation="include">
+        </childnode>
+      </node>
+      <node id="39714">
+        <label>cstdio</label>
+      </node>
+      <node id="39718">
+        <label>tuple</label>
+      </node>
+      <node id="39723">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="39740">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="39723" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39727" relation="include">
+        </childnode>
+        <childnode refid="39741" relation="include">
+        </childnode>
+        <childnode refid="39742" relation="include">
+        </childnode>
+        <childnode refid="39743" relation="include">
+        </childnode>
+        <childnode refid="39744" relation="include">
+        </childnode>
+      </node>
+      <node id="39719">
+        <label>utility</label>
+      </node>
+      <node id="39743">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="39734">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="39731">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="39732" relation="include">
+        </childnode>
+      </node>
+      <node id="39754">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="39755" relation="include">
+        </childnode>
+        <childnode refid="39756" relation="include">
+        </childnode>
+        <childnode refid="39757" relation="include">
+        </childnode>
+        <childnode refid="39758" relation="include">
+        </childnode>
+        <childnode refid="39759" relation="include">
+        </childnode>
+        <childnode refid="39760" relation="include">
+        </childnode>
+        <childnode refid="39761" relation="include">
+        </childnode>
+        <childnode refid="39762" relation="include">
+        </childnode>
+      </node>
+      <node id="39732">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="39746">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="39744" relation="include">
+        </childnode>
+        <childnode refid="39740" relation="include">
+        </childnode>
+        <childnode refid="39747" relation="include">
+        </childnode>
+      </node>
+      <node id="39715">
+        <label>cstdlib</label>
+      </node>
+      <node id="39710">
+        <label>cctype</label>
+      </node>
+      <node id="39733">
+        <label>unordered_map</label>
+      </node>
+      <node id="39712">
+        <label>climits</label>
+      </node>
+      <node id="39760">
+        <label>mutex</label>
+      </node>
+      <node id="39756">
+        <label>chrono</label>
+      </node>
+      <node id="39764">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="39762">
+        <label>thread</label>
+      </node>
+      <node id="39750">
+        <label>type_traits</label>
+      </node>
+      <node id="39726">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="39720">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="39744">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="39722" relation="include">
+        </childnode>
+        <childnode refid="39723" relation="include">
+        </childnode>
+        <childnode refid="39724" relation="include">
+        </childnode>
+        <childnode refid="39725" relation="include">
+        </childnode>
+        <childnode refid="39745" relation="include">
+        </childnode>
+      </node>
+      <node id="39716">
+        <label>cstring</label>
+      </node>
+      <node id="39735">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="39724">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1MarginRankingLoss" prot="public">mlpack::ann::MarginRankingLoss</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Andrei Mihalea</para></simplesect>
+Definition of the Margin Ranking Loss function.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_ANN_LOSS_FUNCTION_MARGIN_RANKING_LOSS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_ANN_LOSS_FUNCTION_MARGIN_RANKING_LOSS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputDataType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputDataType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1ann_1_1MarginRankingLoss" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss" kindref="compound">MarginRankingLoss</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a28d56cfc63a5a75cd5479f335c65df0c" kindref="member">MarginRankingLoss</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>margin<sp/>=<sp/>1.0);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType&gt;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType::elem_type<sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ab3640059898ea76c13709b8099316fe8" kindref="member">Forward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionType,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TargetType,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LossType</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>&gt;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1add41dbaf358dc099750dc6064cb7e0d7" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PredictionType&amp;<sp/>prediction,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TargetType&amp;<sp/>target,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LossType&amp;<sp/>loss);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a8bae962cc603d1cab8d80ec78f8d505d" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a8bae962cc603d1cab8d80ec78f8d505d" kindref="member">OutputParameter</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a21d5f745f02c709625a4ee0907f004a5" refkind="member"><highlight class="normal"><sp/><sp/>OutputDataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a21d5f745f02c709625a4ee0907f004a5" kindref="member">OutputParameter</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>outputParameter;<sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ac29c2c851ff367f45f9ec075352c5b83" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ac29c2c851ff367f45f9ec075352c5b83" kindref="member">Margin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>margin;<sp/>}</highlight></codeline>
+<codeline lineno="81" refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ab8c4d252f686cdc9c5972df28e65dcab" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ab8c4d252f686cdc9c5972df28e65dcab" kindref="member">Margin</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>margin;<sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>OutputDataType<sp/>outputParameter;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>margin;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>MarginRankingLoss</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/>include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;margin_ranking_loss_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp"/>
+  </compounddef>
+</doxygen>

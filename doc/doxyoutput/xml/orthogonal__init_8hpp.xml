@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="orthogonal__init_8hpp" kind="file" language="C++">
+    <compoundname>orthogonal_init.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="28931">
+        <label>list</label>
+      </node>
+      <node id="28928">
+        <label>atomic</label>
+      </node>
+      <node id="28918">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="28894">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="28930">
+        <label>iomanip</label>
+      </node>
+      <node id="28880">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp</label>
+        <link refid="orthogonal__init_8hpp"/>
+        <childnode refid="28881" relation="include">
+        </childnode>
+      </node>
+      <node id="28903">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="28904" relation="include">
+        </childnode>
+        <childnode refid="28906" relation="include">
+        </childnode>
+      </node>
+      <node id="28886">
+        <label>cstdint</label>
+      </node>
+      <node id="28895">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="28902">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="28925">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="28915">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="28882">
+        <label>cmath</label>
+      </node>
+      <node id="28901">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="28890">
+        <label>stdexcept</label>
+      </node>
+      <node id="28910">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="28895" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28896" relation="include">
+        </childnode>
+      </node>
+      <node id="28934">
+        <label>string</label>
+      </node>
+      <node id="28922">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="28923" relation="include">
+        </childnode>
+        <childnode refid="28889" relation="include">
+        </childnode>
+      </node>
+      <node id="28932">
+        <label>map</label>
+      </node>
+      <node id="28884">
+        <label>cfloat</label>
+      </node>
+      <node id="28914">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="28936">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="28898">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="28921">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="28922" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28905" relation="include">
+        </childnode>
+        <childnode refid="28923" relation="include">
+        </childnode>
+      </node>
+      <node id="28911">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="28909">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="28895" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28896" relation="include">
+        </childnode>
+      </node>
+      <node id="28912">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="28895" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28896" relation="include">
+        </childnode>
+      </node>
+      <node id="28900">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="28920">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="28896" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28908" relation="include">
+        </childnode>
+        <childnode refid="28917" relation="include">
+        </childnode>
+      </node>
+      <node id="28924">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="28925" relation="include">
+        </childnode>
+      </node>
+      <node id="28926">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="28881">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="28882" relation="include">
+        </childnode>
+        <childnode refid="28883" relation="include">
+        </childnode>
+        <childnode refid="28884" relation="include">
+        </childnode>
+        <childnode refid="28885" relation="include">
+        </childnode>
+        <childnode refid="28886" relation="include">
+        </childnode>
+        <childnode refid="28887" relation="include">
+        </childnode>
+        <childnode refid="28888" relation="include">
+        </childnode>
+        <childnode refid="28889" relation="include">
+        </childnode>
+        <childnode refid="28890" relation="include">
+        </childnode>
+        <childnode refid="28891" relation="include">
+        </childnode>
+        <childnode refid="28892" relation="include">
+        </childnode>
+        <childnode refid="28893" relation="include">
+        </childnode>
+        <childnode refid="28894" relation="include">
+        </childnode>
+        <childnode refid="28895" relation="include">
+        </childnode>
+        <childnode refid="28896" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28899" relation="include">
+        </childnode>
+        <childnode refid="28900" relation="include">
+        </childnode>
+        <childnode refid="28901" relation="include">
+        </childnode>
+        <childnode refid="28902" relation="include">
+        </childnode>
+        <childnode refid="28903" relation="include">
+        </childnode>
+        <childnode refid="28907" relation="include">
+        </childnode>
+        <childnode refid="28908" relation="include">
+        </childnode>
+        <childnode refid="28909" relation="include">
+        </childnode>
+        <childnode refid="28910" relation="include">
+        </childnode>
+        <childnode refid="28911" relation="include">
+        </childnode>
+        <childnode refid="28912" relation="include">
+        </childnode>
+        <childnode refid="28913" relation="include">
+        </childnode>
+        <childnode refid="28919" relation="include">
+        </childnode>
+        <childnode refid="28920" relation="include">
+        </childnode>
+        <childnode refid="28917" relation="include">
+        </childnode>
+        <childnode refid="28921" relation="include">
+        </childnode>
+        <childnode refid="28924" relation="include">
+        </childnode>
+        <childnode refid="28926" relation="include">
+        </childnode>
+        <childnode refid="28927" relation="include">
+        </childnode>
+        <childnode refid="28936" relation="include">
+        </childnode>
+        <childnode refid="28937" relation="include">
+        </childnode>
+      </node>
+      <node id="28887">
+        <label>cstdio</label>
+      </node>
+      <node id="28891">
+        <label>tuple</label>
+      </node>
+      <node id="28896">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="28913">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="28896" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28900" relation="include">
+        </childnode>
+        <childnode refid="28914" relation="include">
+        </childnode>
+        <childnode refid="28915" relation="include">
+        </childnode>
+        <childnode refid="28916" relation="include">
+        </childnode>
+        <childnode refid="28917" relation="include">
+        </childnode>
+      </node>
+      <node id="28892">
+        <label>utility</label>
+      </node>
+      <node id="28916">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28907">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="28904">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="28905" relation="include">
+        </childnode>
+      </node>
+      <node id="28927">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="28928" relation="include">
+        </childnode>
+        <childnode refid="28929" relation="include">
+        </childnode>
+        <childnode refid="28930" relation="include">
+        </childnode>
+        <childnode refid="28931" relation="include">
+        </childnode>
+        <childnode refid="28932" relation="include">
+        </childnode>
+        <childnode refid="28933" relation="include">
+        </childnode>
+        <childnode refid="28934" relation="include">
+        </childnode>
+        <childnode refid="28935" relation="include">
+        </childnode>
+      </node>
+      <node id="28905">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="28919">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="28917" relation="include">
+        </childnode>
+        <childnode refid="28913" relation="include">
+        </childnode>
+        <childnode refid="28920" relation="include">
+        </childnode>
+      </node>
+      <node id="28888">
+        <label>cstdlib</label>
+      </node>
+      <node id="28883">
+        <label>cctype</label>
+      </node>
+      <node id="28906">
+        <label>unordered_map</label>
+      </node>
+      <node id="28885">
+        <label>climits</label>
+      </node>
+      <node id="28933">
+        <label>mutex</label>
+      </node>
+      <node id="28929">
+        <label>chrono</label>
+      </node>
+      <node id="28937">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="28935">
+        <label>thread</label>
+      </node>
+      <node id="28923">
+        <label>type_traits</label>
+      </node>
+      <node id="28899">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="28893">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="28917">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="28895" relation="include">
+        </childnode>
+        <childnode refid="28896" relation="include">
+        </childnode>
+        <childnode refid="28897" relation="include">
+        </childnode>
+        <childnode refid="28898" relation="include">
+        </childnode>
+        <childnode refid="28918" relation="include">
+        </childnode>
+      </node>
+      <node id="28889">
+        <label>cstring</label>
+      </node>
+      <node id="28908">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="28897">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1OrthogonalInitialization" prot="public">mlpack::ann::OrthogonalInitialization</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Definition and implementation of the orthogonal matrix initialization method.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="classmlpack_1_1ann_1_1OrthogonalInitialization" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization" kindref="compound">OrthogonalInitialization</ref></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a817ae9d4d72deee10477cb6e79dc535a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a817ae9d4d72deee10477cb6e79dc535a" kindref="member">OrthogonalInitialization</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gain<sp/>=<sp/>1.0)<sp/>:<sp/>gain(gain)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(arma::Mat&lt;eT&gt;&amp;<sp/>W,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;<sp/>V;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Col&lt;eT&gt;<sp/>s;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::svd_econ(W,<sp/>s,<sp/>V,<sp/>arma::randu&lt;arma::Mat&lt;eT&gt;<sp/>&gt;(rows,<sp/>cols));</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>W<sp/>*=<sp/>gain;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="59" refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1af2d770912321b8b9ca7b03ab98f735c0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1af2d770912321b8b9ca7b03ab98f735c0" kindref="member">Initialize</ref>(arma::Mat&lt;eT&gt;&amp;<sp/>W)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;<sp/>V;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Col&lt;eT&gt;<sp/>s;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::svd_econ(W,<sp/>s,<sp/>V,<sp/>arma::randu&lt;arma::Mat&lt;eT&gt;<sp/>&gt;(W.n_rows,<sp/>W.n_cols));</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>W<sp/>*=<sp/>gain;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="78" refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" kindref="member">Initialize</ref>(arma::Cube&lt;eT&gt;&amp;<sp/>W,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rows,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cols,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>slices)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(W.is_empty())</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>W.set_size(rows,<sp/>cols,<sp/>slices);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>slices;<sp/>++i)</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W.slice(i),<sp/>rows,<sp/>cols);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>eT&gt;</highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1ae2f3e6d570824a160b687ff9f734f83c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1ae2f3e6d570824a160b687ff9f734f83c" kindref="member">Initialize</ref>(arma::Cube&lt;eT&gt;&amp;<sp/>W)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(W.is_empty())</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Cannot<sp/>initialize<sp/>an<sp/>empty<sp/>cube.&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>W.n_slices;<sp/>++i)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" kindref="member">Initialize</ref>(W.slice(i));</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gain;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>OrthogonalInitialization</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/orthogonal_init.hpp"/>
+  </compounddef>
+</doxygen>

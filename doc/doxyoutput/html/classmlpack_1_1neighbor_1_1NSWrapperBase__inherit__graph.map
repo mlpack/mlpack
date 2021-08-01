@@ -1,0 +1,6 @@
+<map id="NSWrapperBase" name="NSWrapperBase">
+<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper is a wrapper class for most NeighborSearch types. " alt="" coords="175,143,391,199"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper\&lt; SortPolicy,\l tree::SPTree, tree::\lSPTree\&lt; metric::EuclideanDistance,\l NeighborSearchStat\&lt; SortPolicy\l \&gt;, arma::mat \&gt;::template DefeatistDualTree\lTraverser, tree::SPTree\&lt; metric::EuclideanDistance,\l NeighborSearchStat\&lt; SortPolicy \&gt;, arma::mat\l \&gt;::template DefeatistSingleTreeTraverser \&gt;" alt="" coords="753,149,1081,279"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1LeafSizeNSWrapper.html" title="LeafSizeNSWrapper wraps any NeighborSearch types that take a leaf size for tree construction. " alt="" coords="826,5,1009,76"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1neighbor_1_1SpillNSWrapper.html" title="The SpillNSWrapper class wraps the NeighborSearch class when the spill tree is used. " alt="" coords="1131,201,1329,227"/>
+</map>

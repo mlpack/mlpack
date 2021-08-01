@@ -1,0 +1,429 @@
+.TH "mlpack::util" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::util
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBBindingDetails\fP"
+.br
+.RI "This structure holds all of the information about bindings documentation\&. "
+.ti -1c
+.RI "class \fBExample\fP"
+.br
+.ti -1c
+.RI "struct \fBIsStdVector\fP"
+.br
+.RI "Metaprogramming structure for vector detection\&. "
+.ti -1c
+.RI "struct \fBIsStdVector< std::vector< T, A > >\fP"
+.br
+.RI "Metaprogramming structure for vector detection\&. "
+.ti -1c
+.RI "class \fBLongDescription\fP"
+.br
+.ti -1c
+.RI "class \fBNullOutStream\fP"
+.br
+.RI "Used for Log::Debug when not compiled with debugging symbols\&. "
+.ti -1c
+.RI "struct \fBParamData\fP"
+.br
+.RI "This structure holds all of the information about a single parameter, including its value (which is set when ParseCommandLine() is called)\&. "
+.ti -1c
+.RI "class \fBPrefixedOutStream\fP"
+.br
+.RI "Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr\&. "
+.ti -1c
+.RI "class \fBProgramName\fP"
+.br
+.ti -1c
+.RI "class \fBSeeAlso\fP"
+.br
+.ti -1c
+.RI "class \fBShortDescription\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename DataType , typename DimType > void \fBCheckSameDimensionality\fP (const DataType &data, const DimType &dimension, const std::string &callerDescription, const std::string &addInfo='dataset')"
+.br
+.RI "Check for if the given dataset dimension matches with the model's\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBCheckSameDimensionality\fP (const DataType &data, const size_t &dimension, const std::string &callerDescription, const std::string &addInfo='dataset')"
+.br
+.RI "An overload of \fBCheckSameDimensionality()\fP where the dimension to be checked is known second param is unsigned long int\&. "
+.ti -1c
+.RI "template<typename DataType , typename LabelsType > void \fBCheckSameSizes\fP (const DataType &data, const LabelsType &label, const std::string &callerDescription, const std::string &addInfo='labels')"
+.br
+.RI "Check for if the given data points & labels have same size\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBCheckSameSizes\fP (const DataType &data, const size_t &size, const std::string &callerDescription, const std::string &addInfo='labels')"
+.br
+.RI "An overload of \fBCheckSameSizes()\fP where the size to be checked is known previously\&. "
+.ti -1c
+.RI "std::string \fBGetVersion\fP ()"
+.br
+.RI "This will return either 'mlpack x\&.y\&.z' or 'mlpack master-XXXXXXX' depending on whether or not this is a stable version of mlpack or a git repository\&. "
+.ti -1c
+.RI "std::string \fBHyphenateString\fP (const std::string &str, const std::string &prefix, const bool force=false)"
+.br
+.RI "Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. "
+.ti -1c
+.RI "std::string \fBHyphenateString\fP (const std::string &str, int padding)"
+.br
+.RI "Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. "
+.ti -1c
+.RI "void \fBReportIgnoredParam\fP (const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
+.br
+.RI "Report that a parameter is ignored, if each of the constraints given are satisfied\&. "
+.ti -1c
+.RI "void \fBReportIgnoredParam\fP (const std::string &paramName, const std::string &reason)"
+.br
+.RI "If the given parameter is passed, report that it is ignored, supplying a custom reason\&. "
+.ti -1c
+.RI "void \fBRequireAtLeastOnePassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
+.br
+.RI "Require that at least one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
+.ti -1c
+.RI "void \fBRequireNoneOrAllPassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
+.br
+.RI "Require that either none or all of the given parameters in the constraints set were passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
+.ti -1c
+.RI "void \fBRequireOnlyOnePassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='', const bool allowNone=false)"
+.br
+.RI "Require that only one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
+.ti -1c
+.RI "template<typename T > void \fBRequireParamInSet\fP (const std::string &paramName, const std::vector< T > &set, const bool fatal, const std::string &errorMessage)"
+.br
+.RI "Require that a given parameter is in a set of allowable parameters\&. "
+.ti -1c
+.RI "template<typename T > void \fBRequireParamValue\fP (const std::string &paramName, const std::function< bool(T)> &conditional, const bool fatal, const std::string &errorMessage)"
+.br
+.RI "Require that a given parameter satisfies the given conditional function\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetInputParam\fP (const std::string &name, T &&value)"
+.br
+.RI "Utility function that is used in binding tests for setting a parameter and marking it as passed; it uses copy semantics for lvalues and move semantics for rvalues\&. "
+.ti -1c
+.RI "std::string \fBToLower\fP (const std::string &input)"
+.br
+.RI "Convert a string to lowercase letters\&. "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::util::CheckSameDimensionality (const DataType & data, const DimType & dimension, const std::string & callerDescription, const std::string & addInfo = \fC'dataset'\fP)\fC [inline]\fP"
+
+.PP
+Check for if the given dataset dimension matches with the model's\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP dataset\&. 
+.br
+\fIdimension\fP Dimension of the model\&. 
+.br
+\fIcallerDescription\fP A description of the caller that can be used for error generation\&. 
+.br
+\fIaddInfo\fP Name to use for dataset for precise error generation\&. Default is 'dataset'; for example, 'weights' could also be used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 78 of file size_checks\&.hpp\&.
+.SS "void mlpack::util::CheckSameDimensionality (const DataType & data, const size_t & dimension, const std::string & callerDescription, const std::string & addInfo = \fC'dataset'\fP)\fC [inline]\fP"
+
+.PP
+An overload of \fBCheckSameDimensionality()\fP where the dimension to be checked is known second param is unsigned long int\&. 
+.PP
+Definition at line 99 of file size_checks\&.hpp\&.
+.SS "void mlpack::util::CheckSameSizes (const DataType & data, const LabelsType & label, const std::string & callerDescription, const std::string & addInfo = \fC'labels'\fP)\fC [inline]\fP"
+
+.PP
+Check for if the given data points & labels have same size\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP data\&. 
+.br
+\fIlabels\fP Labels\&. 
+.br
+\fIcallerDescription\fP A description of the caller that can be used for error generation\&. 
+.br
+\fIaddInfo\fP Name to use for labels for precise error generation\&. Default is 'labels'; for example, 'weights' could also be used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file size_checks\&.hpp\&.
+.SS "void mlpack::util::CheckSameSizes (const DataType & data, const size_t & size, const std::string & callerDescription, const std::string & addInfo = \fC'labels'\fP)\fC [inline]\fP"
+
+.PP
+An overload of \fBCheckSameSizes()\fP where the size to be checked is known previously\&. The second parameter is of type unsigned int\&. 
+.PP
+Definition at line 51 of file size_checks\&.hpp\&.
+.SS "std::string mlpack::util::GetVersion ()"
+
+.PP
+This will return either 'mlpack x\&.y\&.z' or 'mlpack master-XXXXXXX' depending on whether or not this is a stable version of mlpack or a git repository\&. 
+.SS "std::string mlpack::util::HyphenateString (const std::string & str, const std::string & prefix, const bool force = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. This is used for option output\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstr\fP String to hyphenate (splits are on ' ')\&. 
+.br
+\fIprefix\fP Prefix to hyphenate a string with\&. 
+.br
+\fIforce\fP Hyphenate the string even if the length is less then 80\&. 
+.RE
+.PP
+\fBExceptions:\fP
+.RS 4
+\fIstd::invalid_argument\fP if prefix\&.size() >= 80\&. 
+.RE
+.PP
+
+.PP
+Definition at line 27 of file hyphenate_string\&.hpp\&.
+.PP
+Referenced by HyphenateString()\&.
+.SS "std::string mlpack::util::HyphenateString (const std::string & str, int padding)\fC [inline]\fP"
+
+.PP
+Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. This is used for option output\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstr\fP String to hyphenate (splits are on ' ')\&. 
+.br
+\fIpadding\fP Amount of padding on the left for each new line\&. 
+.RE
+.PP
+
+.PP
+Definition at line 82 of file hyphenate_string\&.hpp\&.
+.PP
+References HyphenateString()\&.
+.SS "void mlpack::util::ReportIgnoredParam (const std::vector< std::pair< std::string, bool >> & constraints, const std::string & paramName)"
+
+.PP
+Report that a parameter is ignored, if each of the constraints given are satisfied\&. The constraints should be a set of string/bool pairs\&. If all of the constraints are true, and the given parameter in 'paramName' is passed, then a warning will be issued noting that the parameter is ignored\&. The warning will go to Log::Warn\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIconstraints\fP Set of constraints\&. 
+.br
+\fIparamName\fP Name of parameter to check\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::ReportIgnoredParam (const std::string & paramName, const std::string & reason)"
+
+.PP
+If the given parameter is passed, report that it is ignored, supplying a custom reason\&. The reason should specify, in short and clear terms, why the parameter is ignored\&. So, for example, the output may be similar to:
+.PP
+.PP
+.nf
+--iterations (-i) ignored because <reason>\&.
+.fi
+.PP
+.PP
+and in this case a good reason might be 'SGD is not being used as an
+optimizer'\&. Be sure that when you write the reason, the full message makes sense\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparamName\fP Name of parameter to check\&. 
+.br
+\fIreason\fP Reason that parameter is ignored, if it is passed\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::RequireAtLeastOnePassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
+
+.PP
+Require that at least one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
+.PP
+This can be used with a set of only one constraint and the output is still sensible\&.
+.PP
+If you use a custom error message, be aware that the given output will be similar to, for example:
+.PP
+.PP
+.nf
+Should pass one of '--codes_file (-c)', '--dictionary_file (-d)', or
+'--output_model_file (-M)'; <custom error message>!
+.fi
+.PP
+.PP
+so when you write your custom error message, be sure that the sentence makes sense\&. The custom error message should not have a capitalized first character and no ending punctuation (a '!' will be added by this function)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIconstraints\fP Set of parameters from which only one should be passed\&. 
+.br
+\fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
+.br
+\fIcustomErrorMessage\fP Error message to append\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::RequireNoneOrAllPassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
+
+.PP
+Require that either none or all of the given parameters in the constraints set were passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
+.PP
+If you use a custom error message, be aware that the given output will be similar to, for example:
+.PP
+.PP
+.nf
+Must pass none or all of '--codes_file (-c)', '--dictionary_file (-d)', and
+'--output_model_file (-M)'; <custom error message>!
+.fi
+.PP
+.PP
+so when you write your custom error message, be sure that the sentence makes sense\&. The custom error message should not have a capitalized first character and no ending punctuation (a '!' will be added by this function)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIconstraints\fP Set of parameters of which none or all should be passed\&. 
+.br
+\fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
+.br
+\fIcustomErrorMessage\fP Error message to append\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::RequireOnlyOnePassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP, const bool allowNone = \fCfalse\fP)"
+
+.PP
+Require that only one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
+.PP
+If you use a custom error message, be aware that the given output will be similar to, for example:
+.PP
+.PP
+.nf
+Must specify one of '--reference_file (-r)' or '--input_model_file (-m)';
+<custom error message here>!
+.fi
+.PP
+.PP
+so when you write your custom error message, be sure that the sentence makes sense\&. The custom error message should not have a capitalized first character and no ending punctuation (a '!' will be added by this function)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIconstraints\fP Set of parameters from which only one should be passed\&. 
+.br
+\fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
+.br
+\fIcustomErrorMessage\fP Error message to append\&. 
+.br
+\fIallowNone\fP If true, then no error message will be thrown if none of the parameters in the constraints were passed\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::RequireParamInSet (const std::string & paramName, const std::vector< T > & set, const bool fatal, const std::string & errorMessage)"
+
+.PP
+Require that a given parameter is in a set of allowable parameters\&. This is probably most useful with T = std::string\&. If fatal is true, then an exception is thrown\&. An error message is not optional and must be specified\&. The error message does \fInot\fP need to specify the values in the set; this function will already output them\&. So, for example, the output may be similar to:
+.PP
+.PP
+.nf
+Invalid value of '--weak_learner (-w)' specified ('something'); <error
+message>; must be one of 'decision_stump', or 'perceptron'!
+.fi
+.PP
+.PP
+so when you write the error message, make sure that the message makes sense\&. For example, in the message above, a good error message might be 'unknown
+weak learner type'\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Type of parameter\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparamName\fP Name of parameter to check\&. 
+.br
+\fIset\fP Set of valid values for parameter\&. 
+.br
+\fIfatal\fP If true, an exception is thrown and output goes to Log::Fatal\&. 
+.br
+\fIerrorMessage\fP Error message to output\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::RequireParamValue (const std::string & paramName, const std::function< bool(T)> & conditional, const bool fatal, const std::string & errorMessage)"
+
+.PP
+Require that a given parameter satisfies the given conditional function\&. This is useful for, e\&.g\&., checking that a given parameter is greater than 0\&. If fatal is true, then an exception is thrown\&. An error message is not optional and must be specified\&. The error message should specify, in clear terms, what the value of the parameter \fIshould\fP be\&. So, for example, the output may be similar to:
+.PP
+.PP
+.nf
+Invalid value of '--iterations (-i)' specified (-1); <error message>!
+.fi
+.PP
+.PP
+and in this case a good error message might be 'number of iterations must be
+positive'\&. Be sure that when you write the error message, the message makes sense\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Type of parameter to check\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparamName\fP Name of parameter to check\&. 
+.br
+\fIconditional\fP Function to use to check parameter value; should return 'true' if the parameter value is okay\&. 
+.br
+\fIfatal\fP If true, an exception is thrown and output goes to Log::Fatal\&. 
+.br
+\fIerrorMessage\fP Error message to output\&. 
+.RE
+.PP
+
+.SS "void mlpack::util::SetInputParam (const std::string & name, T && value)"
+
+.PP
+Utility function that is used in binding tests for setting a parameter and marking it as passed; it uses copy semantics for lvalues and move semantics for rvalues\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIname\fP Name of parameter to set\&. 
+.br
+\fIvalue\fP Value to set parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file test_helper\&.hpp\&.
+.PP
+References IO::SetPassed()\&.
+.SS "std::string mlpack::util::ToLower (const std::string & input)\fC [inline]\fP"
+
+.PP
+Convert a string to lowercase letters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The string to convert\&. 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file to_lower\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

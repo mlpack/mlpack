@@ -1,0 +1,345 @@
+\section{Subview$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Subview}\index{Subview$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Subview$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the subview layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Subview} (const size\+\_\+t in\+Size=1, const size\+\_\+t begin\+Row=0, const size\+\_\+t end\+Row=0, const size\+\_\+t begin\+Col=0, const size\+\_\+t end\+Col=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Subview}{p.}{classmlpack_1_1ann_1_1Subview} layer object using the specified range of input to accept. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Begin\+Col} () const
+\begin{DoxyCompactList}\small\item\em Get the width of each sample. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Begin\+Col} ()
+\begin{DoxyCompactList}\small\item\em Modify the width of each sample. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Begin\+Row} () const
+\begin{DoxyCompactList}\small\item\em Get the starting row index of subview vector or matrix. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Begin\+Row} ()
+\begin{DoxyCompactList}\small\item\em Modify the width of each sample. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ End\+Col} () const
+\begin{DoxyCompactList}\small\item\em Get the ending column index of subview vector or matrix. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ End\+Col} ()
+\begin{DoxyCompactList}\small\item\em Modify the width of each sample. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ End\+Row} () const
+\begin{DoxyCompactList}\small\item\em Get the ending row index of subview vector or matrix. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ End\+Row} ()
+\begin{DoxyCompactList}\small\item\em Modify the width of each sample. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ In\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the width of each sample. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Subview$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the subview layer. 
+
+The subview layer modifies the input to a submatrix of required size.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 34 of file subview.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Subview_aec7c4a92afcb63c76471ab099ab22d05}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Subview@{Subview}}
+\index{Subview@{Subview}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Subview()}
+{\footnotesize\ttfamily \textbf{ Subview} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size = {\ttfamily 1},  }\item[{const size\+\_\+t}]{begin\+Row = {\ttfamily 0},  }\item[{const size\+\_\+t}]{end\+Row = {\ttfamily 0},  }\item[{const size\+\_\+t}]{begin\+Col = {\ttfamily 0},  }\item[{const size\+\_\+t}]{end\+Col = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the \doxyref{Subview}{p.}{classmlpack_1_1ann_1_1Subview} layer object using the specified range of input to accept. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & Width of sample. \\
+\hline
+{\em begin\+Row} & Starting row index. \\
+\hline
+{\em end\+Row} & Ending row index. \\
+\hline
+{\em begin\+Col} & Starting column index. \\
+\hline
+{\em end\+Col} & Ending column index. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 47 of file subview.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Subview_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 115 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_af43f2bc2b564ed9c1bd3ec8140a776e1}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Begin\+Col@{Begin\+Col}}
+\index{Begin\+Col@{Begin\+Col}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Begin\+Col()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Begin\+Col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the width of each sample. 
+
+
+
+Definition at line 146 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_ac54a663d2fb190b7b4cae558832ea0d8}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Begin\+Col@{Begin\+Col}}
+\index{Begin\+Col@{Begin\+Col}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Begin\+Col()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Begin\+Col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the width of each sample. 
+
+
+
+Definition at line 148 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_ae0a4a3f199f56dc3caf36950d14ea5e7}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Begin\+Row@{Begin\+Row}}
+\index{Begin\+Row@{Begin\+Row}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Begin\+Row()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Begin\+Row (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the starting row index of subview vector or matrix. 
+
+
+
+Definition at line 136 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_ab02e9299dee2ff742c921b97cfc9fa1c}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Begin\+Row@{Begin\+Row}}
+\index{Begin\+Row@{Begin\+Row}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Begin\+Row()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Begin\+Row (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the width of each sample. 
+
+
+
+Definition at line 138 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 128 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 130 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_afae677943bad29ddf1fc1350f657d28d}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!End\+Col@{End\+Col}}
+\index{End\+Col@{End\+Col}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{End\+Col()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& End\+Col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the ending column index of subview vector or matrix. 
+
+
+
+Definition at line 151 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a9f8ff3e588bc97b5a0655a6e7365c5f0}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!End\+Col@{End\+Col}}
+\index{End\+Col@{End\+Col}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{End\+Col()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& End\+Col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the width of each sample. 
+
+
+
+Definition at line 153 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a0e3d132608c9b4e6aaf04421e52c374a}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!End\+Row@{End\+Row}}
+\index{End\+Row@{End\+Row}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{End\+Row()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& End\+Row (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the ending row index of subview vector or matrix. 
+
+
+
+Definition at line 141 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a49c81f90f0eaeefbb0273eaaf1541159}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!End\+Row@{End\+Row}}
+\index{End\+Row@{End\+Row}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{End\+Row()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& End\+Row (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the width of each sample. 
+
+
+
+Definition at line 143 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 69 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_adc2669016a821704c4c4aeb4651e9e87}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!In\+Size@{In\+Size}}
+\index{In\+Size@{In\+Size}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{In\+Size()}
+{\footnotesize\ttfamily size\+\_\+t In\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the width of each sample. 
+
+
+
+Definition at line 133 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 123 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 125 of file subview.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Subview_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Subview@{mlpack\+::ann\+::\+Subview}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the layer. 
+
+
+
+Definition at line 159 of file subview.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ subview.\+hpp}\end{DoxyCompactItemize}

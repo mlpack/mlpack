@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1ListwiseDeletion" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::ListwiseDeletion</compoundname>
+    <includes refid="listwise__deletion_8hpp" local="no">listwise_deletion.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ListwiseDeletion_1a94b8353ed4d68b10e2dd59d5e7dc15ca" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Impute</definition>
+        <argsstring>(arma::Mat&lt; T &gt; &amp;input, const T &amp;mappedValue, const size_t dimension, const bool columnMajor=true)</argsstring>
+        <name>Impute</name>
+        <param>
+          <type>arma::Mat&lt; T &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>mappedValue</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dimension</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>columnMajor</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Impute function searches through the input looking for mappedValue and remove the whole row or column. </para>        </briefdescription>
+        <detaileddescription>
+<para>The result is overwritten to the input.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix that contains mappedValue. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mappedValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value that the user wants to get rid of. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the dimension of the mappedValue. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>columnMajor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State of whether the input matrix is columnMajor or not. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/listwise_deletion.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/listwise_deletion.hpp" bodystart="37" bodyend="68"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A complete-case analysis to remove the values containing mappedValue. </para>    </briefdescription>
+    <detaileddescription>
+<para>Removes all data for a case that has one or more missing values. <parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of armadillo matrix </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/listwise_deletion.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/listwise_deletion.hpp" bodystart="25" bodyend="69"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1ListwiseDeletion_1a94b8353ed4d68b10e2dd59d5e7dc15ca" prot="public" virt="non-virtual"><scope>mlpack::data::ListwiseDeletion</scope><name>Impute</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

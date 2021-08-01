@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1sfinae_1_1MethodFormDetector" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::sfinae::MethodFormDetector</compoundname>
+    <includes refid="sfinae__utility_8hpp" local="no">sfinae_utility.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename Class</type>
+      </param>
+      <param>
+        <type>template&lt; typename... &gt; class</type>
+        <declname>MethodForm</declname>
+        <defname>MethodForm</defname>
+      </param>
+      <param>
+        <type>size_t</type>
+        <declname>AdditionalArgsCount</declname>
+        <defname>AdditionalArgsCount</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/sfinae_utility.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/sfinae_utility.hpp" bodystart="45" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

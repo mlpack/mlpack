@@ -1,0 +1,185 @@
+\section{Dictionary\+Encoding\+Policy Class Reference}
+\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy}\index{Dictionary\+Encoding\+Policy@{Dictionary\+Encoding\+Policy}}
+
+
+Dicitonary\+Enocding\+Policy is used as a helper class for \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding}.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the class to the given archive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ Encode} (Mat\+Type \&output, const size\+\_\+t value, const size\+\_\+t line, const size\+\_\+t index)
+\begin{DoxyCompactList}\small\item\em The function performs the dictionary encoding algorithm i.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\static void \textbf{ Encode} (std\+::vector$<$ Elem\+Type $>$ \&output, size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em The function performs the dictionary encoding algorithm i.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ Init\+Matrix} (Mat\+Type \&output, const size\+\_\+t dataset\+Size, const size\+\_\+t max\+Num\+Tokens, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em The function initializes the output matrix. \end{DoxyCompactList}\item 
+static void \textbf{ Preprocess\+Token} (const size\+\_\+t, const size\+\_\+t, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em The function is not used by the dictionary encoding policy. \end{DoxyCompactList}\item 
+static void \textbf{ Reset} ()
+\begin{DoxyCompactList}\small\item\em Clear the necessary internal variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Dicitonary\+Enocding\+Policy is used as a helper class for \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding}. 
+
+The encoder assigns a positive integer number to each unique token and treats the dataset as categorical. The numbers are assigned sequentially starting from one. The order in which the tokens are labeled is defined by the dictionary used by the \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding} class. The encoder writes data either in the column-\/major order or in the row-\/major order depending on the output data type. 
+
+Definition at line 32 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_acb6d0361e38a326545cab647da91ff8e}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{Encode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static void Encode (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{output,  }\item[{const size\+\_\+t}]{value,  }\item[{const size\+\_\+t}]{line,  }\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function performs the dictionary encoding algorithm i.\+e. 
+
+it writes the encoded token to the output. The encoder writes data in the column-\/major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The output matrix type.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results (sp\+\_\+mat or mat). \\
+\hline
+{\em value} & The encoded token. \\
+\hline
+{\em line} & The line number at which the encoding is performed. \\
+\hline
+{\em index} & The token index in the line. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 77 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_af34e0b00d7904b415af3bafa4aa12b37}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{Encode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Encode (\begin{DoxyParamCaption}\item[{std\+::vector$<$ Elem\+Type $>$ \&}]{output,  }\item[{size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function performs the dictionary encoding algorithm i.\+e. 
+
+it writes the encoded token to the output. This is an overloaded function which saves the result into the given vector to avoid padding. The encoder writes data in the row-\/major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Elem\+Type} & Type of the output values.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output vector to store the encoded line. \\
+\hline
+{\em value} & The encoded token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_ab4a21307db632ad572353e4476b749b0}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!Init\+Matrix@{Init\+Matrix}}
+\index{Init\+Matrix@{Init\+Matrix}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{Init\+Matrix()}
+{\footnotesize\ttfamily static void Init\+Matrix (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{output,  }\item[{const size\+\_\+t}]{dataset\+Size,  }\item[{const size\+\_\+t}]{max\+Num\+Tokens,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function initializes the output matrix. 
+
+The encoder writes data in the column-\/major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The output matrix type.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output} & Output matrix to store the encoded results (sp\+\_\+mat or mat). \\
+\hline
+{\em dataset\+Size} & The number of strings in the input dataset. \\
+\hline
+{\em max\+Num\+Tokens} & The maximum number of tokens in the strings of the input dataset. \\
+\hline
+{\em $\ast$} & (dictionary\+Size) The size of the dictionary (not used). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_ab4395511edadd108faf95e985d1f03b2}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!Preprocess\+Token@{Preprocess\+Token}}
+\index{Preprocess\+Token@{Preprocess\+Token}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{Preprocess\+Token()}
+{\footnotesize\ttfamily static void Preprocess\+Token (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function is not used by the dictionary encoding policy. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (line) The line number at which the encoding is performed. \\
+\hline
+{\em $\ast$} & (index) The token sequence number in the line. \\
+\hline
+{\em $\ast$} & (value) The encoded token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 109 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_a77ad624cc83a2a71aa4d5ad991d811d7}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily static void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Clear the necessary internal variables. 
+
+
+
+Definition at line 38 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DictionaryEncodingPolicy_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+Dictionary\+Encoding\+Policy@{mlpack\+::data\+::\+Dictionary\+Encoding\+Policy}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the class to the given archive. 
+
+
+
+Definition at line 118 of file dictionary\+\_\+encoding\+\_\+policy.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/string\+\_\+encoding\+\_\+policies/\textbf{ dictionary\+\_\+encoding\+\_\+policy.\+hpp}\end{DoxyCompactItemize}

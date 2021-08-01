@@ -1,0 +1,130 @@
+\section{Proj\+Vector Class Reference}
+\label{classmlpack_1_1tree_1_1ProjVector}\index{Proj\+Vector@{Proj\+Vector}}
+
+
+\doxyref{Proj\+Vector}{p.}{classmlpack_1_1tree_1_1ProjVector} defines a general projection vector (not necessarily axis-\/parallel).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Proj\+Vector} ()
+\begin{DoxyCompactList}\small\item\em Empty Constructor. \end{DoxyCompactList}\item 
+\textbf{ Proj\+Vector} (const arma\+::vec \&vect)
+\begin{DoxyCompactList}\small\item\em Create the projection vector based on the specified vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\double \textbf{ Project} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Project the given point on the projection vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Vec\+Type $>$ }\\math\+::\+Range\+Type$<$ typename Vec\+Type\+::elem\+\_\+type $>$ \textbf{ Project} (const \textbf{ bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&bound) const
+\begin{DoxyCompactList}\small\item\em Project the given ball bound on the projection vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Proj\+Vector}{p.}{classmlpack_1_1tree_1_1ProjVector} defines a general projection vector (not necessarily axis-\/parallel). 
+
+Definition at line 91 of file projection\+\_\+vector.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1ProjVector_abe4abae33822e19ab53fd1f336adc35f}} 
+\index{mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}!Proj\+Vector@{Proj\+Vector}}
+\index{Proj\+Vector@{Proj\+Vector}!mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}}
+\subsubsection{Proj\+Vector()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Proj\+Vector} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Empty Constructor. 
+
+
+
+Definition at line 100 of file projection\+\_\+vector.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1ProjVector_a5121e3efbf0b19228711d64661781cc5}} 
+\index{mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}!Proj\+Vector@{Proj\+Vector}}
+\index{Proj\+Vector@{Proj\+Vector}!mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}}
+\subsubsection{Proj\+Vector()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Proj\+Vector} (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{vect }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the projection vector based on the specified vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vect} & Vector to be considered. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 109 of file projection\+\_\+vector.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1ProjVector_a3992c37d68bb4c57a67c6f422ad60133}} 
+\index{mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}}
+\subsubsection{Project()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Project (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given point on the projection vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to be projected. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 119 of file projection\+\_\+vector.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1ProjVector_aa2d4cdbd216dff439dbffc30905bcc40}} 
+\index{mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}}
+\subsubsection{Project()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily math\+::\+Range\+Type$<$typename Vec\+Type\+::elem\+\_\+type$>$ Project (\begin{DoxyParamCaption}\item[{const \textbf{ bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{bound }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given ball bound on the projection vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & Bound to be projected. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Range of projected values. 
+\end{DoxyReturn}
+
+
+Definition at line 132 of file projection\+\_\+vector.\+hpp.
+
+
+
+References Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center(), Axis\+Parallel\+Proj\+Vector\+::\+Project(), and Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Radius().
+
+\mbox{\label{classmlpack_1_1tree_1_1ProjVector_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::tree\+::\+Proj\+Vector@{mlpack\+::tree\+::\+Proj\+Vector}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 145 of file projection\+\_\+vector.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/space\+\_\+split/\textbf{ projection\+\_\+vector.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,352 @@
+\section{Ada\+Boost$<$ Weak\+Learner\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1adaboost_1_1AdaBoost}\index{Ada\+Boost$<$ Weak\+Learner\+Type, Mat\+Type $>$@{Ada\+Boost$<$ Weak\+Learner\+Type, Mat\+Type $>$}}
+
+
+The \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} class.  
+
+
+
+
+Inheritance diagram for Ada\+Boost$<$ Weak\+Learner\+Type, Mat\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1adaboost_1_1AdaBoost__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Ada\+Boost} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const Weak\+Learner\+Type \&other, const size\+\_\+t iterations=100, const double tolerance=1e-\/6)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\textbf{ Ada\+Boost} (const double tolerance=1e-\/6)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} object without training. \end{DoxyCompactList}\item 
+double \textbf{ Alpha} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the weights for the given weak learner. \end{DoxyCompactList}\item 
+double \& \textbf{ Alpha} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify the weight for the given weak learner (be careful!). \end{DoxyCompactList}\item 
+void \textbf{ Classify} (const Mat\+Type \&test, arma\+::\+Row$<$ size\+\_\+t $>$ \&predicted\+Labels, arma\+::mat \&probabilities)
+\begin{DoxyCompactList}\small\item\em Classify the given test points. \end{DoxyCompactList}\item 
+void \textbf{ Classify} (const Mat\+Type \&test, arma\+::\+Row$<$ size\+\_\+t $>$ \&predicted\+Labels)
+\begin{DoxyCompactList}\small\item\em Classify the given test points. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Classes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of classes this model is trained on. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} model. \end{DoxyCompactList}\item 
+double \textbf{ Tolerance} () const
+\begin{DoxyCompactList}\small\item\em Get the tolerance for stopping the optimization during training. \end{DoxyCompactList}\item 
+double \& \textbf{ Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance for stopping the optimization during training. \end{DoxyCompactList}\item 
+double \textbf{ Train} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const Weak\+Learner\+Type \&learner, const size\+\_\+t iterations=100, const double tolerance=1e-\/6)
+\begin{DoxyCompactList}\small\item\em Train \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} on the given dataset. \end{DoxyCompactList}\item 
+const Weak\+Learner\+Type \& \textbf{ Weak\+Learner} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the given weak learner. \end{DoxyCompactList}\item 
+Weak\+Learner\+Type \& \textbf{ Weak\+Learner} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify the given weak learner (be careful!). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weak\+Learners} () const
+\begin{DoxyCompactList}\small\item\em Get the number of weak learners in the model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Weak\+Learner\+Type = mlpack\+::perceptron\+::\+Perceptron$<$$>$, typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::adaboost\+::\+Ada\+Boost$<$ Weak\+Learner\+Type, Mat\+Type $>$}
+
+The \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} class. 
+
+\doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} is a boosting algorithm, meaning that it combines an ensemble of weak learners to produce a strong learner. For more information on \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost}, see the following paper\+:
+
+
+\begin{DoxyCode}
+@article\{schapire1999improved,
+  author = \{Schapire, Robert E. and Singer, Yoram\},
+  title = \{Improved Boosting Algorithms Using Confidence-rated Predictions\},
+  journal = \{Machine Learning\},
+  volume = \{37\},
+  number = \{3\},
+  month = dec,
+  year = \{1999\},
+  issn = \{0885-6125\},
+  pages = \{297--336\},
+\}
+\end{DoxyCode}
+
+
+This class is general, and can be used with any type of weak learner, so long as the learner implements the following functions\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// A boosting constructor, which learns using the training parameters of the}
+\textcolor{comment}{// given other WeakLearner, but uses the given instance weights for training.}
+WeakLearner(WeakLearner& other,
+            \textcolor{keyword}{const} MatType& data,
+            \textcolor{keyword}{const} arma::Row<size\_t>& labels,
+            \textcolor{keyword}{const} arma::rowvec& weights);
+
+\textcolor{comment}{// Given the test points, classify them and output predictions into}
+\textcolor{comment}{// predictedLabels.}
+\textcolor{keywordtype}{void} Classify(\textcolor{keyword}{const} MatType& data, arma::Row<size\_t>& predictedLabels);
+\end{DoxyCode}
+
+
+For more information on and examples of weak learners, see perceptron\+::\+Perceptron$<$$>$ and \doxyref{tree\+::\+I\+D3\+Decision\+Stump}{p.}{namespacemlpack_1_1tree_a27b9268c266fdfe2f4563d07052a0ecf}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Data matrix type (i.\+e. arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+{\em Weak\+Learner\+Type} & Type of weak learner to use. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 81 of file adaboost.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a7a37dbe455d049cda36f4676b26eeb70}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Ada\+Boost@{Ada\+Boost}}
+\index{Ada\+Boost@{Ada\+Boost}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Ada\+Boost()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Ada\+Boost} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const Weak\+Learner\+Type \&}]{other,  }\item[{const size\+\_\+t}]{iterations = {\ttfamily 100},  }\item[{const double}]{tolerance = {\ttfamily 1e-\/6} }\end{DoxyParamCaption})}
+
+
+
+Constructor. 
+
+This runs the Ada\+Boost.\+MH algorithm to provide a trained boosting model. This constructor takes an already-\/initialized weak learner; all other weak learners will learn with the same parameters as the given weak learner.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input data. \\
+\hline
+{\em labels} & Corresponding labels. \\
+\hline
+{\em num\+Classes} & The number of classes. \\
+\hline
+{\em iterations} & Number of boosting rounds. \\
+\hline
+{\em tolerance} & The tolerance for change in values of rt. \\
+\hline
+{\em other} & Weak learner that has already been initialized. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a1417a39b49cf9b28c88add6f48daa9a1}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Ada\+Boost@{Ada\+Boost}}
+\index{Ada\+Boost@{Ada\+Boost}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Ada\+Boost()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Ada\+Boost} (\begin{DoxyParamCaption}\item[{const double}]{tolerance = {\ttfamily 1e-\/6} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} object without training. 
+
+Be sure to call \doxyref{Train()}{p.}{classmlpack_1_1adaboost_1_1AdaBoost_adeb648736c63379ce1cb5f2b23d242be} before calling \doxyref{Classify()}{p.}{classmlpack_1_1adaboost_1_1AdaBoost_abc7d38690c69822bd9ec10c3760384da}! 
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_af0e29824cfcada4ec450e4d09cc9a314}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Alpha (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the weights for the given weak learner. 
+
+
+
+Definition at line 122 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_ae59910b30903367791fde226761923cf}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Alpha (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the weight for the given weak learner (be careful!). 
+
+
+
+Definition at line 124 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_abc7d38690c69822bd9ec10c3760384da}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{test,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predicted\+Labels,  }\item[{arma\+::mat \&}]{probabilities }\end{DoxyParamCaption})}
+
+
+
+Classify the given test points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test} & Testing data. \\
+\hline
+{\em predicted\+Labels} & Vector in which the predicted labels of the test set will be stored. \\
+\hline
+{\em probabilities} & matrix to store the predicted class probabilities for each point in the test set. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Ada\+Boost$<$ mlpack\+::tree\+::\+Decision\+Tree $>$\+::\+Weak\+Learner().
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a407f9c281dab80fffd49251d3907838d}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{test,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predicted\+Labels }\end{DoxyParamCaption})}
+
+
+
+Classify the given test points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test} & Testing data. \\
+\hline
+{\em predicted\+Labels} & Vector in which the predicted labels of the test set will be stored. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a088ebfdf3c7a9e7eea81716d0c55b5a3}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Num\+Classes@{Num\+Classes}}
+\index{Num\+Classes@{Num\+Classes}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Num\+Classes()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Classes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of classes this model is trained on. 
+
+
+
+Definition at line 116 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} model. 
+
+
+
+Referenced by Ada\+Boost$<$ mlpack\+::tree\+::\+Decision\+Tree $>$\+::\+Weak\+Learner().
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a7b5af5c1a84c507cbaa7f999ea5a4fda}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Tolerance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Tolerance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the tolerance for stopping the optimization during training. 
+
+
+
+Definition at line 111 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a3d9fac84af16250f5a3689692e8f2173}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Tolerance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Tolerance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the tolerance for stopping the optimization during training. 
+
+
+
+Definition at line 113 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_adeb648736c63379ce1cb5f2b23d242be}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const Weak\+Learner\+Type \&}]{learner,  }\item[{const size\+\_\+t}]{iterations = {\ttfamily 100},  }\item[{const double}]{tolerance = {\ttfamily 1e-\/6} }\end{DoxyParamCaption})}
+
+
+
+Train \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} on the given dataset. 
+
+This method takes an initialized Weak\+Learner\+Type; the parameters for this weak learner will be used to train each of the weak learners during \doxyref{Ada\+Boost}{p.}{classmlpack_1_1adaboost_1_1AdaBoost} training. Note that this will completely overwrite any model that has already been trained with this object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each point in the dataset. \\
+\hline
+{\em num\+Classes} & The number of classes. \\
+\hline
+{\em learner} & Learner to use for training. \\
+\hline
+{\em iterations} & Number of boosting rounds. \\
+\hline
+{\em tolerance} & The tolerance for change in values of rt. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The upper bound for training error. 
+\end{DoxyReturn}
+
+
+Referenced by Ada\+Boost$<$ mlpack\+::tree\+::\+Decision\+Tree $>$\+::\+Weak\+Learner().
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_aa6f54b09b480fed23b0b04214e300cbf}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Weak\+Learner@{Weak\+Learner}}
+\index{Weak\+Learner@{Weak\+Learner}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Weak\+Learner()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Weak\+Learner\+Type\& Weak\+Learner (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the given weak learner. 
+
+
+
+Definition at line 127 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a11d7a531e3de5cdd5cc8f0cc02b8ed4d}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Weak\+Learner@{Weak\+Learner}}
+\index{Weak\+Learner@{Weak\+Learner}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Weak\+Learner()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Weak\+Learner\+Type\& Weak\+Learner (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the given weak learner (be careful!). 
+
+
+
+Definition at line 129 of file adaboost.\+hpp.
+
+\mbox{\label{classmlpack_1_1adaboost_1_1AdaBoost_a5bb6ee8b31c0e16567eee13cb3719f88}} 
+\index{mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}!Weak\+Learners@{Weak\+Learners}}
+\index{Weak\+Learners@{Weak\+Learners}!mlpack\+::adaboost\+::\+Ada\+Boost@{mlpack\+::adaboost\+::\+Ada\+Boost}}
+\subsubsection{Weak\+Learners()}
+{\footnotesize\ttfamily size\+\_\+t Weak\+Learners (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of weak learners in the model. 
+
+
+
+Definition at line 119 of file adaboost.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/adaboost/\textbf{ adaboost.\+hpp}\end{DoxyCompactItemize}

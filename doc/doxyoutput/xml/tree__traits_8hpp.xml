@@ -1,0 +1,507 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="tree__traits_8hpp" kind="file" language="C++">
+    <compoundname>tree_traits.hpp</compoundname>
+    <includedby refid="binary__space__tree_2traits_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/traits.hpp</includedby>
+    <includedby refid="cover__tree_2traits_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/traits.hpp</includedby>
+    <includedby refid="octree_2traits_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/octree/traits.hpp</includedby>
+    <includedby refid="rectangle__tree_2traits_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/traits.hpp</includedby>
+    <includedby refid="spill__tree_2traits_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp</includedby>
+    <includedby refid="fastmks__stat_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp</includedby>
+    <invincdepgraph>
+      <node id="18885">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+      </node>
+      <node id="18918">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/pelleg_moore_kmeans.hpp</label>
+        <link refid="pelleg__moore__kmeans_8hpp"/>
+      </node>
+      <node id="18882">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/traits.hpp</label>
+        <link refid="binary__space__tree_2traits_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+      </node>
+      <node id="18943">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_dual_tree_traverser.hpp</label>
+        <link refid="spill__dual__tree__traverser_8hpp"/>
+        <childnode refid="18939" relation="include">
+        </childnode>
+      </node>
+      <node id="18901">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="18902" relation="include">
+        </childnode>
+      </node>
+      <node id="18919">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/range_search.hpp</label>
+        <link refid="range__search_8hpp"/>
+        <childnode refid="18920" relation="include">
+        </childnode>
+        <childnode refid="18921" relation="include">
+        </childnode>
+      </node>
+      <node id="18903">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="18887" relation="include">
+        </childnode>
+      </node>
+      <node id="18891">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="18934">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</label>
+        <link refid="fastmks__model_8hpp"/>
+      </node>
+      <node id="18937">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/traits.hpp</label>
+        <link refid="rectangle__tree_2traits_8hpp"/>
+      </node>
+      <node id="18893">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="18939">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree.hpp</label>
+        <link refid="spill__tree_8hpp"/>
+        <childnode refid="18940" relation="include">
+        </childnode>
+        <childnode refid="18904" relation="include">
+        </childnode>
+      </node>
+      <node id="18944">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_stat.hpp</label>
+        <link refid="fastmks__stat_8hpp"/>
+        <childnode refid="18933" relation="include">
+        </childnode>
+      </node>
+      <node id="18886">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+      </node>
+      <node id="18890">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="18931">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/typedef.hpp</label>
+        <link refid="core_2tree_2cover__tree_2typedef_8hpp"/>
+        <childnode refid="18928" relation="include">
+        </childnode>
+      </node>
+      <node id="18933">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp</label>
+        <link refid="fastmks_8hpp"/>
+        <childnode refid="18934" relation="include">
+        </childnode>
+      </node>
+      <node id="18888">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="18889" relation="include">
+        </childnode>
+        <childnode refid="18891" relation="include">
+        </childnode>
+        <childnode refid="18892" relation="include">
+        </childnode>
+        <childnode refid="18894" relation="include">
+        </childnode>
+      </node>
+      <node id="18938">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp</label>
+        <link refid="spill__tree_2traits_8hpp"/>
+        <childnode refid="18939" relation="include">
+        </childnode>
+      </node>
+      <node id="18896">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="18925">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_typedef.hpp</label>
+        <link refid="ra__typedef_8hpp"/>
+        <childnode refid="18924" relation="include">
+        </childnode>
+      </node>
+      <node id="18920">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="18914">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp</label>
+        <link refid="gmm_8hpp"/>
+        <childnode refid="18913" relation="include">
+        </childnode>
+      </node>
+      <node id="18922">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="18899">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="18942">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_single_tree_traverser.hpp</label>
+        <link refid="spill__single__tree__traverser_8hpp"/>
+        <childnode refid="18939" relation="include">
+        </childnode>
+      </node>
+      <node id="18894">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="18895" relation="include">
+        </childnode>
+      </node>
+      <node id="18929">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/cover_tree.hpp</label>
+        <link refid="cover__tree_2cover__tree_8hpp"/>
+        <childnode refid="18928" relation="include">
+        </childnode>
+        <childnode refid="18930" relation="include">
+        </childnode>
+        <childnode refid="18931" relation="include">
+        </childnode>
+        <childnode refid="18932" relation="include">
+        </childnode>
+      </node>
+      <node id="18912">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/diagonal_gmm.hpp</label>
+        <link refid="diagonal__gmm_8hpp"/>
+        <childnode refid="18913" relation="include">
+        </childnode>
+      </node>
+      <node id="18904">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="18928">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree.hpp</label>
+        <link refid="cover__tree_8hpp"/>
+        <childnode refid="18929" relation="include">
+        </childnode>
+        <childnode refid="18933" relation="include">
+        </childnode>
+        <childnode refid="18909" relation="include">
+        </childnode>
+        <childnode refid="18899" relation="include">
+        </childnode>
+        <childnode refid="18904" relation="include">
+        </childnode>
+        <childnode refid="18921" relation="include">
+        </childnode>
+        <childnode refid="18923" relation="include">
+        </childnode>
+      </node>
+      <node id="18924">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_search.hpp</label>
+        <link refid="ra__search_8hpp"/>
+        <childnode refid="18923" relation="include">
+        </childnode>
+        <childnode refid="18925" relation="include">
+        </childnode>
+      </node>
+      <node id="18917">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/nystroem_method.hpp</label>
+        <link refid="nystroem__method_2nystroem__method_8hpp"/>
+        <childnode refid="18916" relation="include">
+        </childnode>
+      </node>
+      <node id="18940">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_tree.hpp</label>
+        <link refid="spill__tree_2spill__tree_8hpp"/>
+        <childnode refid="18941" relation="include">
+        </childnode>
+        <childnode refid="18939" relation="include">
+        </childnode>
+        <childnode refid="18942" relation="include">
+        </childnode>
+        <childnode refid="18943" relation="include">
+        </childnode>
+      </node>
+      <node id="18932">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_rules.hpp</label>
+        <link refid="fastmks__rules_8hpp"/>
+      </node>
+      <node id="18900">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="18901" relation="include">
+        </childnode>
+      </node>
+      <node id="18897">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="18888" relation="include">
+        </childnode>
+      </node>
+      <node id="18902">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="18881">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+        <childnode refid="18882" relation="include">
+        </childnode>
+        <childnode refid="18927" relation="include">
+        </childnode>
+        <childnode refid="18935" relation="include">
+        </childnode>
+        <childnode refid="18937" relation="include">
+        </childnode>
+        <childnode refid="18938" relation="include">
+        </childnode>
+        <childnode refid="18944" relation="include">
+        </childnode>
+      </node>
+      <node id="18889">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="18890" relation="include">
+        </childnode>
+      </node>
+      <node id="18884">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+        <childnode refid="18885" relation="include">
+        </childnode>
+        <childnode refid="18886" relation="include">
+        </childnode>
+        <childnode refid="18887" relation="include">
+        </childnode>
+      </node>
+      <node id="18923">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="18911">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/em_fit.hpp</label>
+        <link refid="em__fit_8hpp"/>
+        <childnode refid="18912" relation="include">
+        </childnode>
+        <childnode refid="18914" relation="include">
+        </childnode>
+      </node>
+      <node id="18909">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="18930">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/single_tree_traverser.hpp</label>
+        <link refid="cover__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="18928" relation="include">
+        </childnode>
+      </node>
+      <node id="18883">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="18884" relation="include">
+        </childnode>
+        <childnode refid="18905" relation="include">
+        </childnode>
+        <childnode refid="18906" relation="include">
+        </childnode>
+        <childnode refid="18907" relation="include">
+        </childnode>
+        <childnode refid="18908" relation="include">
+        </childnode>
+        <childnode refid="18909" relation="include">
+        </childnode>
+        <childnode refid="18899" relation="include">
+        </childnode>
+        <childnode refid="18910" relation="include">
+        </childnode>
+        <childnode refid="18918" relation="include">
+        </childnode>
+        <childnode refid="18887" relation="include">
+        </childnode>
+        <childnode refid="18904" relation="include">
+        </childnode>
+        <childnode refid="18919" relation="include">
+        </childnode>
+        <childnode refid="18921" relation="include">
+        </childnode>
+        <childnode refid="18923" relation="include">
+        </childnode>
+        <childnode refid="18924" relation="include">
+        </childnode>
+        <childnode refid="18926" relation="include">
+        </childnode>
+      </node>
+      <node id="18895">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="18892">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="18893" relation="include">
+        </childnode>
+      </node>
+      <node id="18926">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_query_stat.hpp</label>
+        <link refid="ra__query__stat_8hpp"/>
+        <childnode refid="18924" relation="include">
+        </childnode>
+      </node>
+      <node id="18941">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp</label>
+        <link refid="is__spill__tree_8hpp"/>
+        <childnode refid="18939" relation="include">
+        </childnode>
+      </node>
+      <node id="18887">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="18888" relation="include">
+        </childnode>
+        <childnode refid="18896" relation="include">
+        </childnode>
+        <childnode refid="18897" relation="include">
+        </childnode>
+        <childnode refid="18898" relation="include">
+        </childnode>
+        <childnode refid="18899" relation="include">
+        </childnode>
+        <childnode refid="18900" relation="include">
+        </childnode>
+        <childnode refid="18903" relation="include">
+        </childnode>
+        <childnode refid="18904" relation="include">
+        </childnode>
+      </node>
+      <node id="18921">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="18922" relation="include">
+        </childnode>
+      </node>
+      <node id="18908">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde.hpp</label>
+        <link refid="kde_8hpp"/>
+        <childnode refid="18909" relation="include">
+        </childnode>
+      </node>
+      <node id="18898">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="18910">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp</label>
+        <link refid="kmeans_8hpp"/>
+        <childnode refid="18911" relation="include">
+        </childnode>
+        <childnode refid="18915" relation="include">
+        </childnode>
+      </node>
+      <node id="18936">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree.hpp</label>
+        <link refid="octree_8hpp"/>
+        <childnode refid="18909" relation="include">
+        </childnode>
+        <childnode refid="18904" relation="include">
+        </childnode>
+        <childnode refid="18921" relation="include">
+        </childnode>
+        <childnode refid="18923" relation="include">
+        </childnode>
+      </node>
+      <node id="18907">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</label>
+        <link refid="dtb_8hpp"/>
+      </node>
+      <node id="18915">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp</label>
+        <link refid="kmeans__selection_8hpp"/>
+        <childnode refid="18916" relation="include">
+        </childnode>
+        <childnode refid="18917" relation="include">
+        </childnode>
+      </node>
+      <node id="18913">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp</label>
+        <link refid="hmm__model_8hpp"/>
+      </node>
+      <node id="18916">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp</label>
+        <link refid="kernel__pca_2kernel__rules_2nystroem__method_8hpp"/>
+      </node>
+      <node id="18905">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+      </node>
+      <node id="18935">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/octree/traits.hpp</label>
+        <link refid="octree_2traits_8hpp"/>
+        <childnode refid="18936" relation="include">
+        </childnode>
+      </node>
+      <node id="18906">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="18883" relation="include">
+        </childnode>
+      </node>
+      <node id="18927">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/traits.hpp</label>
+        <link refid="cover__tree_2traits_8hpp"/>
+        <childnode refid="18928" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1TreeTraits" prot="public">mlpack::tree::TreeTraits</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+This file implements the basic, unspecialized TreeTraits class, which provides information about tree types. If you create a tree class, you should specialize this class with the characteristics of your tree.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_TREE_TRAITS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_TREE_TRAITS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="77" refid="classmlpack_1_1tree_1_1TreeTraits" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">TreeTraits</ref></highlight></codeline>
+<codeline lineno="78"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1tree_1_1TreeTraits_1aace4b7477b18c336612f4f4d3046eb37" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1aace4b7477b18c336612f4f4d3046eb37" kindref="member">HasOverlappingChildren</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1tree_1_1TreeTraits_1af080c27547c6b45c37173e0df36d63be" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1af080c27547c6b45c37173e0df36d63be" kindref="member">HasDuplicatedPoints</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="classmlpack_1_1tree_1_1TreeTraits_1a74d33aa1842a86c50e913427bce29f04" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1a74d33aa1842a86c50e913427bce29f04" kindref="member">FirstPointIsCentroid</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1tree_1_1TreeTraits_1ad3cb9cb573f3b0e51f99664fb8d29fef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1ad3cb9cb573f3b0e51f99664fb8d29fef" kindref="member">HasSelfChildren</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1tree_1_1TreeTraits_1aba7aca795787a6fe3e8bbdae13edc70b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1aba7aca795787a6fe3e8bbdae13edc70b" kindref="member">RearrangesDataset</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="classmlpack_1_1tree_1_1TreeTraits_1ae435fd522971cd7cfd3064636aad08f8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1ae435fd522971cd7cfd3064636aad08f8" kindref="member">BinaryTree</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="classmlpack_1_1tree_1_1TreeTraits_1a416bd78d7883fd5c3bc22b858f7d7064" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TreeTraits_1a416bd78d7883fd5c3bc22b858f7d7064" kindref="member">UniqueNumDescendants</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/tree_traits.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,380 @@
+\section{Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Reparametrization}\index{Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} layer class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Reparametrization} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} object. \end{DoxyCompactList}\item 
+\textbf{ Reparametrization} (const size\+\_\+t latent\+Size, const bool stochastic=true, const bool include\+Kl=true, const double beta=1)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} layer object using the specified sample vector size. \end{DoxyCompactList}\item 
+\textbf{ Reparametrization} (const \textbf{ Reparametrization} \&layer)
+\begin{DoxyCompactList}\small\item\em Copy Constructor. \end{DoxyCompactList}\item 
+\textbf{ Reparametrization} (\textbf{ Reparametrization} \&\&layer)
+\begin{DoxyCompactList}\small\item\em Move Constructor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+double \textbf{ Beta} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the beta hyperparameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+bool \textbf{ Include\+KL} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the include\+Kl parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\item 
+double \textbf{ Loss} ()
+\begin{DoxyCompactList}\small\item\em Get the KL divergence with standard normal. \end{DoxyCompactList}\item 
+\textbf{ Reparametrization} \& \textbf{ operator=} (const \textbf{ Reparametrization} \&layer)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ Reparametrization} \& \textbf{ operator=} (\textbf{ Reparametrization} \&\&layer)
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the output size. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+bool \textbf{ Stochastic} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the stochastic parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} layer class. 
+
+This layer samples from the given parameters of a normal distribution.
+
+This class also supports beta-\/\+V\+AE, a state-\/of-\/the-\/art framework for automated discovery of interpretable factorised latent representations from raw image data in a completely unsupervised manner.
+
+For more information, refer the following paper.
+
+
+\begin{DoxyCode}
+@article\{ICLR2017,
+  title   = \{beta-VAE: Learning basic visual concepts with a constrained
+             variational framework\},
+  author  = \{Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
+             Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
+             Alexander Lerchner | Google DeepMind\},
+  journal = \{2017 International Conference on Learning Representations(ICLR)\},
+  year    = \{2017\},
+  url     = \{https:\textcolor{comment}{//
+      deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework\}}
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 128 of file layer\+\_\+types.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a832fbcfd05acf9e46e104c51db19588f}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Reparametrization@{Reparametrization}}
+\index{Reparametrization@{Reparametrization}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Reparametrization()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a4a8caf58b20566b71a6a9782211b8121}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Reparametrization@{Reparametrization}}
+\index{Reparametrization@{Reparametrization}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Reparametrization()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{latent\+Size,  }\item[{const bool}]{stochastic = {\ttfamily true},  }\item[{const bool}]{include\+Kl = {\ttfamily true},  }\item[{const double}]{beta = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Reparametrization}{p.}{classmlpack_1_1ann_1_1Reparametrization} layer object using the specified sample vector size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em latent\+Size} & The number of output latent units. \\
+\hline
+{\em stochastic} & Whether we want random sample or constant. \\
+\hline
+{\em include\+Kl} & Whether we want to include KL loss in backward function. \\
+\hline
+{\em beta} & The beta (hyper)parameter for beta-\/\+V\+AE mentioned above. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a4eaa387debbde852c4d784cc84764ca9}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Reparametrization@{Reparametrization}}
+\index{Reparametrization@{Reparametrization}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Reparametrization()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization} (\begin{DoxyParamCaption}\item[{const \textbf{ Reparametrization}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Copy Constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a3394d24a1c604b51a7cde3ede5554af9}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Reparametrization@{Reparametrization}}
+\index{Reparametrization@{Reparametrization}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Reparametrization()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization} (\begin{DoxyParamCaption}\item[{\textbf{ Reparametrization}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Move Constructor. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a78dbad83871f43db1975e45a9a69c376}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_ad1b9206255af52171cb88dfb7c326576}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Beta@{Beta}}
+\index{Beta@{Beta}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Beta()}
+{\footnotesize\ttfamily double Beta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the beta hyperparameter. 
+
+
+
+Definition at line 143 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 117 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 119 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_aa00a2f9218830aaa49f635ad7925d3dc}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Include\+KL@{Include\+KL}}
+\index{Include\+KL@{Include\+KL}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Include\+K\+L()}
+{\footnotesize\ttfamily bool Include\+KL (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the include\+Kl parameter. 
+
+
+
+Definition at line 140 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a13ab93f234244a68f6ade76287284447}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Input\+Shape@{Input\+Shape}}
+\index{Input\+Shape@{Input\+Shape}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Input\+Shape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 145 of file reparametrization.\+hpp.
+
+
+
+References Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a97c2b4c73f25bb50e148d8e4febeda24}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Loss@{Loss}}
+\index{Loss@{Loss}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Loss()}
+{\footnotesize\ttfamily double Loss (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the KL divergence with standard normal. 
+
+
+
+Definition at line 127 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_aa5adae8ce8541d66621702dafd5031c2}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Reparametrization}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Copy assignment operator. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_aa6b3334aa4e5b95e293b0c3af2c83964}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Reparametrization}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Reparametrization}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Move assignment operator. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 112 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 114 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a004c01f91ccd1863b8df0ab76ab4aa6a}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Output\+Size@{Output\+Size}}
+\index{Output\+Size@{Output\+Size}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Output\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 122 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a419dbf849d95d9955d055a2e6ba321d2}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Output\+Size@{Output\+Size}}
+\index{Output\+Size@{Output\+Size}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Output\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output size. 
+
+
+
+Definition at line 124 of file reparametrization.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Reparametrization$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Shape().
+
+\mbox{\label{classmlpack_1_1ann_1_1Reparametrization_ae0147f929967eaddb678cf7d07115d3c}} 
+\index{mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}!Stochastic@{Stochastic}}
+\index{Stochastic@{Stochastic}!mlpack\+::ann\+::\+Reparametrization@{mlpack\+::ann\+::\+Reparametrization}}
+\subsubsection{Stochastic()}
+{\footnotesize\ttfamily bool Stochastic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the stochastic parameter. 
+
+
+
+Definition at line 137 of file reparametrization.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ reparametrization.\+hpp}\end{DoxyCompactItemize}

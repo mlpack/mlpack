@@ -1,0 +1,453 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="radical_8hpp" kind="file" language="C++">
+    <compoundname>radical.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="54043">
+        <label>list</label>
+      </node>
+      <node id="54040">
+        <label>atomic</label>
+      </node>
+      <node id="54030">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="54006">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="54042">
+        <label>iomanip</label>
+      </node>
+      <node id="54015">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="54016" relation="include">
+        </childnode>
+        <childnode refid="54018" relation="include">
+        </childnode>
+      </node>
+      <node id="53998">
+        <label>cstdint</label>
+      </node>
+      <node id="53992">
+        <label>/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp</label>
+        <link refid="radical_8hpp"/>
+        <childnode refid="53993" relation="include">
+        </childnode>
+      </node>
+      <node id="54007">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="54014">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="54037">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="54027">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="53994">
+        <label>cmath</label>
+      </node>
+      <node id="54013">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="54002">
+        <label>stdexcept</label>
+      </node>
+      <node id="54022">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="54007" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54008" relation="include">
+        </childnode>
+      </node>
+      <node id="54046">
+        <label>string</label>
+      </node>
+      <node id="54034">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="54035" relation="include">
+        </childnode>
+        <childnode refid="54001" relation="include">
+        </childnode>
+      </node>
+      <node id="54044">
+        <label>map</label>
+      </node>
+      <node id="53996">
+        <label>cfloat</label>
+      </node>
+      <node id="54026">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="54048">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="54010">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="54033">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="54034" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54017" relation="include">
+        </childnode>
+        <childnode refid="54035" relation="include">
+        </childnode>
+      </node>
+      <node id="54023">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="54021">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="54007" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54008" relation="include">
+        </childnode>
+      </node>
+      <node id="54024">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="54007" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54008" relation="include">
+        </childnode>
+      </node>
+      <node id="54012">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="54032">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="54008" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54020" relation="include">
+        </childnode>
+        <childnode refid="54029" relation="include">
+        </childnode>
+      </node>
+      <node id="54036">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="54037" relation="include">
+        </childnode>
+      </node>
+      <node id="54038">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="53993">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="53994" relation="include">
+        </childnode>
+        <childnode refid="53995" relation="include">
+        </childnode>
+        <childnode refid="53996" relation="include">
+        </childnode>
+        <childnode refid="53997" relation="include">
+        </childnode>
+        <childnode refid="53998" relation="include">
+        </childnode>
+        <childnode refid="53999" relation="include">
+        </childnode>
+        <childnode refid="54000" relation="include">
+        </childnode>
+        <childnode refid="54001" relation="include">
+        </childnode>
+        <childnode refid="54002" relation="include">
+        </childnode>
+        <childnode refid="54003" relation="include">
+        </childnode>
+        <childnode refid="54004" relation="include">
+        </childnode>
+        <childnode refid="54005" relation="include">
+        </childnode>
+        <childnode refid="54006" relation="include">
+        </childnode>
+        <childnode refid="54007" relation="include">
+        </childnode>
+        <childnode refid="54008" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54011" relation="include">
+        </childnode>
+        <childnode refid="54012" relation="include">
+        </childnode>
+        <childnode refid="54013" relation="include">
+        </childnode>
+        <childnode refid="54014" relation="include">
+        </childnode>
+        <childnode refid="54015" relation="include">
+        </childnode>
+        <childnode refid="54019" relation="include">
+        </childnode>
+        <childnode refid="54020" relation="include">
+        </childnode>
+        <childnode refid="54021" relation="include">
+        </childnode>
+        <childnode refid="54022" relation="include">
+        </childnode>
+        <childnode refid="54023" relation="include">
+        </childnode>
+        <childnode refid="54024" relation="include">
+        </childnode>
+        <childnode refid="54025" relation="include">
+        </childnode>
+        <childnode refid="54031" relation="include">
+        </childnode>
+        <childnode refid="54032" relation="include">
+        </childnode>
+        <childnode refid="54029" relation="include">
+        </childnode>
+        <childnode refid="54033" relation="include">
+        </childnode>
+        <childnode refid="54036" relation="include">
+        </childnode>
+        <childnode refid="54038" relation="include">
+        </childnode>
+        <childnode refid="54039" relation="include">
+        </childnode>
+        <childnode refid="54048" relation="include">
+        </childnode>
+        <childnode refid="54049" relation="include">
+        </childnode>
+      </node>
+      <node id="53999">
+        <label>cstdio</label>
+      </node>
+      <node id="54003">
+        <label>tuple</label>
+      </node>
+      <node id="54008">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="54025">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="54008" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54012" relation="include">
+        </childnode>
+        <childnode refid="54026" relation="include">
+        </childnode>
+        <childnode refid="54027" relation="include">
+        </childnode>
+        <childnode refid="54028" relation="include">
+        </childnode>
+        <childnode refid="54029" relation="include">
+        </childnode>
+      </node>
+      <node id="54004">
+        <label>utility</label>
+      </node>
+      <node id="54028">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="54019">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="54016">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="54017" relation="include">
+        </childnode>
+      </node>
+      <node id="54039">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="54040" relation="include">
+        </childnode>
+        <childnode refid="54041" relation="include">
+        </childnode>
+        <childnode refid="54042" relation="include">
+        </childnode>
+        <childnode refid="54043" relation="include">
+        </childnode>
+        <childnode refid="54044" relation="include">
+        </childnode>
+        <childnode refid="54045" relation="include">
+        </childnode>
+        <childnode refid="54046" relation="include">
+        </childnode>
+        <childnode refid="54047" relation="include">
+        </childnode>
+      </node>
+      <node id="54017">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="54031">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="54029" relation="include">
+        </childnode>
+        <childnode refid="54025" relation="include">
+        </childnode>
+        <childnode refid="54032" relation="include">
+        </childnode>
+      </node>
+      <node id="54000">
+        <label>cstdlib</label>
+      </node>
+      <node id="53995">
+        <label>cctype</label>
+      </node>
+      <node id="54018">
+        <label>unordered_map</label>
+      </node>
+      <node id="53997">
+        <label>climits</label>
+      </node>
+      <node id="54045">
+        <label>mutex</label>
+      </node>
+      <node id="54041">
+        <label>chrono</label>
+      </node>
+      <node id="54049">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="54047">
+        <label>thread</label>
+      </node>
+      <node id="54035">
+        <label>type_traits</label>
+      </node>
+      <node id="54011">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="54005">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="54029">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="54007" relation="include">
+        </childnode>
+        <childnode refid="54008" relation="include">
+        </childnode>
+        <childnode refid="54009" relation="include">
+        </childnode>
+        <childnode refid="54010" relation="include">
+        </childnode>
+        <childnode refid="54030" relation="include">
+        </childnode>
+      </node>
+      <node id="54001">
+        <label>cstring</label>
+      </node>
+      <node id="54020">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="54009">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1radical_1_1Radical" prot="public">mlpack::radical::Radical</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1radical">mlpack::radical</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Nishant Mehta</para></simplesect>
+Declaration of Radical class (RADICAL is Robust, Accurate, Direct ICA aLgorithm).</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RADICAL_RADICAL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RADICAL_RADICAL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20" refid="namespacemlpack_1_1radical" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">radical<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1radical_1_1Radical" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1radical_1_1Radical" kindref="compound">Radical</ref></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a73314833d92799d972c9d4e4b8060c72" kindref="member">Radical</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>noiseStdDev<sp/>=<sp/>0.175,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>replicates<sp/>=<sp/>30,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>angles<sp/>=<sp/>150,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sweeps<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" kindref="member">DoRadical</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>matX,<sp/>arma::mat&amp;<sp/>matY,<sp/>arma::mat&amp;<sp/>matW);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a5ab92b41fcbca46d43c3ba20e5a67fe8" kindref="member">Vasicek</ref>(arma::vec&amp;<sp/>x)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" kindref="member">CopyAndPerturb</ref>(arma::mat&amp;<sp/>xNew,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>x)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" kindref="member">DoRadical2D</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>matX);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" kindref="member">NoiseStdDev</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>noiseStdDev;<sp/>}</highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" kindref="member">NoiseStdDev</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>noiseStdDev;<sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" kindref="member">Replicates</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>replicates;<sp/>}</highlight></codeline>
+<codeline lineno="102" refid="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" kindref="member">Replicates</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>replicates;<sp/>}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" kindref="member">Angles</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>angles;<sp/>}</highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" kindref="member">Angles</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>angles;<sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="classmlpack_1_1radical_1_1Radical_1ae5e316ddee04b98e1bb8b8782e97d3fa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1radical_1_1Radical_1ae5e316ddee04b98e1bb8b8782e97d3fa" kindref="member">Sweeps</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sweeps;<sp/>}</highlight></codeline>
+<codeline lineno="112" refid="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" kindref="member">Sweeps</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sweeps;<sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>noiseStdDev;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>replicates;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>angles;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sweeps;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>arma::mat<sp/>perturbed;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>arma::mat<sp/>candidate;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1radical_1ad2cb37f7f394d92d8fa93e154713b841" kindref="member">WhitenFeatureMajorMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>matX,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>matXWhitened,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>matWhitening);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>radical</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp"/>
+  </compounddef>
+</doxygen>

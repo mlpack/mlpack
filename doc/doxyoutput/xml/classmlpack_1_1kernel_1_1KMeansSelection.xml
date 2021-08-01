@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kernel_1_1KMeansSelection" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kernel::KMeansSelection</compoundname>
+    <includes refid="kmeans__selection_8hpp" local="no">kmeans_selection.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ClusteringType</type>
+        <defval><ref refid="classmlpack_1_1kmeans_1_1KMeans" kindref="compound">kmeans::KMeans</ref>&lt;&gt;</defval>
+      </param>
+      <param>
+        <type>size_t</type>
+        <declname>maxIterations</declname>
+        <defname>maxIterations</defname>
+        <defval>5</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1kernel_1_1KMeansSelection_1a0449697ae86a5d2ed893572da8695c7f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat *</type>
+        <definition>static const arma::mat* Select</definition>
+        <argsstring>(const arma::mat &amp;data, const size_t m)</argsstring>
+        <name>Select</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>Use the K-Means clustering method to select the specified number of points in the dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para>You are responsible for deleting the returned matrix!</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to sample from. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to select. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Matrix pointer in which centroids are stored. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp" bodystart="40" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the kmeans sampling scheme. </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ClusteringType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of clustering. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of iterations allowed before giving up. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp" bodystart="29" bodyend="51"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kernel_1_1KMeansSelection_1a0449697ae86a5d2ed893572da8695c7f" prot="public" virt="non-virtual"><scope>mlpack::kernel::KMeansSelection</scope><name>Select</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

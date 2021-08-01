@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1cf" kind="namespace" language="C++">
+    <compoundname>mlpack::cf</compoundname>
+    <innerclass refid="classmlpack_1_1cf_1_1AverageInterpolation" prot="public">mlpack::cf::AverageInterpolation</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1BatchSVDPolicy" prot="public">mlpack::cf::BatchSVDPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1BiasSVDPolicy" prot="public">mlpack::cf::BiasSVDPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CFModel" prot="public">mlpack::cf::CFModel</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CFType" prot="public">mlpack::cf::CFType</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CFWrapper" prot="public">mlpack::cf::CFWrapper</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CFWrapperBase" prot="public">mlpack::cf::CFWrapperBase</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CombinedNormalization" prot="public">mlpack::cf::CombinedNormalization</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1CosineSearch" prot="public">mlpack::cf::CosineSearch</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1DummyClass" prot="public">mlpack::cf::DummyClass</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1ItemMeanNormalization" prot="public">mlpack::cf::ItemMeanNormalization</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1LMetricSearch" prot="public">mlpack::cf::LMetricSearch</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1NMFPolicy" prot="public">mlpack::cf::NMFPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1NoNormalization" prot="public">mlpack::cf::NoNormalization</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1OverallMeanNormalization" prot="public">mlpack::cf::OverallMeanNormalization</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1PearsonSearch" prot="public">mlpack::cf::PearsonSearch</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1RandomizedSVDPolicy" prot="public">mlpack::cf::RandomizedSVDPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1RegressionInterpolation" prot="public">mlpack::cf::RegressionInterpolation</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1RegSVDPolicy" prot="public">mlpack::cf::RegSVDPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SimilarityInterpolation" prot="public">mlpack::cf::SimilarityInterpolation</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SVDCompletePolicy" prot="public">mlpack::cf::SVDCompletePolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SVDIncompletePolicy" prot="public">mlpack::cf::SVDIncompletePolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SVDPlusPlusPolicy" prot="public">mlpack::cf::SVDPlusPlusPolicy</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1SVDWrapper" prot="public">mlpack::cf::SVDWrapper</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1UserMeanNormalization" prot="public">mlpack::cf::UserMeanNormalization</innerclass>
+    <innerclass refid="classmlpack_1_1cf_1_1ZScoreNormalization" prot="public">mlpack::cf::ZScoreNormalization</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5" prot="public" static="no">
+        <name>InterpolationTypes</name>
+        <enumvalue id="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5a3bbe4e8eb438a26aa54a5414e0f67bbc" prot="public">
+          <name>AVERAGE_INTERPOLATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5aee7afc8e51819205e79d54b3160efe9d" prot="public">
+          <name>REGRESSION_INTERPOLATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5a5cf3e6503306d6961bef4858de73608a" prot="public">
+          <name>SIMILARITY_INTERPOLATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>InterpolationTypes contains the set of InterpolationPolicy classes that are usable by <ref refid="classmlpack_1_1cf_1_1CFModel" kindref="compound">CFModel</ref> at prediction time. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="38" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" bodystart="37" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732" prot="public" static="no">
+        <name>NeighborSearchTypes</name>
+        <enumvalue id="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732a5836bdf1d887d07a1dce5c899ebbb7d6" prot="public">
+          <name>COSINE_SEARCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732a2e12a29fd917114d142569ec23116520" prot="public">
+          <name>EUCLIDEAN_SEARCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732a31e04ccb8caf24661f0ba99dc4d418d6" prot="public">
+          <name>PEARSON_SEARCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NeighborSearchTypes contains the set of NeighborSearchPolicy classes that are usable by <ref refid="classmlpack_1_1cf_1_1CFModel" kindref="compound">CFModel</ref> at prediction time. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" bodystart="26" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemlpack_1_1cf_1ac51532acca405aa7f171aca756d776f2" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1cf_1_1SVDWrapper" kindref="compound">SVDWrapper</ref>&lt; <ref refid="classmlpack_1_1cf_1_1DummyClass" kindref="compound">DummyClass</ref> &gt;</type>
+        <definition>typedef SVDWrapper&lt;DummyClass&gt; ArmaSVDFactorizer</definition>
+        <argsstring></argsstring>
+        <name>ArmaSVDFactorizer</name>
+        <briefdescription>
+<para>add simple typedefs </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/svd_wrapper.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1cf_1a3817765250ba3485d25a82ef2da8b9b2" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1cf_1_1LMetricSearch" kindref="compound">LMetricSearch</ref>&lt; 2 &gt;</type>
+        <definition>using EuclideanSearch =  LMetricSearch&lt;2&gt;</definition>
+        <argsstring></argsstring>
+        <name>EuclideanSearch</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Collaborative filtering. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp" line="33" column="1"/>
+  </compounddef>
+</doxygen>

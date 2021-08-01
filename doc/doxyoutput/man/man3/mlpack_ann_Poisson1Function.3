@@ -1,0 +1,108 @@
+.TH "Poisson1Function" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Poisson1Function \- The Poisson one function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double y)"
+.br
+.RI "Computes the first derivative of the Poisson one function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the first derivatives of the Poisson one function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the Poisson one function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the Poisson one function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The Poisson one function, defined by\&. 
+
+\begin{eqnarray*} f(x) = (x - 1) * e^-x \\ f'(x) = e^-x + (1 - x) * e^-x \\ \end{eqnarray*} 
+.PP
+Definition at line 28 of file poisson1_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the Poisson one function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file poisson1_function\&.hpp\&.
+.SS "static void Deriv (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the Poisson one function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file poisson1_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the Poisson one function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file poisson1_function\&.hpp\&.
+.SS "static void Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the Poisson one function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file poisson1_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

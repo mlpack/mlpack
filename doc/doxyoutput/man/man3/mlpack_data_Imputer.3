@@ -1,0 +1,118 @@
+.TH "Imputer< T, MapperType, StrategyType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Imputer< T, MapperType, StrategyType > \- Given a dataset of a particular datatype, replace user-specified missing value with a variable dependent on the StrategyType and MapperType\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBImputer\fP (MapperType mapper, bool columnMajor=true)"
+.br
+.ti -1c
+.RI "\fBImputer\fP (MapperType mapper, StrategyType strategy, bool columnMajor=true)"
+.br
+.ti -1c
+.RI "void \fBImpute\fP (arma::Mat< T > &input, const std::string &missingValue, const size_t dimension)"
+.br
+.RI "Given an input dataset, replace missing values of a dimension with given imputation strategy\&. "
+.ti -1c
+.RI "const MapperType & \fBMapper\fP () const"
+.br
+.RI "Get the mapper\&. "
+.ti -1c
+.RI "MapperType & \fBMapper\fP ()"
+.br
+.RI "Modify the given mapper\&. "
+.ti -1c
+.RI "const StrategyType & \fBStrategy\fP () const"
+.br
+.RI "Get the strategy\&. "
+.ti -1c
+.RI "StrategyType & \fBStrategy\fP ()"
+.br
+.RI "Modify the given strategy\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T, typename MapperType, typename StrategyType>
+.br
+class mlpack::data::Imputer< T, MapperType, StrategyType >"
+Given a dataset of a particular datatype, replace user-specified missing value with a variable dependent on the StrategyType and MapperType\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Type of armadillo matrix used for imputation strategy\&. 
+.br
+\fIMapperType\fP \fBDatasetMapper\fP that is used to hold dataset information\&. 
+.br
+\fIStrategyType\fP Imputation strategy used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file imputer\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBImputer\fP (MapperType mapper, bool columnMajor = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 36 of file imputer\&.hpp\&.
+.SS "\fBImputer\fP (MapperType mapper, StrategyType strategy, bool columnMajor = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 43 of file imputer\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Impute (arma::Mat< T > & input, const std::string & missingValue, const size_t dimension)\fC [inline]\fP"
+
+.PP
+Given an input dataset, replace missing values of a dimension with given imputation strategy\&. This function does not produce output matrix, but overwrites the result into the input matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to apply imputation\&. 
+.br
+\fImissingValue\fP User defined missing value; it can be anything\&. 
+.br
+\fIdimension\fP Dimension to apply the imputation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file imputer\&.hpp\&.
+.SS "const MapperType& Mapper () const\fC [inline]\fP"
+
+.PP
+Get the mapper\&. 
+.PP
+Definition at line 75 of file imputer\&.hpp\&.
+.SS "MapperType& Mapper ()\fC [inline]\fP"
+
+.PP
+Modify the given mapper\&. 
+.PP
+Definition at line 78 of file imputer\&.hpp\&.
+.SS "const StrategyType& Strategy () const\fC [inline]\fP"
+
+.PP
+Get the strategy\&. 
+.PP
+Definition at line 69 of file imputer\&.hpp\&.
+.SS "StrategyType& Strategy ()\fC [inline]\fP"
+
+.PP
+Modify the given strategy\&. 
+.PP
+Definition at line 72 of file imputer\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

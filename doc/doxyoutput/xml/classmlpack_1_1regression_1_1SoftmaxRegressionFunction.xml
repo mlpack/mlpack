@@ -1,0 +1,728 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::regression::SoftmaxRegressionFunction</compoundname>
+    <includes refid="softmax__regression__function_8hpp" local="no">softmax_regression_function.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a5c886e7215de7099875642a5e6a6edbd" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Training data matrix. This is an alias until the data is shuffled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool fitIntercept</definition>
+        <argsstring></argsstring>
+        <name>fitIntercept</name>
+        <briefdescription>
+<para>Intercept term flag. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ae8c1fd887898f02783f0a8b5e9b04cb1" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat</type>
+        <definition>arma::sp_mat groundTruth</definition>
+        <argsstring></argsstring>
+        <name>groundTruth</name>
+        <briefdescription>
+<para>Label matrix for the provided data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="194" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat initialPoint</definition>
+        <argsstring></argsstring>
+        <name>initialPoint</name>
+        <briefdescription>
+<para>Initial parameter point. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="196" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+<para>L2-regularization constant. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>Number of classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="198" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ad91be7fff0c78244b24191b92fe5fcfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SoftmaxRegressionFunction</definition>
+        <argsstring>(const arma::mat &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const double lambda=0.0001, const bool fitIntercept=false)</argsstring>
+        <name>SoftmaxRegressionFunction</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Construct the Softmax Regression objective function with the given parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training data, each column associate with one sample </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Intercept term flag. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="34" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the objective function of the softmax regression model using the given parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>The cost function has terms for the log likelihood error and the regularization cost. The objective function takes a low value when the model generalizes well for the given training data, while having small parameter values.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="109" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a12589583139057b24a415995079f6ffe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t start, const size_t batchSize=1) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the objective function of the softmax regression model for a subset of the data points using the given parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>The cost function has terms for the log likelihood error and the regularization cost. The objective function takes a low value when the model generalizes well for the given training data, while having small parameter values.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First index of the data points to use. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of data points to evaluate objective for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="122" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2878e0828ecdc1d486b0f43a81f95059" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool FitIntercept</definition>
+        <argsstring>() const</argsstring>
+        <name>FitIntercept</name>
+        <briefdescription>
+<para>Gets the intercept flag. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="188" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="188" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1afb090fbee5f880dd69edde4cdd0797cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GetGroundTruthMatrix</definition>
+        <argsstring>(const arma::Row&lt; size_t &gt; &amp;labels, arma::sp_mat &amp;groundTruth)</argsstring>
+        <name>GetGroundTruthMatrix</name>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>arma::sp_mat &amp;</type>
+          <declname>groundTruth</declname>
+        </param>
+        <briefdescription>
+<para>Constructs the ground truth label matrix with the passed labels. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the training data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>groundTruth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to arma::mat which stores the computed matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="81" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; GetInitialPoint</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInitialPoint</name>
+        <briefdescription>
+<para>Return the initial point for the optimization. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="167" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab7a1e4a3f61c8476cb508491173e97ea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GetProbabilitiesMatrix</definition>
+        <argsstring>(const arma::mat &amp;parameters, arma::mat &amp;probabilities, const size_t start, const size_t batchSize) const</argsstring>
+        <name>GetProbabilitiesMatrix</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the probabilities matrix with the passed parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>probabilities(i, j) = <formula id="165">$ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) $</formula>. It represents the probability of data_j belongs to class i.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to arma::mat which stores the probabilities. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of point to start at. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to calculate probabilities for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="95" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, arma::mat &amp;gradient) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the gradient values of the objective function given the current set of parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function calculates the probabilities for each class given the parameters, and computes the gradients based on the difference from the ground truth.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix where gradient values will be stored. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="135" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1af4a328e12f2604b1409241764b214cda" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t start, arma::mat &amp;gradient, const size_t batchSize=1) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the objective function given the current set of parameters, on a subset of the data. </para>        </briefdescription>
+        <detaileddescription>
+<para>The function calculates the probabilities for each class given the parameters, and computes the gradients based on the difference from the ground truth.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First index of the data points to use. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store gradient into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of data points to evaluate gradient for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="148" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a97fbb8f95277b263fbb07eda614633ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const arma::mat</type>
+        <definition>const arma::mat InitializeWeights</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeWeights</name>
+        <briefdescription>
+<para>Initializes the parameters of the model to suitable values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="41" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1aaf66629b989a326453647f42443c6a0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Lambda</definition>
+        <argsstring>()</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Sets the regularization parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="183" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Lambda</definition>
+        <argsstring>() const</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Gets the regularization parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="185" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="185" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumClasses</definition>
+        <argsstring>() const</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Gets the number of classes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="170" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a351704783f122196cf5dc7fb408b8522" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumFeatures</definition>
+        <argsstring>() const</argsstring>
+        <name>NumFeatures</name>
+        <briefdescription>
+<para>Gets the features size of the training data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="173" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumFunctions</definition>
+        <argsstring>() const</argsstring>
+        <name>NumFunctions</name>
+        <briefdescription>
+<para>Return the number of separable functions (the number of predictor points). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="180" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a063626210e7484e95655702487e3feed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void PartialGradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, size_t j, arma::sp_mat &amp;gradient) const</argsstring>
+        <name>PartialGradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>j</declname>
+        </param>
+        <param>
+          <type>arma::sp_mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the gradient values of the objective function given the current set of parameters for a single feature indexed by j. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>j</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the feature with respect to which the partial gradient is to be computed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Out param for the gradient value. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="162" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="46" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a517f514d8c586f660510a1d78c3a8ac6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const arma::mat</type>
+        <definition>static const arma::mat InitializeWeights</definition>
+        <argsstring>(const size_t featureSize, const size_t numClasses, const bool fitIntercept=false)</argsstring>
+        <name>InitializeWeights</name>
+        <param>
+          <type>const size_t</type>
+          <declname>featureSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize Softmax Regression weights (trainable parameters) with the given parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>featureSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of features in the training set. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, an intercept is fitted. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Initialized model weights. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1af39490b2ae62f54b6a4c25a3d92ab0ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void InitializeWeights</definition>
+        <argsstring>(arma::mat &amp;weights, const size_t featureSize, const size_t numClasses, const bool fitIntercept=false)</argsstring>
+        <name>InitializeWeights</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>featureSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize Softmax Regression weights (trainable parameters) with the given parameters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with the initialized model weights. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>featureSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of features in the training set. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Intercept term flag. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="70" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression_function.hpp" bodystart="21" bodyend="203"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a5c886e7215de7099875642a5e6a6edbd" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>data</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a12589583139057b24a415995079f6ffe" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2878e0828ecdc1d486b0f43a81f95059" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>FitIntercept</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>fitIntercept</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1afb090fbee5f880dd69edde4cdd0797cd" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>GetGroundTruthMatrix</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>GetInitialPoint</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab7a1e4a3f61c8476cb508491173e97ea" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>GetProbabilitiesMatrix</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1af4a328e12f2604b1409241764b214cda" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ae8c1fd887898f02783f0a8b5e9b04cb1" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>groundTruth</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a97fbb8f95277b263fbb07eda614633ea" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>InitializeWeights</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a517f514d8c586f660510a1d78c3a8ac6" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>InitializeWeights</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1af39490b2ae62f54b6a4c25a3d92ab0ce" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>InitializeWeights</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>initialPoint</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1aaf66629b989a326453647f42443c6a0c" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>lambda</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a351704783f122196cf5dc7fb408b8522" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>NumFeatures</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>NumFunctions</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a063626210e7484e95655702487e3feed" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>PartialGradient</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>Shuffle</name></member>
+      <member refid="classmlpack_1_1regression_1_1SoftmaxRegressionFunction_1ad91be7fff0c78244b24191b92fe5fcfd" prot="public" virt="non-virtual"><scope>mlpack::regression::SoftmaxRegressionFunction</scope><name>SoftmaxRegressionFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

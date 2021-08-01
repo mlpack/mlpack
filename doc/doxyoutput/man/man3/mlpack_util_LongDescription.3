@@ -1,0 +1,36 @@
+.TH "LongDescription" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LongDescription
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLongDescription\fP (const std::function< std::string()> &longDescription)"
+.br
+.RI "Construct a \fBLongDescription\fP object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 46 of file program_doc\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLongDescription\fP (const std::function< std::string()> & longDescription)"
+
+.PP
+Construct a \fBLongDescription\fP object\&. When constructed, it will register itself with \fBIO\fP\&. A fatal error will be thrown if more than one is constructed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlongDescription\fP Long string containing documentation on what it is\&. No newline characters are necessary; this is taken care of by \fBIO\fP later\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

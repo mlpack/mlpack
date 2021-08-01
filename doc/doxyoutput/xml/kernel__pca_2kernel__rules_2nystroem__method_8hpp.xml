@@ -1,0 +1,888 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="kernel__pca_2kernel__rules_2nystroem__method_8hpp" kind="file" language="C++">
+    <compoundname>nystroem_method.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="kmeans__selection_8hpp" local="no">mlpack/methods/nystroem_method/kmeans_selection.hpp</includes>
+    <includes refid="nystroem__method_2nystroem__method_8hpp" local="no">mlpack/methods/nystroem_method/nystroem_method.hpp</includes>
+    <incdepgraph>
+      <node id="50244">
+        <label>list</label>
+      </node>
+      <node id="50302">
+        <label>breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50294">
+        <label>binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50291" relation="include">
+        </childnode>
+        <childnode refid="50295" relation="include">
+        </childnode>
+      </node>
+      <node id="50304">
+        <label>binary_space_tree/traits.hpp</label>
+        <link refid="binary__space__tree_2traits_8hpp"/>
+        <childnode refid="50305" relation="include">
+        </childnode>
+        <childnode refid="50269" relation="include">
+        </childnode>
+      </node>
+      <node id="50241">
+        <label>atomic</label>
+      </node>
+      <node id="50231">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="50207">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="50243">
+        <label>iomanip</label>
+      </node>
+      <node id="50301">
+        <label>queue</label>
+      </node>
+      <node id="50266">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="50279">
+        <label>binary_space_tree/mean_split.hpp</label>
+        <link refid="mean__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50277" relation="include">
+        </childnode>
+        <childnode refid="50280" relation="include">
+        </childnode>
+      </node>
+      <node id="50254">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="50216">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="50217" relation="include">
+        </childnode>
+        <childnode refid="50219" relation="include">
+        </childnode>
+      </node>
+      <node id="50309">
+        <label>nystroem_method_impl.hpp</label>
+      </node>
+      <node id="50199">
+        <label>cstdint</label>
+      </node>
+      <node id="50208">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="50215">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="50303">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50257">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="50280">
+        <label>mean_split_impl.hpp</label>
+      </node>
+      <node id="50238">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="50271">
+        <label>hollow_ball_bound.hpp</label>
+        <link refid="hollow__ball__bound_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50266" relation="include">
+        </childnode>
+        <childnode refid="50272" relation="include">
+        </childnode>
+      </node>
+      <node id="50292">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="50287">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="50228">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="50195">
+        <label>cmath</label>
+      </node>
+      <node id="50264">
+        <label>bounds.hpp</label>
+        <link refid="bounds_8hpp"/>
+        <childnode refid="50265" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50266" relation="include">
+        </childnode>
+        <childnode refid="50267" relation="include">
+        </childnode>
+        <childnode refid="50269" relation="include">
+        </childnode>
+        <childnode refid="50271" relation="include">
+        </childnode>
+        <childnode refid="50273" relation="include">
+        </childnode>
+      </node>
+      <node id="50214">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="50203">
+        <label>stdexcept</label>
+      </node>
+      <node id="50297">
+        <label>binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50291" relation="include">
+        </childnode>
+        <childnode refid="50298" relation="include">
+        </childnode>
+      </node>
+      <node id="50223">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="50208" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50209" relation="include">
+        </childnode>
+      </node>
+      <node id="50262">
+        <label>naive_kmeans_impl.hpp</label>
+      </node>
+      <node id="50265">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="50247">
+        <label>string</label>
+      </node>
+      <node id="50283">
+        <label>binary_space_tree/rp_tree_max_split.hpp</label>
+        <link refid="rp__tree__max__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50277" relation="include">
+        </childnode>
+        <childnode refid="50284" relation="include">
+        </childnode>
+      </node>
+      <node id="50278">
+        <label>midpoint_split_impl.hpp</label>
+      </node>
+      <node id="50235">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="50236" relation="include">
+        </childnode>
+        <childnode refid="50202" relation="include">
+        </childnode>
+      </node>
+      <node id="50245">
+        <label>map</label>
+      </node>
+      <node id="50298">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50286">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50287" relation="include">
+        </childnode>
+      </node>
+      <node id="50260">
+        <label>max_variance_new_cluster_impl.hpp</label>
+      </node>
+      <node id="50197">
+        <label>cfloat</label>
+      </node>
+      <node id="50227">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="50249">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="50211">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="50234">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="50235" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50218" relation="include">
+        </childnode>
+        <childnode refid="50236" relation="include">
+        </childnode>
+      </node>
+      <node id="50224">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="50222">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="50208" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50209" relation="include">
+        </childnode>
+      </node>
+      <node id="50225">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="50208" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50209" relation="include">
+        </childnode>
+      </node>
+      <node id="50293">
+        <label>binary_space_tree_impl.hpp</label>
+      </node>
+      <node id="50213">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="50233">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="50209" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50221" relation="include">
+        </childnode>
+        <childnode refid="50230" relation="include">
+        </childnode>
+      </node>
+      <node id="50237">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="50238" relation="include">
+        </childnode>
+      </node>
+      <node id="50299">
+        <label>binary_space_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50239">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="50194">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="50195" relation="include">
+        </childnode>
+        <childnode refid="50196" relation="include">
+        </childnode>
+        <childnode refid="50197" relation="include">
+        </childnode>
+        <childnode refid="50198" relation="include">
+        </childnode>
+        <childnode refid="50199" relation="include">
+        </childnode>
+        <childnode refid="50200" relation="include">
+        </childnode>
+        <childnode refid="50201" relation="include">
+        </childnode>
+        <childnode refid="50202" relation="include">
+        </childnode>
+        <childnode refid="50203" relation="include">
+        </childnode>
+        <childnode refid="50204" relation="include">
+        </childnode>
+        <childnode refid="50205" relation="include">
+        </childnode>
+        <childnode refid="50206" relation="include">
+        </childnode>
+        <childnode refid="50207" relation="include">
+        </childnode>
+        <childnode refid="50208" relation="include">
+        </childnode>
+        <childnode refid="50209" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50212" relation="include">
+        </childnode>
+        <childnode refid="50213" relation="include">
+        </childnode>
+        <childnode refid="50214" relation="include">
+        </childnode>
+        <childnode refid="50215" relation="include">
+        </childnode>
+        <childnode refid="50216" relation="include">
+        </childnode>
+        <childnode refid="50220" relation="include">
+        </childnode>
+        <childnode refid="50221" relation="include">
+        </childnode>
+        <childnode refid="50222" relation="include">
+        </childnode>
+        <childnode refid="50223" relation="include">
+        </childnode>
+        <childnode refid="50224" relation="include">
+        </childnode>
+        <childnode refid="50225" relation="include">
+        </childnode>
+        <childnode refid="50226" relation="include">
+        </childnode>
+        <childnode refid="50232" relation="include">
+        </childnode>
+        <childnode refid="50233" relation="include">
+        </childnode>
+        <childnode refid="50230" relation="include">
+        </childnode>
+        <childnode refid="50234" relation="include">
+        </childnode>
+        <childnode refid="50237" relation="include">
+        </childnode>
+        <childnode refid="50239" relation="include">
+        </childnode>
+        <childnode refid="50240" relation="include">
+        </childnode>
+        <childnode refid="50249" relation="include">
+        </childnode>
+        <childnode refid="50250" relation="include">
+        </childnode>
+      </node>
+      <node id="50295">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50276">
+        <label>binary_space_tree/midpoint_split.hpp</label>
+        <link refid="midpoint__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50277" relation="include">
+        </childnode>
+        <childnode refid="50278" relation="include">
+        </childnode>
+      </node>
+      <node id="50258">
+        <label>random</label>
+      </node>
+      <node id="50270">
+        <label>ballbound_impl.hpp</label>
+      </node>
+      <node id="50308">
+        <label>mlpack/methods/nystroem_method/nystroem_method.hpp</label>
+        <link refid="nystroem__method_2nystroem__method_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50251" relation="include">
+        </childnode>
+        <childnode refid="50309" relation="include">
+        </childnode>
+      </node>
+      <node id="50296">
+        <label>binary_space_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="50200">
+        <label>cstdio</label>
+      </node>
+      <node id="50274">
+        <label>address.hpp</label>
+        <link refid="address_8hpp"/>
+      </node>
+      <node id="50305">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="50204">
+        <label>tuple</label>
+      </node>
+      <node id="50209">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="50289">
+        <label>binary_space_tree/ub_tree_split.hpp</label>
+        <link refid="ub__tree__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50274" relation="include">
+        </childnode>
+        <childnode refid="50290" relation="include">
+        </childnode>
+      </node>
+      <node id="50226">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="50209" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50213" relation="include">
+        </childnode>
+        <childnode refid="50227" relation="include">
+        </childnode>
+        <childnode refid="50228" relation="include">
+        </childnode>
+        <childnode refid="50229" relation="include">
+        </childnode>
+        <childnode refid="50230" relation="include">
+        </childnode>
+      </node>
+      <node id="50291">
+        <label>binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50292" relation="include">
+        </childnode>
+        <childnode refid="50276" relation="include">
+        </childnode>
+        <childnode refid="50293" relation="include">
+        </childnode>
+        <childnode refid="50263" relation="include">
+        </childnode>
+      </node>
+      <node id="50267">
+        <label>hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50265" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50266" relation="include">
+        </childnode>
+        <childnode refid="50268" relation="include">
+        </childnode>
+      </node>
+      <node id="50288">
+        <label>rp_tree_mean_split_impl.hpp</label>
+      </node>
+      <node id="50259">
+        <label>max_variance_new_cluster.hpp</label>
+        <link refid="max__variance__new__cluster_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50260" relation="include">
+        </childnode>
+      </node>
+      <node id="50307">
+        <label>kmeans_impl.hpp</label>
+      </node>
+      <node id="50256">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50257" relation="include">
+        </childnode>
+        <childnode refid="50258" relation="include">
+        </childnode>
+      </node>
+      <node id="50205">
+        <label>utility</label>
+      </node>
+      <node id="50229">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="50220">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="50263">
+        <label>mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50264" relation="include">
+        </childnode>
+        <childnode refid="50276" relation="include">
+        </childnode>
+        <childnode refid="50279" relation="include">
+        </childnode>
+        <childnode refid="50281" relation="include">
+        </childnode>
+        <childnode refid="50283" relation="include">
+        </childnode>
+        <childnode refid="50285" relation="include">
+        </childnode>
+        <childnode refid="50289" relation="include">
+        </childnode>
+        <childnode refid="50291" relation="include">
+        </childnode>
+        <childnode refid="50294" relation="include">
+        </childnode>
+        <childnode refid="50296" relation="include">
+        </childnode>
+        <childnode refid="50297" relation="include">
+        </childnode>
+        <childnode refid="50299" relation="include">
+        </childnode>
+        <childnode refid="50300" relation="include">
+        </childnode>
+        <childnode refid="50303" relation="include">
+        </childnode>
+        <childnode refid="50304" relation="include">
+        </childnode>
+        <childnode refid="50306" relation="include">
+        </childnode>
+      </node>
+      <node id="50217">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="50218" relation="include">
+        </childnode>
+      </node>
+      <node id="50240">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="50241" relation="include">
+        </childnode>
+        <childnode refid="50242" relation="include">
+        </childnode>
+        <childnode refid="50243" relation="include">
+        </childnode>
+        <childnode refid="50244" relation="include">
+        </childnode>
+        <childnode refid="50245" relation="include">
+        </childnode>
+        <childnode refid="50246" relation="include">
+        </childnode>
+        <childnode refid="50247" relation="include">
+        </childnode>
+        <childnode refid="50248" relation="include">
+        </childnode>
+      </node>
+      <node id="50218">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="50232">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="50230" relation="include">
+        </childnode>
+        <childnode refid="50226" relation="include">
+        </childnode>
+        <childnode refid="50233" relation="include">
+        </childnode>
+      </node>
+      <node id="50201">
+        <label>cstdlib</label>
+      </node>
+      <node id="50196">
+        <label>cctype</label>
+      </node>
+      <node id="50219">
+        <label>unordered_map</label>
+      </node>
+      <node id="50252">
+        <label>mlpack/methods/kmeans/kmeans.hpp</label>
+        <link refid="kmeans_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50255" relation="include">
+        </childnode>
+        <childnode refid="50259" relation="include">
+        </childnode>
+        <childnode refid="50261" relation="include">
+        </childnode>
+        <childnode refid="50263" relation="include">
+        </childnode>
+        <childnode refid="50307" relation="include">
+        </childnode>
+      </node>
+      <node id="50255">
+        <label>sample_initialization.hpp</label>
+        <link refid="sample__initialization_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50256" relation="include">
+        </childnode>
+      </node>
+      <node id="50198">
+        <label>climits</label>
+      </node>
+      <node id="50246">
+        <label>mutex</label>
+      </node>
+      <node id="50242">
+        <label>chrono</label>
+      </node>
+      <node id="50268">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="50251">
+        <label>mlpack/methods/nystroem_method/kmeans_selection.hpp</label>
+        <link refid="kmeans__selection_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50252" relation="include">
+        </childnode>
+      </node>
+      <node id="50250">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="50285">
+        <label>binary_space_tree/rp_tree_mean_split.hpp</label>
+        <link refid="rp__tree__mean__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50283" relation="include">
+        </childnode>
+        <childnode refid="50277" relation="include">
+        </childnode>
+        <childnode refid="50286" relation="include">
+        </childnode>
+        <childnode refid="50288" relation="include">
+        </childnode>
+      </node>
+      <node id="50282">
+        <label>vantage_point_split_impl.hpp</label>
+      </node>
+      <node id="50248">
+        <label>thread</label>
+      </node>
+      <node id="50269">
+        <label>ballbound.hpp</label>
+        <link refid="ballbound_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50266" relation="include">
+        </childnode>
+        <childnode refid="50270" relation="include">
+        </childnode>
+      </node>
+      <node id="50284">
+        <label>rp_tree_max_split_impl.hpp</label>
+      </node>
+      <node id="50277">
+        <label>mlpack/core/tree/perform_split.hpp</label>
+        <link refid="perform__split_8hpp"/>
+      </node>
+      <node id="50261">
+        <label>naive_kmeans.hpp</label>
+        <link refid="naive__kmeans_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50262" relation="include">
+        </childnode>
+      </node>
+      <node id="50193">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp</label>
+        <link refid="kernel__pca_2kernel__rules_2nystroem__method_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50251" relation="include">
+        </childnode>
+        <childnode refid="50308" relation="include">
+        </childnode>
+      </node>
+      <node id="50236">
+        <label>type_traits</label>
+      </node>
+      <node id="50300">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50301" relation="include">
+        </childnode>
+        <childnode refid="50263" relation="include">
+        </childnode>
+        <childnode refid="50302" relation="include">
+        </childnode>
+      </node>
+      <node id="50212">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="50306">
+        <label>binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="50263" relation="include">
+        </childnode>
+      </node>
+      <node id="50206">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="50230">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="50208" relation="include">
+        </childnode>
+        <childnode refid="50209" relation="include">
+        </childnode>
+        <childnode refid="50210" relation="include">
+        </childnode>
+        <childnode refid="50211" relation="include">
+        </childnode>
+        <childnode refid="50231" relation="include">
+        </childnode>
+      </node>
+      <node id="50272">
+        <label>hollow_ball_bound_impl.hpp</label>
+      </node>
+      <node id="50202">
+        <label>cstring</label>
+      </node>
+      <node id="50221">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="50275">
+        <label>cellbound_impl.hpp</label>
+      </node>
+      <node id="50290">
+        <label>ub_tree_split_impl.hpp</label>
+      </node>
+      <node id="50273">
+        <label>cellbound.hpp</label>
+        <link refid="cellbound_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50265" relation="include">
+        </childnode>
+        <childnode refid="50253" relation="include">
+        </childnode>
+        <childnode refid="50266" relation="include">
+        </childnode>
+        <childnode refid="50274" relation="include">
+        </childnode>
+        <childnode refid="50275" relation="include">
+        </childnode>
+      </node>
+      <node id="50210">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="50253">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50254" relation="include">
+        </childnode>
+      </node>
+      <node id="50281">
+        <label>binary_space_tree/vantage_point_split.hpp</label>
+        <link refid="vantage__point__split_8hpp"/>
+        <childnode refid="50194" relation="include">
+        </childnode>
+        <childnode refid="50277" relation="include">
+        </childnode>
+        <childnode refid="50256" relation="include">
+        </childnode>
+        <childnode refid="50282" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1kpca_1_1NystroemKernelRule" prot="public">mlpack::kpca::NystroemKernelRule</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kpca">mlpack::kpca</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Use the Nystroem method for approximating a kernel matrix.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="kmeans__selection_8hpp" kindref="compound">mlpack/methods/nystroem_method/kmeans_selection.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nystroem__method_2nystroem__method_8hpp" kindref="compound">mlpack/methods/nystroem_method/nystroem_method.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kpca<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PointSelectionPolicy<sp/>=<sp/>kernel::KMeansSelection&lt;&gt;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="27" refid="classmlpack_1_1kpca_1_1NystroemKernelRule" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kpca_1_1NystroemKernelRule" kindref="compound">NystroemKernelRule</ref></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1kpca_1_1NystroemKernelRule_1a9043568ae7d441d997df28a9963c2c39" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kpca_1_1NystroemKernelRule_1a9043568ae7d441d997df28a9963c2c39" kindref="member">ApplyKernelMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>transformedData,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>eigval,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>eigvec,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rank,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>KernelType<sp/>kernel<sp/>=<sp/>KernelType())</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>G,<sp/>v;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1kernel_1_1NystroemMethod" kindref="compound">kernel::NystroemMethod&lt;KernelType, PointSelectionPolicy&gt;</ref><sp/>nm(data,<sp/>kernel,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>nm.<ref refid="classmlpack_1_1kernel_1_1NystroemMethod_1a8e61c6b39dcbd91fc23c9e6bce9a65c5" kindref="member">Apply</ref>(G);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>transformedData<sp/>=<sp/>G.t()<sp/>*<sp/>G;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Center<sp/>the<sp/>reconstructed<sp/>approximation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacemlpack_1_1math_1af20ca29adeac02601e8f4386bda3588e" kindref="member">math::Center</ref>(transformedData,<sp/>transformedData);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>PCA<sp/>the<sp/>data<sp/>has<sp/>to<sp/>be<sp/>centered,<sp/>even<sp/>if<sp/>the<sp/>data<sp/>is<sp/>centered.<sp/>But</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>is<sp/>not<sp/>guaranteed<sp/>that<sp/>the<sp/>data,<sp/>when<sp/>mapped<sp/>to<sp/>the<sp/>kernel<sp/>space,<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>also<sp/>centered.<sp/>Since<sp/>we<sp/>actually<sp/>never<sp/>work<sp/>in<sp/>the<sp/>feature<sp/>space<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>cannot<sp/>center<sp/>the<sp/>data.<sp/>So,<sp/>we<sp/>perform<sp/>a<sp/>&quot;psuedo-centering&quot;<sp/>using<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>kernel<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>colMean<sp/>=<sp/>arma::sum(G,<sp/>1)<sp/>/<sp/>G.n_rows;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>G.each_row()<sp/>-=<sp/>arma::sum(G,<sp/>0)<sp/>/<sp/>G.n_rows;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>G.each_col()<sp/>-=<sp/>colMean;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>G<sp/>+=<sp/>arma::sum(colMean)<sp/>/<sp/>G.n_rows;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigendecompose<sp/>the<sp/>centered<sp/>kernel<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>transformedData<sp/>=<sp/>arma::symmatu(transformedData);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!arma::eig_sym(eigval,<sp/>eigvec,<sp/>transformedData))</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Failed<sp/>to<sp/>construct<sp/>the<sp/>kernel<sp/>matrix.&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Swap<sp/>the<sp/>eigenvalues<sp/>since<sp/>they<sp/>are<sp/>ordered<sp/>backwards<sp/>(we<sp/>need<sp/>largest</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>smallest).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>floor(eigval.n_elem<sp/>/<sp/>2.0);<sp/>++i)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>eigval.swap_rows(i,<sp/>(eigval.n_elem<sp/>-<sp/>1)<sp/>-<sp/>i);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flip<sp/>the<sp/>coefficients<sp/>to<sp/>produce<sp/>the<sp/>same<sp/>effect.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvec<sp/>=<sp/>arma::fliplr(eigvec);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>transformedData<sp/>=<sp/>eigvec.t()<sp/>*<sp/>G.t();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kpca</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,393 @@
+\section{Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier}\index{Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$@{Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$}}
+
+
+The simple Naive Bayes classifier.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Model\+Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\\textbf{ Naive\+Bayes\+Classifier} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const bool incremental\+Variance=false, const double epsilon=1e-\/10)
+\begin{DoxyCompactList}\small\item\em Initializes the classifier as per the input and then trains it by calculating the sample mean and variances. \end{DoxyCompactList}\item 
+\textbf{ Naive\+Bayes\+Classifier} (const size\+\_\+t dimensionality=0, const size\+\_\+t num\+Classes=0, const double epsilon=1e-\/10)
+\begin{DoxyCompactList}\small\item\em Initialize the Naive Bayes classifier without performing training. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Classify} (const Vec\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Classify the given point, using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type , typename Probabilities\+Vec\+Type $>$ }\\void \textbf{ Classify} (const Vec\+Type \&point, size\+\_\+t \&prediction, Probabilities\+Vec\+Type \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Classify the given point using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model and also return estimates of the probability for each class in the given vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions) const
+\begin{DoxyCompactList}\small\item\em Classify the given points using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Probabilities\+Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions, Probabilities\+Mat\+Type \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Classify the given points using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model and also return estimates of the probabilities for each class in the given matrix. \end{DoxyCompactList}\item 
+const Model\+Mat\+Type \& \textbf{ Means} () const
+\begin{DoxyCompactList}\small\item\em Get the sample means for each class. \end{DoxyCompactList}\item 
+Model\+Mat\+Type \& \textbf{ Means} ()
+\begin{DoxyCompactList}\small\item\em Modify the sample means for each class. \end{DoxyCompactList}\item 
+const Model\+Mat\+Type \& \textbf{ Probabilities} () const
+\begin{DoxyCompactList}\small\item\em Get the prior probabilities for each class. \end{DoxyCompactList}\item 
+Model\+Mat\+Type \& \textbf{ Probabilities} ()
+\begin{DoxyCompactList}\small\item\em Modify the prior probabilities for each class. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the classifier. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Train} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const bool incremental=true)
+\begin{DoxyCompactList}\small\item\em Train the Naive Bayes classifier on the given dataset. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void \textbf{ Train} (const Vec\+Type \&point, const size\+\_\+t label)
+\begin{DoxyCompactList}\small\item\em Train the Naive Bayes classifier on the given point. \end{DoxyCompactList}\item 
+const Model\+Mat\+Type \& \textbf{ Variances} () const
+\begin{DoxyCompactList}\small\item\em Get the sample variances for each class. \end{DoxyCompactList}\item 
+Model\+Mat\+Type \& \textbf{ Variances} ()
+\begin{DoxyCompactList}\small\item\em Modify the sample variances for each class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Model\+Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$}
+
+The simple Naive Bayes classifier. 
+
+This class trains on the data by calculating the sample mean and variance of the features with respect to each of the labels, and also the class probabilities. The class labels are assumed to be positive integers (starting with 0), and are expected to be the last row of the data input to the constructor.
+
+Mathematically, it computes P(X\+\_\+i = x\+\_\+i $\vert$ Y = y\+\_\+j) for each feature X\+\_\+i for each of the labels y\+\_\+j. Along with this, it also computes the class probabilities P(Y = y\+\_\+j).
+
+For classifying a data point (x\+\_\+1, x\+\_\+2, ..., x\+\_\+n), it computes the following\+: arg max\+\_\+y(P(Y = y)$\ast$P(X\+\_\+1 = x\+\_\+1 $\vert$ Y = y) $\ast$ ... $\ast$ P(X\+\_\+n = x\+\_\+n $\vert$ Y = y))
+
+Example use\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat training\_data, testing\_data;
+NaiveBayesClassifier<> nbc(training\_data, 5);
+arma::vec results;
+
+nbc.Classify(testing\_data, results);
+\end{DoxyCode}
+
+
+The Model\+Mat\+Type template parameter specifies the internal matrix type that \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} will use to hold the means, variances, and weights that make up the Naive Bayes model. This can be arma\+::mat, arma\+::fmat, or any other Armadillo (or Armadillo-\/compatible) object. Because Model\+Mat\+Type may be different than the type of the data the model is trained on, now training is possible with subviews, sparse matrices, or anything else, while still storing the model as a Model\+Mat\+Type internally.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Model\+Mat\+Type} & Internal matrix type to use to store the model. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 58 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a0796cd3bc672aade6999c349be9cc25f}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Elem\+Type@{Elem\+Type}}
+\index{Elem\+Type@{Elem\+Type}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Elem\+Type}
+{\footnotesize\ttfamily typedef Model\+Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}}
+
+
+
+Definition at line 62 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_ab4c05cba56315b162b29a020a8fa7512}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Naive\+Bayes\+Classifier@{Naive\+Bayes\+Classifier}}
+\index{Naive\+Bayes\+Classifier@{Naive\+Bayes\+Classifier}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Naive\+Bayes\+Classifier()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Naive\+Bayes\+Classifier} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{incremental\+Variance = {\ttfamily false},  }\item[{const double}]{epsilon = {\ttfamily 1e-\/10} }\end{DoxyParamCaption})}
+
+
+
+Initializes the classifier as per the input and then trains it by calculating the sample mean and variances. 
+
+Example use\+: 
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat training\_data, testing\_data;
+\textcolor{keyword}{extern} arma::Row<size\_t> labels;
+NaiveBayesClassifier nbc(training\_data, labels, 5);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Training data points. \\
+\hline
+{\em labels} & Labels corresponding to training data points. \\
+\hline
+{\em num\+Classes} & Number of classes in this classifier. \\
+\hline
+{\em incremental\+Variance} & If true, an incremental algorithm is used to calculate the variance; this can prevent loss of precision in some cases, but will be somewhat slower to calculate. \\
+\hline
+{\em epsilon} & Small value to prevent log of zero. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_aeb4574ad5c4777a8bb4f197da08e0ad8}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Naive\+Bayes\+Classifier@{Naive\+Bayes\+Classifier}}
+\index{Naive\+Bayes\+Classifier@{Naive\+Bayes\+Classifier}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Naive\+Bayes\+Classifier()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Naive\+Bayes\+Classifier} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0},  }\item[{const size\+\_\+t}]{num\+Classes = {\ttfamily 0},  }\item[{const double}]{epsilon = {\ttfamily 1e-\/10} }\end{DoxyParamCaption})}
+
+
+
+Initialize the Naive Bayes classifier without performing training. 
+
+All of the parameters of the model will be initialized to zero. Be sure to use \doxyref{Train()}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a1a4858124d06d22022b2eb082b6e8556} before calling \doxyref{Classify()}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_aa610310b354b7badd88041ca07883569}, otherwise the results may be meaningless. 
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_aa610310b354b7badd88041ca07883569}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily size\+\_\+t Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point, using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model. 
+
+The predicted label is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a22e48e639567f4da2a73dbff6fb44451}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{size\+\_\+t \&}]{prediction,  }\item[{Probabilities\+Vec\+Type \&}]{probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model and also return estimates of the probability for each class in the given vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+{\em prediction} & This will be set to the predicted class of the point. \\
+\hline
+{\em probabilities} & This will be filled with class probabilities for the point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_abd3c3812715d2e249e47476782d8e95e}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model. 
+
+The predicted labels for each point are stored in the given vector.
+
+
+\begin{DoxyCode}
+arma::mat test\_data; \textcolor{comment}{// each column is a test point}
+arma::Row<size\_t> results;
+...
+nbc.Classify(test\_data, results);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & List of data points. \\
+\hline
+{\em predictions} & Vector that class predictions will be placed into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a80f5c31d6b59f21b03b874e91bb873ad}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions,  }\item[{Probabilities\+Mat\+Type \&}]{probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points using the trained \doxyref{Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier} model and also return estimates of the probabilities for each class in the given matrix. 
+
+The predicted labels for each point are stored in the given vector.
+
+
+\begin{DoxyCode}
+arma::mat test\_data; \textcolor{comment}{// each column is a test point}
+arma::Row<size\_t> results;
+arma::mat resultsProbs;
+...
+nbc.Classify(test\_data, results, resultsProbs);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Set of points to classify. \\
+\hline
+{\em predictions} & This will be filled with predictions for each point. \\
+\hline
+{\em probabilities} & This will be filled with class probabilities for each point. Each row represents a point. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data to be classified. \\
+\hline
+{\em Probabilities\+Mat\+Type} & Type to store output probabilities in. \\
+\hline
+\end{DoxyTemplParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_afbabedc78e265a25d10f64662b6f4f96}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Means@{Means}}
+\index{Means@{Means}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Means()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Model\+Mat\+Type\& Means (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the sample means for each class. 
+
+
+
+Definition at line 203 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a97f14b922516ca3aa38c86131f5d6413}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Means@{Means}}
+\index{Means@{Means}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Means()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Model\+Mat\+Type\& Means (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the sample means for each class. 
+
+
+
+Definition at line 205 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a060a0a715c8ff0246972eaaa4575fda6}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Probabilities@{Probabilities}}
+\index{Probabilities@{Probabilities}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Probabilities()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Model\+Mat\+Type\& Probabilities (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the prior probabilities for each class. 
+
+
+
+Definition at line 213 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a5b180e8dd80891d3ec352f92d3068ce6}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Probabilities@{Probabilities}}
+\index{Probabilities@{Probabilities}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Probabilities()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Model\+Mat\+Type\& Probabilities (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the prior probabilities for each class. 
+
+
+
+Definition at line 215 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+
+
+References Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the classifier. 
+
+
+
+Referenced by Naive\+Bayes\+Classifier$<$ Model\+Mat\+Type $>$\+::\+Probabilities().
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a1a4858124d06d22022b2eb082b6e8556}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{incremental = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Train the Naive Bayes classifier on the given dataset. 
+
+If the incremental algorithm is used, the current model is used as a starting point (this is the default). If the incremental algorithm is not used, then the current model is ignored and the new model will be trained only on the given data. Note that even if the incremental algorithm is not used, the data must have the same dimensionality and number of classes that the model was initialized with. If you want to change the dimensionality or number of classes, either re-\/initialize or call \doxyref{Means()}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a97f14b922516ca3aa38c86131f5d6413}, \doxyref{Variances()}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a7d812cb65223a49a796aaa3dfbb8c1dc}, and \doxyref{Probabilities()}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a5b180e8dd80891d3ec352f92d3068ce6} individually to set them to the right size.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The dataset to train on. \\
+\hline
+{\em labels} & The labels for the dataset. \\
+\hline
+{\em num\+Classes} & The numbe of classes in the dataset. \\
+\hline
+{\em incremental} & Whether or not to use the incremental algorithm for training. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a4be1a071b03a017654ecced62e354e02}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{const size\+\_\+t}]{label }\end{DoxyParamCaption})}
+
+
+
+Train the Naive Bayes classifier on the given point. 
+
+This will use the incremental algorithm for updating the model parameters. The data must be the same dimensionality as the existing model parameters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Data point to train on. \\
+\hline
+{\em label} & Label of data point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a7ff00174dce9347760070d8f50c22ae5}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Variances@{Variances}}
+\index{Variances@{Variances}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Variances()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Model\+Mat\+Type\& Variances (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the sample variances for each class. 
+
+
+
+Definition at line 208 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+\mbox{\label{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_a7d812cb65223a49a796aaa3dfbb8c1dc}} 
+\index{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}!Variances@{Variances}}
+\index{Variances@{Variances}!mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier@{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}}
+\subsubsection{Variances()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Model\+Mat\+Type\& Variances (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the sample variances for each class. 
+
+
+
+Definition at line 210 of file naive\+\_\+bayes\+\_\+classifier.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/naive\+\_\+bayes/\textbf{ naive\+\_\+bayes\+\_\+classifier.\+hpp}\end{DoxyCompactItemize}

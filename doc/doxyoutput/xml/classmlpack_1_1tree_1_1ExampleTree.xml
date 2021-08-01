@@ -1,0 +1,514 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1ExampleTree" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::ExampleTree</compoundname>
+    <includes refid="example__tree_8hpp" local="no">example_tree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+        <defval><ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">metric::LMetric</ref>&lt;2, true&gt;</defval>
+      </param>
+      <param>
+        <type>typename StatisticType</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1EmptyStatistic" kindref="compound">EmptyStatistic</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1ExampleTree_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" static="no" mutable="no">
+        <type>MetricType &amp;</type>
+        <definition>MetricType&amp; metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>This member is just here so the <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> compiles without warnings. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required to be a member in every type of tree. Be aware that storing the metric as a member and not a reference may mean that for some metrics (such as <ref refid="classmlpack_1_1metric_1_1MahalanobisDistance" kindref="compound">metric::MahalanobisDistance</ref> in high dimensionality) may incur lots of unnecessary matrix copying. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="234" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1ExampleTree_1a3bb6957cc0ee042b639ebc4b8b45fd37" prot="private" static="no" mutable="no">
+        <type>StatisticType</type>
+        <definition>StatisticType stat</definition>
+        <argsstring></argsstring>
+        <name>stat</name>
+        <briefdescription>
+<para>This member is just here so the <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> compiles without warnings. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required to be a member in every type of tree. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="225" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a71d6f5460a87b7734b9bf02a9105f883" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ExampleTree</definition>
+        <argsstring>(const MatType &amp;dataset, MetricType &amp;metric)</argsstring>
+        <name>ExampleTree</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>MetricType &amp;</type>
+          <declname>metric</declname>
+        </param>
+        <briefdescription>
+<para>This constructor will build the tree given a dataset and an instantiated metric. </para>        </briefdescription>
+        <detaileddescription>
+<para>Note that the parameter is a MatType&amp; and not an arma::mat&amp;. The dataset is not modified by the tree-building process (if it is, see the documentation for <ref refid="classmlpack_1_1tree_1_1TreeTraits_1aba7aca795787a6fe3e8bbdae13edc70b" kindref="member">mlpack::tree::TreeTraits::RearrangesDataset</ref> for how to deal with that situation). The MetricType parameter is necessary even though some metrics do not hold any state. This is so that the tree does not have to worry about instantiating the metric (if the tree had to worry about this, this would almost certainly incur additional runtime complexity and a larger runtime size of the tree node objects, which is to be avoided). The metric can&apos;t be const, in case MetricType::Evaluate() is non-const.</para><para>When this constructor is finished, the entire tree will be built and ready to use. The constructor should call the constructor of the statistic for each node that is built (see <ref refid="classmlpack_1_1tree_1_1EmptyStatistic" kindref="compound">tree::EmptyStatistic</ref> for more information).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset that the tree will be built on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The instantiated metric to use to build the dataset. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="79" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a63dbc8529d1a516434ab56626a778a51" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Centroid</definition>
+        <argsstring>(arma::vec &amp;centroid) const</argsstring>
+        <name>Centroid</name>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>centroid</declname>
+        </param>
+        <briefdescription>
+<para>Fill the given vector with the center of the node. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>centroid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to be filled with the center of the node. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="206" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1ab569c9e59d44e466743e4a674e747e3f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> &amp;</type>
+        <definition>const ExampleTree&amp; Child</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Return a particular child of this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="86" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aba85f31fd90cc21118e0539bbffe5f52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> &amp;</type>
+        <definition>ExampleTree&amp; Child</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify a particular child of this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="88" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a4dd10db2b40e7eb4b00125c35bf1ed3b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Descendant</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Descendant</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the index of a particular descendant point. </para>        </briefdescription>
+        <detaileddescription>
+<para>The ordering of the descendants does not matter, as long as calling Descendant(0) through Descendant(<ref refid="classmlpack_1_1tree_1_1ExampleTree_1a2a85eb34222f1fc073940e8c89274e81" kindref="member">NumDescendants()</ref> - 1) will return the indices of every unique descendant point of the node. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="123" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1afbd27efe2092e752e37e37aafd667beb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double FurthestDescendantDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>FurthestDescendantDistance</name>
+        <briefdescription>
+<para>Get the distance from the center of the node to the furthest descendant point of this node. </para>        </briefdescription>
+        <detaileddescription>
+<para>This does not necessarily need to be the exact furthest descendant distance but instead can be an upper bound. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="214" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aba1de56cd0c3a91c91ad7b9055d03036" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MaxDistance</definition>
+        <argsstring>(const MatType &amp;point) const</argsstring>
+        <name>MaxDistance</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Return the maximum distance between this node and a point. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required that the exact maximum distance between the node and the point is returned but instead an upper bound on the maximum distance will suffice. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to return [upper bound on] maximum distance to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="163" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a440a75b7b6b9535ac3a0bd5de3a5edf0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MaxDistance</definition>
+        <argsstring>(const ExampleTree &amp;other) const</argsstring>
+        <name>MaxDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return the maximum distance between this node and another node. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required that the exact maximum distance between the two nodes be returned but instead an upper bound on the maximum distance will suffice. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node to return [upper bound on] maximum distance to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="173" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aac4d643c62af7d9cc2a072aea10d2b32" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const MetricType &amp;</type>
+        <definition>const MetricType&amp; Metric</definition>
+        <argsstring>() const</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Get the instantiated metric for this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="131" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1acc71d930ed90e73b2bc0c360835c5371" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MetricType &amp;</type>
+        <definition>MetricType&amp; Metric</definition>
+        <argsstring>()</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Modify the instantiated metric for this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="133" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1acc1d69c72174899bf6410555a6cf3c8a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MinDistance</definition>
+        <argsstring>(const MatType &amp;point) const</argsstring>
+        <name>MinDistance</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Return the minimum distance between this node and a point. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required that the exact minimum distance between the node and the point is returned but instead a lower bound on the minimum distance will suffice. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to return [lower bound on] minimum distance to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="143" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a5b65e6d5aaf2961b201a48e3a939026e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MinDistance</definition>
+        <argsstring>(const ExampleTree &amp;other) const</argsstring>
+        <name>MinDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return the minimum distance between this node and another node. </para>        </briefdescription>
+        <detaileddescription>
+<para>It is not required that the exact minimum distance between the two nodes be returned but instead a lower bound on the minimum distance will suffice. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node to return [lower bound on] minimum distance to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="153" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Return the number of children of this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="83" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumDescendants</definition>
+        <argsstring>() const</argsstring>
+        <name>NumDescendants</name>
+        <briefdescription>
+<para>Get the number of descendant points. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the number of unique points held in this node plus the number of points held in all descendant nodes. This could be calculated at build-time and cached, or could be calculated at run-time. This may be harder to calculate for trees that may hold points in multiple nodes (like cover trees and spill trees, for instance). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="115" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a352077c26368da0ee570c0b7f062b1e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumPoints</definition>
+        <argsstring>() const</argsstring>
+        <name>NumPoints</name>
+        <briefdescription>
+<para>Return the number of points held in this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="94" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aeedee01f5a1cabdeeffa09263f746ec6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> *</type>
+        <definition>ExampleTree* Parent</definition>
+        <argsstring>() const</argsstring>
+        <name>Parent</name>
+        <briefdescription>
+<para>Return the parent node (NULL if this is the root of the tree). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="91" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1acddc03b68e8b86e9c4bc689b35b4539c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ParentDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>ParentDistance</name>
+        <briefdescription>
+<para>Get the distance from the center of this node to the center of the parent node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="220" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a72ca4074cde05e9efd635fe11328ecf1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Point</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Point</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Return the index of a particular point of this node. </para>        </briefdescription>
+        <detaileddescription>
+<para>mlpack trees do not, in general, hold the actual dataset, and instead just hold the indices of the points they contain. Thus, you might use this function in code like this:</para><para><programlisting><codeline><highlight class="normal">arma::vec<sp/>thirdPoint<sp/>=<sp/>dataset.col(treeNode.Point(2));</highlight></codeline>
+</programlisting> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="106" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aaf54e9f75afbc73648797db8f00fff65" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>math::Range</type>
+        <definition>math::Range RangeDistance</definition>
+        <argsstring>(const MatType &amp;point) const</argsstring>
+        <name>RangeDistance</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Return both the minimum and maximum distances between this node and a point as a math::Range object. </para>        </briefdescription>
+        <detaileddescription>
+<para>This overload is given because it is possible that, for some tree types, calculation of both at once is faster than a call to <ref refid="classmlpack_1_1tree_1_1ExampleTree_1acc1d69c72174899bf6410555a6cf3c8a" kindref="member">MinDistance()</ref> then <ref refid="classmlpack_1_1tree_1_1ExampleTree_1aba1de56cd0c3a91c91ad7b9055d03036" kindref="member">MaxDistance()</ref>. It is not necessary that the minimum and maximum distances be exact; it is sufficient to return a lower bound on the minimum distance and an upper bound on the maximum distance. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to return [bounds on] minimum and maximum distances to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="186" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1a4fa2b9714ec826a499844feb9e5b0428" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>math::Range</type>
+        <definition>math::Range RangeDistance</definition>
+        <argsstring>(const ExampleTree &amp;other) const</argsstring>
+        <name>RangeDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1ExampleTree" kindref="compound">ExampleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return both the minimum and maximum distances between this node and another node as a math::Range object. </para>        </briefdescription>
+        <detaileddescription>
+<para>This overload is given because it is possible that, for some tree types, calculation of both at once is faster than a call to <ref refid="classmlpack_1_1tree_1_1ExampleTree_1acc1d69c72174899bf6410555a6cf3c8a" kindref="member">MinDistance()</ref> then <ref refid="classmlpack_1_1tree_1_1ExampleTree_1aba1de56cd0c3a91c91ad7b9055d03036" kindref="member">MaxDistance()</ref>. It is not necessary that the minimum and maximum distances be exact; it is sufficient to return a lower bound on the minimum distance and an upper bound on the maximum distance. See the definitions in <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref> for more information.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node to return [bounds on] minimum and maximum distances to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="199" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1ad8b29c84ac793742cd15834f9f4c4f31" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const StatisticType &amp;</type>
+        <definition>const StatisticType&amp; Stat</definition>
+        <argsstring>() const</argsstring>
+        <name>Stat</name>
+        <briefdescription>
+<para>Get the statistic for this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="126" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1ExampleTree_1aac2d3c104b89109f3df4a9a8cad244da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>StatisticType &amp;</type>
+        <definition>StatisticType&amp; Stat</definition>
+        <argsstring>()</argsstring>
+        <name>Stat</name>
+        <briefdescription>
+<para>Modify the statistic for this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="128" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is not an actual space tree but instead an example tree that exists to show and document all the functions that mlpack trees must implement. </para>    </briefdescription>
+    <detaileddescription>
+<para>For a better overview of trees, see <ref refid="trees" kindref="compound">The TreeType policy in mlpack</ref>. Also be aware that the implementations of each of the methods in this example tree are entirely fake and do not work; this example tree exists for its API, not its implementation.</para><para>Note that trees often have different properties. These properties are known at compile-time through the <ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">mlpack::tree::TreeTraits</ref> class, and some properties may imply the existence (or non-existence) of certain functions. Refer to the <ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">TreeTraits</ref> for more documentation on that.</para><para>The three template parameters below must be template parameters to the tree, in the order given below. More template parameters are fine, but they must come after the first three.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This defines the space in which the tree will be built. For some trees, arbitrary metrics cannot be used, and a template metaprogramming approach should be used to issue a compile-time error if a metric cannot be used with a specific tree type. One example is the <ref refid="classmlpack_1_1tree_1_1BinarySpaceTree" kindref="compound">tree::BinarySpaceTree</ref> tree type, which cannot work with the <ref refid="classmlpack_1_1metric_1_1IPMetric" kindref="compound">metric::IPMetric</ref> class. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>StatisticType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A tree node can hold a statistic, which is sometimes useful for various dual-tree algorithms. The tree itself does not need to know anything about how the statistic works, but it needs to hold a StatisticType in each node. It can be assumed that the StatisticType class has a constructor StatisticType(const ExampleTree&amp;). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A tree could be built on a dense matrix or a sparse matrix. All mlpack trees should be able to support any Armadillo-compatible matrix type. When the tree is written it should be assumed that MatType has the same functionality as arma::mat. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" line="57" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/example_tree.hpp" bodystart="56" bodyend="235"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a63dbc8529d1a516434ab56626a778a51" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Centroid</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1ab569c9e59d44e466743e4a674e747e3f" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aba85f31fd90cc21118e0539bbffe5f52" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a4dd10db2b40e7eb4b00125c35bf1ed3b" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Descendant</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a71d6f5460a87b7734b9bf02a9105f883" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>ExampleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1afbd27efe2092e752e37e37aafd667beb" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>FurthestDescendantDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aba1de56cd0c3a91c91ad7b9055d03036" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>MaxDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a440a75b7b6b9535ac3a0bd5de3a5edf0" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>MaxDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aac4d643c62af7d9cc2a072aea10d2b32" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1acc71d930ed90e73b2bc0c360835c5371" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1acc1d69c72174899bf6410555a6cf3c8a" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>MinDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a5b65e6d5aaf2961b201a48e3a939026e" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>MinDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>NumDescendants</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a352077c26368da0ee570c0b7f062b1e3" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>NumPoints</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aeedee01f5a1cabdeeffa09263f746ec6" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Parent</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1acddc03b68e8b86e9c4bc689b35b4539c" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>ParentDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a72ca4074cde05e9efd635fe11328ecf1" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Point</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aaf54e9f75afbc73648797db8f00fff65" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>RangeDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a4fa2b9714ec826a499844feb9e5b0428" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>RangeDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1ad8b29c84ac793742cd15834f9f4c4f31" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Stat</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1aac2d3c104b89109f3df4a9a8cad244da" prot="public" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>Stat</name></member>
+      <member refid="classmlpack_1_1tree_1_1ExampleTree_1a3bb6957cc0ee042b639ebc4b8b45fd37" prot="private" virt="non-virtual"><scope>mlpack::tree::ExampleTree</scope><name>stat</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

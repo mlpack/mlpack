@@ -1,0 +1,13 @@
+.. _exhale_function_kde__main_8cpp_1a79f493b4536039799c3769a787e707e1:
+
+Function BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms", "https://arxiv.org/pdf/1304.4327.pdf")
+=========================================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_kde_kde_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms", "https://arxiv.org/pdf/1304.4327.pdf")

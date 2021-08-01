@@ -1,0 +1,541 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1rl_1_1NStepQLearningWorker" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::NStepQLearningWorker</compoundname>
+    <includes refid="async__learning_8hpp" local="no">async_learning.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename EnvironmentType</type>
+      </param>
+      <param>
+        <type>typename NetworkType</type>
+      </param>
+      <param>
+        <type>typename UpdaterType</type>
+      </param>
+      <param>
+        <type>typename PolicyType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1aaf7b2dc5d49d01961601c7c16be76777" prot="public" static="no">
+        <type>typename EnvironmentType::Action</type>
+        <definition>using ActionType =  typename EnvironmentType::Action</definition>
+        <argsstring></argsstring>
+        <name>ActionType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" prot="public" static="no">
+        <type>typename EnvironmentType::State</type>
+        <definition>using StateType =  typename EnvironmentType::State</definition>
+        <argsstring></argsstring>
+        <name>StateType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="38" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a810951afc4d825b2409bf5378e871dc5" prot="public" static="no">
+        <type>std::tuple&lt; <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref>, <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref>, double, <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &gt;</type>
+        <definition>using TransitionType =  std::tuple&lt;StateType, ActionType, double, StateType&gt;</definition>
+        <argsstring></argsstring>
+        <name>TransitionType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a359d54fcb2400a6e5b91c1bd2f4de79b" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1rl_1_1TrainingConfig" kindref="compound">TrainingConfig</ref></type>
+        <definition>TrainingConfig config</definition>
+        <argsstring></argsstring>
+        <name>config</name>
+        <briefdescription>
+<para>Locally-stored hyper-parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="378" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>Whether this episode is deterministic or not. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="381" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="381" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" static="no" mutable="no">
+        <type>EnvironmentType</type>
+        <definition>EnvironmentType environment</definition>
+        <argsstring></argsstring>
+        <name>environment</name>
+        <briefdescription>
+<para>Locally-stored task. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="375" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="375" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ace58f274fcc6facd3df86200b4b88a40" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double episodeReturn</definition>
+        <argsstring></argsstring>
+        <name>episodeReturn</name>
+        <briefdescription>
+<para>Total reward in current episode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="387" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ab54407124b57a3ab58fb83a5b26fec57" prot="private" static="no" mutable="no">
+        <type>NetworkType</type>
+        <definition>NetworkType network</definition>
+        <argsstring></argsstring>
+        <name>network</name>
+        <briefdescription>
+<para>Local network of the worker. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="396" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a82f9ca74a4fbbda806e90cf6b64140d4" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a810951afc4d825b2409bf5378e871dc5" kindref="member">TransitionType</ref> &gt;</type>
+        <definition>std::vector&lt;TransitionType&gt; pending</definition>
+        <argsstring></argsstring>
+        <name>pending</name>
+        <briefdescription>
+<para>Buffer for delayed update. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="390" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="390" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7bb80215f019a25dfed5e30892012ef6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t pendingIndex</definition>
+        <argsstring></argsstring>
+        <name>pendingIndex</name>
+        <briefdescription>
+<para>Current position of the buffer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="393" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref></type>
+        <definition>StateType state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+<para>Current state of the agent. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="399" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a2a30a0fc4077aef1e55c562ac2586c65" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t steps</definition>
+        <argsstring></argsstring>
+        <name>steps</name>
+        <briefdescription>
+<para>Total steps in current episode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="384" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="384" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" static="no" mutable="no">
+        <type>UpdaterType</type>
+        <definition>UpdaterType updater</definition>
+        <argsstring></argsstring>
+        <name>updater</name>
+        <briefdescription>
+<para>Locally-stored optimizer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="369" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="369" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad7c7dd8a63c39d20e9cda5d2ab348b91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NStepQLearningWorker</definition>
+        <argsstring>(const UpdaterType &amp;updater, const EnvironmentType &amp;environment, const TrainingConfig &amp;config, bool deterministic)</argsstring>
+        <name>NStepQLearningWorker</name>
+        <param>
+          <type>const UpdaterType &amp;</type>
+          <declname>updater</declname>
+        </param>
+        <param>
+          <type>const EnvironmentType &amp;</type>
+          <declname>environment</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1TrainingConfig" kindref="compound">TrainingConfig</ref> &amp;</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>deterministic</declname>
+        </param>
+        <briefdescription>
+<para>Construct N-step Q-Learning worker with the given parameters and environment. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>updater</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The optimizer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>environment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The reinforcement learning task. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hyper-parameters. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>deterministic</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether it should be deterministic. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="51" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1afe4d1c5b3fee4c0291044180f6ced66f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NStepQLearningWorker</definition>
+        <argsstring>(const NStepQLearningWorker &amp;other)</argsstring>
+        <name>NStepQLearningWorker</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy another <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="71" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="71" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a24d36c163a368e04fd6df657e0bec023" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NStepQLearningWorker</definition>
+        <argsstring>(NStepQLearningWorker &amp;&amp;other)</argsstring>
+        <name>NStepQLearningWorker</name>
+        <param>
+          <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of another <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="101" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1acdb590ece8e681e2a51b765c3c379cdb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>~NStepQLearningWorker</definition>
+        <argsstring>()</argsstring>
+        <name>~NStepQLearningWorker</name>
+        <briefdescription>
+<para>Clean memory. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="203" bodyend="208"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1acf86e5b1010bd1f15be7b3fab93dfd75" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(NetworkType &amp;learningNetwork)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>NetworkType &amp;</type>
+          <declname>learningNetwork</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the worker. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>learningNetwork</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared network. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="214" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="214" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a55a2bb2bc1015fd5bc079b0c1e3e65a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
+        <definition>NStepQLearningWorker&amp; operator=</definition>
+        <argsstring>(const NStepQLearningWorker &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy another <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="131" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a42109fefb4743f4a4346c2955f4b016e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
+        <definition>NStepQLearningWorker&amp; operator=</definition>
+        <argsstring>(NStepQLearningWorker &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of another <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="168" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="168" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Step</definition>
+        <argsstring>(NetworkType &amp;learningNetwork, NetworkType &amp;targetNetwork, size_t &amp;totalSteps, PolicyType &amp;policy, double &amp;totalReward)</argsstring>
+        <name>Step</name>
+        <param>
+          <type>NetworkType &amp;</type>
+          <declname>learningNetwork</declname>
+        </param>
+        <param>
+          <type>NetworkType &amp;</type>
+          <declname>targetNetwork</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>totalSteps</declname>
+        </param>
+        <param>
+          <type>PolicyType &amp;</type>
+          <declname>policy</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>totalReward</declname>
+        </param>
+        <briefdescription>
+<para>The agent will execute one step. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>learningNetwork</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared learning network. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>targetNetwork</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared target network. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>totalSteps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared counter for total steps. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>policy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The shared behavior policy. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>totalReward</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be the episode return if the episode ends after this step. Otherwise this is invalid. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Indicate whether current episode ends after this step. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="243" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="243" bodyend="354"/>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1aa6ad347e43fbd017a857577c98b2c60a" compoundref="training__config_8hpp" startline="108" endline="108">TrainingConfig::Discount</references>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1a47c21c74b98a88391e1d4acb707fb930" compoundref="training__config_8hpp" startline="113" endline="113">TrainingConfig::GradientLimit</references>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1ac5d0f7fbe2c8d6222464e0d828073051" compoundref="training__config_8hpp" startline="90" endline="90">TrainingConfig::StepLimit</references>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1a11e6eb66d82a14ebd2943b49db676444" compoundref="training__config_8hpp" startline="103" endline="103">TrainingConfig::StepSize</references>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1ad050465e611df6ecca98f5d98a785f03" compoundref="training__config_8hpp" startline="84" endline="85">TrainingConfig::TargetNetworkSyncInterval</references>
+        <references refid="classmlpack_1_1rl_1_1TrainingConfig_1a3e73fbeca5eb5ab314f65094f59d63b2" compoundref="training__config_8hpp" startline="79" endline="79">TrainingConfig::UpdateInterval</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a372de693ad40b3f42839c8ec6ac845f4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Reset the worker for a new episode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="360" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="360" bodyend="366"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Forward declaration of <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para>N-step Q-Learning worker.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>EnvironmentType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the reinforcement learning task. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NetworkType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the network model. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>UpdaterType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the optimizer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the behavior policy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/async_learning.hpp" line="179" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/async_learning.hpp" bodystart="179" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1aaf7b2dc5d49d01961601c7c16be76777" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>ActionType</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a359d54fcb2400a6e5b91c1bd2f4de79b" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>config</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ace58f274fcc6facd3df86200b4b88a40" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>episodeReturn</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1acf86e5b1010bd1f15be7b3fab93dfd75" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ab54407124b57a3ab58fb83a5b26fec57" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>network</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad7c7dd8a63c39d20e9cda5d2ab348b91" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>NStepQLearningWorker</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1afe4d1c5b3fee4c0291044180f6ced66f" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>NStepQLearningWorker</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a24d36c163a368e04fd6df657e0bec023" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>NStepQLearningWorker</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a55a2bb2bc1015fd5bc079b0c1e3e65a2" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a42109fefb4743f4a4346c2955f4b016e" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a82f9ca74a4fbbda806e90cf6b64140d4" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>pending</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7bb80215f019a25dfed5e30892012ef6" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>pendingIndex</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a372de693ad40b3f42839c8ec6ac845f4" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>state</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>StateType</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>Step</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a2a30a0fc4077aef1e55c562ac2586c65" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>steps</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a810951afc4d825b2409bf5378e871dc5" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>TransitionType</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>updater</name></member>
+      <member refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1acdb590ece8e681e2a51b765c3c379cdb" prot="public" virt="non-virtual"><scope>mlpack::rl::NStepQLearningWorker</scope><name>~NStepQLearningWorker</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

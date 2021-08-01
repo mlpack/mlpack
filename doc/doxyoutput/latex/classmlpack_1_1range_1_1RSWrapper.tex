@@ -1,0 +1,313 @@
+\section{R\+S\+Wrapper$<$ Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1range_1_1RSWrapper}\index{R\+S\+Wrapper$<$ Tree\+Type $>$@{R\+S\+Wrapper$<$ Tree\+Type $>$}}
+
+
+\doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} is a wrapper class for most \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} types.  
+
+
+
+
+Inheritance diagram for R\+S\+Wrapper$<$ Tree\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=171pt]{classmlpack_1_1range_1_1RSWrapper__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ R\+S\+Wrapper} (const bool single\+Mode, const bool naive)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} object. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+R\+S\+Wrapper} ()
+\begin{DoxyCompactList}\small\item\em Destruct the \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} (nothing to do). \end{DoxyCompactList}\item 
+virtual \textbf{ R\+S\+Wrapper} $\ast$ \textbf{ Clone} () const
+\begin{DoxyCompactList}\small\item\em Create a new \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} that is the same as this one. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Get the dataset. \end{DoxyCompactList}\item 
+bool \textbf{ Naive} () const
+\begin{DoxyCompactList}\small\item\em Get whether naive search is being used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Naive} ()
+\begin{DoxyCompactList}\small\item\em Modify whether naive search is being used. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (arma\+::mat \&\&query\+Set, const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Perform bichromatic range search (i.\+e. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances)
+\begin{DoxyCompactList}\small\item\em Perform monochromatic range search (i.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} model. \end{DoxyCompactList}\item 
+bool \textbf{ Single\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Get whether single-\/tree search is being used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify whether single-\/tree search is being used. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Train the model (build the reference tree if needed). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ Range\+Search}$<$ \textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type $>$ \textbf{ R\+S\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ R\+S\+Type} \textbf{ rs}
+\begin{DoxyCompactList}\small\item\em The instantiated \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} object that we are wrapping. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$\newline
+class mlpack\+::range\+::\+R\+S\+Wrapper$<$ Tree\+Type $>$}
+
+\doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} is a wrapper class for most \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} types. 
+
+Definition at line 86 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_ab9397958488bbe4e474b155d36e992a0}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!R\+S\+Type@{R\+S\+Type}}
+\index{R\+S\+Type@{R\+S\+Type}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{R\+S\+Type}
+{\footnotesize\ttfamily typedef \textbf{ Range\+Search}$<$\textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type$>$ \textbf{ R\+S\+Type}\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 143 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a38b7562aad750f7908c3a488cb7610f5}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!R\+S\+Wrapper@{R\+S\+Wrapper}}
+\index{R\+S\+Wrapper@{R\+S\+Wrapper}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{R\+S\+Wrapper()}
+{\footnotesize\ttfamily \textbf{ R\+S\+Wrapper} (\begin{DoxyParamCaption}\item[{const bool}]{single\+Mode,  }\item[{const bool}]{naive }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} object. 
+
+
+
+Definition at line 90 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a8de0259aa7d469f236f7523eadf0da99}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!````~R\+S\+Wrapper@{$\sim$\+R\+S\+Wrapper}}
+\index{````~R\+S\+Wrapper@{$\sim$\+R\+S\+Wrapper}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{$\sim$\+R\+S\+Wrapper()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ R\+S\+Wrapper} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destruct the \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} (nothing to do). 
+
+
+
+Definition at line 101 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a84a6ccc6add7d5bf6a055fb02d16a375}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Clone@{Clone}}
+\index{Clone@{Clone}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ R\+S\+Wrapper}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Create a new \doxyref{R\+S\+Wrapper}{p.}{classmlpack_1_1range_1_1RSWrapper} that is the same as this one. 
+
+This function will properly handle polymorphism. 
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a94063ea7b8e448ead466995134bac09d}.
+
+
+
+Reimplemented in \textbf{ Leaf\+Size\+R\+S\+Wrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1range_1_1LeafSizeRSWrapper_adaf440057041622abd2d1d527b627d25}.
+
+
+
+Definition at line 98 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_aff320b9a86b77a150e630c01d5888273}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get the dataset. 
+
+
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a2effd31755e4ae5f85e14ed94e7fab8e}.
+
+
+
+Definition at line 104 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a343230e7d7344e3f7d5f5f2eb89cf2c5}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get whether naive search is being used. 
+
+
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a76bdb2e751927f38210e7111c15cba08}.
+
+
+
+Definition at line 112 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_af7d397adca3f411b4e2d2f977b280ce6}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Modify whether naive search is being used. 
+
+
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_af7b975b8b5777ab38621d5d7ccd90aae}.
+
+
+
+Definition at line 114 of file rs\+\_\+model.\+hpp.
+
+
+
+References R\+S\+Wrapper\+Base\+::\+Search(), and R\+S\+Wrapper\+Base\+::\+Train().
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a8113f151289737cd35dd9eaf38e32eb8}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const math\+::\+Range \&}]{range,  }\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Perform bichromatic range search (i.\+e. 
+
+a search with a separate query set). This ignores the leaf size. 
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a2b6da2dcc42f52a690dade0749453fdc}.
+
+
+
+Reimplemented in \textbf{ Leaf\+Size\+R\+S\+Wrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1range_1_1LeafSizeRSWrapper_a0b90d9dc1269d8b8f186e6053b12fbe3}.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_af3b8f6601dfb1c6fff4d3fc554eea5c4}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{const math\+::\+Range \&}]{range,  }\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Perform monochromatic range search (i.\+e. 
+
+a search with the reference set as the query set). 
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a6dbe6c455e8b22c78913c91fb8f7f5cf}.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} model. 
+
+
+
+Definition at line 137 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_a7477b3e8499a6158bbe177e7f30d4947}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get whether single-\/tree search is being used. 
+
+
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a66d221dd25418821f76bb66bd9c98bce}.
+
+
+
+Definition at line 107 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_adadacd63ddeadf138d834b1fdc632773}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Modify whether single-\/tree search is being used. 
+
+
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_a5e231427eaa7eeb695cfd1b324858dfb}.
+
+
+
+Definition at line 109 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_aab4ee663331b914daad05f6f7c22ee9b}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Train the model (build the reference tree if needed). 
+
+This ignores the leaf size. 
+
+Implements \textbf{ R\+S\+Wrapper\+Base} \doxyref{}{p.}{classmlpack_1_1range_1_1RSWrapperBase_aed03cfde627d1e971acb1d36d9abd29c}.
+
+
+
+Reimplemented in \textbf{ Leaf\+Size\+R\+S\+Wrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1range_1_1LeafSizeRSWrapper_a6804dc4af719ba3162ad5f15dbe5553d}.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSWrapper_ab0014108c4cd07c4515c4160814f693b}} 
+\index{mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}!rs@{rs}}
+\index{rs@{rs}!mlpack\+::range\+::\+R\+S\+Wrapper@{mlpack\+::range\+::\+R\+S\+Wrapper}}
+\subsubsection{rs}
+{\footnotesize\ttfamily \textbf{ R\+S\+Type} rs\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The instantiated \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} object that we are wrapping. 
+
+
+
+Definition at line 146 of file rs\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/range\+\_\+search/\textbf{ rs\+\_\+model.\+hpp}\end{DoxyCompactItemize}

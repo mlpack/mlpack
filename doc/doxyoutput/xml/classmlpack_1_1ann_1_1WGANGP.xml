@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1WGANGP" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::WGANGP</compoundname>
+    <includes refid="gan__policies_8hpp" local="no">gan_policies.hpp</includes>
+    <briefdescription>
+<para>For more information, see the following paper: </para>    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@article{Gulrajani17,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Ishaan<sp/>Gulrajani,<sp/>Faruk<sp/>Ahmed,<sp/>Martin<sp/>Arjovsky,<sp/>Vincent</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Dumoulin<sp/>and<sp/>Aaron<sp/>Courville},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Improved<sp/>Training<sp/>of<sp/>Wasserstein<sp/>GANs},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2017},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1704.00028},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1704.00028},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan_policies.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan_policies.hpp" bodystart="79" bodyend="79"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

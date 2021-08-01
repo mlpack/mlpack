@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1NormalDistribution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::NormalDistribution</compoundname>
+    <includes refid="normal__distribution_8hpp" local="no">normal_distribution.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename DataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NormalDistribution_1ae96ce80afef41469f6939e6f0bf9c53a" prot="private" static="no" mutable="no">
+        <type>DataType</type>
+        <definition>DataType mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Mean of the distribution. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NormalDistribution_1a63d01f5f13e54a2b2283e5840ad8474c" prot="private" static="no" mutable="no">
+        <type>DataType</type>
+        <definition>DataType sigma</definition>
+        <argsstring></argsstring>
+        <name>sigma</name>
+        <briefdescription>
+<para>Standard deviation of the distribution. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1ab76c4ca0ad20a2d0e3c22c6a1b707571" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NormalDistribution</definition>
+        <argsstring>()</argsstring>
+        <name>NormalDistribution</name>
+        <briefdescription>
+<para>Default constructor, which creates a Normal distribution with zero dimension. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="39" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a7dc8bd49c941fb88043958643d00d6d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NormalDistribution</definition>
+        <argsstring>(const DataType &amp;mean, const DataType &amp;sigma)</argsstring>
+        <name>NormalDistribution</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>mean</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>sigma</declname>
+        </param>
+        <briefdescription>
+<para>Create a Normal distribution with the given mean and sigma. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The mean of the normal distribution. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sigma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The standard deviation of the normal distribution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="47" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Return the dimensionality of this distribution. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="123" bodyend="123"/>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1a65cba07328997659bec80b9879b15a51">NormalDistribution&lt; DataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>DataType</type>
+        <definition>DataType LogProbability</definition>
+        <argsstring>(const DataType &amp;observation) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the log probabilities of the given matrix of observations. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observation matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="64" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" compoundref="normal__distribution_8hpp" startline="97" endline="100">NormalDistribution&lt; DataType &gt;::LogProbability</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" compoundref="normal__distribution_8hpp" startline="54" endline="57">NormalDistribution&lt; DataType &gt;::Probability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogProbability</definition>
+        <argsstring>(const DataType &amp;x, DataType &amp;probabilities) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Calculates the log of normal probability density function for each data point (column) in the given matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observation matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output log probabilities for each input observation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="97" bodyend="100"/>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e">NormalDistribution&lt; DataType &gt;::LogProbability</references>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1a59b1e2962ad6370100f34906d6fddd76">NormalDistribution&lt; DataType &gt;::Sample</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1ad742dbbc903032d3de5036c96942d19c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const DataType &amp;</type>
+        <definition>const DataType&amp; Mean</definition>
+        <argsstring>() const</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Get the mean. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="111" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1ad45f7423a3ba9c77a3a092887709ce59" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>DataType &amp;</type>
+        <definition>DataType&amp; Mean</definition>
+        <argsstring>()</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Modify the mean. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="114" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>DataType</type>
+        <definition>DataType Probability</definition>
+        <argsstring>(const DataType &amp;observation) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the probabilities of the given matrix of observations. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observation matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="54" bodyend="57"/>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e">NormalDistribution&lt; DataType &gt;::LogProbability</references>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1a29775df0ebdfa5da91d4ca3f0fe2543c">NormalDistribution&lt; DataType &gt;::ProbBackward</references>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a6512ca09816d0ae2f7edbeffc8f86b8e" compoundref="normal__distribution_8hpp" startline="85" endline="88">NormalDistribution&lt; DataType &gt;::Probability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a6512ca09816d0ae2f7edbeffc8f86b8e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Probability</definition>
+        <argsstring>(const DataType &amp;x, DataType &amp;probabilities) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Calculates the normal probability density function for each data point (column) in the given matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observation matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output probabilities for each input observation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="85" bodyend="88"/>
+        <references refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" compoundref="normal__distribution_8hpp" startline="54" endline="57">NormalDistribution&lt; DataType &gt;::Probability</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a29775df0ebdfa5da91d4ca3f0fe2543c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProbBackward</definition>
+        <argsstring>(const DataType &amp;observation, DataType &amp;dmu, DataType &amp;dsigma) const</argsstring>
+        <name>ProbBackward</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>dmu</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>dsigma</declname>
+        </param>
+        <briefdescription>
+<para>Stores the gradient of the probabilities of the observations with respect to mean and standard deviation. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observation matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dmu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The gradient with respect to mean. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dsigma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The gradient with respect to the standard deviation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="74" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" compoundref="normal__distribution_8hpp" startline="54" endline="57">NormalDistribution&lt; DataType &gt;::Probability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a59b1e2962ad6370100f34906d6fddd76" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>DataType</type>
+        <definition>DataType Sample</definition>
+        <argsstring>() const</argsstring>
+        <name>Sample</name>
+        <briefdescription>
+<para>Return a randomly generated observation according to the probability distribution defined by this object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Random observation from this Normal distribution. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="108" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" compoundref="normal__distribution_8hpp" startline="97" endline="100">NormalDistribution&lt; DataType &gt;::LogProbability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the distribution. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="129" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1NormalDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" compoundref="normal__distribution_8hpp" startline="123" endline="123">NormalDistribution&lt; DataType &gt;::Dimensionality</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1aa16e7499e9ec471a276dfcad209c4262" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const DataType &amp;</type>
+        <definition>const DataType&amp; StandardDeviation</definition>
+        <argsstring>() const</argsstring>
+        <name>StandardDeviation</name>
+        <briefdescription>
+<para>Get the standard deviation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NormalDistribution_1afdbf13414be377e6b3520205f87f5090" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>DataType &amp;</type>
+        <definition>DataType&amp; StandardDeviation</definition>
+        <argsstring>()</argsstring>
+        <name>StandardDeviation</name>
+        <briefdescription>
+<para>Modify the standard deviation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the Normal Distribution function. </para>    </briefdescription>
+    <detaileddescription>
+<para>Normal distribution is a function which accepts a mean and a standard deviation term and creates a probability distribution out of it.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>DataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data. (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp" bodystart="32" bodyend="137"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1ad742dbbc903032d3de5036c96942d19c" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1ad45f7423a3ba9c77a3a092887709ce59" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1ae96ce80afef41469f6939e6f0bf9c53a" prot="private" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1ab76c4ca0ad20a2d0e3c22c6a1b707571" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>NormalDistribution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a7dc8bd49c941fb88043958643d00d6d1" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>NormalDistribution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a6512ca09816d0ae2f7edbeffc8f86b8e" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a29775df0ebdfa5da91d4ca3f0fe2543c" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>ProbBackward</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a59b1e2962ad6370100f34906d6fddd76" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>Sample</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1a63d01f5f13e54a2b2283e5840ad8474c" prot="private" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>sigma</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1aa16e7499e9ec471a276dfcad209c4262" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>StandardDeviation</name></member>
+      <member refid="classmlpack_1_1ann_1_1NormalDistribution_1afdbf13414be377e6b3520205f87f5090" prot="public" virt="non-virtual"><scope>mlpack::ann::NormalDistribution</scope><name>StandardDeviation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

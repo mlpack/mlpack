@@ -1,0 +1,459 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="greedy__policy_8hpp" kind="file" language="C++">
+    <compoundname>greedy_policy.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="56121">
+        <label>list</label>
+      </node>
+      <node id="56118">
+        <label>atomic</label>
+      </node>
+      <node id="56108">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="56084">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="56120">
+        <label>iomanip</label>
+      </node>
+      <node id="56093">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="56094" relation="include">
+        </childnode>
+        <childnode refid="56096" relation="include">
+        </childnode>
+      </node>
+      <node id="56076">
+        <label>cstdint</label>
+      </node>
+      <node id="56085">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="56092">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="56115">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="56105">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="56072">
+        <label>cmath</label>
+      </node>
+      <node id="56091">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="56080">
+        <label>stdexcept</label>
+      </node>
+      <node id="56100">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="56085" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56086" relation="include">
+        </childnode>
+      </node>
+      <node id="56124">
+        <label>string</label>
+      </node>
+      <node id="56112">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="56113" relation="include">
+        </childnode>
+        <childnode refid="56079" relation="include">
+        </childnode>
+      </node>
+      <node id="56122">
+        <label>map</label>
+      </node>
+      <node id="56074">
+        <label>cfloat</label>
+      </node>
+      <node id="56104">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="56126">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="56088">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="56111">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="56112" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56095" relation="include">
+        </childnode>
+        <childnode refid="56113" relation="include">
+        </childnode>
+      </node>
+      <node id="56101">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="56099">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="56085" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56086" relation="include">
+        </childnode>
+      </node>
+      <node id="56102">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="56085" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56086" relation="include">
+        </childnode>
+      </node>
+      <node id="56090">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="56070">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp</label>
+        <link refid="greedy__policy_8hpp"/>
+        <childnode refid="56071" relation="include">
+        </childnode>
+      </node>
+      <node id="56110">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="56086" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56098" relation="include">
+        </childnode>
+        <childnode refid="56107" relation="include">
+        </childnode>
+      </node>
+      <node id="56114">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="56115" relation="include">
+        </childnode>
+      </node>
+      <node id="56116">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="56071">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="56072" relation="include">
+        </childnode>
+        <childnode refid="56073" relation="include">
+        </childnode>
+        <childnode refid="56074" relation="include">
+        </childnode>
+        <childnode refid="56075" relation="include">
+        </childnode>
+        <childnode refid="56076" relation="include">
+        </childnode>
+        <childnode refid="56077" relation="include">
+        </childnode>
+        <childnode refid="56078" relation="include">
+        </childnode>
+        <childnode refid="56079" relation="include">
+        </childnode>
+        <childnode refid="56080" relation="include">
+        </childnode>
+        <childnode refid="56081" relation="include">
+        </childnode>
+        <childnode refid="56082" relation="include">
+        </childnode>
+        <childnode refid="56083" relation="include">
+        </childnode>
+        <childnode refid="56084" relation="include">
+        </childnode>
+        <childnode refid="56085" relation="include">
+        </childnode>
+        <childnode refid="56086" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56089" relation="include">
+        </childnode>
+        <childnode refid="56090" relation="include">
+        </childnode>
+        <childnode refid="56091" relation="include">
+        </childnode>
+        <childnode refid="56092" relation="include">
+        </childnode>
+        <childnode refid="56093" relation="include">
+        </childnode>
+        <childnode refid="56097" relation="include">
+        </childnode>
+        <childnode refid="56098" relation="include">
+        </childnode>
+        <childnode refid="56099" relation="include">
+        </childnode>
+        <childnode refid="56100" relation="include">
+        </childnode>
+        <childnode refid="56101" relation="include">
+        </childnode>
+        <childnode refid="56102" relation="include">
+        </childnode>
+        <childnode refid="56103" relation="include">
+        </childnode>
+        <childnode refid="56109" relation="include">
+        </childnode>
+        <childnode refid="56110" relation="include">
+        </childnode>
+        <childnode refid="56107" relation="include">
+        </childnode>
+        <childnode refid="56111" relation="include">
+        </childnode>
+        <childnode refid="56114" relation="include">
+        </childnode>
+        <childnode refid="56116" relation="include">
+        </childnode>
+        <childnode refid="56117" relation="include">
+        </childnode>
+        <childnode refid="56126" relation="include">
+        </childnode>
+        <childnode refid="56127" relation="include">
+        </childnode>
+      </node>
+      <node id="56077">
+        <label>cstdio</label>
+      </node>
+      <node id="56081">
+        <label>tuple</label>
+      </node>
+      <node id="56086">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="56103">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="56086" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56090" relation="include">
+        </childnode>
+        <childnode refid="56104" relation="include">
+        </childnode>
+        <childnode refid="56105" relation="include">
+        </childnode>
+        <childnode refid="56106" relation="include">
+        </childnode>
+        <childnode refid="56107" relation="include">
+        </childnode>
+      </node>
+      <node id="56082">
+        <label>utility</label>
+      </node>
+      <node id="56106">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="56097">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="56094">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="56095" relation="include">
+        </childnode>
+      </node>
+      <node id="56117">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56118" relation="include">
+        </childnode>
+        <childnode refid="56119" relation="include">
+        </childnode>
+        <childnode refid="56120" relation="include">
+        </childnode>
+        <childnode refid="56121" relation="include">
+        </childnode>
+        <childnode refid="56122" relation="include">
+        </childnode>
+        <childnode refid="56123" relation="include">
+        </childnode>
+        <childnode refid="56124" relation="include">
+        </childnode>
+        <childnode refid="56125" relation="include">
+        </childnode>
+      </node>
+      <node id="56095">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="56109">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="56107" relation="include">
+        </childnode>
+        <childnode refid="56103" relation="include">
+        </childnode>
+        <childnode refid="56110" relation="include">
+        </childnode>
+      </node>
+      <node id="56078">
+        <label>cstdlib</label>
+      </node>
+      <node id="56073">
+        <label>cctype</label>
+      </node>
+      <node id="56096">
+        <label>unordered_map</label>
+      </node>
+      <node id="56075">
+        <label>climits</label>
+      </node>
+      <node id="56123">
+        <label>mutex</label>
+      </node>
+      <node id="56119">
+        <label>chrono</label>
+      </node>
+      <node id="56127">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="56125">
+        <label>thread</label>
+      </node>
+      <node id="56113">
+        <label>type_traits</label>
+      </node>
+      <node id="56089">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="56083">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="56107">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="56085" relation="include">
+        </childnode>
+        <childnode refid="56086" relation="include">
+        </childnode>
+        <childnode refid="56087" relation="include">
+        </childnode>
+        <childnode refid="56088" relation="include">
+        </childnode>
+        <childnode refid="56108" relation="include">
+        </childnode>
+      </node>
+      <node id="56079">
+        <label>cstring</label>
+      </node>
+      <node id="56098">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="56087">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1GreedyPolicy" prot="public">mlpack::rl::GreedyPolicy</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Shangtong Zhang </para></simplesect>
+<simplesect kind="author"><para>Abhinav Sagar</para></simplesect>
+This file is an implementation of epsilon greedy policy.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_POLICY_GREEDY_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_POLICY_GREEDY_POLICY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType&gt;</highlight></codeline>
+<codeline lineno="31" refid="classmlpack_1_1rl_1_1GreedyPolicy" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1GreedyPolicy" kindref="compound">GreedyPolicy</ref></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1rl_1_1GreedyPolicy_1aaf7b2dc5d49d01961601c7c16be76777" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType::Action;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classmlpack_1_1rl_1_1GreedyPolicy_1a7e04af56c8b5bb57890640e7fcb6b676" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1a7e04af56c8b5bb57890640e7fcb6b676" kindref="member">GreedyPolicy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>initialEpsilon,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>annealInterval,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minEpsilon,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>decayRate<sp/>=<sp/>1.0)<sp/>:</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>epsilon(initialEpsilon),</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>minEpsilon(minEpsilon),</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>delta(((initialEpsilon<sp/>-<sp/>minEpsilon)<sp/>*<sp/>decayRate)<sp/>/<sp/>annealInterval)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="classmlpack_1_1rl_1_1GreedyPolicy_1ab0b01a3a4864c348b0c97ba92bae45c4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1ab0b01a3a4864c348b0c97ba92bae45c4" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/>actionValue,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>deterministic<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isNoisy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>exploration<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" kindref="member">math::Random</ref>();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/>action;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Select<sp/>the<sp/>action<sp/>randomly.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!deterministic<sp/>&amp;&amp;<sp/>exploration<sp/>&lt;<sp/>epsilon<sp/>&amp;&amp;<sp/>isNoisy<sp/>==<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>action.action<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">decltype(action.action)</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" kindref="member">math::RandInt</ref>(ActionType::size));</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Select<sp/>the<sp/>action<sp/>greedily.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>action.action<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">decltype(action.action)</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::as_scalar(arma::find(actionValue<sp/>==<sp/>actionValue.max(),<sp/>1)));</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>action;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1rl_1_1GreedyPolicy_1a280278726ff7d32f2b7eff5c92a1767a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1a280278726ff7d32f2b7eff5c92a1767a" kindref="member">Anneal</ref>()</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>epsilon<sp/>-=<sp/>delta;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>epsilon<sp/>=<sp/>std::max(minEpsilon,<sp/>epsilon);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1rl_1_1GreedyPolicy_1a3ababd597760bb1f9782ad2c17aadb41" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1GreedyPolicy_1a3ababd597760bb1f9782ad2c17aadb41" kindref="member">Epsilon</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>epsilon;<sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>epsilon;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minEpsilon;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delta;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1076 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1MaxPooling" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::MaxPooling</compoundname>
+    <includes refid="max__pooling_8hpp" local="no">max_pooling.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>InputDataType</declname>
+        <defname>InputDataType</defname>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>OutputDataType</declname>
+        <defname>OutputDataType</defname>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1acc8b6b6879b002e34f544046de374ce8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t batchSize</definition>
+        <argsstring></argsstring>
+        <name>batchSize</name>
+        <briefdescription>
+<para>Locally-stored number of input units. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="276" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="291" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>If true use maximum a posteriori during the forward pass. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1af65dfb764f1f675c93f027fa5fb27f3d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool floor</definition>
+        <argsstring></argsstring>
+        <name>floor</name>
+        <briefdescription>
+<para>Rounding operation used. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="248" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="294" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1acff45188c35aab01df4b868ccb60380a" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube gTemp</definition>
+        <argsstring></argsstring>
+        <name>gTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="285" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1aea26aa18334f45fdbe3a4aa156facf69" prot="private" static="no" mutable="no">
+        <type>arma::Mat&lt; size_t &gt;</type>
+        <definition>arma::Mat&lt;size_t&gt; indices</definition>
+        <argsstring></argsstring>
+        <name>indices</name>
+        <briefdescription>
+<para>Locally-stored indices matrix parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="300" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a4e3ae0b00fdb5b9d65834c4027a7d69d" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; indicesCol</definition>
+        <argsstring></argsstring>
+        <name>indicesCol</name>
+        <briefdescription>
+<para>Locally-stored indices column parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="303" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputHeight</definition>
+        <argsstring></argsstring>
+        <name>inputHeight</name>
+        <briefdescription>
+<para>Locally-stored input height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a492e653a89ab30e8bfe15bd81f06f1a6" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube inputTemp</definition>
+        <argsstring></argsstring>
+        <name>inputTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed input parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="282" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a31d1d11207207222fa86f463515dd5dd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputWidth</definition>
+        <argsstring></argsstring>
+        <name>inputWidth</name>
+        <briefdescription>
+<para>Locally-stored input width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inSize</definition>
+        <argsstring></argsstring>
+        <name>inSize</name>
+        <briefdescription>
+<para>Locally-stored number of input channels. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a5edf789e292d666badc50933288c030c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t kernelHeight</definition>
+        <argsstring></argsstring>
+        <name>kernelHeight</name>
+        <briefdescription>
+<para>Locally-stored height of the pooling window. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a56f93caaa26d703cfb801a4c74f839bd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t kernelWidth</definition>
+        <argsstring></argsstring>
+        <name>kernelWidth</name>
+        <briefdescription>
+<para>Locally-stored width of the pooling window. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="236" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputHeight</definition>
+        <argsstring></argsstring>
+        <name>outputHeight</name>
+        <briefdescription>
+<para>Locally-stored output height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="269" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="269" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="297" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="297" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube outputTemp</definition>
+        <argsstring></argsstring>
+        <name>outputTemp</name>
+        <briefdescription>
+<para>Locally-stored output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="279" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputWidth</definition>
+        <argsstring></argsstring>
+        <name>outputWidth</name>
+        <briefdescription>
+<para>Locally-stored output width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outSize</definition>
+        <argsstring></argsstring>
+        <name>outSize</name>
+        <briefdescription>
+<para>Locally-stored number of output channels. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a385d882998760280938497b9b503a01f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1MaxPoolingRule" kindref="compound">MaxPoolingRule</ref></type>
+        <definition>MaxPoolingRule pooling</definition>
+        <argsstring></argsstring>
+        <name>pooling</name>
+        <briefdescription>
+<para>Locally-stored pooling strategy. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="288" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="288" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1afd88bb2a42ae35b4f16d742086b08d7c" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; arma::cube &gt;</type>
+        <definition>std::vector&lt;arma::cube&gt; poolingIndices</definition>
+        <argsstring></argsstring>
+        <name>poolingIndices</name>
+        <briefdescription>
+<para>Locally-stored pooling indicies. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="306" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool reset</definition>
+        <argsstring></argsstring>
+        <name>reset</name>
+        <briefdescription>
+<para>Locally-stored reset parameter used to initialize the module once. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1a01f3c104377154bf5ac87fdbc99b87db" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t strideHeight</definition>
+        <argsstring></argsstring>
+        <name>strideHeight</name>
+        <briefdescription>
+<para>Locally-stored height of the stride operation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="245" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MaxPooling_1aa221493625d4568210be89fee84c909f" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t strideWidth</definition>
+        <argsstring></argsstring>
+        <name>strideWidth</name>
+        <briefdescription>
+<para>Locally-stored width of the stride operation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ab7446375db1d97c81053b313e2e4de83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MaxPooling</definition>
+        <argsstring>()</argsstring>
+        <name>MaxPooling</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1MaxPooling" kindref="compound">MaxPooling</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="56" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ad2ae94f85babedc257143c11a0dfe5c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MaxPooling</definition>
+        <argsstring>(const size_t kernelWidth, const size_t kernelHeight, const size_t strideWidth=1, const size_t strideHeight=1, const bool floor=true)</argsstring>
+        <name>MaxPooling</name>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelHeight</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideWidth</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideHeight</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>floor</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1MaxPooling" kindref="compound">MaxPooling</ref> object using the specified number of units. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>kernelWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the pooling window. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernelHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Height of the pooling window. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the stride operation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the stride operation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>floor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rounding operator (floor or ceil). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="67" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="93" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a1590f28691f13bf27566777c35e2296c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const OutputDataType &amp;</type>
+        <definition>const OutputDataType&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="159" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1aee7cef4ac0fc707cacc7204f86bc9988" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Floor</definition>
+        <argsstring>() const</argsstring>
+        <name>Floor</name>
+        <briefdescription>
+<para>Get the value of the rounding operation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a8859ce7b4be2b8ffbf36bbc8ff16aecd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Floor</definition>
+        <argsstring>()</argsstring>
+        <name>Floor</name>
+        <briefdescription>
+<para>Modify the value of the rounding operation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="156" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="81" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ac34354aab4ed6f9145908b19eade6a24" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Get the input height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1aefbba724eec397a928d5460bb209a360" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Modify the input height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InputSize</name>
+        <briefdescription>
+<para>Get the input size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a432efdff77411903044ae87ec3aec70f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Get the input width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a238e9d308df611a9300a4ca6756fef4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Modify the input width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a6c15e2e3416651fac44621acbbdac9e9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t KernelHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>KernelHeight</name>
+        <briefdescription>
+<para>Get the kernel height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a46b2c28d89959067f549f9f45d2626c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; KernelHeight</definition>
+        <argsstring>()</argsstring>
+        <name>KernelHeight</name>
+        <briefdescription>
+<para>Modify the kernel height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="141" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a656302bc9b300692aa71abe2a614c7b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t KernelWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>KernelWidth</name>
+        <briefdescription>
+<para>Get the kernel width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a5fbae452ceda395f5566833e06ba3615" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; KernelWidth</definition>
+        <argsstring>()</argsstring>
+        <name>KernelWidth</name>
+        <briefdescription>
+<para>Modify the kernel width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Get the output height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Modify the output height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a0d51eabd0467ab5261d828a6cb0cd94e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const OutputDataType &amp;</type>
+        <definition>const OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputSize</name>
+        <briefdescription>
+<para>Get the output size. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1aa2b647f9e029826314b4f572fe96878d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Get the output width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Modify the output width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="170" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a1894b819a7ff82a5576fc8deb8ba7457" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StrideHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>StrideHeight</name>
+        <briefdescription>
+<para>Get the stride height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="149" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a0dd3de9c8a9060e927c575b57a021e8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; StrideHeight</definition>
+        <argsstring>()</argsstring>
+        <name>StrideHeight</name>
+        <briefdescription>
+<para>Modify the stride height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="151" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1ad8fd9eb6de956c3e9d82242793fd2db1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StrideWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>StrideWidth</name>
+        <briefdescription>
+<para>Get the stride width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="144" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="144" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1af40557db9372b513440e06a5e42cc599" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; StrideWidth</definition>
+        <argsstring>()</argsstring>
+        <name>StrideWidth</name>
+        <briefdescription>
+<para>Modify the stride width. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="146" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get the size of the weights. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a11879612856e37217d4fa97c58916c7b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void PoolingOperation</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output, arma::Mat&lt; eT &gt; &amp;poolingIndices)</argsstring>
+        <name>PoolingOperation</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>poolingIndices</declname>
+        </param>
+        <briefdescription>
+<para>Apply pooling to the input and store the results. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input to be apply the pooling rule. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled result. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>poolingIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled indices. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="181" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MaxPooling_1a4b4430055a869df66a068f74ea56bfcc" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Unpooling</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;output, arma::Mat&lt; eT &gt; &amp;poolingIndices)</argsstring>
+        <name>Unpooling</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>poolingIndices</declname>
+        </param>
+        <briefdescription>
+<para>Apply unpooling to the input and store the results. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backward error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled result. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>poolingIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled indices. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="225" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="225" bodyend="233"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1MaxPooling" kindref="compound">MaxPooling</ref> layer. </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/max_pooling.hpp" bodystart="52" bodyend="307"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1acc8b6b6879b002e34f544046de374ce8" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>batchSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a1590f28691f13bf27566777c35e2296c" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a9f4103707f4d199ce5594d239b60443e" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1aee7cef4ac0fc707cacc7204f86bc9988" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Floor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a8859ce7b4be2b8ffbf36bbc8ff16aecd" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Floor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1af65dfb764f1f675c93f027fa5fb27f3d" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>floor</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1acff45188c35aab01df4b868ccb60380a" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>gTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1aea26aa18334f45fdbe3a4aa156facf69" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>indices</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a4e3ae0b00fdb5b9d65834c4027a7d69d" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>indicesCol</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>inputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ac34354aab4ed6f9145908b19eade6a24" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1aefbba724eec397a928d5460bb209a360" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>InputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a492e653a89ab30e8bfe15bd81f06f1a6" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>inputTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a31d1d11207207222fa86f463515dd5dd" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>inputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a432efdff77411903044ae87ec3aec70f" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a238e9d308df611a9300a4ca6756fef4d" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad8790e1135ba331e561e2151f527a9d7" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>inSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a5edf789e292d666badc50933288c030c" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>kernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a6c15e2e3416651fac44621acbbdac9e9" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>KernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a46b2c28d89959067f549f9f45d2626c5" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>KernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a656302bc9b300692aa71abe2a614c7b1" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>KernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a5fbae452ceda395f5566833e06ba3615" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>KernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a56f93caaa26d703cfb801a4c74f839bd" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>kernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ab7446375db1d97c81053b313e2e4de83" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>MaxPooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad2ae94f85babedc257143c11a0dfe5c9" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>MaxPooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>outputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a0d51eabd0467ab5261d828a6cb0cd94e" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>outputTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1aa2b647f9e029826314b4f572fe96878d" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>outputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>outSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a385d882998760280938497b9b503a01f" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>pooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1afd88bb2a42ae35b4f16d742086b08d7c" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>poolingIndices</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a11879612856e37217d4fa97c58916c7b" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>PoolingOperation</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a01f3c104377154bf5ac87fdbc99b87db" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>strideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a1894b819a7ff82a5576fc8deb8ba7457" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>StrideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a0dd3de9c8a9060e927c575b57a021e8b" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>StrideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1aa221493625d4568210be89fee84c909f" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>strideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1ad8fd9eb6de956c3e9d82242793fd2db1" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>StrideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1af40557db9372b513440e06a5e42cc599" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>StrideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a4b4430055a869df66a068f74ea56bfcc" prot="private" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>Unpooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1MaxPooling_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::MaxPooling</scope><name>WeightSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

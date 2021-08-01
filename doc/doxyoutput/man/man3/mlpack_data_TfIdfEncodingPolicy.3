@@ -1,0 +1,327 @@
+.TH "TfIdfEncodingPolicy" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TfIdfEncodingPolicy \- Definition of the \fBTfIdfEncodingPolicy\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBTfTypes\fP { \fBBINARY\fP, \fBRAW_COUNT\fP, \fBTERM_FREQUENCY\fP, \fBSUBLINEAR_TF\fP }
+.RI "Enum class used to identify the type of the term frequency statistics\&. ""
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTfIdfEncodingPolicy\fP (const \fBTfTypes\fP tfType=\fBTfTypes::RAW_COUNT\fP, const bool smoothIdf=true)"
+.br
+.RI "Construct this using the term frequency type and the inverse document frequency type\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBEncode\fP (MatType &output, const size_t value, const size_t line, const size_t)"
+.br
+.RI "The function performs the TfIdf encoding algorithm i\&.e\&. "
+.ti -1c
+.RI "template<typename ElemType > void \fBEncode\fP (std::vector< std::vector< ElemType >> &output, const size_t value, const size_t line, const size_t)"
+.br
+.RI "The function performs the TfIdf encoding algorithm i\&.e\&. "
+.ti -1c
+.RI "const std::vector< size_t > & \fBLinesSizes\fP () const"
+.br
+.RI "Return the lines sizes\&. "
+.ti -1c
+.RI "std::vector< size_t > & \fBLinesSizes\fP ()"
+.br
+.RI "Modify the lines sizes\&. "
+.ti -1c
+.RI "const std::unordered_map< size_t, size_t > & \fBNumContainingStrings\fP () const"
+.br
+.RI "Get the number of containing strings depending on the given token\&. "
+.ti -1c
+.RI "std::unordered_map< size_t, size_t > & \fBNumContainingStrings\fP ()"
+.br
+.RI "Modify the number of containing strings depending on the given token\&. "
+.ti -1c
+.RI "void \fBPreprocessToken\fP (const size_t line, const size_t, const size_t value)"
+.br
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Clear the necessary internal variables\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the class to the given archive\&. "
+.ti -1c
+.RI "bool \fBSmoothIdf\fP () const"
+.br
+.RI "Determine the idf algorithm type (whether it's smooth or not)\&. "
+.ti -1c
+.RI "bool & \fBSmoothIdf\fP ()"
+.br
+.RI "Modify the idf algorithm type (whether it's smooth or not)\&. "
+.ti -1c
+.RI "\fBTfTypes\fP \fBTfType\fP () const"
+.br
+.RI "Return the term frequency type\&. "
+.ti -1c
+.RI "\fBTfTypes\fP & \fBTfType\fP ()"
+.br
+.RI "Modify the term frequency type\&. "
+.ti -1c
+.RI "const std::vector< std::unordered_map< size_t, size_t > > & \fBTokensFrequences\fP () const"
+.br
+.RI "Return token frequencies\&. "
+.ti -1c
+.RI "std::vector< std::unordered_map< size_t, size_t > > & \fBTokensFrequences\fP ()"
+.br
+.RI "Modify token frequencies\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > static void \fBInitMatrix\fP (MatType &output, const size_t datasetSize, const size_t, const size_t dictionarySize)"
+.br
+.RI "The function initializes the output matrix\&. "
+.ti -1c
+.RI "template<typename ElemType > static void \fBInitMatrix\fP (std::vector< std::vector< ElemType >> &output, const size_t datasetSize, const size_t, const size_t dictionarySize)"
+.br
+.RI "The function initializes the output matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition of the \fBTfIdfEncodingPolicy\fP class\&. 
+
+\fBTfIdfEncodingPolicy\fP is used as a helper class for \fBStringEncoding\fP\&.
+.PP
+Tf-idf is a weighting scheme that takes into account the importance of encoded tokens\&. The tf-idf statistics is equal to term frequency (tf) multiplied by inverse document frequency (idf)\&. The encoder assigns the corresponding tf-idf value to each token\&. The order in which the tokens are labeled is defined by the dictionary used by the \fBStringEncoding\fP class\&. The encoder writes data either in the column-major order or in the row-major order depending on the output data type\&. 
+.PP
+Definition at line 35 of file tf_idf_encoding_policy\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBTfTypes\fP\fC [strong]\fP"
+
+.PP
+Enum class used to identify the type of the term frequency statistics\&. The present implementation supports the following types: BINARY Term frequency equals 1 if the row contains the encoded token and 0 otherwise\&. RAW_COUNT Term frequency equals the number of times when the encoded token occurs in the row\&. TERM_FREQUENCY Term frequency equals the number of times when the encoded token occurs in the row divided by the total number of tokens in the row\&. SUBLINEAR_TF Term frequency equals $ 1 + log(rawCount), $ where rawCount is equal to the number of times when the encoded token occurs in the row\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIBINARY \fP\fP
+.TP
+\fB\fIRAW_COUNT \fP\fP
+.TP
+\fB\fITERM_FREQUENCY \fP\fP
+.TP
+\fB\fISUBLINEAR_TF \fP\fP
+.PP
+Definition at line 53 of file tf_idf_encoding_policy\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBTfIdfEncodingPolicy\fP (const \fBTfTypes\fP tfType = \fC\fBTfTypes::RAW_COUNT\fP\fP, const bool smoothIdf = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Construct this using the term frequency type and the inverse document frequency type\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItfType\fP Type of the term frequency statistics\&. 
+.br
+\fIsmoothIdf\fP Used to indicate whether to use smooth idf or not\&. If idf is smooth it's calculated by the following formula: $ idf(T) = \log \frac{1 + N}{1 + df(T)} + 1, $ where $ N $ is the total number of strings in the document, $ T $ is the current encoded token, $ df(T) $ equals the number of strings which contain the token\&. If idf isn't smooth then the following rule applies: $ idf(T) = \log \frac{N}{df(T)} + 1. $ 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file tf_idf_encoding_policy\&.hpp\&.
+.PP
+Referenced by TfIdfEncodingPolicy::serialize()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Encode (MatType & output, const size_t value, const size_t line, const size_t)\fC [inline]\fP"
+
+.PP
+The function performs the TfIdf encoding algorithm i\&.e\&. it writes the encoded token to the output\&. The encoder writes data in the column-major order\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP The output matrix type\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutput\fP Output matrix to store the encoded results (sp_mat or mat)\&. 
+.br
+\fIvalue\fP The encoded token\&. 
+.br
+\fIline\fP The line number at which the encoding is performed\&. 
+.br
+\fI*\fP (index) The token index in the line\&. 
+.RE
+.PP
+
+.PP
+Definition at line 148 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "void Encode (std::vector< std::vector< ElemType >> & output, const size_t value, const size_t line, const size_t)\fC [inline]\fP"
+
+.PP
+The function performs the TfIdf encoding algorithm i\&.e\&. it writes the encoded token to the output\&. The encoder writes data in the row-major order\&.
+.PP
+Overloaded function to accept vector<vector<ElemType>> as the output type\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIElemType\fP Type of the output values\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutput\fP Output matrix to store the encoded results\&. 
+.br
+\fIvalue\fP The encoded token\&. 
+.br
+\fIline\fP The line number at which the encoding is performed\&. 
+.br
+\fI*\fP (index) The token index in the line\&. 
+.RE
+.PP
+
+.PP
+Definition at line 180 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "static void InitMatrix (MatType & output, const size_t datasetSize, const size_t, const size_t dictionarySize)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The function initializes the output matrix\&. The encoder writes data in the row-major order\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP The output matrix type\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutput\fP Output matrix to store the encoded results (sp_mat or mat)\&. 
+.br
+\fIdatasetSize\fP The number of strings in the input dataset\&. 
+.br
+\fI*\fP (maxNumTokens) The maximum number of tokens in the strings of the input dataset (not used)\&. 
+.br
+\fIdictionarySize\fP The size of the dictionary\&. 
+.RE
+.PP
+
+.PP
+Definition at line 104 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "static void InitMatrix (std::vector< std::vector< ElemType >> & output, const size_t datasetSize, const size_t, const size_t dictionarySize)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The function initializes the output matrix\&. The encoder writes data in the row-major order\&.
+.PP
+Overloaded function to save the result in vector<vector<ElemType>>\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIElemType\fP Type of the output values\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutput\fP Output matrix to store the encoded results\&. 
+.br
+\fIdatasetSize\fP The number of strings in the input dataset\&. 
+.br
+\fI*\fP (maxNumTokens) The maximum number of tokens in the strings of the input dataset (not used)\&. 
+.br
+\fIdictionarySize\fP The size of the dictionary\&. 
+.RE
+.PP
+
+.PP
+Definition at line 127 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "const std::vector<size_t>& LinesSizes () const\fC [inline]\fP"
+
+.PP
+Return the lines sizes\&. 
+.PP
+Definition at line 242 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "std::vector<size_t>& LinesSizes ()\fC [inline]\fP"
+
+.PP
+Modify the lines sizes\&. 
+.PP
+Definition at line 244 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "const std::unordered_map<size_t, size_t>& NumContainingStrings () const\fC [inline]\fP"
+
+.PP
+Get the number of containing strings depending on the given token\&. 
+.PP
+Definition at line 230 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "std::unordered_map<size_t, size_t>& NumContainingStrings ()\fC [inline]\fP"
+
+.PP
+Modify the number of containing strings depending on the given token\&. 
+.PP
+Definition at line 236 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "void PreprocessToken (const size_t line, const size_t, const size_t value)\fC [inline]\fP"
+
+.PP
+Definition at line 202 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "void Reset ()\fC [inline]\fP"
+
+.PP
+Clear the necessary internal variables\&. 
+.PP
+Definition at line 84 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the class to the given archive\&. 
+.PP
+Definition at line 260 of file tf_idf_encoding_policy\&.hpp\&.
+.PP
+References TfIdfEncodingPolicy::BINARY, TfIdfEncodingPolicy::RAW_COUNT, TfIdfEncodingPolicy::SUBLINEAR_TF, TfIdfEncodingPolicy::TERM_FREQUENCY, and TfIdfEncodingPolicy::TfIdfEncodingPolicy()\&.
+.SS "bool SmoothIdf () const\fC [inline]\fP"
+
+.PP
+Determine the idf algorithm type (whether it's smooth or not)\&. 
+.PP
+Definition at line 252 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "bool& SmoothIdf ()\fC [inline]\fP"
+
+.PP
+Modify the idf algorithm type (whether it's smooth or not)\&. 
+.PP
+Definition at line 254 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "\fBTfTypes\fP TfType () const\fC [inline]\fP"
+
+.PP
+Return the term frequency type\&. 
+.PP
+Definition at line 247 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "\fBTfTypes\fP& TfType ()\fC [inline]\fP"
+
+.PP
+Modify the term frequency type\&. 
+.PP
+Definition at line 249 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "const std::vector<std::unordered_map<size_t, size_t> >& TokensFrequences () const\fC [inline]\fP"
+
+.PP
+Return token frequencies\&. 
+.PP
+Definition at line 222 of file tf_idf_encoding_policy\&.hpp\&.
+.SS "std::vector<std::unordered_map<size_t, size_t> >& TokensFrequences ()\fC [inline]\fP"
+
+.PP
+Modify token frequencies\&. 
+.PP
+Definition at line 224 of file tf_idf_encoding_policy\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

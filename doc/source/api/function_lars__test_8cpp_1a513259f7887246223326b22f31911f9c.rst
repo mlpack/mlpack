@@ -1,0 +1,13 @@
+.. _exhale_function_lars__test_8cpp_1a513259f7887246223326b22f31911f9c:
+
+Function LARSVerifyCorrectness
+==============================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_lars_test.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: LARSVerifyCorrectness(arma::vec, arma::vec, double)

@@ -1,0 +1,509 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="softmax__regression_8hpp" kind="file" language="C++">
+    <compoundname>softmax_regression.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="no">ensmallen.hpp</includes>
+    <includes refid="softmax__regression__function_8hpp" local="yes">softmax_regression_function.hpp</includes>
+    <includes local="yes">softmax_regression_impl.hpp</includes>
+    <incdepgraph>
+      <node id="57597">
+        <label>list</label>
+      </node>
+      <node id="57594">
+        <label>atomic</label>
+      </node>
+      <node id="57584">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="57560">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="57596">
+        <label>iomanip</label>
+      </node>
+      <node id="57569">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="57570" relation="include">
+        </childnode>
+        <childnode refid="57572" relation="include">
+        </childnode>
+      </node>
+      <node id="57552">
+        <label>cstdint</label>
+      </node>
+      <node id="57561">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="57568">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="57591">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="57581">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="57548">
+        <label>cmath</label>
+      </node>
+      <node id="57567">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="57556">
+        <label>stdexcept</label>
+      </node>
+      <node id="57576">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="57561" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57562" relation="include">
+        </childnode>
+      </node>
+      <node id="57600">
+        <label>string</label>
+      </node>
+      <node id="57588">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="57589" relation="include">
+        </childnode>
+        <childnode refid="57555" relation="include">
+        </childnode>
+      </node>
+      <node id="57598">
+        <label>map</label>
+      </node>
+      <node id="57550">
+        <label>cfloat</label>
+      </node>
+      <node id="57580">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="57602">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="57564">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="57587">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="57588" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57571" relation="include">
+        </childnode>
+        <childnode refid="57589" relation="include">
+        </childnode>
+      </node>
+      <node id="57577">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="57575">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="57561" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57562" relation="include">
+        </childnode>
+      </node>
+      <node id="57578">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="57561" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57562" relation="include">
+        </childnode>
+      </node>
+      <node id="57566">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="57586">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="57562" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57574" relation="include">
+        </childnode>
+        <childnode refid="57583" relation="include">
+        </childnode>
+      </node>
+      <node id="57590">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="57591" relation="include">
+        </childnode>
+      </node>
+      <node id="57592">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="57547">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="57548" relation="include">
+        </childnode>
+        <childnode refid="57549" relation="include">
+        </childnode>
+        <childnode refid="57550" relation="include">
+        </childnode>
+        <childnode refid="57551" relation="include">
+        </childnode>
+        <childnode refid="57552" relation="include">
+        </childnode>
+        <childnode refid="57553" relation="include">
+        </childnode>
+        <childnode refid="57554" relation="include">
+        </childnode>
+        <childnode refid="57555" relation="include">
+        </childnode>
+        <childnode refid="57556" relation="include">
+        </childnode>
+        <childnode refid="57557" relation="include">
+        </childnode>
+        <childnode refid="57558" relation="include">
+        </childnode>
+        <childnode refid="57559" relation="include">
+        </childnode>
+        <childnode refid="57560" relation="include">
+        </childnode>
+        <childnode refid="57561" relation="include">
+        </childnode>
+        <childnode refid="57562" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57565" relation="include">
+        </childnode>
+        <childnode refid="57566" relation="include">
+        </childnode>
+        <childnode refid="57567" relation="include">
+        </childnode>
+        <childnode refid="57568" relation="include">
+        </childnode>
+        <childnode refid="57569" relation="include">
+        </childnode>
+        <childnode refid="57573" relation="include">
+        </childnode>
+        <childnode refid="57574" relation="include">
+        </childnode>
+        <childnode refid="57575" relation="include">
+        </childnode>
+        <childnode refid="57576" relation="include">
+        </childnode>
+        <childnode refid="57577" relation="include">
+        </childnode>
+        <childnode refid="57578" relation="include">
+        </childnode>
+        <childnode refid="57579" relation="include">
+        </childnode>
+        <childnode refid="57585" relation="include">
+        </childnode>
+        <childnode refid="57586" relation="include">
+        </childnode>
+        <childnode refid="57583" relation="include">
+        </childnode>
+        <childnode refid="57587" relation="include">
+        </childnode>
+        <childnode refid="57590" relation="include">
+        </childnode>
+        <childnode refid="57592" relation="include">
+        </childnode>
+        <childnode refid="57593" relation="include">
+        </childnode>
+        <childnode refid="57602" relation="include">
+        </childnode>
+        <childnode refid="57603" relation="include">
+        </childnode>
+      </node>
+      <node id="57553">
+        <label>cstdio</label>
+      </node>
+      <node id="57557">
+        <label>tuple</label>
+      </node>
+      <node id="57562">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="57579">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="57562" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57566" relation="include">
+        </childnode>
+        <childnode refid="57580" relation="include">
+        </childnode>
+        <childnode refid="57581" relation="include">
+        </childnode>
+        <childnode refid="57582" relation="include">
+        </childnode>
+        <childnode refid="57583" relation="include">
+        </childnode>
+      </node>
+      <node id="57605">
+        <label>softmax_regression_function.hpp</label>
+        <link refid="softmax__regression__function_8hpp"/>
+        <childnode refid="57547" relation="include">
+        </childnode>
+      </node>
+      <node id="57558">
+        <label>utility</label>
+      </node>
+      <node id="57582">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="57573">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="57606">
+        <label>softmax_regression_impl.hpp</label>
+      </node>
+      <node id="57546">
+        <label>/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression.hpp</label>
+        <link refid="softmax__regression_8hpp"/>
+        <childnode refid="57547" relation="include">
+        </childnode>
+        <childnode refid="57604" relation="include">
+        </childnode>
+        <childnode refid="57605" relation="include">
+        </childnode>
+        <childnode refid="57606" relation="include">
+        </childnode>
+      </node>
+      <node id="57570">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="57571" relation="include">
+        </childnode>
+      </node>
+      <node id="57593">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="57594" relation="include">
+        </childnode>
+        <childnode refid="57595" relation="include">
+        </childnode>
+        <childnode refid="57596" relation="include">
+        </childnode>
+        <childnode refid="57597" relation="include">
+        </childnode>
+        <childnode refid="57598" relation="include">
+        </childnode>
+        <childnode refid="57599" relation="include">
+        </childnode>
+        <childnode refid="57600" relation="include">
+        </childnode>
+        <childnode refid="57601" relation="include">
+        </childnode>
+      </node>
+      <node id="57571">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="57585">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="57583" relation="include">
+        </childnode>
+        <childnode refid="57579" relation="include">
+        </childnode>
+        <childnode refid="57586" relation="include">
+        </childnode>
+      </node>
+      <node id="57554">
+        <label>cstdlib</label>
+      </node>
+      <node id="57549">
+        <label>cctype</label>
+      </node>
+      <node id="57572">
+        <label>unordered_map</label>
+      </node>
+      <node id="57551">
+        <label>climits</label>
+      </node>
+      <node id="57599">
+        <label>mutex</label>
+      </node>
+      <node id="57595">
+        <label>chrono</label>
+      </node>
+      <node id="57603">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="57601">
+        <label>thread</label>
+      </node>
+      <node id="57589">
+        <label>type_traits</label>
+      </node>
+      <node id="57565">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="57559">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="57583">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="57561" relation="include">
+        </childnode>
+        <childnode refid="57562" relation="include">
+        </childnode>
+        <childnode refid="57563" relation="include">
+        </childnode>
+        <childnode refid="57564" relation="include">
+        </childnode>
+        <childnode refid="57584" relation="include">
+        </childnode>
+      </node>
+      <node id="57555">
+        <label>cstring</label>
+      </node>
+      <node id="57574">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="57604">
+        <label>ensmallen.hpp</label>
+      </node>
+      <node id="57563">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1regression_1_1SoftmaxRegression" prot="public">mlpack::regression::SoftmaxRegression</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1regression">mlpack::regression</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Siddharth Agrawal</para></simplesect>
+An implementation of softmax regression.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ensmallen.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="softmax__regression__function_8hpp" kindref="compound">softmax_regression_function.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">regression<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="classmlpack_1_1regression_1_1SoftmaxRegression" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression" kindref="compound">SoftmaxRegression</ref></highlight></codeline>
+<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1ac58494dce3a8588ef3eab8a2a768a9b7" kindref="member">SoftmaxRegression</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>inputSize<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OptimizerType<sp/>=<sp/>ens::L_BFGS&gt;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1ac58494dce3a8588ef3eab8a2a768a9b7" kindref="member">SoftmaxRegression</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.0001,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OptimizerType<sp/>optimizer<sp/>=<sp/>OptimizerType());</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OptimizerType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>CallbackTypes&gt;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1ac58494dce3a8588ef3eab8a2a768a9b7" kindref="member">SoftmaxRegression</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OptimizerType<sp/>optimizer,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CallbackTypes&amp;&amp;...<sp/>callbacks);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a25d8b43bbbdabff816a6769ab7b35557" kindref="member">Classify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset,<sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a25d8b43bbbdabff816a6769ab7b35557" kindref="member">Classify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a25d8b43bbbdabff816a6769ab7b35557" kindref="member">Classify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>probabilities)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a25d8b43bbbdabff816a6769ab7b35557" kindref="member">Classify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>probabilities)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1af5c25234688c75c84a65607e820985d1" kindref="member">ComputeAccuracy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>testData,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OptimizerType<sp/>=<sp/>ens::L_BFGS&gt;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a38907cc8f0a90a02d12c7675a49dc924" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OptimizerType<sp/>optimizer<sp/>=<sp/>OptimizerType());</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OptimizerType<sp/>=<sp/>ens::L_BFGS,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>CallbackTypes&gt;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a38907cc8f0a90a02d12c7675a49dc924" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>OptimizerType<sp/>optimizer,</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CallbackTypes&amp;&amp;...<sp/>callbacks);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1ac9b6fde1dc1604ba744b1e6ab5b1d499" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1ac9b6fde1dc1604ba744b1e6ab5b1d499" kindref="member">NumClasses</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numClasses;<sp/>}</highlight></codeline>
+<codeline lineno="211" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a088ebfdf3c7a9e7eea81716d0c55b5a3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a088ebfdf3c7a9e7eea81716d0c55b5a3" kindref="member">NumClasses</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numClasses;<sp/>}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="216" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a2878e0828ecdc1d486b0f43a81f95059" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a2878e0828ecdc1d486b0f43a81f95059" kindref="member">FitIntercept</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fitIntercept;<sp/>}</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a043f0ccd62e6711a18e0d81047be9a0a" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a043f0ccd62e6711a18e0d81047be9a0a" kindref="member">Parameters</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="224" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1aa68d74dc1e86e4352e00a3cab83a0e4a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1aa68d74dc1e86e4352e00a3cab83a0e4a" kindref="member">Parameters</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parameters;<sp/>}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a71c4a6c2db59e7a14196cc6e9846a29b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a71c4a6c2db59e7a14196cc6e9846a29b" kindref="member">FeatureSize</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="228"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fitIntercept<sp/>?<sp/>parameters.n_cols<sp/>-<sp/>1:</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>parameters.n_cols;<sp/>}</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="235" refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1regression_1_1SoftmaxRegression_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(parameters));</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(numClasses));</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(lambda));</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(fitIntercept));</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/>arma::mat<sp/>parameters;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fitIntercept;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>regression</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;softmax_regression_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/softmax_regression/softmax_regression.hpp"/>
+  </compounddef>
+</doxygen>

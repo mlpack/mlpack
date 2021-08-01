@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::HoeffdingCategoricalSplit</compoundname>
+    <includes refid="hoeffding__categorical__split_8hpp" local="no">hoeffding_categorical_split.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename FitnessFunction</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ae55bc875c7f68cd63e45eb0ac35de5aa" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1CategoricalSplitInfo" kindref="compound">CategoricalSplitInfo</ref></type>
+        <definition>typedef CategoricalSplitInfo SplitInfo</definition>
+        <argsstring></argsstring>
+        <name>SplitInfo</name>
+        <briefdescription>
+<para>The type of split information required by the <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a8ddf10a071149ba65edcb50a842a6320" prot="private" static="no" mutable="no">
+        <type>arma::Mat&lt; size_t &gt;</type>
+        <definition>arma::Mat&lt;size_t&gt; sufficientStatistics</definition>
+        <argsstring></argsstring>
+        <name>sufficientStatistics</name>
+        <briefdescription>
+<para>The sufficient statistics for all points seen so far. </para>        </briefdescription>
+        <detaileddescription>
+<para>Each column corresponds to a category, and contains a count of each of the classes seen for points in that category. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ac8914c662d828e446d1e7065094a3c29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingCategoricalSplit</definition>
+        <argsstring>(const size_t numCategories=0, const size_t numClasses=0)</argsstring>
+        <name>HoeffdingCategoricalSplit</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numCategories</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> given a number of categories for this dimension and a number of classes. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numCategories</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of categories in this dimension. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in this dimension. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1aae839eb9d04cd687215fa58ae14d265f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingCategoricalSplit</definition>
+        <argsstring>(const size_t numCategories, const size_t numClasses, const HoeffdingCategoricalSplit &amp;other)</argsstring>
+        <name>HoeffdingCategoricalSplit</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numCategories</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> given a number of categories for this dimension and a number of classes and another <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> to take parameters from. </para>        </briefdescription>
+        <detaileddescription>
+<para>In this particular case, there are no parameters to take, but this constructor is required by the <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> class. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="66" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ab4f1b00c777ddabfddd98e45093b97ab" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EvaluateFitnessFunction</definition>
+        <argsstring>(double &amp;bestFitness, double &amp;secondBestFitness) const</argsstring>
+        <name>EvaluateFitnessFunction</name>
+        <param>
+          <type>double &amp;</type>
+          <declname>bestFitness</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>secondBestFitness</declname>
+        </param>
+        <briefdescription>
+<para>Given the points seen so far, evaluate the fitness function, returning the gain for the best possible split and the second best possible split. </para>        </briefdescription>
+        <detaileddescription>
+<para>In this splitting technique, we only split one possible way, so secondBestFitness will always be 0.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bestFitness</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The fitness function result for this split. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>secondBestFitness</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This is always set to 0 (this split only splits one way). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="89" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MajorityClass</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityClass</name>
+        <briefdescription>
+<para>Get the majority class seen so far. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="105" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" compoundref="hoeffding__categorical__split_8hpp" startline="93" endline="93">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::NumChildren</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a68e5f5a4d8c6194482a83440619be83b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MajorityProbability</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityProbability</name>
+        <briefdescription>
+<para>Get the probability of the majority class given the points seen so far. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="107" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" compoundref="hoeffding__categorical__split_8hpp" startline="93" endline="93">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::NumChildren</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Return the number of children, if the node were to split. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" bodystart="93" bodyend="93"/>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a2fbf818eb68075c92655a22904b7ee1a">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::MajorityClass</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a68e5f5a4d8c6194482a83440619be83b">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::MajorityProbability</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a12faa9838c740b8383130fee17c108b6">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::Split</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the categorical split. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" bodystart="111" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a12faa9838c740b8383130fee17c108b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Split</definition>
+        <argsstring>(arma::Col&lt; size_t &gt; &amp;childMajorities, SplitInfo &amp;splitInfo)</argsstring>
+        <name>Split</name>
+        <param>
+          <type>arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>childMajorities</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ae55bc875c7f68cd63e45eb0ac35de5aa" kindref="member">SplitInfo</ref> &amp;</type>
+          <declname>splitInfo</declname>
+        </param>
+        <briefdescription>
+<para>Gather the information for a split: get the labels of the child majorities, and initialize the SplitInfo object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>childMajorities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Majorities of child nodes to be created. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>splitInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Information for splitting. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="102" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" compoundref="hoeffding__categorical__split_8hpp" startline="93" endline="93">HoeffdingCategoricalSplit&lt; FitnessFunction &gt;::NumChildren</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a066e841465846ace64e00f9b6fef9b27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(eT value, const size_t label)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>eT</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>label</declname>
+        </param>
+        <briefdescription>
+<para>Train on the given value with the given label. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to train on. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Label to train on. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="77" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is the standard Hoeffding-bound categorical feature proposed in the paper below: </para>    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{domingos2000mining,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={{Mining<sp/>High-Speed<sp/>Data<sp/>Streams}},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Domingos,<sp/>P.<sp/>and<sp/>Hulten,<sp/>G.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2000},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>Sixth<sp/>ACM<sp/>SIGKDD<sp/>International<sp/>Conference<sp/>on</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Knowledge<sp/>Discovery<sp/>and<sp/>Data<sp/>Mining<sp/>(KDD<sp/>&apos;00)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={71--80}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>This class will track the sufficient statistics of the training points it has seen. The HoeffdingSplit class (and other related classes) can use this class to track categorical features and split decision tree nodes.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>FitnessFunction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Fitness function to use for calculating gain. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp" bodystart="44" bodyend="121"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ab4f1b00c777ddabfddd98e45093b97ab" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>EvaluateFitnessFunction</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ac8914c662d828e446d1e7065094a3c29" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>HoeffdingCategoricalSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1aae839eb9d04cd687215fa58ae14d265f" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>HoeffdingCategoricalSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>MajorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a68e5f5a4d8c6194482a83440619be83b" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>MajorityProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a12faa9838c740b8383130fee17c108b6" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>Split</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1ae55bc875c7f68cd63e45eb0ac35de5aa" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>SplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a8ddf10a071149ba65edcb50a842a6320" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>sufficientStatistics</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit_1a066e841465846ace64e00f9b6fef9b27" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingCategoricalSplit</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,49 @@
+.TH "DataDependentRandomInitializer" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DataDependentRandomInitializer \- A data-dependent random dictionary initializer for \fBSparseCoding\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBInitialize\fP (const arma::mat &data, const size_t atoms, arma::mat &dictionary)"
+.br
+.RI "Initialize the dictionary by adding together three random observations from the data, and then normalizing the atom\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A data-dependent random dictionary initializer for \fBSparseCoding\fP\&. 
+
+This creates random dictionary atoms by adding three random observations from the data together, and then normalizing the atom\&. 
+.PP
+Definition at line 26 of file data_dependent_random_initializer\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void Initialize (const arma::mat & data, const size_t atoms, arma::mat & dictionary)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Initialize the dictionary by adding together three random observations from the data, and then normalizing the atom\&. This implementation is simple enough to be included with the definition\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to initialize the dictionary with\&. 
+.br
+\fIatoms\fP Number of atoms in dictionary\&. 
+.br
+\fIdictionary\fP Dictionary to initialize\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file data_dependent_random_initializer\&.hpp\&.
+.PP
+References mlpack::math::RandInt()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

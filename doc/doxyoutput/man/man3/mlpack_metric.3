@@ -1,0 +1,85 @@
+.TH "mlpack::metric" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::metric
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBBLEU\fP"
+.br
+.RI "\fBBLEU\fP, or the Bilingual Evaluation Understudy, is an algorithm for evaluating the quality of text which has been machine translated from one natural language to another\&. "
+.ti -1c
+.RI "class \fBIoU\fP"
+.br
+.RI "Definition of Intersection over Union metric\&. "
+.ti -1c
+.RI "class \fBIPMetric\fP"
+.br
+.RI "The inner product metric, \fBIPMetric\fP, takes a given Mercer kernel (KernelType), and when \fBEvaluate()\fP is called, returns the distance between the two points in kernel space: "
+.ti -1c
+.RI "class \fBLMetric\fP"
+.br
+.RI "The L_p metric for arbitrary integer p, with an option to take the root\&. "
+.ti -1c
+.RI "class \fBMahalanobisDistance\fP"
+.br
+.RI "The Mahalanobis distance, which is essentially a stretched Euclidean distance\&. "
+.ti -1c
+.RI "class \fBNMS\fP"
+.br
+.RI "Definition of Non Maximal Supression\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBLMetric\fP< INT_MAX, false > \fBChebyshevDistance\fP"
+.br
+.RI "The L-infinity distance\&. "
+.ti -1c
+.RI "typedef \fBLMetric\fP< 2, true > \fBEuclideanDistance\fP"
+.br
+.RI "The Euclidean (L2) distance\&. "
+.ti -1c
+.RI "typedef \fBLMetric\fP< 1, false > \fBManhattanDistance\fP"
+.br
+.RI "The Manhattan (L1) distance\&. "
+.ti -1c
+.RI "typedef \fBLMetric\fP< 2, false > \fBSquaredEuclideanDistance\fP"
+.br
+.RI "The squared Euclidean (L2) distance\&. "
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef \fBLMetric\fP<INT_MAX, false> \fBChebyshevDistance\fP"
+
+.PP
+The L-infinity distance\&. 
+.PP
+Definition at line 117 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<2, true> \fBEuclideanDistance\fP"
+
+.PP
+The Euclidean (L2) distance\&. 
+.PP
+Definition at line 112 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<1, false> \fBManhattanDistance\fP"
+
+.PP
+The Manhattan (L1) distance\&. 
+.PP
+Definition at line 101 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<2, false> \fBSquaredEuclideanDistance\fP"
+
+.PP
+The squared Euclidean (L2) distance\&. Note that this is not technically a metric! But it can sometimes be used when distances are required\&. 
+.PP
+Definition at line 107 of file lmetric\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,97 @@
+\section{S\+V\+D\+Wrapper$<$ Factorizer $>$ Class Template Reference}
+\label{classmlpack_1_1cf_1_1SVDWrapper}\index{S\+V\+D\+Wrapper$<$ Factorizer $>$@{S\+V\+D\+Wrapper$<$ Factorizer $>$}}
+
+
+This class acts as the wrapper for all S\+VD factorizers which are incompatible with CF module.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ S\+V\+D\+Wrapper} (const Factorizer \&factorizer=Factorizer())
+\item 
+double \textbf{ Apply} (const arma\+::mat \&V, arma\+::mat \&W, arma\+::mat \&sigma, arma\+::mat \&H) const
+\begin{DoxyCompactList}\small\item\em Factorizer function which takes S\+VD of the given matrix and returns the frobenius norm of error. \end{DoxyCompactList}\item 
+double \textbf{ Apply} (const arma\+::mat \&V, size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H) const
+\begin{DoxyCompactList}\small\item\em Factorizer function which computes S\+VD and returns matrices as required by CF module. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Factorizer = Dummy\+Class$>$\newline
+class mlpack\+::cf\+::\+S\+V\+D\+Wrapper$<$ Factorizer $>$}
+
+This class acts as the wrapper for all S\+VD factorizers which are incompatible with CF module. 
+
+Normally S\+VD factrorizers implement Apply method which takes matrix V and factorizes it into P, sigma and Q where V = P $\ast$ sigma $\ast$ trans(\+Q). But CF module requires factrorization to be V = W $\ast$ H. This class multiplies P and sigma and takes the first \textquotesingle{}r\textquotesingle{} eigenvectors out where \textquotesingle{}r\textquotesingle{} is the rank of factorization. Q matrix is transposed and trimmed to support the rank of factorization. The Factroizer class should implement Apply which takes matrices P, sigma, Q and V as their parameter respectively. 
+
+Definition at line 40 of file svd\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1SVDWrapper_a062f6d1d0cbae52c35ee6cdc7c0e12e2}} 
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!S\+V\+D\+Wrapper@{S\+V\+D\+Wrapper}}
+\index{S\+V\+D\+Wrapper@{S\+V\+D\+Wrapper}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection{S\+V\+D\+Wrapper()}
+{\footnotesize\ttfamily \textbf{ S\+V\+D\+Wrapper} (\begin{DoxyParamCaption}\item[{const Factorizer \&}]{factorizer = {\ttfamily Factorizer()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 44 of file svd\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1SVDWrapper_a9a4d773f77543202c714b0bd8871cd36}} 
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection{Apply()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{V,  }\item[{arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{sigma,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption}) const}
+
+
+
+Factorizer function which takes S\+VD of the given matrix and returns the frobenius norm of error. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & input matrix \\
+\hline
+{\em W} & first unitary matrix \\
+\hline
+{\em sigma} & eigenvalue matrix \\
+\hline
+{\em H} & second unitary matrix\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+V = W $\ast$ sigma $\ast$ arma\+::trans(\+H) 
+\end{DoxyNote}
+\mbox{\label{classmlpack_1_1cf_1_1SVDWrapper_ac2389a00421a05b85aca1c1b7acf0341}} 
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection{Apply()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{V,  }\item[{size\+\_\+t}]{r,  }\item[{arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption}) const}
+
+
+
+Factorizer function which computes S\+VD and returns matrices as required by CF module. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & input matrix \\
+\hline
+{\em r} & rank \\
+\hline
+{\em W} & first unitary matrix \\
+\hline
+{\em H} & second unitary matrix\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+V = W $\ast$ H 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/\textbf{ svd\+\_\+wrapper.\+hpp}\end{DoxyCompactItemize}

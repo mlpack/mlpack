@@ -1,0 +1,13 @@
+.. _exhale_function_cf__test_8cpp_1a860c4d442124747fd2764dd1e65735a9:
+
+Template Function GetRecommendationsQueriedUser
+===============================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_cf_test.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: GetRecommendationsQueriedUser()

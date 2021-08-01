@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kmeans::DualTreeKMeansStatistic</compoundname>
+    <basecompoundref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat" prot="public" virt="non-virtual">NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</basecompoundref>
+    <includes refid="dual__tree__kmeans__statistic_8hpp" local="no">dual_tree_kmeans_statistic.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3c4fb241ab6b163a894b40eb606936d1" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec centroid</definition>
+        <argsstring></argsstring>
+        <name>centroid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad64fda2df90136db8cfdbcedfe4e5ae7" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lowerBound</definition>
+        <argsstring></argsstring>
+        <name>lowerBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a4fc0946cbdb20a8ad8698000d0287d4a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t owner</definition>
+        <argsstring></argsstring>
+        <name>owner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a4e61cdc9c41652b854a01c90811f5fb1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t pruned</definition>
+        <argsstring></argsstring>
+        <name>pruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a95d42d1736abe4225d7795f16d463155" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double staticLowerBoundMovement</definition>
+        <argsstring></argsstring>
+        <name>staticLowerBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a14a263abdac2ba8706a8d60d2bc3799f" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool staticPruned</definition>
+        <argsstring></argsstring>
+        <name>staticPruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa531c7569b93ef5d5d277abcfb65a0b9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double staticUpperBoundMovement</definition>
+        <argsstring></argsstring>
+        <name>staticUpperBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a22b5e15f311d18c8241551c5501b73be" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; void * &gt;</type>
+        <definition>std::vector&lt;void*&gt; trueChildren</definition>
+        <argsstring></argsstring>
+        <name>trueChildren</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad28b948317aebd66636006b1aefdf9ac" prot="private" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* trueParent</definition>
+        <argsstring></argsstring>
+        <name>trueParent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a681dcabc4cfe9226fc9140836ee98d7a" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double upperBound</definition>
+        <argsstring></argsstring>
+        <name>upperBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ae4bbc0cf4377a786c3b504f951ba7046" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DualTreeKMeansStatistic</definition>
+        <argsstring>()</argsstring>
+        <name>DualTreeKMeansStatistic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="24" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad07d3f8a650ad69028309aa13787eb13" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DualTreeKMeansStatistic</definition>
+        <argsstring>(TreeType &amp;node)</argsstring>
+        <name>DualTreeKMeansStatistic</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="40" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8d1b09bb5ee8c048e57746774a6e502e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Centroid</definition>
+        <argsstring>() const</argsstring>
+        <name>Centroid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a656ee900ec6d5a1548d3023d7df8bb9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec &amp;</type>
+        <definition>arma::vec&amp; Centroid</definition>
+        <argsstring>()</argsstring>
+        <name>Centroid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa685759f5922c85cfd4324b013452acc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LowerBound</definition>
+        <argsstring>() const</argsstring>
+        <name>LowerBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a07dfef5c510f360a388ea83388f6dc9e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LowerBound</definition>
+        <argsstring>()</argsstring>
+        <name>LowerBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3868027cf542938adb12a4bb597ff53e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumTrueChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumTrueChildren</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1add77f6a2ece7cc80c5a8865cbf650d39" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Owner</definition>
+        <argsstring>() const</argsstring>
+        <name>Owner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ab6ffbf89c0e4cc471da490443889e991" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Owner</definition>
+        <argsstring>()</argsstring>
+        <name>Owner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a1c6359156768721a6cb316bd56f039c7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Pruned</definition>
+        <argsstring>() const</argsstring>
+        <name>Pruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad46a79b6924140c2a85e7a54ad2afd1a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Pruned</definition>
+        <argsstring>()</argsstring>
+        <name>Pruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2001cf08b014feb94371cc8b39152064" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double StaticLowerBoundMovement</definition>
+        <argsstring>() const</argsstring>
+        <name>StaticLowerBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1abd65ad8192ec72ca0b349ba5ca323600" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; StaticLowerBoundMovement</definition>
+        <argsstring>()</argsstring>
+        <name>StaticLowerBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a53c2228b52ce984497248a9f192ddaa2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool StaticPruned</definition>
+        <argsstring>() const</argsstring>
+        <name>StaticPruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2488b36c60e3ac332ee9e22e8d4d42dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; StaticPruned</definition>
+        <argsstring>()</argsstring>
+        <name>StaticPruned</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aee9f5d1c2d148ee4f8487579e692fcd1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double StaticUpperBoundMovement</definition>
+        <argsstring>() const</argsstring>
+        <name>StaticUpperBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a379c0b1aeb4ef7c1ba3b6c4536d140d5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; StaticUpperBoundMovement</definition>
+        <argsstring>()</argsstring>
+        <name>StaticUpperBoundMovement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3a834eb10b8b5c8ef0b77616579a4b9d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* TrueChild</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>TrueChild</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a9b84c63a2e48d222e5ffe1dc1ee2e11c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *&amp;</type>
+        <definition>void*&amp; TrueChild</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>TrueChild</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a5d76088594ffa23921e04424ebbbbcc8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* TrueParent</definition>
+        <argsstring>() const</argsstring>
+        <name>TrueParent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="99" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1afd9de4c738ef44724c26f353a5ff40b1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *&amp;</type>
+        <definition>void*&amp; TrueParent</definition>
+        <argsstring>()</argsstring>
+        <name>TrueParent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a7b4b0b81a682ae9cb8d5279e149d0711" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double UpperBound</definition>
+        <argsstring>() const</argsstring>
+        <name>UpperBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="75" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8ca22dd7e7fef0daedaf688ff37b5d05" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; UpperBound</definition>
+        <argsstring>()</argsstring>
+        <name>UpperBound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="76" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="976">
+        <label>DualTreeKMeansStatistic</label>
+        <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
+        <childnode refid="977" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="978">
+        <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+      </node>
+      <node id="977">
+        <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+        <childnode refid="978" relation="template-instance">
+          <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="979">
+        <label>DualTreeKMeansStatistic</label>
+        <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
+        <childnode refid="980" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="981">
+        <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+      </node>
+      <node id="980">
+        <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
+        <childnode refid="981" relation="template-instance">
+          <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans_statistic.hpp" bodystart="20" bodyend="118"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a212cacc0ad25f0c3b409e19bd4062474" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>AuxBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a06f9e5b8efdd5fb48920f5fe3dc79fec" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>AuxBound</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8d1b09bb5ee8c048e57746774a6e502e" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Centroid</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a656ee900ec6d5a1548d3023d7df8bb9a" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Centroid</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3c4fb241ab6b163a894b40eb606936d1" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>centroid</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ae4bbc0cf4377a786c3b504f951ba7046" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>DualTreeKMeansStatistic</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad07d3f8a650ad69028309aa13787eb13" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>DualTreeKMeansStatistic</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a1e5556b0247e4b4ecb9a4c6870879f9d" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>FirstBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ac234f5fa604353c256d61cc97c760fa6" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>FirstBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1acf3025848cf3628a9213763886101369" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a73c8a7f485e9b81d86b7b7b1b75a97af" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad64fda2df90136db8cfdbcedfe4e5ae7" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>lowerBound</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa685759f5922c85cfd4324b013452acc" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>LowerBound</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a07dfef5c510f360a388ea83388f6dc9e" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>LowerBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1ae911ff9386cbf7f4b2f80b49baf65587" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>NeighborSearchStat</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a8d225f9b18a8723e0168142797bb8b65" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>NeighborSearchStat</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3868027cf542938adb12a4bb597ff53e" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>NumTrueChildren</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a4fc0946cbdb20a8ad8698000d0287d4a" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>owner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1add77f6a2ece7cc80c5a8865cbf650d39" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Owner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ab6ffbf89c0e4cc471da490443889e991" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Owner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a4e61cdc9c41652b854a01c90811f5fb1" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>pruned</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a1c6359156768721a6cb316bd56f039c7" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Pruned</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad46a79b6924140c2a85e7a54ad2afd1a" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Pruned</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a66e0fa924e213b7bf07bd8bb6f8ae5d2" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>SecondBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a09a02c2295ba43118c88ace376e60892" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>SecondBound</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearchStat_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2001cf08b014feb94371cc8b39152064" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticLowerBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1abd65ad8192ec72ca0b349ba5ca323600" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticLowerBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a95d42d1736abe4225d7795f16d463155" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>staticLowerBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a14a263abdac2ba8706a8d60d2bc3799f" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>staticPruned</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a53c2228b52ce984497248a9f192ddaa2" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticPruned</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a2488b36c60e3ac332ee9e22e8d4d42dd" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticPruned</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aee9f5d1c2d148ee4f8487579e692fcd1" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticUpperBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a379c0b1aeb4ef7c1ba3b6c4536d140d5" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>StaticUpperBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1aa531c7569b93ef5d5d277abcfb65a0b9" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>staticUpperBoundMovement</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a3a834eb10b8b5c8ef0b77616579a4b9d" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>TrueChild</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a9b84c63a2e48d222e5ffe1dc1ee2e11c" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>TrueChild</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a22b5e15f311d18c8241551c5501b73be" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>trueChildren</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1ad28b948317aebd66636006b1aefdf9ac" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>trueParent</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a5d76088594ffa23921e04424ebbbbcc8" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>TrueParent</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1afd9de4c738ef44724c26f353a5ff40b1" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>TrueParent</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a681dcabc4cfe9226fc9140836ee98d7a" prot="private" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>upperBound</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a7b4b0b81a682ae9cb8d5279e149d0711" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>UpperBound</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic_1a8ca22dd7e7fef0daedaf688ff37b5d05" prot="public" virt="non-virtual"><scope>mlpack::kmeans::DualTreeKMeansStatistic</scope><name>UpperBound</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

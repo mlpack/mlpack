@@ -1,0 +1,364 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1kpca_1_1KernelPCA" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kpca::KernelPCA</compoundname>
+    <includes refid="kernel__pca_8hpp" local="no">kernel_pca.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename KernelType</type>
+      </param>
+      <param>
+        <type>typename KernelRule</type>
+        <defval><ref refid="classmlpack_1_1kpca_1_1NaiveKernelRule" kindref="compound">NaiveKernelRule</ref>&lt;KernelType&gt;</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kpca_1_1KernelPCA_1a3ba3f5ce7080505e6cd1be82249d45d9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool centerTransformedData</definition>
+        <argsstring></argsstring>
+        <name>centerTransformedData</name>
+        <briefdescription>
+<para>If true, the data will be scaled (by standard deviation) when <ref refid="classmlpack_1_1kpca_1_1KernelPCA_1a856a3d7bb0dca4d5beaca3710b9da857" kindref="member">Apply()</ref> is run. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kpca_1_1KernelPCA_1a7efe9a82e3ae452329882c727ec2bbb9" prot="private" static="no" mutable="no">
+        <type>KernelType</type>
+        <definition>KernelType kernel</definition>
+        <argsstring></argsstring>
+        <name>kernel</name>
+        <briefdescription>
+<para>The instantiated kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1acd937631070c2e90436fbc2db6cb2491" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KernelPCA</definition>
+        <argsstring>(const KernelType kernel=KernelType(), const bool centerTransformedData=false)</argsstring>
+        <name>KernelPCA</name>
+        <param>
+          <type>const KernelType</type>
+          <declname>kernel</declname>
+          <defval>KernelType()</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>centerTransformedData</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1kpca_1_1KernelPCA" kindref="compound">KernelPCA</ref> object, optionally passing a kernel. </para>        </briefdescription>
+        <detaileddescription>
+<para>Optionally, the transformed data can be centered about the origin; to do this, pass &apos;true&apos; for centerTransformedData. This will take slightly longer (but not much).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Kernel to be used for computation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centerTransformedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Center transformed data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1a856a3d7bb0dca4d5beaca3710b9da857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;transformedData, arma::vec &amp;eigval, arma::mat &amp;eigvec, const size_t newDimension)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>transformedData</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>eigval</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>eigvec</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>newDimension</declname>
+        </param>
+        <briefdescription>
+<para>Apply Kernel Principal Components Analysis to the provided data set. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transformedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to output results into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KPCA eigenvalues will be written to this vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigvec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KPCA eigenvectors will be written to this matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newDimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New dimension for the dataset. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1aafe044ec4b7a51e09c8820e26e5704d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;transformedData, arma::vec &amp;eigval, arma::mat &amp;eigvec)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>transformedData</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>eigval</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>eigvec</declname>
+        </param>
+        <briefdescription>
+<para>Apply Kernel Principal Components Analysis to the provided data set. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transformedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to output results into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KPCA eigenvalues will be written to this vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigvec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KPCA eigenvectors will be written to this matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="78" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1af7512c50d7e08e2dff7a574613e45840" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;transformedData, arma::vec &amp;eigval)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>transformedData</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>eigval</declname>
+        </param>
+        <briefdescription>
+<para>Apply Kernel Principal Component Analysis to the provided data set. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transformedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to output results into. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KPCA eigenvalues will be written to this vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="90" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1afe19e2aabe4af32fac98d18297c35316" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(arma::mat &amp;data, const size_t newDimension)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>newDimension</declname>
+        </param>
+        <briefdescription>
+<para>Apply dimensionality reduction using Kernel Principal Component Analysis to the provided data set. </para>        </briefdescription>
+        <detaileddescription>
+<para>The data matrix will be modified in-place. Note that the dimension can be larger than the existing dimension because KPCA works on the kernel matrix, not the covariance matrix. This means the new dimension can be as large as the number of points (columns) in the dataset. Note that if you specify newDimension to be larger than the current dimension of the data (the number of rows), then it&apos;s not really &quot;dimensionality reduction&quot;...</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newDimension</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New dimension for the dataset. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="107" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1aac3950c39b833cdb3c7b521530acd255" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool CenterTransformedData</definition>
+        <argsstring>() const</argsstring>
+        <name>CenterTransformedData</name>
+        <briefdescription>
+<para>Return whether or not the transformed data is centered. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1a58b45fe79f520f3114261f08bbd1ac2f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; CenterTransformedData</definition>
+        <argsstring>()</argsstring>
+        <name>CenterTransformedData</name>
+        <briefdescription>
+<para>Return whether or not the transformed data is centered. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1a917492b75cc17298bc58c3d28e2944fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const KernelType &amp;</type>
+        <definition>const KernelType&amp; Kernel</definition>
+        <argsstring>() const</argsstring>
+        <name>Kernel</name>
+        <briefdescription>
+<para>Get the kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kpca_1_1KernelPCA_1ab8d1bedeac8344d80e50d819790a117a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>KernelType &amp;</type>
+        <definition>KernelType&amp; Kernel</definition>
+        <argsstring>()</argsstring>
+        <name>Kernel</name>
+        <briefdescription>
+<para>Modify the kernel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="112" bodyend="112"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class performs kernel principal components analysis (Kernel PCA), for a given kernel. </para>    </briefdescription>
+    <detaileddescription>
+<para>This is a standard machine learning technique and is well-documented on the Internet and in standard texts. It is often used as a dimensionality reduction technique, and can also be useful in mapping linearly inseparable classes of points to different spaces where they are linearly separable.</para><para>The performance of the method is highly dependent on the kernel choice. There are numerous available kernels in the <ref refid="namespacemlpack_1_1kernel" kindref="compound">mlpack::kernel</ref> namespace (see files in mlpack/core/kernels/) and it is easy to write your own; see other implementations for examples. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_pca.hpp" bodystart="40" bodyend="125"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1a856a3d7bb0dca4d5beaca3710b9da857" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1aafe044ec4b7a51e09c8820e26e5704d3" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1af7512c50d7e08e2dff7a574613e45840" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1afe19e2aabe4af32fac98d18297c35316" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1a3ba3f5ce7080505e6cd1be82249d45d9" prot="private" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>centerTransformedData</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1aac3950c39b833cdb3c7b521530acd255" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>CenterTransformedData</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1a58b45fe79f520f3114261f08bbd1ac2f" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>CenterTransformedData</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1a7efe9a82e3ae452329882c727ec2bbb9" prot="private" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>kernel</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1a917492b75cc17298bc58c3d28e2944fb" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Kernel</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1ab8d1bedeac8344d80e50d819790a117a" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>Kernel</name></member>
+      <member refid="classmlpack_1_1kpca_1_1KernelPCA_1acd937631070c2e90436fbc2db6cb2491" prot="public" virt="non-virtual"><scope>mlpack::kpca::KernelPCA</scope><name>KernelPCA</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+.TH "DeleteVisitor" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeleteVisitor \- \fBDeleteVisitor\fP executes the destructor of the instantiated object\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > std::enable_if< !HasModelCheck< LayerType >::value, void >::type \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Execute the destructor if the layer does not hold layers internally\&. "
+.ti -1c
+.RI "template<typename LayerType > std::enable_if< HasModelCheck< LayerType >::value, void >::type \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Execute the destructor if the layer does hold layers internally\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBDeleteVisitor\fP executes the destructor of the instantiated object\&. 
+.PP
+Definition at line 27 of file delete_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "std::enable_if< !HasModelCheck<LayerType>::value, void>::type operator() (LayerType * layer) const"
+
+.PP
+Execute the destructor if the layer does not hold layers internally\&. 
+.SS "std::enable_if< HasModelCheck<LayerType>::value, void>::type operator() (LayerType * layer) const"
+
+.PP
+Execute the destructor if the layer does hold layers internally\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,487 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="perform__split_8hpp" kind="file" language="C++">
+    <compoundname>perform_split.hpp</compoundname>
+    <includedby refid="midpoint__split_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/midpoint_split.hpp</includedby>
+    <includedby refid="mean__split_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/mean_split.hpp</includedby>
+    <includedby refid="vantage__point__split_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/vantage_point_split.hpp</includedby>
+    <includedby refid="rp__tree__max__split_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp</includedby>
+    <includedby refid="rp__tree__mean__split_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_mean_split.hpp</includedby>
+    <invincdepgraph>
+      <node id="17147">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17121">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/pelleg_moore_kmeans.hpp</label>
+        <link refid="pelleg__moore__kmeans_8hpp"/>
+      </node>
+      <node id="17135">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="17136" relation="include">
+        </childnode>
+      </node>
+      <node id="17139">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/range_search.hpp</label>
+        <link refid="range__search_8hpp"/>
+        <childnode refid="17140" relation="include">
+        </childnode>
+        <childnode refid="17141" relation="include">
+        </childnode>
+      </node>
+      <node id="17137">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="17122" relation="include">
+        </childnode>
+      </node>
+      <node id="17149">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/mean_split.hpp</label>
+        <link refid="mean__split_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17126">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="17128">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="17148">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17125">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="17151">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp</label>
+        <link refid="rp__tree__max__split_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+        <childnode refid="17152" relation="include">
+        </childnode>
+      </node>
+      <node id="17123">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="17124" relation="include">
+        </childnode>
+        <childnode refid="17126" relation="include">
+        </childnode>
+        <childnode refid="17127" relation="include">
+        </childnode>
+        <childnode refid="17129" relation="include">
+        </childnode>
+      </node>
+      <node id="17131">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="17145">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_typedef.hpp</label>
+        <link refid="ra__typedef_8hpp"/>
+        <childnode refid="17144" relation="include">
+        </childnode>
+      </node>
+      <node id="17140">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="17117">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/gmm.hpp</label>
+        <link refid="gmm_8hpp"/>
+        <childnode refid="17116" relation="include">
+        </childnode>
+      </node>
+      <node id="17142">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="17112">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="17129">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="17130" relation="include">
+        </childnode>
+      </node>
+      <node id="17115">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/diagonal_gmm.hpp</label>
+        <link refid="diagonal__gmm_8hpp"/>
+        <childnode refid="17116" relation="include">
+        </childnode>
+      </node>
+      <node id="17138">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="17104">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/midpoint_split.hpp</label>
+        <link refid="midpoint__split_8hpp"/>
+        <childnode refid="17105" relation="include">
+        </childnode>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17144">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_search.hpp</label>
+        <link refid="ra__search_8hpp"/>
+        <childnode refid="17143" relation="include">
+        </childnode>
+        <childnode refid="17145" relation="include">
+        </childnode>
+      </node>
+      <node id="17120">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/nystroem_method.hpp</label>
+        <link refid="nystroem__method_2nystroem__method_8hpp"/>
+        <childnode refid="17119" relation="include">
+        </childnode>
+      </node>
+      <node id="17134">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="17135" relation="include">
+        </childnode>
+      </node>
+      <node id="17132">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="17123" relation="include">
+        </childnode>
+      </node>
+      <node id="17136">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="17124">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="17125" relation="include">
+        </childnode>
+      </node>
+      <node id="17105">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+        <childnode refid="17147" relation="include">
+        </childnode>
+        <childnode refid="17148" relation="include">
+        </childnode>
+        <childnode refid="17122" relation="include">
+        </childnode>
+      </node>
+      <node id="17143">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="17114">
+        <label>/home/aakash/mlpack/src/mlpack/methods/gmm/em_fit.hpp</label>
+        <link refid="em__fit_8hpp"/>
+        <childnode refid="17115" relation="include">
+        </childnode>
+        <childnode refid="17117" relation="include">
+        </childnode>
+      </node>
+      <node id="17111">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="17106">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="17105" relation="include">
+        </childnode>
+        <childnode refid="17107" relation="include">
+        </childnode>
+        <childnode refid="17108" relation="include">
+        </childnode>
+        <childnode refid="17109" relation="include">
+        </childnode>
+        <childnode refid="17110" relation="include">
+        </childnode>
+        <childnode refid="17111" relation="include">
+        </childnode>
+        <childnode refid="17112" relation="include">
+        </childnode>
+        <childnode refid="17113" relation="include">
+        </childnode>
+        <childnode refid="17121" relation="include">
+        </childnode>
+        <childnode refid="17122" relation="include">
+        </childnode>
+        <childnode refid="17138" relation="include">
+        </childnode>
+        <childnode refid="17139" relation="include">
+        </childnode>
+        <childnode refid="17141" relation="include">
+        </childnode>
+        <childnode refid="17143" relation="include">
+        </childnode>
+        <childnode refid="17144" relation="include">
+        </childnode>
+        <childnode refid="17146" relation="include">
+        </childnode>
+      </node>
+      <node id="17130">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="17127">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="17128" relation="include">
+        </childnode>
+      </node>
+      <node id="17146">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_query_stat.hpp</label>
+        <link refid="ra__query__stat_8hpp"/>
+        <childnode refid="17144" relation="include">
+        </childnode>
+      </node>
+      <node id="17122">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="17123" relation="include">
+        </childnode>
+        <childnode refid="17131" relation="include">
+        </childnode>
+        <childnode refid="17132" relation="include">
+        </childnode>
+        <childnode refid="17133" relation="include">
+        </childnode>
+        <childnode refid="17112" relation="include">
+        </childnode>
+        <childnode refid="17134" relation="include">
+        </childnode>
+        <childnode refid="17137" relation="include">
+        </childnode>
+        <childnode refid="17138" relation="include">
+        </childnode>
+      </node>
+      <node id="17141">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="17142" relation="include">
+        </childnode>
+      </node>
+      <node id="17110">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde.hpp</label>
+        <link refid="kde_8hpp"/>
+        <childnode refid="17111" relation="include">
+        </childnode>
+      </node>
+      <node id="17133">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="17113">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp</label>
+        <link refid="kmeans_8hpp"/>
+        <childnode refid="17114" relation="include">
+        </childnode>
+        <childnode refid="17118" relation="include">
+        </childnode>
+      </node>
+      <node id="17109">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</label>
+        <link refid="dtb_8hpp"/>
+      </node>
+      <node id="17118">
+        <label>/home/aakash/mlpack/src/mlpack/methods/nystroem_method/kmeans_selection.hpp</label>
+        <link refid="kmeans__selection_8hpp"/>
+        <childnode refid="17119" relation="include">
+        </childnode>
+        <childnode refid="17120" relation="include">
+        </childnode>
+      </node>
+      <node id="17152">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_mean_split.hpp</label>
+        <link refid="rp__tree__mean__split_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17116">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp</label>
+        <link refid="hmm__model_8hpp"/>
+      </node>
+      <node id="17103">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp</label>
+        <link refid="perform__split_8hpp"/>
+        <childnode refid="17104" relation="include">
+        </childnode>
+        <childnode refid="17149" relation="include">
+        </childnode>
+        <childnode refid="17150" relation="include">
+        </childnode>
+        <childnode refid="17151" relation="include">
+        </childnode>
+        <childnode refid="17152" relation="include">
+        </childnode>
+      </node>
+      <node id="17119">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp</label>
+        <link refid="kernel__pca_2kernel__rules_2nystroem__method_8hpp"/>
+      </node>
+      <node id="17107">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17108">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+      <node id="17150">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/vantage_point_split.hpp</label>
+        <link refid="vantage__point__split_8hpp"/>
+        <childnode refid="17106" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree_1_1split">mlpack::tree::split</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Mikhail Lozhnikov</para></simplesect>
+This file contains functions that implement the default binary split behavior. The functions perform the actual splitting. This will order the dataset such that points that belong to the left subtree are on the left of the split column, and points from the right subtree are on the right side of the split column.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="16"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_PERFORM_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_PERFORM_SPLIT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/><sp/>{</highlight></codeline>
+<codeline lineno="21" refid="namespacemlpack_1_1tree_1_1split" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">split<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitType&gt;</highlight></codeline>
+<codeline lineno="36" refid="namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a" kindref="member">PerformSplit</ref>(MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitType::SplitInfo&amp;<sp/>splitInfo)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>method<sp/>modifies<sp/>the<sp/>input<sp/>dataset.<sp/><sp/>We<sp/>loop<sp/>both<sp/>from<sp/>the<sp/>left<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>right<sp/>sides<sp/>of<sp/>the<sp/>points<sp/>contained<sp/>in<sp/>this<sp/>node.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>left<sp/>=<sp/>begin;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>right<sp/>=<sp/>begin<sp/>+<sp/>count<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>half-iteration<sp/>of<sp/>the<sp/>loop<sp/>is<sp/>out<sp/>here<sp/>because<sp/>the<sp/>termination</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>condition<sp/>is<sp/>in<sp/>the<sp/>middle.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((left<sp/>&lt;=<sp/>right)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(SplitType::AssignToLeftNode(data.col(left),<sp/>splitInfo)))</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>left++;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((!SplitType::AssignToLeftNode(data.col(right),<sp/>splitInfo))<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right)<sp/>&amp;&amp;<sp/>(right<sp/>&gt;<sp/>0))</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>right--;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Shortcut<sp/>for<sp/>when<sp/>all<sp/>points<sp/>are<sp/>on<sp/>the<sp/>right.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(left<sp/>==<sp/>right<sp/>&amp;&amp;<sp/>right<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>left;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(left<sp/>&lt;=<sp/>right)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Swap<sp/>columns.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>data.swap_cols(left,<sp/>right);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>See<sp/>how<sp/>many<sp/>points<sp/>on<sp/>the<sp/>left<sp/>are<sp/>correct.<sp/><sp/>When<sp/>they<sp/>are<sp/>correct,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increase<sp/>the<sp/>left<sp/>counter<sp/>accordingly.<sp/><sp/>When<sp/>we<sp/>encounter<sp/>one<sp/>that<sp/>isn&apos;t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>correct,<sp/>stop.<sp/><sp/>We<sp/>will<sp/>switch<sp/>it<sp/>later.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(SplitType::AssignToLeftNode(data.col(left),<sp/>splitInfo)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right))</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>left++;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>see<sp/>how<sp/>many<sp/>points<sp/>on<sp/>the<sp/>right<sp/>are<sp/>correct.<sp/><sp/>When<sp/>they<sp/>are<sp/>correct,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>decrease<sp/>the<sp/>right<sp/>counter<sp/>accordingly.<sp/><sp/>When<sp/>we<sp/>encounter<sp/>one<sp/>that<sp/>isn&apos;t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>correct,<sp/>stop.<sp/><sp/>We<sp/>will<sp/>switch<sp/>it<sp/>with<sp/>the<sp/>wrong<sp/>point<sp/>we<sp/>found<sp/>in<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>previous<sp/>loop.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((!SplitType::AssignToLeftNode(data.col(right),<sp/>splitInfo))<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right))</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>right--;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>Log::Assert(left<sp/>==<sp/>right<sp/>+<sp/>1);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>left;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitType&gt;</highlight></codeline>
+<codeline lineno="101" refid="namespacemlpack_1_1tree_1_1split_1a806f7a8af45201051f59a8db0b8b2feb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a" kindref="member">PerformSplit</ref>(MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitType::SplitInfo&amp;<sp/>splitInfo,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>oldFromNew)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>method<sp/>modifies<sp/>the<sp/>input<sp/>dataset.<sp/><sp/>We<sp/>loop<sp/>both<sp/>from<sp/>the<sp/>left<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>right<sp/>sides<sp/>of<sp/>the<sp/>points<sp/>contained<sp/>in<sp/>this<sp/>node.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>left<sp/>=<sp/>begin;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>right<sp/>=<sp/>begin<sp/>+<sp/>count<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>half-iteration<sp/>of<sp/>the<sp/>loop<sp/>is<sp/>out<sp/>here<sp/>because<sp/>the<sp/>termination</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>condition<sp/>is<sp/>in<sp/>the<sp/>middle.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((left<sp/>&lt;=<sp/>right)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(SplitType::AssignToLeftNode(data.col(left),<sp/>splitInfo)))</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>left++;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((!SplitType::AssignToLeftNode(data.col(right),<sp/>splitInfo))<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right)<sp/>&amp;&amp;<sp/>(right<sp/>&gt;<sp/>0))</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>right--;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Shortcut<sp/>for<sp/>when<sp/>all<sp/>points<sp/>are<sp/>on<sp/>the<sp/>right.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(left<sp/>==<sp/>right<sp/>&amp;&amp;<sp/>right<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>left;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(left<sp/>&lt;=<sp/>right)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Swap<sp/>columns.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>data.swap_cols(left,<sp/>right);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update<sp/>the<sp/>indices<sp/>for<sp/>what<sp/>we<sp/>changed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>oldFromNew[left];</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>oldFromNew[left]<sp/>=<sp/>oldFromNew[right];</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>oldFromNew[right]<sp/>=<sp/>t;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>See<sp/>how<sp/>many<sp/>points<sp/>on<sp/>the<sp/>left<sp/>are<sp/>correct.<sp/><sp/>When<sp/>they<sp/>are<sp/>correct,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increase<sp/>the<sp/>left<sp/>counter<sp/>accordingly.<sp/><sp/>When<sp/>we<sp/>encounter<sp/>one<sp/>that<sp/>isn&apos;t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>correct,<sp/>stop.<sp/><sp/>We<sp/>will<sp/>switch<sp/>it<sp/>later.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(SplitType::AssignToLeftNode(data.col(left),<sp/>splitInfo)<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right))</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>left++;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>see<sp/>how<sp/>many<sp/>points<sp/>on<sp/>the<sp/>right<sp/>are<sp/>correct.<sp/><sp/>When<sp/>they<sp/>are<sp/>correct,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>decrease<sp/>the<sp/>right<sp/>counter<sp/>accordingly.<sp/><sp/>When<sp/>we<sp/>encounter<sp/>one<sp/>that<sp/>isn&apos;t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>correct,<sp/>stop.<sp/><sp/>We<sp/>will<sp/>switch<sp/>it<sp/>with<sp/>the<sp/>wrong<sp/>point<sp/>we<sp/>found<sp/>in<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>previous<sp/>loop.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((!SplitType::AssignToLeftNode(data.col(right),<sp/>splitInfo))<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(left<sp/>&lt;=<sp/>right))</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>right--;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>Log::Assert(left<sp/>==<sp/>right<sp/>+<sp/>1);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>left;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>split</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_CORE_TREE_BINARY_SPACE_TREE_PERFORM_SPLIT_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp"/>
+  </compounddef>
+</doxygen>

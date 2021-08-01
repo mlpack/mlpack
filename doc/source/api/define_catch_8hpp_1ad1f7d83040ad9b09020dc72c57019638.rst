@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1ad1f7d83040ad9b09020dc72c57019638:
+
+Define INTERNAL_CATCH_MSG
+=========================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: INTERNAL_CATCH_MSG

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp" kind="struct" language="C++" prot="protected">
+    <compoundname>mlpack::neighbor::NeighborSearchRules::CandidateCmp</compoundname>
+    <includes refid="neighbor__search__rules_8hpp" local="no">neighbor_search_rules.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator()</definition>
+        <argsstring>(const Candidate &amp;c1, const Candidate &amp;c2)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" kindref="member">Candidate</ref> &amp;</type>
+          <declname>c1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" kindref="member">Candidate</ref> &amp;</type>
+          <declname>c2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp" bodystart="176" bodyend="179"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Compare two candidates based on the distance. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp" bodystart="175" bodyend="180"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearchRules::CandidateCmp</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

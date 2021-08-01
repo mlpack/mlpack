@@ -1,0 +1,341 @@
+\section{Sparse\+Autoencoder Class Reference}
+\label{classmlpack_1_1nn_1_1SparseAutoencoder}\index{Sparse\+Autoencoder@{Sparse\+Autoencoder}}
+
+
+A sparse autoencoder is a neural network whose aim to learn compressed representations of the data, typically for dimensionality reduction, with a constraint on the activity of the neurons in the network.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Optimizer\+Type  = ens\+::\+L\+\_\+\+B\+F\+GS$>$ }\\\textbf{ Sparse\+Autoencoder} (const arma\+::mat \&data, const size\+\_\+t visible\+Size, const size\+\_\+t hidden\+Size, const double lambda=0.\+0001, const double beta=3, const double rho=0.\+01, Optimizer\+Type optimizer=Optimizer\+Type())
+\begin{DoxyCompactList}\small\item\em Construct the sparse autoencoder model with the given training data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type , typename... Callback\+Types$>$ }\\\textbf{ Sparse\+Autoencoder} (const arma\+::mat \&data, const size\+\_\+t visible\+Size, const size\+\_\+t hidden\+Size, const double lambda, const double beta, const double rho, Optimizer\+Type optimizer, Callback\+Types \&\&... callbacks)
+\begin{DoxyCompactList}\small\item\em Construct the sparse autoencoder model with the given training data. \end{DoxyCompactList}\item 
+void \textbf{ Beta} (const double b)
+\begin{DoxyCompactList}\small\item\em Sets the KL divergence parameter. \end{DoxyCompactList}\item 
+double \textbf{ Beta} () const
+\begin{DoxyCompactList}\small\item\em Gets the KL divergence parameter. \end{DoxyCompactList}\item 
+void \textbf{ Get\+New\+Features} (arma\+::mat \&data, arma\+::mat \&features)
+\begin{DoxyCompactList}\small\item\em Transforms the provided data into the representation learned by the sparse autoencoder. \end{DoxyCompactList}\item 
+void \textbf{ Hidden\+Size} (const size\+\_\+t hidden)
+\begin{DoxyCompactList}\small\item\em Sets size of the hidden layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Hidden\+Size} () const
+\begin{DoxyCompactList}\small\item\em Gets the size of the hidden layer. \end{DoxyCompactList}\item 
+void \textbf{ Lambda} (const double l)
+\begin{DoxyCompactList}\small\item\em Sets the L2-\/regularization parameter. \end{DoxyCompactList}\item 
+double \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Gets the L2-\/regularization parameter. \end{DoxyCompactList}\item 
+void \textbf{ Rho} (const double r)
+\begin{DoxyCompactList}\small\item\em Sets the sparsity parameter. \end{DoxyCompactList}\item 
+double \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Gets the sparsity parameter. \end{DoxyCompactList}\item 
+void \textbf{ Sigmoid} (const arma\+::mat \&x, arma\+::mat \&output) const
+\begin{DoxyCompactList}\small\item\em Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number \textquotesingle{}x\textquotesingle{} is [1 / (1 + exp(-\/x))]. \end{DoxyCompactList}\item 
+void \textbf{ Visible\+Size} (const size\+\_\+t visible)
+\begin{DoxyCompactList}\small\item\em Sets size of the visible layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Visible\+Size} () const
+\begin{DoxyCompactList}\small\item\em Gets size of the visible layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A sparse autoencoder is a neural network whose aim to learn compressed representations of the data, typically for dimensionality reduction, with a constraint on the activity of the neurons in the network. 
+
+Sparse autoencoders can be stacked together to learn a hierarchy of features, which provide a better representation of the data for classification. This is a method used in the recently developed field of deep learning. More technical details about the model can be found on the following webpage\+:
+
+{\tt http\+://deeplearning.\+stanford.\+edu/wiki/index.\+php/\+U\+F\+L\+D\+L\+\_\+\+Tutorial}
+
+An example of how to use the interface is shown below\+:
+
+
+\begin{DoxyCode}
+arma::mat data; \textcolor{comment}{// Data matrix.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} vSize = 64; \textcolor{comment}{// Size of visible layer, depends on the data.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} hSize = 25; \textcolor{comment}{// Size of hidden layer, depends on requirements.}
+
+\textcolor{comment}{// Train the model using default options.}
+SparseAutoencoder encoder1(data, vSize, hSize);
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} numBasis = 5; \textcolor{comment}{// Parameter required for L-BFGS algorithm.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} numIterations = 100; \textcolor{comment}{// Maximum number of iterations.}
+
+\textcolor{comment}{// Use an instantiated optimizer for the training.}
+SparseAutoencoderFunction saf(data, vSize, hSize);
+L\_BFGS<SparseAutoencoderFunction> optimizer(saf, numBasis, numIterations);
+SparseAutoencoder<L\_BFGS> encoder2(optimizer);
+
+arma::mat features1, features2; \textcolor{comment}{// Matrices for storing new representations.}
+
+\textcolor{comment}{// Get new representations from the trained models.}
+encoder1.GetNewFeatures(data, features1);
+encoder2.GetNewFeatures(data, features2);
+\end{DoxyCode}
+
+
+This implementation allows the use of arbitrary mlpack optimizers via the Optimizer\+Type template parameter. 
+
+Definition at line 63 of file sparse\+\_\+autoencoder.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a5fbf00d7a7ca616f6128c15d72dac06f}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Sparse\+Autoencoder@{Sparse\+Autoencoder}}
+\index{Sparse\+Autoencoder@{Sparse\+Autoencoder}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Sparse\+Autoencoder()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Sparse\+Autoencoder} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{visible\+Size,  }\item[{const size\+\_\+t}]{hidden\+Size,  }\item[{const double}]{lambda = {\ttfamily 0.0001},  }\item[{const double}]{beta = {\ttfamily 3},  }\item[{const double}]{rho = {\ttfamily 0.01},  }\item[{Optimizer\+Type}]{optimizer = {\ttfamily OptimizerType()} }\end{DoxyParamCaption})}
+
+
+
+Construct the sparse autoencoder model with the given training data. 
+
+This will train the model. The parameters \textquotesingle{}lambda\textquotesingle{}, \textquotesingle{}beta\textquotesingle{} and \textquotesingle{}rho\textquotesingle{} can be set optionally. Changing these parameters will have an effect on regularization and sparsity of the model.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & The optimizer to use. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input data with each column as one example. \\
+\hline
+{\em visible\+Size} & Size of input vector expected at the visible layer. \\
+\hline
+{\em hidden\+Size} & Size of input vector expected at the hidden layer. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+{\em beta} & KL divergence parameter. \\
+\hline
+{\em rho} & Sparsity parameter. \\
+\hline
+{\em optimizer} & Desired optimizer. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a29f0cbc477c227939ebaaf99b0b94ea5}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Sparse\+Autoencoder@{Sparse\+Autoencoder}}
+\index{Sparse\+Autoencoder@{Sparse\+Autoencoder}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Sparse\+Autoencoder()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Sparse\+Autoencoder} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{visible\+Size,  }\item[{const size\+\_\+t}]{hidden\+Size,  }\item[{const double}]{lambda,  }\item[{const double}]{beta,  }\item[{const double}]{rho,  }\item[{Optimizer\+Type}]{optimizer,  }\item[{Callback\+Types \&\&...}]{callbacks }\end{DoxyParamCaption})}
+
+
+
+Construct the sparse autoencoder model with the given training data. 
+
+This will train the model. The parameters \textquotesingle{}lambda\textquotesingle{}, \textquotesingle{}beta\textquotesingle{} and \textquotesingle{}rho\textquotesingle{} can be set optionally. Changing these parameters will have an effect on regularization and sparsity of the model.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & The optimizer to use. \\
+\hline
+{\em Callback\+Types} & Types of Callback Functions. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input data with each column as one example. \\
+\hline
+{\em visible\+Size} & Size of input vector expected at the visible layer. \\
+\hline
+{\em hidden\+Size} & Size of input vector expected at the hidden layer. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+{\em beta} & KL divergence parameter. \\
+\hline
+{\em rho} & Sparsity parameter. \\
+\hline
+{\em optimizer} & Desired optimizer. \\
+\hline
+{\em callbacks} & Callback function for ensmallen optimizer {\ttfamily Optimizer\+Type}. See {\tt https\+://www.\+ensmallen.\+org/docs.\+html\#callback-\/documentation}. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_ac48f9c3723fbeb5d97e8382b706bb20d}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Beta@{Beta}}
+\index{Beta@{Beta}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Beta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Beta (\begin{DoxyParamCaption}\item[{const double}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the KL divergence parameter. 
+
+
+
+Definition at line 177 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_ad1b9206255af52171cb88dfb7c326576}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Beta@{Beta}}
+\index{Beta@{Beta}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Beta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Beta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the KL divergence parameter. 
+
+
+
+Definition at line 183 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_ad16d07cc1fe0b0df569ab3c0ca0562fb}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Get\+New\+Features@{Get\+New\+Features}}
+\index{Get\+New\+Features@{Get\+New\+Features}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Get\+New\+Features()}
+{\footnotesize\ttfamily void Get\+New\+Features (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{data,  }\item[{arma\+::mat \&}]{features }\end{DoxyParamCaption})}
+
+
+
+Transforms the provided data into the representation learned by the sparse autoencoder. 
+
+The function basically performs a feedforward computation using the learned weights, and returns the hidden layer activations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Matrix of the provided data. \\
+\hline
+{\em features} & The hidden layer representation of the provided data. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_aef6f7e6478c5268a8762768f2bed7cf3}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Hidden\+Size@{Hidden\+Size}}
+\index{Hidden\+Size@{Hidden\+Size}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Hidden\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Hidden\+Size (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{hidden }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets size of the hidden layer. 
+
+
+
+Definition at line 153 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a820e775a98d21ef0d06283a445e0813a}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Hidden\+Size@{Hidden\+Size}}
+\index{Hidden\+Size@{Hidden\+Size}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Hidden\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Hidden\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the size of the hidden layer. 
+
+
+
+Definition at line 159 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_af476ed1916ad9b39eaddd7e7ac108f4b}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Lambda (\begin{DoxyParamCaption}\item[{const double}]{l }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the L2-\/regularization parameter. 
+
+
+
+Definition at line 165 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a53535041275cedd0ec3de67ca032aa94}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the L2-\/regularization parameter. 
+
+
+
+Definition at line 171 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a97ac05cf618f1f137a4aa8fcd4e48539}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Rho (\begin{DoxyParamCaption}\item[{const double}]{r }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the sparsity parameter. 
+
+
+
+Definition at line 189 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a309719b378c0bb1962982a8162e58e84}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the sparsity parameter. 
+
+
+
+Definition at line 195 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a78a48b3c359a36dbc1d6936d7c8ba276}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Sigmoid@{Sigmoid}}
+\index{Sigmoid@{Sigmoid}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Sigmoid()}
+{\footnotesize\ttfamily void Sigmoid (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number \textquotesingle{}x\textquotesingle{} is [1 / (1 + exp(-\/x))]. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix of real values for which we require the sigmoid activation. \\
+\hline
+{\em output} & Output matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 135 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a56ba0c1d534d55c931e725914b00a100}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Visible\+Size@{Visible\+Size}}
+\index{Visible\+Size@{Visible\+Size}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Visible\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Visible\+Size (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{visible }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets size of the visible layer. 
+
+
+
+Definition at line 141 of file sparse\+\_\+autoencoder.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoder_a3cea635d43096bb8cd925c74dcdd1d48}} 
+\index{mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}!Visible\+Size@{Visible\+Size}}
+\index{Visible\+Size@{Visible\+Size}!mlpack\+::nn\+::\+Sparse\+Autoencoder@{mlpack\+::nn\+::\+Sparse\+Autoencoder}}
+\subsubsection{Visible\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Visible\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets size of the visible layer. 
+
+
+
+Definition at line 147 of file sparse\+\_\+autoencoder.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/sparse\+\_\+autoencoder/\textbf{ sparse\+\_\+autoencoder.\+hpp}\end{DoxyCompactItemize}

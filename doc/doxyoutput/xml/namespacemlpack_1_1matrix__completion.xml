@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1matrix__completion" kind="namespace" language="C++">
+    <compoundname>mlpack::matrix_completion</compoundname>
+    <innerclass refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion" prot="public">mlpack::matrix_completion::MatrixCompletion</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

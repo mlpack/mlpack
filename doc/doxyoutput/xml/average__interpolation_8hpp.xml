@@ -1,0 +1,494 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="average__interpolation_8hpp" kind="file" language="C++">
+    <compoundname>average_interpolation.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="cf_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</includedby>
+    <incdepgraph>
+      <node id="45629">
+        <label>list</label>
+      </node>
+      <node id="45626">
+        <label>atomic</label>
+      </node>
+      <node id="45616">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="45592">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="45628">
+        <label>iomanip</label>
+      </node>
+      <node id="45601">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="45602" relation="include">
+        </childnode>
+        <childnode refid="45604" relation="include">
+        </childnode>
+      </node>
+      <node id="45584">
+        <label>cstdint</label>
+      </node>
+      <node id="45593">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="45600">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="45623">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="45613">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="45580">
+        <label>cmath</label>
+      </node>
+      <node id="45599">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="45588">
+        <label>stdexcept</label>
+      </node>
+      <node id="45608">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="45593" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45594" relation="include">
+        </childnode>
+      </node>
+      <node id="45632">
+        <label>string</label>
+      </node>
+      <node id="45620">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="45621" relation="include">
+        </childnode>
+        <childnode refid="45587" relation="include">
+        </childnode>
+      </node>
+      <node id="45630">
+        <label>map</label>
+      </node>
+      <node id="45582">
+        <label>cfloat</label>
+      </node>
+      <node id="45612">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="45634">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="45596">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="45619">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="45620" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45603" relation="include">
+        </childnode>
+        <childnode refid="45621" relation="include">
+        </childnode>
+      </node>
+      <node id="45609">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="45607">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="45593" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45594" relation="include">
+        </childnode>
+      </node>
+      <node id="45610">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="45593" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45594" relation="include">
+        </childnode>
+      </node>
+      <node id="45598">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="45618">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="45594" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45606" relation="include">
+        </childnode>
+        <childnode refid="45615" relation="include">
+        </childnode>
+      </node>
+      <node id="45622">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="45623" relation="include">
+        </childnode>
+      </node>
+      <node id="45624">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="45579">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="45580" relation="include">
+        </childnode>
+        <childnode refid="45581" relation="include">
+        </childnode>
+        <childnode refid="45582" relation="include">
+        </childnode>
+        <childnode refid="45583" relation="include">
+        </childnode>
+        <childnode refid="45584" relation="include">
+        </childnode>
+        <childnode refid="45585" relation="include">
+        </childnode>
+        <childnode refid="45586" relation="include">
+        </childnode>
+        <childnode refid="45587" relation="include">
+        </childnode>
+        <childnode refid="45588" relation="include">
+        </childnode>
+        <childnode refid="45589" relation="include">
+        </childnode>
+        <childnode refid="45590" relation="include">
+        </childnode>
+        <childnode refid="45591" relation="include">
+        </childnode>
+        <childnode refid="45592" relation="include">
+        </childnode>
+        <childnode refid="45593" relation="include">
+        </childnode>
+        <childnode refid="45594" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45597" relation="include">
+        </childnode>
+        <childnode refid="45598" relation="include">
+        </childnode>
+        <childnode refid="45599" relation="include">
+        </childnode>
+        <childnode refid="45600" relation="include">
+        </childnode>
+        <childnode refid="45601" relation="include">
+        </childnode>
+        <childnode refid="45605" relation="include">
+        </childnode>
+        <childnode refid="45606" relation="include">
+        </childnode>
+        <childnode refid="45607" relation="include">
+        </childnode>
+        <childnode refid="45608" relation="include">
+        </childnode>
+        <childnode refid="45609" relation="include">
+        </childnode>
+        <childnode refid="45610" relation="include">
+        </childnode>
+        <childnode refid="45611" relation="include">
+        </childnode>
+        <childnode refid="45617" relation="include">
+        </childnode>
+        <childnode refid="45618" relation="include">
+        </childnode>
+        <childnode refid="45615" relation="include">
+        </childnode>
+        <childnode refid="45619" relation="include">
+        </childnode>
+        <childnode refid="45622" relation="include">
+        </childnode>
+        <childnode refid="45624" relation="include">
+        </childnode>
+        <childnode refid="45625" relation="include">
+        </childnode>
+        <childnode refid="45634" relation="include">
+        </childnode>
+        <childnode refid="45635" relation="include">
+        </childnode>
+      </node>
+      <node id="45585">
+        <label>cstdio</label>
+      </node>
+      <node id="45589">
+        <label>tuple</label>
+      </node>
+      <node id="45594">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="45611">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="45594" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45598" relation="include">
+        </childnode>
+        <childnode refid="45612" relation="include">
+        </childnode>
+        <childnode refid="45613" relation="include">
+        </childnode>
+        <childnode refid="45614" relation="include">
+        </childnode>
+        <childnode refid="45615" relation="include">
+        </childnode>
+      </node>
+      <node id="45590">
+        <label>utility</label>
+      </node>
+      <node id="45614">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="45605">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="45602">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="45603" relation="include">
+        </childnode>
+      </node>
+      <node id="45625">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="45626" relation="include">
+        </childnode>
+        <childnode refid="45627" relation="include">
+        </childnode>
+        <childnode refid="45628" relation="include">
+        </childnode>
+        <childnode refid="45629" relation="include">
+        </childnode>
+        <childnode refid="45630" relation="include">
+        </childnode>
+        <childnode refid="45631" relation="include">
+        </childnode>
+        <childnode refid="45632" relation="include">
+        </childnode>
+        <childnode refid="45633" relation="include">
+        </childnode>
+      </node>
+      <node id="45603">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="45617">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="45615" relation="include">
+        </childnode>
+        <childnode refid="45611" relation="include">
+        </childnode>
+        <childnode refid="45618" relation="include">
+        </childnode>
+      </node>
+      <node id="45586">
+        <label>cstdlib</label>
+      </node>
+      <node id="45581">
+        <label>cctype</label>
+      </node>
+      <node id="45604">
+        <label>unordered_map</label>
+      </node>
+      <node id="45583">
+        <label>climits</label>
+      </node>
+      <node id="45631">
+        <label>mutex</label>
+      </node>
+      <node id="45578">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/average_interpolation.hpp</label>
+        <link refid="average__interpolation_8hpp"/>
+        <childnode refid="45579" relation="include">
+        </childnode>
+      </node>
+      <node id="45627">
+        <label>chrono</label>
+      </node>
+      <node id="45635">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="45633">
+        <label>thread</label>
+      </node>
+      <node id="45621">
+        <label>type_traits</label>
+      </node>
+      <node id="45597">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="45591">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="45615">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="45593" relation="include">
+        </childnode>
+        <childnode refid="45594" relation="include">
+        </childnode>
+        <childnode refid="45595" relation="include">
+        </childnode>
+        <childnode refid="45596" relation="include">
+        </childnode>
+        <childnode refid="45616" relation="include">
+        </childnode>
+      </node>
+      <node id="45587">
+        <label>cstring</label>
+      </node>
+      <node id="45606">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="45595">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="45640">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="45642">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="45639">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="45637">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="45638" relation="include">
+        </childnode>
+        <childnode refid="45640" relation="include">
+        </childnode>
+        <childnode refid="45641" relation="include">
+        </childnode>
+        <childnode refid="45643" relation="include">
+        </childnode>
+      </node>
+      <node id="45643">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="45644" relation="include">
+        </childnode>
+      </node>
+      <node id="45638">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="45639" relation="include">
+        </childnode>
+      </node>
+      <node id="45644">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="45641">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="45642" relation="include">
+        </childnode>
+      </node>
+      <node id="45636">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/average_interpolation.hpp</label>
+        <link refid="average__interpolation_8hpp"/>
+        <childnode refid="45637" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1AverageInterpolation" prot="public">mlpack::cf::AverageInterpolation</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Wenhao Huang</para></simplesect>
+Definition of AverageInterpolation class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_CF_AVERAGE_INTERPOLATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_CF_AVERAGE_INTERPOLATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1cf_1_1AverageInterpolation" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1AverageInterpolation" kindref="compound">AverageInterpolation</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Empty<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1cf_1_1AverageInterpolation_1a0fc6829b9ccd30f4e79cb01389d5ef0c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1AverageInterpolation_1a0fc6829b9ccd30f4e79cb01389d5ef0c" kindref="member">AverageInterpolation</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classmlpack_1_1cf_1_1AverageInterpolation_1a48e88c343985e5407cd1e3f1a3d273d6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1AverageInterpolation_1a48e88c343985e5407cd1e3f1a3d273d6" kindref="member">AverageInterpolation</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::sp_mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>cleanedData<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VectorType,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DecompositionPolicy&gt;</highlight></codeline>
+<codeline lineno="65" refid="classmlpack_1_1cf_1_1AverageInterpolation_1ac92ff2a2cfcb48bda46221a1a31de9b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1AverageInterpolation_1ac92ff2a2cfcb48bda46221a1a31de9b3" kindref="member">GetWeights</ref>(VectorType&amp;&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DecompositionPolicy&amp;<sp/></highlight><highlight class="comment">/*<sp/>decomposition<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>queryUser<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/></highlight><highlight class="comment">/*<sp/>similarities<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::sp_mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>cleanedData<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(neighbors.n_elem<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Require:<sp/>neighbors.n_elem<sp/>&gt;<sp/>0.<sp/>There<sp/>should<sp/>be<sp/>at<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;least<sp/>one<sp/>neighbor!&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(weights.n_elem<sp/>!=<sp/>neighbors.n_elem)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;The<sp/>size<sp/>of<sp/>the<sp/>first<sp/>parameter<sp/>(weights)<sp/>should<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;be<sp/>set<sp/>to<sp/>the<sp/>number<sp/>of<sp/>neighbors<sp/>before<sp/>calling<sp/>GetWeights().&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>weights.fill(1.0<sp/>/<sp/>neighbors.n_elem);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/average_interpolation.hpp"/>
+  </compounddef>
+</doxygen>

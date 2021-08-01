@@ -1,0 +1,13 @@
+.. _exhale_define_catch_8hpp_1a4903733490f526b58053836575e99066:
+
+Define CHECK_THROWS_WITH
+========================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_tests_catch.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CHECK_THROWS_WITH

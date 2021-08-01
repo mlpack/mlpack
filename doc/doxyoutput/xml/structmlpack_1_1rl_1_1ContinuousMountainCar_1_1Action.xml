@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structmlpack_1_1rl_1_1ContinuousMountainCar_1_1Action" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::rl::ContinuousMountainCar::Action</compoundname>
+    <includes refid="continuous__mountain__car_8hpp" local="no">continuous_mountain_car.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1rl_1_1ContinuousMountainCar_1_1Action_1ab794acf36ef3d4b917753d5398116058" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double action[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>action</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1rl_1_1ContinuousMountainCar_1a311ac19edc537dee94f37b7cce93d908" compoundref="continuous__mountain__car_8hpp" startline="132" endline="163">ContinuousMountainCar::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1rl_1_1ContinuousMountainCar_1_1Action_1aab938108caad0d0e47d6885b5ba2d23a" prot="public" static="no" mutable="no">
+        <type>const int</type>
+        <definition>const int size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of action of Continuous Mountain Car. </para>    </briefdescription>
+    <detaileddescription>
+<para>In Continuous mountain car gain, the action represents the force to be applied. This value is bounded in range -1.0 to 1.0. Unlike the simple mountain car environment, where action space has a discrete value, continuous mountain car has continous action space value. </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp" bodystart="85" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1rl_1_1ContinuousMountainCar_1_1Action_1ab794acf36ef3d4b917753d5398116058" prot="public" virt="non-virtual"><scope>mlpack::rl::ContinuousMountainCar::Action</scope><name>action</name></member>
+      <member refid="structmlpack_1_1rl_1_1ContinuousMountainCar_1_1Action_1aab938108caad0d0e47d6885b5ba2d23a" prot="public" virt="non-virtual"><scope>mlpack::rl::ContinuousMountainCar::Action</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

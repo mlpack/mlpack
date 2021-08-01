@@ -1,0 +1,13 @@
+.. _exhale_define_CLI11_8hpp_1aa5083d44020c499995d126efcdcf5b63:
+
+Define CLI11_ERROR_DEF
+======================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_bindings_cli_third_party_CLI_CLI11.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: CLI11_ERROR_DEF

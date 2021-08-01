@@ -1,0 +1,102 @@
+.TH "NoNormalization" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NoNormalization \- This normalization class doesn't perform any normalization\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNoNormalization\fP ()"
+.br
+.ti -1c
+.RI "double \fBDenormalize\fP (const size_t, const size_t, const double rating) const"
+.br
+.RI "Do nothing\&. "
+.ti -1c
+.RI "void \fBDenormalize\fP (const arma::Mat< size_t > &, const arma::vec &) const"
+.br
+.RI "Do nothing\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBNormalize\fP (const MatType &) const"
+.br
+.RI "Do nothing\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialization\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This normalization class doesn't perform any normalization\&. 
+
+It is the default normalization type for CF class\&. 
+.PP
+Definition at line 25 of file no_normalization\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNoNormalization\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 29 of file no_normalization\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double Denormalize (const size_t, const size_t, const double rating) const\fC [inline]\fP"
+
+.PP
+Do nothing\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (user) User ID\&. 
+.br
+\fI*\fP (item) Item ID\&. 
+.br
+\fIrating\fP Computed rating before denormalization\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file no_normalization\&.hpp\&.
+.SS "void Denormalize (const arma::Mat< size_t > &, const arma::vec &) const\fC [inline]\fP"
+
+.PP
+Do nothing\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (combinations) User/Item combinations\&. 
+.br
+\fI*\fP (predictions) Predicted ratings for each user/item combination\&. 
+.RE
+.PP
+
+.PP
+Definition at line 59 of file no_normalization\&.hpp\&.
+.SS "void Normalize (const MatType &) const\fC [inline]\fP"
+
+.PP
+Do nothing\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fI*\fP (data) Input dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file no_normalization\&.hpp\&.
+.SS "void serialize (Archive &, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialization\&. 
+.PP
+Definition at line 67 of file no_normalization\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

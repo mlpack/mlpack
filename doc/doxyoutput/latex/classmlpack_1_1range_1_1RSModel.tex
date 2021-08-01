@@ -1,0 +1,510 @@
+\section{R\+S\+Model Class Reference}
+\label{classmlpack_1_1range_1_1RSModel}\index{R\+S\+Model@{R\+S\+Model}}
+
+
+The \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} class provides an abstraction for the \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Tree\+Types} \{ \newline
+\textbf{ K\+D\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ B\+A\+L\+L\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ X\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ V\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ U\+B\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ O\+C\+T\+R\+EE}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ R\+S\+Model} (const \textbf{ Tree\+Types} tree\+Type=Tree\+Types\+::\+K\+D\+\_\+\+T\+R\+EE, const bool random\+Basis=false)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} with the given type and whether or not a random basis should be used. \end{DoxyCompactList}\item 
+\textbf{ R\+S\+Model} (const \textbf{ R\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. \end{DoxyCompactList}\item 
+\textbf{ R\+S\+Model} (\textbf{ R\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+R\+S\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean memory, if necessary. \end{DoxyCompactList}\item 
+void \textbf{ Build\+Model} (arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const bool naive, const bool single\+Mode)
+\begin{DoxyCompactList}\small\item\em Build the reference tree on the given dataset with the given parameters. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Expose the dataset. \end{DoxyCompactList}\item 
+void \textbf{ Initialize\+Model} (const bool naive, const bool single\+Mode)
+\begin{DoxyCompactList}\small\item\em Allocate the memory for the range search model. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the leaf size (applicable to everything but the cover tree). \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Leaf\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the leaf size (applicable to everything but the cover tree). \end{DoxyCompactList}\item 
+bool \textbf{ Naive} () const
+\begin{DoxyCompactList}\small\item\em Get whether the model is in naive search mode. \end{DoxyCompactList}\item 
+bool \& \textbf{ Naive} ()
+\begin{DoxyCompactList}\small\item\em Modify whether the model is in naive search mode. \end{DoxyCompactList}\item 
+\textbf{ R\+S\+Model} \& \textbf{ operator=} (const \textbf{ R\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. \end{DoxyCompactList}\item 
+\textbf{ R\+S\+Model} \& \textbf{ operator=} (\textbf{ R\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}\textquotesingle{}s data. \end{DoxyCompactList}\item 
+bool \textbf{ Random\+Basis} () const
+\begin{DoxyCompactList}\small\item\em Get whether a random basis is used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Random\+Basis} ()
+\begin{DoxyCompactList}\small\item\em Modify whether a random basis is used (don\textquotesingle{}t do this after the model has been built). \end{DoxyCompactList}\item 
+void \textbf{ Search} (arma\+::mat \&\&query\+Set, const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances)
+\begin{DoxyCompactList}\small\item\em Perform range search. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances)
+\begin{DoxyCompactList}\small\item\em Perform monochromatic range search, with the reference set as the query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the range search model. \end{DoxyCompactList}\item 
+bool \textbf{ Single\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Get whether the model is in single-\/tree search mode. \end{DoxyCompactList}\item 
+bool \& \textbf{ Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify whether the model is in single-\/tree search mode. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \textbf{ Tree\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the type of tree. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \& \textbf{ Tree\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the type of tree (don\textquotesingle{}t do this after the model has been built). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} class provides an abstraction for the \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime. 
+
+This class is written for the sake of the {\ttfamily range\+\_\+search} binding, but is not necessarily restricted to that usage. 
+
+Definition at line 206 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8d}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Tree\+Types@{Tree\+Types}}
+\index{Tree\+Types@{Tree\+Types}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Tree\+Types}
+{\footnotesize\ttfamily enum \textbf{ Tree\+Types}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c}} 
+K\+D\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3}} 
+C\+O\+V\+E\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9}} 
+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b}} 
+R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+A\+L\+L\+\_\+\+T\+R\+EE@{B\+A\+L\+L\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!B\+A\+L\+L\+\_\+\+T\+R\+EE@{B\+A\+L\+L\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d}} 
+B\+A\+L\+L\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059}} 
+X\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c}} 
+H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff}} 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5}} 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{V\+P\+\_\+\+T\+R\+EE@{V\+P\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!V\+P\+\_\+\+T\+R\+EE@{V\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8daa8a6aade44830d33165414079bf8dd1c}} 
+V\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+P\+\_\+\+T\+R\+EE@{R\+P\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+P\+\_\+\+T\+R\+EE@{R\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250}} 
+R\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE@{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE@{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8da0e4ed6912ca7a8232754df8771365c96}} 
+M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc}} 
+U\+B\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1range_1_1RSModel_a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50}} 
+O\+C\+T\+R\+EE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 209 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a3dd8fd1e68320b3ec82950d839664350}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+S\+Model@{R\+S\+Model}}
+\index{R\+S\+Model@{R\+S\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{R\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ R\+S\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ Tree\+Types}}]{tree\+Type = {\ttfamily TreeTypes\+:\+:KD\+\_\+TREE},  }\item[{const bool}]{random\+Basis = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Initialize the \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} with the given type and whether or not a random basis should be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree\+Type} & Type of tree to use. \\
+\hline
+{\em random\+Basis} & Whether or not to use a random basis. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a8ed1e3cec17df0626ac2a5034df3b537}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+S\+Model@{R\+S\+Model}}
+\index{R\+S\+Model@{R\+S\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{R\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ R\+S\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ R\+S\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a178ee2403468f92eadfe0d269e858aeb}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!R\+S\+Model@{R\+S\+Model}}
+\index{R\+S\+Model@{R\+S\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{R\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ R\+S\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ R\+S\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a5f50179749aa6dfe66e789d6049c49ab}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!````~R\+S\+Model@{$\sim$\+R\+S\+Model}}
+\index{````~R\+S\+Model@{$\sim$\+R\+S\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{$\sim$\+R\+S\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ R\+S\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory, if necessary. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a394d212c5373090724aaea3ba24b482e}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Build\+Model@{Build\+Model}}
+\index{Build\+Model@{Build\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Build\+Model()}
+{\footnotesize\ttfamily void Build\+Model (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const bool}]{naive,  }\item[{const bool}]{single\+Mode }\end{DoxyParamCaption})}
+
+
+
+Build the reference tree on the given dataset with the given parameters. 
+
+This takes possession of the reference set to avoid a copy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+{\em leaf\+Size} & Leaf size of tree (ignored for the cover tree). \\
+\hline
+{\em naive} & Whether naive search should be used. \\
+\hline
+{\em single\+Mode} & Whether single-\/tree search should be used. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_aff320b9a86b77a150e630c01d5888273}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose the dataset. 
+
+
+
+Definition at line 275 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a7f40b35e0dbe4860397eeeda65197d64}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Initialize\+Model@{Initialize\+Model}}
+\index{Initialize\+Model@{Initialize\+Model}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Initialize\+Model()}
+{\footnotesize\ttfamily void Initialize\+Model (\begin{DoxyParamCaption}\item[{const bool}]{naive,  }\item[{const bool}]{single\+Mode }\end{DoxyParamCaption})}
+
+
+
+Allocate the memory for the range search model. 
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_ab81b93ebb200783ca4c5747f31889fa0}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Leaf\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the leaf size (applicable to everything but the cover tree). 
+
+
+
+Definition at line 288 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a0966773f5b7ef0c324ed40b1cf4b94d1}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Leaf\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the leaf size (applicable to everything but the cover tree). 
+
+
+
+Definition at line 290 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a343230e7d7344e3f7d5f5f2eb89cf2c5}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether the model is in naive search mode. 
+
+
+
+Definition at line 283 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_af7d397adca3f411b4e2d2f977b280ce6}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether the model is in naive search mode. 
+
+
+
+Definition at line 285 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_aea8c23e3a7f72594cce88439d7a8e4e3}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ R\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ R\+S\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a6ac7e5a1e637c462fb01537fb14b2d40}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ R\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ R\+S\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel}\textquotesingle{}s data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+S\+Model}{p.}{classmlpack_1_1range_1_1RSModel} to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_ae3053ad1e3b42eb1ae4105aecd060cf6}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Random\+Basis()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether a random basis is used. 
+
+
+
+Definition at line 298 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a8111114602e748b38c0875f82f323544}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Random\+Basis()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether a random basis is used (don\textquotesingle{}t do this after the model has been built). 
+
+
+
+Definition at line 301 of file rs\+\_\+model.\+hpp.
+
+
+
+References R\+S\+Wrapper\+Base\+::\+Search().
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a24f05d38662b2832148f426ebc930a30}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const math\+::\+Range \&}]{range,  }\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform range search. 
+
+This takes possession of the query set, so the query set will not be usable after the search. For more information on the output format, see \doxyref{Range\+Search$<$$>$\+::\+Search()}{p.}{classmlpack_1_1range_1_1RangeSearch_a0df148abcabf67c5876e942e12279f8e}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set of query points. \\
+\hline
+{\em range} & Range to search for. \\
+\hline
+{\em neighbors} & Output\+: neighbors falling within the desired range. \\
+\hline
+{\em distances} & Output\+: distances of neighbors. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a3868480bcd41a740550657144b5f7018}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const math\+::\+Range \&}]{range,  }\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform monochromatic range search, with the reference set as the query set. 
+
+For more information on the output format, see \doxyref{Range\+Search$<$$>$\+::\+Search()}{p.}{classmlpack_1_1range_1_1RangeSearch_a0df148abcabf67c5876e942e12279f8e}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em range} & Range to search for. \\
+\hline
+{\em neighbors} & Output\+: neighbors falling within the desired range. \\
+\hline
+{\em distances} & Output\+: distances of neighbors. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the range search model. 
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a7477b3e8499a6158bbe177e7f30d4947}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether the model is in single-\/tree search mode. 
+
+
+
+Definition at line 278 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_adadacd63ddeadf138d834b1fdc632773}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether the model is in single-\/tree search mode. 
+
+
+
+Definition at line 280 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_adb3d0b75d7754ec6741d890232576ffc}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Tree\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types} Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the type of tree. 
+
+
+
+Definition at line 293 of file rs\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1range_1_1RSModel_a56b0460c7769ea1ef9d8314026ef36c6}} 
+\index{mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::range\+::\+R\+S\+Model@{mlpack\+::range\+::\+R\+S\+Model}}
+\subsubsection{Tree\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types}\& Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the type of tree (don\textquotesingle{}t do this after the model has been built). 
+
+
+
+Definition at line 295 of file rs\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/range\+\_\+search/\textbf{ rs\+\_\+model.\+hpp}\end{DoxyCompactItemize}

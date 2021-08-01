@@ -1,0 +1,431 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="inverse__quadratic__function_8hpp" kind="file" language="C++">
+    <compoundname>inverse_quadratic_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="24856">
+        <label>list</label>
+      </node>
+      <node id="24853">
+        <label>atomic</label>
+      </node>
+      <node id="24843">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="24819">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="24855">
+        <label>iomanip</label>
+      </node>
+      <node id="24828">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="24829" relation="include">
+        </childnode>
+        <childnode refid="24831" relation="include">
+        </childnode>
+      </node>
+      <node id="24811">
+        <label>cstdint</label>
+      </node>
+      <node id="24820">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="24827">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="24850">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="24840">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="24807">
+        <label>cmath</label>
+      </node>
+      <node id="24826">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="24815">
+        <label>stdexcept</label>
+      </node>
+      <node id="24835">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="24820" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24821" relation="include">
+        </childnode>
+      </node>
+      <node id="24859">
+        <label>string</label>
+      </node>
+      <node id="24847">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="24848" relation="include">
+        </childnode>
+        <childnode refid="24814" relation="include">
+        </childnode>
+      </node>
+      <node id="24857">
+        <label>map</label>
+      </node>
+      <node id="24809">
+        <label>cfloat</label>
+      </node>
+      <node id="24839">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="24861">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="24823">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="24846">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="24847" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24830" relation="include">
+        </childnode>
+        <childnode refid="24848" relation="include">
+        </childnode>
+      </node>
+      <node id="24836">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="24834">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="24820" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24821" relation="include">
+        </childnode>
+      </node>
+      <node id="24837">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="24820" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24821" relation="include">
+        </childnode>
+      </node>
+      <node id="24825">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="24845">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="24821" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24833" relation="include">
+        </childnode>
+        <childnode refid="24842" relation="include">
+        </childnode>
+      </node>
+      <node id="24849">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="24850" relation="include">
+        </childnode>
+      </node>
+      <node id="24851">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="24806">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="24807" relation="include">
+        </childnode>
+        <childnode refid="24808" relation="include">
+        </childnode>
+        <childnode refid="24809" relation="include">
+        </childnode>
+        <childnode refid="24810" relation="include">
+        </childnode>
+        <childnode refid="24811" relation="include">
+        </childnode>
+        <childnode refid="24812" relation="include">
+        </childnode>
+        <childnode refid="24813" relation="include">
+        </childnode>
+        <childnode refid="24814" relation="include">
+        </childnode>
+        <childnode refid="24815" relation="include">
+        </childnode>
+        <childnode refid="24816" relation="include">
+        </childnode>
+        <childnode refid="24817" relation="include">
+        </childnode>
+        <childnode refid="24818" relation="include">
+        </childnode>
+        <childnode refid="24819" relation="include">
+        </childnode>
+        <childnode refid="24820" relation="include">
+        </childnode>
+        <childnode refid="24821" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24824" relation="include">
+        </childnode>
+        <childnode refid="24825" relation="include">
+        </childnode>
+        <childnode refid="24826" relation="include">
+        </childnode>
+        <childnode refid="24827" relation="include">
+        </childnode>
+        <childnode refid="24828" relation="include">
+        </childnode>
+        <childnode refid="24832" relation="include">
+        </childnode>
+        <childnode refid="24833" relation="include">
+        </childnode>
+        <childnode refid="24834" relation="include">
+        </childnode>
+        <childnode refid="24835" relation="include">
+        </childnode>
+        <childnode refid="24836" relation="include">
+        </childnode>
+        <childnode refid="24837" relation="include">
+        </childnode>
+        <childnode refid="24838" relation="include">
+        </childnode>
+        <childnode refid="24844" relation="include">
+        </childnode>
+        <childnode refid="24845" relation="include">
+        </childnode>
+        <childnode refid="24842" relation="include">
+        </childnode>
+        <childnode refid="24846" relation="include">
+        </childnode>
+        <childnode refid="24849" relation="include">
+        </childnode>
+        <childnode refid="24851" relation="include">
+        </childnode>
+        <childnode refid="24852" relation="include">
+        </childnode>
+        <childnode refid="24861" relation="include">
+        </childnode>
+        <childnode refid="24862" relation="include">
+        </childnode>
+      </node>
+      <node id="24812">
+        <label>cstdio</label>
+      </node>
+      <node id="24816">
+        <label>tuple</label>
+      </node>
+      <node id="24821">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="24838">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="24821" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24825" relation="include">
+        </childnode>
+        <childnode refid="24839" relation="include">
+        </childnode>
+        <childnode refid="24840" relation="include">
+        </childnode>
+        <childnode refid="24841" relation="include">
+        </childnode>
+        <childnode refid="24842" relation="include">
+        </childnode>
+      </node>
+      <node id="24817">
+        <label>utility</label>
+      </node>
+      <node id="24841">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="24832">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="24829">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="24830" relation="include">
+        </childnode>
+      </node>
+      <node id="24852">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="24853" relation="include">
+        </childnode>
+        <childnode refid="24854" relation="include">
+        </childnode>
+        <childnode refid="24855" relation="include">
+        </childnode>
+        <childnode refid="24856" relation="include">
+        </childnode>
+        <childnode refid="24857" relation="include">
+        </childnode>
+        <childnode refid="24858" relation="include">
+        </childnode>
+        <childnode refid="24859" relation="include">
+        </childnode>
+        <childnode refid="24860" relation="include">
+        </childnode>
+      </node>
+      <node id="24830">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="24844">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="24842" relation="include">
+        </childnode>
+        <childnode refid="24838" relation="include">
+        </childnode>
+        <childnode refid="24845" relation="include">
+        </childnode>
+      </node>
+      <node id="24813">
+        <label>cstdlib</label>
+      </node>
+      <node id="24808">
+        <label>cctype</label>
+      </node>
+      <node id="24805">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/inverse_quadratic_function.hpp</label>
+        <link refid="inverse__quadratic__function_8hpp"/>
+        <childnode refid="24806" relation="include">
+        </childnode>
+      </node>
+      <node id="24831">
+        <label>unordered_map</label>
+      </node>
+      <node id="24810">
+        <label>climits</label>
+      </node>
+      <node id="24858">
+        <label>mutex</label>
+      </node>
+      <node id="24854">
+        <label>chrono</label>
+      </node>
+      <node id="24862">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="24860">
+        <label>thread</label>
+      </node>
+      <node id="24848">
+        <label>type_traits</label>
+      </node>
+      <node id="24824">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="24818">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="24842">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="24820" relation="include">
+        </childnode>
+        <childnode refid="24821" relation="include">
+        </childnode>
+        <childnode refid="24822" relation="include">
+        </childnode>
+        <childnode refid="24823" relation="include">
+        </childnode>
+        <childnode refid="24843" relation="include">
+        </childnode>
+      </node>
+      <node id="24814">
+        <label>cstring</label>
+      </node>
+      <node id="24833">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="24822">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1InvQuadFunction" prot="public">mlpack::ann::InvQuadFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Himanshu Pathak</para></simplesect>
+Definition and implementation of Inverse Quadratic function.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_INVERSE_QUAD_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_INVERSE_QUAD_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1ann_1_1InvQuadFunction" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1InvQuadFunction" kindref="compound">InvQuadFunction</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="37" refid="classmlpack_1_1ann_1_1InvQuadFunction_1a11bd9a1195e6b107f9fee73643bc328b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1InvQuadFunction_1a11bd9a1195e6b107f9fee73643bc328b" kindref="member">Fn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1<sp/>/<sp/>(<sp/>1<sp/>+<sp/>x<sp/>*<sp/>x);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputVecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputVecType&gt;</highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1ann_1_1InvQuadFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1InvQuadFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" kindref="member">Fn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputVecType&amp;<sp/>x,<sp/>OutputVecType&amp;<sp/>y)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>y<sp/>=<sp/>1<sp/>/<sp/>(1<sp/>+<sp/>arma::pow(x,<sp/>2));</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1ann_1_1InvQuadFunction_1a163d34fd09f8edf457164f5033c635cf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1InvQuadFunction_1a163d34fd09f8edf457164f5033c635cf" kindref="member">Deriv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>y)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>-<sp/>2<sp/>*<sp/>y<sp/>/<sp/>std::pow(1<sp/>+<sp/>std::pow(y,<sp/>2),<sp/>2);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputVecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputVecType&gt;</highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1ann_1_1InvQuadFunction_1a0ad035ec996acd7025807d0e9e082887" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1InvQuadFunction_1a0ad035ec996acd7025807d0e9e082887" kindref="member">Deriv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputVecType&amp;<sp/>x,<sp/>OutputVecType&amp;<sp/>y)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>y<sp/>=<sp/>-<sp/>2<sp/>*<sp/>x<sp/>/<sp/>arma::pow(1<sp/>+<sp/>arma::pow(x,<sp/>2),<sp/>2);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>InvQuadFunction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/inverse_quadratic_function.hpp"/>
+  </compounddef>
+</doxygen>

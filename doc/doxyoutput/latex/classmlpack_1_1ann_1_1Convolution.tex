@@ -1,0 +1,903 @@
+\section{Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Convolution}\index{Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$@{Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Convolution} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object. \end{DoxyCompactList}\item 
+\textbf{ Convolution} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width=1, const size\+\_\+t stride\+Height=1, const size\+\_\+t padW=0, const size\+\_\+t padH=0, const size\+\_\+t input\+Width=0, const size\+\_\+t input\+Height=0, const std\+::string \&padding\+Type=\char`\"{}None\char`\"{})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. \end{DoxyCompactList}\item 
+\textbf{ Convolution} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width, const size\+\_\+t stride\+Height, const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&padW, const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&padH, const size\+\_\+t input\+Width=0, const size\+\_\+t input\+Height=0, const std\+::string \&padding\+Type=\char`\"{}None\char`\"{})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Bias} () const
+\begin{DoxyCompactList}\small\item\em Get the bias of the layer. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Bias} ()
+\begin{DoxyCompactList}\small\item\em Modify the bias of the layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the input height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the input height. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the number of input maps. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the input width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify input the width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the output height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the output height. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the number of output maps. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the output width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the output width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+H\+Bottom} () const
+\begin{DoxyCompactList}\small\item\em Get the bottom padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+H\+Bottom} ()
+\begin{DoxyCompactList}\small\item\em Modify the bottom padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+H\+Top} () const
+\begin{DoxyCompactList}\small\item\em Get the top padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+H\+Top} ()
+\begin{DoxyCompactList}\small\item\em Modify the top padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+W\+Left} () const
+\begin{DoxyCompactList}\small\item\em Get the left padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+W\+Left} ()
+\begin{DoxyCompactList}\small\item\em Modify the left padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+W\+Right} () const
+\begin{DoxyCompactList}\small\item\em Get the right padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+W\+Right} ()
+\begin{DoxyCompactList}\small\item\em Modify the right padding width. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride width. \end{DoxyCompactList}\item 
+arma\+::cube const  \& \textbf{ Weight} () const
+\begin{DoxyCompactList}\small\item\em Get the weight of the layer. \end{DoxyCompactList}\item 
+arma\+::cube \& \textbf{ Weight} ()
+\begin{DoxyCompactList}\small\item\em Modify the weight of the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get size of weights for the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Forward\+Convolution\+Rule = Naive\+Convolution$<$\+Valid\+Convolution$>$, typename Backward\+Convolution\+Rule = Naive\+Convolution$<$\+Full\+Convolution$>$, typename Gradient\+Convolution\+Rule = Naive\+Convolution$<$\+Valid\+Convolution$>$, typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class. 
+
+The \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class represents a single layer of a neural network. Example usage\+:
+
+Suppose we want to pass a matrix M (2744x100) to a {\ttfamily \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution}} layer; in this example, {\ttfamily M} was obtained from \char`\"{}flattening\char`\"{} 100 images (or Mel cepstral coefficients, if we talk about speech, or whatever you like) of dimension 196x14. In other words, the first 196 columns of each row of M will be made of the 196 columns of the first row of each of the 100 images (or Mel cepstral coefficients). Then the next 295 columns of M (196 -\/ 393) will be made of the 196 columns of the second row of the 100 images (or Mel cepstral coefficients), etc. Given that the size of our 2-\/D input images is 196x14, the parameters for our {\ttfamily \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution}} layer will be something like this\+:
+
+
+\begin{DoxyCode}
+Convolution<> c(1, \textcolor{comment}{// Number of input activation maps.}
+                14, \textcolor{comment}{// Number of output activation maps.}
+                3, \textcolor{comment}{// Filter width.}
+                3, \textcolor{comment}{// Filter height.}
+                1, \textcolor{comment}{// Stride along width.}
+                1, \textcolor{comment}{// Stride along height.}
+                0, \textcolor{comment}{// Padding width.}
+                0, \textcolor{comment}{// Padding height.}
+                196, \textcolor{comment}{// Input width.}
+                14); \textcolor{comment}{// Input height.}
+\end{DoxyCode}
+
+
+This {\ttfamily \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution}$<$$>$} layer will treat each column of the input matrix {\ttfamily M} as a 2-\/D image (or object) of the original 196x14 size, using this as the input for the 14 filters of this example.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Forward\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to perform forward process. \\
+\hline
+{\em Backward\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to perform backward process. \\
+\hline
+{\em Gradient\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to calculate gradient. \\
+\hline
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 77 of file convolution.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a69c44a99bce44870880eaf09730d4acc}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Convolution()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Convolution} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a7050bf30b7d9e31bd038c6427236e3ca}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Convolution()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Convolution} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width = {\ttfamily 1},  }\item[{const size\+\_\+t}]{stride\+Height = {\ttfamily 1},  }\item[{const size\+\_\+t}]{padW = {\ttfamily 0},  }\item[{const size\+\_\+t}]{padH = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Height = {\ttfamily 0},  }\item[{const std\+::string \&}]{padding\+Type = {\ttfamily \char`\"{}None\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input maps. \\
+\hline
+{\em out\+Size} & The number of output maps. \\
+\hline
+{\em kernel\+Width} & Width of the filter/kernel. \\
+\hline
+{\em kernel\+Height} & Height of the filter/kernel. \\
+\hline
+{\em stride\+Width} & Stride of filter application in the x direction. \\
+\hline
+{\em stride\+Height} & Stride of filter application in the y direction. \\
+\hline
+{\em padW} & \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} width of the input. \\
+\hline
+{\em padH} & \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} height of the input. \\
+\hline
+{\em input\+Width} & The width of the input data. \\
+\hline
+{\em input\+Height} & The height of the input data. \\
+\hline
+{\em padding\+Type} & The type of padding (Valid or Same). Defaults to None. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a83aba4b04132dd114cf8e15d31ac1600}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Convolution()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Convolution} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width,  }\item[{const size\+\_\+t}]{stride\+Height,  }\item[{const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&}]{padW,  }\item[{const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&}]{padH,  }\item[{const size\+\_\+t}]{input\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Height = {\ttfamily 0},  }\item[{const std\+::string \&}]{padding\+Type = {\ttfamily \char`\"{}None\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input maps. \\
+\hline
+{\em out\+Size} & The number of output maps. \\
+\hline
+{\em kernel\+Width} & Width of the filter/kernel. \\
+\hline
+{\em kernel\+Height} & Height of the filter/kernel. \\
+\hline
+{\em stride\+Width} & Stride of filter application in the x direction. \\
+\hline
+{\em stride\+Height} & Stride of filter application in the y direction. \\
+\hline
+{\em padW} & A two-\/value tuple indicating padding widths of the input. First value is padding at left side. Second value is padding on right side. \\
+\hline
+{\em padH} & A two-\/value tuple indicating padding heights of the input. First value is padding at top. Second value is padding on bottom. \\
+\hline
+{\em input\+Width} & The width of the input data. \\
+\hline
+{\em input\+Height} & The height of the input data. \\
+\hline
+{\em padding\+Type} & The type of padding (Valid or Same). Defaults to None. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ab94cce6a9d6baed0badd20f4a409e9af}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Bias@{Bias}}
+\index{Bias@{Bias}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Bias()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Bias (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bias of the layer. 
+
+
+
+Definition at line 195 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a398f0702633d5ba7afe6057d25f4b78c}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Bias@{Bias}}
+\index{Bias@{Bias}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Bias()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Bias (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bias of the layer. 
+
+
+
+Definition at line 197 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 210 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 212 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a9eb69a40c783e082307be5cb1ffab921}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 215 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a19abce4739c3b0b658b612537e21956a}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 217 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ac34354aab4ed6f9145908b19eade6a24}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input height. 
+
+
+
+Definition at line 225 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_aefbba724eec397a928d5460bb209a360}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input height. 
+
+
+
+Definition at line 227 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_aaffd593b3ab627f8b5aae2a1f53634b0}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 200 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 202 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a13ab93f234244a68f6ade76287284447}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Shape@{Input\+Shape}}
+\index{Input\+Shape@{Input\+Shape}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Shape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 292 of file convolution.\+hpp.
+
+
+
+References Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Size@{Input\+Size}}
+\index{Input\+Size@{Input\+Size}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of input maps. 
+
+
+
+Definition at line 240 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a432efdff77411903044ae87ec3aec70f}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input width. 
+
+
+
+Definition at line 220 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a238e9d308df611a9300a4ca6756fef4d}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Input\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify input the width. 
+
+
+
+Definition at line 222 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a6c15e2e3416651fac44621acbbdac9e9}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Kernel\+Height@{Kernel\+Height}}
+\index{Kernel\+Height@{Kernel\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Kernel\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel height. 
+
+
+
+Definition at line 251 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a46b2c28d89959067f549f9f45d2626c5}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Kernel\+Height@{Kernel\+Height}}
+\index{Kernel\+Height@{Kernel\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Kernel\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel height. 
+
+
+
+Definition at line 253 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a656302bc9b300692aa71abe2a614c7b1}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Kernel\+Width@{Kernel\+Width}}
+\index{Kernel\+Width@{Kernel\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Kernel\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel width. 
+
+
+
+Definition at line 246 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a5fbae452ceda395f5566833e06ba3615}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Kernel\+Width@{Kernel\+Width}}
+\index{Kernel\+Width@{Kernel\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Kernel\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel width. 
+
+
+
+Definition at line 248 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a96a6294ed9ca8d24be9bb5eb53db7f25}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Height@{Output\+Height}}
+\index{Output\+Height@{Output\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output height. 
+
+
+
+Definition at line 235 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ac5112abf9f5e1face13ed965a8755b1d}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Height@{Output\+Height}}
+\index{Output\+Height@{Output\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output height. 
+
+
+
+Definition at line 237 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 205 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 207 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Size@{Output\+Size}}
+\index{Output\+Size@{Output\+Size}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of output maps. 
+
+
+
+Definition at line 243 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_aa2b647f9e029826314b4f572fe96878d}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Width@{Output\+Width}}
+\index{Output\+Width@{Output\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output width. 
+
+
+
+Definition at line 230 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a54579ec9924e2a4a5bc0a4fb822ce80c}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Output\+Width@{Output\+Width}}
+\index{Output\+Width@{Output\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Output\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output width. 
+
+
+
+Definition at line 232 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a7772e9861fa1c1922b00428172315939}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+H\+Bottom@{Pad\+H\+Bottom}}
+\index{Pad\+H\+Bottom@{Pad\+H\+Bottom}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+H\+Bottom()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+H\+Bottom (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bottom padding height. 
+
+
+
+Definition at line 271 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a49d01b2dacca58ba01d883045100b823}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+H\+Bottom@{Pad\+H\+Bottom}}
+\index{Pad\+H\+Bottom@{Pad\+H\+Bottom}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+H\+Bottom()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+H\+Bottom (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bottom padding height. 
+
+
+
+Definition at line 273 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ae6d766575008c2909e51d00b1ef619a1}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+H\+Top@{Pad\+H\+Top}}
+\index{Pad\+H\+Top@{Pad\+H\+Top}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+H\+Top()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+H\+Top (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the top padding height. 
+
+
+
+Definition at line 266 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a9ea976eb369189ecbe7be7e53e323d5e}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+H\+Top@{Pad\+H\+Top}}
+\index{Pad\+H\+Top@{Pad\+H\+Top}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+H\+Top()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+H\+Top (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the top padding height. 
+
+
+
+Definition at line 268 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a353cb5238a6b33f0d740c3ab17da11b4}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+W\+Left@{Pad\+W\+Left}}
+\index{Pad\+W\+Left@{Pad\+W\+Left}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+W\+Left()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+W\+Left (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the left padding width. 
+
+
+
+Definition at line 276 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a10cf922741cd487e0904c933e6500760}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+W\+Left@{Pad\+W\+Left}}
+\index{Pad\+W\+Left@{Pad\+W\+Left}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+W\+Left()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+W\+Left (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the left padding width. 
+
+
+
+Definition at line 278 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a7f164b19d31d8d4ec4988513c139bf55}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+W\+Right@{Pad\+W\+Right}}
+\index{Pad\+W\+Right@{Pad\+W\+Right}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+W\+Right()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+W\+Right (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the right padding width. 
+
+
+
+Definition at line 281 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a97efc672230a48247bd19a1bcd51624f}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Pad\+W\+Right@{Pad\+W\+Right}}
+\index{Pad\+W\+Right@{Pad\+W\+Right}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Pad\+W\+Right()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+W\+Right (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the right padding width. 
+
+
+
+Definition at line 283 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_aa530552c7ef915c952fbacc77b965c90}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 185 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 187 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Shape().
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a1894b819a7ff82a5576fc8deb8ba7457}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Stride\+Height@{Stride\+Height}}
+\index{Stride\+Height@{Stride\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Stride\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride height. 
+
+
+
+Definition at line 261 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a0dd3de9c8a9060e927c575b57a021e8b}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Stride\+Height@{Stride\+Height}}
+\index{Stride\+Height@{Stride\+Height}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Stride\+Height()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride height. 
+
+
+
+Definition at line 263 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_ad8fd9eb6de956c3e9d82242793fd2db1}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Stride\+Width@{Stride\+Width}}
+\index{Stride\+Width@{Stride\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Stride\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride width. 
+
+
+
+Definition at line 256 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_af40557db9372b513440e06a5e42cc599}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Stride\+Width@{Stride\+Width}}
+\index{Stride\+Width@{Stride\+Width}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Stride\+Width()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride width. 
+
+
+
+Definition at line 258 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a18753fb91ac2d21cb52a432cfa0253e5}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Weight@{Weight}}
+\index{Weight@{Weight}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Weight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::cube const\& Weight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the weight of the layer. 
+
+
+
+Definition at line 190 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a7efcee6fad13ea8a7a431168fe0ad55a}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Weight@{Weight}}
+\index{Weight@{Weight}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Weight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::cube\& Weight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the weight of the layer. 
+
+
+
+Definition at line 192 of file convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Convolution_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}!Weight\+Size@{Weight\+Size}}
+\index{Weight\+Size@{Weight\+Size}!mlpack\+::ann\+::\+Convolution@{mlpack\+::ann\+::\+Convolution}}
+\subsubsection{Weight\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get size of weights for the layer. 
+
+
+
+Definition at line 286 of file convolution.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ convolution.\+hpp}\end{DoxyCompactItemize}

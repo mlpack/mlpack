@@ -1,0 +1,427 @@
+.TH "DiagonalGMM" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DiagonalGMM \- A Diagonal Gaussian Mixture Model\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDiagonalGMM\fP ()"
+.br
+.RI "Create an empty Diagonal Gaussian Mixture Model, with zero gaussians\&. "
+.ti -1c
+.RI "\fBDiagonalGMM\fP (const size_t gaussians, const size_t dimensionality)"
+.br
+.RI "Create a \fBGMM\fP with the given number of Gaussians, each of which have the specified dimensionality\&. "
+.ti -1c
+.RI "\fBDiagonalGMM\fP (const std::vector< \fBdistribution::DiagonalGaussianDistribution\fP > &dists, const arma::vec &weights)"
+.br
+.RI "Create a \fBDiagonalGMM\fP with the given dists and weights\&. "
+.ti -1c
+.RI "\fBDiagonalGMM\fP (const \fBDiagonalGMM\fP &other)"
+.br
+.RI "Copy constructor for DiagonalGMMs\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &observations, arma::Row< size_t > &labels) const"
+.br
+.RI "Classify the given observations as being from an individual component in this \fBDiagonalGMM\fP\&. "
+.ti -1c
+.RI "const \fBdistribution::DiagonalGaussianDistribution\fP & \fBComponent\fP (size_t i) const"
+.br
+.RI "Return a const reference to a component distribution\&. "
+.ti -1c
+.RI "\fBdistribution::DiagonalGaussianDistribution\fP & \fBComponent\fP (size_t i)"
+.br
+.RI "Return a reference to a component distribution\&. "
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const"
+.br
+.RI "Return the dimensionality of the model\&. "
+.ti -1c
+.RI "size_t \fBGaussians\fP () const"
+.br
+.RI "Return the number of Gaussians in the model\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the log probability that the given observation came from this distribution\&. "
+.ti -1c
+.RI "void \fBLogProbability\fP (const arma::mat &observation, arma::vec &logProbs) const"
+.br
+.RI "Return the log probability that the given observation matrix\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation, const size_t component) const"
+.br
+.RI "Return the log probability that the given observation came from the given Gaussian component in this distribution\&. "
+.ti -1c
+.RI "\fBDiagonalGMM\fP & \fBoperator=\fP (const \fBDiagonalGMM\fP &other)"
+.br
+.RI "Copy operator for DiagonalGMMs\&. "
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the probability that the given observation came from this distribution\&. "
+.ti -1c
+.RI "void \fBProbability\fP (const arma::mat &observation, arma::vec &probs) const"
+.br
+.RI "Return the probability that the given observation matrix\&. "
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation, const size_t component) const"
+.br
+.RI "Return the probability that the given observation came from the given Gaussian component in this distribution\&. "
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const"
+.br
+.RI "Return a randomly generated observation according to the probability distribution defined by this object\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the \fBDiagonalGMM\fP\&. "
+.ti -1c
+.RI "template<typename FittingType  = EMFit<kmeans::KMeans<>, DiagonalConstraint,      distribution::DiagonalGaussianDistribution>> double \fBTrain\fP (const arma::mat &observations, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())"
+.br
+.RI "Estimate the probability distribution directly from the given observations, using the given algorithm in the FittingType class to fit the data\&. "
+.ti -1c
+.RI "template<typename FittingType  = EMFit<kmeans::KMeans<>, DiagonalConstraint,      distribution::DiagonalGaussianDistribution>> double \fBTrain\fP (const arma::mat &observations, const arma::vec &probabilities, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())"
+.br
+.RI "Estimate the probability distribution directly from the given observations, taking into account the probability of each observation actually being from this distribution, and using the given algorithm in the FittingType class to fit the data\&. "
+.ti -1c
+.RI "const arma::vec & \fBWeights\fP () const"
+.br
+.RI "Return a const reference to the a priori weights of each Gaussian\&. "
+.ti -1c
+.RI "arma::vec & \fBWeights\fP ()"
+.br
+.RI "Return a reference to the a priori weights of each Gaussian\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A Diagonal Gaussian Mixture Model\&. 
+
+This class uses maximum likelihood loss functions to estimate the parameters of the \fBDiagonalGMM\fP on a given dataset via the given fitting mechanism, defined by the FittingType template parameter\&. The \fBDiagonalGMM\fP can be trained using normal data, or data with probabilities of being from this \fBGMM\fP (see \fBDiagonalGMM::Train()\fP for more information)\&. The \fBDiagonalGMM\fP is the same as \fBGMM\fP except for wrapping gmm_diag class\&.
+.PP
+The \fBTrain()\fP method uses a template type 'FittingType'\&. The FittingType template class must provide a way for the \fBDiagonalGMM\fP to train on data\&. It must provide the following two functions:
+.PP
+.PP
+.nf
+void Estimate(
+    const arma::mat& observations,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
+    arma::vec& weights);
+
+void Estimate(
+    const arma::mat& observations,
+    const arma::vec& probabilities,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
+    arma::vec& weights);
+.fi
+.PP
+.PP
+Example use:
+.PP
+.PP
+.nf
+// Set up a mixture of 5 gaussians in a 4-dimensional space\&.
+DiagonalGMM g(5, 4);
+
+// Train the DiagonalGMM given the data observations, using the default
+// EM fitting mechanism\&.
+
+g\&.Train(data);
+
+// Get the probability of 'observation' being observed from this
+// DiagoanlGMM\&.
+double probability = g\&.Probability(observation);
+
+// Get a random observation from the DiagonalGMM\&.
+arma::vec observation = g\&.Random();
+.fi
+.PP
+ 
+.PP
+Definition at line 74 of file diagonal_gmm\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDiagonalGMM\fP ()\fC [inline]\fP"
+
+.PP
+Create an empty Diagonal Gaussian Mixture Model, with zero gaussians\&. 
+.PP
+Definition at line 92 of file diagonal_gmm\&.hpp\&.
+.PP
+Referenced by DiagonalGMM::DiagonalGMM()\&.
+.SS "\fBDiagonalGMM\fP (const size_t gaussians, const size_t dimensionality)"
+
+.PP
+Create a \fBGMM\fP with the given number of Gaussians, each of which have the specified dimensionality\&. The means and covariances will be set to 0\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgaussians\fP Number of Gaussians in this \fBDiagonalGMM\fP\&. 
+.br
+\fIdimensionality\fP Dimensionality of each Gaussian\&. 
+.RE
+.PP
+
+.SS "\fBDiagonalGMM\fP (const std::vector< \fBdistribution::DiagonalGaussianDistribution\fP > & dists, const arma::vec & weights)\fC [inline]\fP"
+
+.PP
+Create a \fBDiagonalGMM\fP with the given dists and weights\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdists\fP Distributions of the model\&. 
+.br
+\fIweights\fP Weights of the model\&. 
+.RE
+.PP
+
+.PP
+Definition at line 118 of file diagonal_gmm\&.hpp\&.
+.PP
+References DiagonalGMM::DiagonalGMM(), and DiagonalGMM::operator=()\&.
+.SS "\fBDiagonalGMM\fP (const \fBDiagonalGMM\fP & other)"
+
+.PP
+Copy constructor for DiagonalGMMs\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Classify (const arma::mat & observations, arma::Row< size_t > & labels) const"
+
+.PP
+Classify the given observations as being from an individual component in this \fBDiagonalGMM\fP\&. The resultant classifications are stored in the 'labels' object, and each label will be between 0 and (\fBGaussians()\fP - 1)\&. Supposing that a point was classified with label 2, and that our \fBDiagonalGMM\fP object was called 'dgmm', one could access the relevant Gaussian distribution as follows:
+.PP
+.PP
+.nf
+arma::vec mean = dgmm\&.Means()[2];
+arma::mat covariance = dgmm\&.Covariances()[2];
+double priorWeight = dgmm\&.Weights()[2];
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP Matrix of observations to classify\&. 
+.br
+\fIlabels\fP Object which will be filled with labels\&. 
+.RE
+.PP
+
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "const \fBdistribution::DiagonalGaussianDistribution\fP& Component (size_t i) const\fC [inline]\fP"
+
+.PP
+Return a const reference to a component distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIi\fP Index of component\&. 
+.RE
+.PP
+
+.PP
+Definition at line 141 of file diagonal_gmm\&.hpp\&.
+.SS "\fBdistribution::DiagonalGaussianDistribution\fP& Component (size_t i)\fC [inline]\fP"
+
+.PP
+Return a reference to a component distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIi\fP Index of component\&. 
+.RE
+.PP
+
+.PP
+Definition at line 151 of file diagonal_gmm\&.hpp\&.
+.SS "size_t Dimensionality () const\fC [inline]\fP"
+
+.PP
+Return the dimensionality of the model\&. 
+.PP
+Definition at line 134 of file diagonal_gmm\&.hpp\&.
+.SS "size_t Gaussians () const\fC [inline]\fP"
+
+.PP
+Return the number of Gaussians in the model\&. 
+.PP
+Definition at line 132 of file diagonal_gmm\&.hpp\&.
+.SS "double LogProbability (const arma::vec & observation) const"
+
+.PP
+Return the log probability that the given observation came from this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the log-probability of\&. 
+.RE
+.PP
+
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "void LogProbability (const arma::mat & observation, arma::vec & logProbs) const"
+
+.PP
+Return the log probability that the given observation matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the log-probability of\&. 
+.br
+\fIlogProbs\fP Stores the value of log-probability for observation\&. 
+.RE
+.PP
+
+.SS "double LogProbability (const arma::vec & observation, const size_t component) const"
+
+.PP
+Return the log probability that the given observation came from the given Gaussian component in this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.br
+\fIcomponent\fP Index of the component of the \fBDiagonalGMM\fP\&. 
+.RE
+.PP
+
+.SS "\fBDiagonalGMM\fP& operator= (const \fBDiagonalGMM\fP & other)"
+
+.PP
+Copy operator for DiagonalGMMs\&. 
+.PP
+Referenced by DiagonalGMM::DiagonalGMM()\&.
+.SS "double Probability (const arma::vec & observation) const"
+
+.PP
+Return the probability that the given observation came from this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.RE
+.PP
+
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "void Probability (const arma::mat & observation, arma::vec & probs) const"
+
+.PP
+Return the probability that the given observation matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.br
+\fIprobs\fP Stores the value of probability for observation\&. 
+.RE
+.PP
+
+.SS "double Probability (const arma::vec & observation, const size_t component) const"
+
+.PP
+Return the probability that the given observation came from the given Gaussian component in this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.br
+\fIcomponent\fP Index of the component of the \fBDiagonalGMM\fP\&. 
+.RE
+.PP
+
+.SS "arma::vec Random () const"
+
+.PP
+Return a randomly generated observation according to the probability distribution defined by this object\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Random observation from this \fBDiagonalGMM\fP\&. 
+.RE
+.PP
+
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the \fBDiagonalGMM\fP\&. 
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "double Train (const arma::mat & observations, const size_t trials = \fC1\fP, const bool useExistingModel = \fCfalse\fP, FittingType fitter = \fCFittingType()\fP)"
+
+.PP
+Estimate the probability distribution directly from the given observations, using the given algorithm in the FittingType class to fit the data\&. The fitting will be performed 'trials' times; from these trials, the model with the greatest log-likelihood will be selected\&. By default, only one trial is performed\&. The log-likelihood of the best fitting is returned\&.
+.PP
+Optionally, the existing model can be used as an initial model for the estimation by setting 'useExistingModel' to true\&. If the fitting procedure is deterministic after the initial position is given, then 'trials' should be set to 1\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP Observations of the model\&. 
+.br
+\fItrials\fP Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected\&. 
+.br
+\fIuseExistingModel\fP If true, the existing model is used as an initial model for the estimation\&. 
+.br
+\fIfitter\fP Fitting type that estimates observations\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The log-likelihood of the best fit\&. 
+.RE
+.PP
+
+.PP
+Referenced by DiagonalGMM::Weights()\&.
+.SS "double Train (const arma::mat & observations, const arma::vec & probabilities, const size_t trials = \fC1\fP, const bool useExistingModel = \fCfalse\fP, FittingType fitter = \fCFittingType()\fP)"
+
+.PP
+Estimate the probability distribution directly from the given observations, taking into account the probability of each observation actually being from this distribution, and using the given algorithm in the FittingType class to fit the data\&. The fitting will be performed 'trials' times; from these trials, the model with the greatest log-likelihood will be selected\&. By default, only one trial is performed\&. The log-likelihood of the best fitting is returned\&.
+.PP
+Optionally, the existing model can be used as an initial model for the estimation by setting 'useExistingModel' to true\&. If the fitting procedure is deterministic after the initial position is given, then 'trials' should be set to 1\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP Observations of the model\&. 
+.br
+\fIprobabilities\fP Probability of each observation being from this distribution\&. 
+.br
+\fItrials\fP Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected\&. 
+.br
+\fIuseExistingModel\fP If true, the existing model is used as an initial model for the estimation\&. 
+.br
+\fIfitter\fP Fitting type that estimates observations\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The log-likelihood of the best fit\&. 
+.RE
+.PP
+
+.SS "const arma::vec& Weights () const\fC [inline]\fP"
+
+.PP
+Return a const reference to the a priori weights of each Gaussian\&. 
+.PP
+Definition at line 157 of file diagonal_gmm\&.hpp\&.
+.SS "arma::vec& Weights ()\fC [inline]\fP"
+
+.PP
+Return a reference to the a priori weights of each Gaussian\&. 
+.PP
+Definition at line 159 of file diagonal_gmm\&.hpp\&.
+.PP
+References DiagonalGMM::Classify(), DiagonalGMM::LogProbability(), DiagonalGMM::Probability(), DiagonalGMM::Random(), DiagonalGMM::serialize(), and DiagonalGMM::Train()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

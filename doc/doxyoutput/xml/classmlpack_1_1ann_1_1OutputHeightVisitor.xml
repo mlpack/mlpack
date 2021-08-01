@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1OutputHeightVisitor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::OutputHeightVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; size_t &gt;</basecompoundref>
+    <includes refid="output__height__visitor_8hpp" local="no">output_height_visitor.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Return the output height. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="32" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1a19a2b78859e4e91b86170544dbd8ae09" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="34" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1a194c251d04f64d28e239dbe69db1bf33" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasInputHeight&lt; T, size_t &amp;(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, size_t &gt;::type</type>
+        <definition>std::enable_if&lt; !HasInputHeight&lt;T, size_t&amp;(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, size_t&gt;::type LayerOutputHeight</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerOutputHeight</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Return 0 if the module doesn&apos;t implement the InputHeight() or Model() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="43" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1a264395058d3bef864422e05d9ed039bb" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasInputHeight&lt; T, size_t &amp;(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, size_t &gt;::type</type>
+        <definition>std::enable_if&lt; HasInputHeight&lt;T, size_t&amp;(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, size_t&gt;::type LayerOutputHeight</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerOutputHeight</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Return the output height if the module implements the InputHeight() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="51" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1adebdd3a090f964d28fb332583d0555ac" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasInputHeight&lt; T, size_t &amp;(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, size_t &gt;::type</type>
+        <definition>std::enable_if&lt; !HasInputHeight&lt;T, size_t&amp;(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, size_t&gt;::type LayerOutputHeight</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerOutputHeight</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Return the output height if the module implements the Model() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="58" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1OutputHeightVisitor_1ab496f603d507d7f66fc7cb558bf529d7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasInputHeight&lt; T, size_t &amp;(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, size_t &gt;::type</type>
+        <definition>std::enable_if&lt; HasInputHeight&lt;T, size_t&amp;(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, size_t&gt;::type LayerOutputHeight</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerOutputHeight</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Return the output height if the module implements the Model() or InputHeight() function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="66" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor" kindref="compound">OutputHeightVisitor</ref> exposes the OutputHeight() method of the given module. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="364">
+        <label>static_visitor&lt; size_t &gt;</label>
+      </node>
+      <node id="363">
+        <label>OutputHeightVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1OutputHeightVisitor"/>
+        <childnode refid="364" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="366">
+        <label>static_visitor&lt; size_t &gt;</label>
+      </node>
+      <node id="365">
+        <label>OutputHeightVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1OutputHeightVisitor"/>
+        <childnode refid="366" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp" bodystart="27" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1a194c251d04f64d28e239dbe69db1bf33" prot="private" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>LayerOutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1a264395058d3bef864422e05d9ed039bb" prot="private" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>LayerOutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1adebdd3a090f964d28fb332583d0555ac" prot="private" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>LayerOutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1ab496f603d507d7f66fc7cb558bf529d7" prot="private" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>LayerOutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" prot="public" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1a19a2b78859e4e91b86170544dbd8ae09" prot="public" virt="non-virtual"><scope>mlpack::ann::OutputHeightVisitor</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,189 @@
+.TH "BinaryNumericSplit< FitnessFunction, ObservationType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BinaryNumericSplit< FitnessFunction, ObservationType > \- The \fBBinaryNumericSplit\fP class implements the numeric feature splitting strategy devised by Gama, Rocha, and Medas in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBBinaryNumericSplitInfo\fP< ObservationType > \fBSplitInfo\fP"
+.br
+.RI "The splitting information required by the \fBBinaryNumericSplit\fP\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBinaryNumericSplit\fP (const size_t numClasses=0)"
+.br
+.RI "Create the \fBBinaryNumericSplit\fP object with the given number of classes\&. "
+.ti -1c
+.RI "\fBBinaryNumericSplit\fP (const size_t numClasses, const \fBBinaryNumericSplit\fP &other)"
+.br
+.RI "Create the \fBBinaryNumericSplit\fP object with the given number of classes, using information from the given other split for other parameters\&. "
+.ti -1c
+.RI "void \fBEvaluateFitnessFunction\fP (double &bestFitness, double &secondBestFitness)"
+.br
+.RI "Given the points seen so far, evaluate the fitness function, returning the best possible gain of a binary split\&. "
+.ti -1c
+.RI "size_t \fBMajorityClass\fP () const"
+.br
+.RI "The majority class of the points seen so far\&. "
+.ti -1c
+.RI "double \fBMajorityProbability\fP () const"
+.br
+.RI "The probability of the majority class given the points seen so far\&. "
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the object\&. "
+.ti -1c
+.RI "void \fBSplit\fP (arma::Col< size_t > &childMajorities, \fBSplitInfo\fP &splitInfo)"
+.br
+.RI "Given that a split should happen, return the majority classes of the (two) children and an initialized SplitInfo object\&. "
+.ti -1c
+.RI "void \fBTrain\fP (ObservationType value, const size_t label)"
+.br
+.RI "Train on the given value with the given label\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction, typename ObservationType = double>
+.br
+class mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >"
+The \fBBinaryNumericSplit\fP class implements the numeric feature splitting strategy devised by Gama, Rocha, and Medas in the following paper: 
+
+
+.PP
+.nf
+@inproceedings{gama2003accurate,
+   title={Accurate Decision Trees for Mining High-Speed Data Streams},
+   author={Gama, J\&. and Rocha, R\&. and Medas, P\&.},
+   year={2003},
+   booktitle={Proceedings of the Ninth ACM SIGKDD International Conference on
+       Knowledge Discovery and Data Mining (KDD '03)},
+   pages={523--528}
+}
+
+.fi
+.PP
+.PP
+This splitting procedure builds a binary tree on points it has seen so far, and then \fBEvaluateFitnessFunction()\fP returns the best possible split in O(n) time, where n is the number of samples seen so far\&. Every split with this split type returns only two splits (greater than or equal to the split point, and less than the split point)\&. The \fBTrain()\fP function should take O(1) time\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFitnessFunction\fP Fitness function to use for calculating gain\&. 
+.br
+\fIObservationType\fP Type of observation used by this dimension\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file binary_numeric_split\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBBinaryNumericSplitInfo\fP<ObservationType> \fBSplitInfo\fP"
+
+.PP
+The splitting information required by the \fBBinaryNumericSplit\fP\&. 
+.PP
+Definition at line 51 of file binary_numeric_split\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBinaryNumericSplit\fP (const size_t numClasses = \fC0\fP)"
+
+.PP
+Create the \fBBinaryNumericSplit\fP object with the given number of classes\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in dataset\&. 
+.RE
+.PP
+
+.SS "\fBBinaryNumericSplit\fP (const size_t numClasses, const \fBBinaryNumericSplit\fP< FitnessFunction, ObservationType > & other)"
+
+.PP
+Create the \fBBinaryNumericSplit\fP object with the given number of classes, using information from the given other split for other parameters\&. In this case, there are no other parameters, but this function is required by the \fBHoeffdingTree\fP class\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void EvaluateFitnessFunction (double & bestFitness, double & secondBestFitness)"
+
+.PP
+Given the points seen so far, evaluate the fitness function, returning the best possible gain of a binary split\&. Note that this takes O(n) time, where n is the number of points seen so far\&. So this may not exactly be fast\&.\&.\&.
+.PP
+The best possible split will be stored in bestFitness, and the second best possible split will be stored in secondBestFitness\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbestFitness\fP Fitness function value for best possible split\&. 
+.br
+\fIsecondBestFitness\fP Fitness function value for second best possible split\&. 
+.RE
+.PP
+
+.SS "size_t MajorityClass () const"
+
+.PP
+The majority class of the points seen so far\&. 
+.PP
+Referenced by BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "double MajorityProbability () const"
+
+.PP
+The probability of the majority class given the points seen so far\&. 
+.PP
+Referenced by BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "size_t NumChildren () const\fC [inline]\fP"
+
+.PP
+Definition at line 93 of file binary_numeric_split\&.hpp\&.
+.PP
+References BinaryNumericSplit< FitnessFunction, ObservationType >::MajorityClass(), BinaryNumericSplit< FitnessFunction, ObservationType >::MajorityProbability(), BinaryNumericSplit< FitnessFunction, ObservationType >::serialize(), and BinaryNumericSplit< FitnessFunction, ObservationType >::Split()\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the object\&. 
+.PP
+Referenced by BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "void Split (arma::Col< size_t > & childMajorities, \fBSplitInfo\fP & splitInfo)"
+
+.PP
+Given that a split should happen, return the majority classes of the (two) children and an initialized SplitInfo object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIchildMajorities\fP Majority classes of the children after the split\&. 
+.br
+\fIsplitInfo\fP Split information\&. 
+.RE
+.PP
+
+.PP
+Referenced by BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "void Train (ObservationType value, const size_t label)"
+
+.PP
+Train on the given value with the given label\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalue\fP The value to train on\&. 
+.br
+\fIlabel\fP The label to train on\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

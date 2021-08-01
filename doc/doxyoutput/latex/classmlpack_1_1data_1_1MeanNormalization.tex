@@ -1,0 +1,192 @@
+\section{Mean\+Normalization Class Reference}
+\label{classmlpack_1_1data_1_1MeanNormalization}\index{Mean\+Normalization@{Mean\+Normalization}}
+
+
+A simple Mean Normalization class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Fit} (const Mat\+Type \&input)
+\begin{DoxyCompactList}\small\item\em Function to fit features, to find out the min max and scale. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Inverse\+Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Function to retrieve original dataset. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Item\+Max} () const
+\begin{DoxyCompactList}\small\item\em Get the Max row vector. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Item\+Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the Mean row vector. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Item\+Min} () const
+\begin{DoxyCompactList}\small\item\em Get the Min row vector. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Scale} () const
+\begin{DoxyCompactList}\small\item\em Get the Scale row vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Function to scale features. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A simple Mean Normalization class. 
+
+Given an input dataset this class helps you to normalize each feature.
+
+[z = x -\/ average(x) / (max(x) -\/ min(x))]
+
+where x is an original value,z is the normalized value.
+
+
+\begin{DoxyCode}
+arma::mat input;
+Load(\textcolor{stringliteral}{"train.csv"}, input);
+arma::mat output;
+
+\textcolor{comment}{// Fit the features.}
+MeanNormalization scale;
+scale.Fit(input)
+
+\textcolor{comment}{// Scale the features.}
+scale.Transform(input, output);
+
+\textcolor{comment}{// Retransform the input.}
+scale.InverseTransform(output, input);
+\end{DoxyCode}
+ 
+
+Definition at line 46 of file mean\+\_\+normalization.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a0b68c1a39a21e56e10f5b9250b056244}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Fit@{Fit}}
+\index{Fit@{Fit}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Fit()}
+{\footnotesize\ttfamily void Fit (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function to fit features, to find out the min max and scale. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Dataset to fit. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 55 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_afb0e67c6fbf5a527f63469bbbf07066c}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Inverse\+Transform@{Inverse\+Transform}}
+\index{Inverse\+Transform@{Inverse\+Transform}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Inverse\+Transform()}
+{\footnotesize\ttfamily void Inverse\+Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function to retrieve original dataset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Scaled dataset. \\
+\hline
+{\em output} & Output matrix with original Dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 91 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a5ed43c216f23cf96c432216d6fc2a1c3}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Item\+Max@{Item\+Max}}
+\index{Item\+Max@{Item\+Max}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Item\+Max()}
+{\footnotesize\ttfamily const arma\+::vec\& Item\+Max (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Max row vector. 
+
+
+
+Definition at line 102 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a95996a797e721bc9acc0c9a5d697fdcf}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Item\+Mean@{Item\+Mean}}
+\index{Item\+Mean@{Item\+Mean}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Item\+Mean()}
+{\footnotesize\ttfamily const arma\+::vec\& Item\+Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Mean row vector. 
+
+
+
+Definition at line 98 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_ae9ae591f227874f238c38d4cf070c6c8}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Item\+Min@{Item\+Min}}
+\index{Item\+Min@{Item\+Min}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Item\+Min()}
+{\footnotesize\ttfamily const arma\+::vec\& Item\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Min row vector. 
+
+
+
+Definition at line 100 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a5adcafebd2c229793e57b7268c90a0fe}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Scale@{Scale}}
+\index{Scale@{Scale}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Scale()}
+{\footnotesize\ttfamily const arma\+::vec\& Scale (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Scale row vector. 
+
+
+
+Definition at line 104 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 107 of file mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1MeanNormalization_a7bc470a1e097f5b0aaf2396691432b3f}} 
+\index{mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}!Transform@{Transform}}
+\index{Transform@{Transform}!mlpack\+::data\+::\+Mean\+Normalization@{mlpack\+::data\+::\+Mean\+Normalization}}
+\subsubsection{Transform()}
+{\footnotesize\ttfamily void Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function to scale features. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Dataset to scale features. \\
+\hline
+{\em output} & Output matrix with scaled features. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 73 of file mean\+\_\+normalization.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/scaler\+\_\+methods/\textbf{ mean\+\_\+normalization.\+hpp}\end{DoxyCompactItemize}

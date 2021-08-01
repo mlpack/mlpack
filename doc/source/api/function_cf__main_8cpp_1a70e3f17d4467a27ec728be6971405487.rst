@@ -1,0 +1,13 @@
+.. _exhale_function_cf__main_8cpp_1a70e3f17d4467a27ec728be6971405487:
+
+Function PARAM_MODEL_IN(CFModel, "input_model", "Trained CF model to load.", "m")
+=================================================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_cf_cf_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: PARAM_MODEL_IN(CFModel, "input_model", "Trained CF model to load.", "m")

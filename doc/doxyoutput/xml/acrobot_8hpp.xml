@@ -1,0 +1,1187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="acrobot_8hpp" kind="file" language="C++">
+    <compoundname>acrobot.hpp</compoundname>
+    <includes refid="core_8hpp" local="no">mlpack/core.hpp</includes>
+    <incdepgraph>
+      <node id="55443">
+        <label>list</label>
+      </node>
+      <node id="55470">
+        <label>save_impl.hpp</label>
+      </node>
+      <node id="55440">
+        <label>atomic</label>
+      </node>
+      <node id="55462">
+        <label>dataset_mapper_impl.hpp</label>
+      </node>
+      <node id="55468">
+        <label>load_image_impl.hpp</label>
+      </node>
+      <node id="55430">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="55406">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="55442">
+        <label>iomanip</label>
+      </node>
+      <node id="55500">
+        <label>mlpack/core/kernels/linear_kernel.hpp</label>
+        <link refid="linear__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55495">
+        <label>mlpack/core/data/confusion_matrix.hpp</label>
+        <link refid="confusion__matrix_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55496" relation="include">
+        </childnode>
+      </node>
+      <node id="55510">
+        <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
+        <link refid="laplacian__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55477">
+        <label>float.h</label>
+      </node>
+      <node id="55506">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="55415">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="55416" relation="include">
+        </childnode>
+        <childnode refid="55418" relation="include">
+        </childnode>
+      </node>
+      <node id="55398">
+        <label>cstdint</label>
+      </node>
+      <node id="55508">
+        <label>epanechnikov_kernel_impl.hpp</label>
+      </node>
+      <node id="55499">
+        <label>mlpack/core/kernels/kernel_traits.hpp</label>
+        <link refid="kernel__traits_8hpp"/>
+      </node>
+      <node id="55407">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="55414">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="55493">
+        <label>mlpack/core/dists/gamma_distribution.hpp</label>
+        <link refid="gamma__distribution_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55478" relation="include">
+        </childnode>
+      </node>
+      <node id="55457">
+        <label>mlpack/core/data/load.hpp</label>
+        <link refid="load_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55446" relation="include">
+        </childnode>
+        <childnode refid="55458" relation="include">
+        </childnode>
+        <childnode refid="55459" relation="include">
+        </childnode>
+        <childnode refid="55463" relation="include">
+        </childnode>
+        <childnode refid="55466" relation="include">
+        </childnode>
+        <childnode refid="55467" relation="include">
+        </childnode>
+        <childnode refid="55468" relation="include">
+        </childnode>
+      </node>
+      <node id="55454">
+        <label>program_doc.hpp</label>
+        <link refid="program__doc_8hpp"/>
+      </node>
+      <node id="55475">
+        <label>stdlib.h</label>
+      </node>
+      <node id="55479">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="55437">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="55514">
+        <label>mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="55515" relation="include">
+        </childnode>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55483">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="55509">
+        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
+        <link refid="hyperbolic__tangent__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55392">
+        <label>mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55406" relation="include">
+        </childnode>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55450" relation="include">
+        </childnode>
+        <childnode refid="55448" relation="include">
+        </childnode>
+        <childnode refid="55457" relation="include">
+        </childnode>
+        <childnode refid="55469" relation="include">
+        </childnode>
+        <childnode refid="55472" relation="include">
+        </childnode>
+        <childnode refid="55474" relation="include">
+        </childnode>
+        <childnode refid="55478" relation="include">
+        </childnode>
+        <childnode refid="55481" relation="include">
+        </childnode>
+        <childnode refid="55482" relation="include">
+        </childnode>
+        <childnode refid="55484" relation="include">
+        </childnode>
+        <childnode refid="55485" relation="include">
+        </childnode>
+        <childnode refid="55486" relation="include">
+        </childnode>
+        <childnode refid="55487" relation="include">
+        </childnode>
+        <childnode refid="55489" relation="include">
+        </childnode>
+        <childnode refid="55490" relation="include">
+        </childnode>
+        <childnode refid="55491" relation="include">
+        </childnode>
+        <childnode refid="55492" relation="include">
+        </childnode>
+        <childnode refid="55493" relation="include">
+        </childnode>
+        <childnode refid="55494" relation="include">
+        </childnode>
+        <childnode refid="55495" relation="include">
+        </childnode>
+        <childnode refid="55497" relation="include">
+        </childnode>
+        <childnode refid="55499" relation="include">
+        </childnode>
+        <childnode refid="55500" relation="include">
+        </childnode>
+        <childnode refid="55501" relation="include">
+        </childnode>
+        <childnode refid="55502" relation="include">
+        </childnode>
+        <childnode refid="55504" relation="include">
+        </childnode>
+        <childnode refid="55507" relation="include">
+        </childnode>
+        <childnode refid="55509" relation="include">
+        </childnode>
+        <childnode refid="55510" relation="include">
+        </childnode>
+        <childnode refid="55511" relation="include">
+        </childnode>
+        <childnode refid="55514" relation="include">
+        </childnode>
+        <childnode refid="55516" relation="include">
+        </childnode>
+        <childnode refid="55517" relation="include">
+        </childnode>
+      </node>
+      <node id="55471">
+        <label>io_impl.hpp</label>
+      </node>
+      <node id="55427">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="55497">
+        <label>mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55392" relation="include">
+        </childnode>
+        <childnode refid="55498" relation="include">
+        </childnode>
+      </node>
+      <node id="55394">
+        <label>cmath</label>
+      </node>
+      <node id="55391">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp</label>
+        <link refid="acrobot_8hpp"/>
+        <childnode refid="55392" relation="include">
+        </childnode>
+      </node>
+      <node id="55413">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="55402">
+        <label>stdexcept</label>
+      </node>
+      <node id="55422">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="55407" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55408" relation="include">
+        </childnode>
+      </node>
+      <node id="55484">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="55503">
+        <label>cosine_distance_impl.hpp</label>
+      </node>
+      <node id="55461">
+        <label>mlpack/core/data/map_policies/datatype.hpp</label>
+        <link refid="datatype_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55446">
+        <label>string</label>
+      </node>
+      <node id="55434">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="55435" relation="include">
+        </childnode>
+        <childnode refid="55401" relation="include">
+        </childnode>
+      </node>
+      <node id="55502">
+        <label>mlpack/core/kernels/cosine_distance.hpp</label>
+        <link refid="cosine__distance_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55499" relation="include">
+        </childnode>
+        <childnode refid="55503" relation="include">
+        </childnode>
+      </node>
+      <node id="55444">
+        <label>map</label>
+      </node>
+      <node id="55482">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55483" relation="include">
+        </childnode>
+      </node>
+      <node id="55396">
+        <label>cfloat</label>
+      </node>
+      <node id="55453">
+        <label>binding_details.hpp</label>
+        <link refid="binding__details_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55454" relation="include">
+        </childnode>
+      </node>
+      <node id="55426">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="55492">
+        <label>mlpack/core/dists/laplace_distribution.hpp</label>
+        <link refid="laplace__distribution_8hpp"/>
+      </node>
+      <node id="55448">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="55410">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="55433">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="55434" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55417" relation="include">
+        </childnode>
+        <childnode refid="55435" relation="include">
+        </childnode>
+      </node>
+      <node id="55423">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="55489">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="55507">
+        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
+        <link refid="epanechnikov__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55499" relation="include">
+        </childnode>
+        <childnode refid="55508" relation="include">
+        </childnode>
+      </node>
+      <node id="55494">
+        <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
+        <link refid="diagonal__gaussian__distribution_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55421">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="55407" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55408" relation="include">
+        </childnode>
+      </node>
+      <node id="55424">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="55407" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55408" relation="include">
+        </childnode>
+      </node>
+      <node id="55481">
+        <label>mlpack/core/math/random_basis.hpp</label>
+        <link refid="random__basis_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55452">
+        <label>boost/any.hpp</label>
+      </node>
+      <node id="55412">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="55432">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="55408" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55420" relation="include">
+        </childnode>
+        <childnode refid="55429" relation="include">
+        </childnode>
+      </node>
+      <node id="55436">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="55437" relation="include">
+        </childnode>
+      </node>
+      <node id="55438">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="55393">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="55394" relation="include">
+        </childnode>
+        <childnode refid="55395" relation="include">
+        </childnode>
+        <childnode refid="55396" relation="include">
+        </childnode>
+        <childnode refid="55397" relation="include">
+        </childnode>
+        <childnode refid="55398" relation="include">
+        </childnode>
+        <childnode refid="55399" relation="include">
+        </childnode>
+        <childnode refid="55400" relation="include">
+        </childnode>
+        <childnode refid="55401" relation="include">
+        </childnode>
+        <childnode refid="55402" relation="include">
+        </childnode>
+        <childnode refid="55403" relation="include">
+        </childnode>
+        <childnode refid="55404" relation="include">
+        </childnode>
+        <childnode refid="55405" relation="include">
+        </childnode>
+        <childnode refid="55406" relation="include">
+        </childnode>
+        <childnode refid="55407" relation="include">
+        </childnode>
+        <childnode refid="55408" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55411" relation="include">
+        </childnode>
+        <childnode refid="55412" relation="include">
+        </childnode>
+        <childnode refid="55413" relation="include">
+        </childnode>
+        <childnode refid="55414" relation="include">
+        </childnode>
+        <childnode refid="55415" relation="include">
+        </childnode>
+        <childnode refid="55419" relation="include">
+        </childnode>
+        <childnode refid="55420" relation="include">
+        </childnode>
+        <childnode refid="55421" relation="include">
+        </childnode>
+        <childnode refid="55422" relation="include">
+        </childnode>
+        <childnode refid="55423" relation="include">
+        </childnode>
+        <childnode refid="55424" relation="include">
+        </childnode>
+        <childnode refid="55425" relation="include">
+        </childnode>
+        <childnode refid="55431" relation="include">
+        </childnode>
+        <childnode refid="55432" relation="include">
+        </childnode>
+        <childnode refid="55429" relation="include">
+        </childnode>
+        <childnode refid="55433" relation="include">
+        </childnode>
+        <childnode refid="55436" relation="include">
+        </childnode>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55439" relation="include">
+        </childnode>
+        <childnode refid="55448" relation="include">
+        </childnode>
+        <childnode refid="55449" relation="include">
+        </childnode>
+      </node>
+      <node id="55473">
+        <label>normalize_labels_impl.hpp</label>
+      </node>
+      <node id="55498">
+        <label>one_hot_encoding_impl.hpp</label>
+      </node>
+      <node id="55480">
+        <label>random</label>
+      </node>
+      <node id="55504">
+        <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
+        <link refid="gaussian__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55505" relation="include">
+        </childnode>
+        <childnode refid="55499" relation="include">
+        </childnode>
+      </node>
+      <node id="55460">
+        <label>map_policies/increment_policy.hpp</label>
+        <link refid="increment__policy_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55418" relation="include">
+        </childnode>
+        <childnode refid="55461" relation="include">
+        </childnode>
+      </node>
+      <node id="55399">
+        <label>cstdio</label>
+      </node>
+      <node id="55464">
+        <label>extension.hpp</label>
+        <link refid="extension_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55403">
+        <label>tuple</label>
+      </node>
+      <node id="55408">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="55425">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="55408" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55412" relation="include">
+        </childnode>
+        <childnode refid="55426" relation="include">
+        </childnode>
+        <childnode refid="55427" relation="include">
+        </childnode>
+        <childnode refid="55428" relation="include">
+        </childnode>
+        <childnode refid="55429" relation="include">
+        </childnode>
+      </node>
+      <node id="55465">
+        <label>image_info_impl.hpp</label>
+      </node>
+      <node id="55512">
+        <label>vector</label>
+      </node>
+      <node id="55467">
+        <label>load_vec_impl.hpp</label>
+      </node>
+      <node id="55455">
+        <label>version.hpp</label>
+        <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
+        <childnode refid="55446" relation="include">
+        </childnode>
+      </node>
+      <node id="55474">
+        <label>mlpack/core/math/clamp.hpp</label>
+        <link refid="clamp_8hpp"/>
+        <childnode refid="55475" relation="include">
+        </childnode>
+        <childnode refid="55476" relation="include">
+        </childnode>
+        <childnode refid="55477" relation="include">
+        </childnode>
+      </node>
+      <node id="55478">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55479" relation="include">
+        </childnode>
+        <childnode refid="55480" relation="include">
+        </childnode>
+      </node>
+      <node id="55404">
+        <label>utility</label>
+      </node>
+      <node id="55428">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="55466">
+        <label>load_model_impl.hpp</label>
+      </node>
+      <node id="55419">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="55416">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="55417" relation="include">
+        </childnode>
+      </node>
+      <node id="55511">
+        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
+        <link refid="pspectrum__string__kernel_8hpp"/>
+        <childnode refid="55444" relation="include">
+        </childnode>
+        <childnode refid="55446" relation="include">
+        </childnode>
+        <childnode refid="55512" relation="include">
+        </childnode>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55513" relation="include">
+        </childnode>
+      </node>
+      <node id="55486">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55472">
+        <label>mlpack/core/data/normalize_labels.hpp</label>
+        <link refid="normalize__labels_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55473" relation="include">
+        </childnode>
+      </node>
+      <node id="55439">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="55440" relation="include">
+        </childnode>
+        <childnode refid="55441" relation="include">
+        </childnode>
+        <childnode refid="55442" relation="include">
+        </childnode>
+        <childnode refid="55443" relation="include">
+        </childnode>
+        <childnode refid="55444" relation="include">
+        </childnode>
+        <childnode refid="55445" relation="include">
+        </childnode>
+        <childnode refid="55446" relation="include">
+        </childnode>
+        <childnode refid="55447" relation="include">
+        </childnode>
+      </node>
+      <node id="55417">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="55431">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="55429" relation="include">
+        </childnode>
+        <childnode refid="55425" relation="include">
+        </childnode>
+        <childnode refid="55432" relation="include">
+        </childnode>
+      </node>
+      <node id="55476">
+        <label>math.h</label>
+      </node>
+      <node id="55456">
+        <label>param_data.hpp</label>
+        <link refid="param__data_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55452" relation="include">
+        </childnode>
+      </node>
+      <node id="55400">
+        <label>cstdlib</label>
+      </node>
+      <node id="55490">
+        <label>mlpack/core/dists/discrete_distribution.hpp</label>
+        <link refid="discrete__distribution_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55478" relation="include">
+        </childnode>
+      </node>
+      <node id="55395">
+        <label>cctype</label>
+      </node>
+      <node id="55451">
+        <label>iostream</label>
+      </node>
+      <node id="55501">
+        <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
+        <link refid="polynomial__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55496">
+        <label>confusion_matrix_impl.hpp</label>
+      </node>
+      <node id="55418">
+        <label>unordered_map</label>
+      </node>
+      <node id="55463">
+        <label>image_info.hpp</label>
+        <link refid="image__info_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55464" relation="include">
+        </childnode>
+        <childnode refid="55465" relation="include">
+        </childnode>
+      </node>
+      <node id="55397">
+        <label>climits</label>
+      </node>
+      <node id="55459">
+        <label>dataset_mapper.hpp</label>
+        <link refid="dataset__mapper_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55418" relation="include">
+        </childnode>
+        <childnode refid="55460" relation="include">
+        </childnode>
+        <childnode refid="55462" relation="include">
+        </childnode>
+      </node>
+      <node id="55487">
+        <label>mlpack/core/math/ccov.hpp</label>
+        <link refid="ccov_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55488" relation="include">
+        </childnode>
+      </node>
+      <node id="55445">
+        <label>mutex</label>
+      </node>
+      <node id="55469">
+        <label>mlpack/core/data/save.hpp</label>
+        <link refid="save_8hpp"/>
+        <childnode refid="55438" relation="include">
+        </childnode>
+        <childnode refid="55405" relation="include">
+        </childnode>
+        <childnode refid="55446" relation="include">
+        </childnode>
+        <childnode refid="55458" relation="include">
+        </childnode>
+        <childnode refid="55463" relation="include">
+        </childnode>
+        <childnode refid="55470" relation="include">
+        </childnode>
+      </node>
+      <node id="55441">
+        <label>chrono</label>
+      </node>
+      <node id="55449">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="55488">
+        <label>ccov_impl.hpp</label>
+      </node>
+      <node id="55515">
+        <label>boost/math/special_functions/gamma.hpp</label>
+      </node>
+      <node id="55447">
+        <label>thread</label>
+      </node>
+      <node id="55517">
+        <label>mlpack/core/kernels/cauchy_kernel.hpp</label>
+        <link refid="cauchy__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55505" relation="include">
+        </childnode>
+        <childnode refid="55499" relation="include">
+        </childnode>
+      </node>
+      <node id="55435">
+        <label>type_traits</label>
+      </node>
+      <node id="55411">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="55513">
+        <label>pspectrum_string_kernel_impl.hpp</label>
+      </node>
+      <node id="55405">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="55429">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="55407" relation="include">
+        </childnode>
+        <childnode refid="55408" relation="include">
+        </childnode>
+        <childnode refid="55409" relation="include">
+        </childnode>
+        <childnode refid="55410" relation="include">
+        </childnode>
+        <childnode refid="55430" relation="include">
+        </childnode>
+      </node>
+      <node id="55485">
+        <label>mlpack/core/math/round.hpp</label>
+        <link refid="round_8hpp"/>
+      </node>
+      <node id="55516">
+        <label>mlpack/core/kernels/triangular_kernel.hpp</label>
+        <link refid="triangular__kernel_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55505" relation="include">
+        </childnode>
+      </node>
+      <node id="55401">
+        <label>cstring</label>
+      </node>
+      <node id="55420">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="55450">
+        <label>mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="55451" relation="include">
+        </childnode>
+        <childnode refid="55443" relation="include">
+        </childnode>
+        <childnode refid="55444" relation="include">
+        </childnode>
+        <childnode refid="55446" relation="include">
+        </childnode>
+        <childnode refid="55452" relation="include">
+        </childnode>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55439" relation="include">
+        </childnode>
+        <childnode refid="55453" relation="include">
+        </childnode>
+        <childnode refid="55454" relation="include">
+        </childnode>
+        <childnode refid="55455" relation="include">
+        </childnode>
+        <childnode refid="55456" relation="include">
+        </childnode>
+        <childnode refid="55457" relation="include">
+        </childnode>
+        <childnode refid="55469" relation="include">
+        </childnode>
+        <childnode refid="55471" relation="include">
+        </childnode>
+      </node>
+      <node id="55409">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="55491">
+        <label>mlpack/core/dists/gaussian_distribution.hpp</label>
+        <link refid="gaussian__distribution_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+      </node>
+      <node id="55505">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="55393" relation="include">
+        </childnode>
+        <childnode refid="55506" relation="include">
+        </childnode>
+      </node>
+      <node id="55458">
+        <label>format.hpp</label>
+        <link refid="format_8hpp"/>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1Acrobot" prot="public">mlpack::rl::Acrobot</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" prot="public">mlpack::rl::Acrobot::Action</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1Acrobot_1_1State" prot="public">mlpack::rl::Acrobot::State</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Rohan Raj</para></simplesect>
+This file is an implementation of Acrobot task: <ulink url="https://gym.openai.com/envs/Acrobot-v1/">https://gym.openai.com/envs/Acrobot-v1/</ulink></para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_ENVIRONMENT_ACROBOT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_ENVIRONMENT_ACROBOT_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="core_8hpp" kindref="compound">mlpack/core.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1rl_1_1Acrobot" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="32"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Implementation<sp/>of<sp/>Acrobot<sp/>State.<sp/>Each<sp/>State<sp/>is<sp/>a<sp/>tuple<sp/>vector</highlight></codeline>
+<codeline lineno="33"><highlight class="comment"><sp/><sp/><sp/>*<sp/>(theta1,<sp/>thetha2,<sp/>angular<sp/>velocity<sp/>1,<sp/>angular<sp/>velocity<sp/>2).</highlight></codeline>
+<codeline lineno="34"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1rl_1_1Acrobot_1_1State" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a790355057d12e9c1ce7643551c16fecd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>():<sp/>data(<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ae813298f34ef9d793885fc04b54dff99" kindref="member">dimension</ref>)<sp/>{<sp/></highlight><highlight class="comment">/*<sp/>nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" kindref="member">State</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/>data)<sp/>:<sp/>data(data)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" kindref="member">Data</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" kindref="member">Theta1</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[0];<sp/>}</highlight></codeline>
+<codeline lineno="57" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1af59cd0f9588fcdaab48215b82cb51977" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1af59cd0f9588fcdaab48215b82cb51977" kindref="member">Theta1</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[0];<sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" kindref="member">Theta2</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[1];<sp/>}</highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1aec1a00c1e9b5bafae918889ada482db0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1aec1a00c1e9b5bafae918889ada482db0" kindref="member">Theta2</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[1];<sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ac10567562fe926ea105ce91a5bbc81c8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ac10567562fe926ea105ce91a5bbc81c8" kindref="member">AngularVelocity1</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[2];<sp/>}</highlight></codeline>
+<codeline lineno="67" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a153da3d994e86a76c1dca846a7e8bc65" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a153da3d994e86a76c1dca846a7e8bc65" kindref="member">AngularVelocity1</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[2];<sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1acab5e143bb40f694cf0a3341d457fdc8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1acab5e143bb40f694cf0a3341d457fdc8" kindref="member">AngularVelocity2</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[3];<sp/>}</highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a4f4ef10ade1253d134e5415a1f372546" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a4f4ef10ade1253d134e5415a1f372546" kindref="member">AngularVelocity2</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[3];<sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a8c1a320788b55fad936455caf0acb62a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a8c1a320788b55fad936455caf0acb62a" kindref="member">Encode</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ae813298f34ef9d793885fc04b54dff99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ae813298f34ef9d793885fc04b54dff99" kindref="member">dimension</ref><sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>data;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="86"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Implementation<sp/>of<sp/>action<sp/>for<sp/>Acrobot</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1" kindref="member">actions</ref></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1af6e2c4a274a7061460fc52bb0e8d92dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1af6e2c4a274a7061460fc52bb0e8d92dd" kindref="member">negativeTorque</ref>,</highlight></codeline>
+<codeline lineno="94" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1a88b15afa5c5e7a209c85650230e11752" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1a88b15afa5c5e7a209c85650230e11752" kindref="member">zeroTorque</ref>,</highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1a4e74e4f919288406e2c194abe8873de8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1a4e74e4f919288406e2c194abe8873de8" kindref="member">positiveTorque</ref>,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>store<sp/>the<sp/>action.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1af806efc6052edbc741683ec893bb2fe1" kindref="member">Action::actions</ref><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" kindref="member">action</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Track<sp/>the<sp/>size<sp/>of<sp/>the<sp/>action<sp/>space.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1a685609860d73ccd0d45ada287ab9ab5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="classmlpack_1_1rl_1_1Acrobot_1aec02bb2af46695046cac2de68ef3ece5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1aec02bb2af46695046cac2de68ef3ece5" kindref="member">Acrobot</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxSteps<sp/>=<sp/>500,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gravity<sp/>=<sp/>9.81,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkLength1<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkLength2<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMass1<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMass2<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkCom1<sp/>=<sp/>0.5,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkCom2<sp/>=<sp/>0.5,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMoi<sp/>=<sp/>1.0,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxVel1<sp/>=<sp/>4<sp/>*<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxVel2<sp/>=<sp/>9<sp/>*<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dt<sp/>=<sp/>0.2,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>doneReward<sp/>=<sp/>0)<sp/>:</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxSteps(maxSteps),</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>gravity(gravity),</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkLength1(linkLength1),</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkLength2(linkLength2),</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkMass1(linkMass1),</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkMass2(linkMass2),</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkCom1(linkCom1),</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkCom2(linkCom2),</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>linkMoi(linkMoi),</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxVel1(maxVel1),</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxVel2(maxVel2),</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>dt(dt),</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doneReward(doneReward),</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>stepsPerformed(0)</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref>&amp;<sp/>action,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>&amp;<sp/>nextState)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update<sp/>the<sp/>number<sp/>of<sp/>steps<sp/>performed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>stepsPerformed++;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>vector<sp/>to<sp/>estimate<sp/>nextstate.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>currentState<sp/>=<sp/>{state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" kindref="member">Theta1</ref>(),<sp/>state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" kindref="member">Theta2</ref>(),</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ac10567562fe926ea105ce91a5bbc81c8" kindref="member">AngularVelocity1</ref>(),<sp/>state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1acab5e143bb40f694cf0a3341d457fdc8" kindref="member">AngularVelocity2</ref>()};</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>currentNextState<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" kindref="member">Rk4</ref>(currentState,<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" kindref="member">Torque</ref>(action));</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" kindref="member">Theta1</ref>()<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" kindref="member">Wrap</ref>(currentNextState[0],<sp/>-<ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>,<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" kindref="member">Theta2</ref>()<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" kindref="member">Wrap</ref>(currentNextState[1],<sp/>-<ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>,<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref>);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ac10567562fe926ea105ce91a5bbc81c8" kindref="member">AngularVelocity1</ref>()<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" kindref="member">math::ClampRange</ref>(currentNextState[2],</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-maxVel1,<sp/>maxVel1);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1acab5e143bb40f694cf0a3341d457fdc8" kindref="member">AngularVelocity2</ref>()<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" kindref="member">math::ClampRange</ref>(currentNextState[3],</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-maxVel2,<sp/>maxVel2);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>the<sp/>episode<sp/>has<sp/>terminated.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>done<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" kindref="member">IsTerminal</ref>(nextState);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>not<sp/>reward<sp/>the<sp/>agent<sp/>if<sp/>time<sp/>ran<sp/>out.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(done<sp/>&amp;&amp;<sp/>maxSteps<sp/>!=<sp/>0<sp/>&amp;&amp;<sp/>stepsPerformed<sp/>&gt;=<sp/>maxSteps)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(done)</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>doneReward;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="classmlpack_1_1rl_1_1Acrobot_1af2bb860eaefeaa62a40f5cf940793704" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1af2bb860eaefeaa62a40f5cf940793704" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref>&amp;<sp/>action)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref><sp/>nextState;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(state,<sp/>action,<sp/>nextState);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213" refid="classmlpack_1_1rl_1_1Acrobot_1aa9f537249fa0c1e62b38197996ab4c6a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1aa9f537249fa0c1e62b38197996ab4c6a" kindref="member">InitialSample</ref>()</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>stepsPerformed<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>((arma::randu&lt;arma::colvec&gt;(4)<sp/>-<sp/>0.5)<sp/>/<sp/>5.0);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" kindref="member">IsTerminal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>&amp;<sp/>state)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="226"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maxSteps<sp/>!=<sp/>0<sp/>&amp;&amp;<sp/>stepsPerformed<sp/>&gt;=<sp/>maxSteps)</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Info<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Episode<sp/>terminated<sp/>due<sp/>to<sp/>the<sp/>maximum<sp/>number<sp/>of<sp/>steps&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;being<sp/>taken.&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(-std::cos(state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" kindref="member">Theta1</ref>())<sp/>-<sp/>std::cos(state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" kindref="member">Theta1</ref>()<sp/>+</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" kindref="member">Theta2</ref>())<sp/>&gt;<sp/>1.0)</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Log::Info<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Episode<sp/>terminated<sp/>due<sp/>to<sp/>agent<sp/>succeeding.&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249" refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" refkind="member"><highlight class="normal"><sp/><sp/>arma::colvec<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" kindref="member">Dsdt</ref>(arma::colvec<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>torque)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="250"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>m1<sp/>=<sp/>linkMass1;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>m2<sp/>=<sp/>linkMass2;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>l1<sp/>=<sp/>linkLength1;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lc1<sp/>=<sp/>linkCom1;</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lc2<sp/>=<sp/>linkCom2;</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>I1<sp/>=<sp/>linkMoi;</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>I2<sp/>=<sp/>linkMoi;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>g<sp/>=<sp/>gravity;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>a<sp/>=<sp/>torque;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta1<sp/>=<sp/>state[0];</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta2<sp/>=<sp/>state[1];</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>values(4);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>values[0]<sp/>=<sp/>state[2];</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/>values[1]<sp/>=<sp/>state[3];</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>d1<sp/>=<sp/>m1<sp/>*<sp/>std::pow(lc1,<sp/>2)<sp/>+<sp/>m2<sp/>*<sp/>(std::pow(l1,<sp/>2)<sp/>+</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::pow(lc2,<sp/>2)<sp/>+<sp/>2<sp/>*<sp/>l1<sp/>*<sp/>lc2<sp/>*<sp/>std::cos(theta2))<sp/>+<sp/>I1<sp/>+<sp/>I2;</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>d2<sp/>=<sp/>m2<sp/>*<sp/>(std::pow(lc2,<sp/>2)<sp/>+<sp/>l1<sp/>*<sp/>lc2<sp/>*<sp/>std::cos(theta2))<sp/>+</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>I2;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>phi2<sp/>=<sp/>m2<sp/>*<sp/>lc2<sp/>*<sp/>g<sp/>*<sp/>std::cos(theta1<sp/>+<sp/>theta2<sp/>-<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref><sp/>/<sp/>2.);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>phi1<sp/>=<sp/>-<sp/>m2<sp/>*<sp/>l1<sp/>*<sp/>lc2<sp/>*<sp/>std::pow(values[1],<sp/>2)<sp/>*</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::sin(theta2)<sp/>-<sp/>2<sp/>*<sp/>m2<sp/>*<sp/>l1<sp/>*<sp/>lc2<sp/>*<sp/>values[1]<sp/>*<sp/>values[0]<sp/>*</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::sin(theta2)<sp/>+<sp/>(m1<sp/>*<sp/>lc1<sp/>+<sp/><sp/>m2<sp/>*<sp/>l1)<sp/>*<sp/>g<sp/>*</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cos(theta1<sp/>-<sp/><ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref><sp/>/<sp/>2)<sp/>+<sp/>phi2;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>values[3]<sp/>=<sp/>(a<sp/>+<sp/>d2<sp/>/<sp/>d1<sp/>*<sp/>phi1<sp/>-<sp/>m2<sp/>*<sp/>l1<sp/>*<sp/>lc2<sp/>*<sp/>std::pow(values[0],<sp/>2)<sp/>*</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::sin(theta2)<sp/>-<sp/>phi2)<sp/>/<sp/>(m2<sp/>*<sp/>std::pow(lc2,<sp/>2)<sp/>+<sp/>I2<sp/>-</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::pow(d2,<sp/>2)<sp/>/<sp/>d1);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/>values[2]<sp/>=<sp/>-(d2<sp/>*<sp/>values[3]<sp/>+<sp/>phi1)<sp/>/<sp/>d1;</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>values;</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" kindref="member">Wrap</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minimum,</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maximum)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="301"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>diff<sp/>=<sp/>maximum<sp/>-<sp/>minimum;</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(value<sp/>&gt;<sp/>maximum)</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>value<sp/>=<sp/>value<sp/>-<sp/>diff;</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(value<sp/>&lt;<sp/>minimum)</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>value<sp/>=<sp/>value<sp/>+<sp/>diff;</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value;</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322" refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" kindref="member">Torque</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref>&amp;<sp/>action)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="323"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>noise<sp/>to<sp/>the<sp/>Torque<sp/>Torque<sp/>is<sp/>action<sp/>number<sp/>-<sp/>1.<sp/>{0,1,2}<sp/>-&gt;<sp/>{-1,0,1}.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>double(action.<ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" kindref="member">action</ref><sp/>-<sp/>1)<sp/>+<sp/><ref refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" kindref="member">mlpack::math::Random</ref>(-0.1,<sp/>0.1);</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335" refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" refkind="member"><highlight class="normal"><sp/><sp/>arma::colvec<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" kindref="member">Rk4</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>torque)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="336"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>k1<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" kindref="member">Dsdt</ref>(state,<sp/>torque);</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>k2<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" kindref="member">Dsdt</ref>(state<sp/>+<sp/>dt<sp/>*<sp/>k1<sp/>/<sp/>2,<sp/>torque);</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>k3<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" kindref="member">Dsdt</ref>(state<sp/>+<sp/>dt<sp/>*<sp/>k2<sp/>/<sp/>2,<sp/>torque);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>k4<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" kindref="member">Dsdt</ref>(state<sp/>+<sp/>dt<sp/>*<sp/>k3,<sp/>torque);</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>nextState<sp/>=<sp/>state<sp/>+<sp/>dt<sp/>*<sp/>(k1<sp/>+<sp/>2<sp/>*<sp/>k2<sp/>+<sp/>2<sp/>*<sp/>k3<sp/>+<sp/>k4)<sp/>/<sp/>6;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>nextState;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347" refid="classmlpack_1_1rl_1_1Acrobot_1a5fe06563064ebcee88c593e1673f03d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a5fe06563064ebcee88c593e1673f03d4" kindref="member">StepsPerformed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stepsPerformed;<sp/>}</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350" refid="classmlpack_1_1rl_1_1Acrobot_1ad8fd6d8f7581c82e73556491b79a8907" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1ad8fd6d8f7581c82e73556491b79a8907" kindref="member">MaxSteps</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxSteps;<sp/>}</highlight></codeline>
+<codeline lineno="352" refid="classmlpack_1_1rl_1_1Acrobot_1a64c84cebc489c6fdfd7f057e127b0aef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1Acrobot_1a64c84cebc489c6fdfd7f057e127b0aef" kindref="member">MaxSteps</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxSteps;<sp/>}</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxSteps;</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gravity;</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkLength1;</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkLength2;</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMass1;</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMass2;</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkCom1;</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"></highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkCom2;</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"></highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>linkMoi;</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"></highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxVel1;</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"></highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxVel2;</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dt;</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>doneReward;</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"></highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>stepsPerformed;</highlight></codeline>
+<codeline lineno="396"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="399"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="400"><highlight class="normal"></highlight></codeline>
+<codeline lineno="401"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp"/>
+  </compounddef>
+</doxygen>

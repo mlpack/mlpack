@@ -1,0 +1,525 @@
+\section{N\+S\+Model$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NSModel}\index{N\+S\+Model$<$ Sort\+Policy $>$@{N\+S\+Model$<$ Sort\+Policy $>$}}
+
+
+The \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} A\+PI.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Tree\+Types} \{ \newline
+\textbf{ K\+D\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ B\+A\+L\+L\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ X\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ V\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ R\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ S\+P\+I\+L\+L\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ U\+B\+\_\+\+T\+R\+EE}, 
+\newline
+\textbf{ O\+C\+T\+R\+EE}
+ \}\begin{DoxyCompactList}\small\item\em Enum type to identify each accepted tree type. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ N\+S\+Model} (\textbf{ Tree\+Types} tree\+Type=Tree\+Types\+::\+K\+D\+\_\+\+T\+R\+EE, bool random\+Basis=false)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} with the given type and whether or not a random basis should be used. \end{DoxyCompactList}\item 
+\textbf{ N\+S\+Model} (const \textbf{ N\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ N\+S\+Model} (\textbf{ N\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+N\+S\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean memory, if necessary. \end{DoxyCompactList}\item 
+void \textbf{ Build\+Model} (arma\+::mat \&\&reference\+Set, const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon=0)
+\begin{DoxyCompactList}\small\item\em Build the reference tree. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Expose the dataset. \end{DoxyCompactList}\item 
+double \textbf{ Epsilon} () const
+\begin{DoxyCompactList}\small\item\em Expose Epsilon. \end{DoxyCompactList}\item 
+double \& \textbf{ Epsilon} ()
+\item 
+void \textbf{ Initialize\+Model} (const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon)
+\begin{DoxyCompactList}\small\item\em Initialize the model type. (This does not perform any training.) \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Expose Leaf\+Size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Leaf\+Size} ()
+\item 
+\textbf{ N\+S\+Model} \& \textbf{ operator=} (const \textbf{ N\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ N\+S\+Model} \& \textbf{ operator=} (\textbf{ N\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+bool \textbf{ Random\+Basis} () const
+\begin{DoxyCompactList}\small\item\em Expose random\+Basis. \end{DoxyCompactList}\item 
+bool \& \textbf{ Random\+Basis} ()
+\item 
+double \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Expose Rho. \end{DoxyCompactList}\item 
+double \& \textbf{ Rho} ()
+\item 
+void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform neighbor search. The query set will be reordered. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform monochromatic neighbor search. \end{DoxyCompactList}\item 
+\textbf{ Neighbor\+Search\+Mode} \textbf{ Search\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Expose Search\+Mode. \end{DoxyCompactList}\item 
+\textbf{ Neighbor\+Search\+Mode} \& \textbf{ Search\+Mode} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the neighbor search model. \end{DoxyCompactList}\item 
+double \textbf{ Tau} () const
+\begin{DoxyCompactList}\small\item\em Expose Tau. \end{DoxyCompactList}\item 
+double \& \textbf{ Tau} ()
+\item 
+std\+::string \textbf{ Tree\+Name} () const
+\begin{DoxyCompactList}\small\item\em Return a string representation of the current tree type. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \textbf{ Tree\+Type} () const
+\begin{DoxyCompactList}\small\item\em Expose tree\+Type. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \& \textbf{ Tree\+Type} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\newline
+class mlpack\+::neighbor\+::\+N\+S\+Model$<$ Sort\+Policy $>$}
+
+The \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} A\+PI. 
+
+This class is meant to be used by the command-\/line mlpack\+\_\+knn and mlpack\+\_\+kfn programs, and thus does not have the same complete functionality and flexibility as the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class. So if you are using it outside of mlpack\+\_\+knn and mlpack\+\_\+kfn, be aware that it is limited!
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Sort\+Policy} & The sort policy for distances; see Nearest\+Neighbor\+Sort. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 333 of file ns\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8d}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tree\+Types@{Tree\+Types}}
+\index{Tree\+Types@{Tree\+Types}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tree\+Types}
+{\footnotesize\ttfamily enum \textbf{ Tree\+Types}}
+
+
+
+Enum type to identify each accepted tree type. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c}} 
+K\+D\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3}} 
+C\+O\+V\+E\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9}} 
+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b}} 
+R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+A\+L\+L\+\_\+\+T\+R\+EE@{B\+A\+L\+L\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!B\+A\+L\+L\+\_\+\+T\+R\+EE@{B\+A\+L\+L\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d}} 
+B\+A\+L\+L\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059}} 
+X\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c}} 
+H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff}} 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5}} 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{V\+P\+\_\+\+T\+R\+EE@{V\+P\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!V\+P\+\_\+\+T\+R\+EE@{V\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daa8a6aade44830d33165414079bf8dd1c}} 
+V\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+P\+\_\+\+T\+R\+EE@{R\+P\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!R\+P\+\_\+\+T\+R\+EE@{R\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250}} 
+R\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE@{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE@{M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da0e4ed6912ca7a8232754df8771365c96}} 
+M\+A\+X\+\_\+\+R\+P\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+P\+I\+L\+L\+\_\+\+T\+R\+EE@{S\+P\+I\+L\+L\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!S\+P\+I\+L\+L\+\_\+\+T\+R\+EE@{S\+P\+I\+L\+L\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae380b83ef5a8ba2c32c569705a8b66fc}} 
+S\+P\+I\+L\+L\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc}} 
+U\+B\+\_\+\+T\+R\+EE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50}} 
+O\+C\+T\+R\+EE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 337 of file ns\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a79e4c6c22da7f04fc8f9a5bae9b688e1}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!N\+S\+Model@{N\+S\+Model}}
+\index{N\+S\+Model@{N\+S\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{N\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ N\+S\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ Tree\+Types}}]{tree\+Type = {\ttfamily TreeTypes\+:\+:KD\+\_\+TREE},  }\item[{bool}]{random\+Basis = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Initialize the \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} with the given type and whether or not a random basis should be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree\+Type} & Type of tree to use. \\
+\hline
+{\em random\+Basis} & Whether or not to project the points onto a random basis before searching. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6377c3a4b61de368dedff9fa95304359}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!N\+S\+Model@{N\+S\+Model}}
+\index{N\+S\+Model@{N\+S\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{N\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ N\+S\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ N\+S\+Model}$<$ Sort\+Policy $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8eba8cadae0d4294becc60ec69cf158d}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!N\+S\+Model@{N\+S\+Model}}
+\index{N\+S\+Model@{N\+S\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{N\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ N\+S\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ N\+S\+Model}$<$ Sort\+Policy $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a25d5032163e2f4db1c2330d689df8434}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!````~N\+S\+Model@{$\sim$\+N\+S\+Model}}
+\index{````~N\+S\+Model@{$\sim$\+N\+S\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{$\sim$\+N\+S\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ N\+S\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory, if necessary. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_aa5cbba6575bb949e63ace34052516eb6}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Build\+Model@{Build\+Model}}
+\index{Build\+Model@{Build\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Build\+Model()}
+{\footnotesize\ttfamily void Build\+Model (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Build the reference tree. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_aff320b9a86b77a150e630c01d5888273}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose the dataset. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_af6d960193bb5db37e51416e12bf720de}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose Epsilon. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ab6a080993b32456443eced5df2f8b9b9}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a407a10954f142968edc38f36c321c6b8}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Initialize\+Model@{Initialize\+Model}}
+\index{Initialize\+Model@{Initialize\+Model}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Initialize\+Model()}
+{\footnotesize\ttfamily void Initialize\+Model (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon }\end{DoxyParamCaption})}
+
+
+
+Initialize the model type. (This does not perform any training.) 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ab81b93ebb200783ca4c5747f31889fa0}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Leaf\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Leaf\+Size. 
+
+
+
+Definition at line 429 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a0966773f5b7ef0c324ed40b1cf4b94d1}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Leaf\+Size()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 430 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8423369eb2979b36475f0e3fd533c274}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ N\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ N\+S\+Model}$<$ Sort\+Policy $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a9a971bffd9a24a23a0e2216b24a60cf3}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ N\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ N\+S\+Model}$<$ Sort\+Policy $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ae3053ad1e3b42eb1ae4105aecd060cf6}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Random\+Basis()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose random\+Basis. 
+
+
+
+Definition at line 449 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8111114602e748b38c0875f82f323544}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Random\+Basis()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 450 of file ns\+\_\+model.\+hpp.
+
+
+
+References N\+S\+Wrapper\+Base\+::\+Search().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a309719b378c0bb1962982a8162e58e84}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Rho. 
+
+
+
+Definition at line 437 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a10001faac75d91c05a3c0bfd711b901a}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 438 of file ns\+\_\+model.\+hpp.
+
+
+
+References N\+S\+Wrapper\+Base\+::\+Epsilon().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_af621a93ffd3ff29728b4f4d2380ccfd5}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform neighbor search. The query set will be reordered. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a619c7d4931e628a0c199159c57b34cbd}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform monochromatic neighbor search. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a23cdc4b734a3dc41722aaded92244fd4}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Search\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode} Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose Search\+Mode. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6071cc412821cb4ce4364fbc2a0a8533}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Search\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode}\& Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the neighbor search model. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a4a4b0fafde4cc4c856a53025dc8c4c21}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tau@{Tau}}
+\index{Tau@{Tau}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Tau. 
+
+
+
+Definition at line 433 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ad522d61ed716a322376adea25ebdbc90}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tau@{Tau}}
+\index{Tau@{Tau}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 434 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a98cbe53c61f1681514056f78a89a57b8}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tree\+Name@{Tree\+Name}}
+\index{Tree\+Name@{Tree\+Name}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tree\+Name()}
+{\footnotesize\ttfamily std\+::string Tree\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return a string representation of the current tree type. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_adb3d0b75d7754ec6741d890232576ffc}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tree\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types} Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose tree\+Type. 
+
+
+
+Definition at line 445 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a56b0460c7769ea1ef9d8314026ef36c6}} 
+\index{mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::neighbor\+::\+N\+S\+Model@{mlpack\+::neighbor\+::\+N\+S\+Model}}
+\subsubsection{Tree\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types}\& Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 446 of file ns\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

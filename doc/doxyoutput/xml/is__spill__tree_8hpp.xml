@@ -1,0 +1,714 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="is__spill__tree_8hpp" kind="file" language="C++">
+    <compoundname>is_spill_tree.hpp</compoundname>
+    <includes refid="spill__tree_2spill__tree_8hpp" local="yes">spill_tree.hpp</includes>
+    <includedby refid="spill__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/spill_tree.hpp</includedby>
+    <incdepgraph>
+      <node id="18358">
+        <label>list</label>
+      </node>
+      <node id="18389">
+        <label>spill_tree/spill_dual_tree_traverser.hpp</label>
+        <link refid="spill__dual__tree__traverser_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18307" relation="include">
+        </childnode>
+        <childnode refid="18390" relation="include">
+        </childnode>
+      </node>
+      <node id="18355">
+        <label>atomic</label>
+      </node>
+      <node id="18367">
+        <label>projection_vector.hpp</label>
+        <link refid="projection__vector_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18368" relation="include">
+        </childnode>
+      </node>
+      <node id="18345">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="18321">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="18394">
+        <label>spill_tree/typedef.hpp</label>
+        <link refid="core_2tree_2spill__tree_2typedef_8hpp"/>
+        <childnode refid="18395" relation="include">
+        </childnode>
+        <childnode refid="18365" relation="include">
+        </childnode>
+      </node>
+      <node id="18357">
+        <label>iomanip</label>
+      </node>
+      <node id="18372">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="18366">
+        <label>hyperplane.hpp</label>
+        <link refid="hyperplane_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18367" relation="include">
+        </childnode>
+      </node>
+      <node id="18371">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="18330">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="18331" relation="include">
+        </childnode>
+        <childnode refid="18333" relation="include">
+        </childnode>
+      </node>
+      <node id="18313">
+        <label>cstdint</label>
+      </node>
+      <node id="18365">
+        <label>../space_split/midpoint_space_split.hpp</label>
+        <link refid="midpoint__space__split_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18366" relation="include">
+        </childnode>
+        <childnode refid="18382" relation="include">
+        </childnode>
+      </node>
+      <node id="18322">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="18329">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="18396">
+        <label>mean_space_split_impl.hpp</label>
+      </node>
+      <node id="18352">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="18377">
+        <label>hollow_ball_bound.hpp</label>
+        <link refid="hollow__ball__bound_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18370" relation="include">
+        </childnode>
+        <childnode refid="18372" relation="include">
+        </childnode>
+        <childnode refid="18378" relation="include">
+        </childnode>
+      </node>
+      <node id="18383">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="18385">
+        <label>../spill_tree.hpp</label>
+        <link refid="spill__tree_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18368" relation="include">
+        </childnode>
+        <childnode refid="18306" relation="include">
+        </childnode>
+        <childnode refid="18307" relation="include">
+        </childnode>
+        <childnode refid="18386" relation="include">
+        </childnode>
+        <childnode refid="18388" relation="include">
+        </childnode>
+        <childnode refid="18389" relation="include">
+        </childnode>
+        <childnode refid="18391" relation="include">
+        </childnode>
+        <childnode refid="18392" relation="include">
+        </childnode>
+        <childnode refid="18394" relation="include">
+        </childnode>
+      </node>
+      <node id="18342">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="18309">
+        <label>cmath</label>
+      </node>
+      <node id="18368">
+        <label>../bounds.hpp</label>
+        <link refid="bounds_8hpp"/>
+        <childnode refid="18369" relation="include">
+        </childnode>
+        <childnode refid="18370" relation="include">
+        </childnode>
+        <childnode refid="18372" relation="include">
+        </childnode>
+        <childnode refid="18373" relation="include">
+        </childnode>
+        <childnode refid="18375" relation="include">
+        </childnode>
+        <childnode refid="18377" relation="include">
+        </childnode>
+        <childnode refid="18379" relation="include">
+        </childnode>
+      </node>
+      <node id="18328">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="18317">
+        <label>stdexcept</label>
+      </node>
+      <node id="18337">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="18322" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18323" relation="include">
+        </childnode>
+      </node>
+      <node id="18369">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="18361">
+        <label>string</label>
+      </node>
+      <node id="18349">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="18350" relation="include">
+        </childnode>
+        <childnode refid="18316" relation="include">
+        </childnode>
+      </node>
+      <node id="18359">
+        <label>map</label>
+      </node>
+      <node id="18392">
+        <label>spill_tree/traits.hpp</label>
+        <link refid="spill__tree_2traits_8hpp"/>
+        <childnode refid="18393" relation="include">
+        </childnode>
+      </node>
+      <node id="18311">
+        <label>cfloat</label>
+      </node>
+      <node id="18341">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="18363">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="18325">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="18348">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="18349" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18332" relation="include">
+        </childnode>
+        <childnode refid="18350" relation="include">
+        </childnode>
+      </node>
+      <node id="18386">
+        <label>spill_tree/spill_single_tree_traverser.hpp</label>
+        <link refid="spill__single__tree__traverser_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18307" relation="include">
+        </childnode>
+        <childnode refid="18387" relation="include">
+        </childnode>
+      </node>
+      <node id="18338">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="18336">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="18322" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18323" relation="include">
+        </childnode>
+      </node>
+      <node id="18339">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="18322" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18323" relation="include">
+        </childnode>
+      </node>
+      <node id="18327">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="18347">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="18323" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18335" relation="include">
+        </childnode>
+        <childnode refid="18344" relation="include">
+        </childnode>
+      </node>
+      <node id="18351">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="18352" relation="include">
+        </childnode>
+      </node>
+      <node id="18353">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="18308">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="18309" relation="include">
+        </childnode>
+        <childnode refid="18310" relation="include">
+        </childnode>
+        <childnode refid="18311" relation="include">
+        </childnode>
+        <childnode refid="18312" relation="include">
+        </childnode>
+        <childnode refid="18313" relation="include">
+        </childnode>
+        <childnode refid="18314" relation="include">
+        </childnode>
+        <childnode refid="18315" relation="include">
+        </childnode>
+        <childnode refid="18316" relation="include">
+        </childnode>
+        <childnode refid="18317" relation="include">
+        </childnode>
+        <childnode refid="18318" relation="include">
+        </childnode>
+        <childnode refid="18319" relation="include">
+        </childnode>
+        <childnode refid="18320" relation="include">
+        </childnode>
+        <childnode refid="18321" relation="include">
+        </childnode>
+        <childnode refid="18322" relation="include">
+        </childnode>
+        <childnode refid="18323" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18326" relation="include">
+        </childnode>
+        <childnode refid="18327" relation="include">
+        </childnode>
+        <childnode refid="18328" relation="include">
+        </childnode>
+        <childnode refid="18329" relation="include">
+        </childnode>
+        <childnode refid="18330" relation="include">
+        </childnode>
+        <childnode refid="18334" relation="include">
+        </childnode>
+        <childnode refid="18335" relation="include">
+        </childnode>
+        <childnode refid="18336" relation="include">
+        </childnode>
+        <childnode refid="18337" relation="include">
+        </childnode>
+        <childnode refid="18338" relation="include">
+        </childnode>
+        <childnode refid="18339" relation="include">
+        </childnode>
+        <childnode refid="18340" relation="include">
+        </childnode>
+        <childnode refid="18346" relation="include">
+        </childnode>
+        <childnode refid="18347" relation="include">
+        </childnode>
+        <childnode refid="18344" relation="include">
+        </childnode>
+        <childnode refid="18348" relation="include">
+        </childnode>
+        <childnode refid="18351" relation="include">
+        </childnode>
+        <childnode refid="18353" relation="include">
+        </childnode>
+        <childnode refid="18354" relation="include">
+        </childnode>
+        <childnode refid="18363" relation="include">
+        </childnode>
+        <childnode refid="18364" relation="include">
+        </childnode>
+      </node>
+      <node id="18387">
+        <label>spill_single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="18376">
+        <label>ballbound_impl.hpp</label>
+      </node>
+      <node id="18388">
+        <label>spill_tree/spill_single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="18307">
+        <label>spill_tree.hpp</label>
+        <link refid="spill__tree_2spill__tree_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18365" relation="include">
+        </childnode>
+        <childnode refid="18383" relation="include">
+        </childnode>
+        <childnode refid="18384" relation="include">
+        </childnode>
+        <childnode refid="18385" relation="include">
+        </childnode>
+      </node>
+      <node id="18314">
+        <label>cstdio</label>
+      </node>
+      <node id="18380">
+        <label>address.hpp</label>
+        <link refid="address_8hpp"/>
+      </node>
+      <node id="18393">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="18384">
+        <label>spill_tree_impl.hpp</label>
+      </node>
+      <node id="18318">
+        <label>tuple</label>
+      </node>
+      <node id="18323">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="18340">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="18323" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18327" relation="include">
+        </childnode>
+        <childnode refid="18341" relation="include">
+        </childnode>
+        <childnode refid="18342" relation="include">
+        </childnode>
+        <childnode refid="18343" relation="include">
+        </childnode>
+        <childnode refid="18344" relation="include">
+        </childnode>
+      </node>
+      <node id="18373">
+        <label>hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18369" relation="include">
+        </childnode>
+        <childnode refid="18370" relation="include">
+        </childnode>
+        <childnode refid="18372" relation="include">
+        </childnode>
+        <childnode refid="18374" relation="include">
+        </childnode>
+      </node>
+      <node id="18391">
+        <label>spill_tree/spill_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="18319">
+        <label>utility</label>
+      </node>
+      <node id="18343">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="18334">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="18331">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="18332" relation="include">
+        </childnode>
+      </node>
+      <node id="18382">
+        <label>midpoint_space_split_impl.hpp</label>
+      </node>
+      <node id="18354">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="18355" relation="include">
+        </childnode>
+        <childnode refid="18356" relation="include">
+        </childnode>
+        <childnode refid="18357" relation="include">
+        </childnode>
+        <childnode refid="18358" relation="include">
+        </childnode>
+        <childnode refid="18359" relation="include">
+        </childnode>
+        <childnode refid="18360" relation="include">
+        </childnode>
+        <childnode refid="18361" relation="include">
+        </childnode>
+        <childnode refid="18362" relation="include">
+        </childnode>
+      </node>
+      <node id="18306">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp</label>
+        <link refid="is__spill__tree_8hpp"/>
+        <childnode refid="18307" relation="include">
+        </childnode>
+      </node>
+      <node id="18332">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="18346">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="18344" relation="include">
+        </childnode>
+        <childnode refid="18340" relation="include">
+        </childnode>
+        <childnode refid="18347" relation="include">
+        </childnode>
+      </node>
+      <node id="18315">
+        <label>cstdlib</label>
+      </node>
+      <node id="18310">
+        <label>cctype</label>
+      </node>
+      <node id="18333">
+        <label>unordered_map</label>
+      </node>
+      <node id="18312">
+        <label>climits</label>
+      </node>
+      <node id="18360">
+        <label>mutex</label>
+      </node>
+      <node id="18356">
+        <label>chrono</label>
+      </node>
+      <node id="18374">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="18364">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="18362">
+        <label>thread</label>
+      </node>
+      <node id="18375">
+        <label>ballbound.hpp</label>
+        <link refid="ballbound_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18370" relation="include">
+        </childnode>
+        <childnode refid="18372" relation="include">
+        </childnode>
+        <childnode refid="18376" relation="include">
+        </childnode>
+      </node>
+      <node id="18390">
+        <label>spill_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="18350">
+        <label>type_traits</label>
+      </node>
+      <node id="18326">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="18320">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="18344">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="18322" relation="include">
+        </childnode>
+        <childnode refid="18323" relation="include">
+        </childnode>
+        <childnode refid="18324" relation="include">
+        </childnode>
+        <childnode refid="18325" relation="include">
+        </childnode>
+        <childnode refid="18345" relation="include">
+        </childnode>
+      </node>
+      <node id="18378">
+        <label>hollow_ball_bound_impl.hpp</label>
+      </node>
+      <node id="18316">
+        <label>cstring</label>
+      </node>
+      <node id="18335">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18381">
+        <label>cellbound_impl.hpp</label>
+      </node>
+      <node id="18395">
+        <label>../space_split/mean_space_split.hpp</label>
+        <link refid="mean__space__split_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18366" relation="include">
+        </childnode>
+        <childnode refid="18396" relation="include">
+        </childnode>
+      </node>
+      <node id="18379">
+        <label>cellbound.hpp</label>
+        <link refid="cellbound_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18369" relation="include">
+        </childnode>
+        <childnode refid="18370" relation="include">
+        </childnode>
+        <childnode refid="18372" relation="include">
+        </childnode>
+        <childnode refid="18380" relation="include">
+        </childnode>
+        <childnode refid="18381" relation="include">
+        </childnode>
+      </node>
+      <node id="18324">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="18370">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="18308" relation="include">
+        </childnode>
+        <childnode refid="18371" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="18401">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_dual_tree_traverser.hpp</label>
+        <link refid="spill__dual__tree__traverser_8hpp"/>
+        <childnode refid="18398" relation="include">
+        </childnode>
+      </node>
+      <node id="18398">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree.hpp</label>
+        <link refid="spill__tree_8hpp"/>
+        <childnode refid="18399" relation="include">
+        </childnode>
+        <childnode refid="18402" relation="include">
+        </childnode>
+      </node>
+      <node id="18400">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_single_tree_traverser.hpp</label>
+        <link refid="spill__single__tree__traverser_8hpp"/>
+        <childnode refid="18398" relation="include">
+        </childnode>
+      </node>
+      <node id="18402">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="18399">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/spill_tree.hpp</label>
+        <link refid="spill__tree_2spill__tree_8hpp"/>
+        <childnode refid="18397" relation="include">
+        </childnode>
+        <childnode refid="18398" relation="include">
+        </childnode>
+        <childnode refid="18400" relation="include">
+        </childnode>
+        <childnode refid="18401" relation="include">
+        </childnode>
+      </node>
+      <node id="18397">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp</label>
+        <link refid="is__spill__tree_8hpp"/>
+        <childnode refid="18398" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structmlpack_1_1tree_1_1IsSpillTree" prot="public">mlpack::tree::IsSpillTree</innerclass>
+    <innerclass refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340" prot="public">mlpack::tree::IsSpillTree&lt; tree::SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+<para>Definition of IsSpillTree. </para>    </briefdescription>
+    <detaileddescription>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="11"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_SPILL_TREE_IS_SPILL_TREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_SPILL_TREE_IS_SPILL_TREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="spill__tree_2spill__tree_8hpp" kindref="compound">spill_tree.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Useful<sp/>struct<sp/>when<sp/>specific<sp/>behaviour<sp/>for<sp/>SpillTrees<sp/>is<sp/>required.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="21" refid="structmlpack_1_1tree_1_1IsSpillTree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1tree_1_1IsSpillTree" kindref="compound">IsSpillTree</ref></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23" refid="structmlpack_1_1tree_1_1IsSpillTree_1a11ddd051208250c32dc4985abcafa86d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1tree_1_1IsSpillTree_1a11ddd051208250c32dc4985abcafa86d" kindref="member">value</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Specialization<sp/>for<sp/>SpillTree.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>StatisticType,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>HyperplaneMetricType&gt;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">HyperplaneType,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitMetricType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitMatType&gt;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">SplitType&gt;</highlight></codeline>
+<codeline lineno="34" refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1tree_1_1IsSpillTree" kindref="compound">IsSpillTree</ref>&lt;tree::<ref refid="classmlpack_1_1tree_1_1SpillTree" kindref="compound">SpillTree</ref>&lt;MetricType,<sp/>StatisticType,<sp/>MatType,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>HyperplaneType,<sp/>SplitType&gt;&gt;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37" refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340_1a11ddd051208250c32dc4985abcafa86d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1tree_1_1IsSpillTree_1a11ddd051208250c32dc4985abcafa86d" kindref="member">value</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp"/>
+  </compounddef>
+</doxygen>

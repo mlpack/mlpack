@@ -1,0 +1,626 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="fastmks__rules_8hpp" kind="file" language="C++">
+    <compoundname>fastmks_rules.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="kernel__traits_8hpp" local="no">mlpack/core/kernels/kernel_traits.hpp</includes>
+    <includes refid="cover__tree_2cover__tree_8hpp" local="no">mlpack/core/tree/cover_tree/cover_tree.hpp</includes>
+    <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
+    <includes local="no">boost/heap/priority_queue.hpp</includes>
+    <includes local="yes">fastmks_rules_impl.hpp</includes>
+    <incdepgraph>
+      <node id="48097">
+        <label>list</label>
+      </node>
+      <node id="48094">
+        <label>atomic</label>
+      </node>
+      <node id="48084">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="48060">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="48096">
+        <label>iomanip</label>
+      </node>
+      <node id="48115">
+        <label>queue</label>
+      </node>
+      <node id="48122">
+        <label>boost/heap/priority_queue.hpp</label>
+      </node>
+      <node id="48069">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="48070" relation="include">
+        </childnode>
+        <childnode refid="48072" relation="include">
+        </childnode>
+      </node>
+      <node id="48052">
+        <label>cstdint</label>
+      </node>
+      <node id="48104">
+        <label>mlpack/core/kernels/kernel_traits.hpp</label>
+        <link refid="kernel__traits_8hpp"/>
+      </node>
+      <node id="48061">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="48068">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="48091">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="48107">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="48081">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="48048">
+        <label>cmath</label>
+      </node>
+      <node id="48067">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="48056">
+        <label>stdexcept</label>
+      </node>
+      <node id="48076">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="48061" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48062" relation="include">
+        </childnode>
+      </node>
+      <node id="48106">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="48120">
+        <label>cover_tree/typedef.hpp</label>
+        <link refid="core_2tree_2cover__tree_2typedef_8hpp"/>
+        <childnode refid="48105" relation="include">
+        </childnode>
+      </node>
+      <node id="48123">
+        <label>fastmks_rules_impl.hpp</label>
+      </node>
+      <node id="48100">
+        <label>string</label>
+      </node>
+      <node id="48088">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="48089" relation="include">
+        </childnode>
+        <childnode refid="48055" relation="include">
+        </childnode>
+      </node>
+      <node id="48098">
+        <label>map</label>
+      </node>
+      <node id="48116">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48050">
+        <label>cfloat</label>
+      </node>
+      <node id="48080">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="48102">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="48114">
+        <label>cover_tree/dual_tree_traverser.hpp</label>
+        <link refid="cover__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+        <childnode refid="48115" relation="include">
+        </childnode>
+        <childnode refid="48116" relation="include">
+        </childnode>
+      </node>
+      <node id="48064">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="48087">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="48088" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48071" relation="include">
+        </childnode>
+        <childnode refid="48089" relation="include">
+        </childnode>
+      </node>
+      <node id="48077">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="48105">
+        <label>mlpack/core/tree/cover_tree/cover_tree.hpp</label>
+        <link refid="cover__tree_2cover__tree_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+        <childnode refid="48106" relation="include">
+        </childnode>
+        <childnode refid="48107" relation="include">
+        </childnode>
+        <childnode refid="48108" relation="include">
+        </childnode>
+        <childnode refid="48109" relation="include">
+        </childnode>
+        <childnode refid="48110" relation="include">
+        </childnode>
+      </node>
+      <node id="48075">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="48061" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48062" relation="include">
+        </childnode>
+      </node>
+      <node id="48078">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="48061" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48062" relation="include">
+        </childnode>
+      </node>
+      <node id="48066">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="48086">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="48062" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48074" relation="include">
+        </childnode>
+        <childnode refid="48083" relation="include">
+        </childnode>
+      </node>
+      <node id="48090">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="48091" relation="include">
+        </childnode>
+      </node>
+      <node id="48092">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="48047">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="48048" relation="include">
+        </childnode>
+        <childnode refid="48049" relation="include">
+        </childnode>
+        <childnode refid="48050" relation="include">
+        </childnode>
+        <childnode refid="48051" relation="include">
+        </childnode>
+        <childnode refid="48052" relation="include">
+        </childnode>
+        <childnode refid="48053" relation="include">
+        </childnode>
+        <childnode refid="48054" relation="include">
+        </childnode>
+        <childnode refid="48055" relation="include">
+        </childnode>
+        <childnode refid="48056" relation="include">
+        </childnode>
+        <childnode refid="48057" relation="include">
+        </childnode>
+        <childnode refid="48058" relation="include">
+        </childnode>
+        <childnode refid="48059" relation="include">
+        </childnode>
+        <childnode refid="48060" relation="include">
+        </childnode>
+        <childnode refid="48061" relation="include">
+        </childnode>
+        <childnode refid="48062" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48065" relation="include">
+        </childnode>
+        <childnode refid="48066" relation="include">
+        </childnode>
+        <childnode refid="48067" relation="include">
+        </childnode>
+        <childnode refid="48068" relation="include">
+        </childnode>
+        <childnode refid="48069" relation="include">
+        </childnode>
+        <childnode refid="48073" relation="include">
+        </childnode>
+        <childnode refid="48074" relation="include">
+        </childnode>
+        <childnode refid="48075" relation="include">
+        </childnode>
+        <childnode refid="48076" relation="include">
+        </childnode>
+        <childnode refid="48077" relation="include">
+        </childnode>
+        <childnode refid="48078" relation="include">
+        </childnode>
+        <childnode refid="48079" relation="include">
+        </childnode>
+        <childnode refid="48085" relation="include">
+        </childnode>
+        <childnode refid="48086" relation="include">
+        </childnode>
+        <childnode refid="48083" relation="include">
+        </childnode>
+        <childnode refid="48087" relation="include">
+        </childnode>
+        <childnode refid="48090" relation="include">
+        </childnode>
+        <childnode refid="48092" relation="include">
+        </childnode>
+        <childnode refid="48093" relation="include">
+        </childnode>
+        <childnode refid="48102" relation="include">
+        </childnode>
+        <childnode refid="48103" relation="include">
+        </childnode>
+      </node>
+      <node id="48112">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48110">
+        <label>../cover_tree.hpp</label>
+        <link refid="cover__tree_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+        <childnode refid="48108" relation="include">
+        </childnode>
+        <childnode refid="48105" relation="include">
+        </childnode>
+        <childnode refid="48111" relation="include">
+        </childnode>
+        <childnode refid="48113" relation="include">
+        </childnode>
+        <childnode refid="48114" relation="include">
+        </childnode>
+        <childnode refid="48117" relation="include">
+        </childnode>
+        <childnode refid="48118" relation="include">
+        </childnode>
+        <childnode refid="48120" relation="include">
+        </childnode>
+      </node>
+      <node id="48046">
+        <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_rules.hpp</label>
+        <link refid="fastmks__rules_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+        <childnode refid="48104" relation="include">
+        </childnode>
+        <childnode refid="48105" relation="include">
+        </childnode>
+        <childnode refid="48121" relation="include">
+        </childnode>
+        <childnode refid="48122" relation="include">
+        </childnode>
+        <childnode refid="48123" relation="include">
+        </childnode>
+      </node>
+      <node id="48053">
+        <label>cstdio</label>
+      </node>
+      <node id="48119">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="48057">
+        <label>tuple</label>
+      </node>
+      <node id="48062">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="48079">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="48062" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48066" relation="include">
+        </childnode>
+        <childnode refid="48080" relation="include">
+        </childnode>
+        <childnode refid="48081" relation="include">
+        </childnode>
+        <childnode refid="48082" relation="include">
+        </childnode>
+        <childnode refid="48083" relation="include">
+        </childnode>
+      </node>
+      <node id="48108">
+        <label>first_point_is_root.hpp</label>
+        <link refid="first__point__is__root_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+      </node>
+      <node id="48111">
+        <label>cover_tree/single_tree_traverser.hpp</label>
+        <link refid="cover__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="48047" relation="include">
+        </childnode>
+        <childnode refid="48105" relation="include">
+        </childnode>
+        <childnode refid="48112" relation="include">
+        </childnode>
+      </node>
+      <node id="48058">
+        <label>utility</label>
+      </node>
+      <node id="48082">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="48073">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="48070">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="48071" relation="include">
+        </childnode>
+      </node>
+      <node id="48117">
+        <label>cover_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48109">
+        <label>cover_tree_impl.hpp</label>
+      </node>
+      <node id="48093">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="48094" relation="include">
+        </childnode>
+        <childnode refid="48095" relation="include">
+        </childnode>
+        <childnode refid="48096" relation="include">
+        </childnode>
+        <childnode refid="48097" relation="include">
+        </childnode>
+        <childnode refid="48098" relation="include">
+        </childnode>
+        <childnode refid="48099" relation="include">
+        </childnode>
+        <childnode refid="48100" relation="include">
+        </childnode>
+        <childnode refid="48101" relation="include">
+        </childnode>
+      </node>
+      <node id="48071">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="48085">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="48083" relation="include">
+        </childnode>
+        <childnode refid="48079" relation="include">
+        </childnode>
+        <childnode refid="48086" relation="include">
+        </childnode>
+      </node>
+      <node id="48054">
+        <label>cstdlib</label>
+      </node>
+      <node id="48049">
+        <label>cctype</label>
+      </node>
+      <node id="48072">
+        <label>unordered_map</label>
+      </node>
+      <node id="48113">
+        <label>cover_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="48051">
+        <label>climits</label>
+      </node>
+      <node id="48099">
+        <label>mutex</label>
+      </node>
+      <node id="48095">
+        <label>chrono</label>
+      </node>
+      <node id="48121">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+      <node id="48103">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="48101">
+        <label>thread</label>
+      </node>
+      <node id="48089">
+        <label>type_traits</label>
+      </node>
+      <node id="48065">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="48059">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="48083">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="48061" relation="include">
+        </childnode>
+        <childnode refid="48062" relation="include">
+        </childnode>
+        <childnode refid="48063" relation="include">
+        </childnode>
+        <childnode refid="48064" relation="include">
+        </childnode>
+        <childnode refid="48084" relation="include">
+        </childnode>
+      </node>
+      <node id="48055">
+        <label>cstring</label>
+      </node>
+      <node id="48074">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="48063">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="48118">
+        <label>cover_tree/traits.hpp</label>
+        <link refid="cover__tree_2traits_8hpp"/>
+        <childnode refid="48119" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1fastmks_1_1FastMKSRules" prot="public">mlpack::fastmks::FastMKSRules</innerclass>
+    <innerclass refid="structmlpack_1_1fastmks_1_1FastMKSRules_1_1CandidateCmp" prot="private">mlpack::fastmks::FastMKSRules::CandidateCmp</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1fastmks">mlpack::fastmks</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Rules for the single or dual tree traversal for fast max-kernel search.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="kernel__traits_8hpp" kindref="compound">mlpack/core/kernels/kernel_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="cover__tree_2cover__tree_8hpp" kindref="compound">mlpack/core/tree/cover_tree/cover_tree.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="traversal__info_8hpp" kindref="compound">mlpack/core/tree/traversal_info.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;boost/heap/priority_queue.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fastmks<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="34" refid="classmlpack_1_1fastmks_1_1FastMKSRules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules" kindref="compound">FastMKSRules</ref></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1aef348931ec8b852e6bdfd93ae99f45fe" kindref="member">FastMKSRules</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/>referenceSet,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/>querySet,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>KernelType&amp;<sp/>kernel);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1aa6f7caaccb12c9c5000c45860cbf546b" kindref="member">GetResults</ref>(arma::Mat&lt;size_t&gt;&amp;<sp/>indices,<sp/>arma::mat&amp;<sp/>products);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1abac50f780bb5e1bc12dd0d16d850cacc" kindref="member">BaseCase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>referenceIndex);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore</ref>(TreeType&amp;<sp/>queryNode,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a3f4bd5d0aa64ea090796725f7755287d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a3f4bd5d0aa64ea090796725f7755287d" kindref="member">BaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>baseCases;<sp/>}</highlight></codeline>
+<codeline lineno="115" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab93e60b3671ebddbe95a890f1e1b2768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab93e60b3671ebddbe95a890f1e1b2768" kindref="member">BaseCases</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>baseCases;<sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a4d1e40c0bf406280a237ca1b487e3c62" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a4d1e40c0bf406280a237ca1b487e3c62" kindref="member">Scores</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scores;<sp/>}</highlight></codeline>
+<codeline lineno="120" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a8c3486626c1d3c0a10cdb27a8faa198f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a8c3486626c1d3c0a10cdb27a8faa198f" kindref="member">Scores</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scores;<sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab5f079db10d0a6813eefeb1115e894cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo&lt;TreeType&gt;</ref><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref>;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TraversalInfoType&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" kindref="member">TraversalInfo</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="125" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a4027bb90e756a4520d55978459c7f83e" refkind="member"><highlight class="normal"><sp/><sp/>TraversalInfoType&amp;<sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a4027bb90e756a4520d55978459c7f83e" kindref="member">TraversalInfo</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a469f61784f9cce8f2574c23823405768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1fastmks_1_1FastMKSRules_1a469f61784f9cce8f2574c23823405768" kindref="member">MinimumBaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>k;<sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/>referenceSet;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/>querySet;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;double,<sp/>size_t&gt;<sp/>Candidate;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">CandidateCmp<sp/>{</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>operator()(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Candidate&amp;<sp/>c1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Candidate&amp;<sp/>c2)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="143"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>c1.first<sp/>&gt;<sp/>c2.first;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>boost::heap::priority_queue&lt;Candidate,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>boost::heap::compare&lt;CandidateCmp&gt;&gt;<sp/>CandidateList;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>std::vector&lt;CandidateList&gt;<sp/>candidates;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>arma::vec<sp/>queryKernels;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>arma::vec<sp/>referenceKernels;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>KernelType&amp;<sp/>kernel;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lastQueryIndex;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lastReferenceIndex;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lastKernel;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>CalculateBound(TreeType&amp;<sp/>queryNode)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InsertNeighbor(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index,</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>product);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>baseCases;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>scores;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>TraversalInfoType<sp/>traversalInfo;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>fastmks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;fastmks_rules_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_rules.hpp"/>
+  </compounddef>
+</doxygen>

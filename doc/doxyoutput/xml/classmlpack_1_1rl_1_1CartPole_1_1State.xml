@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1rl_1_1CartPole_1_1State" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::CartPole::State</compoundname>
+    <includes refid="cart__pole_8hpp" local="no">cart_pole.hpp</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1CartPole_1_1State_1ae813298f34ef9d793885fc04b54dff99" prot="public" static="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t dimension</definition>
+        <argsstring></argsstring>
+        <name>dimension</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+<para>Dimension of the encoded state. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a05ce11e72e37bd0034387e3a763a18ee" prot="private" static="no" mutable="no">
+        <type>arma::colvec</type>
+        <definition>arma::colvec data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Locally-stored (position, velocity, angle, angular velocity). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a790355057d12e9c1ce7643551c16fecd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>State</definition>
+        <argsstring>()</argsstring>
+        <name>State</name>
+        <briefdescription>
+<para>Construct a state instance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="39" bodyend="40"/>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1aa9f537249fa0c1e62b38197996ab4c6a" compoundref="cart__pole_8hpp" startline="207" endline="211">CartPole::InitialSample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>State</definition>
+        <argsstring>(const arma::colvec &amp;data)</argsstring>
+        <name>State</name>
+        <param>
+          <type>const arma::colvec &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Construct a state instance from given data. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data for the position, velocity, angle and angular velocity. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="47" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1af48d93c5d69b4024665b3e4af6fa52ff" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Angle</definition>
+        <argsstring>() const</argsstring>
+        <name>Angle</name>
+        <briefdescription>
+<para>Get the angle. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="64" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="64" bodyend="64"/>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a7fd056133dfd315e4bf45c408f99326f" compoundref="cart__pole_8hpp" startline="219" endline="234">CartPole::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a311ac19edc537dee94f37b7cce93d908" compoundref="cart__pole_8hpp" startline="151" endline="186">CartPole::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1ab5ad4d288bdca197d1a6562a2aa0afd3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Angle</definition>
+        <argsstring>()</argsstring>
+        <name>Angle</name>
+        <briefdescription>
+<para>Modify the angle. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="66" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a7e1965fe334ebc9d5a4f187cc7e4e740" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double AngularVelocity</definition>
+        <argsstring>() const</argsstring>
+        <name>AngularVelocity</name>
+        <briefdescription>
+<para>Get the angular velocity. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="69" bodyend="69"/>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a311ac19edc537dee94f37b7cce93d908" compoundref="cart__pole_8hpp" startline="151" endline="186">CartPole::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a4f26946cef1f578ff752ef8a0bac643c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; AngularVelocity</definition>
+        <argsstring>()</argsstring>
+        <name>AngularVelocity</name>
+        <briefdescription>
+<para>Modify the angular velocity. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="71" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::colvec &amp;</type>
+        <definition>arma::colvec&amp; Data</definition>
+        <argsstring>()</argsstring>
+        <name>Data</name>
+        <briefdescription>
+<para>Modify the internal representation of the state. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="51" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a8c1a320788b55fad936455caf0acb62a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::colvec &amp;</type>
+        <definition>const arma::colvec&amp; Encode</definition>
+        <argsstring>() const</argsstring>
+        <name>Encode</name>
+        <briefdescription>
+<para>Encode the state to a column vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Position</definition>
+        <argsstring>() const</argsstring>
+        <name>Position</name>
+        <briefdescription>
+<para>Get the position. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="54" bodyend="54"/>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a7fd056133dfd315e4bf45c408f99326f" compoundref="cart__pole_8hpp" startline="219" endline="234">CartPole::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a311ac19edc537dee94f37b7cce93d908" compoundref="cart__pole_8hpp" startline="151" endline="186">CartPole::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a005c39713bc5c65715a94572bfb5fc29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Position</definition>
+        <argsstring>()</argsstring>
+        <name>Position</name>
+        <briefdescription>
+<para>Modify the position. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a5281cef88d4e272d6cb8581bff91195a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Velocity</definition>
+        <argsstring>() const</argsstring>
+        <name>Velocity</name>
+        <briefdescription>
+<para>Get the velocity. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="59" bodyend="59"/>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a311ac19edc537dee94f37b7cce93d908" compoundref="cart__pole_8hpp" startline="151" endline="186">CartPole::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1CartPole_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Velocity</definition>
+        <argsstring>()</argsstring>
+        <name>Velocity</name>
+        <briefdescription>
+<para>Modify the velocity. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="61" bodyend="61"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the state of Cart Pole. </para>    </briefdescription>
+    <detaileddescription>
+<para>Each state is a tuple vector (position, velocity, angle, angular velocity). </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/cart_pole.hpp" bodystart="33" bodyend="82"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1af48d93c5d69b4024665b3e4af6fa52ff" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Angle</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1ab5ad4d288bdca197d1a6562a2aa0afd3" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Angle</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a7e1965fe334ebc9d5a4f187cc7e4e740" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>AngularVelocity</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a4f26946cef1f578ff752ef8a0bac643c" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>AngularVelocity</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Data</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a05ce11e72e37bd0034387e3a763a18ee" prot="private" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>data</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1ae813298f34ef9d793885fc04b54dff99" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>dimension</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a8c1a320788b55fad936455caf0acb62a" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Position</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a005c39713bc5c65715a94572bfb5fc29" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Position</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a790355057d12e9c1ce7643551c16fecd" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a5281cef88d4e272d6cb8581bff91195a" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Velocity</name></member>
+      <member refid="classmlpack_1_1rl_1_1CartPole_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" prot="public" virt="non-virtual"><scope>mlpack::rl::CartPole::State</scope><name>Velocity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

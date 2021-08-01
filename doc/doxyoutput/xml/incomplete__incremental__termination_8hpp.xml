@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="incomplete__incremental__termination_8hpp" kind="file" language="C++">
+    <compoundname>incomplete_incremental_termination.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="23439">
+        <label>list</label>
+      </node>
+      <node id="23436">
+        <label>atomic</label>
+      </node>
+      <node id="23426">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="23402">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="23438">
+        <label>iomanip</label>
+      </node>
+      <node id="23411">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="23412" relation="include">
+        </childnode>
+        <childnode refid="23414" relation="include">
+        </childnode>
+      </node>
+      <node id="23394">
+        <label>cstdint</label>
+      </node>
+      <node id="23403">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23410">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="23433">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="23423">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="23390">
+        <label>cmath</label>
+      </node>
+      <node id="23409">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="23398">
+        <label>stdexcept</label>
+      </node>
+      <node id="23418">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="23403" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23404" relation="include">
+        </childnode>
+      </node>
+      <node id="23442">
+        <label>string</label>
+      </node>
+      <node id="23430">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="23431" relation="include">
+        </childnode>
+        <childnode refid="23397" relation="include">
+        </childnode>
+      </node>
+      <node id="23440">
+        <label>map</label>
+      </node>
+      <node id="23392">
+        <label>cfloat</label>
+      </node>
+      <node id="23422">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="23444">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="23406">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="23429">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="23430" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23413" relation="include">
+        </childnode>
+        <childnode refid="23431" relation="include">
+        </childnode>
+      </node>
+      <node id="23419">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="23417">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="23403" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23404" relation="include">
+        </childnode>
+      </node>
+      <node id="23420">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="23403" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23404" relation="include">
+        </childnode>
+      </node>
+      <node id="23408">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="23428">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="23404" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23416" relation="include">
+        </childnode>
+        <childnode refid="23425" relation="include">
+        </childnode>
+      </node>
+      <node id="23432">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="23433" relation="include">
+        </childnode>
+      </node>
+      <node id="23434">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="23389">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="23390" relation="include">
+        </childnode>
+        <childnode refid="23391" relation="include">
+        </childnode>
+        <childnode refid="23392" relation="include">
+        </childnode>
+        <childnode refid="23393" relation="include">
+        </childnode>
+        <childnode refid="23394" relation="include">
+        </childnode>
+        <childnode refid="23395" relation="include">
+        </childnode>
+        <childnode refid="23396" relation="include">
+        </childnode>
+        <childnode refid="23397" relation="include">
+        </childnode>
+        <childnode refid="23398" relation="include">
+        </childnode>
+        <childnode refid="23399" relation="include">
+        </childnode>
+        <childnode refid="23400" relation="include">
+        </childnode>
+        <childnode refid="23401" relation="include">
+        </childnode>
+        <childnode refid="23402" relation="include">
+        </childnode>
+        <childnode refid="23403" relation="include">
+        </childnode>
+        <childnode refid="23404" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23407" relation="include">
+        </childnode>
+        <childnode refid="23408" relation="include">
+        </childnode>
+        <childnode refid="23409" relation="include">
+        </childnode>
+        <childnode refid="23410" relation="include">
+        </childnode>
+        <childnode refid="23411" relation="include">
+        </childnode>
+        <childnode refid="23415" relation="include">
+        </childnode>
+        <childnode refid="23416" relation="include">
+        </childnode>
+        <childnode refid="23417" relation="include">
+        </childnode>
+        <childnode refid="23418" relation="include">
+        </childnode>
+        <childnode refid="23419" relation="include">
+        </childnode>
+        <childnode refid="23420" relation="include">
+        </childnode>
+        <childnode refid="23421" relation="include">
+        </childnode>
+        <childnode refid="23427" relation="include">
+        </childnode>
+        <childnode refid="23428" relation="include">
+        </childnode>
+        <childnode refid="23425" relation="include">
+        </childnode>
+        <childnode refid="23429" relation="include">
+        </childnode>
+        <childnode refid="23432" relation="include">
+        </childnode>
+        <childnode refid="23434" relation="include">
+        </childnode>
+        <childnode refid="23435" relation="include">
+        </childnode>
+        <childnode refid="23444" relation="include">
+        </childnode>
+        <childnode refid="23445" relation="include">
+        </childnode>
+      </node>
+      <node id="23395">
+        <label>cstdio</label>
+      </node>
+      <node id="23399">
+        <label>tuple</label>
+      </node>
+      <node id="23404">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="23421">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="23404" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23408" relation="include">
+        </childnode>
+        <childnode refid="23422" relation="include">
+        </childnode>
+        <childnode refid="23423" relation="include">
+        </childnode>
+        <childnode refid="23424" relation="include">
+        </childnode>
+        <childnode refid="23425" relation="include">
+        </childnode>
+      </node>
+      <node id="23400">
+        <label>utility</label>
+      </node>
+      <node id="23424">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="23415">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="23388">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/incomplete_incremental_termination.hpp</label>
+        <link refid="incomplete__incremental__termination_8hpp"/>
+        <childnode refid="23389" relation="include">
+        </childnode>
+      </node>
+      <node id="23412">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="23413" relation="include">
+        </childnode>
+      </node>
+      <node id="23435">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="23436" relation="include">
+        </childnode>
+        <childnode refid="23437" relation="include">
+        </childnode>
+        <childnode refid="23438" relation="include">
+        </childnode>
+        <childnode refid="23439" relation="include">
+        </childnode>
+        <childnode refid="23440" relation="include">
+        </childnode>
+        <childnode refid="23441" relation="include">
+        </childnode>
+        <childnode refid="23442" relation="include">
+        </childnode>
+        <childnode refid="23443" relation="include">
+        </childnode>
+      </node>
+      <node id="23413">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="23427">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="23425" relation="include">
+        </childnode>
+        <childnode refid="23421" relation="include">
+        </childnode>
+        <childnode refid="23428" relation="include">
+        </childnode>
+      </node>
+      <node id="23396">
+        <label>cstdlib</label>
+      </node>
+      <node id="23391">
+        <label>cctype</label>
+      </node>
+      <node id="23414">
+        <label>unordered_map</label>
+      </node>
+      <node id="23393">
+        <label>climits</label>
+      </node>
+      <node id="23441">
+        <label>mutex</label>
+      </node>
+      <node id="23437">
+        <label>chrono</label>
+      </node>
+      <node id="23445">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="23443">
+        <label>thread</label>
+      </node>
+      <node id="23431">
+        <label>type_traits</label>
+      </node>
+      <node id="23407">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="23401">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="23425">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="23403" relation="include">
+        </childnode>
+        <childnode refid="23404" relation="include">
+        </childnode>
+        <childnode refid="23405" relation="include">
+        </childnode>
+        <childnode refid="23406" relation="include">
+        </childnode>
+        <childnode refid="23426" relation="include">
+        </childnode>
+      </node>
+      <node id="23397">
+        <label>cstring</label>
+      </node>
+      <node id="23416">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="23405">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination" prot="public">mlpack::amf::IncompleteIncrementalTermination</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1amf">mlpack::amf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Sumedh Ghaisas</para></simplesect>
+Termination policy used in AMF (Alternating Matrix Factorization).</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>_MLPACK_METHODS_AMF_INCOMPLETE_INCREMENTAL_TERMINATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_MLPACK_METHODS_AMF_INCOMPLETE_INCREMENTAL_TERMINATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">amf<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>TerminationPolicy&gt;</highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination" kindref="compound">IncompleteIncrementalTermination</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="36" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1ad304bbad7ff21b99648f715528d1667d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1ad304bbad7ff21b99648f715528d1667d" kindref="member">IncompleteIncrementalTermination</ref>(</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>TerminationPolicy<sp/>tPolicy<sp/>=<sp/>TerminationPolicy())<sp/>:</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>tPolicy(tPolicy),<sp/>incrementalIndex(0),<sp/>iteration(0)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a7cd2df552c1f471b3248ac66291133f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a7cd2df552c1f471b3248ac66291133f3" kindref="member">Initialize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>V)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>tPolicy.Initialize(V);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initialize<sp/>incremental<sp/>index<sp/>to<sp/>number<sp/>of<sp/>rows.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>incrementalIndex<sp/>=<sp/>V.n_rows;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>iteration<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a21aa00d1db37e94076e46c66313514df" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a21aa00d1db37e94076e46c66313514df" kindref="member">IsConverged</ref>(arma::mat&amp;<sp/>W,<sp/>arma::mat&amp;<sp/>H)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increment<sp/>iteration<sp/>count</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>iteration++;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>iteration<sp/>count<sp/>is<sp/>a<sp/>multiple<sp/>of<sp/>incremental<sp/>index,<sp/>return<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>wrapped<sp/>termination<sp/>policy<sp/>result.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iteration<sp/>%<sp/>incrementalIndex<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy.IsConverged(W,<sp/>H);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a866b70f9202a81d2bdbb116bc2683eb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a866b70f9202a81d2bdbb116bc2683eb2" kindref="member">Index</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy.Index();<sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a5226c80136390904f5893e72749211e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a5226c80136390904f5893e72749211e6" kindref="member">Iteration</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>iteration;<sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy.MaxIterations();<sp/>}</highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy.MaxIterations();<sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a523fe69db072d54bbb214e80d28db0d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TerminationPolicy&amp;<sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1a523fe69db072d54bbb214e80d28db0d1" kindref="member">TPolicy</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy;<sp/>}</highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1ab45272397c548991adca60a51a1e00dc" refkind="member"><highlight class="normal"><sp/><sp/>TerminationPolicy&amp;<sp/><ref refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination_1ab45272397c548991adca60a51a1e00dc" kindref="member">TPolicy</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tPolicy;<sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>TerminationPolicy<sp/>tPolicy;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>incrementalIndex;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>iteration;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>IncompleteIncrementalTermination</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>amf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/incomplete_incremental_termination.hpp"/>
+  </compounddef>
+</doxygen>

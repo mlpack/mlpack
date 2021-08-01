@@ -1,0 +1,475 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="normal__distribution_8hpp" kind="file" language="C++">
+    <compoundname>normal_distribution.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="logistic__function_8hpp" local="yes">../activation_functions/logistic_function.hpp</includes>
+    <includes local="yes">normal_distribution_impl.hpp</includes>
+    <incdepgraph>
+      <node id="27362">
+        <label>list</label>
+      </node>
+      <node id="27359">
+        <label>atomic</label>
+      </node>
+      <node id="27349">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="27325">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="27361">
+        <label>iomanip</label>
+      </node>
+      <node id="27334">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="27335" relation="include">
+        </childnode>
+        <childnode refid="27337" relation="include">
+        </childnode>
+      </node>
+      <node id="27317">
+        <label>cstdint</label>
+      </node>
+      <node id="27326">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="27333">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="27356">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="27346">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="27313">
+        <label>cmath</label>
+      </node>
+      <node id="27332">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="27321">
+        <label>stdexcept</label>
+      </node>
+      <node id="27341">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="27326" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27327" relation="include">
+        </childnode>
+      </node>
+      <node id="27365">
+        <label>string</label>
+      </node>
+      <node id="27353">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="27354" relation="include">
+        </childnode>
+        <childnode refid="27320" relation="include">
+        </childnode>
+      </node>
+      <node id="27363">
+        <label>map</label>
+      </node>
+      <node id="27315">
+        <label>cfloat</label>
+      </node>
+      <node id="27345">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="27367">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="27329">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="27352">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="27353" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27336" relation="include">
+        </childnode>
+        <childnode refid="27354" relation="include">
+        </childnode>
+      </node>
+      <node id="27342">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="27370">
+        <label>normal_distribution_impl.hpp</label>
+      </node>
+      <node id="27340">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="27326" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27327" relation="include">
+        </childnode>
+      </node>
+      <node id="27343">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="27326" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27327" relation="include">
+        </childnode>
+      </node>
+      <node id="27331">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="27351">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="27327" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27339" relation="include">
+        </childnode>
+        <childnode refid="27348" relation="include">
+        </childnode>
+      </node>
+      <node id="27355">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="27356" relation="include">
+        </childnode>
+      </node>
+      <node id="27357">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="27312">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="27313" relation="include">
+        </childnode>
+        <childnode refid="27314" relation="include">
+        </childnode>
+        <childnode refid="27315" relation="include">
+        </childnode>
+        <childnode refid="27316" relation="include">
+        </childnode>
+        <childnode refid="27317" relation="include">
+        </childnode>
+        <childnode refid="27318" relation="include">
+        </childnode>
+        <childnode refid="27319" relation="include">
+        </childnode>
+        <childnode refid="27320" relation="include">
+        </childnode>
+        <childnode refid="27321" relation="include">
+        </childnode>
+        <childnode refid="27322" relation="include">
+        </childnode>
+        <childnode refid="27323" relation="include">
+        </childnode>
+        <childnode refid="27324" relation="include">
+        </childnode>
+        <childnode refid="27325" relation="include">
+        </childnode>
+        <childnode refid="27326" relation="include">
+        </childnode>
+        <childnode refid="27327" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27330" relation="include">
+        </childnode>
+        <childnode refid="27331" relation="include">
+        </childnode>
+        <childnode refid="27332" relation="include">
+        </childnode>
+        <childnode refid="27333" relation="include">
+        </childnode>
+        <childnode refid="27334" relation="include">
+        </childnode>
+        <childnode refid="27338" relation="include">
+        </childnode>
+        <childnode refid="27339" relation="include">
+        </childnode>
+        <childnode refid="27340" relation="include">
+        </childnode>
+        <childnode refid="27341" relation="include">
+        </childnode>
+        <childnode refid="27342" relation="include">
+        </childnode>
+        <childnode refid="27343" relation="include">
+        </childnode>
+        <childnode refid="27344" relation="include">
+        </childnode>
+        <childnode refid="27350" relation="include">
+        </childnode>
+        <childnode refid="27351" relation="include">
+        </childnode>
+        <childnode refid="27348" relation="include">
+        </childnode>
+        <childnode refid="27352" relation="include">
+        </childnode>
+        <childnode refid="27355" relation="include">
+        </childnode>
+        <childnode refid="27357" relation="include">
+        </childnode>
+        <childnode refid="27358" relation="include">
+        </childnode>
+        <childnode refid="27367" relation="include">
+        </childnode>
+        <childnode refid="27368" relation="include">
+        </childnode>
+      </node>
+      <node id="27318">
+        <label>cstdio</label>
+      </node>
+      <node id="27322">
+        <label>tuple</label>
+      </node>
+      <node id="27327">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="27344">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="27327" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27331" relation="include">
+        </childnode>
+        <childnode refid="27345" relation="include">
+        </childnode>
+        <childnode refid="27346" relation="include">
+        </childnode>
+        <childnode refid="27347" relation="include">
+        </childnode>
+        <childnode refid="27348" relation="include">
+        </childnode>
+      </node>
+      <node id="27323">
+        <label>utility</label>
+      </node>
+      <node id="27347">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="27338">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="27335">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="27336" relation="include">
+        </childnode>
+      </node>
+      <node id="27358">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="27359" relation="include">
+        </childnode>
+        <childnode refid="27360" relation="include">
+        </childnode>
+        <childnode refid="27361" relation="include">
+        </childnode>
+        <childnode refid="27362" relation="include">
+        </childnode>
+        <childnode refid="27363" relation="include">
+        </childnode>
+        <childnode refid="27364" relation="include">
+        </childnode>
+        <childnode refid="27365" relation="include">
+        </childnode>
+        <childnode refid="27366" relation="include">
+        </childnode>
+      </node>
+      <node id="27336">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="27350">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="27348" relation="include">
+        </childnode>
+        <childnode refid="27344" relation="include">
+        </childnode>
+        <childnode refid="27351" relation="include">
+        </childnode>
+      </node>
+      <node id="27319">
+        <label>cstdlib</label>
+      </node>
+      <node id="27314">
+        <label>cctype</label>
+      </node>
+      <node id="27337">
+        <label>unordered_map</label>
+      </node>
+      <node id="27311">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp</label>
+        <link refid="normal__distribution_8hpp"/>
+        <childnode refid="27312" relation="include">
+        </childnode>
+        <childnode refid="27369" relation="include">
+        </childnode>
+        <childnode refid="27370" relation="include">
+        </childnode>
+      </node>
+      <node id="27316">
+        <label>climits</label>
+      </node>
+      <node id="27364">
+        <label>mutex</label>
+      </node>
+      <node id="27360">
+        <label>chrono</label>
+      </node>
+      <node id="27368">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="27366">
+        <label>thread</label>
+      </node>
+      <node id="27354">
+        <label>type_traits</label>
+      </node>
+      <node id="27330">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="27324">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="27348">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="27326" relation="include">
+        </childnode>
+        <childnode refid="27327" relation="include">
+        </childnode>
+        <childnode refid="27328" relation="include">
+        </childnode>
+        <childnode refid="27329" relation="include">
+        </childnode>
+        <childnode refid="27349" relation="include">
+        </childnode>
+      </node>
+      <node id="27369">
+        <label>../activation_functions/logistic_function.hpp</label>
+        <link refid="logistic__function_8hpp"/>
+        <childnode refid="27312" relation="include">
+        </childnode>
+      </node>
+      <node id="27320">
+        <label>cstring</label>
+      </node>
+      <node id="27339">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="27328">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1NormalDistribution" prot="public">mlpack::ann::NormalDistribution</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>xiaohong ji </para></simplesect>
+<simplesect kind="author"><para>Nishant Kumar</para></simplesect>
+Definition of the Normal distribution class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../activation_functions/logistic_function.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DataType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1ann_1_1NormalDistribution" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1NormalDistribution" kindref="compound">NormalDistribution</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1ab76c4ca0ad20a2d0e3c22c6a1b707571" kindref="member">NormalDistribution</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1ab76c4ca0ad20a2d0e3c22c6a1b707571" kindref="member">NormalDistribution</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>sigma);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" refkind="member"><highlight class="normal"><sp/><sp/>DataType<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" kindref="member">Probability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>observation)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="55"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arma::exp(<ref refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e" kindref="member">LogProbability</ref>(observation));</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>DataType<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e" kindref="member">LogProbability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>observation)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a29775df0ebdfa5da91d4ca3f0fe2543c" kindref="member">ProbBackward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>observation,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DataType&amp;<sp/>dmu,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DataType&amp;<sp/>dsigma)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1ann_1_1NormalDistribution_1a6512ca09816d0ae2f7edbeffc8f86b8e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a6512ca09816d0ae2f7edbeffc8f86b8e" kindref="member">Probability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>x,<sp/>DataType&amp;<sp/>probabilities)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="86"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>probabilities<sp/>=<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a3e6dc6d5dcfdbaa446afaa6cb87b9e26" kindref="member">Probability</ref>(x);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a206f15b7f10ba5118df1bd6ac31ddf91" kindref="member">LogProbability</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/>x,<sp/>DataType&amp;<sp/>probabilities)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="98"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>probabilities<sp/>=<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1aa02bcee8ddd2603eac9ba925d709fe6e" kindref="member">LogProbability</ref>(x);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>DataType<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a59b1e2962ad6370100f34906d6fddd76" kindref="member">Sample</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="classmlpack_1_1ann_1_1NormalDistribution_1ad742dbbc903032d3de5036c96942d19c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1ad742dbbc903032d3de5036c96942d19c" kindref="member">Mean</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mean;<sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="classmlpack_1_1ann_1_1NormalDistribution_1ad45f7423a3ba9c77a3a092887709ce59" refkind="member"><highlight class="normal"><sp/><sp/>DataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1ad45f7423a3ba9c77a3a092887709ce59" kindref="member">Mean</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mean;<sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="classmlpack_1_1ann_1_1NormalDistribution_1aa16e7499e9ec471a276dfcad209c4262" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1aa16e7499e9ec471a276dfcad209c4262" kindref="member">StandardDeviation</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sigma;<sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classmlpack_1_1ann_1_1NormalDistribution_1afdbf13414be377e6b3520205f87f5090" refkind="member"><highlight class="normal"><sp/><sp/>DataType&amp;<sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1afdbf13414be377e6b3520205f87f5090" kindref="member">StandardDeviation</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sigma;<sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="classmlpack_1_1ann_1_1NormalDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" kindref="member">Dimensionality</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mean.n_elem;<sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1NormalDistribution_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>DataType<sp/>mean;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>DataType<sp/>sigma;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>NormalDistribution</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;normal_distribution_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/normal_distribution.hpp"/>
+  </compounddef>
+</doxygen>

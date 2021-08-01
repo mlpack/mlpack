@@ -1,0 +1,439 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="mahalanobis__distance_8hpp" kind="file" language="C++">
+    <compoundname>mahalanobis_distance.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">mahalanobis_distance_impl.hpp</includes>
+    <incdepgraph>
+      <node id="13313">
+        <label>list</label>
+      </node>
+      <node id="13310">
+        <label>atomic</label>
+      </node>
+      <node id="13300">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="13276">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="13312">
+        <label>iomanip</label>
+      </node>
+      <node id="13285">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="13286" relation="include">
+        </childnode>
+        <childnode refid="13288" relation="include">
+        </childnode>
+      </node>
+      <node id="13268">
+        <label>cstdint</label>
+      </node>
+      <node id="13277">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="13284">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="13307">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="13297">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="13264">
+        <label>cmath</label>
+      </node>
+      <node id="13283">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="13272">
+        <label>stdexcept</label>
+      </node>
+      <node id="13292">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="13277" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13278" relation="include">
+        </childnode>
+      </node>
+      <node id="13316">
+        <label>string</label>
+      </node>
+      <node id="13304">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="13305" relation="include">
+        </childnode>
+        <childnode refid="13271" relation="include">
+        </childnode>
+      </node>
+      <node id="13314">
+        <label>map</label>
+      </node>
+      <node id="13262">
+        <label>/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp</label>
+        <link refid="mahalanobis__distance_8hpp"/>
+        <childnode refid="13263" relation="include">
+        </childnode>
+        <childnode refid="13320" relation="include">
+        </childnode>
+      </node>
+      <node id="13266">
+        <label>cfloat</label>
+      </node>
+      <node id="13296">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="13318">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="13280">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="13303">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="13304" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13287" relation="include">
+        </childnode>
+        <childnode refid="13305" relation="include">
+        </childnode>
+      </node>
+      <node id="13293">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="13291">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="13277" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13278" relation="include">
+        </childnode>
+      </node>
+      <node id="13294">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="13277" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13278" relation="include">
+        </childnode>
+      </node>
+      <node id="13282">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="13302">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="13278" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13290" relation="include">
+        </childnode>
+        <childnode refid="13299" relation="include">
+        </childnode>
+      </node>
+      <node id="13306">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="13307" relation="include">
+        </childnode>
+      </node>
+      <node id="13308">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="13263">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="13264" relation="include">
+        </childnode>
+        <childnode refid="13265" relation="include">
+        </childnode>
+        <childnode refid="13266" relation="include">
+        </childnode>
+        <childnode refid="13267" relation="include">
+        </childnode>
+        <childnode refid="13268" relation="include">
+        </childnode>
+        <childnode refid="13269" relation="include">
+        </childnode>
+        <childnode refid="13270" relation="include">
+        </childnode>
+        <childnode refid="13271" relation="include">
+        </childnode>
+        <childnode refid="13272" relation="include">
+        </childnode>
+        <childnode refid="13273" relation="include">
+        </childnode>
+        <childnode refid="13274" relation="include">
+        </childnode>
+        <childnode refid="13275" relation="include">
+        </childnode>
+        <childnode refid="13276" relation="include">
+        </childnode>
+        <childnode refid="13277" relation="include">
+        </childnode>
+        <childnode refid="13278" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13281" relation="include">
+        </childnode>
+        <childnode refid="13282" relation="include">
+        </childnode>
+        <childnode refid="13283" relation="include">
+        </childnode>
+        <childnode refid="13284" relation="include">
+        </childnode>
+        <childnode refid="13285" relation="include">
+        </childnode>
+        <childnode refid="13289" relation="include">
+        </childnode>
+        <childnode refid="13290" relation="include">
+        </childnode>
+        <childnode refid="13291" relation="include">
+        </childnode>
+        <childnode refid="13292" relation="include">
+        </childnode>
+        <childnode refid="13293" relation="include">
+        </childnode>
+        <childnode refid="13294" relation="include">
+        </childnode>
+        <childnode refid="13295" relation="include">
+        </childnode>
+        <childnode refid="13301" relation="include">
+        </childnode>
+        <childnode refid="13302" relation="include">
+        </childnode>
+        <childnode refid="13299" relation="include">
+        </childnode>
+        <childnode refid="13303" relation="include">
+        </childnode>
+        <childnode refid="13306" relation="include">
+        </childnode>
+        <childnode refid="13308" relation="include">
+        </childnode>
+        <childnode refid="13309" relation="include">
+        </childnode>
+        <childnode refid="13318" relation="include">
+        </childnode>
+        <childnode refid="13319" relation="include">
+        </childnode>
+      </node>
+      <node id="13269">
+        <label>cstdio</label>
+      </node>
+      <node id="13273">
+        <label>tuple</label>
+      </node>
+      <node id="13278">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="13295">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="13278" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13282" relation="include">
+        </childnode>
+        <childnode refid="13296" relation="include">
+        </childnode>
+        <childnode refid="13297" relation="include">
+        </childnode>
+        <childnode refid="13298" relation="include">
+        </childnode>
+        <childnode refid="13299" relation="include">
+        </childnode>
+      </node>
+      <node id="13274">
+        <label>utility</label>
+      </node>
+      <node id="13298">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="13289">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="13286">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="13287" relation="include">
+        </childnode>
+      </node>
+      <node id="13309">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="13310" relation="include">
+        </childnode>
+        <childnode refid="13311" relation="include">
+        </childnode>
+        <childnode refid="13312" relation="include">
+        </childnode>
+        <childnode refid="13313" relation="include">
+        </childnode>
+        <childnode refid="13314" relation="include">
+        </childnode>
+        <childnode refid="13315" relation="include">
+        </childnode>
+        <childnode refid="13316" relation="include">
+        </childnode>
+        <childnode refid="13317" relation="include">
+        </childnode>
+      </node>
+      <node id="13287">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="13301">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="13299" relation="include">
+        </childnode>
+        <childnode refid="13295" relation="include">
+        </childnode>
+        <childnode refid="13302" relation="include">
+        </childnode>
+      </node>
+      <node id="13270">
+        <label>cstdlib</label>
+      </node>
+      <node id="13265">
+        <label>cctype</label>
+      </node>
+      <node id="13288">
+        <label>unordered_map</label>
+      </node>
+      <node id="13267">
+        <label>climits</label>
+      </node>
+      <node id="13315">
+        <label>mutex</label>
+      </node>
+      <node id="13311">
+        <label>chrono</label>
+      </node>
+      <node id="13319">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="13317">
+        <label>thread</label>
+      </node>
+      <node id="13305">
+        <label>type_traits</label>
+      </node>
+      <node id="13320">
+        <label>mahalanobis_distance_impl.hpp</label>
+      </node>
+      <node id="13281">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="13275">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="13299">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="13277" relation="include">
+        </childnode>
+        <childnode refid="13278" relation="include">
+        </childnode>
+        <childnode refid="13279" relation="include">
+        </childnode>
+        <childnode refid="13280" relation="include">
+        </childnode>
+        <childnode refid="13300" relation="include">
+        </childnode>
+      </node>
+      <node id="13271">
+        <label>cstring</label>
+      </node>
+      <node id="13290">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="13279">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1metric_1_1MahalanobisDistance" prot="public">mlpack::metric::MahalanobisDistance</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1metric">mlpack::metric</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+The Mahalanobis distance.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">metric<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TakeRoot<sp/>=<sp/>true&gt;</highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1metric_1_1MahalanobisDistance" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance" kindref="compound">MahalanobisDistance</ref></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="67" refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a00cbb536d89ebdafc57f3a481aa772e4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a00cbb536d89ebdafc57f3a481aa772e4" kindref="member">MahalanobisDistance</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a68f439d98cd6d071ed45bd91f47ebfcb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a68f439d98cd6d071ed45bd91f47ebfcb" kindref="member">MahalanobisDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimensionality)<sp/>:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>covariance(arma::eye&lt;arma::mat&gt;(dimensionality,<sp/>dimensionality))<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a385234d4f1d914f7786c481fa805c31c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a385234d4f1d914f7786c481fa805c31c" kindref="member">MahalanobisDistance</ref>(arma::mat<sp/>covariance)<sp/>:</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>covariance(<ref refid="namespacestd" kindref="compound">std</ref>::move(covariance))<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeA,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecTypeB&gt;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7bc3cfc0ee3750ba84ee4dc7f62994ae" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeA&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecTypeB&amp;<sp/>b);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7cab8a0b8c0deac1833f3e489fa52daf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a7cab8a0b8c0deac1833f3e489fa52daf" kindref="member">Covariance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>covariance;<sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1aa65080f46932c7155e87b017e8fa58f5" kindref="member">Covariance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>covariance;<sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1metric_1_1MahalanobisDistance_1a72d63b74c8166dff8e1a9006905ad9ca" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>version);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>arma::mat<sp/>covariance;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>metric</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;mahalanobis_distance_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/metrics/mahalanobis_distance.hpp"/>
+  </compounddef>
+</doxygen>

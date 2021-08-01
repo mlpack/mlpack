@@ -1,0 +1,449 @@
+\section{Introduction}\label{formatdoc_formatintro}
+mlpack supports a wide variety of data (including images) and model formats for use in both its command-\/line programs and in C++ programs using mlpack via the \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} function. This tutorial discusses the formats that are supported and how to use them.\section{Table of Contents}\label{formatdoc_toc_tut}
+This tutorial is split into the following sections\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{formatdoc_formatintro}
+\item \doxyref{Table of Contents}{p.}{formatdoc_toc_tut}
+\item Data
+\begin{DoxyItemize}
+\item Data Formats
+\begin{DoxyItemize}
+\item \doxyref{Simple examples to load data in C++}{p.}{formatdoc_formatsimple}
+\item \doxyref{Supported dataset types}{p.}{formatdoc_formattypes}
+\item \doxyref{Loading simple matrices in C++}{p.}{formatdoc_formatcpp}
+\item \doxyref{Dealing with sparse matrices}{p.}{formatdoc_sparseload}
+\item \doxyref{Categorical features and command line programs}{p.}{formatdoc_formatcat}
+\item \doxyref{Categorical features and C++}{p.}{formatdoc_formatcatcpp}
+\end{DoxyItemize}
+\item Image Support
+\begin{DoxyItemize}
+\item \doxyref{Loading and Saving Images}{p.}{formatdoc_intro_imagetut}
+\item \doxyref{Image Utilities A\+PI}{p.}{formatdoc_model_api_imagetut}
+\item \doxyref{Accessing Metadata of Images\+: Image\+Info}{p.}{formatdoc_imageinfo_api_imagetut}
+\item \doxyref{Loading Images in C++}{p.}{formatdoc_load_api_imagetut}
+\item \doxyref{Saving Images in C++}{p.}{formatdoc_save_api_imagetut}
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item Models
+\begin{DoxyItemize}
+\item \doxyref{Loading and saving models}{p.}{formatdoc_formatmodels}
+\item \doxyref{Loading and saving models in C++}{p.}{formatdoc_formatmodelscpp}
+\end{DoxyItemize}
+\item \doxyref{Final notes}{p.}{formatdoc_formatfinal}
+\end{DoxyItemize}\section{Simple examples to load data in C++}\label{formatdoc_formatsimple}
+The example code snippets below load data from different formats into an Armadillo matrix object ({\ttfamily arma\+::mat}) or model when using C++.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{using namespace }mlpack;
+
+arma::mat matrix1;
+data::Load(\textcolor{stringliteral}{"dataset.csv"}, matrix1);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{using namespace }mlpack;
+
+arma::mat matrix2;
+data::Load(\textcolor{stringliteral}{"dataset.bin"}, matrix2);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{using namespace }mlpack;
+
+arma::mat matrix3;
+data::Load(\textcolor{stringliteral}{"dataset.h5"}, matrix3);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{using namespace }mlpack;
+
+\textcolor{comment}{// ARFF loading is a little different, since sometimes mapping has to be done}
+\textcolor{comment}{// for string types.}
+arma::mat matrix4;
+data::DatasetInfo datasetInfo;
+data::Load(\textcolor{stringliteral}{"dataset.arff"}, matrix4, datasetInfo);
+
+\textcolor{comment}{// The datasetInfo object now holds information about each dimension.}
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{using namespace }mlpack;
+
+regression::LogisticRegression lr;
+data::Load(\textcolor{stringliteral}{"model.bin"}, \textcolor{stringliteral}{"logistic\_regression\_model"}, lr);
+\end{DoxyCode}
+\section{Supported dataset types}\label{formatdoc_formattypes}
+Datasets in mlpack are represented internally as sparse or dense numeric matrices (specifically, as {\ttfamily arma\+::mat} or {\ttfamily arma\+::sp\+\_\+mat} or similar). This means that when datasets are loaded from file, they must be converted to a suitable numeric representation. Therefore, in general, datasets on disk should contain only numeric features in order to be loaded successfully by mlpack.
+
+The types of datasets that mlpack can load are roughly the same as the types of matrices that Armadillo can load. However, the load functionality that mlpack provides {\bfseries only supports loading dense datasets}. When datasets are loaded by mlpack, {\bfseries the file\textquotesingle{}s type is detected using the file\textquotesingle{}s extension}. mlpack supports the following file types\+:
+
+
+\begin{DoxyItemize}
+\item csv (comma-\/separated values), denoted by .csv or .txt
+\item tsv (tab-\/separated values), denoted by .tsv, .csv, or .txt
+\item A\+S\+C\+II (raw A\+S\+C\+II, with space-\/separated values), denoted by .txt
+\item Armadillo A\+S\+C\+II (Armadillo\textquotesingle{}s text format with a header), denoted by .txt
+\item P\+GM, denoted by .pgm
+\item P\+PM, denoted by .ppm
+\item Armadillo binary, denoted by .bin
+\item Raw binary, denoted by .bin {\bfseries (note\+: this will be loaded as one-\/dimensional data, which is likely not what is desired.)}
+\item H\+D\+F5, denoted by .hdf, .hdf5, .h5, or .he5 ({\bfseries note\+: H\+D\+F5 must be enabled in the Armadillo configuration})
+\item A\+R\+FF, denoted by .arff ({\bfseries note\+: this is not supported by all mlpack command-\/line programs }; see \doxyref{Categorical features and command line programs}{p.}{formatdoc_formatcat})
+\end{DoxyItemize}
+
+Datasets that are loaded by mlpack should be stored with {\bfseries one row for one point} and {\bfseries one column for one dimension}. Therefore, a dataset with three two-\/dimensional points $(0, 1)$, $(3, 1)$, and $(5, -5)$ would be stored in a csv file as\+:
+
+
+\begin{DoxyCode}
+0, 1
+3, 1
+5, -5
+\end{DoxyCode}
+
+
+As noted earlier, for command-\/line programs, the format is automatically detected at load time. Therefore, a dataset can be loaded in many ways\+:
+
+
+\begin{DoxyCode}
+$ mlpack\_logistic\_regression -t dataset.csv -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 32 x 37749.
+...
+
+$ mlpack\_logistic\_regression -t dataset.txt -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.txt'} as raw ASCII formatted data.  Size is 32 x 37749.
+...
+
+$ mlpack\_logistic\_regression -t dataset.h5 -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.h5'} as HDF5 data.  Size is 32 x 37749.
+...
+\end{DoxyCode}
+
+
+Similarly, the format to save to is detected by the extension of the given filename.\section{Loading simple matrices in C++}\label{formatdoc_formatcpp}
+When C++ is being written, the \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} functions are used to load and save datasets, respectively. These functions should be preferred over the built-\/in Armadillo {\ttfamily }.load() and {\ttfamily }.save() functions.
+
+Matrices in mlpack are column-\/major, meaning that each column should correspond to a point in the dataset and each row should correspond to a dimension; for more information, see \doxyref{Matrices in mlpack}{p.}{matrices}. This is at odds with how the data is stored in files; therefore, a transposition is required during load and save. The \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} functions do this automatically (unless otherwise specified), which is why they are preferred over the Armadillo functions.
+
+To load a matrix from file, the call is straightforward. After creating a matrix object, the data can be loaded\+:
+
+
+\begin{DoxyCode}
+arma::mat dataset; \textcolor{comment}{// The data will be loaded into this matrix.}
+mlpack::data::Load(\textcolor{stringliteral}{"dataset.csv"}, dataset);
+\end{DoxyCode}
+
+
+Saving matrices is equally straightforward. The code below generates a random matrix with 10 points in 3 dimensions and saves it to a file as H\+D\+F5.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// 3 dimensions (rows), with 10 points (columns).}
+arma::mat dataset = arma::randu<arma::mat>(3, 10);
+mlpack::data::Save(\textcolor{stringliteral}{"dataset.h5"}, dataset);
+\end{DoxyCode}
+
+
+As with the command-\/line programs, the type of data to be loaded is automatically detected from the filename extension. For more details, see the \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} documentation.\section{Dealing with sparse matrices}\label{formatdoc_sparseload}
+As mentioned earlier, support for loading sparse matrices in mlpack is not available at this time. To use a sparse matrix with mlpack code, you will have to write a C++ program instead of using any of the command-\/line tools, because the command-\/line tools all use dense datasets internally. (There is one exception\+: the {\ttfamily mlpack\+\_\+cf} program, for collaborative filtering, loads sparse coordinate lists.)
+
+In addition, the {\ttfamily \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831}} function does not support loading any sparse format; so the best idea is to use undocumented Armadillo functionality to load coordinate lists. Suppose you have a coordinate list file like the one below\+:
+
+
+\begin{DoxyCode}
+$ cat cl.csv
+0 0 0.332
+1 3 3.126
+4 4 1.333
+\end{DoxyCode}
+
+
+This represents a 5x5 matrix with three nonzero elements. We can load this using Armadillo\+:
+
+
+\begin{DoxyCode}
+arma::sp\_mat matrix;
+matrix.load(\textcolor{stringliteral}{"cl.csv"}, arma::coord\_ascii);
+matrix = matrix.t(); \textcolor{comment}{// We must transpose after load!}
+\end{DoxyCode}
+
+
+The transposition after loading is necessary if the coordinate list is in row-\/major format (that is, if each row in the matrix represents a point and each column represents a feature). Be sure that the matrix you use with mlpack methods has points as columns and features as rows! See \doxyref{Matrices in mlpack}{p.}{matrices} for more information.\section{Categorical features and command line programs}\label{formatdoc_formatcat}
+In some situations it is useful to represent data not just as a numeric matrix but also as categorical data (i.\+e. with numeric but unordered categories). This support is useful for, e.\+g., decision trees and other models that support categorical features.
+
+In some machine learning situations, such as, e.\+g., decision trees, categorical data can be used. Categorical data might look like this (in C\+SV format)\+:
+
+
+\begin{DoxyCode}
+0, 1, \textcolor{stringliteral}{"true"}, 3
+5, -2, \textcolor{stringliteral}{"false"}, 5
+2, 2, \textcolor{stringliteral}{"true"}, 4
+3, -1, \textcolor{stringliteral}{"true"}, 3
+4, 4, \textcolor{stringliteral}{"not sure"}, 0
+0, 7, \textcolor{stringliteral}{"false"}, 6
+\end{DoxyCode}
+
+
+In the example above, the third dimension (which takes values \char`\"{}true\char`\"{}, \char`\"{}false\char`\"{}, and \char`\"{}not sure\char`\"{}) is categorical. mlpack can load and work with this data, but the strings must be mapped to numbers, because all dataset in mlpack are represented by Armadillo matrix objects.
+
+From the perspective of an mlpack command-\/line program, this support is transparent; mlpack will attempt to load the data file, and if it detects entries in the file that are not numeric, it will map them to numbers and then print, for each dimension, the number of mappings. For instance, if we run the {\ttfamily mlpack\+\_\+hoeffding\+\_\+tree} program (which supports categorical data) on the dataset above (stored as dataset.\+csv), we receive this output during loading\+:
+
+
+\begin{DoxyCode}
+$ mlpack\_hoeffding\_tree -t dataset.csv -l dataset.labels.csv -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 6 x 4.
+[INFO ] 0 mappings in dimension 0.
+[INFO ] 0 mappings in dimension 1.
+[INFO ] 3 mappings in dimension 2.
+[INFO ] 0 mappings in dimension 3.
+...
+\end{DoxyCode}
+
+
+Currently, only the {\ttfamily mlpack\+\_\+hoeffding\+\_\+tree} program supports loading categorical data, and this is also the only program that supports loading an A\+R\+FF dataset.\section{Categorical features and C++}\label{formatdoc_formatcatcpp}
+When writing C++, loading categorical data is slightly more tricky\+: the mappings from strings to integers must be preserved. This is the purpose of the \doxyref{mlpack\+::data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} class, which stores these mappings and can be used and load and save time to apply and de-\/apply the mappings.
+
+When loading a dataset with categorical data, the overload of \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} that takes an \doxyref{mlpack\+::data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} object should be used. An example is below\+:
+
+
+\begin{DoxyCode}
+arma::mat dataset; \textcolor{comment}{// Load into this matrix.}
+mlpack::data::DatasetInfo info; \textcolor{comment}{// Store information about dataset in this.}
+
+\textcolor{comment}{// Load the ARFF dataset.}
+mlpack::data::Load(\textcolor{stringliteral}{"dataset.arff"}, dataset, info);
+\end{DoxyCode}
+
+
+After this load completes, the {\ttfamily info} object will hold the information about the mappings necessary to load the dataset. It is possible to re-\/use the {\ttfamily Dataset\+Info} object to load another dataset with the same mappings. This is useful when, for instance, both a training and test set are being loaded, and it is necessary that the mappings from strings to integers for categorical features are identical. An example is given below.
+
+
+\begin{DoxyCode}
+arma::mat trainingData; \textcolor{comment}{// Load training data into this matrix.}
+mlpack::data::DatasetInfo info; \textcolor{comment}{// This will store the mappings.}
+
+\textcolor{comment}{// Load the training data, and create the mappings in the 'info' object.}
+mlpack::data::Load(\textcolor{stringliteral}{"training\_data.arff"}, trainingData, info);
+
+\textcolor{comment}{// Load the test data, but re-use the 'info' object with the already initialized}
+\textcolor{comment}{// mappings.  This means that the same mappings will be applied to the test set.}
+mlpack::data::Load(\textcolor{stringliteral}{"test\_data.arff"}, trainingData, info);
+\end{DoxyCode}
+
+
+When saving data, pass the same Dataset\+Info object it was loaded with in order to unmap the categorical features correctly. The example below demonstrates this functionality\+: it loads the dataset, increments all non-\/categorical features by 1, and then saves the dataset with the same Dataset\+Info it was loaded with.
+
+
+\begin{DoxyCode}
+arma::mat dataset; \textcolor{comment}{// Load data into this matrix.}
+mlpack::data::DatasetInfo info; \textcolor{comment}{// This will store the mappings.}
+
+\textcolor{comment}{// Load the dataset.}
+mlpack::data::Load(\textcolor{stringliteral}{"dataset.tsv"}, dataset, info);
+
+\textcolor{comment}{// Loop over all features, and add 1 to all non-categorical features.}
+\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < info.Dimensionality(); ++i)
+\{
+  \textcolor{comment}{// The Type() function returns whether or not the data is numeric or}
+  \textcolor{comment}{// categorical.}
+  \textcolor{keywordflow}{if} (info.Type(i) != mlpack::data::Datatype::categorical)
+    dataset.row(i) += 1.0;
+\}
+
+\textcolor{comment}{// Save the modified dataset using the same DatasetInfo.}
+mlpack::data::Save(\textcolor{stringliteral}{"dataset-new.tsv"}, dataset, info);
+\end{DoxyCode}
+
+
+There is more functionality to the Dataset\+Info class; for more information, see the \doxyref{mlpack\+::data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} documentation.\section{Loading and Saving Images}\label{formatdoc_intro_imagetut}
+Image datasets are becoming increasingly popular in deep learning.
+
+mlpack\textquotesingle{}s image saving/loading functionality is based on {\tt stb/}.\section{Image Utilities A\+PI}\label{formatdoc_model_api_imagetut}
+Image utilities supports loading and saving of images.
+
+It supports filetypes \char`\"{}jpg\char`\"{}, \char`\"{}png\char`\"{}, \char`\"{}tga\char`\"{}, \char`\"{}bmp\char`\"{}, \char`\"{}psd\char`\"{}, \char`\"{}gif\char`\"{}, \char`\"{}hdr\char`\"{}, \char`\"{}pic\char`\"{}, \char`\"{}pnm\char`\"{} for loading and \char`\"{}jpg\char`\"{}, \char`\"{}png\char`\"{}, \char`\"{}tga\char`\"{}, \char`\"{}bmp\char`\"{}, \char`\"{}hdr\char`\"{} for saving.
+
+The datatype associated is unsigned char to support R\+GB values in the range 1-\/255. To feed data into the network typecast of {\ttfamily arma\+::\+Mat} may be required. Images are stored in the matrix as (width $\ast$ height $\ast$ channels, Number\+Of\+Images). Therefore {\ttfamily image\+Matrix.\+col(0)} would be the first image if images are loaded in {\ttfamily image\+Matrix}.\section{Accessing Metadata of Images\+: Image\+Info}\label{formatdoc_imageinfo_api_imagetut}
+Image\+Info class contains the metadata of the images. 
+\begin{DoxyCode}
+ImageInfo(\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} width,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} height,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} channels,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} quality = 90);
+\end{DoxyCode}
+
+
+The {\ttfamily quality} member denotes the compression of the image if it is saved as {\ttfamily jpg}; it takes values from 0 to 100.\section{Loading Images in C++}\label{formatdoc_load_api_imagetut}
+Standalone loading of images.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} eT>
+\textcolor{keywordtype}{bool} Load(\textcolor{keyword}{const} std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} fatal);
+\end{DoxyCode}
+
+
+The example below loads a test image. It also fills up the Image\+Info class object.
+
+
+\begin{DoxyCode}
+data::ImageInfo info;
+data::Load(\textcolor{stringliteral}{"test\_image.png"}, matrix, info, \textcolor{keyword}{false});
+\end{DoxyCode}
+
+
+Image\+Info requires height, width, number of channels of the image.
+
+
+\begin{DoxyCode}
+\textcolor{keywordtype}{size\_t} height = 64, width = 64, channels = 1;
+data::ImageInfo info(width, height, channels);
+\end{DoxyCode}
+
+
+More than one image can be loaded into the same matrix.
+
+Loading multiple images\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} eT>
+\textcolor{keywordtype}{bool} Load(\textcolor{keyword}{const} std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} fatal);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+data::ImageInfo info;
+std::vector<std::string>> files\{\textcolor{stringliteral}{"test\_image1.bmp"},\textcolor{stringliteral}{"test\_image2.bmp"}\};
+data::Load(files, matrix, info, \textcolor{keyword}{false});
+\end{DoxyCode}
+\section{Saving Images in C++}\label{formatdoc_save_api_imagetut}
+Save images expects a matrix of type unsigned char in the form (width $\ast$ height $\ast$ channels, Number\+Of\+Images). Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).
+
+Saving one image\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} eT>
+\textcolor{keywordtype}{bool} Save(\textcolor{keyword}{const} std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} fatal,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} transpose);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+data::ImageInfo info;
+info.width = info.height = 25;
+info.channels = 3;
+info.quality = 90;
+data::Save(\textcolor{stringliteral}{"test\_image.bmp"}, matrix, info, \textcolor{keyword}{false}, \textcolor{keyword}{true});
+\end{DoxyCode}
+
+
+If the matrix contains more than one image, only the first one is saved.
+
+Saving multiple images\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} eT>
+\textcolor{keywordtype}{bool} Save(\textcolor{keyword}{const} std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} fatal,
+          \textcolor{keyword}{const} \textcolor{keywordtype}{bool} transpose);
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+data::ImageInfo info;
+info.width = info.height = 25;
+info.channels = 3;
+info.quality = 90;
+std::vector<std::string>> files\{\textcolor{stringliteral}{"test\_image1.bmp"}, \textcolor{stringliteral}{"test\_image2.bmp"}\};
+data::Save(files, matrix, info, \textcolor{keyword}{false}, \textcolor{keyword}{true});
+\end{DoxyCode}
+
+
+Multiple images are saved according to the vector of filenames specified.\section{Loading and saving models}\label{formatdoc_formatmodels}
+Using {\ttfamily cereal}, mlpack is able to load and save machine learning models with ease. These models can currently be saved in three formats\+:
+
+
+\begin{DoxyItemize}
+\item binary (.bin); this is not human-\/readable, but it is small
+\item json (.json); this is sort of human-\/readable and relatively small
+\item xml (.xml); this is human-\/readable but very verbose and large
+\end{DoxyItemize}
+
+The type of file to save is determined by the given file extension, as with the other loading and saving functionality in mlpack. Below is an example where a dataset stored as T\+SV and labels stored as A\+S\+C\+II text are used to train a logistic regression model, which is then saved to model.\+xml.
+
+
+\begin{DoxyCode}
+$ mlpack\_logistic\_regression -t training\_dataset.tsv -l training\_labels.txt \(\backslash\)
+> -M model.xml
+\end{DoxyCode}
+
+
+Many mlpack command-\/line programs have support for loading and saving models through the {\ttfamily --input\+\_\+model\+\_\+file} ({\ttfamily -\/m}) and {\ttfamily --output\+\_\+model\+\_\+file} ({\ttfamily -\/M}) options; for more information, see the documentation for each program (accessible by passing {\ttfamily --help} as a parameter).\section{Loading and saving models in C++}\label{formatdoc_formatmodelscpp}
+mlpack uses the {\ttfamily cereal} library internally to perform loading and saving of models, and provides convenience overloads of \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} to load and save these models.
+
+To be serializable, a class must implement the method
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} Archive>
+\textcolor{keywordtype}{void} serialize(Archive& ar);
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+For more information on this method and how it works, see the cereal documentation at {\tt https\+://uscilab.\+github.\+io/cereal/index.\+html}.
+
+Examples of serialize() methods can be found in most classes; one fairly straightforward example is found in the mlpack\+:\+:math\+:\+:Range class. A more complex example is found \doxyref{in the mlpack\+:\+:tree\+:\+:Binary\+Space\+Tree class}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree_a72d63b74c8166dff8e1a9006905ad9ca}.
+\end{DoxyNote}
+Using the \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} classes is easy if the type being saved has a {\ttfamily serialize()} method implemented\+: simply call either function with a filename, a name for the object to save, and the object itself. The example below, for instance, creates an mlpack\+::math\+::\+Range object and saves it as range.\+txt. Then, that range is loaded from file into another mlpack\+::math\+::\+Range object.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Create range and save it.}
+mlpack::math::Range r(0.0, 5.0);
+mlpack::data::Save(\textcolor{stringliteral}{"range.json"}, \textcolor{stringliteral}{"range"}, r);
+
+\textcolor{comment}{// Load into new range.}
+mlpack::math::Range newRange;
+mlpack::data::Load(\textcolor{stringliteral}{"range.json"}, \textcolor{stringliteral}{"range"}, newRange);
+\end{DoxyCode}
+
+
+It is important to be sure that you load the appropriate type; if you save, for instance, an \doxyref{mlpack\+::regression\+::\+Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} object and attempt to load it as an mlpack\+::math\+::\+Range object, the load will fail and an exception will be thrown. (When the object is saved as binary (.bin), it is possible that the load will not fail, but instead load with mangled data, which is perhaps even worse!)\section{Final notes}\label{formatdoc_formatfinal}
+If the examples here are unclear, it would be worth looking into the ways that \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831} and \doxyref{mlpack\+::data\+::\+Save()}{p.}{namespacemlpack_1_1data_accd1605a1d160c09ee75c93a587dc313} are used in the code. Some example files that may be useful to this end\+:
+
+
+\begin{DoxyItemize}
+\item src/mlpack/methods/logistic\+\_\+regression/logistic\+\_\+regression\+\_\+main.\+cpp
+\item src/mlpack/methods/hoeffding\+\_\+trees/hoeffding\+\_\+tree\+\_\+main.\+cpp
+\item src/mlpack/methods/neighbor\+\_\+search/knn\+\_\+main.\+cpp
+\end{DoxyItemize}
+
+If you are interested in adding support for more data types to mlpack, it would be preferable to add the support upstream to Armadillo instead, so that may be a better direction to go first. Then very little code modification for mlpack will be necessary. 

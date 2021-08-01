@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_59bec0826d2e016f13c6682ecc8c9a58" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/gan</compoundname>
+    <innerdir refid="dir_fad15b871161a97195139f0577b4ae8d">/home/aakash/mlpack/src/mlpack/methods/ann/gan/metrics</innerdir>
+    <innerfile refid="gan_8hpp">gan.hpp</innerfile>
+    <innerfile refid="gan__policies_8hpp">gan_policies.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/gan/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="edge__pair_8hpp" kind="file" language="C++">
+    <compoundname>edge_pair.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="union__find_8hpp" local="yes">union_find.hpp</includes>
+    <includedby refid="dtb_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</includedby>
+    <incdepgraph>
+      <node id="47795">
+        <label>list</label>
+      </node>
+      <node id="47802">
+        <label>union_find.hpp</label>
+        <link refid="union__find_8hpp"/>
+        <childnode refid="47745" relation="include">
+        </childnode>
+      </node>
+      <node id="47792">
+        <label>atomic</label>
+      </node>
+      <node id="47782">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47758">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="47794">
+        <label>iomanip</label>
+      </node>
+      <node id="47767">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47768" relation="include">
+        </childnode>
+        <childnode refid="47770" relation="include">
+        </childnode>
+      </node>
+      <node id="47750">
+        <label>cstdint</label>
+      </node>
+      <node id="47759">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47766">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47789">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47779">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47746">
+        <label>cmath</label>
+      </node>
+      <node id="47765">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="47754">
+        <label>stdexcept</label>
+      </node>
+      <node id="47774">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47759" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47760" relation="include">
+        </childnode>
+      </node>
+      <node id="47798">
+        <label>string</label>
+      </node>
+      <node id="47786">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47787" relation="include">
+        </childnode>
+        <childnode refid="47753" relation="include">
+        </childnode>
+      </node>
+      <node id="47796">
+        <label>map</label>
+      </node>
+      <node id="47748">
+        <label>cfloat</label>
+      </node>
+      <node id="47778">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="47800">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="47762">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47785">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47786" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47769" relation="include">
+        </childnode>
+        <childnode refid="47787" relation="include">
+        </childnode>
+      </node>
+      <node id="47775">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="47773">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47759" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47760" relation="include">
+        </childnode>
+      </node>
+      <node id="47776">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47759" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47760" relation="include">
+        </childnode>
+      </node>
+      <node id="47764">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47784">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47760" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47772" relation="include">
+        </childnode>
+        <childnode refid="47781" relation="include">
+        </childnode>
+      </node>
+      <node id="47788">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47789" relation="include">
+        </childnode>
+      </node>
+      <node id="47790">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47745">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47746" relation="include">
+        </childnode>
+        <childnode refid="47747" relation="include">
+        </childnode>
+        <childnode refid="47748" relation="include">
+        </childnode>
+        <childnode refid="47749" relation="include">
+        </childnode>
+        <childnode refid="47750" relation="include">
+        </childnode>
+        <childnode refid="47751" relation="include">
+        </childnode>
+        <childnode refid="47752" relation="include">
+        </childnode>
+        <childnode refid="47753" relation="include">
+        </childnode>
+        <childnode refid="47754" relation="include">
+        </childnode>
+        <childnode refid="47755" relation="include">
+        </childnode>
+        <childnode refid="47756" relation="include">
+        </childnode>
+        <childnode refid="47757" relation="include">
+        </childnode>
+        <childnode refid="47758" relation="include">
+        </childnode>
+        <childnode refid="47759" relation="include">
+        </childnode>
+        <childnode refid="47760" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47763" relation="include">
+        </childnode>
+        <childnode refid="47764" relation="include">
+        </childnode>
+        <childnode refid="47765" relation="include">
+        </childnode>
+        <childnode refid="47766" relation="include">
+        </childnode>
+        <childnode refid="47767" relation="include">
+        </childnode>
+        <childnode refid="47771" relation="include">
+        </childnode>
+        <childnode refid="47772" relation="include">
+        </childnode>
+        <childnode refid="47773" relation="include">
+        </childnode>
+        <childnode refid="47774" relation="include">
+        </childnode>
+        <childnode refid="47775" relation="include">
+        </childnode>
+        <childnode refid="47776" relation="include">
+        </childnode>
+        <childnode refid="47777" relation="include">
+        </childnode>
+        <childnode refid="47783" relation="include">
+        </childnode>
+        <childnode refid="47784" relation="include">
+        </childnode>
+        <childnode refid="47781" relation="include">
+        </childnode>
+        <childnode refid="47785" relation="include">
+        </childnode>
+        <childnode refid="47788" relation="include">
+        </childnode>
+        <childnode refid="47790" relation="include">
+        </childnode>
+        <childnode refid="47791" relation="include">
+        </childnode>
+        <childnode refid="47800" relation="include">
+        </childnode>
+        <childnode refid="47801" relation="include">
+        </childnode>
+      </node>
+      <node id="47744">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/edge_pair.hpp</label>
+        <link refid="edge__pair_8hpp"/>
+        <childnode refid="47745" relation="include">
+        </childnode>
+        <childnode refid="47802" relation="include">
+        </childnode>
+      </node>
+      <node id="47751">
+        <label>cstdio</label>
+      </node>
+      <node id="47755">
+        <label>tuple</label>
+      </node>
+      <node id="47760">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47777">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47760" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47764" relation="include">
+        </childnode>
+        <childnode refid="47778" relation="include">
+        </childnode>
+        <childnode refid="47779" relation="include">
+        </childnode>
+        <childnode refid="47780" relation="include">
+        </childnode>
+        <childnode refid="47781" relation="include">
+        </childnode>
+      </node>
+      <node id="47756">
+        <label>utility</label>
+      </node>
+      <node id="47780">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47771">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47768">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47769" relation="include">
+        </childnode>
+      </node>
+      <node id="47791">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47792" relation="include">
+        </childnode>
+        <childnode refid="47793" relation="include">
+        </childnode>
+        <childnode refid="47794" relation="include">
+        </childnode>
+        <childnode refid="47795" relation="include">
+        </childnode>
+        <childnode refid="47796" relation="include">
+        </childnode>
+        <childnode refid="47797" relation="include">
+        </childnode>
+        <childnode refid="47798" relation="include">
+        </childnode>
+        <childnode refid="47799" relation="include">
+        </childnode>
+      </node>
+      <node id="47769">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47783">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47781" relation="include">
+        </childnode>
+        <childnode refid="47777" relation="include">
+        </childnode>
+        <childnode refid="47784" relation="include">
+        </childnode>
+      </node>
+      <node id="47752">
+        <label>cstdlib</label>
+      </node>
+      <node id="47747">
+        <label>cctype</label>
+      </node>
+      <node id="47770">
+        <label>unordered_map</label>
+      </node>
+      <node id="47749">
+        <label>climits</label>
+      </node>
+      <node id="47797">
+        <label>mutex</label>
+      </node>
+      <node id="47793">
+        <label>chrono</label>
+      </node>
+      <node id="47801">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="47799">
+        <label>thread</label>
+      </node>
+      <node id="47787">
+        <label>type_traits</label>
+      </node>
+      <node id="47763">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="47757">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47781">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47759" relation="include">
+        </childnode>
+        <childnode refid="47760" relation="include">
+        </childnode>
+        <childnode refid="47761" relation="include">
+        </childnode>
+        <childnode refid="47762" relation="include">
+        </childnode>
+        <childnode refid="47782" relation="include">
+        </childnode>
+      </node>
+      <node id="47753">
+        <label>cstring</label>
+      </node>
+      <node id="47772">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47761">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="47803">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/edge_pair.hpp</label>
+        <link refid="edge__pair_8hpp"/>
+        <childnode refid="47804" relation="include">
+        </childnode>
+      </node>
+      <node id="47804">
+        <label>/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp</label>
+        <link refid="dtb_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1emst_1_1EdgePair" prot="public">mlpack::emst::EdgePair</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1emst">mlpack::emst</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Bill March (<ulink url="mailto:march@gatech.edu">march@gatech.edu</ulink>)</para></simplesect>
+This file contains utilities necessary for all of the minimum spanning tree algorithms.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_EMST_EDGE_PAIR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_EMST_EDGE_PAIR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="union__find_8hpp" kindref="compound">union_find.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">emst<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1emst_1_1EdgePair" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1emst_1_1EdgePair" kindref="compound">EdgePair</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lesser;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>greater;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="45" refid="classmlpack_1_1emst_1_1EdgePair_1af3f7bffad4afa6cf42a2638be0323fad" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1af3f7bffad4afa6cf42a2638be0323fad" kindref="member">EdgePair</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lesser,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>greater,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist)<sp/>:</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lesser(lesser),<sp/>greater(greater),<sp/>distance(dist)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>Log::Assert(lesser<sp/>!=<sp/>greater,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;EdgePair::EdgePair():<sp/>indices<sp/>cannot<sp/>be<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1emst_1_1EdgePair_1a63d103ffd628dd98d4d5e35bd05f385d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1a63d103ffd628dd98d4d5e35bd05f385d" kindref="member">Lesser</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lesser;<sp/>}</highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1emst_1_1EdgePair_1a8cae10dbf99f3609608acf2ab0e001f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1a8cae10dbf99f3609608acf2ab0e001f3" kindref="member">Lesser</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lesser;<sp/>}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="classmlpack_1_1emst_1_1EdgePair_1aedc0e9385d1e0e671eda49c2784c8216" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1aedc0e9385d1e0e671eda49c2784c8216" kindref="member">Greater</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>greater;<sp/>}</highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1emst_1_1EdgePair_1ae1bcb2f0c03f9208e17cd75741d96e43" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1ae1bcb2f0c03f9208e17cd75741d96e43" kindref="member">Greater</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>greater;<sp/>}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="classmlpack_1_1emst_1_1EdgePair_1a2a7bfdfb655cc5a9fbf9f8613121eb52" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1a2a7bfdfb655cc5a9fbf9f8613121eb52" kindref="member">Distance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distance;<sp/>}</highlight></codeline>
+<codeline lineno="65" refid="classmlpack_1_1emst_1_1EdgePair_1a63e78be68aebecbecf7e06763f39f31c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1emst_1_1EdgePair_1a63e78be68aebecbecf7e06763f39f31c" kindref="member">Distance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distance;<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>EdgePair</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>emst</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_EMST_EDGE_PAIR_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/edge_pair.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1SVDConvolution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::SVDConvolution</compoundname>
+    <includes refid="svd__convolution_8hpp" local="no">svd_convolution.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>BorderMode</declname>
+        <defname>BorderMode</defname>
+        <defval><ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;filter, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" bodystart="56" bodyend="110"/>
+        <references refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" compoundref="naive__convolution_8hpp" startline="52" endline="82">NaiveConvolution&lt; BorderMode &gt;::Convolution</references>
+        <references refid="classmlpack_1_1ann_1_1FFTConvolution_1a2982c8389e46e6ba1a839e8cd23eb5f9" compoundref="fft__convolution_8hpp" startline="54" endline="74">FFTConvolution&lt; BorderMode, padLastDim &gt;::Convolution</references>
+        <referencedby refid="classmlpack_1_1ann_1_1SVDConvolution_1aa37ddacedb28e6dce994110781a184f6" compoundref="svd__convolution_8hpp" startline="122" endline="139">SVDConvolution&lt; BorderMode &gt;::Convolution</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SVDConvolution_1aa37ddacedb28e6dce994110781a184f6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, const arma::Cube&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" bodystart="122" bodyend="139"/>
+        <references refid="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" compoundref="svd__convolution_8hpp" startline="56" endline="110">SVDConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SVDConvolution_1ae95a7b7e102c7b7b92666bd6e7e04c22" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Cube&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" bodystart="152" bodyend="168"/>
+        <references refid="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" compoundref="svd__convolution_8hpp" startline="56" endline="110">SVDConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1SVDConvolution_1ae14e839c68e6e5d32d8083c3d364ef64" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" bodystart="181" bodyend="197"/>
+        <references refid="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" compoundref="svd__convolution_8hpp" startline="56" endline="110">SVDConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Computes the two-dimensional convolution using singular value decomposition. </para>    </briefdescription>
+    <detaileddescription>
+<para>This class allows specification of the type of the border type. The convolution can be computed with the valid border type of the full border type (default).</para><para><ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref>: returns the full two-dimensional convolution. <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>: returns only those parts of the convolution that are computed without the zero-padded edges.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>BorderMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the border mode (<ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref> or <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/svd_convolution.hpp" bodystart="38" bodyend="198"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" prot="public" virt="non-virtual"><scope>mlpack::ann::SVDConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1SVDConvolution_1aa37ddacedb28e6dce994110781a184f6" prot="public" virt="non-virtual"><scope>mlpack::ann::SVDConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1SVDConvolution_1ae95a7b7e102c7b7b92666bd6e7e04c22" prot="public" virt="non-virtual"><scope>mlpack::ann::SVDConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1SVDConvolution_1ae14e839c68e6e5d32d8083c3d364ef64" prot="public" virt="non-virtual"><scope>mlpack::ann::SVDConvolution</scope><name>Convolution</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

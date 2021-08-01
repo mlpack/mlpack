@@ -1,0 +1,86 @@
+.TH "AllDimensionSelect" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AllDimensionSelect \- This dimension selection policy allows any dimension to be selected for splitting\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAllDimensionSelect\fP ()"
+.br
+.RI "Construct the \fBAllDimensionSelect\fP object for the given number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBBegin\fP ()"
+.br
+.RI "Get the first dimension to select from\&. "
+.ti -1c
+.RI "size_t \fBDimensions\fP () const"
+.br
+.RI "Get the number of dimensions\&. "
+.ti -1c
+.RI "size_t & \fBDimensions\fP ()"
+.br
+.RI "Modify the number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBEnd\fP () const"
+.br
+.RI "Get the last dimension to select from\&. "
+.ti -1c
+.RI "size_t \fBNext\fP ()"
+.br
+.RI "Get the next dimension\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This dimension selection policy allows any dimension to be selected for splitting\&. 
+.PP
+Definition at line 22 of file all_dimension_select\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAllDimensionSelect\fP ()\fC [inline]\fP"
+
+.PP
+Construct the \fBAllDimensionSelect\fP object for the given number of dimensions\&. 
+.PP
+Definition at line 28 of file all_dimension_select\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Begin ()\fC [inline]\fP"
+
+.PP
+Get the first dimension to select from\&. 
+.PP
+Definition at line 33 of file all_dimension_select\&.hpp\&.
+.SS "size_t Dimensions () const\fC [inline]\fP"
+
+.PP
+Get the number of dimensions\&. 
+.PP
+Definition at line 50 of file all_dimension_select\&.hpp\&.
+.SS "size_t& Dimensions ()\fC [inline]\fP"
+
+.PP
+Modify the number of dimensions\&. 
+.PP
+Definition at line 52 of file all_dimension_select\&.hpp\&.
+.SS "size_t End () const\fC [inline]\fP"
+
+.PP
+Get the last dimension to select from\&. 
+.PP
+Definition at line 42 of file all_dimension_select\&.hpp\&.
+.SS "size_t Next ()\fC [inline]\fP"
+
+.PP
+Get the next dimension\&. 
+.PP
+Definition at line 47 of file all_dimension_select\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

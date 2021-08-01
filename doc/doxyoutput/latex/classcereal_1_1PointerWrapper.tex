@@ -1,0 +1,81 @@
+\section{Pointer\+Wrapper$<$ T $>$ Class Template Reference}
+\label{classcereal_1_1PointerWrapper}\index{Pointer\+Wrapper$<$ T $>$@{Pointer\+Wrapper$<$ T $>$}}
+
+
+The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique\+\_\+ptr.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Pointer\+Wrapper} (T $\ast$\&pointer)
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \textbf{ load} (Archive \&ar, const uint32\+\_\+t)
+\item 
+T $\ast$\& \textbf{ release} ()
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \textbf{ save} (Archive \&ar, const uint32\+\_\+t) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class T$>$\newline
+class cereal\+::\+Pointer\+Wrapper$<$ T $>$}
+
+The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique\+\_\+ptr. 
+
+Cereal does not support the serialization of raw pointer out of the box. Therefore, we have created this wrapper to serialize raw pointer in cereal as a smart pointer since because it will be difficult to change all pointer type in mlpack. 
+
+Definition at line 44 of file pointer\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classcereal_1_1PointerWrapper_a65ffc92800be3b2e2acd6bf27c7d8745}} 
+\index{cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}!Pointer\+Wrapper@{Pointer\+Wrapper}}
+\index{Pointer\+Wrapper@{Pointer\+Wrapper}!cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}}
+\subsubsection{Pointer\+Wrapper()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Wrapper} (\begin{DoxyParamCaption}\item[{T $\ast$\&}]{pointer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 47 of file pointer\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classcereal_1_1PointerWrapper_a2c74fd23efa75fae660603e36f4d03ac}} 
+\index{cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}!load@{load}}
+\index{load@{load}!cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}}
+\subsubsection{load()}
+{\footnotesize\ttfamily void load (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 62 of file pointer\+\_\+wrapper.\+hpp.
+
+\mbox{\label{classcereal_1_1PointerWrapper_ad56c5f39662b211a09253c751262fdc4}} 
+\index{cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}!release@{release}}
+\index{release@{release}!cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}}
+\subsubsection{release()}
+{\footnotesize\ttfamily T$\ast$\& release (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 69 of file pointer\+\_\+wrapper.\+hpp.
+
+\mbox{\label{classcereal_1_1PointerWrapper_a52958fcb465f0f3082b164a49ab238a7}} 
+\index{cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}!save@{save}}
+\index{save@{save}!cereal\+::\+Pointer\+Wrapper@{cereal\+::\+Pointer\+Wrapper}}
+\subsubsection{save()}
+{\footnotesize\ttfamily void save (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 52 of file pointer\+\_\+wrapper.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cereal/\textbf{ pointer\+\_\+wrapper.\+hpp}\end{DoxyCompactItemize}

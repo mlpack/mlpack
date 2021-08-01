@@ -1,0 +1,130 @@
+.TH "PellegMooreKMeansRules< MetricType, TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PellegMooreKMeansRules< MetricType, TreeType > \- The rules class for the single-tree Pelleg-Moore kd-tree traversal for k-means clustering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPellegMooreKMeansRules\fP (const typename TreeType::Mat &dataset, const arma::mat &centroids, arma::mat &newCentroids, arma::Col< size_t > &counts, MetricType &metric)"
+.br
+.RI "Create the \fBPellegMooreKMeansRules\fP object\&. "
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.RI "The \fBBaseCase()\fP function for this single-tree algorithm does nothing\&. "
+.ti -1c
+.RI "size_t \fBDistanceCalculations\fP () const"
+.br
+.RI "Get the number of distance calculations that have been performed\&. "
+.ti -1c
+.RI "size_t & \fBDistanceCalculations\fP ()"
+.br
+.RI "Modify the number of distance calculations that have been performed\&. "
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore)"
+.br
+.RI "Rescore to determine if a node can be pruned\&. "
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "Determine if a cluster can be pruned, and if not, perform point-to-cluster comparisons\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename TreeType>
+.br
+class mlpack::kmeans::PellegMooreKMeansRules< MetricType, TreeType >"
+The rules class for the single-tree Pelleg-Moore kd-tree traversal for k-means clustering\&. 
+
+Although TreeType is a free template parameter, this particular implementation is specialized to trees with hyper-rectangle bounds due to the pruning rule used to determine if one cluster dominates a node with respect to another cluster\&.
+.PP
+Our implementation here abuses the single-tree algorithm abstractions a little bit\&. Instead of doing a traversal for a particular query point, in this case we consider all clusters at once---so the query point is entirely ignored during in \fBBaseCase()\fP and \fBScore()\fP\&. 
+.PP
+Definition at line 33 of file pelleg_moore_kmeans_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPellegMooreKMeansRules\fP (const typename TreeType::Mat & dataset, const arma::mat & centroids, arma::mat & newCentroids, arma::Col< size_t > & counts, MetricType & metric)"
+
+.PP
+Create the \fBPellegMooreKMeansRules\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP The dataset that the tree is built on\&. 
+.br
+\fIcentroids\fP The current centroids\&. 
+.br
+\fInewCentroids\fP New centroids after this iteration (output)\&. 
+.br
+\fIcounts\fP Current cluster counts, to be replaced with new cluster counts\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.PP
+The \fBBaseCase()\fP function for this single-tree algorithm does nothing\&. Instead, point-to-cluster comparisons are handled as necessary in \fBScore()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point (fake, will be ignored)\&. 
+.br
+\fIreferenceIndex\fP Index of reference point\&. 
+.RE
+.PP
+
+.SS "size_t DistanceCalculations () const\fC [inline]\fP"
+
+.PP
+Get the number of distance calculations that have been performed\&. 
+.PP
+Definition at line 84 of file pelleg_moore_kmeans_rules\&.hpp\&.
+.SS "size_t& DistanceCalculations ()\fC [inline]\fP"
+
+.PP
+Modify the number of distance calculations that have been performed\&. 
+.PP
+Definition at line 86 of file pelleg_moore_kmeans_rules\&.hpp\&.
+.SS "double Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore)"
+
+.PP
+Rescore to determine if a node can be pruned\&. In this case, a node can never be pruned during rescoring, so this just returns oldScore\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point (fake, will be ignored)\&. 
+.br
+\fIreferenceNode\fP Node containing points in the dataset\&. 
+.br
+\fIoldScore\fP Resulting score from \fBScore()\fP\&. 
+.RE
+.PP
+
+.SS "double Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Determine if a cluster can be pruned, and if not, perform point-to-cluster comparisons\&. The point-to-cluster comparisons are performed here and not in \fBBaseCase()\fP because of the complexity of managing the blacklist\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point (fake, will be ignored)\&. 
+.br
+\fIreferenceNode\fP Node containing points in the dataset\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

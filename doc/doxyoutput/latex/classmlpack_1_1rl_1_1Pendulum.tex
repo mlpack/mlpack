@@ -1,0 +1,262 @@
+\section{Pendulum Class Reference}
+\label{classmlpack_1_1rl_1_1Pendulum}\index{Pendulum@{Pendulum}}
+
+
+Implementation of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum} task.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Action}
+\begin{DoxyCompactList}\small\item\em Implementation of action of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. \end{DoxyCompactList}\item 
+class \textbf{ State}
+\begin{DoxyCompactList}\small\item\em Implementation of state of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Pendulum} (const size\+\_\+t max\+Steps=200, const double max\+Angular\+Velocity=8, const double max\+Torque=2.\+0, const double dt=0.\+05, const double done\+Reward=0.\+0)
+\begin{DoxyCompactList}\small\item\em Construct a \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum} instance using the given values. \end{DoxyCompactList}\item 
+double \textbf{ Angle\+Normalize} (double theta) const
+\begin{DoxyCompactList}\small\item\em This function calculates the normalized angle for a particular theta. \end{DoxyCompactList}\item 
+\textbf{ State} \textbf{ Initial\+Sample} ()
+\begin{DoxyCompactList}\small\item\em Initial theta is randomly generated within [-\/pi, pi]. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Terminal} (const \textbf{ State} \&) const
+\begin{DoxyCompactList}\small\item\em This function checks if the pendulum has reaches a terminal state. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Steps} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of steps allowed. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Steps} ()
+\begin{DoxyCompactList}\small\item\em Set the maximum number of steps allowed. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action, \textbf{ State} \&next\+State)
+\begin{DoxyCompactList}\small\item\em Dynamics of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action)
+\begin{DoxyCompactList}\small\item\em Dynamics of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Steps\+Performed} () const
+\begin{DoxyCompactList}\small\item\em Get the number of steps performed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum} task. 
+
+The inverted pendulum swingup problem is a classic problem in the control literature. In this version of the problem, the pendulum starts in a random position, and the goal is to swing it up so it stays upright 
+
+Definition at line 31 of file pendulum.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_a5e9ab6406d8643978821196e620e7738}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Pendulum@{Pendulum}}
+\index{Pendulum@{Pendulum}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Pendulum()}
+{\footnotesize\ttfamily \textbf{ Pendulum} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Steps = {\ttfamily 200},  }\item[{const double}]{max\+Angular\+Velocity = {\ttfamily 8},  }\item[{const double}]{max\+Torque = {\ttfamily 2.0},  }\item[{const double}]{dt = {\ttfamily 0.05},  }\item[{const double}]{done\+Reward = {\ttfamily 0.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum} instance using the given values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Steps} & The number of steps after which the episode terminates. If the value is 0, there is no limit (Default\+: 200 steps). \\
+\hline
+{\em max\+Angular\+Velocity} & Maximum angular velocity. \\
+\hline
+{\em max\+Torque} & Maximum torque. \\
+\hline
+{\em dt} & The differential value. \\
+\hline
+{\em done\+Reward} & The reward recieved by the agent on success. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 118 of file pendulum.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_ac2a3e1383ed5fed53067d76039890fa9}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Angle\+Normalize@{Angle\+Normalize}}
+\index{Angle\+Normalize@{Angle\+Normalize}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Angle\+Normalize()}
+{\footnotesize\ttfamily double Angle\+Normalize (\begin{DoxyParamCaption}\item[{double}]{theta }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function calculates the normalized angle for a particular theta. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em theta} & The un-\/normalized angle. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 212 of file pendulum.\+hpp.
+
+
+
+References M\+\_\+\+PI.
+
+
+
+Referenced by Pendulum\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_aa9f537249fa0c1e62b38197996ab4c6a}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Initial\+Sample@{Initial\+Sample}}
+\index{Initial\+Sample@{Initial\+Sample}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Initial\+Sample()}
+{\footnotesize\ttfamily \textbf{ State} Initial\+Sample (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initial theta is randomly generated within [-\/pi, pi]. 
+
+Initial angular velocity is randomly generated within [-\/1, 1].
+
+\begin{DoxyReturn}{Returns}
+Initial state for each episode. 
+\end{DoxyReturn}
+
+
+Definition at line 197 of file pendulum.\+hpp.
+
+
+
+References Pendulum\+::\+State\+::\+Angular\+Velocity(), M\+\_\+\+PI, mlpack\+::math\+::\+Random(), Pendulum\+::\+State\+::\+Set\+State(), and Pendulum\+::\+State\+::\+Theta().
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_a7061ffc3be37983a46a312973a375c0a}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Is\+Terminal@{Is\+Terminal}}
+\index{Is\+Terminal@{Is\+Terminal}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Is\+Terminal()}
+{\footnotesize\ttfamily bool Is\+Terminal (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function checks if the pendulum has reaches a terminal state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (state) desired state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if state is a terminal state, otherwise false. 
+\end{DoxyReturn}
+
+
+Definition at line 227 of file pendulum.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_ad8fd6d8f7581c82e73556491b79a8907}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Max\+Steps@{Max\+Steps}}
+\index{Max\+Steps@{Max\+Steps}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Max\+Steps()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of steps allowed. 
+
+
+
+Definition at line 242 of file pendulum.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_a64c84cebc489c6fdfd7f057e127b0aef}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Max\+Steps@{Max\+Steps}}
+\index{Max\+Steps@{Max\+Steps}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Max\+Steps()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the maximum number of steps allowed. 
+
+
+
+Definition at line 244 of file pendulum.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_a311ac19edc537dee94f37b7cce93d908}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Sample@{Sample}}
+\index{Sample@{Sample}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action,  }\item[{\textbf{ State} \&}]{next\+State }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. 
+
+Get reward and next state based on current state and current action.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+{\em next\+State} & The next state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reward, The reward for taking the action taken for current state. 
+\end{DoxyReturn}
+
+
+Definition at line 140 of file pendulum.\+hpp.
+
+
+
+References Pendulum\+::\+Action\+::action, Pendulum\+::\+Angle\+Normalize(), Pendulum\+::\+State\+::\+Angular\+Velocity(), mlpack\+::math\+::\+Clamp\+Range(), M\+\_\+\+PI, Pendulum\+::\+State\+::\+Set\+State(), and Pendulum\+::\+State\+::\+Theta().
+
+
+
+Referenced by Pendulum\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_af2bb860eaefeaa62a40f5cf940793704}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Sample@{Sample}}
+\index{Sample@{Sample}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum}. 
+
+Get reward based on current state and current action
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reward, The reward. 
+\end{DoxyReturn}
+
+
+Definition at line 185 of file pendulum.\+hpp.
+
+
+
+References Pendulum\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Pendulum_a5fe06563064ebcee88c593e1673f03d4}} 
+\index{mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}!Steps\+Performed@{Steps\+Performed}}
+\index{Steps\+Performed@{Steps\+Performed}!mlpack\+::rl\+::\+Pendulum@{mlpack\+::rl\+::\+Pendulum}}
+\subsubsection{Steps\+Performed()}
+{\footnotesize\ttfamily size\+\_\+t Steps\+Performed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of steps performed. 
+
+
+
+Definition at line 239 of file pendulum.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ pendulum.\+hpp}\end{DoxyCompactItemize}

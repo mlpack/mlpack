@@ -1,0 +1,25 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/binary_space_tree.hpp" name="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/binary_space_tree.hpp">
+<area shape="rect" id="node2" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="1680,295,1816,322"/>
+<area shape="rect" id="node41" href="$statistic_8hpp.html" title="Definition of the policy type for the statistic class. " alt="" coords="1507,124,1613,151"/>
+<area shape="rect" id="node42" href="$midpoint__split_8hpp.html" title="midpoint_split.hpp" alt="" coords="1221,206,1347,233"/>
+<area shape="rect" id="node46" href="$binary__space__tree_8hpp.html" title="../binary_space_tree.hpp" alt="" coords="1636,124,1801,151"/>
+<area shape="rect" id="node15" href="$arma__traits_8hpp.html" title="mlpack/core/util/arma\l_traits.hpp" alt="" coords="1128,385,1275,426"/>
+<area shape="rect" id="node24" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="2082,385,2222,426"/>
+<area shape="rect" id="node27" href="$is__loading_8hpp.html" title="mlpack/core/cereal\l/is_loading.hpp" alt="" coords="1834,571,1966,612"/>
+<area shape="rect" id="node28" href="$is__saving_8hpp.html" title="mlpack/core/cereal\l/is_saving.hpp" alt="" coords="1990,571,2122,612"/>
+<area shape="rect" id="node30" href="$array__wrapper_8hpp.html" title="mlpack/core/cereal\l/array_wrapper.hpp" alt="" coords="2300,571,2433,612"/>
+<area shape="rect" id="node31" href="$pointer__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_variant_wrapper.hpp" alt="" coords="2451,481,2640,523"/>
+<area shape="rect" id="node32" href="$pointer__wrapper_8hpp.html" title="pointer_wrapper.hpp" alt="" coords="2559,578,2697,605"/>
+<area shape="rect" id="node33" href="$pointer__vector__variant__wrapper_8hpp.html" title="mlpack/core/cereal\l/pointer_vector_variant\l_wrapper.hpp" alt="" coords="2525,377,2680,433"/>
+<area shape="rect" id="node34" href="$pointer__vector__wrapper_8hpp.html" title="pointer_vector_wrapper.hpp" alt="" coords="2795,489,2978,515"/>
+<area shape="rect" id="node35" href="$has__serialize_8hpp.html" title="mlpack/core/data/has\l_serialize.hpp" alt="" coords="3104,481,3251,523"/>
+<area shape="rect" id="node36" href="$arma__config__check_8hpp.html" title="mlpack/core/util/arma\l_config_check.hpp" alt="" coords="3205,385,3352,426"/>
+<area shape="rect" id="node38" href="$timers_8hpp.html" title="mlpack/core/util/timers.hpp" alt="" coords="3560,392,3739,419"/>
+<area shape="rect" id="node39" href="$deprecated_8hpp.html" title="mlpack/core/util/deprecated.hpp" alt="" coords="3763,392,3970,419"/>
+<area shape="rect" id="node40" href="$size__checks_8hpp.html" title="mlpack/core/util/size\l_checks.hpp" alt="" coords="3994,385,4137,426"/>
+<area shape="rect" id="node43" href="$perform__split_8hpp.html" title="mlpack/core/tree/perform\l_split.hpp" alt="" coords="1483,288,1650,329"/>
+<area shape="rect" id="node47" href="$bounds_8hpp.html" title="Bounds that are useful for binary space partitioning trees. " alt="" coords="1763,206,1853,233"/>
+<area shape="rect" id="node48" href="$mean__split_8hpp.html" title="binary_space_tree/mean\l_split.hpp" alt="" coords="1575,199,1739,240"/>
+<area shape="rect" id="node49" href="$vantage__point__split_8hpp.html" title="binary_space_tree/vantage\l_point_split.hpp" alt="" coords="1372,199,1551,240"/>
+<area shape="rect" id="node50" href="$rp__tree__max__split_8hpp.html" title="binary_space_tree/rp\l_tree_max_split.hpp" alt="" coords="1877,199,2019,240"/>
+</map>

@@ -1,0 +1,193 @@
+\section{Mountain\+Car\+:\+:State Class Reference}
+\label{classmlpack_1_1rl_1_1MountainCar_1_1State}\index{Mountain\+Car\+::\+State@{Mountain\+Car\+::\+State}}
+
+
+Implementation of state of Mountain Car.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Construct a state instance. \end{DoxyCompactList}\item 
+\textbf{ State} (const arma\+::colvec \&data)
+\begin{DoxyCompactList}\small\item\em Construct a state based on the given data. \end{DoxyCompactList}\item 
+arma\+::colvec \& \textbf{ Data} ()
+\begin{DoxyCompactList}\small\item\em Modify the internal representation of the state. \end{DoxyCompactList}\item 
+const arma\+::colvec \& \textbf{ Encode} () const
+\begin{DoxyCompactList}\small\item\em Encode the state to a column vector. \end{DoxyCompactList}\item 
+double \textbf{ Position} () const
+\begin{DoxyCompactList}\small\item\em Get the position. \end{DoxyCompactList}\item 
+double \& \textbf{ Position} ()
+\begin{DoxyCompactList}\small\item\em Modify the position. \end{DoxyCompactList}\item 
+double \textbf{ Velocity} () const
+\begin{DoxyCompactList}\small\item\em Get the velocity. \end{DoxyCompactList}\item 
+double \& \textbf{ Velocity} ()
+\begin{DoxyCompactList}\small\item\em Modify the velocity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \textbf{ dimension} = 2
+\begin{DoxyCompactList}\small\item\em Dimension of the encoded state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of state of Mountain Car. 
+
+Each state is a (velocity, position) vector. 
+
+Definition at line 35 of file mountain\+\_\+car.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a790355057d12e9c1ce7643551c16fecd}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!State@{State}}
+\index{State@{State}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance. 
+
+
+
+Definition at line 41 of file mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a8bc7967f6d91a3c94f9b3f502297a926}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!State@{State}}
+\index{State@{State}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state based on the given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data for the velocity and position. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file mountain\+\_\+car.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_ad6a50c7b5fced2e931d9a4b4ff989ed6}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Data@{Data}}
+\index{Data@{Data}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Data()}
+{\footnotesize\ttfamily arma\+::colvec\& Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the internal representation of the state. 
+
+
+
+Definition at line 53 of file mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a8c1a320788b55fad936455caf0acb62a}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Encode()}
+{\footnotesize\ttfamily const arma\+::colvec\& Encode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encode the state to a column vector. 
+
+
+
+Definition at line 66 of file mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_adc41cb3d3f5bdd1bd67dc963ce78c20c}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Position@{Position}}
+\index{Position@{Position}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the position. 
+
+
+
+Definition at line 61 of file mountain\+\_\+car.\+hpp.
+
+
+
+Referenced by Mountain\+Car\+::\+Initial\+Sample(), Mountain\+Car\+::\+Is\+Terminal(), and Mountain\+Car\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a005c39713bc5c65715a94572bfb5fc29}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Position@{Position}}
+\index{Position@{Position}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the position. 
+
+
+
+Definition at line 63 of file mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a5281cef88d4e272d6cb8581bff91195a}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the velocity. 
+
+
+
+Definition at line 56 of file mountain\+\_\+car.\+hpp.
+
+
+
+Referenced by Mountain\+Car\+::\+Initial\+Sample(), and Mountain\+Car\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_a2bdce16cfc8c84b65f13ee9fffab1266}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the velocity. 
+
+
+
+Definition at line 58 of file mountain\+\_\+car.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1MountainCar_1_1State_ae813298f34ef9d793885fc04b54dff99}} 
+\index{mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}!dimension@{dimension}}
+\index{dimension@{dimension}!mlpack\+::rl\+::\+Mountain\+Car\+::\+State@{mlpack\+::rl\+::\+Mountain\+Car\+::\+State}}
+\subsubsection{dimension}
+{\footnotesize\ttfamily constexpr size\+\_\+t dimension = 2\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Dimension of the encoded state. 
+
+
+
+Definition at line 69 of file mountain\+\_\+car.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ mountain\+\_\+car.\+hpp}\end{DoxyCompactItemize}

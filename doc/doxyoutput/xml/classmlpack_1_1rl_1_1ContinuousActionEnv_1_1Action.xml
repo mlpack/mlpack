@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::ContinuousActionEnv::Action</compoundname>
+    <includes refid="env__type_8hpp" local="no">env_type.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1afb5d8e230f784cdcdbd42f358f0a054e" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt;double&gt; action</definition>
+        <argsstring></argsstring>
+        <name>action</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" prot="public" static="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a9e72d404d52a0c6d6edefac30f76e02d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Action</definition>
+        <argsstring>()</argsstring>
+        <name>Action</name>
+        <briefdescription>
+<para>Construct an action instance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" bodystart="171" bodyend="172"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of continuous action. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp" bodystart="161" bodyend="173"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1afb5d8e230f784cdcdbd42f358f0a054e" prot="public" virt="non-virtual"><scope>mlpack::rl::ContinuousActionEnv::Action</scope><name>action</name></member>
+      <member refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a9e72d404d52a0c6d6edefac30f76e02d" prot="public" virt="non-virtual"><scope>mlpack::rl::ContinuousActionEnv::Action</scope><name>Action</name></member>
+      <member refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" prot="public" virt="non-virtual"><scope>mlpack::rl::ContinuousActionEnv::Action</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,173 @@
+\section{K\+D\+E\+Clean\+Rules$<$ Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kde_1_1KDECleanRules}\index{K\+D\+E\+Clean\+Rules$<$ Tree\+Type $>$@{K\+D\+E\+Clean\+Rules$<$ Tree\+Type $>$}}
+
+
+A dual-\/tree traversal Rules class for cleaning used trees before performing kernel density estimation.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ \textbf{ Traversal\+Info\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ K\+D\+E\+Clean\+Rules} ()
+\begin{DoxyCompactList}\small\item\em Construct \doxyref{K\+D\+E\+Clean\+Rules}{p.}{classmlpack_1_1kde_1_1KDECleanRules}. \end{DoxyCompactList}\item 
+double \textbf{ Base\+Case} (const size\+\_\+t, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Base Case. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (const size\+\_\+t, Tree\+Type \&, const double old\+Score) const
+\begin{DoxyCompactList}\small\item\em Single\+Tree Rescore. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (Tree\+Type \&, Tree\+Type \&, const double old\+Score) const
+\begin{DoxyCompactList}\small\item\em Dual-\/\+Tree Rescore. \end{DoxyCompactList}\item 
+double \textbf{ Score} (const size\+\_\+t, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Single\+Tree Score. \end{DoxyCompactList}\item 
+double \textbf{ Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Dual-\/\+Tree Score. \end{DoxyCompactList}\item 
+const \textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} () const
+\begin{DoxyCompactList}\small\item\em Get traversal information. \end{DoxyCompactList}\item 
+\textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} ()
+\begin{DoxyCompactList}\small\item\em Modify traversal information. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Tree\+Type$>$\newline
+class mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules$<$ Tree\+Type $>$}
+
+A dual-\/tree traversal Rules class for cleaning used trees before performing kernel density estimation. 
+
+Definition at line 189 of file kde\+\_\+rules.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_ab5f079db10d0a6813eefeb1115e894cb}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Traversal\+Info\+Type@{Traversal\+Info\+Type}}
+\index{Traversal\+Info\+Type@{Traversal\+Info\+Type}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Traversal\+Info\+Type}
+{\footnotesize\ttfamily typedef \textbf{ tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ \textbf{ Traversal\+Info\+Type}}
+
+
+
+Definition at line 214 of file kde\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_a9b4a8d3068b51fba5a4631ef16d2d80b}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!K\+D\+E\+Clean\+Rules@{K\+D\+E\+Clean\+Rules}}
+\index{K\+D\+E\+Clean\+Rules@{K\+D\+E\+Clean\+Rules}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{K\+D\+E\+Clean\+Rules()}
+{\footnotesize\ttfamily \textbf{ K\+D\+E\+Clean\+Rules} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct \doxyref{K\+D\+E\+Clean\+Rules}{p.}{classmlpack_1_1kde_1_1KDECleanRules}. 
+
+
+
+Definition at line 193 of file kde\+\_\+rules.\+hpp.
+
+
+
+References K\+D\+E\+Rules$<$ Metric\+Type, Kernel\+Type, Tree\+Type $>$\+::\+Base\+Case(), and K\+D\+E\+Rules$<$ Metric\+Type, Kernel\+Type, Tree\+Type $>$\+::\+Score().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_afde86a5301e751ee60e64cb7c4b65a6c}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Base\+Case()}
+{\footnotesize\ttfamily double Base\+Case (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{,  }\item[{const size\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Base Case. 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_a12a9cd8472681e4db55db7d8600e16f7}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{,  }\item[{Tree\+Type \&}]{,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Single\+Tree Rescore. 
+
+
+
+Definition at line 202 of file kde\+\_\+rules.\+hpp.
+
+
+
+References K\+D\+E\+Rules$<$ Metric\+Type, Kernel\+Type, Tree\+Type $>$\+::\+Score().
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_ae9e5b74e47db9c2035cbc10381f39d69}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{,  }\item[{Tree\+Type \&}]{,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dual-\/\+Tree Rescore. 
+
+
+
+Definition at line 210 of file kde\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_a52fccee427560ab1cc4f6930fc1aae64}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Single\+Tree Score. 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_a05b142945ef94221b628a75961f48b02}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Dual-\/\+Tree Score. 
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_ab5c6f4ae7c3b71b808403a7b7454f26f}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get traversal information. 
+
+
+
+Definition at line 217 of file kde\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDECleanRules_a4027bb90e756a4520d55978459c7f83e}} 
+\index{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules@{mlpack\+::kde\+::\+K\+D\+E\+Clean\+Rules}}
+\subsubsection{Traversal\+Info()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify traversal information. 
+
+
+
+Definition at line 220 of file kde\+\_\+rules.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kde/\textbf{ kde\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

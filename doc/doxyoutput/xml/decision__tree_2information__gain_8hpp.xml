@@ -1,0 +1,596 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="decision__tree_2information__gain_8hpp" kind="file" language="C++">
+    <compoundname>information_gain.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="decision__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</includedby>
+    <incdepgraph>
+      <node id="47306">
+        <label>list</label>
+      </node>
+      <node id="47303">
+        <label>atomic</label>
+      </node>
+      <node id="47293">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47269">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="47305">
+        <label>iomanip</label>
+      </node>
+      <node id="47278">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47279" relation="include">
+        </childnode>
+        <childnode refid="47281" relation="include">
+        </childnode>
+      </node>
+      <node id="47261">
+        <label>cstdint</label>
+      </node>
+      <node id="47270">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47277">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47300">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47290">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47257">
+        <label>cmath</label>
+      </node>
+      <node id="47276">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="47265">
+        <label>stdexcept</label>
+      </node>
+      <node id="47285">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47270" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47271" relation="include">
+        </childnode>
+      </node>
+      <node id="47309">
+        <label>string</label>
+      </node>
+      <node id="47297">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47298" relation="include">
+        </childnode>
+        <childnode refid="47264" relation="include">
+        </childnode>
+      </node>
+      <node id="47307">
+        <label>map</label>
+      </node>
+      <node id="47259">
+        <label>cfloat</label>
+      </node>
+      <node id="47289">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="47311">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="47273">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47296">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47297" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47280" relation="include">
+        </childnode>
+        <childnode refid="47298" relation="include">
+        </childnode>
+      </node>
+      <node id="47286">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="47284">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47270" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47271" relation="include">
+        </childnode>
+      </node>
+      <node id="47287">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47270" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47271" relation="include">
+        </childnode>
+      </node>
+      <node id="47275">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47295">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47271" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47283" relation="include">
+        </childnode>
+        <childnode refid="47292" relation="include">
+        </childnode>
+      </node>
+      <node id="47299">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47300" relation="include">
+        </childnode>
+      </node>
+      <node id="47301">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47256">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47257" relation="include">
+        </childnode>
+        <childnode refid="47258" relation="include">
+        </childnode>
+        <childnode refid="47259" relation="include">
+        </childnode>
+        <childnode refid="47260" relation="include">
+        </childnode>
+        <childnode refid="47261" relation="include">
+        </childnode>
+        <childnode refid="47262" relation="include">
+        </childnode>
+        <childnode refid="47263" relation="include">
+        </childnode>
+        <childnode refid="47264" relation="include">
+        </childnode>
+        <childnode refid="47265" relation="include">
+        </childnode>
+        <childnode refid="47266" relation="include">
+        </childnode>
+        <childnode refid="47267" relation="include">
+        </childnode>
+        <childnode refid="47268" relation="include">
+        </childnode>
+        <childnode refid="47269" relation="include">
+        </childnode>
+        <childnode refid="47270" relation="include">
+        </childnode>
+        <childnode refid="47271" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47274" relation="include">
+        </childnode>
+        <childnode refid="47275" relation="include">
+        </childnode>
+        <childnode refid="47276" relation="include">
+        </childnode>
+        <childnode refid="47277" relation="include">
+        </childnode>
+        <childnode refid="47278" relation="include">
+        </childnode>
+        <childnode refid="47282" relation="include">
+        </childnode>
+        <childnode refid="47283" relation="include">
+        </childnode>
+        <childnode refid="47284" relation="include">
+        </childnode>
+        <childnode refid="47285" relation="include">
+        </childnode>
+        <childnode refid="47286" relation="include">
+        </childnode>
+        <childnode refid="47287" relation="include">
+        </childnode>
+        <childnode refid="47288" relation="include">
+        </childnode>
+        <childnode refid="47294" relation="include">
+        </childnode>
+        <childnode refid="47295" relation="include">
+        </childnode>
+        <childnode refid="47292" relation="include">
+        </childnode>
+        <childnode refid="47296" relation="include">
+        </childnode>
+        <childnode refid="47299" relation="include">
+        </childnode>
+        <childnode refid="47301" relation="include">
+        </childnode>
+        <childnode refid="47302" relation="include">
+        </childnode>
+        <childnode refid="47311" relation="include">
+        </childnode>
+        <childnode refid="47312" relation="include">
+        </childnode>
+      </node>
+      <node id="47262">
+        <label>cstdio</label>
+      </node>
+      <node id="47266">
+        <label>tuple</label>
+      </node>
+      <node id="47271">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47288">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47271" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47275" relation="include">
+        </childnode>
+        <childnode refid="47289" relation="include">
+        </childnode>
+        <childnode refid="47290" relation="include">
+        </childnode>
+        <childnode refid="47291" relation="include">
+        </childnode>
+        <childnode refid="47292" relation="include">
+        </childnode>
+      </node>
+      <node id="47255">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/information_gain.hpp</label>
+        <link refid="decision__tree_2information__gain_8hpp"/>
+        <childnode refid="47256" relation="include">
+        </childnode>
+      </node>
+      <node id="47267">
+        <label>utility</label>
+      </node>
+      <node id="47291">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47282">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47279">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47280" relation="include">
+        </childnode>
+      </node>
+      <node id="47302">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47303" relation="include">
+        </childnode>
+        <childnode refid="47304" relation="include">
+        </childnode>
+        <childnode refid="47305" relation="include">
+        </childnode>
+        <childnode refid="47306" relation="include">
+        </childnode>
+        <childnode refid="47307" relation="include">
+        </childnode>
+        <childnode refid="47308" relation="include">
+        </childnode>
+        <childnode refid="47309" relation="include">
+        </childnode>
+        <childnode refid="47310" relation="include">
+        </childnode>
+      </node>
+      <node id="47280">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47294">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47292" relation="include">
+        </childnode>
+        <childnode refid="47288" relation="include">
+        </childnode>
+        <childnode refid="47295" relation="include">
+        </childnode>
+      </node>
+      <node id="47263">
+        <label>cstdlib</label>
+      </node>
+      <node id="47258">
+        <label>cctype</label>
+      </node>
+      <node id="47281">
+        <label>unordered_map</label>
+      </node>
+      <node id="47260">
+        <label>climits</label>
+      </node>
+      <node id="47308">
+        <label>mutex</label>
+      </node>
+      <node id="47304">
+        <label>chrono</label>
+      </node>
+      <node id="47312">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="47310">
+        <label>thread</label>
+      </node>
+      <node id="47298">
+        <label>type_traits</label>
+      </node>
+      <node id="47274">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="47268">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47292">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47270" relation="include">
+        </childnode>
+        <childnode refid="47271" relation="include">
+        </childnode>
+        <childnode refid="47272" relation="include">
+        </childnode>
+        <childnode refid="47273" relation="include">
+        </childnode>
+        <childnode refid="47293" relation="include">
+        </childnode>
+      </node>
+      <node id="47264">
+        <label>cstring</label>
+      </node>
+      <node id="47283">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47272">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="47314">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
+        <link refid="decision__tree_8hpp"/>
+        <childnode refid="47315" relation="include">
+        </childnode>
+        <childnode refid="47316" relation="include">
+        </childnode>
+      </node>
+      <node id="47315">
+        <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
+        <link refid="adaboost_8hpp"/>
+      </node>
+      <node id="47316">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="47313">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/information_gain.hpp</label>
+        <link refid="decision__tree_2information__gain_8hpp"/>
+        <childnode refid="47314" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1InformationGain" prot="public">mlpack::tree::InformationGain</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+An implementation of information gain, which can be used in place of Gini gain.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_DECISION_TREE_INFORMATION_GAIN_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_DECISION_TREE_INFORMATION_GAIN_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classmlpack_1_1tree_1_1InformationGain" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1InformationGain" kindref="compound">InformationGain</ref></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CountType&gt;</highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1tree_1_1InformationGain_1a67d1277fdaf085606937d4b523f615ba" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1InformationGain_1a67d1277fdaf085606937d4b523f615ba" kindref="member">EvaluatePtr</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>CountType*<sp/>counts,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>countLength,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>CountType<sp/>totalCount)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gain<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>countLength;<sp/>++i)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>f<sp/>=<sp/>((double)<sp/>counts[i]<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)<sp/>totalCount);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(f<sp/>&gt;<sp/>0.0)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>gain<sp/>+=<sp/>f<sp/>*<sp/>std::log2(f);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>gain;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights&gt;</highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1tree_1_1InformationGain_1a82f0cda1eb3b481f5fec6142e07b8053" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1InformationGain_1a82f0cda1eb3b481f5fec6142e07b8053" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;double&gt;&amp;<sp/>weights)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Edge<sp/>case:<sp/>if<sp/>there<sp/>are<sp/>no<sp/>elements,<sp/>the<sp/>gain<sp/>is<sp/>zero.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>information<sp/>gain.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gain<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Count<sp/>the<sp/>number<sp/>of<sp/>elements<sp/>in<sp/>each<sp/>class.<sp/><sp/>Use<sp/>four<sp/>auxiliary<sp/>vectors</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>exploit<sp/>SIMD<sp/>instructions<sp/>if<sp/>possible.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::vec<sp/>countSpace(4<sp/>*<sp/>numClasses,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::vec<sp/>counts(countSpace.memptr(),<sp/>numClasses,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::vec<sp/>counts2(countSpace.memptr()<sp/>+<sp/>numClasses,<sp/>numClasses,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::vec<sp/>counts3(countSpace.memptr()<sp/>+<sp/>2<sp/>*<sp/>numClasses,<sp/>numClasses,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::vec<sp/>counts4(countSpace.memptr()<sp/>+<sp/>3<sp/>*<sp/>numClasses,<sp/>numClasses,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UseWeights)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sum<sp/>all<sp/>the<sp/>weights<sp/>up.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>accWeights[4]<sp/>=<sp/>{<sp/>0.0,<sp/>0.0,<sp/>0.0,<sp/>0.0<sp/>};</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>SIMD<sp/>loop:<sp/>add<sp/>counts<sp/>for<sp/>four<sp/>elements<sp/>simultaneously<sp/>(if<sp/>the<sp/>compiler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>manages<sp/>to<sp/>vectorize<sp/>the<sp/>loop).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>3;<sp/>i<sp/>&lt;<sp/>labels.n_elem;<sp/>i<sp/>+=<sp/>4)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight1<sp/>=<sp/>weights[i<sp/>-<sp/>3];</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight2<sp/>=<sp/>weights[i<sp/>-<sp/>2];</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight3<sp/>=<sp/>weights[i<sp/>-<sp/>1];</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight4<sp/>=<sp/>weights[i];</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[i<sp/>-<sp/>3]]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[i<sp/>-<sp/>2]]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts3[labels[i<sp/>-<sp/>1]]<sp/>+=<sp/>weight3;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts4[labels[i]]<sp/>+=<sp/>weight4;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[0]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[1]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[2]<sp/>+=<sp/>weight3;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[3]<sp/>+=<sp/>weight4;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>leftovers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>1)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight1<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>1];</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>1]]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[0]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>2)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight1<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>2];</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight2<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>1];</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>2]]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[labels.n_elem<sp/>-<sp/>1]]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[0]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[1]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>3)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight1<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>3];</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight2<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>2];</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight3<sp/>=<sp/>weights[labels.n_elem<sp/>-<sp/>1];</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>3]]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[labels.n_elem<sp/>-<sp/>2]]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts3[labels[labels.n_elem<sp/>-<sp/>1]]<sp/>+=<sp/>weight3;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[0]<sp/>+=<sp/>weight1;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[1]<sp/>+=<sp/>weight2;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[2]<sp/>+=<sp/>weight3;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>accWeights[0]<sp/>+=<sp/>accWeights[1]<sp/>+<sp/>accWeights[2]<sp/>+<sp/>accWeights[3];</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>counts<sp/>+=<sp/>counts2<sp/>+<sp/>counts3<sp/>+<sp/>counts4;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Corner<sp/>case:<sp/>return<sp/>0<sp/>if<sp/>no<sp/>weight.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(accWeights[0]<sp/>==<sp/>0.0)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>numClasses;<sp/>++i)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>f<sp/>=<sp/>((double)<sp/>counts[i]<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)<sp/>accWeights[0]);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(f<sp/>&gt;<sp/>0.0)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>gain<sp/>+=<sp/>f<sp/>*<sp/>std::log2(f);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>SIMD<sp/>loop:<sp/>add<sp/>counts<sp/>for<sp/>four<sp/>elements<sp/>simultaneously<sp/>(if<sp/>the<sp/>compiler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>manages<sp/>to<sp/>vectorize<sp/>the<sp/>loop).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>3;<sp/>i<sp/>&lt;<sp/>labels.n_elem;<sp/>i<sp/>+=<sp/>4)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[i<sp/>-<sp/>3]]++;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[i<sp/>-<sp/>2]]++;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts3[labels[i<sp/>-<sp/>1]]++;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts4[labels[i]]++;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>leftovers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>1)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>1]]++;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>2)</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>2]]++;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[labels.n_elem<sp/>-<sp/>1]]++;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(labels.n_elem<sp/>%<sp/>4<sp/>==<sp/>3)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts[labels[labels.n_elem<sp/>-<sp/>3]]++;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts2[labels[labels.n_elem<sp/>-<sp/>2]]++;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>counts3[labels[labels.n_elem<sp/>-<sp/>1]]++;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>counts<sp/>+=<sp/>counts2<sp/>+<sp/>counts3<sp/>+<sp/>counts4;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>numClasses;<sp/>++i)</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>f<sp/>=<sp/>((double)<sp/>counts[i]<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)<sp/>labels.n_elem);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(f<sp/>&gt;<sp/>0.0)</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>gain<sp/>+=<sp/>f<sp/>*<sp/>std::log2(f);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>gain;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="classmlpack_1_1tree_1_1InformationGain_1a9d801bb1be5db5207213f846f224458f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1InformationGain_1a9d801bb1be5db5207213f846f224458f" kindref="member">Range</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>best<sp/>possible<sp/>case<sp/>gives<sp/>an<sp/>information<sp/>gain<sp/>of<sp/>0.<sp/><sp/>The<sp/>worst</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>possible<sp/>case<sp/>is<sp/>even<sp/>distribution,<sp/>which<sp/>gives<sp/>n<sp/>*<sp/>(1/n<sp/>*<sp/>log2(1/n))<sp/>=</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>log2(1/n)<sp/>=<sp/>-log2(n).<sp/><sp/>So,<sp/>the<sp/>range<sp/>is<sp/>log2(n).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::log2(numClasses);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/information_gain.hpp"/>
+  </compounddef>
+</doxygen>

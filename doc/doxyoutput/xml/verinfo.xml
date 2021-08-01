@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="verinfo" kind="page">
+    <compoundname>verinfo</compoundname>
+    <title>mlpack version information</title>
+    <detaileddescription>
+<sect1 id="verinfo_1vercode">
+<title>mlpack versions in code</title>
+<para>mlpack provides a couple of convenience macros and functions to get the version of mlpack. More information (and straightforward code) can be found in <ref refid="src_2mlpack_2core_2util_2version_8hpp" kindref="compound">src/mlpack/core/util/version.hpp</ref>.</para><para>The following three macros provide major, minor, and patch versions of mlpack (i.e. for mlpack-x.y.z, &apos;x&apos; is the major version, &apos;y&apos; is the minor version, and &apos;z&apos; is the patch version):</para><para><programlisting><codeline><highlight class="normal">MLPACK_VERSION_MAJOR</highlight></codeline>
+<codeline><highlight class="normal">MLPACK_VERSION_MINOR</highlight></codeline>
+<codeline><highlight class="normal">MLPACK_VERSION_PATCH</highlight></codeline>
+</programlisting></para><para>In addition, the function <computeroutput><ref refid="namespacemlpack_1_1util_1a5463728499ca94746d779a6863df5c20" kindref="member">mlpack::util::GetVersion()</ref></computeroutput> returns the mlpack version as a string (for instance, &quot;mlpack 1.0.8&quot;).</para></sect1>
+<sect1 id="verinfo_1verex">
+<title>mlpack executable versions</title>
+<para>Each mlpack executable supports the <computeroutput><ndash/>version</computeroutput> (or <computeroutput>-V</computeroutput> ) option, which will print the version of mlpack used. If the version is not an official release but instead from svn trunk, the version will be &quot;mlpack trunk&quot; (and may have a revision number appended to &quot;trunk&quot;). </para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

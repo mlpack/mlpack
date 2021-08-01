@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1emst_1_1DTBStat" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::emst::DTBStat</compoundname>
+    <includes refid="dtb__stat_8hpp" local="no">dtb_stat.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1DTBStat_1a7694744cdc068cb065fc8e6bf659d2b3" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double bound</definition>
+        <argsstring></argsstring>
+        <name>bound</name>
+        <briefdescription>
+<para>Total bound for pruning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1DTBStat_1ab9746223b95c480afa228c4d84931d97" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int componentMembership</definition>
+        <argsstring></argsstring>
+        <name>componentMembership</name>
+        <briefdescription>
+<para>The index of the component that all points in this node belong to. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is the same index returned by <ref refid="classmlpack_1_1emst_1_1UnionFind" kindref="compound">UnionFind</ref> for all points in this node. If points in this node are in different components, this value will be negative. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1DTBStat_1a31b07fbfe4cc3144cbd9ecd29c641d21" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double maxNeighborDistance</definition>
+        <argsstring></argsstring>
+        <name>maxNeighborDistance</name>
+        <briefdescription>
+<para>Upper bound on the distance to the nearest neighbor of any point in this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1DTBStat_1ace605ebeff43f3ad07c34a7388e74e37" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double minNeighborDistance</definition>
+        <argsstring></argsstring>
+        <name>minNeighborDistance</name>
+        <briefdescription>
+<para>Lower bound on the distance to the nearest neighbor of any point in this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1abf24d1728c9b1953062c6a2486aa2efa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DTBStat</definition>
+        <argsstring>()</argsstring>
+        <name>DTBStat</name>
+        <briefdescription>
+<para>A generic initializer. </para>        </briefdescription>
+        <detaileddescription>
+<para>Sets the maximum neighbor distance to its default, and the component membership to -1 (no component). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="49" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a53418f29d577baf63a854464390e8170" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DTBStat</definition>
+        <argsstring>(const TreeType &amp;node)</argsstring>
+        <name>DTBStat</name>
+        <param>
+          <type>const TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>This is called when a node is finished initializing. </para>        </briefdescription>
+        <detaileddescription>
+<para>We set the maximum neighbor distance to its default, and if possible, we set the component membership of the node (if it has only one point and no children).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node that has been finished. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="63" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="63" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1abe1eb75f967ca19571a77a1e90faa0ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Bound</definition>
+        <argsstring>() const</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Get the total bound for pruning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a421b6e4a396e0c1057e297e39a7d1b8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Bound</definition>
+        <argsstring>()</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Modify the total bound for pruning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a3f07069a05538d0f822f9dca68371c7c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int ComponentMembership</definition>
+        <argsstring>() const</argsstring>
+        <name>ComponentMembership</name>
+        <briefdescription>
+<para>Get the component membership of this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a8a7729e91d7bab8346489e63d43b6026" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int &amp;</type>
+        <definition>int&amp; ComponentMembership</definition>
+        <argsstring>()</argsstring>
+        <name>ComponentMembership</name>
+        <briefdescription>
+<para>Modify the component membership of this node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a4d4e97c209c9d20ab2214ebea3888c01" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double MaxNeighborDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxNeighborDistance</name>
+        <briefdescription>
+<para>Get the maximum neighbor distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="72" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1abcf9c2e19fb0a9c1d95dea5d09e04262" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MaxNeighborDistance</definition>
+        <argsstring>()</argsstring>
+        <name>MaxNeighborDistance</name>
+        <briefdescription>
+<para>Modify the maximum neighbor distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1a7d566fbeb953884df157bef4b07ab664" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double MinNeighborDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>MinNeighborDistance</name>
+        <briefdescription>
+<para>Get the minimum neighbor distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="77" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1DTBStat_1aa09dedc3377b0db900030d33270f7423" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MinNeighborDistance</definition>
+        <argsstring>()</argsstring>
+        <name>MinNeighborDistance</name>
+        <briefdescription>
+<para>Modify the minimum neighbor distance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A statistic for use with mlpack trees, which stores the upper bound on distance to nearest neighbors and the component which this node belongs to. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/dtb_stat.hpp" bodystart="24" bodyend="90"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a7694744cdc068cb065fc8e6bf659d2b3" prot="private" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>bound</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1abe1eb75f967ca19571a77a1e90faa0ad" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a421b6e4a396e0c1057e297e39a7d1b8b" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a3f07069a05538d0f822f9dca68371c7c" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>ComponentMembership</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a8a7729e91d7bab8346489e63d43b6026" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>ComponentMembership</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1ab9746223b95c480afa228c4d84931d97" prot="private" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>componentMembership</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1abf24d1728c9b1953062c6a2486aa2efa" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>DTBStat</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a53418f29d577baf63a854464390e8170" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>DTBStat</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a4d4e97c209c9d20ab2214ebea3888c01" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>MaxNeighborDistance</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1abcf9c2e19fb0a9c1d95dea5d09e04262" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>MaxNeighborDistance</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a31b07fbfe4cc3144cbd9ecd29c641d21" prot="private" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>maxNeighborDistance</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1ace605ebeff43f3ad07c34a7388e74e37" prot="private" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>minNeighborDistance</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1a7d566fbeb953884df157bef4b07ab664" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>MinNeighborDistance</name></member>
+      <member refid="classmlpack_1_1emst_1_1DTBStat_1aa09dedc3377b0db900030d33270f7423" prot="public" virt="non-virtual"><scope>mlpack::emst::DTBStat</scope><name>MinNeighborDistance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

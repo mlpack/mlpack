@@ -1,0 +1,13 @@
+.. _exhale_define_param_8hpp_1a20f436f371a7613b532ae3a4c0416b30:
+
+Define PARAM_MATRIX_OUT
+=======================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_core_util_param.hpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: PARAM_MATRIX_OUT

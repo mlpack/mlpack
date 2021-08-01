@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::MeanSquaredLogarithmicError</compoundname>
+    <includes refid="mean__squared__logarithmic__error_8hpp" local="no">mean_squared_logarithmic_error.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a489eeeb89441241818ab0b96d877e217" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MeanSquaredLogarithmicError</definition>
+        <argsstring>()</argsstring>
+        <name>MeanSquaredLogarithmicError</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError" kindref="compound">MeanSquaredLogarithmicError</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="39" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+          <param>
+            <type>typename LossType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target, LossType &amp;loss)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>LossType &amp;</type>
+          <declname>loss</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>loss</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="61" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1ab3640059898ea76c13709b8099316fe8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+        </templateparamlist>
+        <type>PredictionType::elem_type</type>
+        <definition>PredictionType::elem_type Forward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the mean squared logarithmic error function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="49" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="66" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" bodystart="68" bodyend="68"/>
+        <references refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a65cba07328997659bec80b9879b15a51">MeanSquaredLogarithmicError&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="74" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a21d5f745f02c709625a4ee0907f004a5" compoundref="mean__squared__logarithmic__error_8hpp" startline="68" endline="68">MeanSquaredLogarithmicError&lt; InputDataType, OutputDataType &gt;::OutputParameter</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The mean squared logarithmic error performance function measures the network&apos;s performance according to the mean of squared logarithmic errors. </para>    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp" bodystart="33" bodyend="79"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1ab3640059898ea76c13709b8099316fe8" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a489eeeb89441241818ab0b96d877e217" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>MeanSquaredLogarithmicError</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MeanSquaredLogarithmicError_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::MeanSquaredLogarithmicError</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

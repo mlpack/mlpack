@@ -1,0 +1,330 @@
+\section{Fast\+M\+K\+S\+Model Class Reference}
+\label{classmlpack_1_1fastmks_1_1FastMKSModel}\index{Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}}
+
+
+A utility struct to contain all the possible \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} models, for use by the mlpack\+\_\+fastmks program.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Kernel\+Types} \{ \newline
+\textbf{ L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL}, 
+\newline
+\textbf{ P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL}, 
+\newline
+\textbf{ C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE}, 
+\newline
+\textbf{ G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL}, 
+\newline
+\textbf{ E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL}, 
+\newline
+\textbf{ T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL}, 
+\newline
+\textbf{ H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL}
+ \}\begin{DoxyCompactList}\small\item\em A list of all the kernels we support. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Fast\+M\+K\+S\+Model} (const int kernel\+Type=\textbf{ L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Fast\+M\+K\+S\+Model}{p.}{classmlpack_1_1fastmks_1_1FastMKSModel} with the given kernel type. \end{DoxyCompactList}\item 
+\textbf{ Fast\+M\+K\+S\+Model} (const \textbf{ Fast\+M\+K\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ Fast\+M\+K\+S\+Model} (\textbf{ Fast\+M\+K\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Fast\+M\+K\+S\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T\+Kernel\+Type $>$ }\\void \textbf{ Build\+Model} (arma\+::mat \&\&reference\+Data, T\+Kernel\+Type \&kernel, const bool single\+Mode, const bool naive, const double base)
+\begin{DoxyCompactList}\small\item\em Build the model on the given reference set. \end{DoxyCompactList}\item 
+int \textbf{ Kernel\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel type. \end{DoxyCompactList}\item 
+int \& \textbf{ Kernel\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel type. \end{DoxyCompactList}\item 
+bool \textbf{ Naive} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not naive search is used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Naive} ()
+\begin{DoxyCompactList}\small\item\em Set whether or not naive search is used. \end{DoxyCompactList}\item 
+\textbf{ Fast\+M\+K\+S\+Model} \& \textbf{ operator=} (const \textbf{ Fast\+M\+K\+S\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ Fast\+M\+K\+S\+Model} \& \textbf{ operator=} (\textbf{ Fast\+M\+K\+S\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const arma\+::mat \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels, const double base)
+\begin{DoxyCompactList}\small\item\em Search with a different query set. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels)
+\begin{DoxyCompactList}\small\item\em Search with the reference set as the query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+bool \textbf{ Single\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not single-\/tree search is used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Set whether or not single-\/tree search is used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A utility struct to contain all the possible \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} models, for use by the mlpack\+\_\+fastmks program. 
+
+
+
+Definition at line 34 of file fastmks\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Kernel\+Types@{Kernel\+Types}}
+\index{Kernel\+Types@{Kernel\+Types}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Kernel\+Types}
+{\footnotesize\ttfamily enum \textbf{ Kernel\+Types}}
+
+
+
+A list of all the kernels we support. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL@{L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL@{L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb}} 
+L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL@{P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL@{P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b}} 
+P\+O\+L\+Y\+N\+O\+M\+I\+A\+L\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE@{C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE@{C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee}} 
+C\+O\+S\+I\+N\+E\+\_\+\+D\+I\+S\+T\+A\+N\+CE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL@{G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL@{G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13}} 
+G\+A\+U\+S\+S\+I\+A\+N\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL@{E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL@{E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc}} 
+E\+P\+A\+N\+E\+C\+H\+N\+I\+K\+O\+V\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL@{T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL@{T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61a54d012af1c18f0d33fc7b76ee3d164fe}} 
+T\+R\+I\+A\+N\+G\+U\+L\+A\+R\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL@{H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL@{H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL}}}\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a0d0c6dc6893ad3824d5d31d87e69fb61aa8b1a75b45fd61561787952bff37e591}} 
+H\+Y\+P\+T\+A\+N\+\_\+\+K\+E\+R\+N\+EL&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 38 of file fastmks\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a785f40ed57385b87326e500c92e6e919}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}}
+\index{Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Fast\+M\+K\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Model} (\begin{DoxyParamCaption}\item[{const int}]{kernel\+Type = {\ttfamily \textbf{ L\+I\+N\+E\+A\+R\+\_\+\+K\+E\+R\+N\+EL}} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Fast\+M\+K\+S\+Model}{p.}{classmlpack_1_1fastmks_1_1FastMKSModel} with the given kernel type. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_ae4060d2c27f69eea2438f25bc24eeddb}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}}
+\index{Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Fast\+M\+K\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Model} (\begin{DoxyParamCaption}\item[{const \textbf{ Fast\+M\+K\+S\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_af44dc1dc47f204f5163feaae0da6d0c8}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}}
+\index{Fast\+M\+K\+S\+Model@{Fast\+M\+K\+S\+Model}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Fast\+M\+K\+S\+Model()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Model} (\begin{DoxyParamCaption}\item[{\textbf{ Fast\+M\+K\+S\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a901e6c34f535118d384a4ae938a44f90}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!````~Fast\+M\+K\+S\+Model@{$\sim$\+Fast\+M\+K\+S\+Model}}
+\index{````~Fast\+M\+K\+S\+Model@{$\sim$\+Fast\+M\+K\+S\+Model}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{$\sim$\+Fast\+M\+K\+S\+Model()}
+{\footnotesize\ttfamily $\sim$\textbf{ Fast\+M\+K\+S\+Model} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_af6633d1be8fcc6fb3c24722505310828}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Build\+Model@{Build\+Model}}
+\index{Build\+Model@{Build\+Model}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Build\+Model()}
+{\footnotesize\ttfamily void Build\+Model (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Data,  }\item[{T\+Kernel\+Type \&}]{kernel,  }\item[{const bool}]{single\+Mode,  }\item[{const bool}]{naive,  }\item[{const double}]{base }\end{DoxyParamCaption})}
+
+
+
+Build the model on the given reference set. 
+
+Make sure kernel\+Type is equal to the correct entry in Kernel\+Types for the given Kernel\+Type class! \mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_aaefce8a6d9804780c3ba76387743bfa1}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Kernel\+Type@{Kernel\+Type}}
+\index{Kernel\+Type@{Kernel\+Type}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Kernel\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int Kernel\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel type. 
+
+
+
+Definition at line 93 of file fastmks\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a15c6e02f9ef88544804eab512e383407}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Kernel\+Type@{Kernel\+Type}}
+\index{Kernel\+Type@{Kernel\+Type}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Kernel\+Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int\& Kernel\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel type. 
+
+
+
+Definition at line 95 of file fastmks\+\_\+model.\+hpp.
+
+
+
+References Fast\+M\+K\+S\+Model\+::\+Search(), and Fast\+M\+K\+S\+Model\+::serialize().
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a343230e7d7344e3f7d5f5f2eb89cf2c5}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get whether or not naive search is used. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_af7d397adca3f411b4e2d2f977b280ce6}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Set whether or not naive search is used. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a1679bc06e54e078ade0d854db6daa912}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Fast\+M\+K\+S\+Model} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy assignment operator. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a7efa63563a3b3934e96ab230902a744f}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Fast\+M\+K\+S\+Model}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Fast\+M\+K\+S\+Model} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move assignment operator. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a812b069578882b07c71b9ce5ab977bab}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices,  }\item[{arma\+::mat \&}]{kernels,  }\item[{const double}]{base }\end{DoxyParamCaption})}
+
+
+
+Search with a different query set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set to search with. \\
+\hline
+{\em k} & Number of max-\/kernel candidates to search for. \\
+\hline
+{\em indices} & A matrix in which to store the indices of max-\/kernel candidates. \\
+\hline
+{\em kernels} & A matrix in which to store the max-\/kernel candidate kernel values. \\
+\hline
+{\em base} & Base to use for cover tree building (if in dual-\/tree search mode). \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Fast\+M\+K\+S\+Model\+::\+Kernel\+Type().
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_af21ed3dd588e5375f7fb5b69819b60bb}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices,  }\item[{arma\+::mat \&}]{kernels }\end{DoxyParamCaption})}
+
+
+
+Search with the reference set as the query set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of max-\/kernel candidates to search for. \\
+\hline
+{\em indices} & A matrix in which to store the indices of max-\/kernel candidates. \\
+\hline
+{\em kernels} & A matrix in which to store the max-\/kernel candidate kernel values. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+
+
+Referenced by Fast\+M\+K\+S\+Model\+::\+Kernel\+Type().
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_a7477b3e8499a6158bbe177e7f30d4947}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get whether or not single-\/tree search is used. 
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSModel_adadacd63ddeadf138d834b1fdc632773}} 
+\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Model}}
+\subsubsection{Single\+Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Set whether or not single-\/tree search is used. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/fastmks/\textbf{ fastmks\+\_\+model.\+hpp}\end{DoxyCompactItemize}

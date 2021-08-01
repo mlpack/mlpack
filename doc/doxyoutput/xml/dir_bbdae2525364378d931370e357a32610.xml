@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_bbdae2525364378d931370e357a32610" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/lmnn</compoundname>
+    <innerfile refid="constraints_8hpp">constraints.hpp</innerfile>
+    <innerfile refid="lmnn_8hpp">lmnn.hpp</innerfile>
+    <innerfile refid="lmnn__function_8hpp">lmnn_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/lmnn/"/>
+  </compounddef>
+</doxygen>

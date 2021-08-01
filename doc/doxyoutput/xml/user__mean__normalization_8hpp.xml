@@ -1,0 +1,508 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="user__mean__normalization_8hpp" kind="file" language="C++">
+    <compoundname>user_mean_normalization.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="46429">
+        <label>list</label>
+      </node>
+      <node id="46426">
+        <label>atomic</label>
+      </node>
+      <node id="46416">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="46392">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="46428">
+        <label>iomanip</label>
+      </node>
+      <node id="46401">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="46402" relation="include">
+        </childnode>
+        <childnode refid="46404" relation="include">
+        </childnode>
+      </node>
+      <node id="46384">
+        <label>cstdint</label>
+      </node>
+      <node id="46393">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="46400">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="46423">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="46413">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="46380">
+        <label>cmath</label>
+      </node>
+      <node id="46399">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="46388">
+        <label>stdexcept</label>
+      </node>
+      <node id="46408">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="46393" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46394" relation="include">
+        </childnode>
+      </node>
+      <node id="46432">
+        <label>string</label>
+      </node>
+      <node id="46420">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="46421" relation="include">
+        </childnode>
+        <childnode refid="46387" relation="include">
+        </childnode>
+      </node>
+      <node id="46430">
+        <label>map</label>
+      </node>
+      <node id="46382">
+        <label>cfloat</label>
+      </node>
+      <node id="46412">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="46434">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="46396">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="46419">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="46420" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46403" relation="include">
+        </childnode>
+        <childnode refid="46421" relation="include">
+        </childnode>
+      </node>
+      <node id="46409">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="46407">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="46393" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46394" relation="include">
+        </childnode>
+      </node>
+      <node id="46410">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="46393" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46394" relation="include">
+        </childnode>
+      </node>
+      <node id="46398">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="46378">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/normalization/user_mean_normalization.hpp</label>
+        <link refid="user__mean__normalization_8hpp"/>
+        <childnode refid="46379" relation="include">
+        </childnode>
+      </node>
+      <node id="46418">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="46394" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46406" relation="include">
+        </childnode>
+        <childnode refid="46415" relation="include">
+        </childnode>
+      </node>
+      <node id="46422">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46423" relation="include">
+        </childnode>
+      </node>
+      <node id="46424">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="46379">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="46380" relation="include">
+        </childnode>
+        <childnode refid="46381" relation="include">
+        </childnode>
+        <childnode refid="46382" relation="include">
+        </childnode>
+        <childnode refid="46383" relation="include">
+        </childnode>
+        <childnode refid="46384" relation="include">
+        </childnode>
+        <childnode refid="46385" relation="include">
+        </childnode>
+        <childnode refid="46386" relation="include">
+        </childnode>
+        <childnode refid="46387" relation="include">
+        </childnode>
+        <childnode refid="46388" relation="include">
+        </childnode>
+        <childnode refid="46389" relation="include">
+        </childnode>
+        <childnode refid="46390" relation="include">
+        </childnode>
+        <childnode refid="46391" relation="include">
+        </childnode>
+        <childnode refid="46392" relation="include">
+        </childnode>
+        <childnode refid="46393" relation="include">
+        </childnode>
+        <childnode refid="46394" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46397" relation="include">
+        </childnode>
+        <childnode refid="46398" relation="include">
+        </childnode>
+        <childnode refid="46399" relation="include">
+        </childnode>
+        <childnode refid="46400" relation="include">
+        </childnode>
+        <childnode refid="46401" relation="include">
+        </childnode>
+        <childnode refid="46405" relation="include">
+        </childnode>
+        <childnode refid="46406" relation="include">
+        </childnode>
+        <childnode refid="46407" relation="include">
+        </childnode>
+        <childnode refid="46408" relation="include">
+        </childnode>
+        <childnode refid="46409" relation="include">
+        </childnode>
+        <childnode refid="46410" relation="include">
+        </childnode>
+        <childnode refid="46411" relation="include">
+        </childnode>
+        <childnode refid="46417" relation="include">
+        </childnode>
+        <childnode refid="46418" relation="include">
+        </childnode>
+        <childnode refid="46415" relation="include">
+        </childnode>
+        <childnode refid="46419" relation="include">
+        </childnode>
+        <childnode refid="46422" relation="include">
+        </childnode>
+        <childnode refid="46424" relation="include">
+        </childnode>
+        <childnode refid="46425" relation="include">
+        </childnode>
+        <childnode refid="46434" relation="include">
+        </childnode>
+        <childnode refid="46435" relation="include">
+        </childnode>
+      </node>
+      <node id="46385">
+        <label>cstdio</label>
+      </node>
+      <node id="46389">
+        <label>tuple</label>
+      </node>
+      <node id="46394">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="46411">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="46394" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46398" relation="include">
+        </childnode>
+        <childnode refid="46412" relation="include">
+        </childnode>
+        <childnode refid="46413" relation="include">
+        </childnode>
+        <childnode refid="46414" relation="include">
+        </childnode>
+        <childnode refid="46415" relation="include">
+        </childnode>
+      </node>
+      <node id="46390">
+        <label>utility</label>
+      </node>
+      <node id="46414">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="46405">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="46402">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="46403" relation="include">
+        </childnode>
+      </node>
+      <node id="46425">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="46426" relation="include">
+        </childnode>
+        <childnode refid="46427" relation="include">
+        </childnode>
+        <childnode refid="46428" relation="include">
+        </childnode>
+        <childnode refid="46429" relation="include">
+        </childnode>
+        <childnode refid="46430" relation="include">
+        </childnode>
+        <childnode refid="46431" relation="include">
+        </childnode>
+        <childnode refid="46432" relation="include">
+        </childnode>
+        <childnode refid="46433" relation="include">
+        </childnode>
+      </node>
+      <node id="46403">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="46417">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="46415" relation="include">
+        </childnode>
+        <childnode refid="46411" relation="include">
+        </childnode>
+        <childnode refid="46418" relation="include">
+        </childnode>
+      </node>
+      <node id="46386">
+        <label>cstdlib</label>
+      </node>
+      <node id="46381">
+        <label>cctype</label>
+      </node>
+      <node id="46404">
+        <label>unordered_map</label>
+      </node>
+      <node id="46383">
+        <label>climits</label>
+      </node>
+      <node id="46431">
+        <label>mutex</label>
+      </node>
+      <node id="46427">
+        <label>chrono</label>
+      </node>
+      <node id="46435">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="46433">
+        <label>thread</label>
+      </node>
+      <node id="46421">
+        <label>type_traits</label>
+      </node>
+      <node id="46397">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="46391">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="46415">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="46393" relation="include">
+        </childnode>
+        <childnode refid="46394" relation="include">
+        </childnode>
+        <childnode refid="46395" relation="include">
+        </childnode>
+        <childnode refid="46396" relation="include">
+        </childnode>
+        <childnode refid="46416" relation="include">
+        </childnode>
+      </node>
+      <node id="46387">
+        <label>cstring</label>
+      </node>
+      <node id="46406">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="46395">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1UserMeanNormalization" prot="public">mlpack::cf::UserMeanNormalization</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Wenhao Huang</para></simplesect>
+This class performs user mean normalization on raw ratings. In another word, this class is used to remove global effect of user mean.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_CF_NORMALIZATION_USER_MEAN_NORMALIZATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_CF_NORMALIZATION_USER_MEAN_NORMALIZATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1cf_1_1UserMeanNormalization" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization" kindref="compound">UserMeanNormalization</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Empty<sp/>constructor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a95ff6b23a42843c747deb50c32825344" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a95ff6b23a42843c747deb50c32825344" kindref="member">UserMeanNormalization</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a87410cc06d847eef46d0dfdb137c6be7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a87410cc06d847eef46d0dfdb137c6be7" kindref="member">Normalize</ref>(arma::mat&amp;<sp/>data)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>userNum<sp/>=<sp/>arma::max(data.row(0))<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>userMean<sp/>=<sp/>arma::vec(userNum,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Number<sp/>of<sp/>ratings<sp/>for<sp/>each<sp/>user.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;<sp/>ratingNum(userNum,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sum<sp/>ratings<sp/>for<sp/>each<sp/>user.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>data.each_col([&amp;](arma::vec&amp;<sp/>datapoint)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user<sp/>=<sp/>(size_t)<sp/>datapoint(0);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating<sp/>=<sp/>datapoint(2);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>userMean(user)<sp/>+=<sp/>rating;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>ratingNum(user)<sp/>+=<sp/>1;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>user<sp/>mean<sp/>and<sp/>subtract<sp/>user<sp/>mean<sp/>from<sp/>ratings.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Set<sp/>user<sp/>mean<sp/>to<sp/>0<sp/>if<sp/>the<sp/>user<sp/>has<sp/>no<sp/>rating.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>userNum;<sp/>++i)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ratingNum(i)<sp/>!=<sp/>0)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>userMean(i)<sp/>/=<sp/>ratingNum(i);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>data.each_col([&amp;](arma::vec&amp;<sp/>datapoint)</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user<sp/>=<sp/>(size_t)<sp/>datapoint(0);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>datapoint(2)<sp/>-=<sp/>userMean(user);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>algorithm<sp/>omits<sp/>rating<sp/>of<sp/>zero.<sp/>If<sp/>normalized<sp/>rating<sp/>equals<sp/>zero,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>is<sp/>set<sp/>to<sp/>the<sp/>smallest<sp/>positive<sp/>double<sp/>value.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(datapoint(2)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>datapoint(2)<sp/>=<sp/>std::numeric_limits&lt;double&gt;::min();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a9656a2fd4841da15cf4b13ab57aa8000" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a9656a2fd4841da15cf4b13ab57aa8000" kindref="member">Normalize</ref>(arma::sp_mat&amp;<sp/>cleanedData)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>userMean.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>userMean<sp/>=<sp/>arma::vec(cleanedData.n_cols,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;<sp/>ratingNum(cleanedData.n_cols,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::sp_mat::iterator<sp/>it<sp/>=<sp/>cleanedData.begin();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::sp_mat::iterator<sp/>it_end<sp/>=<sp/>cleanedData.end();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(;<sp/>it<sp/>!=<sp/>it_end;<sp/>++it)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>userMean(it.col())<sp/>+=<sp/>*it;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>ratingNum(it.col())<sp/>+=<sp/>1;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>userMean.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ratingNum(i)<sp/>!=<sp/>0)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>userMean(i)<sp/>/=<sp/>ratingNum(i);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Normalize<sp/>the<sp/>data.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>it<sp/>=<sp/>cleanedData.begin();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(;<sp/>it<sp/>!=<sp/>cleanedData.end();<sp/>++it)</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tmp<sp/>=<sp/>*it<sp/>-<sp/>userMean(it.col());</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>algorithm<sp/>omits<sp/>rating<sp/>of<sp/>zero.<sp/>If<sp/>normalized<sp/>rating<sp/>equals<sp/>zero,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>is<sp/>set<sp/>to<sp/>the<sp/>smallest<sp/>positive<sp/>float<sp/>value.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tmp<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tmp<sp/>=<sp/>std::numeric_limits&lt;float&gt;::min();</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>*it<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1abf21cefd8cf5cdc776b4dc9cf8eac372" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1abf21cefd8cf5cdc776b4dc9cf8eac372" kindref="member">Denormalize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>item<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="133"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rating<sp/>+<sp/>userMean(user);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a93926452083f79197edc30f83476a40d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a93926452083f79197edc30f83476a40d" kindref="member">Denormalize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>combinations,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>predictions)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="145"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>predictions.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user<sp/>=<sp/>combinations(0,<sp/>i);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>predictions(i)<sp/>+=<sp/>userMean(user);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a6db5f5d76cbd055347cecd9ca90eea86" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a6db5f5d76cbd055347cecd9ca90eea86" kindref="member">Mean</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>userMean;<sp/>}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="162" refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1UserMeanNormalization_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(userMean));</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/>arma::vec<sp/>userMean;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/user_mean_normalization.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_339a92b69de992c476f69912c4933ab8" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/lars</compoundname>
+    <innerfile refid="lars_8hpp">lars.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/lars/"/>
+  </compounddef>
+</doxygen>

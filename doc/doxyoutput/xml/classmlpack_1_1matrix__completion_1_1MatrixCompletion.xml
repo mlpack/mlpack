@@ -1,0 +1,407 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1matrix__completion_1_1MatrixCompletion" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::matrix_completion::MatrixCompletion</compoundname>
+    <includes refid="matrix__completion_8hpp" local="no">matrix_completion.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a2ed8ce8220267a1311e7230c46ed382f" prot="private" static="no" mutable="no">
+        <type>arma::umat</type>
+        <definition>arma::umat indices</definition>
+        <argsstring></argsstring>
+        <name>indices</name>
+        <briefdescription>
+<para>Matrix containing the indices of the known entries (has two rows). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a007b64e06504c20a853be59118f2182a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t m</definition>
+        <argsstring></argsstring>
+        <name>m</name>
+        <briefdescription>
+<para>Number of rows in original matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a3d05cf6aa68b03e254d70afbe869e305" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+<para>Number of columns in original matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aacd669a958c07f26f5de9de1c215eab8" prot="private" static="no" mutable="no">
+        <type>ens::LRSDP&lt; ens::SDP&lt; arma::sp_mat &gt; &gt;</type>
+        <definition>ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt; &gt; sdp</definition>
+        <argsstring></argsstring>
+        <name>sdp</name>
+        <briefdescription>
+<para>The underlying SDP to be solved. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a98be09ab3e352319efee7bfdcd0664ae" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat values</definition>
+        <argsstring></argsstring>
+        <name>values</name>
+        <briefdescription>
+<para>Vector containing the values of the known entries. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a5f500c0e84f8afe5603571983f88339b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MatrixCompletion</definition>
+        <argsstring>(const size_t m, const size_t n, const arma::umat &amp;indices, const arma::vec &amp;values, const size_t r)</argsstring>
+        <name>MatrixCompletion</name>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const arma::umat &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>values</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Construct a matrix completion problem, specifying the maximum rank of the solution. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix containing the indices of the known entries (must be [2 x p]). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>values</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing the values of the known entries (must be length p). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum rank of solution. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="68" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a8c29debbb3dcafbcbef2959136870bfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MatrixCompletion</definition>
+        <argsstring>(const size_t m, const size_t n, const arma::umat &amp;indices, const arma::vec &amp;values, const arma::mat &amp;initialPoint)</argsstring>
+        <name>MatrixCompletion</name>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const arma::umat &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>values</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>initialPoint</declname>
+        </param>
+        <briefdescription>
+<para>Construct a matrix completion problem, specifying the initial point of the optimization. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix containing the indices of the known entries (must be [2 x p]). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>values</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing the values of the known entries (must be length p). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initialPoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Starting point for the SDP optimization. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="86" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aeb772507cd8f576eceedf6edc52d0ef3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MatrixCompletion</definition>
+        <argsstring>(const size_t m, const size_t n, const arma::umat &amp;indices, const arma::vec &amp;values)</argsstring>
+        <name>MatrixCompletion</name>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const arma::umat &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+<para>Construct a matrix completion problem. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns of original matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix containing the indices of the known entries (must be [2 x p]). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>values</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector containing the values of the known entries (must be length p). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="102" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aa758764911348e5540da0ffd092eba75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Recover</definition>
+        <argsstring>(arma::mat &amp;recovered)</argsstring>
+        <name>Recover</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>recovered</declname>
+        </param>
+        <briefdescription>
+<para>Solve the underlying SDP to fill in the remaining values. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>recovered</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Will contain the completed matrix. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="112" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ac1d73e9809358a87bd0092a77f8f00be" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const ens::LRSDP&lt; ens::SDP&lt; arma::sp_mat &gt; &gt; &amp;</type>
+        <definition>const ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt; &gt;&amp; Sdp</definition>
+        <argsstring>() const</argsstring>
+        <name>Sdp</name>
+        <briefdescription>
+<para>Return the underlying SDP. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="115" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a67f1f8713360e9c83a12f1ad735d7f8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ens::LRSDP&lt; ens::SDP&lt; arma::sp_mat &gt; &gt; &amp;</type>
+        <definition>ens::LRSDP&lt;ens::SDP&lt;arma::sp_mat&gt; &gt;&amp; Sdp</definition>
+        <argsstring>()</argsstring>
+        <name>Sdp</name>
+        <briefdescription>
+<para>Modify the underlying SDP. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ae4b0b2e284b3d9f9991b37bca7de6de8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CheckValues</definition>
+        <argsstring>()</argsstring>
+        <name>CheckValues</name>
+        <briefdescription>
+<para>Validate the input matrices. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="136" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ad3396d2a43c71766a27e054d30f1fb0d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InitSDP</definition>
+        <argsstring>()</argsstring>
+        <name>InitSDP</name>
+        <briefdescription>
+<para>Initialize the SDP. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="138" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aa12c14a7c72ec979684e9006887f84af" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t DefaultRank</definition>
+        <argsstring>(const size_t m, const size_t n, const size_t p)</argsstring>
+        <name>DefaultRank</name>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+<para>Select a rank of the matrix given that is of size m x n and has p known elements. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="142" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements the popular nuclear norm minimization heuristic for matrix completion problems. </para>    </briefdescription>
+    <detaileddescription>
+<para>That is, given known values M_ij&apos;s, the following optimization problem (semi-definite program) is solved to fill in the remaining unknown values of X</para><para>min ||X||_* subj to X_ij = M_ij</para><para>where ||X||_* denotes the nuclear norm (sum of singular values of X).</para><para>For a theoretical treatment of the conditions necessary for exact recovery, see the following paper:</para><para>A Simpler Appoarch to Matrix Completion. Benjamin Recht. JMLR 11. <ulink url="http://arxiv.org/pdf/0910.0651v2.pdf">http://arxiv.org/pdf/0910.0651v2.pdf</ulink></para><para>An example of how to use this class is shown below:</para><para><programlisting><codeline><highlight class="normal">size_t<sp/>m,<sp/>n;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>size<sp/>of<sp/>unknown<sp/>matrix</highlight></codeline>
+<codeline><highlight class="normal">arma::umat<sp/>indices;<sp/><sp/>//<sp/>contains<sp/>the<sp/>known<sp/>indices<sp/>[2<sp/>x<sp/>n_entries]</highlight></codeline>
+<codeline><highlight class="normal">arma::vec<sp/>values;<sp/><sp/><sp/><sp/>//<sp/>contains<sp/>the<sp/>known<sp/>values<sp/>[n_entries]</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>recovered;<sp/>//<sp/>will<sp/>contain<sp/>the<sp/>completed<sp/>matrix</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">MatrixCompletion<sp/>mc(m,<sp/>n,<sp/>indices,<sp/>values);</highlight></codeline>
+<codeline><highlight class="normal">mc.Recover(recovered);</highlight></codeline>
+</programlisting></para><para><simplesect kind="see"><para>LRSDP </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/matrix_completion/matrix_completion.hpp" bodystart="53" bodyend="143"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ae4b0b2e284b3d9f9991b37bca7de6de8" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>CheckValues</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aa12c14a7c72ec979684e9006887f84af" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>DefaultRank</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a2ed8ce8220267a1311e7230c46ed382f" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>indices</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ad3396d2a43c71766a27e054d30f1fb0d" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>InitSDP</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a007b64e06504c20a853be59118f2182a" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>m</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a5f500c0e84f8afe5603571983f88339b" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>MatrixCompletion</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a8c29debbb3dcafbcbef2959136870bfc" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>MatrixCompletion</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aeb772507cd8f576eceedf6edc52d0ef3" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>MatrixCompletion</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a3d05cf6aa68b03e254d70afbe869e305" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>n</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aa758764911348e5540da0ffd092eba75" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>Recover</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1ac1d73e9809358a87bd0092a77f8f00be" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>Sdp</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a67f1f8713360e9c83a12f1ad735d7f8d" prot="public" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>Sdp</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1aacd669a958c07f26f5de9de1c215eab8" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>sdp</name></member>
+      <member refid="classmlpack_1_1matrix__completion_1_1MatrixCompletion_1a98be09ab3e352319efee7bfdcd0664ae" prot="private" virt="non-virtual"><scope>mlpack::matrix_completion::MatrixCompletion</scope><name>values</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

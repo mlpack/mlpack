@@ -1,0 +1,462 @@
+.TH "RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap > \- The \fBRandomForest\fP class provides an implementation of random forests, described in Breiman's seminal paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType > \fBDecisionTreeType\fP"
+.br
+.RI "Allow access to the underlying decision tree type\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRandomForest\fP ()"
+.br
+.RI "Construct the random forest without any training or specifying the number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > \fBRandomForest\fP (const MatType &dataset, const arma::Row< size_t > &labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Create a random forest, training on the given labeled training data with the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > \fBRandomForest\fP (const MatType &dataset, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Create a random forest, training on the given labeled training data with the given dataset info and the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > \fBRandomForest\fP (const MatType &dataset, const arma::Row< size_t > &labels, const size_t numClasses, const arma::rowvec &weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Create a random forest, training on the given weighted labeled training data with the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > \fBRandomForest\fP (const MatType &dataset, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const arma::rowvec &weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Create a random forest, training on the given weighted labeled training data with the given dataset info and the given number of trees\&. "
+.ti -1c
+.RI "template<typename VecType > size_t \fBClassify\fP (const VecType &point) const"
+.br
+.RI "Predict the class of the given point\&. "
+.ti -1c
+.RI "template<typename VecType > void \fBClassify\fP (const VecType &point, size_t &prediction, arma::vec &probabilities) const"
+.br
+.RI "Predict the class of the given point and return the predicted class probabilities for each class\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions) const"
+.br
+.RI "Predict the classes of each point in the given dataset\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions, arma::mat &probabilities) const"
+.br
+.RI "Predict the classes of each point in the given dataset, also returning the predicted class probabilities for each point\&. "
+.ti -1c
+.RI "size_t \fBNumTrees\fP () const"
+.br
+.RI "Get the number of trees in the forest\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the random forest\&. "
+.ti -1c
+.RI "template<typename MatType > double \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Train the random forest on the given labeled training data with the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > double \fBTrain\fP (const MatType &data, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Train the random forest on the given labeled training data with the given dataset info and the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > double \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const size_t numClasses, const arma::rowvec &weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Train the random forest on the given weighted labeled training data with the given number of trees\&. "
+.ti -1c
+.RI "template<typename MatType > double \fBTrain\fP (const MatType &data, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const arma::rowvec &weights, const size_t numTrees=20, const size_t minimumLeafSize=1, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, const bool warmStart=false, DimensionSelectionType dimensionSelector=DimensionSelectionType())"
+.br
+.RI "Train the random forest on the given weighted labeled training data with the given dataset info and the given number of trees\&. "
+.ti -1c
+.RI "const \fBDecisionTreeType\fP & \fBTree\fP (const size_t i) const"
+.br
+.RI "Access a tree in the forest\&. "
+.ti -1c
+.RI "\fBDecisionTreeType\fP & \fBTree\fP (const size_t i)"
+.br
+.RI "Modify a tree in the forest (be careful!)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction = GiniGain, typename DimensionSelectionType = MultipleRandomDimensionSelect, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, bool UseBootstrap = true>
+.br
+class mlpack::tree::RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >"
+The \fBRandomForest\fP class provides an implementation of random forests, described in Breiman's seminal paper: 
+
+
+.PP
+.nf
+@article{breiman2001random,
+  title={Random forests},
+  author={Breiman, Leo},
+  journal={Machine Learning},
+  volume={45},
+  number={1},
+  pages={5--32},
+  year={2001},
+  publisher={Springer}
+}
+
+.fi
+.PP
+ 
+.PP
+Definition at line 44 of file random_forest\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBDecisionTree\fP<FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType> \fBDecisionTreeType\fP"
+
+.PP
+Allow access to the underlying decision tree type\&. 
+.PP
+Definition at line 49 of file random_forest\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRandomForest\fP ()"
+
+.PP
+Construct the random forest without any training or specifying the number of trees\&. Predict() will throw an exception until \fBTrain()\fP is called\&. 
+.SS "\fBRandomForest\fP (const MatType & dataset, const arma::Row< size_t > & labels, const size_t numClasses, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Create a random forest, training on the given labeled training data with the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+
+.SS "\fBRandomForest\fP (const MatType & dataset, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Create a random forest, training on the given labeled training data with the given dataset info and the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&. This constructor can be used to train on categorical data\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Dimension info for the dataset\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+
+.SS "\fBRandomForest\fP (const MatType & dataset, const arma::Row< size_t > & labels, const size_t numClasses, const arma::rowvec & weights, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Create a random forest, training on the given weighted labeled training data with the given number of trees\&. The minimumLeafSize parameter is given to each individual decision tree during tree building\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIweights\fP Weights (importances) of each point in the dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+
+.SS "\fBRandomForest\fP (const MatType & dataset, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const arma::rowvec & weights, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Create a random forest, training on the given weighted labeled training data with the given dataset info and the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&. This can be used for categorical weighted training\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Dimension info for the dataset\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIweights\fP Weights (importances) of each point in the dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Classify (const VecType & point) const"
+
+.PP
+Predict the class of the given point\&. If the random forest has not been trained, this will throw an exception\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to be classified\&. 
+.RE
+.PP
+
+.SS "void Classify (const VecType & point, size_t & prediction, arma::vec & probabilities) const"
+
+.PP
+Predict the class of the given point and return the predicted class probabilities for each class\&. If the random forest has not been trained, this will throw an exception\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to be classified\&. 
+.br
+\fIprediction\fP size_t to store predicted class in\&. 
+.br
+\fIprobabilities\fP Output vector of class probabilities\&. 
+.RE
+.PP
+
+.SS "void Classify (const MatType & data, arma::Row< size_t > & predictions) const"
+
+.PP
+Predict the classes of each point in the given dataset\&. If the random forest has not been trained, this will throw an exception\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to be classified\&. 
+.br
+\fIpredictions\fP Output predictions for each point in the dataset\&. 
+.RE
+.PP
+
+.SS "void Classify (const MatType & data, arma::Row< size_t > & predictions, arma::mat & probabilities) const"
+
+.PP
+Predict the classes of each point in the given dataset, also returning the predicted class probabilities for each point\&. If the random forest has not been trained, this will throw an exception\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to be classified\&. 
+.br
+\fIpredictions\fP Output predictions for each point in the dataset\&. 
+.br
+\fIprobabilities\fP Output matrix of class probabilities for each point\&. 
+.RE
+.PP
+
+.SS "size_t NumTrees () const\fC [inline]\fP"
+
+.PP
+Get the number of trees in the forest\&. 
+.PP
+Definition at line 362 of file random_forest\&.hpp\&.
+.PP
+References RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >::serialize(), and RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >::Train()\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the random forest\&. 
+.PP
+Referenced by RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >::NumTrees()\&.
+.SS "double Train (const MatType & data, const arma::Row< size_t > & labels, const size_t numClasses, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, const bool warmStart = \fCfalse\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Train the random forest on the given labeled training data with the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIwarmStart\fP When set to \fCtrue\fP, it adds \fCnumTrees\fP new trees to the existing random forest otherwise a new forest is trained from scratch\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The average entropy of all the decision trees trained under forest\&. 
+.RE
+.PP
+
+.PP
+Referenced by RandomForest< FitnessFunction, DimensionSelectionType, NumericSplitType, CategoricalSplitType, UseBootstrap >::NumTrees()\&.
+.SS "double Train (const MatType & data, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, const bool warmStart = \fCfalse\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Train the random forest on the given labeled training data with the given dataset info and the given number of trees\&. The minimumLeafSize parameter is given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&. This overload can be used to train on categorical data\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Dimension info for the dataset\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIwarmStart\fP When set to \fCtrue\fP, it adds \fCnumTrees\fP new trees to the existing random forest else a new forest is trained from scratch\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The average entropy of all the decision trees trained under forest\&. 
+.RE
+.PP
+
+.SS "double Train (const MatType & data, const arma::Row< size_t > & labels, const size_t numClasses, const arma::rowvec & weights, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, const bool warmStart = \fCfalse\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Train the random forest on the given weighted labeled training data with the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIweights\fP Weights (importances) of each point in the dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIwarmStart\fP When set to \fCtrue\fP, it adds \fCnumTrees\fP new trees to the existing random forest else a new forest is trained from scratch\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The average entropy of all the decision trees trained under forest\&. 
+.RE
+.PP
+
+.SS "double Train (const MatType & data, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const arma::rowvec & weights, const size_t numTrees = \fC20\fP, const size_t minimumLeafSize = \fC1\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, const bool warmStart = \fCfalse\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
+
+.PP
+Train the random forest on the given weighted labeled training data with the given dataset info and the given number of trees\&. The minimumLeafSize and minimumGainSplit parameters are given to each individual decision tree during tree building\&. Optionally, you may specify a DimensionSelectionType to set parameters for the strategy used to choose dimensions\&. This overload can be used for categorical weighted training\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Dimension info for the dataset\&. 
+.br
+\fIlabels\fP Labels for dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIweights\fP Weights (importances) of each point in the dataset\&. 
+.br
+\fInumTrees\fP Number of trees in the forest\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each tree's leaf nodes\&. 
+.br
+\fIminimumGainSplit\fP Minimum gain for splitting a decision tree node\&. 
+.br
+\fImaximumDepth\fP Maximum depth for the tree\&. 
+.br
+\fIwarmStart\fP When set to \fCtrue\fP, it adds \fCnumTrees\fP new trees to the existing random forest else a new forest is trained from scratch\&. 
+.br
+\fIdimensionSelector\fP Instantiated dimension selection policy\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The average entropy of all the decision trees trained under forest\&. 
+.RE
+.PP
+
+.SS "const \fBDecisionTreeType\fP& Tree (const size_t i) const\fC [inline]\fP"
+
+.PP
+Access a tree in the forest\&. 
+.PP
+Definition at line 357 of file random_forest\&.hpp\&.
+.SS "\fBDecisionTreeType\fP& Tree (const size_t i)\fC [inline]\fP"
+
+.PP
+Modify a tree in the forest (be careful!)\&. 
+.PP
+Definition at line 359 of file random_forest\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,1078 @@
+\section{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1SpillTree}\index{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$@{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}}
+
+
+A hybrid spill tree is a variant of binary space trees in which the children of a node can \char`\"{}spill over\char`\"{} each other, and contain shared datapoints.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Spill\+Dual\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A generic dual-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__dual__tree__traverser_8hpp} for implementation. \end{DoxyCompactList}\item 
+class \textbf{ Spill\+Single\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A generic single-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+single\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__single__tree__traverser_8hpp} for implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Hyperplane\+Type$<$ Metric\+Type $>$\+::\textbf{ Bound\+Type} \textbf{ Bound\+Type}
+\begin{DoxyCompactList}\small\item\em The bound type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Rule\+Type $>$ }\\using \textbf{ Defeatist\+Dual\+Tree\+Traverser} = \textbf{ Spill\+Dual\+Tree\+Traverser}$<$ Rule\+Type, true $>$
+\begin{DoxyCompactList}\small\item\em A defeatist dual-\/tree traverser for hybrid spill trees. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Rule\+Type $>$ }\\using \textbf{ Defeatist\+Single\+Tree\+Traverser} = \textbf{ Spill\+Single\+Tree\+Traverser}$<$ Rule\+Type, true $>$
+\begin{DoxyCompactList}\small\item\em A defeatist single-\/tree traverser for hybrid spill trees. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Rule\+Type $>$ }\\using \textbf{ Dual\+Tree\+Traverser} = \textbf{ Spill\+Dual\+Tree\+Traverser}$<$ Rule\+Type, false $>$
+\begin{DoxyCompactList}\small\item\em A dual-\/tree traverser for hybrid spill trees. \end{DoxyCompactList}\item 
+typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}
+\begin{DoxyCompactList}\small\item\em The type of element held in Mat\+Type. \end{DoxyCompactList}\item 
+typedef Mat\+Type \textbf{ Mat}
+\begin{DoxyCompactList}\small\item\em So other classes can use Tree\+Type\+::\+Mat. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Rule\+Type $>$ }\\using \textbf{ Single\+Tree\+Traverser} = \textbf{ Spill\+Single\+Tree\+Traverser}$<$ Rule\+Type, false $>$
+\begin{DoxyCompactList}\small\item\em A single-\/tree traverser for hybrid spill trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Spill\+Tree} (const Mat\+Type \&data, const double tau=0, const size\+\_\+t max\+Leaf\+Size=20, const double rho=0.\+7)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of a hybrid spill tree using the given dataset. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} (Mat\+Type \&\&data, const double tau=0, const size\+\_\+t max\+Leaf\+Size=20, const double rho=0.\+7)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of a hybrid spill tree using the given dataset. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} (\textbf{ Spill\+Tree} $\ast$parent, arma\+::\+Col$<$ size\+\_\+t $>$ \&points, const double tau=0, const size\+\_\+t max\+Leaf\+Size=20, const double rho=0.\+7)
+\begin{DoxyCompactList}\small\item\em Construct this node as a child of the given parent, including the given list of points. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} (const \textbf{ Spill\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Create a hybrid spill tree by copying the other tree. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} (\textbf{ Spill\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move constructor for a \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}; possess all the members of the given tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\\textbf{ Spill\+Tree} (Archive \&ar, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ cereal\+::is\+\_\+loading}$<$ Archive $>$()$>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Initialize the tree from a cereal archive. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Spill\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Deletes this node, deallocating the memory for the children and calling their destructors in turn. \end{DoxyCompactList}\item 
+const \textbf{ Bound\+Type} \& \textbf{ Bound} () const
+\begin{DoxyCompactList}\small\item\em Return the bound object for this node. \end{DoxyCompactList}\item 
+\textbf{ Bound\+Type} \& \textbf{ Bound} ()
+\begin{DoxyCompactList}\small\item\em Return the bound object for this node. \end{DoxyCompactList}\item 
+void \textbf{ Center} (arma\+::vec \&center)
+\begin{DoxyCompactList}\small\item\em Store the center of the bounding region in the given vector. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} \& \textbf{ Child} (const size\+\_\+t child) const
+\begin{DoxyCompactList}\small\item\em Return the specified child (0 will be left, 1 will be right). \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$\& \textbf{ Child\+Ptr} (const size\+\_\+t child)
+\item 
+const Mat\+Type \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Get the dataset which the tree is built on. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Descendant} (const size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular descendant of this node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Furthest\+Descendant\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the furthest possible descendant distance. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Furthest\+Point\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the furthest distance to a point held in this node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Get\+Furthest\+Child} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Get\+Furthest\+Child} (const \textbf{ Spill\+Tree} \&query\+Node)
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Get\+Nearest\+Child} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Get\+Nearest\+Child} (const \textbf{ Spill\+Tree} \&query\+Node)
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest). \end{DoxyCompactList}\item 
+const Hyperplane\+Type$<$ Metric\+Type $>$ \& \textbf{ Hyperplane} () const
+\begin{DoxyCompactList}\small\item\em Get the Hyperplane instance. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Leaf} () const
+\begin{DoxyCompactList}\small\item\em Return whether or not this node is a leaf (true if it has no children). \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$ \textbf{ Left} () const
+\begin{DoxyCompactList}\small\item\em Gets the left child of this node. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$\& \textbf{ Left} ()
+\begin{DoxyCompactList}\small\item\em Modify the left child of this node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Max\+Distance} (const \textbf{ Spill\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\\textbf{ Elem\+Type} \textbf{ Max\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to another point. \end{DoxyCompactList}\item 
+Metric\+Type \textbf{ Metric} () const
+\begin{DoxyCompactList}\small\item\em Get the metric that the tree uses. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Min\+Distance} (const \textbf{ Spill\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\\textbf{ Elem\+Type} \textbf{ Min\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to another point. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Minimum\+Bound\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance from the center of the node to any bound edge. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the number of children in this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Descendants} () const
+\begin{DoxyCompactList}\small\item\em Return the number of descendants of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Points} () const
+\begin{DoxyCompactList}\small\item\em Return the number of points in this node (0 if not a leaf). \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} \& \textbf{ operator=} (const \textbf{ Spill\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given Spill Tree. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} \& \textbf{ operator=} (\textbf{ Spill\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given Spill Tree. \end{DoxyCompactList}\item 
+bool \textbf{ Overlap} () const
+\begin{DoxyCompactList}\small\item\em Distinguish overlapping nodes from non-\/overlapping nodes. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$ \textbf{ Parent} () const
+\begin{DoxyCompactList}\small\item\em Gets the parent of this node. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$\& \textbf{ Parent} ()
+\begin{DoxyCompactList}\small\item\em Modify the parent of this node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Parent\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \& \textbf{ Parent\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Point} (const size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular point in this node. \end{DoxyCompactList}\item 
+math\+::\+Range\+Type$<$ \textbf{ Elem\+Type} $>$ \textbf{ Range\+Distance} (const \textbf{ Spill\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\math\+::\+Range\+Type$<$ \textbf{ Elem\+Type} $>$ \textbf{ Range\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another point. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$ \textbf{ Right} () const
+\begin{DoxyCompactList}\small\item\em Gets the right child of this node. \end{DoxyCompactList}\item 
+\textbf{ Spill\+Tree} $\ast$\& \textbf{ Right} ()
+\begin{DoxyCompactList}\small\item\em Modify the right child of this node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the tree. \end{DoxyCompactList}\item 
+const Statistic\+Type \& \textbf{ Stat} () const
+\begin{DoxyCompactList}\small\item\em Return the statistic object for this node. \end{DoxyCompactList}\item 
+Statistic\+Type \& \textbf{ Stat} ()
+\begin{DoxyCompactList}\small\item\em Return the statistic object for this node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \textbf{ Has\+Self\+Children} ()
+\begin{DoxyCompactList}\small\item\em Returns false\+: this tree type does not have self children. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Spill\+Tree} ()
+\begin{DoxyCompactList}\small\item\em A default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$\newline
+class mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}
+
+A hybrid spill tree is a variant of binary space trees in which the children of a node can \char`\"{}spill over\char`\"{} each other, and contain shared datapoints. 
+
+Two new separating planes lplane and rplane are defined, both of which are parallel to the original decision boundary and at a distance tau from it. The region between lplane and rplane is called \char`\"{}overlapping buffer\char`\"{}.
+
+For each node, we first split the points considering the overlapping buffer. If either of its children contains more than rho fraction of the total points we undo the overlapping splitting. Instead a conventional partition is used. In this way, we can ensure that each split reduces the number of points of a node by at least a constant factor.
+
+This particular tree does not allow growth, so you cannot add or delete nodes from it. If you need to add or delete a node, the better procedure is to rebuild the tree entirely.
+
+Three runtime parameters are required in the constructor\+:
+\begin{DoxyItemize}
+\item max\+Leaf\+Size\+: Max leaf size to be used.
+\item tau\+: Overlapping size.
+\item rho\+: Balance threshold.
+\end{DoxyItemize}
+
+For more information on spill trees, see
+
+
+\begin{DoxyCode}
+@inproceedings\{
+  author = \{Ting Liu, Andrew W. Moore, Alexander Gray and Ke Yang\},
+  title = \{An Investigation of Practical Approximate Nearest Neighbor
+    Algorithms\},
+  booktitle = \{Advances in Neural Information Processing Systems 17\},
+  year = \{2005\},
+  pages = \{825--832\}
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & The metric used for tree-\/building. \\
+\hline
+{\em Statistic\+Type} & Extra data contained in the node. See \doxyref{statistic.\+hpp}{p.}{statistic_8hpp} for the necessary skeleton interface. \\
+\hline
+{\em Mat\+Type} & The dataset class. \\
+\hline
+{\em Hyperplane\+Type} & The splitting hyperplane class. \\
+\hline
+{\em Split\+Type} & The class that partitions the dataset/points at a particular node into two parts. Its definition decides the way this split is done. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 73 of file spill\+\_\+tree.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_afb7ac4d7ba253be481b886d3ae52cf81}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Bound\+Type@{Bound\+Type}}
+\index{Bound\+Type@{Bound\+Type}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Bound\+Type}
+{\footnotesize\ttfamily typedef Hyperplane\+Type$<$Metric\+Type$>$\+::\textbf{ Bound\+Type} \textbf{ Bound\+Type}}
+
+
+
+The bound type. 
+
+
+
+Definition at line 81 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a1ed327205f09a5f798f411a41ed94ce3}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Defeatist\+Dual\+Tree\+Traverser@{Defeatist\+Dual\+Tree\+Traverser}}
+\index{Defeatist\+Dual\+Tree\+Traverser@{Defeatist\+Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Defeatist\+Dual\+Tree\+Traverser}
+{\footnotesize\ttfamily using \textbf{ Defeatist\+Dual\+Tree\+Traverser} =  \textbf{ Spill\+Dual\+Tree\+Traverser}$<$Rule\+Type, true$>$}
+
+
+
+A defeatist dual-\/tree traverser for hybrid spill trees. 
+
+
+
+Definition at line 146 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a70567cc69a2425783765a87845ec9e03}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Defeatist\+Single\+Tree\+Traverser@{Defeatist\+Single\+Tree\+Traverser}}
+\index{Defeatist\+Single\+Tree\+Traverser@{Defeatist\+Single\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Defeatist\+Single\+Tree\+Traverser}
+{\footnotesize\ttfamily using \textbf{ Defeatist\+Single\+Tree\+Traverser} =  \textbf{ Spill\+Single\+Tree\+Traverser}$<$Rule\+Type, true$>$}
+
+
+
+A defeatist single-\/tree traverser for hybrid spill trees. 
+
+
+
+Definition at line 138 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a63f559cd634d9be24db5b041e74169db}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}}
+\index{Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Dual\+Tree\+Traverser}
+{\footnotesize\ttfamily using \textbf{ Dual\+Tree\+Traverser} =  \textbf{ Spill\+Dual\+Tree\+Traverser}$<$Rule\+Type, false$>$}
+
+
+
+A dual-\/tree traverser for hybrid spill trees. 
+
+
+
+Definition at line 142 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a227d0c7e23e98fcd6c81ecab357a791f}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Elem\+Type@{Elem\+Type}}
+\index{Elem\+Type@{Elem\+Type}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Elem\+Type}
+{\footnotesize\ttfamily typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}}
+
+
+
+The type of element held in Mat\+Type. 
+
+
+
+Definition at line 79 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a57758caa2e58c3fe05d1284eeabae523}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Mat@{Mat}}
+\index{Mat@{Mat}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Mat}
+{\footnotesize\ttfamily typedef Mat\+Type \textbf{ Mat}}
+
+
+
+So other classes can use Tree\+Type\+::\+Mat. 
+
+
+
+Definition at line 77 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ae95fd7c19ba7e882936c55b022384887}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Single\+Tree\+Traverser@{Single\+Tree\+Traverser}}
+\index{Single\+Tree\+Traverser@{Single\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Single\+Tree\+Traverser}
+{\footnotesize\ttfamily using \textbf{ Single\+Tree\+Traverser} =  \textbf{ Spill\+Single\+Tree\+Traverser}$<$Rule\+Type, false$>$}
+
+
+
+A single-\/tree traverser for hybrid spill trees. 
+
+
+
+Definition at line 134 of file spill\+\_\+tree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_af01ea5b8618874348c074c5cedfbfef6}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const double}]{tau = {\ttfamily 0},  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20},  }\item[{const double}]{rho = {\ttfamily 0.7} }\end{DoxyParamCaption})}
+
+
+
+Construct this as the root node of a hybrid spill tree using the given dataset. 
+
+The dataset will not be modified during the building procedure (unlike \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. \\
+\hline
+{\em tau} & Overlapping size. \\
+\hline
+{\em max\+Leaf\+Size} & Size of each leaf in the tree. \\
+\hline
+{\em rho} & Balance threshold. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a5e77cfea45b36b3769f9b7f3883f3e82}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type \&\&}]{data,  }\item[{const double}]{tau = {\ttfamily 0},  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20},  }\item[{const double}]{rho = {\ttfamily 0.7} }\end{DoxyParamCaption})}
+
+
+
+Construct this as the root node of a hybrid spill tree using the given dataset. 
+
+This will take ownership of the data matrix; if you don\textquotesingle{}t want this, consider using the constructor that takes a const reference to a dataset.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. \\
+\hline
+{\em tau} & Overlapping size. \\
+\hline
+{\em max\+Leaf\+Size} & Size of each leaf in the tree. \\
+\hline
+{\em rho} & Balance threshold. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a949c2bc414a1e1c0b51b098d2c1be253}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $\ast$}]{parent,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{points,  }\item[{const double}]{tau = {\ttfamily 0},  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20},  }\item[{const double}]{rho = {\ttfamily 0.7} }\end{DoxyParamCaption})}
+
+
+
+Construct this node as a child of the given parent, including the given list of points. 
+
+This is used for recursive tree-\/building by the other constructors which don\textquotesingle{}t specify point indices.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Parent of this node. \\
+\hline
+{\em points} & Vector of indexes of points to be included in this node. \\
+\hline
+{\em tau} & Overlapping size. \\
+\hline
+{\em max\+Leaf\+Size} & Size of each leaf in the tree. \\
+\hline
+{\em rho} & Balance threshold. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_afb0f5c8da31c35c67546288cfa36efd5}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Create a hybrid spill tree by copying the other tree. 
+
+Be careful! This can take a long time and use a lot of memory.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & tree to be replicated. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a0cc2e96cef9427b420d16439505cdb0b}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Move constructor for a \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}; possess all the members of the given tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & tree to be moved. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a907d16b2dbd703629792a929db296567}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ cereal\+::is\+\_\+loading}$<$ Archive $>$()$>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Initialize the tree from a cereal archive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ar} & Archive to load tree from. Must be an iarchive, not an oarchive. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a61630a42d6ba37cb1b0f38126443795e}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!````~Spill\+Tree@{$\sim$\+Spill\+Tree}}
+\index{````~Spill\+Tree@{$\sim$\+Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{$\sim$\+Spill\+Tree()}
+{\footnotesize\ttfamily $\sim$\textbf{ Spill\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Deletes this node, deallocating the memory for the children and calling their destructors in turn. 
+
+This will invalidate any pointers or references to any nodes which are children of this one. \mbox{\label{classmlpack_1_1tree_1_1SpillTree_afa475b761ce701406b530e35bf30e5d9}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Spill\+Tree@{Spill\+Tree}}
+\index{Spill\+Tree@{Spill\+Tree}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Spill\+Tree()\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+A default constructor. 
+
+This is meant to only be used with cereal, which is allowed with the friend declaration below. This does not return a valid tree! The method must be protected, so that the serialization shim can work with the default constructor. 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Center().
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ad8aa68339c34c1ac00dc24012e2904ca}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \textbf{ Bound\+Type}\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the bound object for this node. 
+
+
+
+Definition at line 244 of file spill\+\_\+tree.\+hpp.
+
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Max\+Distance(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Min\+Distance(), and Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Range\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a10137711613ed872f3efef934e0ee069}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Bound\+Type}\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the bound object for this node. 
+
+
+
+Definition at line 246 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a16e556777ca3125ab3cdc16aed9e7885}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Center()}
+{\footnotesize\ttfamily void Center (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{center }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Store the center of the bounding region in the given vector. 
+
+
+
+Definition at line 438 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Tree().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a2bd6ef4c06f38a780238a8dd74e590b5}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Child@{Child}}
+\index{Child@{Child}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Child()}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption}) const}
+
+
+
+Return the specified child (0 will be left, 1 will be right). 
+
+If the index is greater than 1, this will return the right child.
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & Index of child to return. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Parent\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ae6b405ea3bdeaf218e90ebb324bd012b}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Child\+Ptr@{Child\+Ptr}}
+\index{Child\+Ptr@{Child\+Ptr}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Child\+Ptr()}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$\& Child\+Ptr (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 357 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Descendant(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Num\+Descendants(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Num\+Points(), and Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Point().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a4c3764c98d5804083a9ec2c867eb9366}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Dataset()}
+{\footnotesize\ttfamily const Mat\+Type\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the dataset which the tree is built on. 
+
+
+
+Definition at line 272 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_aa732ea3eeb38529c549fd4d15d8655be}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Descendant@{Descendant}}
+\index{Descendant@{Descendant}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Descendant()}
+{\footnotesize\ttfamily size\+\_\+t Descendant (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption}) const}
+
+
+
+Return the index (with reference to the dataset) of a particular descendant of this node. 
+
+The index should be greater than zero but less than the number of descendants.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Index of the descendant. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Child\+Ptr().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_adc597088eadfcfa3060336d0484ab573}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Furthest\+Descendant\+Distance@{Furthest\+Descendant\+Distance}}
+\index{Furthest\+Descendant\+Distance@{Furthest\+Descendant\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Furthest\+Descendant\+Distance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Furthest\+Descendant\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the furthest possible descendant distance. 
+
+This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this). 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_acbe82a6439f71405b5801ca7d941cbfb}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Furthest\+Point\+Distance@{Furthest\+Point\+Distance}}
+\index{Furthest\+Point\+Distance@{Furthest\+Point\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Furthest\+Point\+Distance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Furthest\+Point\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the furthest distance to a point held in this node. 
+
+If this is not a leaf node, then the distance is 0 because the node holds no points. 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a0257281722537c7916db7763623f67f7}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Get\+Furthest\+Child@{Get\+Furthest\+Child}}
+\index{Get\+Furthest\+Child@{Get\+Furthest\+Child}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Get\+Furthest\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Furthest\+Child (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the index of the furthest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest). 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1SpillTree_a1f7ec083be66d58a3e02e12956bf005e} (invalid index). 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a12e43f9076ca004912461d442cf5158f}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Get\+Furthest\+Child@{Get\+Furthest\+Child}}
+\index{Get\+Furthest\+Child@{Get\+Furthest\+Child}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Get\+Furthest\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Furthest\+Child (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{query\+Node }\end{DoxyParamCaption})}
+
+
+
+Return the index of the furthest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest). 
+
+If it can\textquotesingle{}t decide it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1SpillTree_a1f7ec083be66d58a3e02e12956bf005e} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1SpillTree_a19b9a5fd41d8e192b62effb1445bd410}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Get\+Nearest\+Child@{Get\+Nearest\+Child}}
+\index{Get\+Nearest\+Child@{Get\+Nearest\+Child}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Get\+Nearest\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Nearest\+Child (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the index of the nearest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest). 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1SpillTree_a1f7ec083be66d58a3e02e12956bf005e} (invalid index). 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ae84607913e07294e74fe0f238af7abad}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Get\+Nearest\+Child@{Get\+Nearest\+Child}}
+\index{Get\+Nearest\+Child@{Get\+Nearest\+Child}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Get\+Nearest\+Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Nearest\+Child (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{query\+Node }\end{DoxyParamCaption})}
+
+
+
+Return the index of the nearest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest). 
+
+If it can\textquotesingle{}t decide it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1SpillTree_a1f7ec083be66d58a3e02e12956bf005e} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1SpillTree_a550caa440c5847505a0065dfe4c67724}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Has\+Self\+Children@{Has\+Self\+Children}}
+\index{Has\+Self\+Children@{Has\+Self\+Children}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Has\+Self\+Children()}
+{\footnotesize\ttfamily static bool Has\+Self\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns false\+: this tree type does not have self children. 
+
+
+
+Definition at line 435 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a8634496d0672235fadbd9a9a47b2d344}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Hyperplane@{Hyperplane}}
+\index{Hyperplane@{Hyperplane}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Hyperplane()}
+{\footnotesize\ttfamily const Hyperplane\+Type$<$Metric\+Type$>$\& \textbf{ Hyperplane} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Hyperplane instance. 
+
+
+
+Definition at line 278 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_aa0f4813924e6cdee43b45050bb947abe}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Is\+Leaf@{Is\+Leaf}}
+\index{Is\+Leaf@{Is\+Leaf}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Is\+Leaf()}
+{\footnotesize\ttfamily bool Is\+Leaf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return whether or not this node is a leaf (true if it has no children). 
+
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Stat().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_aa843b534cdaa91d21da8da06233436e3}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Left@{Left}}
+\index{Left@{Left}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Left()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$ Left (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the left child of this node. 
+
+
+
+Definition at line 257 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a3791d521a3b192caee1551195af1a45b}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Left@{Left}}
+\index{Left@{Left}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Left()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$\& Left (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the left child of this node. 
+
+
+
+Definition at line 259 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a750cfba0005bdde7bec9a0b38727e987}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Max\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Max\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum distance to another node. 
+
+
+
+Definition at line 396 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Bound().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ae764d88483236cc470f5abe0273df4c5}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Max\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Max\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum distance to another point. 
+
+
+
+Definition at line 418 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ab7cdd810a507e4a0aa262ea0fa8a322c}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Metric()}
+{\footnotesize\ttfamily Metric\+Type Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the metric that the tree uses. 
+
+
+
+Definition at line 281 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Furthest\+Descendant\+Distance(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Furthest\+Point\+Distance(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Get\+Furthest\+Child(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Get\+Nearest\+Child(), Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Minimum\+Bound\+Distance(), and Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Num\+Children().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a11831de21b4ea2d02761cdd869efddee}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Min\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Min\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum distance to another node. 
+
+
+
+Definition at line 390 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Bound().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a73bf99a433e88a31d98b46bf4c0da147}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Min\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Min\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum distance to another point. 
+
+
+
+Definition at line 409 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a20a4e92da6066eb335a576b7f9cd0415}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Minimum\+Bound\+Distance@{Minimum\+Bound\+Distance}}
+\index{Minimum\+Bound\+Distance@{Minimum\+Bound\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Minimum\+Bound\+Distance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Minimum\+Bound\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the minimum distance from the center of the node to any bound edge. 
+
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Num\+Children@{Num\+Children}}
+\index{Num\+Children@{Num\+Children}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Num\+Children()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of children in this node. 
+
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Metric().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a2a85eb34222f1fc073940e8c89274e81}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Num\+Descendants@{Num\+Descendants}}
+\index{Num\+Descendants@{Num\+Descendants}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Num\+Descendants()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Descendants (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of descendants of this node. 
+
+For a non-\/leaf spill tree, this is the number of points at the descendant leaves. For a leaf, this is the number of points in the leaf. 
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Child\+Ptr().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a352077c26368da0ee570c0b7f062b1e3}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Num\+Points@{Num\+Points}}
+\index{Num\+Points@{Num\+Points}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Num\+Points()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Points (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of points in this node (0 if not a leaf). 
+
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Child\+Ptr().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ab792f299d368b4dd0e01cfd170f7d9b0}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given Spill Tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to be copied. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a27764d50c5cd303dc3101957f7ee8672}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given Spill Tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a3a882fb5101c0772a7e49762fac0ebd0}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Overlap@{Overlap}}
+\index{Overlap@{Overlap}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Overlap()}
+{\footnotesize\ttfamily bool Overlap (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Distinguish overlapping nodes from non-\/overlapping nodes. 
+
+
+
+Definition at line 275 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a95f7cd8e2d7f028a2f0f409f3ab7d4b8}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Parent@{Parent}}
+\index{Parent@{Parent}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Parent()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$ Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the parent of this node. 
+
+
+
+Definition at line 267 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a1cbf92ac63899f610e6b4cd28008e7bf}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Parent@{Parent}}
+\index{Parent@{Parent}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Parent()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$\& Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parent of this node. 
+
+
+
+Definition at line 269 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_af44ed4e7bfea088689caed082da67e17}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Parent\+Distance@{Parent\+Distance}}
+\index{Parent\+Distance@{Parent\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Parent\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Parent\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 344 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_aa22ead21ac809efb970b90ec014dc318}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Parent\+Distance@{Parent\+Distance}}
+\index{Parent\+Distance@{Parent\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Parent\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type}\& Parent\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 347 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Child().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a559eede5ea60f68634f8e7e72c3c68d2}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Point@{Point}}
+\index{Point@{Point}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Point()}
+{\footnotesize\ttfamily size\+\_\+t Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption}) const}
+
+
+
+Return the index (with reference to the dataset) of a particular point in this node. 
+
+This will happily return invalid indices if the given index is greater than the number of points in this node (obtained with \doxyref{Num\+Points()}{p.}{classmlpack_1_1tree_1_1SpillTree_a352077c26368da0ee570c0b7f062b1e3}) -- be careful.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Index of point for which a dataset index is wanted. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Child\+Ptr().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_afeaa6c846c856693e5f73272b94bd8b8}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Range\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily math\+::\+Range\+Type$<$\textbf{ Elem\+Type}$>$ Range\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum and maximum distance to another node. 
+
+
+
+Definition at line 402 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Bound().
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a60a550bf46aa1d7b858134ce41fd5a3a}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Range\+Distance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily math\+::\+Range\+Type$<$\textbf{ Elem\+Type}$>$ Range\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum and maximum distance to another point. 
+
+
+
+Definition at line 428 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_af26c4d9ed44411f6d8de9a6186b53406}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Right@{Right}}
+\index{Right@{Right}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Right()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$ Right (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the right child of this node. 
+
+
+
+Definition at line 262 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ad165dc6342ee5b3bc02c90faa9d787ee}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Right@{Right}}
+\index{Right@{Right}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Right()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Spill\+Tree}$\ast$\& Right (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the right child of this node. 
+
+
+
+Definition at line 264 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the tree. 
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_ad8b29c84ac793742cd15834f9f4c4f31}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Stat@{Stat}}
+\index{Stat@{Stat}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the statistic object for this node. 
+
+
+
+Definition at line 249 of file spill\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_aac2d3c104b89109f3df4a9a8cad244da}} 
+\index{mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}!Stat@{Stat}}
+\index{Stat@{Stat}!mlpack\+::tree\+::\+Spill\+Tree@{mlpack\+::tree\+::\+Spill\+Tree}}
+\subsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the statistic object for this node. 
+
+
+
+Definition at line 251 of file spill\+\_\+tree.\+hpp.
+
+
+
+References Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Is\+Leaf().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/spill\+\_\+tree/\textbf{ spill\+\_\+tree.\+hpp}\end{DoxyCompactItemize}

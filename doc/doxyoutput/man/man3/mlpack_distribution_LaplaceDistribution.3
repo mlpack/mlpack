@@ -1,0 +1,274 @@
+.TH "LaplaceDistribution" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LaplaceDistribution \- The multivariate Laplace distribution centered at 0 has pdf\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLaplaceDistribution\fP ()"
+.br
+.RI "Default constructor, which creates a Laplace distribution with zero dimension and zero scale parameter\&. "
+.ti -1c
+.RI "\fBLaplaceDistribution\fP (const size_t dimensionality, const double scale)"
+.br
+.RI "Construct the Laplace distribution with the given scale and dimensionality\&. "
+.ti -1c
+.RI "\fBLaplaceDistribution\fP (const arma::vec &mean, const double scale)"
+.br
+.RI "Construct the Laplace distribution with the given mean and scale parameter\&. "
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const"
+.br
+.RI "Return the dimensionality of this distribution\&. "
+.ti -1c
+.RI "void \fBEstimate\fP (const arma::mat &observations)"
+.br
+.RI "Estimate the Laplace distribution directly from the given observations\&. "
+.ti -1c
+.RI "void \fBEstimate\fP (const arma::mat &observations, const arma::vec &probabilities)"
+.br
+.RI "Estimate the Laplace distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the log probability of the given observation\&. "
+.ti -1c
+.RI "void \fBLogProbability\fP (const arma::mat &x, arma::vec &logProbabilities) const"
+.br
+.RI "Evaluate log probability density function of given observation\&. "
+.ti -1c
+.RI "const arma::vec & \fBMean\fP () const"
+.br
+.RI "Return the mean\&. "
+.ti -1c
+.RI "arma::vec & \fBMean\fP ()"
+.br
+.RI "Modify the mean\&. "
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the probability of the given observation\&. "
+.ti -1c
+.RI "void \fBProbability\fP (const arma::mat &x, arma::vec &probabilities) const"
+.br
+.RI "Evaluate probability density function of given observation\&. "
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const"
+.br
+.RI "Return a randomly generated observation according to the probability distribution defined by this object\&. "
+.ti -1c
+.RI "double \fBScale\fP () const"
+.br
+.RI "Return the scale parameter\&. "
+.ti -1c
+.RI "double & \fBScale\fP ()"
+.br
+.RI "Modify the scale parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the distribution\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The multivariate Laplace distribution centered at 0 has pdf\&. 
+
+\[ f(x|\theta) = \frac{1}{2 \theta}\exp\left(-\frac{\|x - \mu\|}{\theta}\right) \]
+.PP
+given scale parameter $\theta$ and mean $\mu$\&. This implementation assumes a diagonal covariance, but a rewrite to support arbitrary covariances is possible\&.
+.PP
+See the following paper for more information on the non-diagonal-covariance Laplace distribution and estimation techniques:
+.PP
+.PP
+.nf
+@article{eltoft2006multivariate,
+  title={{On the Multivariate Laplace Distribution}},
+  author={Eltoft, Torbj\orn and Kim, Taesu and Lee, Te-Won},
+  journal={IEEE Signal Processing Letters},
+  volume={13},
+  number={5},
+  pages={300--304},
+  year={2006}
+}
+.fi
+.PP
+.PP
+Note that because of the diagonal covariance restriction, much of the algebra in the paper above becomes simplified, and the PDF takes roughly the same form as the univariate case\&. 
+.PP
+Definition at line 50 of file laplace_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLaplaceDistribution\fP ()\fC [inline]\fP"
+
+.PP
+Default constructor, which creates a Laplace distribution with zero dimension and zero scale parameter\&. 
+.PP
+Definition at line 57 of file laplace_distribution\&.hpp\&.
+.SS "\fBLaplaceDistribution\fP (const size_t dimensionality, const double scale)\fC [inline]\fP"
+
+.PP
+Construct the Laplace distribution with the given scale and dimensionality\&. The mean is initialized to zero\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimensionality\fP Dimensionality of distribution\&. 
+.br
+\fIscale\fP Scale of distribution\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file laplace_distribution\&.hpp\&.
+.SS "\fBLaplaceDistribution\fP (const arma::vec & mean, const double scale)\fC [inline]\fP"
+
+.PP
+Construct the Laplace distribution with the given mean and scale parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImean\fP Mean of distribution\&. 
+.br
+\fIscale\fP Scale of distribution\&. 
+.RE
+.PP
+
+.PP
+Definition at line 76 of file laplace_distribution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Dimensionality () const\fC [inline]\fP"
+
+.PP
+Return the dimensionality of this distribution\&. 
+.PP
+Definition at line 80 of file laplace_distribution\&.hpp\&.
+.SS "void Estimate (const arma::mat & observations)"
+
+.PP
+Estimate the Laplace distribution directly from the given observations\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.RE
+.PP
+
+.PP
+Referenced by LaplaceDistribution::Random()\&.
+.SS "void Estimate (const arma::mat & observations, const arma::vec & probabilities)"
+
+.PP
+Estimate the Laplace distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. 
+.SS "double LogProbability (const arma::vec & observation) const"
+
+.PP
+Return the log probability of the given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Point to evaluate logarithm of probability\&. 
+.RE
+.PP
+
+.PP
+Referenced by LaplaceDistribution::LogProbability(), and LaplaceDistribution::Probability()\&.
+.SS "void LogProbability (const arma::mat & x, arma::vec & logProbabilities) const\fC [inline]\fP"
+
+.PP
+Evaluate log probability density function of given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP List of observations\&. 
+.br
+\fIlogProbabilities\fP Output probabilities for each input observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 113 of file laplace_distribution\&.hpp\&.
+.PP
+References LaplaceDistribution::LogProbability()\&.
+.SS "const arma::vec& Mean () const\fC [inline]\fP"
+
+.PP
+Return the mean\&. 
+.PP
+Definition at line 163 of file laplace_distribution\&.hpp\&.
+.SS "arma::vec& Mean ()\fC [inline]\fP"
+
+.PP
+Modify the mean\&. 
+.PP
+Definition at line 165 of file laplace_distribution\&.hpp\&.
+.SS "double Probability (const arma::vec & observation) const\fC [inline]\fP"
+
+.PP
+Return the probability of the given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Point to evaluate probability at\&. 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file laplace_distribution\&.hpp\&.
+.PP
+References LaplaceDistribution::LogProbability()\&.
+.SS "void Probability (const arma::mat & x, arma::vec & probabilities) const"
+
+.PP
+Evaluate probability density function of given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP List of observations\&. 
+.br
+\fIprobabilities\fP Output probabilities for each input observation\&. 
+.RE
+.PP
+
+.SS "arma::vec Random () const\fC [inline]\fP"
+
+.PP
+Return a randomly generated observation according to the probability distribution defined by this object\&. This is inlined for speed\&.
+.PP
+\fBReturns:\fP
+.RS 4
+Random observation from this Laplace distribution\&. 
+.RE
+.PP
+
+.PP
+Definition at line 128 of file laplace_distribution\&.hpp\&.
+.PP
+References LaplaceDistribution::Estimate()\&.
+.SS "double Scale () const\fC [inline]\fP"
+
+.PP
+Return the scale parameter\&. 
+.PP
+Definition at line 168 of file laplace_distribution\&.hpp\&.
+.SS "double& Scale ()\fC [inline]\fP"
+
+.PP
+Modify the scale parameter\&. 
+.PP
+Definition at line 170 of file laplace_distribution\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the distribution\&. 
+.PP
+Definition at line 176 of file laplace_distribution\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

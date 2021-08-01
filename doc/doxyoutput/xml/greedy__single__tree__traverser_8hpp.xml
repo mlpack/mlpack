@@ -1,0 +1,430 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="greedy__single__tree__traverser_8hpp" kind="file" language="C++">
+    <compoundname>greedy_single_tree_traverser.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">greedy_single_tree_traverser_impl.hpp</includes>
+    <incdepgraph>
+      <node id="16686">
+        <label>list</label>
+      </node>
+      <node id="16683">
+        <label>atomic</label>
+      </node>
+      <node id="16673">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="16649">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="16685">
+        <label>iomanip</label>
+      </node>
+      <node id="16658">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="16659" relation="include">
+        </childnode>
+        <childnode refid="16661" relation="include">
+        </childnode>
+      </node>
+      <node id="16641">
+        <label>cstdint</label>
+      </node>
+      <node id="16650">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="16657">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="16680">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="16670">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="16637">
+        <label>cmath</label>
+      </node>
+      <node id="16656">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="16645">
+        <label>stdexcept</label>
+      </node>
+      <node id="16665">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16650" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16651" relation="include">
+        </childnode>
+      </node>
+      <node id="16689">
+        <label>string</label>
+      </node>
+      <node id="16677">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="16678" relation="include">
+        </childnode>
+        <childnode refid="16644" relation="include">
+        </childnode>
+      </node>
+      <node id="16687">
+        <label>map</label>
+      </node>
+      <node id="16693">
+        <label>greedy_single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="16639">
+        <label>cfloat</label>
+      </node>
+      <node id="16669">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="16691">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="16653">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="16676">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="16677" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16660" relation="include">
+        </childnode>
+        <childnode refid="16678" relation="include">
+        </childnode>
+      </node>
+      <node id="16666">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="16664">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16650" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16651" relation="include">
+        </childnode>
+      </node>
+      <node id="16667">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16650" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16651" relation="include">
+        </childnode>
+      </node>
+      <node id="16655">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="16675">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="16651" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16663" relation="include">
+        </childnode>
+        <childnode refid="16672" relation="include">
+        </childnode>
+      </node>
+      <node id="16679">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="16680" relation="include">
+        </childnode>
+      </node>
+      <node id="16681">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="16636">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="16637" relation="include">
+        </childnode>
+        <childnode refid="16638" relation="include">
+        </childnode>
+        <childnode refid="16639" relation="include">
+        </childnode>
+        <childnode refid="16640" relation="include">
+        </childnode>
+        <childnode refid="16641" relation="include">
+        </childnode>
+        <childnode refid="16642" relation="include">
+        </childnode>
+        <childnode refid="16643" relation="include">
+        </childnode>
+        <childnode refid="16644" relation="include">
+        </childnode>
+        <childnode refid="16645" relation="include">
+        </childnode>
+        <childnode refid="16646" relation="include">
+        </childnode>
+        <childnode refid="16647" relation="include">
+        </childnode>
+        <childnode refid="16648" relation="include">
+        </childnode>
+        <childnode refid="16649" relation="include">
+        </childnode>
+        <childnode refid="16650" relation="include">
+        </childnode>
+        <childnode refid="16651" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16654" relation="include">
+        </childnode>
+        <childnode refid="16655" relation="include">
+        </childnode>
+        <childnode refid="16656" relation="include">
+        </childnode>
+        <childnode refid="16657" relation="include">
+        </childnode>
+        <childnode refid="16658" relation="include">
+        </childnode>
+        <childnode refid="16662" relation="include">
+        </childnode>
+        <childnode refid="16663" relation="include">
+        </childnode>
+        <childnode refid="16664" relation="include">
+        </childnode>
+        <childnode refid="16665" relation="include">
+        </childnode>
+        <childnode refid="16666" relation="include">
+        </childnode>
+        <childnode refid="16667" relation="include">
+        </childnode>
+        <childnode refid="16668" relation="include">
+        </childnode>
+        <childnode refid="16674" relation="include">
+        </childnode>
+        <childnode refid="16675" relation="include">
+        </childnode>
+        <childnode refid="16672" relation="include">
+        </childnode>
+        <childnode refid="16676" relation="include">
+        </childnode>
+        <childnode refid="16679" relation="include">
+        </childnode>
+        <childnode refid="16681" relation="include">
+        </childnode>
+        <childnode refid="16682" relation="include">
+        </childnode>
+        <childnode refid="16691" relation="include">
+        </childnode>
+        <childnode refid="16692" relation="include">
+        </childnode>
+      </node>
+      <node id="16642">
+        <label>cstdio</label>
+      </node>
+      <node id="16646">
+        <label>tuple</label>
+      </node>
+      <node id="16651">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="16668">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="16651" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16655" relation="include">
+        </childnode>
+        <childnode refid="16669" relation="include">
+        </childnode>
+        <childnode refid="16670" relation="include">
+        </childnode>
+        <childnode refid="16671" relation="include">
+        </childnode>
+        <childnode refid="16672" relation="include">
+        </childnode>
+      </node>
+      <node id="16647">
+        <label>utility</label>
+      </node>
+      <node id="16671">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="16662">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="16659">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="16660" relation="include">
+        </childnode>
+      </node>
+      <node id="16682">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="16683" relation="include">
+        </childnode>
+        <childnode refid="16684" relation="include">
+        </childnode>
+        <childnode refid="16685" relation="include">
+        </childnode>
+        <childnode refid="16686" relation="include">
+        </childnode>
+        <childnode refid="16687" relation="include">
+        </childnode>
+        <childnode refid="16688" relation="include">
+        </childnode>
+        <childnode refid="16689" relation="include">
+        </childnode>
+        <childnode refid="16690" relation="include">
+        </childnode>
+      </node>
+      <node id="16660">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="16674">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="16672" relation="include">
+        </childnode>
+        <childnode refid="16668" relation="include">
+        </childnode>
+        <childnode refid="16675" relation="include">
+        </childnode>
+      </node>
+      <node id="16635">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/greedy_single_tree_traverser.hpp</label>
+        <link refid="greedy__single__tree__traverser_8hpp"/>
+        <childnode refid="16636" relation="include">
+        </childnode>
+        <childnode refid="16693" relation="include">
+        </childnode>
+      </node>
+      <node id="16643">
+        <label>cstdlib</label>
+      </node>
+      <node id="16638">
+        <label>cctype</label>
+      </node>
+      <node id="16661">
+        <label>unordered_map</label>
+      </node>
+      <node id="16640">
+        <label>climits</label>
+      </node>
+      <node id="16688">
+        <label>mutex</label>
+      </node>
+      <node id="16684">
+        <label>chrono</label>
+      </node>
+      <node id="16692">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="16690">
+        <label>thread</label>
+      </node>
+      <node id="16678">
+        <label>type_traits</label>
+      </node>
+      <node id="16654">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="16648">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="16672">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16650" relation="include">
+        </childnode>
+        <childnode refid="16651" relation="include">
+        </childnode>
+        <childnode refid="16652" relation="include">
+        </childnode>
+        <childnode refid="16653" relation="include">
+        </childnode>
+        <childnode refid="16673" relation="include">
+        </childnode>
+      </node>
+      <node id="16644">
+        <label>cstring</label>
+      </node>
+      <node id="16663">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="16652">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser" prot="public">mlpack::tree::GreedySingleTreeTraverser</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcos Pividori</para></simplesect>
+A simple greedy traverser which always chooses the child with the best score and doesn&apos;t do backtracking. The RuleType class must implement the method &apos;GetBestChild()&apos;.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_GREEDY_SINGLE_TREE_TRAVERSER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_GREEDY_SINGLE_TREE_TRAVERSER_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RuleType&gt;</highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser" kindref="compound">GreedySingleTreeTraverser</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1ab381f1601c6a3b0bd886aeba34de89b9" kindref="member">GreedySingleTreeTraverser</ref>(RuleType&amp;<sp/>rule);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1a794b07d567369c4b56e958a21c27531b" kindref="member">Traverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" kindref="member">NumPrunes</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numPrunes;<sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>RuleType&amp;<sp/>rule;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numPrunes;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;greedy_single_tree_traverser_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/greedy_single_tree_traverser.hpp"/>
+  </compounddef>
+</doxygen>

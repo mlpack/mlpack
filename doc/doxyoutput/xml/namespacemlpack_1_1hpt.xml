@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacemlpack_1_1hpt" kind="namespace" language="C++">
+    <compoundname>mlpack::hpt</compoundname>
+    <innerclass refid="classmlpack_1_1hpt_1_1CVFunction" prot="public">mlpack::hpt::CVFunction</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes" prot="public">mlpack::hpt::DeduceHyperParameterTypes</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01PreFixedArg_3_01T_01_4_00_01Args_8_8_8_01_4" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; PreFixedArg&lt; T &gt;, Args... &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4" prot="public">mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1FixedArg" prot="public">mlpack::hpt::FixedArg</innerclass>
+    <innerclass refid="classmlpack_1_1hpt_1_1HyperParameterTuner" prot="public">mlpack::hpt::HyperParameterTuner</innerclass>
+    <innerclass refid="classmlpack_1_1hpt_1_1IsPreFixedArg" prot="public">mlpack::hpt::IsPreFixedArg</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1PreFixedArg" prot="public">mlpack::hpt::PreFixedArg</innerclass>
+    <innerclass refid="structmlpack_1_1hpt_1_1PreFixedArg_3_01T_01_6_01_4" prot="public">mlpack::hpt::PreFixedArg&lt; T &amp; &gt;</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemlpack_1_1hpt_1a7146c132523ba701e4baee3e1cad424d" prot="public" static="no">
+        <type>typename <ref refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes" kindref="compound">DeduceHyperParameterTypes</ref>&lt; Args... &gt;::TupleType</type>
+        <definition>using TupleOfHyperParameters =  typename DeduceHyperParameterTypes&lt;Args...&gt;::TupleType</definition>
+        <argsstring></argsstring>
+        <name>TupleOfHyperParameters</name>
+        <briefdescription>
+<para>A short alias for deducing types of hyper-parameters from types of arguments in the Optimize method in <ref refid="classmlpack_1_1hpt_1_1HyperParameterTuner" kindref="compound">HyperParameterTuner</ref>. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1hpt_1ad773f4d1def8deb412ffbf37bdf289ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="structmlpack_1_1hpt_1_1PreFixedArg" kindref="compound">PreFixedArg</ref>&lt; T &gt;</type>
+        <definition>PreFixedArg&lt;T&gt; mlpack::hpt::Fixed</definition>
+        <argsstring>(T &amp;&amp;value)</argsstring>
+        <name>Fixed</name>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Mark the given argument as one that should be fixed. </para>        </briefdescription>
+        <detaileddescription>
+<para>It can be applied to arguments that are passed to the Optimize method of <ref refid="classmlpack_1_1hpt_1_1HyperParameterTuner" kindref="compound">HyperParameterTuner</ref>.</para><para>The implementation avoids data copying. If the passed argument is an l-value reference, we store it as a const l-value rerefence inside the returned <ref refid="structmlpack_1_1hpt_1_1PreFixedArg" kindref="compound">PreFixedArg</ref> object. If the passed argument is an r-value reference, light-weight copying (by taking possession of the r-value) will be made during the initialization of the returned <ref refid="structmlpack_1_1hpt_1_1PreFixedArg" kindref="compound">PreFixedArg</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/cv_function.hpp" line="18" column="1"/>
+  </compounddef>
+</doxygen>

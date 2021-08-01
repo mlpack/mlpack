@@ -1,0 +1,573 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="validation__rmse__termination_8hpp" kind="file" language="C++">
+    <compoundname>validation_rmse_termination.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="23656">
+        <label>list</label>
+      </node>
+      <node id="23653">
+        <label>atomic</label>
+      </node>
+      <node id="23643">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="23619">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="23655">
+        <label>iomanip</label>
+      </node>
+      <node id="23628">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="23629" relation="include">
+        </childnode>
+        <childnode refid="23631" relation="include">
+        </childnode>
+      </node>
+      <node id="23611">
+        <label>cstdint</label>
+      </node>
+      <node id="23620">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23627">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="23650">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="23605">
+        <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp</label>
+        <link refid="validation__rmse__termination_8hpp"/>
+        <childnode refid="23606" relation="include">
+        </childnode>
+      </node>
+      <node id="23640">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="23607">
+        <label>cmath</label>
+      </node>
+      <node id="23626">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="23615">
+        <label>stdexcept</label>
+      </node>
+      <node id="23635">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="23620" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23621" relation="include">
+        </childnode>
+      </node>
+      <node id="23659">
+        <label>string</label>
+      </node>
+      <node id="23647">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="23648" relation="include">
+        </childnode>
+        <childnode refid="23614" relation="include">
+        </childnode>
+      </node>
+      <node id="23657">
+        <label>map</label>
+      </node>
+      <node id="23609">
+        <label>cfloat</label>
+      </node>
+      <node id="23639">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="23661">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="23623">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="23646">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="23647" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23630" relation="include">
+        </childnode>
+        <childnode refid="23648" relation="include">
+        </childnode>
+      </node>
+      <node id="23636">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="23634">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="23620" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23621" relation="include">
+        </childnode>
+      </node>
+      <node id="23637">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="23620" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23621" relation="include">
+        </childnode>
+      </node>
+      <node id="23625">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="23645">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="23621" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23633" relation="include">
+        </childnode>
+        <childnode refid="23642" relation="include">
+        </childnode>
+      </node>
+      <node id="23649">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="23650" relation="include">
+        </childnode>
+      </node>
+      <node id="23651">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="23606">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="23607" relation="include">
+        </childnode>
+        <childnode refid="23608" relation="include">
+        </childnode>
+        <childnode refid="23609" relation="include">
+        </childnode>
+        <childnode refid="23610" relation="include">
+        </childnode>
+        <childnode refid="23611" relation="include">
+        </childnode>
+        <childnode refid="23612" relation="include">
+        </childnode>
+        <childnode refid="23613" relation="include">
+        </childnode>
+        <childnode refid="23614" relation="include">
+        </childnode>
+        <childnode refid="23615" relation="include">
+        </childnode>
+        <childnode refid="23616" relation="include">
+        </childnode>
+        <childnode refid="23617" relation="include">
+        </childnode>
+        <childnode refid="23618" relation="include">
+        </childnode>
+        <childnode refid="23619" relation="include">
+        </childnode>
+        <childnode refid="23620" relation="include">
+        </childnode>
+        <childnode refid="23621" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23624" relation="include">
+        </childnode>
+        <childnode refid="23625" relation="include">
+        </childnode>
+        <childnode refid="23626" relation="include">
+        </childnode>
+        <childnode refid="23627" relation="include">
+        </childnode>
+        <childnode refid="23628" relation="include">
+        </childnode>
+        <childnode refid="23632" relation="include">
+        </childnode>
+        <childnode refid="23633" relation="include">
+        </childnode>
+        <childnode refid="23634" relation="include">
+        </childnode>
+        <childnode refid="23635" relation="include">
+        </childnode>
+        <childnode refid="23636" relation="include">
+        </childnode>
+        <childnode refid="23637" relation="include">
+        </childnode>
+        <childnode refid="23638" relation="include">
+        </childnode>
+        <childnode refid="23644" relation="include">
+        </childnode>
+        <childnode refid="23645" relation="include">
+        </childnode>
+        <childnode refid="23642" relation="include">
+        </childnode>
+        <childnode refid="23646" relation="include">
+        </childnode>
+        <childnode refid="23649" relation="include">
+        </childnode>
+        <childnode refid="23651" relation="include">
+        </childnode>
+        <childnode refid="23652" relation="include">
+        </childnode>
+        <childnode refid="23661" relation="include">
+        </childnode>
+        <childnode refid="23662" relation="include">
+        </childnode>
+      </node>
+      <node id="23612">
+        <label>cstdio</label>
+      </node>
+      <node id="23616">
+        <label>tuple</label>
+      </node>
+      <node id="23621">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="23638">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="23621" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23625" relation="include">
+        </childnode>
+        <childnode refid="23639" relation="include">
+        </childnode>
+        <childnode refid="23640" relation="include">
+        </childnode>
+        <childnode refid="23641" relation="include">
+        </childnode>
+        <childnode refid="23642" relation="include">
+        </childnode>
+      </node>
+      <node id="23617">
+        <label>utility</label>
+      </node>
+      <node id="23641">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="23632">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="23629">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="23630" relation="include">
+        </childnode>
+      </node>
+      <node id="23652">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="23653" relation="include">
+        </childnode>
+        <childnode refid="23654" relation="include">
+        </childnode>
+        <childnode refid="23655" relation="include">
+        </childnode>
+        <childnode refid="23656" relation="include">
+        </childnode>
+        <childnode refid="23657" relation="include">
+        </childnode>
+        <childnode refid="23658" relation="include">
+        </childnode>
+        <childnode refid="23659" relation="include">
+        </childnode>
+        <childnode refid="23660" relation="include">
+        </childnode>
+      </node>
+      <node id="23630">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="23644">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="23642" relation="include">
+        </childnode>
+        <childnode refid="23638" relation="include">
+        </childnode>
+        <childnode refid="23645" relation="include">
+        </childnode>
+      </node>
+      <node id="23613">
+        <label>cstdlib</label>
+      </node>
+      <node id="23608">
+        <label>cctype</label>
+      </node>
+      <node id="23631">
+        <label>unordered_map</label>
+      </node>
+      <node id="23610">
+        <label>climits</label>
+      </node>
+      <node id="23658">
+        <label>mutex</label>
+      </node>
+      <node id="23654">
+        <label>chrono</label>
+      </node>
+      <node id="23662">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="23660">
+        <label>thread</label>
+      </node>
+      <node id="23648">
+        <label>type_traits</label>
+      </node>
+      <node id="23624">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="23618">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="23642">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="23620" relation="include">
+        </childnode>
+        <childnode refid="23621" relation="include">
+        </childnode>
+        <childnode refid="23622" relation="include">
+        </childnode>
+        <childnode refid="23623" relation="include">
+        </childnode>
+        <childnode refid="23643" relation="include">
+        </childnode>
+      </node>
+      <node id="23614">
+        <label>cstring</label>
+      </node>
+      <node id="23633">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="23622">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1amf_1_1ValidationRMSETermination" prot="public">mlpack::amf::ValidationRMSETermination</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1amf">mlpack::amf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Sumedh Ghaisas</para></simplesect>
+Termination policy used in AMF (Alternating Matrix Factorization).</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>_MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">amf</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="37" refid="classmlpack_1_1amf_1_1ValidationRMSETermination" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination" kindref="compound">ValidationRMSETermination</ref></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a0b35fd2a73bdd8b0f6e0655118ac7197" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a0b35fd2a73bdd8b0f6e0655118ac7197" kindref="member">ValidationRMSETermination</ref>(MatType&amp;<sp/>V,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>num_test_points,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>10000,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>reverseStepTolerance<sp/>=<sp/>3)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>tolerance(tolerance),</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>maxIterations(maxIterations),</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>num_test_points(num_test_points),</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reverseStepTolerance(reverseStepTolerance)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>V.n_rows;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m<sp/>=<sp/>V.n_cols;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>initialize<sp/>validation<sp/>set<sp/>matrix</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>test_points.zeros(num_test_points,<sp/>3);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>fill<sp/>validation<sp/>set<sp/>matrix<sp/>with<sp/>random<sp/>chosen<sp/>entries</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>num_test_points;<sp/>++i)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_val;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t_row;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t_col;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>pick<sp/>a<sp/>random<sp/>non-zero<sp/>entry</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t_row<sp/>=<sp/>rand()<sp/>%<sp/>n;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t_col<sp/>=<sp/>rand()<sp/>%<sp/>m;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>((t_val<sp/>=<sp/>V(t_row,<sp/>t_col))<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>add<sp/>the<sp/>entry<sp/>to<sp/>the<sp/>validation<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>test_points(i,<sp/>0)<sp/>=<sp/>t_row;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>test_points(i,<sp/>1)<sp/>=<sp/>t_col;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>test_points(i,<sp/>2)<sp/>=<sp/>t_val;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>nullify<sp/>the<sp/>added<sp/>entry<sp/>from<sp/>data<sp/>matrix<sp/>(training<sp/>set)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>V(t_row,<sp/>t_col)<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1acbaed082d0525430f3a66296b54c11e7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1acbaed082d0525430f3a66296b54c11e7" kindref="member">Initialize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/></highlight><highlight class="comment">/*<sp/>V<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>iteration<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>rmse<sp/>=<sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>rmseOld<sp/>=<sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>c_index<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>c_indexOld<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>reverseStepCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>isCopy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a21aa00d1db37e94076e46c66313514df" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a21aa00d1db37e94076e46c66313514df" kindref="member">IsConverged</ref>(arma::mat&amp;<sp/>W,<sp/>arma::mat&amp;<sp/>H)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>WH;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>WH<sp/>=<sp/>W<sp/>*<sp/>H;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>compute<sp/>validation<sp/>RMSE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iteration<sp/>!=<sp/>0)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rmseOld<sp/>=<sp/>rmse;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rmse<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>num_test_points;<sp/>++i)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t_row<sp/>=<sp/>test_points(i,<sp/>0);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t_col<sp/>=<sp/>test_points(i,<sp/>1);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_val<sp/>=<sp/>test_points(i,<sp/>2);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>temp<sp/>=<sp/>(t_val<sp/>-<sp/>WH(t_row,<sp/>t_col));</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp<sp/>*=<sp/>temp;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rmse<sp/>+=<sp/>temp;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rmse<sp/>/=<sp/>num_test_points;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rmse<sp/>=<sp/>sqrt(rmse);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increment<sp/>iteration<sp/>count</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>iteration++;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>RMSE<sp/>tolerance<sp/>is<sp/>not<sp/>satisfied</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((rmseOld<sp/>-<sp/>rmse)<sp/>/<sp/>rmseOld<sp/>&lt;<sp/>tolerance<sp/>&amp;&amp;<sp/>iteration<sp/>&gt;<sp/>4)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>check<sp/>if<sp/>this<sp/>is<sp/>a<sp/>first<sp/>of<sp/>successive<sp/>drops</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(reverseStepCount<sp/>==<sp/>0<sp/>&amp;&amp;<sp/>isCopy<sp/>==<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>store<sp/>a<sp/>copy<sp/>of<sp/>W<sp/>and<sp/>H<sp/>matrix</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>isCopy<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;W<sp/>=<sp/>W;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;H<sp/>=<sp/>H;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>store<sp/>residue<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>c_indexOld<sp/>=<sp/>rmseOld;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>c_index<sp/>=<sp/>rmse;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increase<sp/>successive<sp/>drop<sp/>count</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>reverseStepCount++;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>tolerance<sp/>is<sp/>satisfied</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>initialize<sp/>successive<sp/>drop<sp/>count</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>reverseStepCount<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>residue<sp/>is<sp/>droped<sp/>below<sp/>minimum<sp/>scrap<sp/>stored<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rmse<sp/>&lt;=<sp/>c_indexOld<sp/>&amp;&amp;<sp/>isCopy<sp/>==<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>isCopy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>check<sp/>if<sp/>termination<sp/>criterion<sp/>is<sp/>met</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(reverseStepCount<sp/>==<sp/>reverseStepTolerance<sp/>||<sp/>iteration<sp/>&gt;<sp/>maxIterations)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>stored<sp/>values<sp/>are<sp/>present<sp/>replace<sp/>them<sp/>with<sp/>current<sp/>value<sp/>as<sp/>they</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>represent<sp/>the<sp/>minimum<sp/>residue<sp/>point</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isCopy)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>W<sp/>=<sp/>this-&gt;W;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H<sp/>=<sp/>this-&gt;H;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rmse<sp/>=<sp/>c_index;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a866b70f9202a81d2bdbb116bc2683eb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a866b70f9202a81d2bdbb116bc2683eb2" kindref="member">Index</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rmse;<sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a5226c80136390904f5893e72749211e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a5226c80136390904f5893e72749211e6" kindref="member">Iteration</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>iteration;<sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a8a782fdac137e9d2c9de49fb5a529391" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a8a782fdac137e9d2c9de49fb5a529391" kindref="member">NumTestPoints</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>num_test_points;<sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a26b939a18b15788ad266b8eda3f301e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a26b939a18b15788ad266b8eda3f301e6" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="198" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1aa3141c2547caeb826a4c221e10b8529e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1aa3141c2547caeb826a4c221e10b8529e" kindref="member">Tolerance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a3d9fac84af16250f5a3689692e8f2173" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1amf_1_1ValidationRMSETermination_1a3d9fac84af16250f5a3689692e8f2173" kindref="member">Tolerance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>num_test_points;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>iteration;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/>arma::mat<sp/>test_points;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rmseOld;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rmse;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>reverseStepTolerance;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>reverseStepCount;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isCopy;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/>arma::mat<sp/>W;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>arma::mat<sp/>H;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>c_indexOld;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>c_index;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>ValidationRMSETermination</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>amf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>_MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp"/>
+  </compounddef>
+</doxygen>

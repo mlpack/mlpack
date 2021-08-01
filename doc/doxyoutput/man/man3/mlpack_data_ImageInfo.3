@@ -1,0 +1,134 @@
+.TH "ImageInfo" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ImageInfo \- Implements meta-data of images required by \fBdata::Load\fP and \fBdata::Save\fP for loading and saving images into arma::Mat\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBImageInfo\fP (const size_t width=0, const size_t height=0, const size_t channels=3, const size_t quality=90)"
+.br
+.RI "Instantiate the \fBImageInfo\fP object with the given image width, height, number of channels and quality parameter\&. "
+.ti -1c
+.RI "const size_t & \fBChannels\fP () const"
+.br
+.RI "Get the image channels\&. "
+.ti -1c
+.RI "size_t & \fBChannels\fP ()"
+.br
+.RI "Modify the image channels\&. "
+.ti -1c
+.RI "const size_t & \fBHeight\fP () const"
+.br
+.RI "Get the image height\&. "
+.ti -1c
+.RI "size_t & \fBHeight\fP ()"
+.br
+.RI "Modify the image height\&. "
+.ti -1c
+.RI "const size_t & \fBQuality\fP () const"
+.br
+.RI "Get the image quality\&. "
+.ti -1c
+.RI "size_t & \fBQuality\fP ()"
+.br
+.RI "Modify the image quality\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.ti -1c
+.RI "const size_t & \fBWidth\fP () const"
+.br
+.RI "Get the image width\&. "
+.ti -1c
+.RI "size_t & \fBWidth\fP ()"
+.br
+.RI "Modify the image width\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implements meta-data of images required by \fBdata::Load\fP and \fBdata::Save\fP for loading and saving images into arma::Mat\&. 
+.PP
+Definition at line 36 of file image_info\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBImageInfo\fP (const size_t width = \fC0\fP, const size_t height = \fC0\fP, const size_t channels = \fC3\fP, const size_t quality = \fC90\fP)"
+
+.PP
+Instantiate the \fBImageInfo\fP object with the given image width, height, number of channels and quality parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIwidth\fP Image width\&. 
+.br
+\fIheight\fP Image height\&. 
+.br
+\fIchannels\fP Number of channels in the image\&. 
+.br
+\fIquality\fP Compression of the image if saved as jpg (0 - 100)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const size_t& Channels () const\fC [inline]\fP"
+
+.PP
+Get the image channels\&. 
+.PP
+Definition at line 64 of file image_info\&.hpp\&.
+.SS "size_t& Channels ()\fC [inline]\fP"
+
+.PP
+Modify the image channels\&. 
+.PP
+Definition at line 66 of file image_info\&.hpp\&.
+.SS "const size_t& Height () const\fC [inline]\fP"
+
+.PP
+Get the image height\&. 
+.PP
+Definition at line 59 of file image_info\&.hpp\&.
+.SS "size_t& Height ()\fC [inline]\fP"
+
+.PP
+Modify the image height\&. 
+.PP
+Definition at line 61 of file image_info\&.hpp\&.
+.SS "const size_t& Quality () const\fC [inline]\fP"
+
+.PP
+Get the image quality\&. 
+.PP
+Definition at line 69 of file image_info\&.hpp\&.
+.SS "size_t& Quality ()\fC [inline]\fP"
+
+.PP
+Modify the image quality\&. 
+.PP
+Definition at line 71 of file image_info\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Definition at line 74 of file image_info\&.hpp\&.
+.SS "const size_t& Width () const\fC [inline]\fP"
+
+.PP
+Get the image width\&. 
+.PP
+Definition at line 54 of file image_info\&.hpp\&.
+.SS "size_t& Width ()\fC [inline]\fP"
+
+.PP
+Modify the image width\&. 
+.PP
+Definition at line 56 of file image_info\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

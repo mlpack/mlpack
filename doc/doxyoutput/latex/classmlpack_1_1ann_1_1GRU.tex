@@ -1,0 +1,409 @@
+\section{G\+RU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1GRU}\index{G\+R\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{G\+R\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+An implementation of a gru network layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ G\+RU} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{G\+RU}{p.}{classmlpack_1_1ann_1_1GRU} object. \end{DoxyCompactList}\item 
+\textbf{ G\+RU} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t rho=std\+::numeric\+\_\+limits$<$ size\+\_\+t $>$\+::max())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{G\+RU}{p.}{classmlpack_1_1ann_1_1GRU} layer object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+bool \textbf{ Deterministic} () const
+\begin{DoxyCompactList}\small\item\em The value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \& \textbf{ Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&, arma\+::\+Mat$<$ eT $>$ \&)
+\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ In\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the number of input units. \end{DoxyCompactList}\item 
+std\+::vector$<$ \textbf{ Layer\+Types}$<$$>$ $>$ \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Get the model modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Out\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the number of output units. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset\+Cell} (const size\+\_\+t size)
+\item 
+size\+\_\+t \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of steps to backpropagate through time (B\+P\+TT). \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Rho} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of steps to backpropagate through time (B\+P\+TT). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+G\+R\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+An implementation of a gru network layer. 
+
+This cell can be used in \doxyref{R\+NN}{p.}{classmlpack_1_1ann_1_1RNN} networks.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 58 of file gru.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a375d9aa6e1d5554befe4173d70ca3e34}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!G\+RU@{G\+RU}}
+\index{G\+RU@{G\+RU}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{G\+R\+U()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ G\+RU} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{G\+RU}{p.}{classmlpack_1_1ann_1_1GRU} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a95db7ecef7c74dfd78bf58ea47667ab0}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!G\+RU@{G\+RU}}
+\index{G\+RU@{G\+RU}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{G\+R\+U()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ G\+RU} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{const size\+\_\+t}]{rho = {\ttfamily std\+:\+:numeric\+\_\+limits$<$~size\+\_\+t~$>$\+:\+:max()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{G\+RU}{p.}{classmlpack_1_1ann_1_1GRU} layer object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+{\em rho} & Maximum number of steps to backpropagate through time (B\+P\+TT). \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GRU_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 140 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 142 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a9f4103707f4d199ce5594d239b60443e}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The value of the deterministic parameter. 
+
+
+
+Definition at line 120 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a42d4ee3da432cff20d3a41b8b1ec801c}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 122 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1GRU_ae3face09d68158413cc32cefe69f060d}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 145 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a19abce4739c3b0b658b612537e21956a}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 147 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a13ab93f234244a68f6ade76287284447}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Input\+Shape@{Input\+Shape}}
+\index{Input\+Shape@{Input\+Shape}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Input\+Shape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 159 of file gru.\+hpp.
+
+
+
+References G\+R\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_adc2669016a821704c4c4aeb4651e9e87}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!In\+Size@{In\+Size}}
+\index{In\+Size@{In\+Size}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{In\+Size()}
+{\footnotesize\ttfamily size\+\_\+t In\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of input units. 
+
+
+
+Definition at line 153 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a50c707b4f7c009339d8d661539baf38f}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Model@{Model}}
+\index{Model@{Model}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Model()}
+{\footnotesize\ttfamily std\+::vector$<$\textbf{ Layer\+Types}$<$$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the model modules. 
+
+
+
+Definition at line 150 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 135 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 137 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a366243e673681001c6080d84ea644f6a}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Out\+Size@{Out\+Size}}
+\index{Out\+Size@{Out\+Size}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Out\+Size()}
+{\footnotesize\ttfamily size\+\_\+t Out\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of output units. 
+
+
+
+Definition at line 156 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_aa530552c7ef915c952fbacc77b965c90}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 130 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 132 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_ab92846e8253dc597239574d87d969ffb}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Reset\+Cell@{Reset\+Cell}}
+\index{Reset\+Cell@{Reset\+Cell}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Reset\+Cell()}
+{\footnotesize\ttfamily void Reset\+Cell (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a45280505858e9bda815a48c96e930f8d}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of steps to backpropagate through time (B\+P\+TT). 
+
+
+
+Definition at line 125 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_aeb617af2894a3e4bbabcd7ebc30a35af}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum number of steps to backpropagate through time (B\+P\+TT). 
+
+
+
+Definition at line 127 of file gru.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1GRU_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+G\+RU@{mlpack\+::ann\+::\+G\+RU}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by G\+R\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Shape().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ gru.\+hpp}\end{DoxyCompactItemize}

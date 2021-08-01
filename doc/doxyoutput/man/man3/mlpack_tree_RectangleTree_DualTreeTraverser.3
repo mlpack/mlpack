@@ -1,0 +1,134 @@
+.TH "DualTreeTraverser< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DualTreeTraverser< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDualTreeTraverser\fP (RuleType &rule)"
+.br
+.RI "Instantiate the dual-tree traverser with the given rule set\&. "
+.ti -1c
+.RI "size_t \fBNumBaseCases\fP () const"
+.br
+.RI "Get the number of times a base case was calculated\&. "
+.ti -1c
+.RI "size_t & \fBNumBaseCases\fP ()"
+.br
+.RI "Modify the number of times a base case was calculated\&. "
+.ti -1c
+.RI "size_t \fBNumPrunes\fP () const"
+.br
+.RI "Get the number of prunes\&. "
+.ti -1c
+.RI "size_t & \fBNumPrunes\fP ()"
+.br
+.RI "Modify the number of prunes\&. "
+.ti -1c
+.RI "size_t \fBNumScores\fP () const"
+.br
+.RI "Get the number of times a node combination was scored\&. "
+.ti -1c
+.RI "size_t & \fBNumScores\fP ()"
+.br
+.RI "Modify the number of times a node combination was scored\&. "
+.ti -1c
+.RI "size_t \fBNumVisited\fP () const"
+.br
+.RI "Get the number of visited combinations\&. "
+.ti -1c
+.RI "size_t & \fBNumVisited\fP ()"
+.br
+.RI "Modify the number of visited combinations\&. "
+.ti -1c
+.RI "void \fBTraverse\fP (RectangleTree &queryNode, RectangleTree &referenceNode)"
+.br
+.RI "Traverse the two trees\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType, typename SplitType, typename DescentType, template< typename > class AuxiliaryInformationType>
+.br
+class mlpack::tree::RectangleTree::DualTreeTraverser< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >"
+
+.PP
+Definition at line 31 of file dual_tree_traverser\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDualTreeTraverser\fP (RuleType & rule)"
+
+.PP
+Instantiate the dual-tree traverser with the given rule set\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t NumBaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of times a base case was calculated\&. 
+.PP
+Definition at line 64 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumBaseCases ()\fC [inline]\fP"
+
+.PP
+Modify the number of times a base case was calculated\&. 
+.PP
+Definition at line 66 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t NumPrunes () const\fC [inline]\fP"
+
+.PP
+Get the number of prunes\&. 
+.PP
+Definition at line 49 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumPrunes ()\fC [inline]\fP"
+
+.PP
+Modify the number of prunes\&. 
+.PP
+Definition at line 51 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t NumScores () const\fC [inline]\fP"
+
+.PP
+Get the number of times a node combination was scored\&. 
+.PP
+Definition at line 59 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumScores ()\fC [inline]\fP"
+
+.PP
+Modify the number of times a node combination was scored\&. 
+.PP
+Definition at line 61 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t NumVisited () const\fC [inline]\fP"
+
+.PP
+Get the number of visited combinations\&. 
+.PP
+Definition at line 54 of file dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumVisited ()\fC [inline]\fP"
+
+.PP
+Modify the number of visited combinations\&. 
+.PP
+Definition at line 56 of file dual_tree_traverser\&.hpp\&.
+.SS "void Traverse (RectangleTree & queryNode, RectangleTree & referenceNode)"
+
+.PP
+Traverse the two trees\&. This does not reset the number of prunes\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP The query node to be traversed\&. 
+.br
+\fIreferenceNode\fP The reference node to be traversed\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,203 @@
+.TH "RSWrapper< TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RSWrapper< TreeType > \- \fBRSWrapper\fP is a wrapper class for most \fBRangeSearch\fP types\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBRSWrapperBase\fP\&.
+.PP
+Inherited by \fBLeafSizeRSWrapper< TreeType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRSWrapper\fP (const bool singleMode, const bool naive)"
+.br
+.RI "Create the \fBRSWrapper\fP object\&. "
+.ti -1c
+.RI "virtual \fB~RSWrapper\fP ()"
+.br
+.RI "Destruct the \fBRSWrapper\fP (nothing to do)\&. "
+.ti -1c
+.RI "virtual \fBRSWrapper\fP * \fBClone\fP () const"
+.br
+.RI "Create a new \fBRSWrapper\fP that is the same as this one\&. "
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const"
+.br
+.RI "Get the dataset\&. "
+.ti -1c
+.RI "bool \fBNaive\fP () const"
+.br
+.RI "Get whether naive search is being used\&. "
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "Modify whether naive search is being used\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t)"
+.br
+.RI "Perform bichromatic range search (i\&.e\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.br
+.RI "Perform monochromatic range search (i\&.e\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the \fBRangeSearch\fP model\&. "
+.ti -1c
+.RI "bool \fBSingleMode\fP () const"
+.br
+.RI "Get whether single-tree search is being used\&. "
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "Modify whether single-tree search is being used\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t)"
+.br
+.RI "Train the model (build the reference tree if needed)\&. "
+.in -1c
+.SS "Protected Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBRangeSearch\fP< \fBmetric::EuclideanDistance\fP, arma::mat, TreeType > \fBRSType\fP"
+.br
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBRSType\fP \fBrs\fP"
+.br
+.RI "The instantiated \fBRangeSearch\fP object that we are wrapping\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType>
+.br
+class mlpack::range::RSWrapper< TreeType >"
+\fBRSWrapper\fP is a wrapper class for most \fBRangeSearch\fP types\&. 
+.PP
+Definition at line 86 of file rs_model\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBRangeSearch\fP<\fBmetric::EuclideanDistance\fP, arma::mat, TreeType> \fBRSType\fP\fC [protected]\fP"
+
+.PP
+Definition at line 143 of file rs_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRSWrapper\fP (const bool singleMode, const bool naive)\fC [inline]\fP"
+
+.PP
+Create the \fBRSWrapper\fP object\&. 
+.PP
+Definition at line 90 of file rs_model\&.hpp\&.
+.SS "virtual ~\fBRSWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Destruct the \fBRSWrapper\fP (nothing to do)\&. 
+.PP
+Definition at line 101 of file rs_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual \fBRSWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Create a new \fBRSWrapper\fP that is the same as this one\&. This function will properly handle polymorphism\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
+.PP
+Definition at line 98 of file rs_model\&.hpp\&.
+.SS "const arma::mat& Dataset () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get the dataset\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Definition at line 104 of file rs_model\&.hpp\&.
+.SS "bool Naive () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether naive search is being used\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Definition at line 112 of file rs_model\&.hpp\&.
+.SS "bool& Naive ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether naive search is being used\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Definition at line 114 of file rs_model\&.hpp\&.
+.PP
+References RSWrapperBase::Search(), and RSWrapperBase::Train()\&.
+.SS "virtual void Search (arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t)\fC [virtual]\fP"
+
+.PP
+Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&. This ignores the leaf size\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
+.SS "virtual void Search (const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [virtual]\fP"
+
+.PP
+Perform monochromatic range search (i\&.e\&. a search with the reference set as the query set)\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the \fBRangeSearch\fP model\&. 
+.PP
+Definition at line 137 of file rs_model\&.hpp\&.
+.SS "bool SingleMode () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether single-tree search is being used\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Definition at line 107 of file rs_model\&.hpp\&.
+.SS "bool& SingleMode ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether single-tree search is being used\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Definition at line 109 of file rs_model\&.hpp\&.
+.SS "virtual void Train (arma::mat && referenceSet, const size_t)\fC [virtual]\fP"
+
+.PP
+Train the model (build the reference tree if needed)\&. This ignores the leaf size\&. 
+.PP
+Implements \fBRSWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBRSType\fP rs\fC [protected]\fP"
+
+.PP
+The instantiated \fBRangeSearch\fP object that we are wrapping\&. 
+.PP
+Definition at line 146 of file rs_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

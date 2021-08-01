@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1CharExtract" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::CharExtract</compoundname>
+    <includes refid="char__extract_8hpp" local="no">char_extract.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1CharExtract_1a80e7e247aa7b4392b900c808645a26cb" prot="public" static="no">
+        <type>int</type>
+        <definition>using TokenType =  int</definition>
+        <argsstring></argsstring>
+        <name>TokenType</name>
+        <briefdescription>
+<para>The type of the token which the tokenizer extracts. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1CharExtract_1af8bc68c5ca75596657ff05e08954fbcd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int operator()</definition>
+        <argsstring>(boost::string_view &amp;str) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>boost::string_view &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+<para>The function extracts the first character from the given string view and removes it from the view. </para>        </briefdescription>
+        <detaileddescription>
+<para>Each charecter is casted to unsigned char i.e. it belongs to [0, 255]. The functon returns EOF provided that the input string is empty.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String view to retrieve the next token from. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" bodystart="39" bodyend="49"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1CharExtract_1a68ac0f257a34674662078d3303c25b99" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool IsTokenEmpty</definition>
+        <argsstring>(const int token)</argsstring>
+        <name>IsTokenEmpty</name>
+        <param>
+          <type>const int</type>
+          <declname>token</declname>
+        </param>
+        <briefdescription>
+<para>The function returns true if the given token is equal to EOF. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given token. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" bodystart="56" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The class is used to split a string into characters. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/tokenizers/char_extract.hpp" bodystart="25" bodyend="60"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1CharExtract_1a68ac0f257a34674662078d3303c25b99" prot="public" virt="non-virtual"><scope>mlpack::data::CharExtract</scope><name>IsTokenEmpty</name></member>
+      <member refid="classmlpack_1_1data_1_1CharExtract_1af8bc68c5ca75596657ff05e08954fbcd" prot="public" virt="non-virtual"><scope>mlpack::data::CharExtract</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1data_1_1CharExtract_1a80e7e247aa7b4392b900c808645a26cb" prot="public" virt="non-virtual"><scope>mlpack::data::CharExtract</scope><name>TokenType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

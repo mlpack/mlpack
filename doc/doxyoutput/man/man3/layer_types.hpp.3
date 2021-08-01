@@ -1,0 +1,183 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAdaptiveMaxPooling< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBAdaptiveMaxPooling\fP layer\&. "
+.ti -1c
+.RI "class \fBAdaptiveMeanPooling< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBAdaptiveMeanPooling\fP\&. "
+.ti -1c
+.RI "class \fBAddMerge< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Implementation of the \fBAddMerge\fP module class\&. "
+.ti -1c
+.RI "class \fBAtrousConvolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the Atrous \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBBatchNorm< InputDataType, OutputDataType >\fP"
+.br
+.RI "Declaration of the Batch Normalization layer class\&. "
+.ti -1c
+.RI "class \fBConcat< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Implementation of the \fBConcat\fP class\&. "
+.ti -1c
+.RI "class \fBConcatenate< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBConcatenate\fP module class\&. "
+.ti -1c
+.RI "class \fBConcatPerformance< OutputLayerType, InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the concat performance class\&. "
+.ti -1c
+.RI "class \fBConvolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBDropConnect< InputDataType, OutputDataType >\fP"
+.br
+.RI "The \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&. "
+.ti -1c
+.RI "class \fBFastLSTM< InputDataType, OutputDataType >\fP"
+.br
+.RI "An implementation of a faster version of the Fast \fBLSTM\fP network layer\&. "
+.ti -1c
+.RI "class \fBGlimpse< InputDataType, OutputDataType >\fP"
+.br
+.RI "The glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. "
+.ti -1c
+.RI "class \fBGRU< InputDataType, OutputDataType >\fP"
+.br
+.RI "An implementation of a gru network layer\&. "
+.ti -1c
+.RI "class \fBHighway< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Implementation of the \fBHighway\fP layer\&. "
+.ti -1c
+.RI "class \fBLayerNorm< InputDataType, OutputDataType >\fP"
+.br
+.RI "Declaration of the Layer Normalization class\&. "
+.ti -1c
+.RI "class \fBLinear< InputDataType, OutputDataType, RegularizerType >\fP"
+.br
+.RI "Implementation of the \fBLinear\fP layer class\&. "
+.ti -1c
+.RI "class \fBLinear3D< InputDataType, OutputDataType, RegularizerType >\fP"
+.br
+.RI "Implementation of the \fBLinear3D\fP layer class\&. "
+.ti -1c
+.RI "class \fBLinearNoBias< InputDataType, OutputDataType, RegularizerType >\fP"
+.br
+.RI "Implementation of the \fBLinearNoBias\fP class\&. "
+.ti -1c
+.RI "class \fBLSTM< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBLSTM\fP module class\&. "
+.ti -1c
+.RI "class \fBMiniBatchDiscrimination< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBMiniBatchDiscrimination\fP layer\&. "
+.ti -1c
+.RI "class \fBMultiheadAttention< InputDataType, OutputDataType, RegularizerType >\fP"
+.br
+.RI "Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions\&. "
+.ti -1c
+.RI "class \fBMultiplyMerge< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Implementation of the \fBMultiplyMerge\fP module class\&. "
+.ti -1c
+.RI "class \fBNoisyLinear< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBNoisyLinear\fP layer class\&. "
+.ti -1c
+.RI "class \fBPadding< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBPadding\fP module class\&. "
+.ti -1c
+.RI "class \fBRBF< InputDataType, OutputDataType, Activation >\fP"
+.br
+.RI "Implementation of the Radial Basis Function layer\&. "
+.ti -1c
+.RI "class \fBRecurrent< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Implementation of the RecurrentLayer class\&. "
+.ti -1c
+.RI "class \fBRecurrentAttention< InputDataType, OutputDataType >\fP"
+.br
+.RI "This class implements the \fBRecurrent\fP Model for Visual Attention, using a variety of possible layer implementations\&. "
+.ti -1c
+.RI "class \fBReparametrization< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the \fBReparametrization\fP layer class\&. "
+.ti -1c
+.RI "class \fBSequential< InputDataType, OutputDataType, Residual, CustomLayers >\fP"
+.br
+.RI "Implementation of the \fBSequential\fP class\&. "
+.ti -1c
+.RI "class \fBTransposedConvolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the Transposed \fBConvolution\fP class\&. "
+.ti -1c
+.RI "class \fBVirtualBatchNorm< InputDataType, OutputDataType >\fP"
+.br
+.RI "Declaration of the \fBVirtualBatchNorm\fP layer class\&. "
+.ti -1c
+.RI "class \fBVRClassReward< InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the variance reduced classification reinforcement layer\&. "
+.ti -1c
+.RI "class \fBWeightNorm< InputDataType, OutputDataType, CustomLayers >\fP"
+.br
+.RI "Declaration of the \fBWeightNorm\fP layer class\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "Artificial Neural Network\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename\&.\&.\&. CustomLayers> using \fBLayerTypes\fP = boost::variant< AdaptiveMaxPooling< arma::mat, arma::mat > *, AdaptiveMeanPooling< arma::mat, arma::mat > *, Add< arma::mat, arma::mat > *, AddMerge< arma::mat, arma::mat > *, AlphaDropout< arma::mat, arma::mat > *, AtrousConvolution< NaiveConvolution< ValidConvolution >, NaiveConvolution< FullConvolution >, NaiveConvolution< ValidConvolution >, arma::mat, arma::mat > *, BaseLayer< LogisticFunction, arma::mat, arma::mat > *, BaseLayer< IdentityFunction, arma::mat, arma::mat > *, BaseLayer< TanhFunction, arma::mat, arma::mat > *, BaseLayer< SoftplusFunction, arma::mat, arma::mat > *, BaseLayer< RectifierFunction, arma::mat, arma::mat > *, BatchNorm< arma::mat, arma::mat > *, BilinearInterpolation< arma::mat, arma::mat > *, CELU< arma::mat, arma::mat > *, Concat< arma::mat, arma::mat > *, Concatenate< arma::mat, arma::mat > *, ConcatPerformance< NegativeLogLikelihood< arma::mat, arma::mat >, arma::mat, arma::mat > *, Constant< arma::mat, arma::mat > *, Convolution< NaiveConvolution< ValidConvolution >, NaiveConvolution< FullConvolution >, NaiveConvolution< ValidConvolution >, arma::mat, arma::mat > *, CReLU< arma::mat, arma::mat > *, DropConnect< arma::mat, arma::mat > *, Dropout< arma::mat, arma::mat > *, ELU< arma::mat, arma::mat > *, FastLSTM< arma::mat, arma::mat > *, FlexibleReLU< arma::mat, arma::mat > *, GRU< arma::mat, arma::mat > *, HardTanH< arma::mat, arma::mat > *, Join< arma::mat, arma::mat > *, LayerNorm< arma::mat, arma::mat > *, LeakyReLU< arma::mat, arma::mat > *, Linear< arma::mat, arma::mat, NoRegularizer > *, LinearNoBias< arma::mat, arma::mat, NoRegularizer > *, LogSoftMax< arma::mat, arma::mat > *, Lookup< arma::mat, arma::mat > *, LSTM< arma::mat, arma::mat > *, MaxPooling< arma::mat, arma::mat > *, MeanPooling< arma::mat, arma::mat > *, MiniBatchDiscrimination< arma::mat, arma::mat > *, MultiplyConstant< arma::mat, arma::mat > *, MultiplyMerge< arma::mat, arma::mat > *, NegativeLogLikelihood< arma::mat, arma::mat > *, NoisyLinear< arma::mat, arma::mat > *, Padding< arma::mat, arma::mat > *, PReLU< arma::mat, arma::mat > *, Softmax< arma::mat, arma::mat > *, SpatialDropout< arma::mat, arma::mat > *, TransposedConvolution< NaiveConvolution< ValidConvolution >, NaiveConvolution< ValidConvolution >, NaiveConvolution< ValidConvolution >, arma::mat, arma::mat > *, WeightNorm< arma::mat, arma::mat > *, MoreTypes, CustomLayers *\&.\&.\&. >"
+.br
+.ti -1c
+.RI "using \fBMoreTypes\fP = boost::variant< Linear3D< arma::mat, arma::mat, NoRegularizer > *, LpPooling< arma::mat, arma::mat > *, PixelShuffle< arma::mat, arma::mat > *, Glimpse< arma::mat, arma::mat > *, Highway< arma::mat, arma::mat > *, MultiheadAttention< arma::mat, arma::mat, NoRegularizer > *, Recurrent< arma::mat, arma::mat > *, RecurrentAttention< arma::mat, arma::mat > *, ReinforceNormal< arma::mat, arma::mat > *, Reparametrization< arma::mat, arma::mat > *, Select< arma::mat, arma::mat > *, Sequential< arma::mat, arma::mat, false > *, Sequential< arma::mat, arma::mat, true > *, Subview< arma::mat, arma::mat > *, VRClassReward< arma::mat, arma::mat > *, VirtualBatchNorm< arma::mat, arma::mat > *, RBF< arma::mat, arma::mat, GaussianFunction > *, BaseLayer< GaussianFunction, arma::mat, arma::mat > *, PositionalEncoding< arma::mat, arma::mat > *, ISRLU< arma::mat, arma::mat > *>"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+This provides a list of all modules that can be used to construct a model\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBlayer_types\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

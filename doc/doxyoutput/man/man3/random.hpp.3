@@ -1,0 +1,92 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/math/random.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/math/random.hpp \- Miscellaneous math random-related routines\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::math\fP"
+.br
+.RI "Miscellaneous math routines\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBCustomRandomSeed\fP (const size_t seed)"
+.br
+.ti -1c
+.RI "void \fBFixedRandomSeed\fP ()"
+.br
+.RI "Set the random seed to a fixed number\&. "
+.ti -1c
+.RI "void \fBObtainDistinctSamples\fP (const size_t loInclusive, const size_t hiExclusive, const size_t maxNumSamples, arma::uvec &distinctSamples)"
+.br
+.RI "Obtains no more than maxNumSamples distinct samples\&. "
+.ti -1c
+.RI "double \fBRandBernoulli\fP (const double input)"
+.br
+.RI "Generates a 0/1 specified by the input\&. "
+.ti -1c
+.RI "int \fBRandInt\fP (const int hiExclusive)"
+.br
+.RI "Generates a uniform random integer\&. "
+.ti -1c
+.RI "int \fBRandInt\fP (const int lo, const int hiExclusive)"
+.br
+.RI "Generates a uniform random integer\&. "
+.ti -1c
+.RI "double \fBRandNormal\fP ()"
+.br
+.RI "Generates a normally distributed random number with mean 0 and variance 1\&. "
+.ti -1c
+.RI "double \fBRandNormal\fP (const double mean, const double variance)"
+.br
+.RI "Generates a normally distributed random number with specified mean and variance\&. "
+.ti -1c
+.RI "double \fBRandom\fP ()"
+.br
+.RI "Generates a uniform random number between 0 and 1\&. "
+.ti -1c
+.RI "double \fBRandom\fP (const double lo, const double hi)"
+.br
+.RI "Generates a uniform random number in the specified range\&. "
+.ti -1c
+.RI "void \fBRandomSeed\fP (const size_t seed)"
+.br
+.RI "Set the random seed used by the random functions (\fBRandom()\fP and \fBRandInt()\fP)\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "MLPACK_EXPORT std::mt19937 \fBrandGen\fP"
+.br
+.RI "MLPACK_EXPORT is required for global variables; it exports the symbols correctly on Windows\&. "
+.ti -1c
+.RI "MLPACK_EXPORT std::normal_distribution \fBrandNormalDist\fP"
+.br
+.ti -1c
+.RI "MLPACK_EXPORT std::uniform_real_distribution \fBrandUniformDist\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Miscellaneous math random-related routines\&. 
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBrandom\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

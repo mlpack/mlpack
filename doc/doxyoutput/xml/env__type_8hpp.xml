@@ -1,0 +1,492 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="env__type_8hpp" kind="file" language="C++">
+    <compoundname>env_type.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="55810">
+        <label>list</label>
+      </node>
+      <node id="55807">
+        <label>atomic</label>
+      </node>
+      <node id="55797">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="55773">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="55809">
+        <label>iomanip</label>
+      </node>
+      <node id="55782">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="55783" relation="include">
+        </childnode>
+        <childnode refid="55785" relation="include">
+        </childnode>
+      </node>
+      <node id="55765">
+        <label>cstdint</label>
+      </node>
+      <node id="55774">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="55781">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="55804">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="55794">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="55761">
+        <label>cmath</label>
+      </node>
+      <node id="55780">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="55769">
+        <label>stdexcept</label>
+      </node>
+      <node id="55789">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="55774" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55775" relation="include">
+        </childnode>
+      </node>
+      <node id="55813">
+        <label>string</label>
+      </node>
+      <node id="55801">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="55802" relation="include">
+        </childnode>
+        <childnode refid="55768" relation="include">
+        </childnode>
+      </node>
+      <node id="55811">
+        <label>map</label>
+      </node>
+      <node id="55763">
+        <label>cfloat</label>
+      </node>
+      <node id="55793">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="55815">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="55777">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="55800">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="55801" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55784" relation="include">
+        </childnode>
+        <childnode refid="55802" relation="include">
+        </childnode>
+      </node>
+      <node id="55790">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="55788">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="55774" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55775" relation="include">
+        </childnode>
+      </node>
+      <node id="55791">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="55774" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55775" relation="include">
+        </childnode>
+      </node>
+      <node id="55779">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="55799">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="55775" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55787" relation="include">
+        </childnode>
+        <childnode refid="55796" relation="include">
+        </childnode>
+      </node>
+      <node id="55803">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="55804" relation="include">
+        </childnode>
+      </node>
+      <node id="55805">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="55760">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="55761" relation="include">
+        </childnode>
+        <childnode refid="55762" relation="include">
+        </childnode>
+        <childnode refid="55763" relation="include">
+        </childnode>
+        <childnode refid="55764" relation="include">
+        </childnode>
+        <childnode refid="55765" relation="include">
+        </childnode>
+        <childnode refid="55766" relation="include">
+        </childnode>
+        <childnode refid="55767" relation="include">
+        </childnode>
+        <childnode refid="55768" relation="include">
+        </childnode>
+        <childnode refid="55769" relation="include">
+        </childnode>
+        <childnode refid="55770" relation="include">
+        </childnode>
+        <childnode refid="55771" relation="include">
+        </childnode>
+        <childnode refid="55772" relation="include">
+        </childnode>
+        <childnode refid="55773" relation="include">
+        </childnode>
+        <childnode refid="55774" relation="include">
+        </childnode>
+        <childnode refid="55775" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55778" relation="include">
+        </childnode>
+        <childnode refid="55779" relation="include">
+        </childnode>
+        <childnode refid="55780" relation="include">
+        </childnode>
+        <childnode refid="55781" relation="include">
+        </childnode>
+        <childnode refid="55782" relation="include">
+        </childnode>
+        <childnode refid="55786" relation="include">
+        </childnode>
+        <childnode refid="55787" relation="include">
+        </childnode>
+        <childnode refid="55788" relation="include">
+        </childnode>
+        <childnode refid="55789" relation="include">
+        </childnode>
+        <childnode refid="55790" relation="include">
+        </childnode>
+        <childnode refid="55791" relation="include">
+        </childnode>
+        <childnode refid="55792" relation="include">
+        </childnode>
+        <childnode refid="55798" relation="include">
+        </childnode>
+        <childnode refid="55799" relation="include">
+        </childnode>
+        <childnode refid="55796" relation="include">
+        </childnode>
+        <childnode refid="55800" relation="include">
+        </childnode>
+        <childnode refid="55803" relation="include">
+        </childnode>
+        <childnode refid="55805" relation="include">
+        </childnode>
+        <childnode refid="55806" relation="include">
+        </childnode>
+        <childnode refid="55815" relation="include">
+        </childnode>
+        <childnode refid="55816" relation="include">
+        </childnode>
+      </node>
+      <node id="55766">
+        <label>cstdio</label>
+      </node>
+      <node id="55770">
+        <label>tuple</label>
+      </node>
+      <node id="55775">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="55792">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="55775" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55779" relation="include">
+        </childnode>
+        <childnode refid="55793" relation="include">
+        </childnode>
+        <childnode refid="55794" relation="include">
+        </childnode>
+        <childnode refid="55795" relation="include">
+        </childnode>
+        <childnode refid="55796" relation="include">
+        </childnode>
+      </node>
+      <node id="55759">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp</label>
+        <link refid="env__type_8hpp"/>
+        <childnode refid="55760" relation="include">
+        </childnode>
+      </node>
+      <node id="55771">
+        <label>utility</label>
+      </node>
+      <node id="55795">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="55786">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="55783">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="55784" relation="include">
+        </childnode>
+      </node>
+      <node id="55806">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="55807" relation="include">
+        </childnode>
+        <childnode refid="55808" relation="include">
+        </childnode>
+        <childnode refid="55809" relation="include">
+        </childnode>
+        <childnode refid="55810" relation="include">
+        </childnode>
+        <childnode refid="55811" relation="include">
+        </childnode>
+        <childnode refid="55812" relation="include">
+        </childnode>
+        <childnode refid="55813" relation="include">
+        </childnode>
+        <childnode refid="55814" relation="include">
+        </childnode>
+      </node>
+      <node id="55784">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="55798">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="55796" relation="include">
+        </childnode>
+        <childnode refid="55792" relation="include">
+        </childnode>
+        <childnode refid="55799" relation="include">
+        </childnode>
+      </node>
+      <node id="55767">
+        <label>cstdlib</label>
+      </node>
+      <node id="55762">
+        <label>cctype</label>
+      </node>
+      <node id="55785">
+        <label>unordered_map</label>
+      </node>
+      <node id="55764">
+        <label>climits</label>
+      </node>
+      <node id="55812">
+        <label>mutex</label>
+      </node>
+      <node id="55808">
+        <label>chrono</label>
+      </node>
+      <node id="55816">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="55814">
+        <label>thread</label>
+      </node>
+      <node id="55802">
+        <label>type_traits</label>
+      </node>
+      <node id="55778">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="55772">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="55796">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="55774" relation="include">
+        </childnode>
+        <childnode refid="55775" relation="include">
+        </childnode>
+        <childnode refid="55776" relation="include">
+        </childnode>
+        <childnode refid="55777" relation="include">
+        </childnode>
+        <childnode refid="55797" relation="include">
+        </childnode>
+      </node>
+      <node id="55768">
+        <label>cstring</label>
+      </node>
+      <node id="55787">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="55776">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1ContinuousActionEnv" prot="public">mlpack::rl::ContinuousActionEnv</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" prot="public">mlpack::rl::ContinuousActionEnv::Action</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" prot="public">mlpack::rl::ContinuousActionEnv::State</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1DiscreteActionEnv" prot="public">mlpack::rl::DiscreteActionEnv</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action" prot="public">mlpack::rl::DiscreteActionEnv::Action</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" prot="public">mlpack::rl::DiscreteActionEnv::State</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Nishant Kumar</para></simplesect>
+This file defines a dummy environment to be used with gym_tcp_api.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_ENVIRONMENT_ENV_TYPE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_ENVIRONMENT_ENV_TYPE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1rl_1_1DiscreteActionEnv" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv" kindref="compound">DiscreteActionEnv</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="38" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" kindref="compound">State</ref></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>()<sp/>:<sp/>data(<ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" kindref="member">dimension</ref>)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" kindref="member">State</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/>data)<sp/>:<sp/>data(data)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" kindref="member">Data</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a8c1a320788b55fad936455caf0acb62a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a8c1a320788b55fad936455caf0acb62a" kindref="member">Encode</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" kindref="member">dimension</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>data;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action" kindref="compound">Action</ref></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>store<sp/>the<sp/>action.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action_1ad8b12ef32844c7a5f1317fcc232a1bca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>action<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Track<sp/>the<sp/>size<sp/>of<sp/>the<sp/>action<sp/>space.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1a1e46b501bcca9ffdaab87a8cd6002d35" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1a1e46b501bcca9ffdaab87a8cd6002d35" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>state<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1Action" kindref="compound">Action</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>action<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>nextState*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1aa9f537249fa0c1e62b38197996ab4c6a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" kindref="compound">State</ref><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1aa9f537249fa0c1e62b38197996ab4c6a" kindref="member">InitialSample</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="106" refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1a7061ffc3be37983a46a312973a375c0a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1a7061ffc3be37983a46a312973a375c0a" kindref="member">IsTerminal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>state<sp/>*/</highlight><highlight class="normal">)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="classmlpack_1_1rl_1_1ContinuousActionEnv" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv" kindref="compound">ContinuousActionEnv</ref></highlight></codeline>
+<codeline lineno="122"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="127" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" kindref="compound">State</ref></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="133" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>()<sp/>:<sp/>data(<ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" kindref="member">dimension</ref>)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" kindref="member">State</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/>data)<sp/>:<sp/>data(data)</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" kindref="member">Data</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a8c1a320788b55fad936455caf0acb62a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a8c1a320788b55fad936455caf0acb62a" kindref="member">Encode</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State_1a389cd93f4e125d4369384464914be61f" kindref="member">dimension</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>data;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" kindref="compound">Action</ref></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="164" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1afb5d8e230f784cdcdbd42f358f0a054e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1afb5d8e230f784cdcdbd42f358f0a054e" kindref="member">action</ref>;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Storing<sp/>degree<sp/>of<sp/>freedom.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a854352f53b148adc24983a58a1866d66" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a9e72d404d52a0c6d6edefac30f76e02d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action_1a9e72d404d52a0c6d6edefac30f76e02d" kindref="member">Action</ref>()<sp/>:<sp/>action(<ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv" kindref="compound">ContinuousActionEnv</ref>::<ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" kindref="compound">Action</ref>::size)</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1a1e46b501bcca9ffdaab87a8cd6002d35" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1a1e46b501bcca9ffdaab87a8cd6002d35" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>state<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1Action" kindref="compound">Action</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>action<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>nextState*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1aa9f537249fa0c1e62b38197996ab4c6a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" kindref="compound">State</ref><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1aa9f537249fa0c1e62b38197996ab4c6a" kindref="member">InitialSample</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1DiscreteActionEnv_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="200" refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1a7061ffc3be37983a46a312973a375c0a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1a7061ffc3be37983a46a312973a375c0a" kindref="member">IsTerminal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1ContinuousActionEnv_1_1State" kindref="compound">State</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>state<sp/>*/</highlight><highlight class="normal">)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/env_type.hpp"/>
+  </compounddef>
+</doxygen>

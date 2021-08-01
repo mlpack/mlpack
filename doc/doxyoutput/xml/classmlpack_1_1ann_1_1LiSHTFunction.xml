@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1LiSHTFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::LiSHTFunction</compoundname>
+    <includes refid="lisht__function_8hpp" local="no">lisht_function.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1LiSHTFunction_1a163d34fd09f8edf457164f5033c635cf" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Deriv</definition>
+        <argsstring>(const double y)</argsstring>
+        <name>Deriv</name>
+        <param>
+          <type>const double</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Computes the first derivative of the LiSHT function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>f&apos;(x) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1LiSHTFunction_1ad442502c34b67303b74c735641dab790" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputVecType</type>
+          </param>
+          <param>
+            <type>typename OutputVecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Deriv</definition>
+        <argsstring>(const InputVecType &amp;y, OutputVecType &amp;x)</argsstring>
+        <name>Deriv</name>
+        <param>
+          <type>const InputVecType &amp;</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>OutputVecType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Computes the first derivatives of the LiSHT function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The resulting derivatives. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" bodystart="86" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1LiSHTFunction_1a11bd9a1195e6b107f9fee73643bc328b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Fn</definition>
+        <argsstring>(const double x)</argsstring>
+        <name>Fn</name>
+        <param>
+          <type>const double</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Computes the LiSHT function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>f(x). </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" bodystart="51" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1LiSHTFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputVecType</type>
+          </param>
+          <param>
+            <type>typename OutputVecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Fn</definition>
+        <argsstring>(const InputVecType &amp;x, OutputVecType &amp;y)</argsstring>
+        <name>Fn</name>
+        <param>
+          <type>const InputVecType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>OutputVecType &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Computes the LiSHT function. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" line="63" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" bodystart="63" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The LiSHT function, defined by. </para>    </briefdescription>
+    <detaileddescription>
+<para><formula id="90">\begin{eqnarray*} f(x) = x * tanh(x) f&apos;(x) = tanh(x) + x * (1 - tanh^{2}(x)) \end{eqnarray*}</formula> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/lisht_function.hpp" bodystart="42" bodyend="90"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1LiSHTFunction_1a163d34fd09f8edf457164f5033c635cf" prot="public" virt="non-virtual"><scope>mlpack::ann::LiSHTFunction</scope><name>Deriv</name></member>
+      <member refid="classmlpack_1_1ann_1_1LiSHTFunction_1ad442502c34b67303b74c735641dab790" prot="public" virt="non-virtual"><scope>mlpack::ann::LiSHTFunction</scope><name>Deriv</name></member>
+      <member refid="classmlpack_1_1ann_1_1LiSHTFunction_1a11bd9a1195e6b107f9fee73643bc328b" prot="public" virt="non-virtual"><scope>mlpack::ann::LiSHTFunction</scope><name>Fn</name></member>
+      <member refid="classmlpack_1_1ann_1_1LiSHTFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" prot="public" virt="non-virtual"><scope>mlpack::ann::LiSHTFunction</scope><name>Fn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

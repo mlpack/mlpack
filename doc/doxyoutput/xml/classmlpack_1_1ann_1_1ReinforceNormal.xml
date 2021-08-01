@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1ReinforceNormal" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::ReinforceNormal</compoundname>
+    <includes refid="reinforce__normal_8hpp" local="no">reinforce_normal.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>If true use maximum a posteriori during the forward pass. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1a03e18c81d5d1f589000c8b85a244c458" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; arma::mat &gt;</type>
+        <definition>std::vector&lt;arma::mat&gt; moduleInputParameter</definition>
+        <argsstring></argsstring>
+        <name>moduleInputParameter</name>
+        <briefdescription>
+<para>Locally-stored output module parameter parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1acee3a91cbbd4173eee61bff21bd94815" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double reward</definition>
+        <argsstring></argsstring>
+        <name>reward</name>
+        <briefdescription>
+<para>Locally-stored reward parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1ReinforceNormal_1a07164184203ee48b0e8fd553720f435e" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double stdev</definition>
+        <argsstring></argsstring>
+        <name>stdev</name>
+        <briefdescription>
+<para>Standard deviation used during the forward and backward pass. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a39ec4ed6f311b836e58d415a5b632188" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ReinforceNormal</definition>
+        <argsstring>(const double stdev=1.0)</argsstring>
+        <name>ReinforceNormal</name>
+        <param>
+          <type>const double</type>
+          <declname>stdev</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1ReinforceNormal" kindref="compound">ReinforceNormal</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stdev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Standard deviation used during the forward and backward pass. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="42" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1ae49e208545ccc60a8522fea2c974b64d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const DataType &amp;input, const DataType &amp;, DataType &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(gy) The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="72" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="77" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="52" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="69" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1af64ec3689291cb64aebeb275e3481439" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Reward</definition>
+        <argsstring>() const</argsstring>
+        <name>Reward</name>
+        <briefdescription>
+<para>Get the value of the reward parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a4ef4c95e2db3015b48ea9b9ad5693a5c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Reward</definition>
+        <argsstring>()</argsstring>
+        <name>Reward</name>
+        <briefdescription>
+<para>Modify the value of the deterministic parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="93" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1ReinforceNormal_1a4ad89e6cbbfff6c8be147a82219bb502" compoundref="reinforce__normal_8hpp" startline="87" endline="87">ReinforceNormal&lt; InputDataType, OutputDataType &gt;::StandardDeviation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ReinforceNormal_1a4ad89e6cbbfff6c8be147a82219bb502" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double StandardDeviation</definition>
+        <argsstring>() const</argsstring>
+        <name>StandardDeviation</name>
+        <briefdescription>
+<para>Get the standard deviation used during forward and backward pass. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="87" bodyend="87"/>
+        <references refid="classmlpack_1_1ann_1_1ReinforceNormal_1a65cba07328997659bec80b9879b15a51">ReinforceNormal&lt; InputDataType, OutputDataType &gt;::serialize</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the reinforce normal layer. </para>    </briefdescription>
+    <detaileddescription>
+<para>The reinforce normal layer implements the REINFORCE algorithm for the normal distribution.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/reinforce_normal.hpp" bodystart="34" bodyend="113"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1ae49e208545ccc60a8522fea2c974b64d" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a9f4103707f4d199ce5594d239b60443e" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a03e18c81d5d1f589000c8b85a244c458" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>moduleInputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a39ec4ed6f311b836e58d415a5b632188" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>ReinforceNormal</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1af64ec3689291cb64aebeb275e3481439" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Reward</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a4ef4c95e2db3015b48ea9b9ad5693a5c" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>Reward</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1acee3a91cbbd4173eee61bff21bd94815" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>reward</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a4ad89e6cbbfff6c8be147a82219bb502" prot="public" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>StandardDeviation</name></member>
+      <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a07164184203ee48b0e8fd553720f435e" prot="private" virt="non-virtual"><scope>mlpack::ann::ReinforceNormal</scope><name>stdev</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

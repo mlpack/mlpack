@@ -1,0 +1,104 @@
+.TH "AggregatedPolicy< PolicyType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AggregatedPolicy< PolicyType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBActionType\fP = typename PolicyType::ActionType"
+.br
+.RI "Convenient typedef for action\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAggregatedPolicy\fP (std::vector< PolicyType > policies, const arma::colvec &distribution)"
+.br
+.ti -1c
+.RI "void \fBAnneal\fP ()"
+.br
+.RI "Exploration probability will anneal at each step\&. "
+.ti -1c
+.RI "\fBActionType\fP \fBSample\fP (const arma::colvec &actionValue, bool deterministic=false)"
+.br
+.RI "Sample an action based on given action values\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename PolicyType>
+.br
+class mlpack::rl::AggregatedPolicy< PolicyType >"
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIPolicyType\fP The type of the child policy\&. 
+.RE
+.PP
+
+.PP
+Definition at line 27 of file aggregated_policy\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBActionType\fP =  typename PolicyType::ActionType"
+
+.PP
+Convenient typedef for action\&. 
+.PP
+Definition at line 31 of file aggregated_policy\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAggregatedPolicy\fP (std::vector< PolicyType > policies, const arma::colvec & distribution)\fC [inline]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpolicies\fP Child policies\&. 
+.br
+\fIdistribution\fP Probability distribution for each child policy\&. User should make sure its size is same as the number of policies and the sum of its element is equal to 1\&. 
+.RE
+.PP
+
+.PP
+Definition at line 39 of file aggregated_policy\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Anneal ()\fC [inline]\fP"
+
+.PP
+Exploration probability will anneal at each step\&. 
+.PP
+Definition at line 63 of file aggregated_policy\&.hpp\&.
+.SS "\fBActionType\fP Sample (const arma::colvec & actionValue, bool deterministic = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Sample an action based on given action values\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIactionValue\fP Values for each action\&. 
+.br
+\fIdeterministic\fP Always select the action greedily\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Sampled action\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file aggregated_policy\&.hpp\&.
+.PP
+References DiscreteDistribution::Random()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

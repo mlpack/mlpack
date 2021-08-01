@@ -1,0 +1,13 @@
+.. _exhale_function_nmf__main_8cpp_1a30b4878fd1d75b3681f046347335e274:
+
+Function BINDING_NAME("Non-negative Matrix Factorization")
+==========================================================
+
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_nmf_nmf_main.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: BINDING_NAME("Non-negative Matrix Factorization")

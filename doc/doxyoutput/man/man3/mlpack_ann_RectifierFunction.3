@@ -1,0 +1,131 @@
+.TH "RectifierFunction" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RectifierFunction \- The rectifier function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double x)"
+.br
+.RI "Computes the first derivative of the rectifier function\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > static void \fBDeriv\fP (const InputType &y, OutputType &x)"
+.br
+.RI "Computes the first derivatives of the rectifier function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the rectifier function\&. "
+.ti -1c
+.RI "template<typename eT > static void \fBFn\fP (const arma::Mat< eT > &x, arma::Mat< eT > &y)"
+.br
+.RI "Computes the rectifier function using a dense matrix as input\&. "
+.ti -1c
+.RI "template<typename eT > static void \fBFn\fP (const arma::Cube< eT > &x, arma::Cube< eT > &y)"
+.br
+.RI "Computes the rectifier function using a 3rd-order tensor as input\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The rectifier function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \max(0, x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*} 
+.PP
+Definition at line 45 of file rectifier_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the rectifier function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file rectifier_function\&.hpp\&.
+.PP
+Referenced by RectifierFunction::Deriv()\&.
+.SS "static void Deriv (const InputType & y, OutputType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the rectifier function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 103 of file rectifier_function\&.hpp\&.
+.PP
+References RectifierFunction::Deriv()\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the rectifier function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 54 of file rectifier_function\&.hpp\&.
+.SS "static void Fn (const arma::Mat< eT > & x, arma::Mat< eT > & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the rectifier function using a dense matrix as input\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file rectifier_function\&.hpp\&.
+.SS "static void Fn (const arma::Cube< eT > & x, arma::Cube< eT > & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the rectifier function using a 3rd-order tensor as input\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 79 of file rectifier_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

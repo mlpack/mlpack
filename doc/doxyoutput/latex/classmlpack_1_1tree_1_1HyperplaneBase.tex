@@ -1,0 +1,250 @@
+\section{Hyperplane\+Base$<$ BoundT, Proj\+VectorT $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1HyperplaneBase}\index{Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$@{Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$}}
+
+
+\doxyref{Hyperplane\+Base}{p.}{classmlpack_1_1tree_1_1HyperplaneBase} defines a splitting hyperplane based on a projection vector and projection value.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef BoundT \textbf{ Bound\+Type}
+\begin{DoxyCompactList}\small\item\em Useful typedef for the bound type. \end{DoxyCompactList}\item 
+typedef Proj\+VectorT \textbf{ Proj\+Vector\+Type}
+\begin{DoxyCompactList}\small\item\em Useful typedef for the projection vector type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Hyperplane\+Base} ()
+\begin{DoxyCompactList}\small\item\em Empty Constructor. \end{DoxyCompactList}\item 
+\textbf{ Hyperplane\+Base} (const \textbf{ Proj\+Vector\+Type} \&proj\+Vect, double split\+Val)
+\begin{DoxyCompactList}\small\item\em Create the hyperplane with the specified projection vector and split value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\bool \textbf{ Left} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Determine if the given point is to the left of the hyperplane, this means if the projection over the projection vector is negative or zero. \end{DoxyCompactList}\item 
+bool \textbf{ Left} (const \textbf{ Bound\+Type} \&bound) const
+\begin{DoxyCompactList}\small\item\em Determine if the given bound is to the left of the hyperplane. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\double \textbf{ Project} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Project the given point on the projection vector and subtract the split value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\bool \textbf{ Right} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Determine if the given point is to the right of the hyperplane, this means if the projection over the projection vector is positive. \end{DoxyCompactList}\item 
+bool \textbf{ Right} (const \textbf{ Bound\+Type} \&bound) const
+\begin{DoxyCompactList}\small\item\em Determine if the given bound is to the right of the hyperplane. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename BoundT, typename Proj\+VectorT$>$\newline
+class mlpack\+::tree\+::\+Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$}
+
+\doxyref{Hyperplane\+Base}{p.}{classmlpack_1_1tree_1_1HyperplaneBase} defines a splitting hyperplane based on a projection vector and projection value. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em BoundT} & The bound type considered. \\
+\hline
+{\em Proj\+VectorT} & Type of projection vector (\doxyref{Axis\+Parallel\+Proj\+Vector}{p.}{classmlpack_1_1tree_1_1AxisParallelProjVector}, \doxyref{Proj\+Vector}{p.}{classmlpack_1_1tree_1_1ProjVector}). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 30 of file hyperplane.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_adf1b3e4e822c2fdb767e1dd2a70759e1}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Bound\+Type@{Bound\+Type}}
+\index{Bound\+Type@{Bound\+Type}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Bound\+Type}
+{\footnotesize\ttfamily typedef BoundT \textbf{ Bound\+Type}}
+
+
+
+Useful typedef for the bound type. 
+
+
+
+Definition at line 34 of file hyperplane.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a9c63f86eb1f2a6154e154f7a7eccf4d7}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Proj\+Vector\+Type@{Proj\+Vector\+Type}}
+\index{Proj\+Vector\+Type@{Proj\+Vector\+Type}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Proj\+Vector\+Type}
+{\footnotesize\ttfamily typedef Proj\+VectorT \textbf{ Proj\+Vector\+Type}}
+
+
+
+Useful typedef for the projection vector type. 
+
+
+
+Definition at line 36 of file hyperplane.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a3b06db0c328fd3b847a8843578566d50}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Hyperplane\+Base@{Hyperplane\+Base}}
+\index{Hyperplane\+Base@{Hyperplane\+Base}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Hyperplane\+Base()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Hyperplane\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Empty Constructor. 
+
+By default will consider all points to the left. 
+
+Definition at line 49 of file hyperplane.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a112db47156d3656f7782b7d04c26b910}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Hyperplane\+Base@{Hyperplane\+Base}}
+\index{Hyperplane\+Base@{Hyperplane\+Base}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Hyperplane\+Base()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Hyperplane\+Base} (\begin{DoxyParamCaption}\item[{const \textbf{ Proj\+Vector\+Type} \&}]{proj\+Vect,  }\item[{double}]{split\+Val }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the hyperplane with the specified projection vector and split value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em proj\+Vect} & Projection vector. \\
+\hline
+{\em split\+Val} & Split value. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 59 of file hyperplane.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_ad4c0f9fc8b46fb486a3d41759ae16c8a}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Left@{Left}}
+\index{Left@{Left}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Left()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Left (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determine if the given point is to the left of the hyperplane, this means if the projection over the projection vector is negative or zero. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to be analyzed. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 86 of file hyperplane.\+hpp.
+
+
+
+References Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$\+::\+Project().
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_ab6e7456966188ab912faf392be34d370}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Left@{Left}}
+\index{Left@{Left}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Left()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Left (\begin{DoxyParamCaption}\item[{const \textbf{ Bound\+Type} \&}]{bound }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determine if the given bound is to the left of the hyperplane. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & Bound to be analyzed. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 110 of file hyperplane.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a3992c37d68bb4c57a67c6f422ad60133}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Project@{Project}}
+\index{Project@{Project}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Project()}
+{\footnotesize\ttfamily double Project (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Project the given point on the projection vector and subtract the split value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to be projected. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 71 of file hyperplane.\+hpp.
+
+
+
+Referenced by Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$\+::\+Left(), and Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$\+::\+Right().
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a10fdc3f4229c624f8f63f1398a14714c}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Right@{Right}}
+\index{Right@{Right}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Right()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Right (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determine if the given point is to the right of the hyperplane, this means if the projection over the projection vector is positive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to be analyzed. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 99 of file hyperplane.\+hpp.
+
+
+
+References Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$\+::\+Project().
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a809077e433dcb5315d930cf02048f6e9}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!Right@{Right}}
+\index{Right@{Right}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{Right()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Right (\begin{DoxyParamCaption}\item[{const \textbf{ Bound\+Type} \&}]{bound }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determine if the given bound is to the right of the hyperplane. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & Bound to be analyzed. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 122 of file hyperplane.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1HyperplaneBase_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::tree\+::\+Hyperplane\+Base@{mlpack\+::tree\+::\+Hyperplane\+Base}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 133 of file hyperplane.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/space\+\_\+split/\textbf{ hyperplane.\+hpp}\end{DoxyCompactItemize}

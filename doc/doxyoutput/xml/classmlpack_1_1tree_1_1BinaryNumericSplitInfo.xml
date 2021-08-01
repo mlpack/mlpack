@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::BinaryNumericSplitInfo</compoundname>
+    <includes refid="binary__numeric__split__info_8hpp" local="no">binary_numeric_split_info.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ObservationType</type>
+        <defval>double</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a9eaf17c9c2bdbf86f33a026891174399" prot="private" static="no" mutable="no">
+        <type>ObservationType</type>
+        <definition>ObservationType splitPoint</definition>
+        <argsstring></argsstring>
+        <name>splitPoint</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1aed83ede456468042b3971657e90a2c02" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BinaryNumericSplitInfo</definition>
+        <argsstring>()</argsstring>
+        <name>BinaryNumericSplitInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="25" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a55599c147991a0e9ab4c452a6d70851d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BinaryNumericSplitInfo</definition>
+        <argsstring>(const ObservationType &amp;splitPoint)</argsstring>
+        <name>BinaryNumericSplitInfo</name>
+        <param>
+          <type>const ObservationType &amp;</type>
+          <declname>splitPoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="26" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1aa802a4b4fde3489025146c60ec5b60d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t CalculateDirection</definition>
+        <argsstring>(const eT &amp;value) const</argsstring>
+        <name>CalculateDirection</name>
+        <param>
+          <type>const eT &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the split (save/load the split points). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/binary_numeric_split_info.hpp" bodystart="22" bodyend="44"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1aed83ede456468042b3971657e90a2c02" prot="public" virt="non-virtual"><scope>mlpack::tree::BinaryNumericSplitInfo</scope><name>BinaryNumericSplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a55599c147991a0e9ab4c452a6d70851d" prot="public" virt="non-virtual"><scope>mlpack::tree::BinaryNumericSplitInfo</scope><name>BinaryNumericSplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1aa802a4b4fde3489025146c60ec5b60d3" prot="public" virt="non-virtual"><scope>mlpack::tree::BinaryNumericSplitInfo</scope><name>CalculateDirection</name></member>
+      <member refid="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::BinaryNumericSplitInfo</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1BinaryNumericSplitInfo_1a9eaf17c9c2bdbf86f33a026891174399" prot="private" virt="non-virtual"><scope>mlpack::tree::BinaryNumericSplitInfo</scope><name>splitPoint</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

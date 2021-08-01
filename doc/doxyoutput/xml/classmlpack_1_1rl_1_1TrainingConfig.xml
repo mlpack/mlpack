@@ -1,0 +1,754 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1rl_1_1TrainingConfig" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::TrainingConfig</compoundname>
+    <includes refid="training__config_8hpp" local="no">training_config.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1abb6d1a3f37f99d0f966af04a3583ee10" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t atomSize</definition>
+        <argsstring></argsstring>
+        <name>atomSize</name>
+        <briefdescription>
+<para>Locally-stored number of atoms to be used. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for categorical q-network. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="226" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a53313c66e4ab6acce975994de1d9c097" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double discount</definition>
+        <argsstring></argsstring>
+        <name>discount</name>
+        <briefdescription>
+<para>Locally-stored discount rate for future reward. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid for both async RL agent and q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="196" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a4fdb0b2a159b8c9c41072c389fa75687" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool doubleQLearning</definition>
+        <argsstring></argsstring>
+        <name>doubleQLearning</name>
+        <briefdescription>
+<para>Locally-stored indicator for double q-learning. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="208" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a4eeaf7b8e33d2b2382d6058271802065" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t explorationSteps</definition>
+        <argsstring></argsstring>
+        <name>explorationSteps</name>
+        <briefdescription>
+<para>Locally-stored exploration steps before learning. </para>        </briefdescription>
+        <detaileddescription>
+<para>The agent won&apos;t start learn until those steps have passed. This is valid only for q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a3822ff3dd4e1f0acda751278a59a8181" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gradientLimit</definition>
+        <argsstring></argsstring>
+        <name>gradientLimit</name>
+        <briefdescription>
+<para>Locally-stored gradient limit. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for async RL agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1ac2f7ea582a2199d8381a4c9af2997194" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool isCategorical</definition>
+        <argsstring></argsstring>
+        <name>isCategorical</name>
+        <briefdescription>
+<para>Locally-stored indicator for categorical q-learning. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="220" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1afc910475abd82b3393a3edf3401af808" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool noisyQLearning</definition>
+        <argsstring></argsstring>
+        <name>noisyQLearning</name>
+        <briefdescription>
+<para>Locally-stored indicator for noisy q-learning. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="214" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a73370030a89fb92051c897aae72b2b9b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numWorkers</definition>
+        <argsstring></argsstring>
+        <name>numWorkers</name>
+        <briefdescription>
+<para>Locally-stored number of workers. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for async RL agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a3ed57096651b587c2bf716fa78048153" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double rho</definition>
+        <argsstring></argsstring>
+        <name>rho</name>
+        <briefdescription>
+<para>Locally-stored parameter for softly updating q networks. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for Soft Actor-Critic. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a02b8bf7d4a328de7cef55ca7710921c8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t stepLimit</definition>
+        <argsstring></argsstring>
+        <name>stepLimit</name>
+        <briefdescription>
+<para>Locally-stored step limit of each episode. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid for both async RL agent and q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="177" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a76b84e13aaf5a8bd0f919403d57307c0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double stepSize</definition>
+        <argsstring></argsstring>
+        <name>stepSize</name>
+        <briefdescription>
+<para>Locally-stored step size of optimizer. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid for both async RL agent and q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="190" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a96f6b97b81b94da770ae778973ce3f12" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t targetNetworkSyncInterval</definition>
+        <argsstring></argsstring>
+        <name>targetNetworkSyncInterval</name>
+        <briefdescription>
+<para>Locally-stored interval for syncing target network. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid for both async RL agent and q-learning agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a590b3211b1410a58f499221ba9a857b2" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t updateInterval</definition>
+        <argsstring></argsstring>
+        <name>updateInterval</name>
+        <briefdescription>
+<para>Locally-stored update interval. </para>        </briefdescription>
+        <detaileddescription>
+<para>Update interval is similar to batch size, however the update is done one by one. This is valid only for async RL agent. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="165" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a1f36f39ac22daecc7d6c29aeee29fe16" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double vMax</definition>
+        <argsstring></argsstring>
+        <name>vMax</name>
+        <briefdescription>
+<para>Locally-stored maximum value of support. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for categorical q-network. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="238" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1TrainingConfig_1a7dda8a252f275cb9d492b13ad8c0ce2a" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double vMin</definition>
+        <argsstring></argsstring>
+        <name>vMin</name>
+        <briefdescription>
+<para>Locally-stored minimum value of support. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is valid only for categorical q-network. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="232" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a3019009601a109962148cd8ba5505217" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrainingConfig</definition>
+        <argsstring>()</argsstring>
+        <name>TrainingConfig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="22" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a3b78e9485faa6307c63cf980850ee615" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrainingConfig</definition>
+        <argsstring>(size_t numWorkers, size_t updateInterval, size_t targetNetworkSyncInterval, size_t stepLimit, size_t explorationSteps, double stepSize, double discount, double gradientLimit, bool doubleQLearning, bool noisyQLearning, bool isCategorical, size_t atomSize, double vMin, double vMax, double rho)</argsstring>
+        <name>TrainingConfig</name>
+        <param>
+          <type>size_t</type>
+          <declname>numWorkers</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>updateInterval</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>targetNetworkSyncInterval</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>stepLimit</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>explorationSteps</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>stepSize</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>discount</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>gradientLimit</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>doubleQLearning</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>noisyQLearning</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isCategorical</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>atomSize</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>vMin</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>vMax</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>rho</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="40" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ad7df1d452c9f3c80149f18537f1736d4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t AtomSize</definition>
+        <argsstring>() const</argsstring>
+        <name>AtomSize</name>
+        <briefdescription>
+<para>Get the number of atoms. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="133" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a30f42fc518e2d5826247f7eab599ad5e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; AtomSize</definition>
+        <argsstring>()</argsstring>
+        <name>AtomSize</name>
+        <briefdescription>
+<para>Modify the number of atoms. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="135" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1aa6ad347e43fbd017a857577c98b2c60a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Discount</definition>
+        <argsstring>() const</argsstring>
+        <name>Discount</name>
+        <briefdescription>
+<para>Get the discount rate for future reward. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="108" bodyend="108"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1acac458c2ea9b4b4f1d48bd9cff986bae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Discount</definition>
+        <argsstring>()</argsstring>
+        <name>Discount</name>
+        <briefdescription>
+<para>Modify the discount rate for future reward. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a5ba88e606db2e58eefb3930c0fe4bbd3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DoubleQLearning</definition>
+        <argsstring>() const</argsstring>
+        <name>DoubleQLearning</name>
+        <briefdescription>
+<para>Get the indicator of double q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a5b1dece1cfbb6e22e8bfd35002bb0aa5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; DoubleQLearning</definition>
+        <argsstring>()</argsstring>
+        <name>DoubleQLearning</name>
+        <briefdescription>
+<para>Modify the indicator of double q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a152e5eb946b9733ad6032403bae7cc85" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ExplorationSteps</definition>
+        <argsstring>() const</argsstring>
+        <name>ExplorationSteps</name>
+        <briefdescription>
+<para>Get the exploration steps. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1afa61655c677211db7194648c2be1b0ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; ExplorationSteps</definition>
+        <argsstring>()</argsstring>
+        <name>ExplorationSteps</name>
+        <briefdescription>
+<para>Modify the exploration steps. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a47c21c74b98a88391e1d4acb707fb930" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double GradientLimit</definition>
+        <argsstring>() const</argsstring>
+        <name>GradientLimit</name>
+        <briefdescription>
+<para>Get the limit of update gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="113" bodyend="113"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ae2f246d60c5d8fbebd3218063fe3d752" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; GradientLimit</definition>
+        <argsstring>()</argsstring>
+        <name>GradientLimit</name>
+        <briefdescription>
+<para>Modify the limit of update gradient. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a2ac5642c04ea8b0b9bf2ac94a3d4cc0b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsCategorical</definition>
+        <argsstring>() const</argsstring>
+        <name>IsCategorical</name>
+        <briefdescription>
+<para>Get the indicator of categorical q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a00a3192e4210e07c1d1fb447c3949b91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; IsCategorical</definition>
+        <argsstring>()</argsstring>
+        <name>IsCategorical</name>
+        <briefdescription>
+<para>Modify the indicator of categorical q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="130" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a8c43f11833475085127daec3c393e4b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool NoisyQLearning</definition>
+        <argsstring>() const</argsstring>
+        <name>NoisyQLearning</name>
+        <briefdescription>
+<para>Get the indicator of noisy q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ab6104949740bbfddb9ee9788186269b6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; NoisyQLearning</definition>
+        <argsstring>()</argsstring>
+        <name>NoisyQLearning</name>
+        <briefdescription>
+<para>Modify the indicator of double q-learning. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a924fc92508c8bd78b50b0859e039b4f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumWorkers</definition>
+        <argsstring>() const</argsstring>
+        <name>NumWorkers</name>
+        <briefdescription>
+<para>Get the amount of workers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a0c9a438aa9ae517c2c0d79a1d9c91143" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumWorkers</definition>
+        <argsstring>()</argsstring>
+        <name>NumWorkers</name>
+        <briefdescription>
+<para>Modify the amount of workers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="76" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a309719b378c0bb1962982a8162e58e84" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rho</definition>
+        <argsstring>() const</argsstring>
+        <name>Rho</name>
+        <briefdescription>
+<para>Get the rho value for sac. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="148" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a10001faac75d91c05a3c0bfd711b901a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Rho</definition>
+        <argsstring>()</argsstring>
+        <name>Rho</name>
+        <briefdescription>
+<para>Modify the rho value for sac. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="150" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ac5d0f7fbe2c8d6222464e0d828073051" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StepLimit</definition>
+        <argsstring>() const</argsstring>
+        <name>StepLimit</name>
+        <briefdescription>
+<para>Get the maximum steps of each episode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="90" bodyend="90"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a8affdbc5f4db5e3f62e0e56a1e7de599" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; StepLimit</definition>
+        <argsstring>()</argsstring>
+        <name>StepLimit</name>
+        <briefdescription>
+<para>Modify the maximum steps of each episode. </para>        </briefdescription>
+        <detaileddescription>
+<para>Setting it to 0 means no limit. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a11e6eb66d82a14ebd2943b49db676444" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double StepSize</definition>
+        <argsstring>() const</argsstring>
+        <name>StepSize</name>
+        <briefdescription>
+<para>Get the step size of the optimizer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="103" bodyend="103"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1af6b273aba48a984b2847aa1593e09477" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; StepSize</definition>
+        <argsstring>()</argsstring>
+        <name>StepSize</name>
+        <briefdescription>
+<para>Modify the step size of the optimizer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ad050465e611df6ecca98f5d98a785f03" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t TargetNetworkSyncInterval</definition>
+        <argsstring>() const</argsstring>
+        <name>TargetNetworkSyncInterval</name>
+        <briefdescription>
+<para>Get the interval for syncing target network. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="84" bodyend="85"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a44fc92866e2a5ac3c9bbaebac71b8a62" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; TargetNetworkSyncInterval</definition>
+        <argsstring>()</argsstring>
+        <name>TargetNetworkSyncInterval</name>
+        <briefdescription>
+<para>Modify the interval for syncing target network. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a3e73fbeca5eb5ab314f65094f59d63b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t UpdateInterval</definition>
+        <argsstring>() const</argsstring>
+        <name>UpdateInterval</name>
+        <briefdescription>
+<para>Get the update interval. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="79" bodyend="79"/>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a8ff4385395b639358c1e392696a7469f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; UpdateInterval</definition>
+        <argsstring>()</argsstring>
+        <name>UpdateInterval</name>
+        <briefdescription>
+<para>Modify the update interval. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1af17fe4b8e0837c2280c72c08513a0da0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double VMax</definition>
+        <argsstring>() const</argsstring>
+        <name>VMax</name>
+        <briefdescription>
+<para>Get the maximum value for support. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="143" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1adcbb11864041e04d884f279313c3ef16" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; VMax</definition>
+        <argsstring>()</argsstring>
+        <name>VMax</name>
+        <briefdescription>
+<para>Modify the maximum value for support. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="145" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ae19534b553f92ecba4f07efee2d0f3bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double VMin</definition>
+        <argsstring>() const</argsstring>
+        <name>VMin</name>
+        <briefdescription>
+<para>Get the minimum value for support. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="138" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ab9a47f972ee65973d0b3b654477fe2c7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; VMin</definition>
+        <argsstring>()</argsstring>
+        <name>VMin</name>
+        <briefdescription>
+<para>Modify the minimum value for support. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="140" bodyend="140"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="20" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="19" bodyend="245"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1abb6d1a3f37f99d0f966af04a3583ee10" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>atomSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ad7df1d452c9f3c80149f18537f1736d4" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>AtomSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a30f42fc518e2d5826247f7eab599ad5e" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>AtomSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1aa6ad347e43fbd017a857577c98b2c60a" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>Discount</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1acac458c2ea9b4b4f1d48bd9cff986bae" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>Discount</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a53313c66e4ab6acce975994de1d9c097" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>discount</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a4fdb0b2a159b8c9c41072c389fa75687" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>doubleQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a5ba88e606db2e58eefb3930c0fe4bbd3" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>DoubleQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a5b1dece1cfbb6e22e8bfd35002bb0aa5" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>DoubleQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a152e5eb946b9733ad6032403bae7cc85" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>ExplorationSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1afa61655c677211db7194648c2be1b0ba" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>ExplorationSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a4eeaf7b8e33d2b2382d6058271802065" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>explorationSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a3822ff3dd4e1f0acda751278a59a8181" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>gradientLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a47c21c74b98a88391e1d4acb707fb930" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>GradientLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ae2f246d60c5d8fbebd3218063fe3d752" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>GradientLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ac2f7ea582a2199d8381a4c9af2997194" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>isCategorical</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a2ac5642c04ea8b0b9bf2ac94a3d4cc0b" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>IsCategorical</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a00a3192e4210e07c1d1fb447c3949b91" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>IsCategorical</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1afc910475abd82b3393a3edf3401af808" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>noisyQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a8c43f11833475085127daec3c393e4b0" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>NoisyQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ab6104949740bbfddb9ee9788186269b6" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>NoisyQLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a924fc92508c8bd78b50b0859e039b4f6" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>NumWorkers</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a0c9a438aa9ae517c2c0d79a1d9c91143" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>NumWorkers</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a73370030a89fb92051c897aae72b2b9b" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>numWorkers</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a3ed57096651b587c2bf716fa78048153" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>rho</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a309719b378c0bb1962982a8162e58e84" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>Rho</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a10001faac75d91c05a3c0bfd711b901a" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>Rho</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ac5d0f7fbe2c8d6222464e0d828073051" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>StepLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a8affdbc5f4db5e3f62e0e56a1e7de599" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>StepLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a02b8bf7d4a328de7cef55ca7710921c8" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>stepLimit</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a11e6eb66d82a14ebd2943b49db676444" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>StepSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1af6b273aba48a984b2847aa1593e09477" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>StepSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a76b84e13aaf5a8bd0f919403d57307c0" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>stepSize</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ad050465e611df6ecca98f5d98a785f03" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>TargetNetworkSyncInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a44fc92866e2a5ac3c9bbaebac71b8a62" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>TargetNetworkSyncInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a96f6b97b81b94da770ae778973ce3f12" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>targetNetworkSyncInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a3019009601a109962148cd8ba5505217" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>TrainingConfig</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a3b78e9485faa6307c63cf980850ee615" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>TrainingConfig</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a3e73fbeca5eb5ab314f65094f59d63b2" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>UpdateInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a8ff4385395b639358c1e392696a7469f" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>UpdateInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a590b3211b1410a58f499221ba9a857b2" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>updateInterval</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a1f36f39ac22daecc7d6c29aeee29fe16" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>vMax</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1af17fe4b8e0837c2280c72c08513a0da0" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>VMax</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1adcbb11864041e04d884f279313c3ef16" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>VMax</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ae19534b553f92ecba4f07efee2d0f3bb" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>VMin</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1ab9a47f972ee65973d0b3b654477fe2c7" prot="public" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>VMin</name></member>
+      <member refid="classmlpack_1_1rl_1_1TrainingConfig_1a7dda8a252f275cb9d492b13ad8c0ce2a" prot="private" virt="non-virtual"><scope>mlpack::rl::TrainingConfig</scope><name>vMin</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

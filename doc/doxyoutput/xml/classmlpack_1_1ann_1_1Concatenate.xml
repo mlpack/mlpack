@@ -1,0 +1,430 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1Concatenate" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Concatenate</compoundname>
+    <includes refid="concatenate_8hpp" local="no">concatenate.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Concatenate_1ab231b7057baffd8226032ab30a4f3d18" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType concat</definition>
+        <argsstring></argsstring>
+        <name>concat</name>
+        <briefdescription>
+<para>Locally-stored matrix to be concatenated to input. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Concatenate_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Concatenate_1a2a0eeeab1c8b24875e070a999d5b30bf" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inRows</definition>
+        <argsstring></argsstring>
+        <name>inRows</name>
+        <briefdescription>
+<para>Locally-stored number of input rows. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Concatenate_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Concatenate_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored weight object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1ab589994946f9646efb33115d53bbb7b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Concatenate</definition>
+        <argsstring>()</argsstring>
+        <name>Concatenate</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> object using the specified number of output units. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="42" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a5383a98632f81f199f6be2de6ac7d70d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Concatenate</definition>
+        <argsstring>(const Concatenate &amp;layer)</argsstring>
+        <name>Concatenate</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="45" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a6cdb568b9c5f21708da26f2f63108d23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Concatenate</definition>
+        <argsstring>(Concatenate &amp;&amp;layer)</argsstring>
+        <name>Concatenate</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="48" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="76" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a2a3b8cc991cfeb4c68616ca8542efe99" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Concat</definition>
+        <argsstring>() const</argsstring>
+        <name>Concat</name>
+        <briefdescription>
+<para>Get the concat matrix. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1ab6d00c9e20fe864a635afeee80267c66" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Concat</definition>
+        <argsstring>()</argsstring>
+        <name>Concat</name>
+        <briefdescription>
+<para>Modify the concat. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="91" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="64" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a399bc61a5d9b5a2d3798c98465d177a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;</type>
+        <definition>Concatenate&amp; operator=</definition>
+        <argsstring>(const Concatenate &amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Operator= copy constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="51" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a9fae613c9c4f38339a6ea65feb01f017" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;</type>
+        <definition>Concatenate&amp; operator=</definition>
+        <argsstring>(Concatenate &amp;&amp;layer)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> &amp;&amp;</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Operator= move constructor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Concatenate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="104" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> module class. </para>    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1Concatenate" kindref="compound">Concatenate</ref> module concatenates a constant given matrix to the incoming data. Note: Users need to use the <ref refid="classmlpack_1_1ann_1_1Concatenate_1ab6d00c9e20fe864a635afeee80267c66" kindref="member">Concat()</ref> function to provide the concat matrix.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp" bodystart="36" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1ab231b7057baffd8226032ab30a4f3d18" prot="private" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>concat</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a2a3b8cc991cfeb4c68616ca8542efe99" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Concat</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1ab6d00c9e20fe864a635afeee80267c66" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Concat</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1ab589994946f9646efb33115d53bbb7b3" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Concatenate</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a5383a98632f81f199f6be2de6ac7d70d" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Concatenate</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a6cdb568b9c5f21708da26f2f63108d23" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Concatenate</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a2a0eeeab1c8b24875e070a999d5b30bf" prot="private" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>inRows</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a399bc61a5d9b5a2d3798c98465d177a0" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a9fae613c9c4f38339a6ea65feb01f017" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Concatenate_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::Concatenate</scope><name>weights</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

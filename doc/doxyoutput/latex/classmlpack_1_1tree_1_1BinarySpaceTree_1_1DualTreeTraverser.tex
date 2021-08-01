@@ -1,0 +1,194 @@
+\section{Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, Split\+Type $>$\+:\+:Dual\+Tree\+Traverser$<$ Rule\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser}\index{Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, Split\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Rule\+Type $>$@{Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, Split\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Rule\+Type $>$}}
+
+
+A dual-\/tree traverser for binary space trees; see dual\+\_\+tree\+\_\+traverser.\+hpp.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Dual\+Tree\+Traverser} (Rule\+Type \&rule)
+\begin{DoxyCompactList}\small\item\em Instantiate the dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Prunes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Scores} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Visited} () const
+\begin{DoxyCompactList}\small\item\em Get the number of visited combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Visited} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited combinations. \end{DoxyCompactList}\item 
+void \textbf{ Traverse} (\textbf{ Binary\+Space\+Tree} \&query\+Node, \textbf{ Binary\+Space\+Tree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, template$<$ typename Bound\+Metric\+Type, typename... $>$ class Bound\+Type = bound\+::\+H\+Rect\+Bound, template$<$ typename Split\+Bound\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Split$>$\newline
+template$<$typename Rule\+Type$>$\newline
+class mlpack\+::tree\+::\+Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, Split\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Rule\+Type $>$}
+
+A dual-\/tree traverser for binary space trees; see dual\+\_\+tree\+\_\+traverser.\+hpp. 
+
+Definition at line 100 of file binary\+\_\+space\+\_\+tree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_abd4227fd4d7e7f3e1090233443cc265e}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}}
+\index{Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Dual\+Tree\+Traverser()}
+{\footnotesize\ttfamily \textbf{ Dual\+Tree\+Traverser} (\begin{DoxyParamCaption}\item[{Rule\+Type \&}]{rule }\end{DoxyParamCaption})}
+
+
+
+Instantiate the dual-\/tree traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_afc2a1471e0354570c99c25473d32433e}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a base case was calculated. 
+
+
+
+Definition at line 66 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_a56b8f525584ea0bf262fa6e413fe3672}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Base\+Cases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a base case was calculated. 
+
+
+
+Definition at line 68 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_ac2f6072011ee31a0a32f62e2a105a347}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Prunes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of prunes. 
+
+
+
+Definition at line 51 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_adf887190e9d9024ff244503e4aaf0732}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Prunes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of prunes. 
+
+
+
+Definition at line 53 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_a9adf9744b1b9b4d74e0da6570010e63e}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Scores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a node combination was scored. 
+
+
+
+Definition at line 61 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_a3c4c3ca7affdd40cc224370b87417125}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Scores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a node combination was scored. 
+
+
+
+Definition at line 63 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_a6a5a81524ab8e6506495bdfb2f42fb2f}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Visited()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Visited (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of visited combinations. 
+
+
+
+Definition at line 56 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_a970ffa1006597bf4b7388496c34eea2f}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Num\+Visited()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Visited (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of visited combinations. 
+
+
+
+Definition at line 58 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1BinarySpaceTree_1_1DualTreeTraverser_addfcfe8d6ac4ef7fef8b6f99324a69b2}} 
+\index{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Binary\+Space\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection{Traverse()}
+{\footnotesize\ttfamily void Traverse (\begin{DoxyParamCaption}\item[{\textbf{ Binary\+Space\+Tree} \&}]{query\+Node,  }\item[{\textbf{ Binary\+Space\+Tree} \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Traverse the two trees. 
+
+This does not reset the number of prunes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & The query node to be traversed. \\
+\hline
+{\em reference\+Node} & The reference node to be traversed. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/\textbf{ binary\+\_\+space\+\_\+tree.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/\textbf{ dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

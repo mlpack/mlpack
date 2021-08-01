@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1ann_1_1NaiveConvolution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::NaiveConvolution</compoundname>
+    <includes refid="naive__convolution_8hpp" local="no">naive_convolution.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>BorderMode</declname>
+        <defname>BorderMode</defname>
+        <defval><ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+          <param>
+            <type>typename Border</type>
+            <defval>BorderMode</defval>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; std::is_same&lt; Border, <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref> &gt;::value, void &gt;::type</type>
+        <definition>static std::enable_if&lt; std::is_same&lt;Border, ValidConvolution&gt;::value, void&gt;::type Convolution</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;filter, arma::Mat&lt; eT &gt; &amp;output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dH</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationH</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="52" bodyend="82"/>
+        <referencedby refid="classmlpack_1_1ann_1_1SVDConvolution_1aaff7a735c01552aa46deafa7a7331b1c" compoundref="svd__convolution_8hpp" startline="56" endline="110">SVDConvolution&lt; BorderMode &gt;::Convolution</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1NaiveConvolution_1a1ba06465fccd6afa80f4d6cfe9a9dec3" compoundref="naive__convolution_8hpp" startline="98" endline="137">NaiveConvolution&lt; BorderMode &gt;::Convolution</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NaiveConvolution_1a1ba06465fccd6afa80f4d6cfe9a9dec3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+          <param>
+            <type>typename Border</type>
+            <defval>BorderMode</defval>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; std::is_same&lt; Border, <ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref> &gt;::value, void &gt;::type</type>
+        <definition>static std::enable_if&lt; std::is_same&lt;Border, FullConvolution&gt;::value, void&gt;::type Convolution</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;filter, arma::Mat&lt; eT &gt; &amp;output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dH</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationH</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="98" bodyend="137"/>
+        <references refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" compoundref="naive__convolution_8hpp" startline="52" endline="82">NaiveConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NaiveConvolution_1ae2b55592952b28666d36015a4e42f9d6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, const arma::Cube&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dH</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationH</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="151" bodyend="172"/>
+        <references refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" compoundref="naive__convolution_8hpp" startline="52" endline="82">NaiveConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NaiveConvolution_1ac2914aeee931814235a0e237aad5e6d1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Cube&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dH</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationH</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="187" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="187" bodyend="208"/>
+        <references refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" compoundref="naive__convolution_8hpp" startline="52" endline="82">NaiveConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NaiveConvolution_1a3afb255b85fb9c65054493f44104178f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Convolution</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;filter, arma::Cube&lt; eT &gt; &amp;output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)</argsstring>
+        <name>Convolution</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dH</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationW</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>dilationH</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="223" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="223" bodyend="244"/>
+        <references refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" compoundref="naive__convolution_8hpp" startline="52" endline="82">NaiveConvolution&lt; BorderMode &gt;::Convolution</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Computes the two-dimensional convolution. </para>    </briefdescription>
+    <detaileddescription>
+<para>This class allows specification of the type of the border type. The convolution can be compute with the valid border type of the full border type (default).</para><para><ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref>: returns the full two-dimensional convolution. <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>: returns only those parts of the convolution that are computed without the zero-padded edges.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>BorderMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the border mode (<ref refid="classmlpack_1_1ann_1_1FullConvolution" kindref="compound">FullConvolution</ref> or <ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/convolution_rules/naive_convolution.hpp" bodystart="35" bodyend="245"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1adde8ddb6df77ab42370e7c28c26af974" prot="public" virt="non-virtual"><scope>mlpack::ann::NaiveConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1a1ba06465fccd6afa80f4d6cfe9a9dec3" prot="public" virt="non-virtual"><scope>mlpack::ann::NaiveConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1ae2b55592952b28666d36015a4e42f9d6" prot="public" virt="non-virtual"><scope>mlpack::ann::NaiveConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1ac2914aeee931814235a0e237aad5e6d1" prot="public" virt="non-virtual"><scope>mlpack::ann::NaiveConvolution</scope><name>Convolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1a3afb255b85fb9c65054493f44104178f" prot="public" virt="non-virtual"><scope>mlpack::ann::NaiveConvolution</scope><name>Convolution</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

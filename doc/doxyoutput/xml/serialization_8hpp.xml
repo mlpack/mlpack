@@ -1,0 +1,1158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="serialization_8hpp" kind="file" language="C++">
+    <compoundname>serialization.hpp</compoundname>
+    <includes refid="core_8hpp" local="no">mlpack/core.hpp</includes>
+    <includes refid="test__catch__tools_8hpp" local="yes">test_catch_tools.hpp</includes>
+    <includes local="yes">catch.hpp</includes>
+    <incdepgraph>
+      <node id="59736">
+        <label>list</label>
+      </node>
+      <node id="59763">
+        <label>save_impl.hpp</label>
+      </node>
+      <node id="59733">
+        <label>atomic</label>
+      </node>
+      <node id="59755">
+        <label>dataset_mapper_impl.hpp</label>
+      </node>
+      <node id="59761">
+        <label>load_image_impl.hpp</label>
+      </node>
+      <node id="59813">
+        <label>catch.hpp</label>
+      </node>
+      <node id="59723">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="59699">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="59684">
+        <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
+        <link refid="serialization_8hpp"/>
+        <childnode refid="59685" relation="include">
+        </childnode>
+        <childnode refid="59811" relation="include">
+        </childnode>
+        <childnode refid="59813" relation="include">
+        </childnode>
+      </node>
+      <node id="59735">
+        <label>iomanip</label>
+      </node>
+      <node id="59812">
+        <label>boost/version.hpp</label>
+      </node>
+      <node id="59793">
+        <label>mlpack/core/kernels/linear_kernel.hpp</label>
+        <link refid="linear__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59788">
+        <label>mlpack/core/data/confusion_matrix.hpp</label>
+        <link refid="confusion__matrix_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59789" relation="include">
+        </childnode>
+      </node>
+      <node id="59803">
+        <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
+        <link refid="laplacian__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59770">
+        <label>float.h</label>
+      </node>
+      <node id="59799">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="59708">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="59709" relation="include">
+        </childnode>
+        <childnode refid="59711" relation="include">
+        </childnode>
+      </node>
+      <node id="59691">
+        <label>cstdint</label>
+      </node>
+      <node id="59801">
+        <label>epanechnikov_kernel_impl.hpp</label>
+      </node>
+      <node id="59792">
+        <label>mlpack/core/kernels/kernel_traits.hpp</label>
+        <link refid="kernel__traits_8hpp"/>
+      </node>
+      <node id="59700">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="59707">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="59786">
+        <label>mlpack/core/dists/gamma_distribution.hpp</label>
+        <link refid="gamma__distribution_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59771" relation="include">
+        </childnode>
+      </node>
+      <node id="59750">
+        <label>mlpack/core/data/load.hpp</label>
+        <link refid="load_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59739" relation="include">
+        </childnode>
+        <childnode refid="59751" relation="include">
+        </childnode>
+        <childnode refid="59752" relation="include">
+        </childnode>
+        <childnode refid="59756" relation="include">
+        </childnode>
+        <childnode refid="59759" relation="include">
+        </childnode>
+        <childnode refid="59760" relation="include">
+        </childnode>
+        <childnode refid="59761" relation="include">
+        </childnode>
+      </node>
+      <node id="59747">
+        <label>program_doc.hpp</label>
+        <link refid="program__doc_8hpp"/>
+      </node>
+      <node id="59768">
+        <label>stdlib.h</label>
+      </node>
+      <node id="59772">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="59730">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="59807">
+        <label>mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="59808" relation="include">
+        </childnode>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59776">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="59802">
+        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
+        <link refid="hyperbolic__tangent__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59685">
+        <label>mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59699" relation="include">
+        </childnode>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59743" relation="include">
+        </childnode>
+        <childnode refid="59741" relation="include">
+        </childnode>
+        <childnode refid="59750" relation="include">
+        </childnode>
+        <childnode refid="59762" relation="include">
+        </childnode>
+        <childnode refid="59765" relation="include">
+        </childnode>
+        <childnode refid="59767" relation="include">
+        </childnode>
+        <childnode refid="59771" relation="include">
+        </childnode>
+        <childnode refid="59774" relation="include">
+        </childnode>
+        <childnode refid="59775" relation="include">
+        </childnode>
+        <childnode refid="59777" relation="include">
+        </childnode>
+        <childnode refid="59778" relation="include">
+        </childnode>
+        <childnode refid="59779" relation="include">
+        </childnode>
+        <childnode refid="59780" relation="include">
+        </childnode>
+        <childnode refid="59782" relation="include">
+        </childnode>
+        <childnode refid="59783" relation="include">
+        </childnode>
+        <childnode refid="59784" relation="include">
+        </childnode>
+        <childnode refid="59785" relation="include">
+        </childnode>
+        <childnode refid="59786" relation="include">
+        </childnode>
+        <childnode refid="59787" relation="include">
+        </childnode>
+        <childnode refid="59788" relation="include">
+        </childnode>
+        <childnode refid="59790" relation="include">
+        </childnode>
+        <childnode refid="59792" relation="include">
+        </childnode>
+        <childnode refid="59793" relation="include">
+        </childnode>
+        <childnode refid="59794" relation="include">
+        </childnode>
+        <childnode refid="59795" relation="include">
+        </childnode>
+        <childnode refid="59797" relation="include">
+        </childnode>
+        <childnode refid="59800" relation="include">
+        </childnode>
+        <childnode refid="59802" relation="include">
+        </childnode>
+        <childnode refid="59803" relation="include">
+        </childnode>
+        <childnode refid="59804" relation="include">
+        </childnode>
+        <childnode refid="59807" relation="include">
+        </childnode>
+        <childnode refid="59809" relation="include">
+        </childnode>
+        <childnode refid="59810" relation="include">
+        </childnode>
+      </node>
+      <node id="59764">
+        <label>io_impl.hpp</label>
+      </node>
+      <node id="59720">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="59790">
+        <label>mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59685" relation="include">
+        </childnode>
+        <childnode refid="59791" relation="include">
+        </childnode>
+      </node>
+      <node id="59687">
+        <label>cmath</label>
+      </node>
+      <node id="59706">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="59695">
+        <label>stdexcept</label>
+      </node>
+      <node id="59715">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="59700" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59701" relation="include">
+        </childnode>
+      </node>
+      <node id="59777">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="59796">
+        <label>cosine_distance_impl.hpp</label>
+      </node>
+      <node id="59754">
+        <label>mlpack/core/data/map_policies/datatype.hpp</label>
+        <link refid="datatype_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59739">
+        <label>string</label>
+      </node>
+      <node id="59727">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="59728" relation="include">
+        </childnode>
+        <childnode refid="59694" relation="include">
+        </childnode>
+      </node>
+      <node id="59795">
+        <label>mlpack/core/kernels/cosine_distance.hpp</label>
+        <link refid="cosine__distance_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59792" relation="include">
+        </childnode>
+        <childnode refid="59796" relation="include">
+        </childnode>
+      </node>
+      <node id="59737">
+        <label>map</label>
+      </node>
+      <node id="59775">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59776" relation="include">
+        </childnode>
+      </node>
+      <node id="59689">
+        <label>cfloat</label>
+      </node>
+      <node id="59746">
+        <label>binding_details.hpp</label>
+        <link refid="binding__details_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59747" relation="include">
+        </childnode>
+      </node>
+      <node id="59719">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="59785">
+        <label>mlpack/core/dists/laplace_distribution.hpp</label>
+        <link refid="laplace__distribution_8hpp"/>
+      </node>
+      <node id="59741">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="59703">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="59726">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="59727" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59710" relation="include">
+        </childnode>
+        <childnode refid="59728" relation="include">
+        </childnode>
+      </node>
+      <node id="59716">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="59782">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="59800">
+        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
+        <link refid="epanechnikov__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59792" relation="include">
+        </childnode>
+        <childnode refid="59801" relation="include">
+        </childnode>
+      </node>
+      <node id="59787">
+        <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
+        <link refid="diagonal__gaussian__distribution_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59714">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="59700" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59701" relation="include">
+        </childnode>
+      </node>
+      <node id="59717">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="59700" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59701" relation="include">
+        </childnode>
+      </node>
+      <node id="59774">
+        <label>mlpack/core/math/random_basis.hpp</label>
+        <link refid="random__basis_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59745">
+        <label>boost/any.hpp</label>
+      </node>
+      <node id="59705">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="59725">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="59701" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59713" relation="include">
+        </childnode>
+        <childnode refid="59722" relation="include">
+        </childnode>
+      </node>
+      <node id="59729">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="59730" relation="include">
+        </childnode>
+      </node>
+      <node id="59731">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="59811">
+        <label>test_catch_tools.hpp</label>
+        <link refid="test__catch__tools_8hpp"/>
+        <childnode refid="59685" relation="include">
+        </childnode>
+        <childnode refid="59812" relation="include">
+        </childnode>
+        <childnode refid="59813" relation="include">
+        </childnode>
+      </node>
+      <node id="59686">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="59687" relation="include">
+        </childnode>
+        <childnode refid="59688" relation="include">
+        </childnode>
+        <childnode refid="59689" relation="include">
+        </childnode>
+        <childnode refid="59690" relation="include">
+        </childnode>
+        <childnode refid="59691" relation="include">
+        </childnode>
+        <childnode refid="59692" relation="include">
+        </childnode>
+        <childnode refid="59693" relation="include">
+        </childnode>
+        <childnode refid="59694" relation="include">
+        </childnode>
+        <childnode refid="59695" relation="include">
+        </childnode>
+        <childnode refid="59696" relation="include">
+        </childnode>
+        <childnode refid="59697" relation="include">
+        </childnode>
+        <childnode refid="59698" relation="include">
+        </childnode>
+        <childnode refid="59699" relation="include">
+        </childnode>
+        <childnode refid="59700" relation="include">
+        </childnode>
+        <childnode refid="59701" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59704" relation="include">
+        </childnode>
+        <childnode refid="59705" relation="include">
+        </childnode>
+        <childnode refid="59706" relation="include">
+        </childnode>
+        <childnode refid="59707" relation="include">
+        </childnode>
+        <childnode refid="59708" relation="include">
+        </childnode>
+        <childnode refid="59712" relation="include">
+        </childnode>
+        <childnode refid="59713" relation="include">
+        </childnode>
+        <childnode refid="59714" relation="include">
+        </childnode>
+        <childnode refid="59715" relation="include">
+        </childnode>
+        <childnode refid="59716" relation="include">
+        </childnode>
+        <childnode refid="59717" relation="include">
+        </childnode>
+        <childnode refid="59718" relation="include">
+        </childnode>
+        <childnode refid="59724" relation="include">
+        </childnode>
+        <childnode refid="59725" relation="include">
+        </childnode>
+        <childnode refid="59722" relation="include">
+        </childnode>
+        <childnode refid="59726" relation="include">
+        </childnode>
+        <childnode refid="59729" relation="include">
+        </childnode>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59732" relation="include">
+        </childnode>
+        <childnode refid="59741" relation="include">
+        </childnode>
+        <childnode refid="59742" relation="include">
+        </childnode>
+      </node>
+      <node id="59766">
+        <label>normalize_labels_impl.hpp</label>
+      </node>
+      <node id="59791">
+        <label>one_hot_encoding_impl.hpp</label>
+      </node>
+      <node id="59773">
+        <label>random</label>
+      </node>
+      <node id="59797">
+        <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
+        <link refid="gaussian__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59798" relation="include">
+        </childnode>
+        <childnode refid="59792" relation="include">
+        </childnode>
+      </node>
+      <node id="59753">
+        <label>map_policies/increment_policy.hpp</label>
+        <link refid="increment__policy_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59711" relation="include">
+        </childnode>
+        <childnode refid="59754" relation="include">
+        </childnode>
+      </node>
+      <node id="59692">
+        <label>cstdio</label>
+      </node>
+      <node id="59757">
+        <label>extension.hpp</label>
+        <link refid="extension_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59696">
+        <label>tuple</label>
+      </node>
+      <node id="59701">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="59718">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="59701" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59705" relation="include">
+        </childnode>
+        <childnode refid="59719" relation="include">
+        </childnode>
+        <childnode refid="59720" relation="include">
+        </childnode>
+        <childnode refid="59721" relation="include">
+        </childnode>
+        <childnode refid="59722" relation="include">
+        </childnode>
+      </node>
+      <node id="59758">
+        <label>image_info_impl.hpp</label>
+      </node>
+      <node id="59805">
+        <label>vector</label>
+      </node>
+      <node id="59760">
+        <label>load_vec_impl.hpp</label>
+      </node>
+      <node id="59748">
+        <label>version.hpp</label>
+        <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
+        <childnode refid="59739" relation="include">
+        </childnode>
+      </node>
+      <node id="59767">
+        <label>mlpack/core/math/clamp.hpp</label>
+        <link refid="clamp_8hpp"/>
+        <childnode refid="59768" relation="include">
+        </childnode>
+        <childnode refid="59769" relation="include">
+        </childnode>
+        <childnode refid="59770" relation="include">
+        </childnode>
+      </node>
+      <node id="59771">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59772" relation="include">
+        </childnode>
+        <childnode refid="59773" relation="include">
+        </childnode>
+      </node>
+      <node id="59697">
+        <label>utility</label>
+      </node>
+      <node id="59721">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="59759">
+        <label>load_model_impl.hpp</label>
+      </node>
+      <node id="59712">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="59709">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="59710" relation="include">
+        </childnode>
+      </node>
+      <node id="59804">
+        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
+        <link refid="pspectrum__string__kernel_8hpp"/>
+        <childnode refid="59737" relation="include">
+        </childnode>
+        <childnode refid="59739" relation="include">
+        </childnode>
+        <childnode refid="59805" relation="include">
+        </childnode>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59806" relation="include">
+        </childnode>
+      </node>
+      <node id="59779">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59765">
+        <label>mlpack/core/data/normalize_labels.hpp</label>
+        <link refid="normalize__labels_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59766" relation="include">
+        </childnode>
+      </node>
+      <node id="59732">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="59733" relation="include">
+        </childnode>
+        <childnode refid="59734" relation="include">
+        </childnode>
+        <childnode refid="59735" relation="include">
+        </childnode>
+        <childnode refid="59736" relation="include">
+        </childnode>
+        <childnode refid="59737" relation="include">
+        </childnode>
+        <childnode refid="59738" relation="include">
+        </childnode>
+        <childnode refid="59739" relation="include">
+        </childnode>
+        <childnode refid="59740" relation="include">
+        </childnode>
+      </node>
+      <node id="59710">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="59724">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="59722" relation="include">
+        </childnode>
+        <childnode refid="59718" relation="include">
+        </childnode>
+        <childnode refid="59725" relation="include">
+        </childnode>
+      </node>
+      <node id="59769">
+        <label>math.h</label>
+      </node>
+      <node id="59749">
+        <label>param_data.hpp</label>
+        <link refid="param__data_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59745" relation="include">
+        </childnode>
+      </node>
+      <node id="59693">
+        <label>cstdlib</label>
+      </node>
+      <node id="59783">
+        <label>mlpack/core/dists/discrete_distribution.hpp</label>
+        <link refid="discrete__distribution_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59771" relation="include">
+        </childnode>
+      </node>
+      <node id="59688">
+        <label>cctype</label>
+      </node>
+      <node id="59744">
+        <label>iostream</label>
+      </node>
+      <node id="59794">
+        <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
+        <link refid="polynomial__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59789">
+        <label>confusion_matrix_impl.hpp</label>
+      </node>
+      <node id="59711">
+        <label>unordered_map</label>
+      </node>
+      <node id="59756">
+        <label>image_info.hpp</label>
+        <link refid="image__info_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59757" relation="include">
+        </childnode>
+        <childnode refid="59758" relation="include">
+        </childnode>
+      </node>
+      <node id="59690">
+        <label>climits</label>
+      </node>
+      <node id="59752">
+        <label>dataset_mapper.hpp</label>
+        <link refid="dataset__mapper_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59711" relation="include">
+        </childnode>
+        <childnode refid="59753" relation="include">
+        </childnode>
+        <childnode refid="59755" relation="include">
+        </childnode>
+      </node>
+      <node id="59780">
+        <label>mlpack/core/math/ccov.hpp</label>
+        <link refid="ccov_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59781" relation="include">
+        </childnode>
+      </node>
+      <node id="59738">
+        <label>mutex</label>
+      </node>
+      <node id="59762">
+        <label>mlpack/core/data/save.hpp</label>
+        <link refid="save_8hpp"/>
+        <childnode refid="59731" relation="include">
+        </childnode>
+        <childnode refid="59698" relation="include">
+        </childnode>
+        <childnode refid="59739" relation="include">
+        </childnode>
+        <childnode refid="59751" relation="include">
+        </childnode>
+        <childnode refid="59756" relation="include">
+        </childnode>
+        <childnode refid="59763" relation="include">
+        </childnode>
+      </node>
+      <node id="59734">
+        <label>chrono</label>
+      </node>
+      <node id="59742">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="59781">
+        <label>ccov_impl.hpp</label>
+      </node>
+      <node id="59808">
+        <label>boost/math/special_functions/gamma.hpp</label>
+      </node>
+      <node id="59740">
+        <label>thread</label>
+      </node>
+      <node id="59810">
+        <label>mlpack/core/kernels/cauchy_kernel.hpp</label>
+        <link refid="cauchy__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59798" relation="include">
+        </childnode>
+        <childnode refid="59792" relation="include">
+        </childnode>
+      </node>
+      <node id="59728">
+        <label>type_traits</label>
+      </node>
+      <node id="59704">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="59806">
+        <label>pspectrum_string_kernel_impl.hpp</label>
+      </node>
+      <node id="59698">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="59722">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="59700" relation="include">
+        </childnode>
+        <childnode refid="59701" relation="include">
+        </childnode>
+        <childnode refid="59702" relation="include">
+        </childnode>
+        <childnode refid="59703" relation="include">
+        </childnode>
+        <childnode refid="59723" relation="include">
+        </childnode>
+      </node>
+      <node id="59778">
+        <label>mlpack/core/math/round.hpp</label>
+        <link refid="round_8hpp"/>
+      </node>
+      <node id="59809">
+        <label>mlpack/core/kernels/triangular_kernel.hpp</label>
+        <link refid="triangular__kernel_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59798" relation="include">
+        </childnode>
+      </node>
+      <node id="59694">
+        <label>cstring</label>
+      </node>
+      <node id="59713">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="59743">
+        <label>mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="59744" relation="include">
+        </childnode>
+        <childnode refid="59736" relation="include">
+        </childnode>
+        <childnode refid="59737" relation="include">
+        </childnode>
+        <childnode refid="59739" relation="include">
+        </childnode>
+        <childnode refid="59745" relation="include">
+        </childnode>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59732" relation="include">
+        </childnode>
+        <childnode refid="59746" relation="include">
+        </childnode>
+        <childnode refid="59747" relation="include">
+        </childnode>
+        <childnode refid="59748" relation="include">
+        </childnode>
+        <childnode refid="59749" relation="include">
+        </childnode>
+        <childnode refid="59750" relation="include">
+        </childnode>
+        <childnode refid="59762" relation="include">
+        </childnode>
+        <childnode refid="59764" relation="include">
+        </childnode>
+      </node>
+      <node id="59702">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="59784">
+        <label>mlpack/core/dists/gaussian_distribution.hpp</label>
+        <link refid="gaussian__distribution_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+      </node>
+      <node id="59798">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="59686" relation="include">
+        </childnode>
+        <childnode refid="59799" relation="include">
+        </childnode>
+      </node>
+      <node id="59751">
+        <label>format.hpp</label>
+        <link refid="format_8hpp"/>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Miscellaneous utility functions for serialization tests.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_TESTS_SERIALIZATION_CATCH_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_TESTS_SERIALIZATION_CATCH_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="core_8hpp" kindref="compound">mlpack/core.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="test__catch__tools_8hpp" kindref="compound">test_catch_tools.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;catch.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Test<sp/>function<sp/>for<sp/>loading<sp/>and<sp/>saving<sp/>Armadillo<sp/>objects.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CubeType,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>IArchiveType,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OArchiveType&gt;</highlight></codeline>
+<codeline lineno="26" refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>(arma::Cube&lt;CubeType&gt;&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>save<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>type_info<sp/>name<sp/>to<sp/>get<sp/>unique<sp/>file<sp/>name<sp/>for<sp/>serialization<sp/>test<sp/>files.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName<sp/>=<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(IArchiveType).name());</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>std::ofstream<sp/>ofs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>OArchiveType<sp/>o(ofs);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>o(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>ofs.close();</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>load<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>arma::Cube&lt;CubeType&gt;<sp/>orig(x);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>ifs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>IArchiveType<sp/>i(ifs);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>i(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>ifs.close();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">remove</highlight><highlight class="normal">(fileName.c_str());</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_rows<sp/>==<sp/>orig.n_rows);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_cols<sp/>==<sp/>orig.n_cols);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_elem_slice<sp/>==<sp/>orig.n_elem_slice);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_slices<sp/>==<sp/>orig.n_slices);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_elem<sp/>==<sp/>orig.n_elem);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>slice<sp/>=<sp/>0;<sp/>slice<sp/>!=<sp/>x.n_slices;<sp/>++slice)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>origSlice<sp/>=<sp/>orig.slice(slice);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>xSlice<sp/>=<sp/>x.slice(slice);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>x.n_cols;<sp/>++i)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>x.n_rows;<sp/>++j)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(origSlice(j,<sp/>i))<sp/>==<sp/>0.0)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(xSlice(j,<sp/>i))<sp/>==<sp/>Approx(0.0).margin(1e-8<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(origSlice(j,<sp/>i))<sp/>==</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Approx(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(xSlice(j,<sp/>i))).epsilon(1e-8<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Test<sp/>all<sp/>serialization<sp/>strategies.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>CubeType&gt;</highlight></codeline>
+<codeline lineno="78" refid="namespacemlpack_1a4f980f11d878f685a51f25a1e00aeef1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a4f980f11d878f685a51f25a1e00aeef1" kindref="member">TestAllArmadilloSerialization</ref>(arma::Cube&lt;CubeType&gt;&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;CubeType,<sp/>cereal::XMLInputArchive,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::XMLOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;CubeType,<sp/>cereal::JSONInputArchive,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::JSONOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;CubeType,<sp/>cereal::BinaryInputArchive,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::BinaryOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Test<sp/>function<sp/>for<sp/>loading<sp/>and<sp/>saving<sp/>Armadillo<sp/>objects.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>IArchiveType,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OArchiveType&gt;</highlight></codeline>
+<codeline lineno="92" refid="namespacemlpack_1a7c2aa41ce56ddd03a2a2d8580b2433c2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>(MatType&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>save<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName<sp/>=<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(IArchiveType).name());</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>std::ofstream<sp/>ofs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>OArchiveType<sp/>o(ofs);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>o(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>ofs.close();</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>load<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>MatType<sp/>orig(x);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>ifs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>IArchiveType<sp/>i(ifs);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>i(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>ifs.close();</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">remove</highlight><highlight class="normal">(fileName.c_str());</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_rows<sp/>==<sp/>orig.n_rows);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_cols<sp/>==<sp/>orig.n_cols);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>REQUIRE(x.n_elem<sp/>==<sp/>orig.n_elem);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>x.n_cols;<sp/>++i)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>x.n_rows;<sp/>++j)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(orig(j,<sp/>i))<sp/>==<sp/>0.0)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(x(j,<sp/>i))<sp/>==<sp/>Approx(0.0).margin(1e-8<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(orig(j,<sp/>i))<sp/>==</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Approx(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(x(j,<sp/>i))).epsilon(1e-8<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Test<sp/>all<sp/>serialization<sp/>strategies.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="132" refid="namespacemlpack_1a48f8ce6e4565473110b4f55040b74b2f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a4f980f11d878f685a51f25a1e00aeef1" kindref="member">TestAllArmadilloSerialization</ref>(MatType&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;MatType,<sp/>cereal::XMLInputArchive,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::XMLOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;MatType,<sp/>cereal::JSONInputArchive,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::JSONOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" kindref="member">TestArmadilloSerialization</ref>&lt;MatType,<sp/>cereal::BinaryInputArchive,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::BinaryOutputArchive&gt;(x);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Save<sp/>and<sp/>load<sp/>an<sp/>mlpack<sp/>object.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>re-loaded<sp/>copy<sp/>is<sp/>placed<sp/>in<sp/>&apos;newT&apos;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>IArchiveType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OArchiveType&gt;</highlight></codeline>
+<codeline lineno="145" refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" kindref="member">SerializeObject</ref>(T&amp;<sp/>t,<sp/>T&amp;<sp/>newT)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName<sp/>=<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(T).name());</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>std::ofstream<sp/>ofs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>OArchiveType<sp/>o(ofs);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>T&amp;<sp/>x(t);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>o(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>ofs.close();</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>ifs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>IArchiveType<sp/>i(ifs);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>T&amp;<sp/>x(newT);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>i(CEREAL_NVP(x));</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>ifs.close();</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">remove</highlight><highlight class="normal">(fileName.c_str());</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Test<sp/>mlpack<sp/>serialization<sp/>with<sp/>all<sp/>three<sp/>archive<sp/>types.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="172" refid="namespacemlpack_1a8c171c8ee3d09fb7f38f9a76b9a962b8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a8c171c8ee3d09fb7f38f9a76b9a962b8" kindref="member">SerializeObjectAll</ref>(T&amp;<sp/>t,<sp/>T&amp;<sp/>xmlT,<sp/>T&amp;<sp/>jsonT,<sp/>T&amp;<sp/>binaryT)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" kindref="member">SerializeObject</ref>&lt;T,<sp/>cereal::XMLInputArchive,</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::XMLOutputArchive&gt;(t,<sp/>xmlT);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" kindref="member">SerializeObject</ref>&lt;T,<sp/>cereal::JSONInputArchive,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::JSONOutputArchive&gt;(t,<sp/>jsonT);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" kindref="member">SerializeObject</ref>&lt;T,<sp/>cereal::BinaryInputArchive,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::BinaryOutputArchive&gt;(t,<sp/>binaryT);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Save<sp/>and<sp/>load<sp/>a<sp/>non-default-constructible<sp/>mlpack<sp/>object.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>IArchiveType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OArchiveType&gt;</highlight></codeline>
+<codeline lineno="184" refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" kindref="member">SerializePointerObject</ref>(T*<sp/>t,<sp/>T*&amp;<sp/>newT)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName<sp/>=<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(T).name());</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>std::ofstream<sp/>ofs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>OArchiveType<sp/>o(ofs);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>o(<ref refid="pointer__wrapper_8hpp_1a58a300268ba9c6215a8ab2075a4dc675" kindref="member">CEREAL_POINTER</ref>(t));</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/>ofs.close();</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>ifs(fileName,<sp/><ref refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" kindref="member">std::ios::binary</ref>);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>IArchiveType<sp/>i(ifs);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>i(<ref refid="pointer__wrapper_8hpp_1a58a300268ba9c6215a8ab2075a4dc675" kindref="member">CEREAL_POINTER</ref>(newT));</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>ifs.close();</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">remove</highlight><highlight class="normal">(fileName.c_str());</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="206" refid="namespacemlpack_1a005e4f612a7747ec26149ceb00fbb960" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1a005e4f612a7747ec26149ceb00fbb960" kindref="member">SerializePointerObjectAll</ref>(T*<sp/>t,<sp/>T*&amp;<sp/>xmlT,<sp/>T*&amp;<sp/>jsonT,<sp/>T*&amp;<sp/>binaryT)</highlight></codeline>
+<codeline lineno="207"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" kindref="member">SerializePointerObject</ref>&lt;T,<sp/>cereal::JSONInputArchive,</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::JSONOutputArchive&gt;(t,<sp/>jsonT);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" kindref="member">SerializePointerObject</ref>&lt;T,<sp/>cereal::BinaryInputArchive,</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::BinaryOutputArchive&gt;(t,<sp/>binaryT);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><ref refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" kindref="member">SerializePointerObject</ref>&lt;T,<sp/>cereal::XMLInputArchive,</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cereal::XMLOutputArchive&gt;(t,<sp/>xmlT);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Utility<sp/>function<sp/>to<sp/>check<sp/>the<sp/>equality<sp/>of<sp/>two<sp/>Armadillo<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1aa79e1de3de2187b74e5ea138b09ab461" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>x,</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>xmlX,</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>jsonX,</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>binaryX);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1aa79e1de3de2187b74e5ea138b09ab461" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>x,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>xmlX,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>jsonX,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>binaryX);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1aa79e1de3de2187b74e5ea138b09ab461" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>x,</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>xmlX,</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>jsonX,</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>binaryX);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp"/>
+  </compounddef>
+</doxygen>

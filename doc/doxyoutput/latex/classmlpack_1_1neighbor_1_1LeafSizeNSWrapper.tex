@@ -1,0 +1,149 @@
+\section{Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper}\index{Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$@{Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}}
+
+
+\doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper} wraps any \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types that take a leaf size for tree construction.  
+
+
+
+
+Inheritance diagram for Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Leaf\+Size\+N\+S\+Wrapper} (const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper} by delegating to the \doxyref{N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} constructor. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+Leaf\+Size\+N\+S\+Wrapper} ()
+\begin{DoxyCompactList}\small\item\em Delete the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper}. \end{DoxyCompactList}\item 
+virtual \textbf{ Leaf\+Size\+N\+S\+Wrapper} $\ast$ \textbf{ Clone} () const
+\begin{DoxyCompactList}\small\item\em Return a copy of the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper}. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, const size\+\_\+t leaf\+Size, const double)
+\begin{DoxyCompactList}\small\item\em Perform bichromatic search (e.\+g. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const double, const double)
+\begin{DoxyCompactList}\small\item\em Train a model with the given parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$metric\+::\+Euclidean\+Distance,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      arma\+::mat$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$metric\+::\+Euclidean\+Distance,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      arma\+::mat$>$\+::template Single\+Tree\+Traverser$>$\newline
+class mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}
+
+\doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper} wraps any \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types that take a leaf size for tree construction. 
+
+The implementations of \doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_af1b6a13a041581bdb250c303a2736c7c} and \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a4aef4b9e215d07dbc33e97f5ff574ab2} take the leaf size into account. 
+
+Definition at line 40 of file neighbor\+\_\+search.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a6482ab61b862e190cc140e01510dfc13}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!Leaf\+Size\+N\+S\+Wrapper@{Leaf\+Size\+N\+S\+Wrapper}}
+\index{Leaf\+Size\+N\+S\+Wrapper@{Leaf\+Size\+N\+S\+Wrapper}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{Leaf\+Size\+N\+S\+Wrapper()}
+{\footnotesize\ttfamily \textbf{ Leaf\+Size\+N\+S\+Wrapper} (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper} by delegating to the \doxyref{N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} constructor. 
+
+
+
+Definition at line 199 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a2f174f3ce09e29ae6ee6ecc2f22c0a7a}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!````~Leaf\+Size\+N\+S\+Wrapper@{$\sim$\+Leaf\+Size\+N\+S\+Wrapper}}
+\index{````~Leaf\+Size\+N\+S\+Wrapper@{$\sim$\+Leaf\+Size\+N\+S\+Wrapper}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{$\sim$\+Leaf\+Size\+N\+S\+Wrapper()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ Leaf\+Size\+N\+S\+Wrapper} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Delete the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper}. 
+
+
+
+Definition at line 210 of file ns\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a1ada05f817cfde693b0ce9cb758f8e4d}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!Clone@{Clone}}
+\index{Clone@{Clone}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ Leaf\+Size\+N\+S\+Wrapper}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Return a copy of the \doxyref{Leaf\+Size\+N\+S\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper}. 
+
+
+
+Reimplemented from \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a99ca7e011f7ab92c5ba440bc1304536d}.
+
+
+
+Definition at line 213 of file ns\+\_\+model.\+hpp.
+
+
+
+References N\+S\+Wrapper\+Base\+::\+Search(), and N\+S\+Wrapper\+Base\+::\+Train().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a4aef4b9e215d07dbc33e97f5ff574ab2}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{Search()}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const double}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Perform bichromatic search (e.\+g. 
+
+search with a separate query set). This overload uses the leaf size, but ignores the other parameters. 
+
+Reimplemented from \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_a1f033e50f5a14937123de77cb439fcb5}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. 
+
+
+
+Definition at line 236 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_af1b6a13a041581bdb250c303a2736c7c}} 
+\index{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper@{mlpack\+::neighbor\+::\+Leaf\+Size\+N\+S\+Wrapper}}
+\subsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const double}]{,  }\item[{const double}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Train a model with the given parameters. 
+
+This overload uses leaf\+Size but ignores the other parameters. 
+
+Reimplemented from \textbf{ N\+S\+Wrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapper_ae4fcf39ad7ed7dca39fe8bd00fd76082}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ neighbor\+\_\+search.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

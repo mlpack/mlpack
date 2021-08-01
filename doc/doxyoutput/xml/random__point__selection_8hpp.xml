@@ -1,0 +1,455 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="random__point__selection_8hpp" kind="file" language="C++">
+    <compoundname>random_point_selection.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includedby refid="dbscan_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</includedby>
+    <incdepgraph>
+      <node id="46844">
+        <label>list</label>
+      </node>
+      <node id="46841">
+        <label>atomic</label>
+      </node>
+      <node id="46831">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="46807">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="46843">
+        <label>iomanip</label>
+      </node>
+      <node id="46816">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="46817" relation="include">
+        </childnode>
+        <childnode refid="46819" relation="include">
+        </childnode>
+      </node>
+      <node id="46799">
+        <label>cstdint</label>
+      </node>
+      <node id="46808">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="46815">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="46838">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="46828">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="46795">
+        <label>cmath</label>
+      </node>
+      <node id="46814">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="46803">
+        <label>stdexcept</label>
+      </node>
+      <node id="46823">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="46808" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46809" relation="include">
+        </childnode>
+      </node>
+      <node id="46847">
+        <label>string</label>
+      </node>
+      <node id="46835">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="46836" relation="include">
+        </childnode>
+        <childnode refid="46802" relation="include">
+        </childnode>
+      </node>
+      <node id="46845">
+        <label>map</label>
+      </node>
+      <node id="46797">
+        <label>cfloat</label>
+      </node>
+      <node id="46827">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="46849">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="46793">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/random_point_selection.hpp</label>
+        <link refid="random__point__selection_8hpp"/>
+        <childnode refid="46794" relation="include">
+        </childnode>
+      </node>
+      <node id="46811">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="46834">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="46835" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46818" relation="include">
+        </childnode>
+        <childnode refid="46836" relation="include">
+        </childnode>
+      </node>
+      <node id="46824">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="46822">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="46808" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46809" relation="include">
+        </childnode>
+      </node>
+      <node id="46825">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="46808" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46809" relation="include">
+        </childnode>
+      </node>
+      <node id="46813">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="46833">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="46809" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46821" relation="include">
+        </childnode>
+        <childnode refid="46830" relation="include">
+        </childnode>
+      </node>
+      <node id="46837">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46838" relation="include">
+        </childnode>
+      </node>
+      <node id="46839">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="46794">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="46795" relation="include">
+        </childnode>
+        <childnode refid="46796" relation="include">
+        </childnode>
+        <childnode refid="46797" relation="include">
+        </childnode>
+        <childnode refid="46798" relation="include">
+        </childnode>
+        <childnode refid="46799" relation="include">
+        </childnode>
+        <childnode refid="46800" relation="include">
+        </childnode>
+        <childnode refid="46801" relation="include">
+        </childnode>
+        <childnode refid="46802" relation="include">
+        </childnode>
+        <childnode refid="46803" relation="include">
+        </childnode>
+        <childnode refid="46804" relation="include">
+        </childnode>
+        <childnode refid="46805" relation="include">
+        </childnode>
+        <childnode refid="46806" relation="include">
+        </childnode>
+        <childnode refid="46807" relation="include">
+        </childnode>
+        <childnode refid="46808" relation="include">
+        </childnode>
+        <childnode refid="46809" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46812" relation="include">
+        </childnode>
+        <childnode refid="46813" relation="include">
+        </childnode>
+        <childnode refid="46814" relation="include">
+        </childnode>
+        <childnode refid="46815" relation="include">
+        </childnode>
+        <childnode refid="46816" relation="include">
+        </childnode>
+        <childnode refid="46820" relation="include">
+        </childnode>
+        <childnode refid="46821" relation="include">
+        </childnode>
+        <childnode refid="46822" relation="include">
+        </childnode>
+        <childnode refid="46823" relation="include">
+        </childnode>
+        <childnode refid="46824" relation="include">
+        </childnode>
+        <childnode refid="46825" relation="include">
+        </childnode>
+        <childnode refid="46826" relation="include">
+        </childnode>
+        <childnode refid="46832" relation="include">
+        </childnode>
+        <childnode refid="46833" relation="include">
+        </childnode>
+        <childnode refid="46830" relation="include">
+        </childnode>
+        <childnode refid="46834" relation="include">
+        </childnode>
+        <childnode refid="46837" relation="include">
+        </childnode>
+        <childnode refid="46839" relation="include">
+        </childnode>
+        <childnode refid="46840" relation="include">
+        </childnode>
+        <childnode refid="46849" relation="include">
+        </childnode>
+        <childnode refid="46850" relation="include">
+        </childnode>
+      </node>
+      <node id="46800">
+        <label>cstdio</label>
+      </node>
+      <node id="46804">
+        <label>tuple</label>
+      </node>
+      <node id="46809">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="46826">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="46809" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46813" relation="include">
+        </childnode>
+        <childnode refid="46827" relation="include">
+        </childnode>
+        <childnode refid="46828" relation="include">
+        </childnode>
+        <childnode refid="46829" relation="include">
+        </childnode>
+        <childnode refid="46830" relation="include">
+        </childnode>
+      </node>
+      <node id="46805">
+        <label>utility</label>
+      </node>
+      <node id="46829">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="46820">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="46817">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="46818" relation="include">
+        </childnode>
+      </node>
+      <node id="46840">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="46841" relation="include">
+        </childnode>
+        <childnode refid="46842" relation="include">
+        </childnode>
+        <childnode refid="46843" relation="include">
+        </childnode>
+        <childnode refid="46844" relation="include">
+        </childnode>
+        <childnode refid="46845" relation="include">
+        </childnode>
+        <childnode refid="46846" relation="include">
+        </childnode>
+        <childnode refid="46847" relation="include">
+        </childnode>
+        <childnode refid="46848" relation="include">
+        </childnode>
+      </node>
+      <node id="46818">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="46832">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="46830" relation="include">
+        </childnode>
+        <childnode refid="46826" relation="include">
+        </childnode>
+        <childnode refid="46833" relation="include">
+        </childnode>
+      </node>
+      <node id="46801">
+        <label>cstdlib</label>
+      </node>
+      <node id="46796">
+        <label>cctype</label>
+      </node>
+      <node id="46819">
+        <label>unordered_map</label>
+      </node>
+      <node id="46798">
+        <label>climits</label>
+      </node>
+      <node id="46846">
+        <label>mutex</label>
+      </node>
+      <node id="46842">
+        <label>chrono</label>
+      </node>
+      <node id="46850">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="46848">
+        <label>thread</label>
+      </node>
+      <node id="46836">
+        <label>type_traits</label>
+      </node>
+      <node id="46812">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="46806">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="46830">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="46808" relation="include">
+        </childnode>
+        <childnode refid="46809" relation="include">
+        </childnode>
+        <childnode refid="46810" relation="include">
+        </childnode>
+        <childnode refid="46811" relation="include">
+        </childnode>
+        <childnode refid="46831" relation="include">
+        </childnode>
+      </node>
+      <node id="46802">
+        <label>cstring</label>
+      </node>
+      <node id="46821">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="46810">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="46852">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp</label>
+        <link refid="dbscan_8hpp"/>
+      </node>
+      <node id="46851">
+        <label>/home/aakash/mlpack/src/mlpack/methods/dbscan/random_point_selection.hpp</label>
+        <link refid="random__point__selection_8hpp"/>
+        <childnode refid="46852" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1dbscan_1_1RandomPointSelection" prot="public">mlpack::dbscan::RandomPointSelection</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1dbscan">mlpack::dbscan</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Randomly select the next point for DBSCAN.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="12"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">dbscan<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="classmlpack_1_1dbscan_1_1RandomPointSelection" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1dbscan_1_1RandomPointSelection" kindref="compound">RandomPointSelection</ref></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="33" refid="classmlpack_1_1dbscan_1_1RandomPointSelection_1a640a2e01689f58d88ac361757c7579c6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1dbscan_1_1RandomPointSelection_1a640a2e01689f58d88ac361757c7579c6" kindref="member">Select</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>point<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initialize<sp/>the<sp/>length<sp/>of<sp/>the<sp/>unvisited<sp/>bitset.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>data.n_cols;<sp/></highlight><highlight class="comment">//<sp/>Get<sp/>the<sp/>size<sp/>of<sp/>points.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(unvisited.size()<sp/>!=<sp/>size)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>unvisited.resize(size,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);<sp/></highlight><highlight class="comment">//<sp/>Resize<sp/>&amp;<sp/>Set<sp/>bitset<sp/>to<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Count<sp/>the<sp/>unvisited<sp/>points<sp/>and<sp/>generate<sp/>nth<sp/>index<sp/>randomly.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>max<sp/>=<sp/>std::count(unvisited.begin(),<sp/>unvisited.end(),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" kindref="member">math::RandInt</ref>(max);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Select<sp/>the<sp/>index&apos;th<sp/>unvisited<sp/>point.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>found<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>unvisited.size();<sp/>++i)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(unvisited[i])</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++found;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(found<sp/>&gt;<sp/>index)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>unvisited[i].flip();<sp/></highlight><highlight class="comment">//<sp/>Set<sp/>unvisited<sp/>point<sp/>to<sp/>visited<sp/>point.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>i;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Not<sp/>sure<sp/>if<sp/>it<sp/>is<sp/>possible<sp/>to<sp/>get<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Bitset<sp/>for<sp/>unvisited<sp/>points.<sp/>If<sp/>true,<sp/>mean<sp/>unvisited.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>std::vector&lt;bool&gt;<sp/>unvisited;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>dbscan</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/random_point_selection.hpp"/>
+  </compounddef>
+</doxygen>

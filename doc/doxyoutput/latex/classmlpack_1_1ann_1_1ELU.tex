@@ -1,0 +1,324 @@
+\section{E\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1ELU}\index{E\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{E\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} activation function, defined by.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ E\+LU} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} object. \end{DoxyCompactList}\item 
+\textbf{ E\+LU} (const double alpha)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} object using the specified parameter. \end{DoxyCompactList}\item 
+double const  \& \textbf{ Alpha} () const
+\begin{DoxyCompactList}\small\item\em Get the non zero gradient. \end{DoxyCompactList}\item 
+double \& \textbf{ Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the non zero gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Backward} (const Data\+Type \&input, const Data\+Type \&gy, Data\+Type \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+bool \textbf{ Deterministic} () const
+\begin{DoxyCompactList}\small\item\em Get the value of deterministic parameter. \end{DoxyCompactList}\item 
+bool \& \textbf{ Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+double const  \& \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Get the lambda parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+E\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} activation function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x > 0 \\ \alpha(e^x - 1) & : x \le 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ f(x) + \alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+
+For more information, read the following paper\+:
+
+
+\begin{DoxyCode}
+@article\{Clevert2015,
+  author  = \{Djork\{-\}Arn\{\(\backslash\)\textcolor{stringliteral}{'\{e\}\} Clevert and Thomas Unterthiner and}
+\textcolor{stringliteral}{             Sepp Hochreiter\},}
+\textcolor{stringliteral}{  title   = \{Fast and Accurate Deep Network Learning by Exponential Linear}
+\textcolor{stringliteral}{             Units (ELUs)\},}
+\textcolor{stringliteral}{  journal = \{CoRR\},}
+\textcolor{stringliteral}{  year    = \{2015\},}
+\textcolor{stringliteral}{  url     = \{https://arxiv.org/abs/1511.07289\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+The S\+E\+LU activation function is defined by
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} \lambda * x & : x > 0 \\ \lambda * \alpha(e^x - 1) & : x \le 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} \lambda & : x > 0 \\ f(x) + \lambda * \alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+
+For more information, read the following paper\+:
+
+
+\begin{DoxyCode}
+@article\{Klambauer2017,
+  author  = \{Gunter Klambauer and Thomas Unterthiner and
+             Andreas Mayr\},
+  title   = \{Self-Normalizing Neural Networks\},
+  journal = \{Advances in Neural Information Processing Systems\},
+  year    = \{2017\},
+  url = \{https:\textcolor{comment}{//arxiv.org/abs/1706.02515\}}
+\}
+\end{DoxyCode}
+
+
+In the deterministic mode, there is no computation of the derivative.
+
+\begin{DoxyNote}{Note}
+During training deterministic should be set to false and during testing/inference deterministic should be set to true. 
+
+Make sure to use S\+E\+LU activation function with normalized inputs and weights initialized with Lecun Normal Initialization.
+\end{DoxyNote}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 111 of file elu.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ELU_ac74bf903a3d27e91aaf80e59e3812624}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!E\+LU@{E\+LU}}
+\index{E\+LU@{E\+LU}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{E\+L\+U()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ E\+LU} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} object. 
+
+N\+O\+TE\+: Use this constructor for S\+E\+LU activation function. \mbox{\label{classmlpack_1_1ann_1_1ELU_a2be97a9ea26474ca497b24ac1b1a9323}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!E\+LU@{E\+LU}}
+\index{E\+LU@{E\+LU}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{E\+L\+U()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ E\+LU} (\begin{DoxyParamCaption}\item[{const double}]{alpha }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} object using the specified parameter. 
+
+The non zero gradient for negative inputs can be adjusted by specifying the \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} hyperparameter alpha (alpha $>$ 0).
+
+\begin{DoxyNote}{Note}
+Use this constructor for \doxyref{E\+LU}{p.}{classmlpack_1_1ann_1_1ELU} activation function. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Scale parameter for the negative factor. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a21679485637bdec3078ec74d71572980}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double const\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the non zero gradient. 
+
+
+
+Definition at line 164 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_acbb0e4747a3a307bee88bad71e5eeaf1}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the non zero gradient. 
+
+
+
+Definition at line 166 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_aef8c56f1f8624bd006afec8b3bcda9d6}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{input,  }\item[{const Data\+Type \&}]{gy,  }\item[{Data\+Type \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation f(x). \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 159 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_ad6601342d560219ce951d554e69e5e87}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 161 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a9f4103707f4d199ce5594d239b60443e}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of deterministic parameter. 
+
+
+
+Definition at line 169 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a42d4ee3da432cff20d3a41b8b1ec801c}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of deterministic parameter. 
+
+
+
+Definition at line 171 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a09440df0a90bdcc766e56e097d91205b}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ELU_acb669457ad59e62d0fccc5bae3a6c35e}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Lambda()}
+{\footnotesize\ttfamily double const\& Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the lambda parameter. 
+
+
+
+Definition at line 174 of file elu.\+hpp.
+
+
+
+References E\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::serialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 154 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{Output\+Parameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 156 of file elu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ELU_a65cba07328997659bec80b9879b15a51}} 
+\index{mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::ann\+::\+E\+LU@{mlpack\+::ann\+::\+E\+LU}}
+\subsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+Referenced by E\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Lambda().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ elu.\+hpp}\end{DoxyCompactItemize}

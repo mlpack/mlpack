@@ -1,0 +1,1044 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1neighbor_1_1NeighborSearch" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::NeighborSearch</compoundname>
+    <includes refid="neighbor__search_8hpp" local="no">neighbor_search.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>SortPolicy</declname>
+        <defname>SortPolicy</defname>
+        <defval><ref refid="namespacemlpack_1_1neighbor_1af3f11fce33c041aa26b1c91107f71b0f" kindref="member">NearestNeighborSort</ref></defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>MetricType</declname>
+        <defname>MetricType</defname>
+        <defval><ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">mlpack::metric::EuclideanDistance</ref></defval>
+      </param>
+      <param>
+        <type>typename</type>
+        <declname>MatType</declname>
+        <defname>MatType</defname>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>template&lt; typename TreeMetricType, typename TreeStatType, typename TreeMatType &gt; class</type>
+        <declname>TreeType</declname>
+        <defname>TreeType</defname>
+        <defval><ref refid="namespacemlpack_1_1tree_1a73c2146f8d1da65d927c7746bfe7e750" kindref="member">tree::KDTree</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename RuleType &gt; class</type>
+        <declname>DualTreeTraversalType</declname>
+        <defname>DualTreeTraversalType</defname>
+        <defval>TreeType&lt;MetricType,                      <ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat" kindref="compound">NeighborSearchStat</ref>&lt;SortPolicy&gt;,                      MatType&gt;::template DualTreeTraverser</defval>
+      </param>
+      <param>
+        <type>template&lt; typename RuleType &gt; class</type>
+        <declname>SingleTreeTraversalType</declname>
+        <defname>SingleTreeTraversalType</defname>
+        <defval>TreeType&lt;MetricType,                      <ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat" kindref="compound">NeighborSearchStat</ref>&lt;SortPolicy&gt;,                      MatType&gt;::template SingleTreeTraverser</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" prot="public" static="no">
+        <type>TreeType&lt; MetricType, <ref refid="classmlpack_1_1neighbor_1_1NeighborSearchStat" kindref="compound">NeighborSearchStat</ref>&lt; SortPolicy &gt;, MatType &gt;</type>
+        <definition>typedef TreeType&lt;MetricType, NeighborSearchStat&lt;SortPolicy&gt;, MatType&gt; Tree</definition>
+        <argsstring></argsstring>
+        <name>Tree</name>
+        <briefdescription>
+<para>Convenience typedef. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a06e4c7b3f942c628e2b3584e7ba02cbf" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t baseCases</definition>
+        <argsstring></argsstring>
+        <name>baseCases</name>
+        <briefdescription>
+<para>The total number of base cases. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="358" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a4904cc82627458fdf6672ccc0b2802c7" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double epsilon</definition>
+        <argsstring></argsstring>
+        <name>epsilon</name>
+        <briefdescription>
+<para>Indicates the relative error to be considered in approximate search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="352" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" static="no" mutable="no">
+        <type>MetricType</type>
+        <definition>MetricType metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>Instantiation of metric. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="355" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a18bb7cb0cf16d0f4ba0744c6c7ab2027" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; size_t &gt;</type>
+        <definition>std::vector&lt;size_t&gt; oldFromNewReferences</definition>
+        <argsstring></argsstring>
+        <name>oldFromNewReferences</name>
+        <briefdescription>
+<para>Permutations of reference points during tree building. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="343" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="343" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1afdeaba8b33d99d27772a74843e7dfbc2" prot="private" static="no" mutable="no">
+        <type>const MatType *</type>
+        <definition>const MatType* referenceSet</definition>
+        <argsstring></argsstring>
+        <name>referenceSet</name>
+        <briefdescription>
+<para>Reference dataset. In some situations we may be the owner of this. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="347" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1afce03afdbc14367356598962033187af" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref> *</type>
+        <definition>Tree* referenceTree</definition>
+        <argsstring></argsstring>
+        <name>referenceTree</name>
+        <briefdescription>
+<para>Pointer to the root of the reference tree. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="345" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="345" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1aecc3c9a30f1be1fe8b602374bde73e7b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t scores</definition>
+        <argsstring></argsstring>
+        <name>scores</name>
+        <briefdescription>
+<para>The total number of scores (applicable for non-naive search). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="360" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1adc971d70678f19356fce734e5be4d84f" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
+        <definition>NeighborSearchMode searchMode</definition>
+        <argsstring></argsstring>
+        <name>searchMode</name>
+        <briefdescription>
+<para>Indicates the neighbor search mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="350" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NeighborSearch_1af27c6a1966ff02b14556124cff26e849" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool treeNeedsReset</definition>
+        <argsstring></argsstring>
+        <name>treeNeedsReset</name>
+        <briefdescription>
+<para>If this is true, the reference tree bounds need to be reset on a call to <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search()</ref> without a query set. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="364" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classmlpack_1_1neighbor_1_1NeighborSearch_1af1f7a5d8e6dbc008c92eaf979c80d843" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>friend class</type>
+        <definition>friend class LeafSizeNSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</definition>
+        <argsstring></argsstring>
+        <name>LeafSizeNSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</name>
+        <briefdescription>
+<para>The <ref refid="classmlpack_1_1neighbor_1_1NSModel" kindref="compound">NSModel</ref> class should have access to internal members. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="364" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1affa7257868588792956a7f30493ae564" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearch</definition>
+        <argsstring>(MatType referenceSet, const NeighborSearchMode mode=DUAL_TREE_MODE, const double epsilon=0, const MetricType metric=MetricType())</argsstring>
+        <name>NeighborSearch</name>
+        <param>
+          <type>MatType</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15a902f8ca27975735ab2151d26152c6d2a" kindref="member">DUAL_TREE_MODE</ref></defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object, passing a reference dataset (this is the dataset which is searched). </para>        </briefdescription>
+        <detaileddescription>
+<para>Optionally, perform the computation in a different mode. An initialized distance metric can be given, for cases where the metric has internal data (i.e. the distance::MahalanobisDistance class).</para><para>This method will move the matrices to internal copies, which are rearranged during tree-building. You can avoid creating an extra copy by pre-constructing the trees, passing std::move(yourReferenceSet).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Neighbor search mode. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative approximate error (non-negative). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An optional instance of the MetricType class. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="110" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a43c317f817c52d7e7004c12ac0cb0018" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearch</definition>
+        <argsstring>(Tree referenceTree, const NeighborSearchMode mode=DUAL_TREE_MODE, const double epsilon=0, const MetricType metric=MetricType())</argsstring>
+        <name>NeighborSearch</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref></type>
+          <declname>referenceTree</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15a902f8ca27975735ab2151d26152c6d2a" kindref="member">DUAL_TREE_MODE</ref></defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object with a copy of the given pre-constructed reference tree (this is the tree built on the points that will be searched). </para>        </briefdescription>
+        <detaileddescription>
+<para>Optionally, choose to use single-tree mode. Naive mode is not available as an option for this constructor. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data.</para><para>This method will copy the given tree. When copies must absolutely be avoided, you can avoid this copy, while taking ownership of the given tree, by passing std::move(yourReferenceTree)</para><para><simplesect kind="note"><para>Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like BinarySpaceTree), then you will have to perform the re-mapping manually.</para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pre-built tree for reference points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Neighbor search mode. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative approximate error (non-negative). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated distance metric. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="138" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1aed9cc934c52a665a8ceda52eea54116e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearch</definition>
+        <argsstring>(const NeighborSearchMode mode=DUAL_TREE_MODE, const double epsilon=0, const MetricType metric=MetricType())</argsstring>
+        <name>NeighborSearch</name>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15a902f8ca27975735ab2151d26152c6d2a" kindref="member">DUAL_TREE_MODE</ref></defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object without any reference data. </para>        </briefdescription>
+        <detaileddescription>
+<para>If <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search()</ref> is called before a reference set is set with <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e" kindref="member">Train()</ref>, an exception will be thrown.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Neighbor search mode. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative approximate error (non-negative). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated metric. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="152" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a6a0e27cd320c4ebb93078ef09d5487ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearch</definition>
+        <argsstring>(const NeighborSearch &amp;other)</argsstring>
+        <name>NeighborSearch</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object by copying the given <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="162" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a36a4571e0d23ee25a4b65c726cab860f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NeighborSearch</definition>
+        <argsstring>(NeighborSearch &amp;&amp;other)</argsstring>
+        <name>NeighborSearch</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object by taking ownership of the given <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="170" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a248061a2d110a8abb094008a0a50af2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~NeighborSearch</definition>
+        <argsstring>()</argsstring>
+        <name>~NeighborSearch</name>
+        <briefdescription>
+<para>Delete the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para>The tree is the only member we are responsible for deleting. The others will take care of themselves. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="190" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a3f4bd5d0aa64ea090796725f7755287d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t BaseCases</definition>
+        <argsstring>() const</argsstring>
+        <name>BaseCases</name>
+        <briefdescription>
+<para>Return the total number of base case evaluations performed during the last search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="314" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="314" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1af6d960193bb5db37e51416e12bf720de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Epsilon</definition>
+        <argsstring>() const</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Access the relative error to be considered in approximate search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="325" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="325" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1ab6a080993b32456443eced5df2f8b9b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Epsilon</definition>
+        <argsstring>()</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Modify the relative error to be considered in approximate search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="327" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="327" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a63578ba36477ae9cd29b2a2f1ddeb4da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;</type>
+        <definition>NeighborSearch&amp; operator=</definition>
+        <argsstring>(const NeighborSearch &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object to copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="177" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1ac4a972be0776d58774df599f780a9b00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;</type>
+        <definition>NeighborSearch&amp; operator=</definition>
+        <argsstring>(NeighborSearch &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> object to take ownership of. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="184" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a0a975940b302b4efec85bbe2d8b36251" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const MatType &amp;</type>
+        <definition>const MatType&amp; ReferenceSet</definition>
+        <argsstring>() const</argsstring>
+        <name>ReferenceSet</name>
+        <briefdescription>
+<para>Access the reference dataset. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="330" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="330" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a6a609f8eeba6eae0c8d0f53a18562cd6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref> &amp;</type>
+        <definition>const Tree&amp; ReferenceTree</definition>
+        <argsstring>() const</argsstring>
+        <name>ReferenceTree</name>
+        <briefdescription>
+<para>Access the reference tree. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="333" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="333" bodyend="333"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a87852e0bc1eb566c799b68ebcddfe4f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref> &amp;</type>
+        <definition>Tree&amp; ReferenceTree</definition>
+        <argsstring>()</argsstring>
+        <name>ReferenceTree</name>
+        <briefdescription>
+<para>Modify the reference tree. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="335" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="335" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a4d1e40c0bf406280a237ca1b487e3c62" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Scores</definition>
+        <argsstring>() const</argsstring>
+        <name>Scores</name>
+        <briefdescription>
+<para>Return the number of node combination scores during the last search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="317" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="317" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const MatType &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>For each point in the query set, compute the nearest neighbors and store the output in the given matrices. </para>        </briefdescription>
+        <detaileddescription>
+<para>The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.</para><para>If querySet contains only a few query points, the extra cost of building a tree on the points for dual-tree search may not be warranted, and it may be worthwhile to set singleMode = false (either in the constructor or with SingleMode()).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query points (can be just one point). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="231" column="1"/>
+        <referencedby refid="classmlpack_1_1cf_1_1LMetricSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" compoundref="lmetric__search_8hpp" startline="64" endline="72">LMetricSearch&lt; TPower &gt;::Search</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1CosineSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" compoundref="cosine__search_8hpp" startline="70" endline="85">CosineSearch::Search</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1PearsonSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" compoundref="pearson__search_8hpp" startline="78" endline="96">PearsonSearch::Search</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1af02a695f0975f6be1628d5b362407e6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(Tree &amp;queryTree, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, bool sameSet=false)</argsstring>
+        <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref> &amp;</type>
+          <declname>queryTree</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>sameSet</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Given a pre-built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices. </para>        </briefdescription>
+        <detaileddescription>
+<para>The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.</para><para>Note that if you are calling <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search()</ref> multiple times with a single query tree, you need to reset the bounds in the statistic of each query node, otherwise the result may be wrong! You can do this by calling <computeroutput>TreeType::Stat()</computeroutput>.Reset() on each node in the query tree.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree built on query points. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sameSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Denotes whether or not the reference and query sets are the same. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="256" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a619c7d4931e628a0c199159c57b34cbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Search for the nearest neighbors of every point in the reference set. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is basically equivalent to calling any other overload of <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search()</ref> with the reference set as the query set; so, this lets you do all-k-nearest-neighbors search. The results are stored in the given matrices. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing distances of neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="276" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
+        <definition>NeighborSearchMode SearchMode</definition>
+        <argsstring>() const</argsstring>
+        <name>SearchMode</name>
+        <briefdescription>
+<para>Access the search mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="320" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="320" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref> &amp;</type>
+        <definition>NeighborSearchMode&amp; SearchMode</definition>
+        <argsstring>()</argsstring>
+        <name>SearchMode</name>
+        <briefdescription>
+<para>Modify the search mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="322" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="322" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> model. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="339" column="1"/>
+        <referencedby refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a87852e0bc1eb566c799b68ebcddfe4f4" compoundref="neighbor__search_8hpp" startline="335" endline="335">NeighborSearch&lt; neighbor::NearestNeighborSort, metric::LMetric&lt; TPower, true &gt; &gt;::ReferenceTree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(MatType referenceSet)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+<para>Set the reference set to a new reference set, and build a tree if necessary. </para>        </briefdescription>
+        <detaileddescription>
+<para>The dataset is copied by default, but the copy can be avoided by transferring the ownership of the dataset using std::move(). This method is called &apos;<ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e" kindref="member">Train()</ref>&apos; in order to match the rest of the mlpack abstractions, even though calling this &quot;training&quot; is maybe a bit of a stretch.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New set of reference data. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="201" column="1"/>
+        <referencedby refid="classmlpack_1_1cf_1_1CosineSearch_1a3c05953c20d36d4ea490e3d3aa879704" compoundref="cosine__search_8hpp" startline="53" endline="59">CosineSearch::CosineSearch</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1PearsonSearch_1affe8eece29c0967f401bf689bf324c23" compoundref="pearson__search_8hpp" startline="57" endline="67">PearsonSearch::PearsonSearch</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1a5dc7ffacb415423753d75d02e9d87842" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(Tree referenceTree)</argsstring>
+        <name>Train</name>
+        <param>
+          <type><ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" kindref="member">Tree</ref></type>
+          <declname>referenceTree</declname>
+        </param>
+        <briefdescription>
+<para>Set the reference tree to a new reference tree. </para>        </briefdescription>
+        <detaileddescription>
+<para>The tree is copied by default, but the copy can be avoided by using std::move() to transfer the ownership of the tree. This method is called &apos;<ref refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e" kindref="member">Train()</ref>&apos; in order to match the rest of the mlpack abstractions, even though calling this &quot;training&quot; is maybe a bit of a stretch.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pre-built tree for reference points. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="212" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1afe70b46abe9ea3b9033ae1ecf0834d9f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double EffectiveError</definition>
+        <argsstring>(arma::mat &amp;foundDistances, arma::mat &amp;realDistances)</argsstring>
+        <name>EffectiveError</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>foundDistances</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>realDistances</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the average relative error (effective error) between the distances calculated and the true distances provided. </para>        </briefdescription>
+        <detaileddescription>
+<para>The input matrices must have the same size.</para><para>Cases where the true distance is zero (the same point) or the calculated distance is SortPolicy::WorstDistance() (didn&apos;t find enough points) will be ignored.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>foundDistances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of calculated distances for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>realDistances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of true best distances for each query point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Average relative error. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="295" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NeighborSearch_1ae399494c0386750e39eeab310a1e22d2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Recall</definition>
+        <argsstring>(arma::Mat&lt; size_t &gt; &amp;foundNeighbors, arma::Mat&lt; size_t &gt; &amp;realNeighbors)</argsstring>
+        <name>Recall</name>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>foundNeighbors</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>realNeighbors</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the recall (% of neighbors found) given the list of found neighbors and the true set of neighbors. </para>        </briefdescription>
+        <detaileddescription>
+<para>The recall returned will be in the range [0, 1].</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>foundNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of calculated neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>realNeighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix storing lists of true best neighbors for each query point. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Recall. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="309" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> class is a template class for performing distance-based neighbor searches. </para>    </briefdescription>
+    <detaileddescription>
+<para>It takes a query dataset and a reference dataset (or just a reference dataset) and, for each point in the query dataset, finds the k neighbors in the reference dataset which have the &apos;best&apos; distance according to a given sorting policy. A constructor is given which takes only a reference dataset, and if that constructor is used, the given reference dataset is also used as the query dataset.</para><para>The template parameters SortPolicy and Metric define the sort function used and the metric (distance function) used. More information on those classes can be found in the NearestNeighborSort class and the <ref refid="classmlpack_1_1kernel_1_1ExampleKernel" kindref="compound">kernel::ExampleKernel</ref> class.</para><para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>SortPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sort policy for distances; see NearestNeighborSort. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The metric to use for computation. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of data matrix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TreeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree type to use; must adhere to the TreeType API. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DualTreeTraversalType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of dual tree traversal to use (defaults to the tree&apos;s default traverser). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>SingleTreeTraversalType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of single tree traversal to use (defaults to the tree&apos;s default traverser). </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="1078">
+        <label>NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
+      </node>
+      <node id="1080">
+        <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
+        <childnode refid="1078" relation="template-instance">
+          <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1079">
+        <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
+        <childnode refid="1078" relation="template-instance">
+          <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1081">
+        <label>NeighborSearch&lt; neighbor::NearestNeighborSort, metric::LMetric&lt; TPower, true &gt; &gt;</label>
+        <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
+        <childnode refid="1078" relation="template-instance">
+          <edgelabel>&lt; neighbor::NearestNeighborSort, metric::LMetric&lt; TPower, true &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" line="89" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp" bodystart="88" bodyend="369"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a06e4c7b3f942c628e2b3584e7ba02cbf" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>baseCases</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a3f4bd5d0aa64ea090796725f7755287d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>BaseCases</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1afe70b46abe9ea3b9033ae1ecf0834d9f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>EffectiveError</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a4904cc82627458fdf6672ccc0b2802c7" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>epsilon</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1af6d960193bb5db37e51416e12bf720de" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ab6a080993b32456443eced5df2f8b9b9" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1affa7257868588792956a7f30493ae564" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>NeighborSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a43c317f817c52d7e7004c12ac0cb0018" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>NeighborSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1aed9cc934c52a665a8ceda52eea54116e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>NeighborSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a6a0e27cd320c4ebb93078ef09d5487ea" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>NeighborSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a36a4571e0d23ee25a4b65c726cab860f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>NeighborSearch</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a18bb7cb0cf16d0f4ba0744c6c7ab2027" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>oldFromNewReferences</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a63578ba36477ae9cd29b2a2f1ddeb4da" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ac4a972be0776d58774df599f780a9b00" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae399494c0386750e39eeab310a1e22d2" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Recall</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1afdeaba8b33d99d27772a74843e7dfbc2" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>referenceSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0a975940b302b4efec85bbe2d8b36251" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>ReferenceSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a6a609f8eeba6eae0c8d0f53a18562cd6" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>ReferenceTree</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a87852e0bc1eb566c799b68ebcddfe4f4" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>ReferenceTree</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1afce03afdbc14367356598962033187af" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>referenceTree</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1aecc3c9a30f1be1fe8b602374bde73e7b" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>scores</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a4d1e40c0bf406280a237ca1b487e3c62" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Scores</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1af02a695f0975f6be1628d5b362407e6f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a619c7d4931e628a0c199159c57b34cbd" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>SearchMode</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>SearchMode</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1adc971d70678f19356fce734e5be4d84f" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>searchMode</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a5dc7ffacb415423753d75d02e9d87842" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1ae33127288015e4076598a66f1cbf9526" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>Tree</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1af27c6a1966ff02b14556124cff26e849" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>treeNeedsReset</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a248061a2d110a8abb094008a0a50af2b" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NeighborSearch</scope><name>~NeighborSearch</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

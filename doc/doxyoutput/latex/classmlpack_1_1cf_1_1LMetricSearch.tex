@@ -1,0 +1,122 @@
+\section{L\+Metric\+Search$<$ T\+Power $>$ Class Template Reference}
+\label{classmlpack_1_1cf_1_1LMetricSearch}\index{L\+Metric\+Search$<$ T\+Power $>$@{L\+Metric\+Search$<$ T\+Power $>$}}
+
+
+Nearest neighbor search with L\+\_\+p distance.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Neighbor\+Search\+Type} = \textbf{ neighbor\+::\+Neighbor\+Search}$<$ \textbf{ neighbor\+::\+Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+L\+Metric}$<$ T\+Power, true $>$ $>$
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ L\+Metric\+Search} (const arma\+::mat \&reference\+Set)
+\item 
+void \textbf{ Search} (const arma\+::mat \&query, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&similarities)
+\begin{DoxyCompactList}\small\item\em Given a set of query points, find the nearest k neighbors, and return similarites. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$int T\+Power$>$\newline
+class mlpack\+::cf\+::\+L\+Metric\+Search$<$ T\+Power $>$}
+
+Nearest neighbor search with L\+\_\+p distance. 
+
+An example of how to use \doxyref{L\+Metric\+Search}{p.}{classmlpack_1_1cf_1_1LMetricSearch} in CF is shown below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}
+\textcolor{comment}{// Users for whom recommendations are generated.}
+\textcolor{keyword}{extern} arma::Col<size\_t> users;
+arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}
+
+CFType<> cf(data);
+
+\textcolor{comment}{// Generate 10 recommendations for all users.}
+cf.template GetRecommendations<LMetricSearch<2>>(10, recommendations);
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T\+Power} & Power of metric. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 42 of file lmetric\+\_\+search.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1LMetricSearch_a7ec82c48ea6d34622bba11476edfb1d0}} 
+\index{mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}!Neighbor\+Search\+Type@{Neighbor\+Search\+Type}}
+\index{Neighbor\+Search\+Type@{Neighbor\+Search\+Type}!mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}}
+\subsubsection{Neighbor\+Search\+Type}
+{\footnotesize\ttfamily using \textbf{ Neighbor\+Search\+Type} =  \textbf{ neighbor\+::\+Neighbor\+Search}$<$ \textbf{ neighbor\+::\+Nearest\+Neighbor\+Sort}, \textbf{ metric\+::\+L\+Metric}$<$T\+Power, true$>$ $>$}
+
+
+
+Definition at line 47 of file lmetric\+\_\+search.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1LMetricSearch_adf30d29ff937a051ff8e1c1bbc1a0f7c}} 
+\index{mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}!L\+Metric\+Search@{L\+Metric\+Search}}
+\index{L\+Metric\+Search@{L\+Metric\+Search}!mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}}
+\subsubsection{L\+Metric\+Search()}
+{\footnotesize\ttfamily \textbf{ L\+Metric\+Search} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{reference\+Set }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 52 of file lmetric\+\_\+search.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1LMetricSearch_a5ce7aae85679ed26a716bcb8d7c8ee7b}} 
+\index{mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::cf\+::\+L\+Metric\+Search@{mlpack\+::cf\+::\+L\+Metric\+Search}}
+\subsubsection{Search()}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{query,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{similarities }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a set of query points, find the nearest k neighbors, and return similarites. 
+
+Similarities are non-\/negative and no larger thant one.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & A set of query points. \\
+\hline
+{\em k} & Number of neighbors to search. \\
+\hline
+{\em neighbors} & Nearest neighbors. \\
+\hline
+{\em similarities} & Similarities between query point and its neighbors. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 64 of file lmetric\+\_\+search.\+hpp.
+
+
+
+References Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/neighbor\+\_\+search\+\_\+policies/\textbf{ lmetric\+\_\+search.\+hpp}\end{DoxyCompactItemize}

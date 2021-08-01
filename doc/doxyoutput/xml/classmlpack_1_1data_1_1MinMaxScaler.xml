@@ -1,0 +1,365 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classmlpack_1_1data_1_1MinMaxScaler" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::MinMaxScaler</compoundname>
+    <includes refid="min__max__scaler_8hpp" local="no">min_max_scaler.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1a2c793ce1b34c546c07464a462d920f8f" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec itemMax</definition>
+        <argsstring></argsstring>
+        <name>itemMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1a234ef55ba29a25bb260a699a4e3826f8" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec itemMin</definition>
+        <argsstring></argsstring>
+        <name>itemMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1a5927d7b5794dc9921074c489983745eb" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec scale</definition>
+        <argsstring></argsstring>
+        <name>scale</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1a95080c87bef070a84a7641ae1189523e" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double scaleMax</definition>
+        <argsstring></argsstring>
+        <name>scaleMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1aa4fb5146a12107fffdafad0ef15143b7" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double scaleMin</definition>
+        <argsstring></argsstring>
+        <name>scaleMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MinMaxScaler_1a21a6943ae7180b765910b0e48440d00d" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec scalerowmin</definition>
+        <argsstring></argsstring>
+        <name>scalerowmin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1acb30d2500651f0921263773ddd493252" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MinMaxScaler</definition>
+        <argsstring>(const double min=0, const double max=1)</argsstring>
+        <name>MinMaxScaler</name>
+        <param>
+          <type>const double</type>
+          <declname>min</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>max</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Default constructor. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>min</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Lower range of scaling. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Upper range of scaling. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="57" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="57" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Fit</definition>
+        <argsstring>(const MatType &amp;input)</argsstring>
+        <name>Fit</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Function to fit features, to find out the min max and scale. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to fit. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="74" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="74" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InverseTransform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>InverseTransform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve original dataset. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaled dataset. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with original Dataset. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="113" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; ItemMax</definition>
+        <argsstring>() const</argsstring>
+        <name>ItemMax</name>
+        <briefdescription>
+<para>Get the Max row vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1ae9ae591f227874f238c38d4cf070c6c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; ItemMin</definition>
+        <argsstring>() const</argsstring>
+        <name>ItemMin</name>
+        <briefdescription>
+<para>Get the Min row vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a5adcafebd2c229793e57b7268c90a0fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Scale</definition>
+        <argsstring>() const</argsstring>
+        <name>Scale</name>
+        <briefdescription>
+<para>Get the Scale row vector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a841ab6e52291099af1ea0d7f50b31f87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double ScaleMax</definition>
+        <argsstring>() const</argsstring>
+        <name>ScaleMax</name>
+        <briefdescription>
+<para>Get the upper range parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="126" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a478b195e13c72fe1a667f93dfbf5b613" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double ScaleMin</definition>
+        <argsstring>() const</argsstring>
+        <name>ScaleMin</name>
+        <briefdescription>
+<para>Get the lower range parameter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="128" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="131" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MinMaxScaler_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Transform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>Transform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function to scale features. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to scale features. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with scaled features. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="95" bodyend="104"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A simple MinMax Scaler class. </para>    </briefdescription>
+    <detaileddescription>
+<para>Given an input dataset this class helps you to scale each feature to a given range.</para><para>[z = scale * x + scaleMin - min(x) * scale] [scale = (scaleMax - scaleMin) / (max(x) - min(x))]</para><para>where scaleMin, scaleMax = feature_range and min(x), max(x) are the minimum and maximum value of x respectively.</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>input;</highlight></codeline>
+<codeline><highlight class="normal">Load(&quot;train.csv&quot;,<sp/>input);</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>output;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Fit<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">MinMaxScaler<sp/>scale;</highlight></codeline>
+<codeline><highlight class="normal">scale.Fit(input)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Scale<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">scale.Transform(input,<sp/>output);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Retransform<sp/>the<sp/>input.</highlight></codeline>
+<codeline><highlight class="normal">scale.InverseTransform(output,<sp/>input);</highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp" bodystart="48" bodyend="154"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>Fit</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>InverseTransform</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a2c793ce1b34c546c07464a462d920f8f" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>itemMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>ItemMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a234ef55ba29a25bb260a699a4e3826f8" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>itemMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1ae9ae591f227874f238c38d4cf070c6c8" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>ItemMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1acb30d2500651f0921263773ddd493252" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>MinMaxScaler</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a5adcafebd2c229793e57b7268c90a0fe" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>Scale</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a5927d7b5794dc9921074c489983745eb" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>scale</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a841ab6e52291099af1ea0d7f50b31f87" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>ScaleMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a95080c87bef070a84a7641ae1189523e" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>scaleMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a478b195e13c72fe1a667f93dfbf5b613" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>ScaleMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1aa4fb5146a12107fffdafad0ef15143b7" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>scaleMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a21a6943ae7180b765910b0e48440d00d" prot="private" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>scalerowmin</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1MinMaxScaler_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" virt="non-virtual"><scope>mlpack::data::MinMaxScaler</scope><name>Transform</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

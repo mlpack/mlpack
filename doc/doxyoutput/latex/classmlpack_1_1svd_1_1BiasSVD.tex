@@ -1,0 +1,110 @@
+\section{Bias\+S\+VD$<$ Optimizer\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1svd_1_1BiasSVD}\index{Bias\+S\+V\+D$<$ Optimizer\+Type $>$@{Bias\+S\+V\+D$<$ Optimizer\+Type $>$}}
+
+
+Bias S\+VD is an improvement on Regularized S\+VD which is a matrix factorization techniques.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bias\+S\+VD} (const size\+\_\+t iterations=10, const double alpha=0.\+02, const double lambda=0.\+05)
+\begin{DoxyCompactList}\small\item\em Constructor of Bias S\+VD. \end{DoxyCompactList}\item 
+void \textbf{ Apply} (const arma\+::mat \&data, const size\+\_\+t rank, arma\+::mat \&u, arma\+::mat \&v, arma\+::vec \&p, arma\+::vec \&q)
+\begin{DoxyCompactList}\small\item\em Trains the model and obtains user/item matrices and user/item bias. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Optimizer\+Type = ens\+::\+Standard\+S\+GD$>$\newline
+class mlpack\+::svd\+::\+Bias\+S\+V\+D$<$ Optimizer\+Type $>$}
+
+Bias S\+VD is an improvement on Regularized S\+VD which is a matrix factorization techniques. 
+
+Bias S\+VD outputs user/item latent vectors and user/item bias, so that $ r_{iu} = b_i + b_u + p_i * q_u $, where b, p, q are bias, item latent, user latent respectively. Parameters are optmized by Stochastic Gradient Desent(\+S\+G\+D). The updates also penalize the learning of large feature values by means of regularization.
+
+An example of how to use the interface is shown below\+:
+
+
+\begin{DoxyCode}
+arma::mat data; \textcolor{comment}{// Rating data in the form of coordinate list.}
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} rank = 10; \textcolor{comment}{// Rank used for the decomposition.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} iterations = 10; \textcolor{comment}{// Number of iterations used for optimization.}
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} alpha = 0.005 \textcolor{comment}{// Learning rate for the SGD optimizer.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{double} lambda = 0.02 \textcolor{comment}{// Regularization parameter for the optimization.}
+
+\textcolor{comment}{// Make a BiasSVD object.}
+BiasSVD<> biasSVD(iterations, alpha, lambda);
+
+arma::mat u, v; \textcolor{comment}{// Item and User matrices.}
+arma::vec p, q; \textcolor{comment}{// Item and User bias.}
+
+\textcolor{comment}{// Use the Apply() method to get a factorization.}
+rSVD.Apply(data, rank, u, v, p, q);
+\end{DoxyCode}
+ 
+
+Definition at line 57 of file bias\+\_\+svd.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1BiasSVD_a217884b3b86ec1fa9148eac852165945}} 
+\index{mlpack\+::svd\+::\+Bias\+S\+VD@{mlpack\+::svd\+::\+Bias\+S\+VD}!Bias\+S\+VD@{Bias\+S\+VD}}
+\index{Bias\+S\+VD@{Bias\+S\+VD}!mlpack\+::svd\+::\+Bias\+S\+VD@{mlpack\+::svd\+::\+Bias\+S\+VD}}
+\subsubsection{Bias\+S\+V\+D()}
+{\footnotesize\ttfamily \textbf{ Bias\+S\+VD} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{iterations = {\ttfamily 10},  }\item[{const double}]{alpha = {\ttfamily 0.02},  }\item[{const double}]{lambda = {\ttfamily 0.05} }\end{DoxyParamCaption})}
+
+
+
+Constructor of Bias S\+VD. 
+
+By default S\+GD optimizer is used in \doxyref{Bias\+S\+VD}{p.}{classmlpack_1_1svd_1_1BiasSVD}. The optimizer uses a template specialization of Optimize().
+
+
+\begin{DoxyParams}{Parameters}
+{\em iterations} & Number of optimization iterations. \\
+\hline
+{\em alpha} & Learning rate for the S\+GD optimizer. \\
+\hline
+{\em lambda} & Regularization parameter for the optimization. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1BiasSVD_a2cda95c3460611ea7af141f8db7fb3eb}} 
+\index{mlpack\+::svd\+::\+Bias\+S\+VD@{mlpack\+::svd\+::\+Bias\+S\+VD}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::svd\+::\+Bias\+S\+VD@{mlpack\+::svd\+::\+Bias\+S\+VD}}
+\subsubsection{Apply()}
+{\footnotesize\ttfamily void Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{rank,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::mat \&}]{v,  }\item[{arma\+::vec \&}]{p,  }\item[{arma\+::vec \&}]{q }\end{DoxyParamCaption})}
+
+
+
+Trains the model and obtains user/item matrices and user/item bias. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Rating data matrix. \\
+\hline
+{\em rank} & Rank parameter to be used for optimization. \\
+\hline
+{\em u} & Item matrix obtained on decomposition. \\
+\hline
+{\em v} & User matrix obtained on decomposition. \\
+\hline
+{\em p} & Item bias. \\
+\hline
+{\em q} & User bias. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Bias\+S\+V\+D\+Policy\+::\+Apply().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/bias\+\_\+svd/\textbf{ bias\+\_\+svd.\+hpp}\end{DoxyCompactItemize}

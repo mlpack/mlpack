@@ -1,0 +1,1138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="bias__svd__method_8hpp" kind="file" language="C++">
+    <compoundname>bias_svd_method.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="bias__svd_8hpp" local="no">mlpack/methods/bias_svd/bias_svd.hpp</includes>
+    <incdepgraph>
+      <node id="44841">
+        <label>list</label>
+      </node>
+      <node id="44897">
+        <label>breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44889">
+        <label>binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44886" relation="include">
+        </childnode>
+        <childnode refid="44890" relation="include">
+        </childnode>
+      </node>
+      <node id="44899">
+        <label>binary_space_tree/traits.hpp</label>
+        <link refid="binary__space__tree_2traits_8hpp"/>
+        <childnode refid="44900" relation="include">
+        </childnode>
+        <childnode refid="44861" relation="include">
+        </childnode>
+      </node>
+      <node id="44838">
+        <label>atomic</label>
+      </node>
+      <node id="44932">
+        <label>bias_svd_function.hpp</label>
+        <link refid="bias__svd__function_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44849" relation="include">
+        </childnode>
+        <childnode refid="44933" relation="include">
+        </childnode>
+      </node>
+      <node id="44828">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="44804">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="44840">
+        <label>iomanip</label>
+      </node>
+      <node id="44896">
+        <label>queue</label>
+      </node>
+      <node id="44910">
+        <label>typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="44851" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44904" relation="include">
+        </childnode>
+        <childnode refid="44911" relation="include">
+        </childnode>
+      </node>
+      <node id="44906">
+        <label>neighbor_search_rules.hpp</label>
+        <link refid="neighbor__search__rules_8hpp"/>
+        <childnode refid="44907" relation="include">
+        </childnode>
+        <childnode refid="44896" relation="include">
+        </childnode>
+        <childnode refid="44908" relation="include">
+        </childnode>
+      </node>
+      <node id="44858">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="44871">
+        <label>binary_space_tree/mean_split.hpp</label>
+        <link refid="mean__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44869" relation="include">
+        </childnode>
+        <childnode refid="44872" relation="include">
+        </childnode>
+      </node>
+      <node id="44857">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="44902">
+        <label>mlpack/core/tree/rectangle_tree.hpp</label>
+      </node>
+      <node id="44913">
+        <label>mlpack/methods/amf/amf.hpp</label>
+        <link refid="amf_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44914" relation="include">
+        </childnode>
+        <childnode refid="44915" relation="include">
+        </childnode>
+        <childnode refid="44916" relation="include">
+        </childnode>
+        <childnode refid="44917" relation="include">
+        </childnode>
+        <childnode refid="44918" relation="include">
+        </childnode>
+        <childnode refid="44919" relation="include">
+        </childnode>
+        <childnode refid="44920" relation="include">
+        </childnode>
+        <childnode refid="44921" relation="include">
+        </childnode>
+        <childnode refid="44922" relation="include">
+        </childnode>
+        <childnode refid="44923" relation="include">
+        </childnode>
+      </node>
+      <node id="44813">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="44814" relation="include">
+        </childnode>
+        <childnode refid="44816" relation="include">
+        </childnode>
+      </node>
+      <node id="44796">
+        <label>cstdint</label>
+      </node>
+      <node id="44805">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="44812">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="44898">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44905">
+        <label>nearest_neighbor_sort_impl.hpp</label>
+      </node>
+      <node id="44875">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="44872">
+        <label>mean_split_impl.hpp</label>
+      </node>
+      <node id="44835">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="44863">
+        <label>hollow_ball_bound.hpp</label>
+        <link refid="hollow__ball__bound_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44858" relation="include">
+        </childnode>
+        <childnode refid="44864" relation="include">
+        </childnode>
+      </node>
+      <node id="44887">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="44903">
+        <label>neighbor_search_stat.hpp</label>
+        <link refid="neighbor__search__stat_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44882">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="44825">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="44792">
+        <label>cmath</label>
+      </node>
+      <node id="44854">
+        <label>bounds.hpp</label>
+        <link refid="bounds_8hpp"/>
+        <childnode refid="44855" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44858" relation="include">
+        </childnode>
+        <childnode refid="44859" relation="include">
+        </childnode>
+        <childnode refid="44861" relation="include">
+        </childnode>
+        <childnode refid="44863" relation="include">
+        </childnode>
+        <childnode refid="44865" relation="include">
+        </childnode>
+      </node>
+      <node id="44811">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="44800">
+        <label>stdexcept</label>
+      </node>
+      <node id="44892">
+        <label>binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44886" relation="include">
+        </childnode>
+        <childnode refid="44893" relation="include">
+        </childnode>
+      </node>
+      <node id="44820">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="44805" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44806" relation="include">
+        </childnode>
+      </node>
+      <node id="44855">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="44790">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44848" relation="include">
+        </childnode>
+      </node>
+      <node id="44844">
+        <label>string</label>
+      </node>
+      <node id="44878">
+        <label>binary_space_tree/rp_tree_max_split.hpp</label>
+        <link refid="rp__tree__max__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44869" relation="include">
+        </childnode>
+        <childnode refid="44879" relation="include">
+        </childnode>
+      </node>
+      <node id="44870">
+        <label>midpoint_split_impl.hpp</label>
+      </node>
+      <node id="44832">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44833" relation="include">
+        </childnode>
+        <childnode refid="44799" relation="include">
+        </childnode>
+      </node>
+      <node id="44850">
+        <label>mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44851" relation="include">
+        </childnode>
+        <childnode refid="44913" relation="include">
+        </childnode>
+        <childnode refid="44915" relation="include">
+        </childnode>
+        <childnode refid="44921" relation="include">
+        </childnode>
+        <childnode refid="44924" relation="include">
+        </childnode>
+        <childnode refid="44925" relation="include">
+        </childnode>
+        <childnode refid="44927" relation="include">
+        </childnode>
+        <childnode refid="44928" relation="include">
+        </childnode>
+        <childnode refid="44929" relation="include">
+        </childnode>
+        <childnode refid="44842" relation="include">
+        </childnode>
+        <childnode refid="44930" relation="include">
+        </childnode>
+        <childnode refid="44931" relation="include">
+        </childnode>
+      </node>
+      <node id="44842">
+        <label>map</label>
+      </node>
+      <node id="44893">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44881">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44882" relation="include">
+        </childnode>
+      </node>
+      <node id="44794">
+        <label>cfloat</label>
+      </node>
+      <node id="44924">
+        <label>mlpack/methods/cf/normalization/no_normalization.hpp</label>
+        <link refid="no__normalization_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44824">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="44846">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="44808">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="44831">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="44832" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44815" relation="include">
+        </childnode>
+        <childnode refid="44833" relation="include">
+        </childnode>
+      </node>
+      <node id="44821">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="44819">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="44805" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44806" relation="include">
+        </childnode>
+      </node>
+      <node id="44822">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="44805" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44806" relation="include">
+        </childnode>
+      </node>
+      <node id="44888">
+        <label>binary_space_tree_impl.hpp</label>
+      </node>
+      <node id="44810">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="44923">
+        <label>amf_impl.hpp</label>
+      </node>
+      <node id="44830">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="44806" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44818" relation="include">
+        </childnode>
+        <childnode refid="44827" relation="include">
+        </childnode>
+      </node>
+      <node id="44834">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="44835" relation="include">
+        </childnode>
+      </node>
+      <node id="44894">
+        <label>binary_space_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44908">
+        <label>neighbor_search_rules_impl.hpp</label>
+      </node>
+      <node id="44836">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="44791">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="44792" relation="include">
+        </childnode>
+        <childnode refid="44793" relation="include">
+        </childnode>
+        <childnode refid="44794" relation="include">
+        </childnode>
+        <childnode refid="44795" relation="include">
+        </childnode>
+        <childnode refid="44796" relation="include">
+        </childnode>
+        <childnode refid="44797" relation="include">
+        </childnode>
+        <childnode refid="44798" relation="include">
+        </childnode>
+        <childnode refid="44799" relation="include">
+        </childnode>
+        <childnode refid="44800" relation="include">
+        </childnode>
+        <childnode refid="44801" relation="include">
+        </childnode>
+        <childnode refid="44802" relation="include">
+        </childnode>
+        <childnode refid="44803" relation="include">
+        </childnode>
+        <childnode refid="44804" relation="include">
+        </childnode>
+        <childnode refid="44805" relation="include">
+        </childnode>
+        <childnode refid="44806" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44809" relation="include">
+        </childnode>
+        <childnode refid="44810" relation="include">
+        </childnode>
+        <childnode refid="44811" relation="include">
+        </childnode>
+        <childnode refid="44812" relation="include">
+        </childnode>
+        <childnode refid="44813" relation="include">
+        </childnode>
+        <childnode refid="44817" relation="include">
+        </childnode>
+        <childnode refid="44818" relation="include">
+        </childnode>
+        <childnode refid="44819" relation="include">
+        </childnode>
+        <childnode refid="44820" relation="include">
+        </childnode>
+        <childnode refid="44821" relation="include">
+        </childnode>
+        <childnode refid="44822" relation="include">
+        </childnode>
+        <childnode refid="44823" relation="include">
+        </childnode>
+        <childnode refid="44829" relation="include">
+        </childnode>
+        <childnode refid="44830" relation="include">
+        </childnode>
+        <childnode refid="44827" relation="include">
+        </childnode>
+        <childnode refid="44831" relation="include">
+        </childnode>
+        <childnode refid="44834" relation="include">
+        </childnode>
+        <childnode refid="44836" relation="include">
+        </childnode>
+        <childnode refid="44837" relation="include">
+        </childnode>
+        <childnode refid="44846" relation="include">
+        </childnode>
+        <childnode refid="44847" relation="include">
+        </childnode>
+      </node>
+      <node id="44890">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44912">
+        <label>furthest_neighbor_sort_impl.hpp</label>
+      </node>
+      <node id="44868">
+        <label>binary_space_tree/midpoint_split.hpp</label>
+        <link refid="midpoint__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44869" relation="include">
+        </childnode>
+        <childnode refid="44870" relation="include">
+        </childnode>
+      </node>
+      <node id="44876">
+        <label>random</label>
+      </node>
+      <node id="44862">
+        <label>ballbound_impl.hpp</label>
+      </node>
+      <node id="44934">
+        <label>bias_svd_impl.hpp</label>
+      </node>
+      <node id="44891">
+        <label>binary_space_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="44916">
+        <label>mlpack/methods/amf/update_rules/svd_batch_learning.hpp</label>
+        <link refid="svd__batch__learning_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44797">
+        <label>cstdio</label>
+      </node>
+      <node id="44927">
+        <label>mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44851" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+      </node>
+      <node id="44866">
+        <label>address.hpp</label>
+        <link refid="address_8hpp"/>
+      </node>
+      <node id="44900">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="44914">
+        <label>mlpack/methods/amf/update_rules/nmf_mult_dist.hpp</label>
+        <link refid="nmf__mult__dist_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44848">
+        <label>mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44849" relation="include">
+        </childnode>
+        <childnode refid="44850" relation="include">
+        </childnode>
+        <childnode refid="44932" relation="include">
+        </childnode>
+        <childnode refid="44934" relation="include">
+        </childnode>
+      </node>
+      <node id="44801">
+        <label>tuple</label>
+      </node>
+      <node id="44806">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="44884">
+        <label>binary_space_tree/ub_tree_split.hpp</label>
+        <link refid="ub__tree__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44866" relation="include">
+        </childnode>
+        <childnode refid="44885" relation="include">
+        </childnode>
+      </node>
+      <node id="44823">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="44806" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44810" relation="include">
+        </childnode>
+        <childnode refid="44824" relation="include">
+        </childnode>
+        <childnode refid="44825" relation="include">
+        </childnode>
+        <childnode refid="44826" relation="include">
+        </childnode>
+        <childnode refid="44827" relation="include">
+        </childnode>
+      </node>
+      <node id="44886">
+        <label>binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44887" relation="include">
+        </childnode>
+        <childnode refid="44868" relation="include">
+        </childnode>
+        <childnode refid="44888" relation="include">
+        </childnode>
+        <childnode refid="44853" relation="include">
+        </childnode>
+      </node>
+      <node id="44859">
+        <label>hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44855" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44858" relation="include">
+        </childnode>
+        <childnode refid="44860" relation="include">
+        </childnode>
+      </node>
+      <node id="44852">
+        <label>vector</label>
+      </node>
+      <node id="44883">
+        <label>rp_tree_mean_split_impl.hpp</label>
+      </node>
+      <node id="44874">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44875" relation="include">
+        </childnode>
+        <childnode refid="44876" relation="include">
+        </childnode>
+      </node>
+      <node id="44922">
+        <label>mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp</label>
+        <link refid="simple__tolerance__termination_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44802">
+        <label>utility</label>
+      </node>
+      <node id="44826">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="44817">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="44853">
+        <label>mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44854" relation="include">
+        </childnode>
+        <childnode refid="44868" relation="include">
+        </childnode>
+        <childnode refid="44871" relation="include">
+        </childnode>
+        <childnode refid="44873" relation="include">
+        </childnode>
+        <childnode refid="44878" relation="include">
+        </childnode>
+        <childnode refid="44880" relation="include">
+        </childnode>
+        <childnode refid="44884" relation="include">
+        </childnode>
+        <childnode refid="44886" relation="include">
+        </childnode>
+        <childnode refid="44889" relation="include">
+        </childnode>
+        <childnode refid="44891" relation="include">
+        </childnode>
+        <childnode refid="44892" relation="include">
+        </childnode>
+        <childnode refid="44894" relation="include">
+        </childnode>
+        <childnode refid="44895" relation="include">
+        </childnode>
+        <childnode refid="44898" relation="include">
+        </childnode>
+        <childnode refid="44899" relation="include">
+        </childnode>
+        <childnode refid="44901" relation="include">
+        </childnode>
+      </node>
+      <node id="44919">
+        <label>mlpack/methods/amf/init_rules/random_init.hpp</label>
+        <link refid="amf_2init__rules_2random__init_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44904">
+        <label>sort_policies/nearest_neighbor_sort.hpp</label>
+        <link refid="nearest__neighbor__sort_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44905" relation="include">
+        </childnode>
+      </node>
+      <node id="44814">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="44815" relation="include">
+        </childnode>
+      </node>
+      <node id="44837">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="44838" relation="include">
+        </childnode>
+        <childnode refid="44839" relation="include">
+        </childnode>
+        <childnode refid="44840" relation="include">
+        </childnode>
+        <childnode refid="44841" relation="include">
+        </childnode>
+        <childnode refid="44842" relation="include">
+        </childnode>
+        <childnode refid="44843" relation="include">
+        </childnode>
+        <childnode refid="44844" relation="include">
+        </childnode>
+        <childnode refid="44845" relation="include">
+        </childnode>
+      </node>
+      <node id="44815">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="44851">
+        <label>mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44852" relation="include">
+        </childnode>
+        <childnode refid="44844" relation="include">
+        </childnode>
+        <childnode refid="44853" relation="include">
+        </childnode>
+        <childnode refid="44902" relation="include">
+        </childnode>
+        <childnode refid="44886" relation="include">
+        </childnode>
+        <childnode refid="44903" relation="include">
+        </childnode>
+        <childnode refid="44904" relation="include">
+        </childnode>
+        <childnode refid="44906" relation="include">
+        </childnode>
+        <childnode refid="44909" relation="include">
+        </childnode>
+        <childnode refid="44910" relation="include">
+        </childnode>
+      </node>
+      <node id="44829">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="44827" relation="include">
+        </childnode>
+        <childnode refid="44823" relation="include">
+        </childnode>
+        <childnode refid="44830" relation="include">
+        </childnode>
+      </node>
+      <node id="44798">
+        <label>cstdlib</label>
+      </node>
+      <node id="44918">
+        <label>mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp</label>
+        <link refid="svd__complete__incremental__learning_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44909">
+        <label>neighbor_search_impl.hpp</label>
+      </node>
+      <node id="44793">
+        <label>cctype</label>
+      </node>
+      <node id="44930">
+        <label>iostream</label>
+      </node>
+      <node id="44931">
+        <label>cf_impl.hpp</label>
+      </node>
+      <node id="44911">
+        <label>sort_policies/furthest_neighbor_sort.hpp</label>
+        <link refid="furthest__neighbor__sort_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44912" relation="include">
+        </childnode>
+      </node>
+      <node id="44915">
+        <label>mlpack/methods/amf/update_rules/nmf_als.hpp</label>
+        <link refid="nmf__als_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44933">
+        <label>bias_svd_function_impl.hpp</label>
+      </node>
+      <node id="44816">
+        <label>unordered_map</label>
+      </node>
+      <node id="44795">
+        <label>climits</label>
+      </node>
+      <node id="44843">
+        <label>mutex</label>
+      </node>
+      <node id="44928">
+        <label>mlpack/methods/cf/interpolation_policies/average_interpolation.hpp</label>
+        <link refid="average__interpolation_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44839">
+        <label>chrono</label>
+      </node>
+      <node id="44907">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+      <node id="44860">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="44847">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="44880">
+        <label>binary_space_tree/rp_tree_mean_split.hpp</label>
+        <link refid="rp__tree__mean__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44878" relation="include">
+        </childnode>
+        <childnode refid="44869" relation="include">
+        </childnode>
+        <childnode refid="44881" relation="include">
+        </childnode>
+        <childnode refid="44883" relation="include">
+        </childnode>
+      </node>
+      <node id="44877">
+        <label>vantage_point_split_impl.hpp</label>
+      </node>
+      <node id="44845">
+        <label>thread</label>
+      </node>
+      <node id="44861">
+        <label>ballbound.hpp</label>
+        <link refid="ballbound_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44858" relation="include">
+        </childnode>
+        <childnode refid="44862" relation="include">
+        </childnode>
+      </node>
+      <node id="44917">
+        <label>mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp</label>
+        <link refid="svd__incomplete__incremental__learning_8hpp"/>
+      </node>
+      <node id="44879">
+        <label>rp_tree_max_split_impl.hpp</label>
+      </node>
+      <node id="44869">
+        <label>mlpack/core/tree/perform_split.hpp</label>
+        <link refid="perform__split_8hpp"/>
+      </node>
+      <node id="44926">
+        <label>mlpack/methods/amf/termination_policies/max_iteration_termination.hpp</label>
+        <link refid="max__iteration__termination_8hpp"/>
+      </node>
+      <node id="44921">
+        <label>mlpack/methods/amf/termination_policies/simple_residue_termination.hpp</label>
+        <link refid="simple__residue__termination_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+      </node>
+      <node id="44833">
+        <label>type_traits</label>
+      </node>
+      <node id="44920">
+        <label>mlpack/methods/amf/init_rules/random_acol_init.hpp</label>
+        <link refid="random__acol__init_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44874" relation="include">
+        </childnode>
+      </node>
+      <node id="44929">
+        <label>set</label>
+      </node>
+      <node id="44895">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44896" relation="include">
+        </childnode>
+        <childnode refid="44853" relation="include">
+        </childnode>
+        <childnode refid="44897" relation="include">
+        </childnode>
+      </node>
+      <node id="44809">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="44901">
+        <label>binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="44853" relation="include">
+        </childnode>
+      </node>
+      <node id="44803">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="44827">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="44805" relation="include">
+        </childnode>
+        <childnode refid="44806" relation="include">
+        </childnode>
+        <childnode refid="44807" relation="include">
+        </childnode>
+        <childnode refid="44808" relation="include">
+        </childnode>
+        <childnode refid="44828" relation="include">
+        </childnode>
+      </node>
+      <node id="44864">
+        <label>hollow_ball_bound_impl.hpp</label>
+      </node>
+      <node id="44799">
+        <label>cstring</label>
+      </node>
+      <node id="44818">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="44867">
+        <label>cellbound_impl.hpp</label>
+      </node>
+      <node id="44885">
+        <label>ub_tree_split_impl.hpp</label>
+      </node>
+      <node id="44865">
+        <label>cellbound.hpp</label>
+        <link refid="cellbound_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44855" relation="include">
+        </childnode>
+        <childnode refid="44856" relation="include">
+        </childnode>
+        <childnode refid="44858" relation="include">
+        </childnode>
+        <childnode refid="44866" relation="include">
+        </childnode>
+        <childnode refid="44867" relation="include">
+        </childnode>
+      </node>
+      <node id="44849">
+        <label>ensmallen.hpp</label>
+      </node>
+      <node id="44807">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="44856">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44857" relation="include">
+        </childnode>
+      </node>
+      <node id="44873">
+        <label>binary_space_tree/vantage_point_split.hpp</label>
+        <link refid="vantage__point__split_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44869" relation="include">
+        </childnode>
+        <childnode refid="44874" relation="include">
+        </childnode>
+        <childnode refid="44877" relation="include">
+        </childnode>
+      </node>
+      <node id="44925">
+        <label>mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
+        <link refid="nmf__method_8hpp"/>
+        <childnode refid="44791" relation="include">
+        </childnode>
+        <childnode refid="44913" relation="include">
+        </childnode>
+        <childnode refid="44915" relation="include">
+        </childnode>
+        <childnode refid="44926" relation="include">
+        </childnode>
+        <childnode refid="44921" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1BiasSVDPolicy" prot="public">mlpack::cf::BiasSVDPolicy</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Wenhao Huang</para></simplesect>
+Implementation of the bias svd method for use in the Collaborative Filtering.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_BIAS_SVD_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_BIAS_SVD_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="bias__svd_8hpp" kindref="compound">mlpack/methods/bias_svd/bias_svd.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1cf_1_1BiasSVDPolicy" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy" kindref="compound">BiasSVDPolicy</ref></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="51" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a84017b53f2a6df3270eecceb8a4aec85" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a84017b53f2a6df3270eecceb8a4aec85" kindref="member">BiasSVDPolicy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>10,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>alpha<sp/>=<sp/>0.02,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda<sp/>=<sp/>0.05)<sp/>:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxIterations(maxIterations),</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>alpha(alpha),</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lambda(lambda)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a3b3962a80d1217a799cfab110b487cea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a3b3962a80d1217a799cfab110b487cea" kindref="member">Apply</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::sp_mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>cleanedData<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rank,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>minResidue<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>mit<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Perform<sp/>decomposition<sp/>using<sp/>the<sp/>bias<sp/>SVD<sp/>algorithm.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1svd_1_1BiasSVD" kindref="compound">svd::BiasSVD&lt;&gt;</ref><sp/>biassvd(maxIterations,<sp/>alpha,<sp/>lambda);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>biassvd.<ref refid="classmlpack_1_1svd_1_1BiasSVD_1a2cda95c3460611ea7af141f8db7fb3eb" kindref="member">Apply</ref>(data,<sp/>rank,<sp/>w,<sp/>h,<sp/>p,<sp/>q);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a0c3e16d73c8b25b8934cbc36ac161619" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a0c3e16d73c8b25b8934cbc36ac161619" kindref="member">GetRating</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>item)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="92"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating<sp/>=</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::as_scalar(w.row(item)<sp/>*<sp/>h.col(user))<sp/>+<sp/>p(item)<sp/>+<sp/>q(user);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rating;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1ae5dc3895f0294bf054cb2ea58084a426" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1ae5dc3895f0294bf054cb2ea58084a426" kindref="member">GetRatingOfUser</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,<sp/>arma::vec&amp;<sp/>rating)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="105"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>rating<sp/>=<sp/>w<sp/>*<sp/>h.col(user)<sp/>+<sp/>p<sp/>+<sp/>q(user);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>NeighborSearchPolicy&gt;</highlight></codeline>
+<codeline lineno="122" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a35bca7a6e09f4fb35b9945a9368711e4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a35bca7a6e09f4fb35b9945a9368711e4" kindref="member">GetNeighborhood</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>users,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numUsersForSimilarity,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighborhood,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>similarities)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="126"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>User<sp/>latent<sp/>vectors<sp/>(matrix<sp/>H)<sp/>are<sp/>used<sp/>for<sp/>neighbor<sp/>search.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Temporarily<sp/>store<sp/>feature<sp/>vector<sp/>of<sp/>queried<sp/>users.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>query(h.n_rows,<sp/>users.n_elem);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Select<sp/>feature<sp/>vectors<sp/>of<sp/>queried<sp/>users.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>users.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>query.col(i)<sp/>=<sp/>h.col(users(i));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>NeighborSearchPolicy<sp/>neighborSearch(h);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>neighborSearch.Search(</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>query,<sp/>numUsersForSimilarity,<sp/>neighborhood,<sp/>similarities);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a0f733dde66e23287758de984b5151e36" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a0f733dde66e23287758de984b5151e36" kindref="member">W</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>w;<sp/>}</highlight></codeline>
+<codeline lineno="142" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a71e6a6119b9efde17f4112c6d82d9233" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a71e6a6119b9efde17f4112c6d82d9233" kindref="member">H</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>h;<sp/>}</highlight></codeline>
+<codeline lineno="144" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a833b773328ccaf79c06f39e4fb12a993" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a833b773328ccaf79c06f39e4fb12a993" kindref="member">Q</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>q;<sp/>}</highlight></codeline>
+<codeline lineno="146" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1ae9a18ef885ed4222645dad9b7b15c3ef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1ae9a18ef885ed4222645dad9b7b15c3ef" kindref="member">P</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>p;<sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="151" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a500ecd077d5cc5fdbf6ceb095d8de9e1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a500ecd077d5cc5fdbf6ceb095d8de9e1" kindref="member">Alpha</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>alpha;<sp/>}</highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1acbb0e4747a3a307bee88bad71e5eeaf1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1acbb0e4747a3a307bee88bad71e5eeaf1" kindref="member">Alpha</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>alpha;<sp/>}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a53535041275cedd0ec3de67ca032aa94" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a53535041275cedd0ec3de67ca032aa94" kindref="member">Lambda</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="161" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1aaf66629b989a326453647f42443c6a0c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1aaf66629b989a326453647f42443c6a0c" kindref="member">Lambda</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lambda;<sp/>}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="167" refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1BiasSVDPolicy_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(maxIterations));</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(alpha));</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(lambda));</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(w));</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(h));</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(p));</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(q));</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>alpha;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lambda;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>arma::mat<sp/>w;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>arma::mat<sp/>h;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/>arma::vec<sp/>p;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>arma::vec<sp/>q;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp"/>
+  </compounddef>
+</doxygen>

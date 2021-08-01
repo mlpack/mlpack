@@ -1,0 +1,82 @@
+\section{Gradient\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1GradientVisitor}\index{Gradient\+Visitor@{Gradient\+Visitor}}
+
+
+Search\+Mode\+Visitor executes the Gradient() method of the given module using the input and delta parameter.  
+
+
+
+
+Inheritance diagram for Gradient\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=152pt]{classmlpack_1_1ann_1_1GradientVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Gradient\+Visitor} (const arma\+::mat \&input, const arma\+::mat \&delta)
+\begin{DoxyCompactList}\small\item\em Executes the Gradient() method of the given module using the input and delta parameter. \end{DoxyCompactList}\item 
+\textbf{ Gradient\+Visitor} (const arma\+::mat \&input, const arma\+::mat \&delta, const size\+\_\+t index)
+\begin{DoxyCompactList}\small\item\em Executes the Gradient() method for the layer with the specified index. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void \textbf{ operator()} (Layer\+Type $\ast$layer) const
+\begin{DoxyCompactList}\small\item\em Executes the Gradient() method. \end{DoxyCompactList}\item 
+void \textbf{ operator()} (\textbf{ More\+Types} layer) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Search\+Mode\+Visitor executes the Gradient() method of the given module using the input and delta parameter. 
+
+Definition at line 28 of file gradient\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GradientVisitor_aef51b166a43ea70ddbb05b7dfc8f82b7}} 
+\index{mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}!Gradient\+Visitor@{Gradient\+Visitor}}
+\index{Gradient\+Visitor@{Gradient\+Visitor}!mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}}
+\subsubsection{Gradient\+Visitor()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Gradient\+Visitor} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{input,  }\item[{const arma\+::mat \&}]{delta }\end{DoxyParamCaption})}
+
+
+
+Executes the Gradient() method of the given module using the input and delta parameter. 
+
+\mbox{\label{classmlpack_1_1ann_1_1GradientVisitor_a39e14abb4d965e541b0905125fbb03a0}} 
+\index{mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}!Gradient\+Visitor@{Gradient\+Visitor}}
+\index{Gradient\+Visitor@{Gradient\+Visitor}!mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}}
+\subsubsection{Gradient\+Visitor()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Gradient\+Visitor} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{input,  }\item[{const arma\+::mat \&}]{delta,  }\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption})}
+
+
+
+Executes the Gradient() method for the layer with the specified index. 
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1GradientVisitor_a26bb3385c630118c35f4799f1509abbc}} 
+\index{mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}}
+\subsubsection{operator()()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void operator() (\begin{DoxyParamCaption}\item[{Layer\+Type $\ast$}]{layer }\end{DoxyParamCaption}) const}
+
+
+
+Executes the Gradient() method. 
+
+\mbox{\label{classmlpack_1_1ann_1_1GradientVisitor_ae35578e7ff874a320fe762bc0edfff04}} 
+\index{mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Gradient\+Visitor@{mlpack\+::ann\+::\+Gradient\+Visitor}}
+\subsubsection{operator()()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void operator() (\begin{DoxyParamCaption}\item[{\textbf{ More\+Types}}]{layer }\end{DoxyParamCaption}) const}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/visitor/\textbf{ gradient\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

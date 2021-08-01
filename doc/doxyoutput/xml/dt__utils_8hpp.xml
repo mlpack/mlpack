@@ -1,0 +1,486 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dt__utils_8hpp" kind="file" language="C++">
+    <compoundname>dt_utils.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="dtree_8hpp" local="yes">dtree.hpp</includes>
+    <includes local="yes">dt_utils_impl.hpp</includes>
+    <incdepgraph>
+      <node id="47439">
+        <label>list</label>
+      </node>
+      <node id="47436">
+        <label>atomic</label>
+      </node>
+      <node id="47426">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="47402">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="47438">
+        <label>iomanip</label>
+      </node>
+      <node id="47411">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="47412" relation="include">
+        </childnode>
+        <childnode refid="47414" relation="include">
+        </childnode>
+      </node>
+      <node id="47394">
+        <label>cstdint</label>
+      </node>
+      <node id="47403">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="47410">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="47446">
+        <label>dtree.hpp</label>
+        <link refid="dtree_8hpp"/>
+        <childnode refid="47389" relation="include">
+        </childnode>
+        <childnode refid="47447" relation="include">
+        </childnode>
+      </node>
+      <node id="47433">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47423">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="47390">
+        <label>cmath</label>
+      </node>
+      <node id="47409">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="47398">
+        <label>stdexcept</label>
+      </node>
+      <node id="47418">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="47403" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47404" relation="include">
+        </childnode>
+      </node>
+      <node id="47442">
+        <label>string</label>
+      </node>
+      <node id="47430">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="47431" relation="include">
+        </childnode>
+        <childnode refid="47397" relation="include">
+        </childnode>
+      </node>
+      <node id="47440">
+        <label>map</label>
+      </node>
+      <node id="47447">
+        <label>dtree_impl.hpp</label>
+      </node>
+      <node id="47392">
+        <label>cfloat</label>
+      </node>
+      <node id="47422">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="47444">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="47406">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="47429">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="47430" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47413" relation="include">
+        </childnode>
+        <childnode refid="47431" relation="include">
+        </childnode>
+      </node>
+      <node id="47419">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="47417">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="47403" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47404" relation="include">
+        </childnode>
+      </node>
+      <node id="47420">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="47403" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47404" relation="include">
+        </childnode>
+      </node>
+      <node id="47408">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="47428">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="47404" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47416" relation="include">
+        </childnode>
+        <childnode refid="47425" relation="include">
+        </childnode>
+      </node>
+      <node id="47432">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47433" relation="include">
+        </childnode>
+      </node>
+      <node id="47434">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="47389">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="47390" relation="include">
+        </childnode>
+        <childnode refid="47391" relation="include">
+        </childnode>
+        <childnode refid="47392" relation="include">
+        </childnode>
+        <childnode refid="47393" relation="include">
+        </childnode>
+        <childnode refid="47394" relation="include">
+        </childnode>
+        <childnode refid="47395" relation="include">
+        </childnode>
+        <childnode refid="47396" relation="include">
+        </childnode>
+        <childnode refid="47397" relation="include">
+        </childnode>
+        <childnode refid="47398" relation="include">
+        </childnode>
+        <childnode refid="47399" relation="include">
+        </childnode>
+        <childnode refid="47400" relation="include">
+        </childnode>
+        <childnode refid="47401" relation="include">
+        </childnode>
+        <childnode refid="47402" relation="include">
+        </childnode>
+        <childnode refid="47403" relation="include">
+        </childnode>
+        <childnode refid="47404" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47407" relation="include">
+        </childnode>
+        <childnode refid="47408" relation="include">
+        </childnode>
+        <childnode refid="47409" relation="include">
+        </childnode>
+        <childnode refid="47410" relation="include">
+        </childnode>
+        <childnode refid="47411" relation="include">
+        </childnode>
+        <childnode refid="47415" relation="include">
+        </childnode>
+        <childnode refid="47416" relation="include">
+        </childnode>
+        <childnode refid="47417" relation="include">
+        </childnode>
+        <childnode refid="47418" relation="include">
+        </childnode>
+        <childnode refid="47419" relation="include">
+        </childnode>
+        <childnode refid="47420" relation="include">
+        </childnode>
+        <childnode refid="47421" relation="include">
+        </childnode>
+        <childnode refid="47427" relation="include">
+        </childnode>
+        <childnode refid="47428" relation="include">
+        </childnode>
+        <childnode refid="47425" relation="include">
+        </childnode>
+        <childnode refid="47429" relation="include">
+        </childnode>
+        <childnode refid="47432" relation="include">
+        </childnode>
+        <childnode refid="47434" relation="include">
+        </childnode>
+        <childnode refid="47435" relation="include">
+        </childnode>
+        <childnode refid="47444" relation="include">
+        </childnode>
+        <childnode refid="47445" relation="include">
+        </childnode>
+      </node>
+      <node id="47395">
+        <label>cstdio</label>
+      </node>
+      <node id="47399">
+        <label>tuple</label>
+      </node>
+      <node id="47404">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="47421">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="47404" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47408" relation="include">
+        </childnode>
+        <childnode refid="47422" relation="include">
+        </childnode>
+        <childnode refid="47423" relation="include">
+        </childnode>
+        <childnode refid="47424" relation="include">
+        </childnode>
+        <childnode refid="47425" relation="include">
+        </childnode>
+      </node>
+      <node id="47400">
+        <label>utility</label>
+      </node>
+      <node id="47424">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="47415">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="47412">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="47413" relation="include">
+        </childnode>
+      </node>
+      <node id="47388">
+        <label>/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp</label>
+        <link refid="dt__utils_8hpp"/>
+        <childnode refid="47389" relation="include">
+        </childnode>
+        <childnode refid="47446" relation="include">
+        </childnode>
+        <childnode refid="47448" relation="include">
+        </childnode>
+      </node>
+      <node id="47435">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="47436" relation="include">
+        </childnode>
+        <childnode refid="47437" relation="include">
+        </childnode>
+        <childnode refid="47438" relation="include">
+        </childnode>
+        <childnode refid="47439" relation="include">
+        </childnode>
+        <childnode refid="47440" relation="include">
+        </childnode>
+        <childnode refid="47441" relation="include">
+        </childnode>
+        <childnode refid="47442" relation="include">
+        </childnode>
+        <childnode refid="47443" relation="include">
+        </childnode>
+      </node>
+      <node id="47413">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="47427">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="47425" relation="include">
+        </childnode>
+        <childnode refid="47421" relation="include">
+        </childnode>
+        <childnode refid="47428" relation="include">
+        </childnode>
+      </node>
+      <node id="47396">
+        <label>cstdlib</label>
+      </node>
+      <node id="47391">
+        <label>cctype</label>
+      </node>
+      <node id="47414">
+        <label>unordered_map</label>
+      </node>
+      <node id="47448">
+        <label>dt_utils_impl.hpp</label>
+      </node>
+      <node id="47393">
+        <label>climits</label>
+      </node>
+      <node id="47441">
+        <label>mutex</label>
+      </node>
+      <node id="47437">
+        <label>chrono</label>
+      </node>
+      <node id="47445">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="47443">
+        <label>thread</label>
+      </node>
+      <node id="47431">
+        <label>type_traits</label>
+      </node>
+      <node id="47407">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="47401">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="47425">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="47403" relation="include">
+        </childnode>
+        <childnode refid="47404" relation="include">
+        </childnode>
+        <childnode refid="47405" relation="include">
+        </childnode>
+        <childnode refid="47406" relation="include">
+        </childnode>
+        <childnode refid="47426" relation="include">
+        </childnode>
+      </node>
+      <node id="47397">
+        <label>cstring</label>
+      </node>
+      <node id="47416">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="47405">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1det_1_1PathCacher" prot="public">mlpack::det::PathCacher</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1det">mlpack::det</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Parikshit Ram (<ulink url="mailto:pram@cc.gatech.edu">pram@cc.gatech.edu</ulink>)</para></simplesect>
+This file implements functions to perform different tasks with the Density Tree class.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_DET_DT_UTILS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_DET_DT_UTILS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="dtree_8hpp" kindref="compound">dtree.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20" refid="namespacemlpack_1_1det" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">det<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TagType&gt;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1det_1a0671a10d605707a02c14efa54a2e16f0" kindref="member">PrintLeafMembership</ref>(<ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, TagType&gt;</ref>*<sp/>dtree,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>leafClassMembershipFile<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TagType&gt;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1det_1ac64804c6c73b842b3eb69d9a64fb12e3" kindref="member">PrintVariableImportance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, TagType&gt;</ref>*<sp/>dtree,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>viFile<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TagType&gt;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, TagType&gt;</ref>*<sp/><ref refid="namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c" kindref="member">Trainer</ref>(MatType&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>folds,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>useVolumeReg<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>10,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minLeafSize<sp/>=<sp/>5,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>unprunedTreeOutput<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>skipPruning<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="classmlpack_1_1det_1_1PathCacher" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1det_1_1PathCacher" kindref="compound">PathCacher</ref></highlight></codeline>
+<codeline lineno="81"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59" kindref="member">PathFormat</ref></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59a5e04095213d836ceee073d53425709e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59a5e04095213d836ceee073d53425709e1" kindref="member">FormatLR</ref>,</highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59ab0b26eeb16bd5e237d3c4149f81d1b24" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59ab0b26eeb16bd5e237d3c4149f81d1b24" kindref="member">FormatLR_ID</ref>,</highlight></codeline>
+<codeline lineno="93" refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59a3a8b8d2daa2fad886dfb77b20737a2e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59a3a8b8d2daa2fad886dfb77b20737a2e1" kindref="member">FormatID_LR</ref></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ac2117a674303c683520652b1e3506cc5" kindref="member">PathCacher</ref>(<ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59" kindref="member">PathFormat</ref><sp/>fmt,<sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, int&gt;</ref>*<sp/>tree);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a7825e68e15d3d8cc33e44db3d0801527" kindref="member">Enter</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, int&gt;</ref>*<sp/>node,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, int&gt;</ref>*<sp/>parent);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a1cac9b036f3b4aadf7bbf098d65ff37e" kindref="member">Leave</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, int&gt;</ref>*<sp/>node,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree&lt;MatType, int&gt;</ref>*<sp/>parent);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a1cf438e5bc7c1c934766705a081885d8" kindref="member">PathFor</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>tag)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ab3f0e671c8ef70476a2a3b0dffb3d24d" kindref="member">ParentOf</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>tag)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="classmlpack_1_1det_1_1PathCacher_1a5745ee58508df730d6557dc103ede353" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a5745ee58508df730d6557dc103ede353" kindref="member">NumNodes</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" kindref="member">pathCache</ref>.size();<sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="135" refid="classmlpack_1_1det_1_1PathCacher_1af21ffd6b8b037b9235c00547b371def3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::list&lt;std::pair&lt;bool,<sp/>int&gt;&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1af21ffd6b8b037b9235c00547b371def3" kindref="member">PathType</ref>;</highlight></codeline>
+<codeline lineno="136" refid="classmlpack_1_1det_1_1PathCacher_1a3556ea9f8a86ca23b6c205c23f0e0f11" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::vector&lt;std::pair&lt;int,<sp/>std::string&gt;&gt;<sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a3556ea9f8a86ca23b6c205c23f0e0f11" kindref="member">PathCacheType</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="classmlpack_1_1det_1_1PathCacher_1a137e67424ef34c606fa1dfea3e80ac12" refkind="member"><highlight class="normal"><sp/><sp/>PathType<sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a137e67424ef34c606fa1dfea3e80ac12" kindref="member">path</ref>;</highlight></codeline>
+<codeline lineno="139" refid="classmlpack_1_1det_1_1PathCacher_1a2fbade9ce67adf733de0cbac35148550" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad42c791e18217f9f8ec4b75e3b832d59" kindref="member">PathFormat</ref><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1a2fbade9ce67adf733de0cbac35148550" kindref="member">format</ref>;</highlight></codeline>
+<codeline lineno="140" refid="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" refkind="member"><highlight class="normal"><sp/><sp/>PathCacheType<sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" kindref="member">pathCache</ref>;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><sp/><sp/><ref refid="classmlpack_1_1det_1_1PathCacher_1ad564bef941bc27ad1a335367f504af66" kindref="member">BuildString</ref>();</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>det</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;dt_utils_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_DET_DT_UTILS_HPP</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp"/>
+  </compounddef>
+</doxygen>

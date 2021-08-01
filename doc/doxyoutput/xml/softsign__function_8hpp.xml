@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="softsign__function_8hpp" kind="file" language="C++">
+    <compoundname>softsign_function.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="25767">
+        <label>list</label>
+      </node>
+      <node id="25764">
+        <label>atomic</label>
+      </node>
+      <node id="25754">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="25730">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="25766">
+        <label>iomanip</label>
+      </node>
+      <node id="25739">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25740" relation="include">
+        </childnode>
+        <childnode refid="25742" relation="include">
+        </childnode>
+      </node>
+      <node id="25722">
+        <label>cstdint</label>
+      </node>
+      <node id="25731">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="25738">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="25761">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="25751">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="25718">
+        <label>cmath</label>
+      </node>
+      <node id="25737">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="25726">
+        <label>stdexcept</label>
+      </node>
+      <node id="25746">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="25731" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25732" relation="include">
+        </childnode>
+      </node>
+      <node id="25770">
+        <label>string</label>
+      </node>
+      <node id="25758">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="25759" relation="include">
+        </childnode>
+        <childnode refid="25725" relation="include">
+        </childnode>
+      </node>
+      <node id="25768">
+        <label>map</label>
+      </node>
+      <node id="25720">
+        <label>cfloat</label>
+      </node>
+      <node id="25750">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="25772">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="25734">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="25757">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="25758" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25741" relation="include">
+        </childnode>
+        <childnode refid="25759" relation="include">
+        </childnode>
+      </node>
+      <node id="25747">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="25745">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="25731" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25732" relation="include">
+        </childnode>
+      </node>
+      <node id="25748">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="25731" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25732" relation="include">
+        </childnode>
+      </node>
+      <node id="25736">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="25756">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="25732" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25744" relation="include">
+        </childnode>
+        <childnode refid="25753" relation="include">
+        </childnode>
+      </node>
+      <node id="25760">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="25761" relation="include">
+        </childnode>
+      </node>
+      <node id="25762">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="25717">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="25718" relation="include">
+        </childnode>
+        <childnode refid="25719" relation="include">
+        </childnode>
+        <childnode refid="25720" relation="include">
+        </childnode>
+        <childnode refid="25721" relation="include">
+        </childnode>
+        <childnode refid="25722" relation="include">
+        </childnode>
+        <childnode refid="25723" relation="include">
+        </childnode>
+        <childnode refid="25724" relation="include">
+        </childnode>
+        <childnode refid="25725" relation="include">
+        </childnode>
+        <childnode refid="25726" relation="include">
+        </childnode>
+        <childnode refid="25727" relation="include">
+        </childnode>
+        <childnode refid="25728" relation="include">
+        </childnode>
+        <childnode refid="25729" relation="include">
+        </childnode>
+        <childnode refid="25730" relation="include">
+        </childnode>
+        <childnode refid="25731" relation="include">
+        </childnode>
+        <childnode refid="25732" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25735" relation="include">
+        </childnode>
+        <childnode refid="25736" relation="include">
+        </childnode>
+        <childnode refid="25737" relation="include">
+        </childnode>
+        <childnode refid="25738" relation="include">
+        </childnode>
+        <childnode refid="25739" relation="include">
+        </childnode>
+        <childnode refid="25743" relation="include">
+        </childnode>
+        <childnode refid="25744" relation="include">
+        </childnode>
+        <childnode refid="25745" relation="include">
+        </childnode>
+        <childnode refid="25746" relation="include">
+        </childnode>
+        <childnode refid="25747" relation="include">
+        </childnode>
+        <childnode refid="25748" relation="include">
+        </childnode>
+        <childnode refid="25749" relation="include">
+        </childnode>
+        <childnode refid="25755" relation="include">
+        </childnode>
+        <childnode refid="25756" relation="include">
+        </childnode>
+        <childnode refid="25753" relation="include">
+        </childnode>
+        <childnode refid="25757" relation="include">
+        </childnode>
+        <childnode refid="25760" relation="include">
+        </childnode>
+        <childnode refid="25762" relation="include">
+        </childnode>
+        <childnode refid="25763" relation="include">
+        </childnode>
+        <childnode refid="25772" relation="include">
+        </childnode>
+        <childnode refid="25773" relation="include">
+        </childnode>
+      </node>
+      <node id="25723">
+        <label>cstdio</label>
+      </node>
+      <node id="25727">
+        <label>tuple</label>
+      </node>
+      <node id="25732">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="25749">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="25732" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25736" relation="include">
+        </childnode>
+        <childnode refid="25750" relation="include">
+        </childnode>
+        <childnode refid="25751" relation="include">
+        </childnode>
+        <childnode refid="25752" relation="include">
+        </childnode>
+        <childnode refid="25753" relation="include">
+        </childnode>
+      </node>
+      <node id="25728">
+        <label>utility</label>
+      </node>
+      <node id="25752">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="25743">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25740">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="25741" relation="include">
+        </childnode>
+      </node>
+      <node id="25763">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="25764" relation="include">
+        </childnode>
+        <childnode refid="25765" relation="include">
+        </childnode>
+        <childnode refid="25766" relation="include">
+        </childnode>
+        <childnode refid="25767" relation="include">
+        </childnode>
+        <childnode refid="25768" relation="include">
+        </childnode>
+        <childnode refid="25769" relation="include">
+        </childnode>
+        <childnode refid="25770" relation="include">
+        </childnode>
+        <childnode refid="25771" relation="include">
+        </childnode>
+      </node>
+      <node id="25741">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="25755">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="25753" relation="include">
+        </childnode>
+        <childnode refid="25749" relation="include">
+        </childnode>
+        <childnode refid="25756" relation="include">
+        </childnode>
+      </node>
+      <node id="25724">
+        <label>cstdlib</label>
+      </node>
+      <node id="25719">
+        <label>cctype</label>
+      </node>
+      <node id="25742">
+        <label>unordered_map</label>
+      </node>
+      <node id="25721">
+        <label>climits</label>
+      </node>
+      <node id="25769">
+        <label>mutex</label>
+      </node>
+      <node id="25765">
+        <label>chrono</label>
+      </node>
+      <node id="25773">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="25716">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/softsign_function.hpp</label>
+        <link refid="softsign__function_8hpp"/>
+        <childnode refid="25717" relation="include">
+        </childnode>
+      </node>
+      <node id="25771">
+        <label>thread</label>
+      </node>
+      <node id="25759">
+        <label>type_traits</label>
+      </node>
+      <node id="25735">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="25729">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="25753">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="25731" relation="include">
+        </childnode>
+        <childnode refid="25732" relation="include">
+        </childnode>
+        <childnode refid="25733" relation="include">
+        </childnode>
+        <childnode refid="25734" relation="include">
+        </childnode>
+        <childnode refid="25754" relation="include">
+        </childnode>
+      </node>
+      <node id="25725">
+        <label>cstring</label>
+      </node>
+      <node id="25744">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="25733">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1SoftsignFunction" prot="public">mlpack::ann::SoftsignFunction</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para></simplesect>
+Definition and implementation of the softsign function as described by X. Glorot and Y. Bengio.</para><para>For more information, see the following paper.</para><para><programlisting><codeline><highlight class="normal">@inproceedings{GlorotAISTATS2010,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={title={Understanding<sp/>the<sp/>difficulty<sp/>of<sp/>training<sp/>deep<sp/>feedforward</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>neural<sp/>networks},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Glorot,<sp/>Xavier<sp/>and<sp/>Bengio,<sp/>Yoshua},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>AISTATS<sp/>2010},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2010}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="25"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFTSIGN_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_SOFTSIGN_FUNCTION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/><sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="classmlpack_1_1ann_1_1SoftsignFunction" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1SoftsignFunction" kindref="compound">SoftsignFunction</ref></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="56" refid="classmlpack_1_1ann_1_1SoftsignFunction_1a11bd9a1195e6b107f9fee73643bc328b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1a11bd9a1195e6b107f9fee73643bc328b" kindref="member">Fn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(x<sp/>&lt;<sp/>DBL_MAX)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x<sp/>&gt;<sp/>-DBL_MAX<sp/>?<sp/>x<sp/>/<sp/>(1.0<sp/>+<sp/>std::abs(x))<sp/>:<sp/>-1.0;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1.0;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputVecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputVecType&gt;</highlight></codeline>
+<codeline lineno="70" refid="classmlpack_1_1ann_1_1SoftsignFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1af6cf5da90eb6312e3e25c9b8bd9c3527" kindref="member">Fn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputVecType&amp;<sp/>x,<sp/>OutputVecType&amp;<sp/>y)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>y.set_size(arma::size(x));</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>x.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>y(i)<sp/>=<sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1a11bd9a1195e6b107f9fee73643bc328b" kindref="member">Fn</ref>(x(i));</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1ann_1_1SoftsignFunction_1a163d34fd09f8edf457164f5033c635cf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1a163d34fd09f8edf457164f5033c635cf" kindref="member">Deriv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>y)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pow(1.0<sp/>-<sp/>std::abs(y),<sp/>2);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputVecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputVecType&gt;</highlight></codeline>
+<codeline lineno="96" refid="classmlpack_1_1ann_1_1SoftsignFunction_1ad442502c34b67303b74c735641dab790" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1ad442502c34b67303b74c735641dab790" kindref="member">Deriv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputVecType&amp;<sp/>y,<sp/>OutputVecType&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>x<sp/>=<sp/>arma::pow(1.0<sp/>-<sp/>arma::abs(y),<sp/>2);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1ann_1_1SoftsignFunction_1a32d503b167c9646569a202e8c134ef76" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1a32d503b167c9646569a202e8c134ef76" kindref="member">Inv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>y)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(y<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>y<sp/>&lt;<sp/>1<sp/>?<sp/>-y<sp/>/<sp/>(y<sp/>-<sp/>1)<sp/>:<sp/>DBL_MAX;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>y<sp/>&gt;<sp/>-1<sp/>?<sp/>y<sp/>/<sp/>(1<sp/>+<sp/>y)<sp/>:<sp/>-DBL_MAX;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputVecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>OutputVecType&gt;</highlight></codeline>
+<codeline lineno="122" refid="classmlpack_1_1ann_1_1SoftsignFunction_1ad48548410161bbf6178eb1c293c991c3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1ad48548410161bbf6178eb1c293c991c3" kindref="member">Inv</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>InputVecType&amp;<sp/>y,<sp/>OutputVecType&amp;<sp/>x)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>x.set_size(arma::size(y));</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>y.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>x(i)<sp/>=<sp/><ref refid="classmlpack_1_1ann_1_1SoftsignFunction_1a32d503b167c9646569a202e8c134ef76" kindref="member">Inv</ref>(y(i));</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">};<sp/></highlight><highlight class="comment">//<sp/>class<sp/>SoftsignFunction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/softsign_function.hpp"/>
+  </compounddef>
+</doxygen>

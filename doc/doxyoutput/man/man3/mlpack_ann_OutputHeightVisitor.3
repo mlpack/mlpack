@@ -1,0 +1,39 @@
+.TH "OutputHeightVisitor" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+OutputHeightVisitor \- \fBOutputHeightVisitor\fP exposes the OutputHeight() method of the given module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< size_t >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > size_t \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Return the output height\&. "
+.ti -1c
+.RI "size_t \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBOutputHeightVisitor\fP exposes the OutputHeight() method of the given module\&. 
+.PP
+Definition at line 27 of file output_height_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t operator() (LayerType * layer) const"
+
+.PP
+Return the output height\&. 
+.SS "size_t operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

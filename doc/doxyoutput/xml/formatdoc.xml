@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="formatdoc" kind="page">
+    <compoundname>formatdoc</compoundname>
+    <title>File formats and loading data in mlpack</title>
+    <detaileddescription>
+<sect1 id="formatdoc_1formatintro">
+<title>Introduction</title>
+<para>mlpack supports a wide variety of data (including images) and model formats for use in both its command-line programs and in C++ programs using mlpack via the <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> function. This tutorial discusses the formats that are supported and how to use them.</para></sect1>
+<sect1 id="formatdoc_1toc_tut">
+<title>Table of Contents</title>
+<para>This tutorial is split into the following sections:</para><para><itemizedlist>
+<listitem><para><ref refid="formatdoc_1formatintro" kindref="member">Introduction</ref></para></listitem><listitem><para><ref refid="formatdoc_1toc_tut" kindref="member">Table of Contents</ref></para></listitem><listitem><para>Data<itemizedlist>
+<listitem><para>Data Formats<itemizedlist>
+<listitem><para><ref refid="formatdoc_1formatsimple" kindref="member">Simple examples to load data in C++</ref></para></listitem><listitem><para><ref refid="formatdoc_1formattypes" kindref="member">Supported dataset types</ref></para></listitem><listitem><para><ref refid="formatdoc_1formatcpp" kindref="member">Loading simple matrices in C++</ref></para></listitem><listitem><para><ref refid="formatdoc_1sparseload" kindref="member">Dealing with sparse matrices</ref></para></listitem><listitem><para><ref refid="formatdoc_1formatcat" kindref="member">Categorical features and command line programs</ref></para></listitem><listitem><para><ref refid="formatdoc_1formatcatcpp" kindref="member">Categorical features and C++</ref></para></listitem></itemizedlist>
+</para></listitem><listitem><para>Image Support<itemizedlist>
+<listitem><para><ref refid="formatdoc_1intro_imagetut" kindref="member">Loading and Saving Images</ref></para></listitem><listitem><para><ref refid="formatdoc_1model_api_imagetut" kindref="member">Image Utilities API</ref></para></listitem><listitem><para><ref refid="formatdoc_1imageinfo_api_imagetut" kindref="member">Accessing Metadata of Images: ImageInfo</ref></para></listitem><listitem><para><ref refid="formatdoc_1load_api_imagetut" kindref="member">Loading Images in C++</ref></para></listitem><listitem><para><ref refid="formatdoc_1save_api_imagetut" kindref="member">Saving Images in C++</ref></para></listitem></itemizedlist>
+</para></listitem></itemizedlist>
+</para></listitem><listitem><para>Models<itemizedlist>
+<listitem><para><ref refid="formatdoc_1formatmodels" kindref="member">Loading and saving models</ref></para></listitem><listitem><para><ref refid="formatdoc_1formatmodelscpp" kindref="member">Loading and saving models in C++</ref></para></listitem></itemizedlist>
+</para></listitem><listitem><para><ref refid="formatdoc_1formatfinal" kindref="member">Final notes</ref></para></listitem></itemizedlist>
+</para></sect1>
+<sect1 id="formatdoc_1formatsimple">
+<title>Simple examples to load data in C++</title>
+<para>The example code snippets below load data from different formats into an Armadillo matrix object (<computeroutput>arma::mat</computeroutput>) or model when using C++.</para><para><programlisting><codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>matrix1;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;dataset.csv&quot;,<sp/>matrix1);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>matrix2;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;dataset.bin&quot;,<sp/>matrix2);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>matrix3;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;dataset.h5&quot;,<sp/>matrix3);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>ARFF<sp/>loading<sp/>is<sp/>a<sp/>little<sp/>different,<sp/>since<sp/>sometimes<sp/>mapping<sp/>has<sp/>to<sp/>be<sp/>done</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>for<sp/>string<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>matrix4;</highlight></codeline>
+<codeline><highlight class="normal">data::DatasetInfo<sp/>datasetInfo;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;dataset.arff&quot;,<sp/>matrix4,<sp/>datasetInfo);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>datasetInfo<sp/>object<sp/>now<sp/>holds<sp/>information<sp/>about<sp/>each<sp/>dimension.</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">regression::LogisticRegression<sp/>lr;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;model.bin&quot;,<sp/>&quot;logistic_regression_model&quot;,<sp/>lr);</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="formatdoc_1formattypes">
+<title>Supported dataset types</title>
+<para>Datasets in mlpack are represented internally as sparse or dense numeric matrices (specifically, as <computeroutput>arma::mat</computeroutput> or <computeroutput>arma::sp_mat</computeroutput> or similar). This means that when datasets are loaded from file, they must be converted to a suitable numeric representation. Therefore, in general, datasets on disk should contain only numeric features in order to be loaded successfully by mlpack.</para><para>The types of datasets that mlpack can load are roughly the same as the types of matrices that Armadillo can load. However, the load functionality that mlpack provides <bold>only supports loading dense datasets</bold>. When datasets are loaded by mlpack, <bold>the file&apos;s type is detected using the file&apos;s extension</bold>. mlpack supports the following file types:</para><para><itemizedlist>
+<listitem><para>csv (comma-separated values), denoted by .csv or .txt</para></listitem><listitem><para>tsv (tab-separated values), denoted by .tsv, .csv, or .txt</para></listitem><listitem><para>ASCII (raw ASCII, with space-separated values), denoted by .txt</para></listitem><listitem><para>Armadillo ASCII (Armadillo&apos;s text format with a header), denoted by .txt</para></listitem><listitem><para>PGM, denoted by .pgm</para></listitem><listitem><para>PPM, denoted by .ppm</para></listitem><listitem><para>Armadillo binary, denoted by .bin</para></listitem><listitem><para>Raw binary, denoted by .bin <bold>(note: this will be loaded as one-dimensional data, which is likely not what is desired.)</bold></para></listitem><listitem><para>HDF5, denoted by .hdf, .hdf5, .h5, or .he5 (<bold>note: HDF5 must be enabled in the Armadillo configuration</bold>)</para></listitem><listitem><para>ARFF, denoted by .arff (<bold>note: this is not supported by all mlpack command-line programs </bold>; see <ref refid="formatdoc_1formatcat" kindref="member">Categorical features and command line programs</ref>)</para></listitem></itemizedlist>
+</para><para>Datasets that are loaded by mlpack should be stored with <bold>one row for one point</bold> and <bold>one column for one dimension</bold>. Therefore, a dataset with three two-dimensional points <formula id="171">$(0, 1)$</formula>, <formula id="172">$(3, 1)$</formula>, and <formula id="173">$(5, -5)$</formula> would be stored in a csv file as:</para><para><programlisting><codeline><highlight class="normal">0,<sp/>1</highlight></codeline>
+<codeline><highlight class="normal">3,<sp/>1</highlight></codeline>
+<codeline><highlight class="normal">5,<sp/>-5</highlight></codeline>
+</programlisting></para><para>As noted earlier, for command-line programs, the format is automatically detected at load time. Therefore, a dataset can be loaded in many ways:</para><para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_logistic_regression<sp/>-t<sp/>dataset.csv<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Loading<sp/>&apos;dataset.csv&apos;<sp/>as<sp/>CSV<sp/>data.<sp/><sp/>Size<sp/>is<sp/>32<sp/>x<sp/>37749.</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">$<sp/>mlpack_logistic_regression<sp/>-t<sp/>dataset.txt<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Loading<sp/>&apos;dataset.txt&apos;<sp/>as<sp/>raw<sp/>ASCII<sp/>formatted<sp/>data.<sp/><sp/>Size<sp/>is<sp/>32<sp/>x<sp/>37749.</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">$<sp/>mlpack_logistic_regression<sp/>-t<sp/>dataset.h5<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Loading<sp/>&apos;dataset.h5&apos;<sp/>as<sp/>HDF5<sp/>data.<sp/><sp/>Size<sp/>is<sp/>32<sp/>x<sp/>37749.</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+</programlisting></para><para>Similarly, the format to save to is detected by the extension of the given filename.</para></sect1>
+<sect1 id="formatdoc_1formatcpp">
+<title>Loading simple matrices in C++</title>
+<para>When C++ is being written, the <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> functions are used to load and save datasets, respectively. These functions should be preferred over the built-in Armadillo <computeroutput></computeroutput>.load() and <computeroutput></computeroutput>.save() functions.</para><para>Matrices in mlpack are column-major, meaning that each column should correspond to a point in the dataset and each row should correspond to a dimension; for more information, see <ref refid="matrices" kindref="compound">Matrices in mlpack</ref>. This is at odds with how the data is stored in files; therefore, a transposition is required during load and save. The <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> functions do this automatically (unless otherwise specified), which is why they are preferred over the Armadillo functions.</para><para>To load a matrix from file, the call is straightforward. After creating a matrix object, the data can be loaded:</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>dataset;<sp/>//<sp/>The<sp/>data<sp/>will<sp/>be<sp/>loaded<sp/>into<sp/>this<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;dataset.csv&quot;,<sp/>dataset);</highlight></codeline>
+</programlisting></para><para>Saving matrices is equally straightforward. The code below generates a random matrix with 10 points in 3 dimensions and saves it to a file as HDF5.</para><para><programlisting><codeline><highlight class="normal">//<sp/>3<sp/>dimensions<sp/>(rows),<sp/>with<sp/>10<sp/>points<sp/>(columns).</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>dataset<sp/>=<sp/>arma::randu&lt;arma::mat&gt;(3,<sp/>10);</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Save(&quot;dataset.h5&quot;,<sp/>dataset);</highlight></codeline>
+</programlisting></para><para>As with the command-line programs, the type of data to be loaded is automatically detected from the filename extension. For more details, see the <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> documentation.</para></sect1>
+<sect1 id="formatdoc_1sparseload">
+<title>Dealing with sparse matrices</title>
+<para>As mentioned earlier, support for loading sparse matrices in mlpack is not available at this time. To use a sparse matrix with mlpack code, you will have to write a C++ program instead of using any of the command-line tools, because the command-line tools all use dense datasets internally. (There is one exception: the <computeroutput>mlpack_cf</computeroutput> program, for collaborative filtering, loads sparse coordinate lists.)</para><para>In addition, the <computeroutput><ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref></computeroutput> function does not support loading any sparse format; so the best idea is to use undocumented Armadillo functionality to load coordinate lists. Suppose you have a coordinate list file like the one below:</para><para><programlisting><codeline><highlight class="normal">$<sp/>cat<sp/>cl.csv</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>0<sp/>0.332</highlight></codeline>
+<codeline><highlight class="normal">1<sp/>3<sp/>3.126</highlight></codeline>
+<codeline><highlight class="normal">4<sp/>4<sp/>1.333</highlight></codeline>
+</programlisting></para><para>This represents a 5x5 matrix with three nonzero elements. We can load this using Armadillo:</para><para><programlisting><codeline><highlight class="normal">arma::sp_mat<sp/>matrix;</highlight></codeline>
+<codeline><highlight class="normal">matrix.load(&quot;cl.csv&quot;,<sp/>arma::coord_ascii);</highlight></codeline>
+<codeline><highlight class="normal">matrix<sp/>=<sp/>matrix.t();<sp/>//<sp/>We<sp/>must<sp/>transpose<sp/>after<sp/>load!</highlight></codeline>
+</programlisting></para><para>The transposition after loading is necessary if the coordinate list is in row-major format (that is, if each row in the matrix represents a point and each column represents a feature). Be sure that the matrix you use with mlpack methods has points as columns and features as rows! See <ref refid="matrices" kindref="compound">Matrices in mlpack</ref> for more information.</para></sect1>
+<sect1 id="formatdoc_1formatcat">
+<title>Categorical features and command line programs</title>
+<para>In some situations it is useful to represent data not just as a numeric matrix but also as categorical data (i.e. with numeric but unordered categories). This support is useful for, e.g., decision trees and other models that support categorical features.</para><para>In some machine learning situations, such as, e.g., decision trees, categorical data can be used. Categorical data might look like this (in CSV format):</para><para><programlisting><codeline><highlight class="normal">0,<sp/>1,<sp/>&quot;true&quot;,<sp/>3</highlight></codeline>
+<codeline><highlight class="normal">5,<sp/>-2,<sp/>&quot;false&quot;,<sp/>5</highlight></codeline>
+<codeline><highlight class="normal">2,<sp/>2,<sp/>&quot;true&quot;,<sp/>4</highlight></codeline>
+<codeline><highlight class="normal">3,<sp/>-1,<sp/>&quot;true&quot;,<sp/>3</highlight></codeline>
+<codeline><highlight class="normal">4,<sp/>4,<sp/>&quot;not<sp/>sure&quot;,<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">0,<sp/>7,<sp/>&quot;false&quot;,<sp/>6</highlight></codeline>
+</programlisting></para><para>In the example above, the third dimension (which takes values &quot;true&quot;, &quot;false&quot;, and &quot;not sure&quot;) is categorical. mlpack can load and work with this data, but the strings must be mapped to numbers, because all dataset in mlpack are represented by Armadillo matrix objects.</para><para>From the perspective of an mlpack command-line program, this support is transparent; mlpack will attempt to load the data file, and if it detects entries in the file that are not numeric, it will map them to numbers and then print, for each dimension, the number of mappings. For instance, if we run the <computeroutput>mlpack_hoeffding_tree</computeroutput> program (which supports categorical data) on the dataset above (stored as dataset.csv), we receive this output during loading:</para><para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_hoeffding_tree<sp/>-t<sp/>dataset.csv<sp/>-l<sp/>dataset.labels.csv<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Loading<sp/>&apos;dataset.csv&apos;<sp/>as<sp/>CSV<sp/>data.<sp/><sp/>Size<sp/>is<sp/>6<sp/>x<sp/>4.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>0<sp/>mappings<sp/>in<sp/>dimension<sp/>0.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>0<sp/>mappings<sp/>in<sp/>dimension<sp/>1.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>3<sp/>mappings<sp/>in<sp/>dimension<sp/>2.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>0<sp/>mappings<sp/>in<sp/>dimension<sp/>3.</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+</programlisting></para><para>Currently, only the <computeroutput>mlpack_hoeffding_tree</computeroutput> program supports loading categorical data, and this is also the only program that supports loading an ARFF dataset.</para></sect1>
+<sect1 id="formatdoc_1formatcatcpp">
+<title>Categorical features and C++</title>
+<para>When writing C++, loading categorical data is slightly more tricky: the mappings from strings to integers must be preserved. This is the purpose of the <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref> class, which stores these mappings and can be used and load and save time to apply and de-apply the mappings.</para><para>When loading a dataset with categorical data, the overload of <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> that takes an <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref> object should be used. An example is below:</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>dataset;<sp/>//<sp/>Load<sp/>into<sp/>this<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::DatasetInfo<sp/>info;<sp/>//<sp/>Store<sp/>information<sp/>about<sp/>dataset<sp/>in<sp/>this.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Load<sp/>the<sp/>ARFF<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;dataset.arff&quot;,<sp/>dataset,<sp/>info);</highlight></codeline>
+</programlisting></para><para>After this load completes, the <computeroutput>info</computeroutput> object will hold the information about the mappings necessary to load the dataset. It is possible to re-use the <computeroutput>DatasetInfo</computeroutput> object to load another dataset with the same mappings. This is useful when, for instance, both a training and test set are being loaded, and it is necessary that the mappings from strings to integers for categorical features are identical. An example is given below.</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>trainingData;<sp/>//<sp/>Load<sp/>training<sp/>data<sp/>into<sp/>this<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::DatasetInfo<sp/>info;<sp/>//<sp/>This<sp/>will<sp/>store<sp/>the<sp/>mappings.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Load<sp/>the<sp/>training<sp/>data,<sp/>and<sp/>create<sp/>the<sp/>mappings<sp/>in<sp/>the<sp/>&apos;info&apos;<sp/>object.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;training_data.arff&quot;,<sp/>trainingData,<sp/>info);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Load<sp/>the<sp/>test<sp/>data,<sp/>but<sp/>re-use<sp/>the<sp/>&apos;info&apos;<sp/>object<sp/>with<sp/>the<sp/>already<sp/>initialized</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>mappings.<sp/><sp/>This<sp/>means<sp/>that<sp/>the<sp/>same<sp/>mappings<sp/>will<sp/>be<sp/>applied<sp/>to<sp/>the<sp/>test<sp/>set.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;test_data.arff&quot;,<sp/>trainingData,<sp/>info);</highlight></codeline>
+</programlisting></para><para>When saving data, pass the same DatasetInfo object it was loaded with in order to unmap the categorical features correctly. The example below demonstrates this functionality: it loads the dataset, increments all non-categorical features by 1, and then saves the dataset with the same DatasetInfo it was loaded with.</para><para><programlisting><codeline><highlight class="normal">arma::mat<sp/>dataset;<sp/>//<sp/>Load<sp/>data<sp/>into<sp/>this<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::DatasetInfo<sp/>info;<sp/>//<sp/>This<sp/>will<sp/>store<sp/>the<sp/>mappings.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Load<sp/>the<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;dataset.tsv&quot;,<sp/>dataset,<sp/>info);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Loop<sp/>over<sp/>all<sp/>features,<sp/>and<sp/>add<sp/>1<sp/>to<sp/>all<sp/>non-categorical<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">for<sp/>(size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>info.Dimensionality();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>The<sp/>Type()<sp/>function<sp/>returns<sp/>whether<sp/>or<sp/>not<sp/>the<sp/>data<sp/>is<sp/>numeric<sp/>or</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>categorical.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>if<sp/>(info.Type(i)<sp/>!=<sp/>mlpack::data::Datatype::categorical)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dataset.row(i)<sp/>+=<sp/>1.0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Save<sp/>the<sp/>modified<sp/>dataset<sp/>using<sp/>the<sp/>same<sp/>DatasetInfo.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Save(&quot;dataset-new.tsv&quot;,<sp/>dataset,<sp/>info);</highlight></codeline>
+</programlisting></para><para>There is more functionality to the DatasetInfo class; for more information, see the <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref> documentation.</para></sect1>
+<sect1 id="formatdoc_1intro_imagetut">
+<title>Loading and Saving Images</title>
+<para>Image datasets are becoming increasingly popular in deep learning.</para><para>mlpack&apos;s image saving/loading functionality is based on <ulink url="https://github.com/nothings/stb">stb/</ulink>.</para></sect1>
+<sect1 id="formatdoc_1model_api_imagetut">
+<title>Image Utilities API</title>
+<para>Image utilities supports loading and saving of images.</para><para>It supports filetypes &quot;jpg&quot;, &quot;png&quot;, &quot;tga&quot;, &quot;bmp&quot;, &quot;psd&quot;, &quot;gif&quot;, &quot;hdr&quot;, &quot;pic&quot;, &quot;pnm&quot; for loading and &quot;jpg&quot;, &quot;png&quot;, &quot;tga&quot;, &quot;bmp&quot;, &quot;hdr&quot; for saving.</para><para>The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of <computeroutput>arma::Mat</computeroutput> may be required. Images are stored in the matrix as (width * height * channels, NumberOfImages). Therefore <computeroutput>imageMatrix.col(0)</computeroutput> would be the first image if images are loaded in <computeroutput>imageMatrix</computeroutput>.</para></sect1>
+<sect1 id="formatdoc_1imageinfo_api_imagetut">
+<title>Accessing Metadata of Images: ImageInfo</title>
+<para>ImageInfo class contains the metadata of the images. <programlisting><codeline><highlight class="normal">ImageInfo(const<sp/>size_t<sp/>width,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>height,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>channels,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>quality<sp/>=<sp/>90);</highlight></codeline>
+</programlisting></para><para>The <computeroutput>quality</computeroutput> member denotes the compression of the image if it is saved as <computeroutput>jpg</computeroutput>; it takes values from 0 to 100.</para></sect1>
+<sect1 id="formatdoc_1load_api_imagetut">
+<title>Loading Images in C++</title>
+<para>Standalone loading of images.</para><para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>eT&gt;</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>Load(const<sp/>std::string&amp;<sp/>filename,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>matrix,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ImageInfo&amp;<sp/>info,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>fatal);</highlight></codeline>
+</programlisting></para><para>The example below loads a test image. It also fills up the ImageInfo class object.</para><para><programlisting><codeline><highlight class="normal">data::ImageInfo<sp/>info;</highlight></codeline>
+<codeline><highlight class="normal">data::Load(&quot;test_image.png&quot;,<sp/>matrix,<sp/>info,<sp/>false);</highlight></codeline>
+</programlisting></para><para>ImageInfo requires height, width, number of channels of the image.</para><para><programlisting><codeline><highlight class="normal">size_t<sp/>height<sp/>=<sp/>64,<sp/>width<sp/>=<sp/>64,<sp/>channels<sp/>=<sp/>1;</highlight></codeline>
+<codeline><highlight class="normal">data::ImageInfo<sp/>info(width,<sp/>height,<sp/>channels);</highlight></codeline>
+</programlisting></para><para>More than one image can be loaded into the same matrix.</para><para>Loading multiple images:</para><para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>eT&gt;</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>Load(const<sp/>std::vector&lt;std::string&gt;&amp;<sp/>files,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>matrix,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ImageInfo&amp;<sp/>info,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>fatal);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">data::ImageInfo<sp/>info;</highlight></codeline>
+<codeline><highlight class="normal">std::vector&lt;std::string&gt;&gt;<sp/>files{&quot;test_image1.bmp&quot;,&quot;test_image2.bmp&quot;};</highlight></codeline>
+<codeline><highlight class="normal">data::Load(files,<sp/>matrix,<sp/>info,<sp/>false);</highlight></codeline>
+</programlisting></para></sect1>
+<sect1 id="formatdoc_1save_api_imagetut">
+<title>Saving Images in C++</title>
+<para>Save images expects a matrix of type unsigned char in the form (width * height * channels, NumberOfImages). Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).</para><para>Saving one image:</para><para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>eT&gt;</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>Save(const<sp/>std::string&amp;<sp/>filename,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>matrix,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ImageInfo&amp;<sp/>info,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>fatal,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>transpose);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">data::ImageInfo<sp/>info;</highlight></codeline>
+<codeline><highlight class="normal">info.width<sp/>=<sp/>info.height<sp/>=<sp/>25;</highlight></codeline>
+<codeline><highlight class="normal">info.channels<sp/>=<sp/>3;</highlight></codeline>
+<codeline><highlight class="normal">info.quality<sp/>=<sp/>90;</highlight></codeline>
+<codeline><highlight class="normal">data::Save(&quot;test_image.bmp&quot;,<sp/>matrix,<sp/>info,<sp/>false,<sp/>true);</highlight></codeline>
+</programlisting></para><para>If the matrix contains more than one image, only the first one is saved.</para><para>Saving multiple images:</para><para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>eT&gt;</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>Save(const<sp/>std::vector&lt;std::string&gt;&amp;<sp/>files,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;eT&gt;&amp;<sp/>matrix,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ImageInfo&amp;<sp/>info,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>fatal,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>bool<sp/>transpose);</highlight></codeline>
+</programlisting></para><para><programlisting><codeline><highlight class="normal">data::ImageInfo<sp/>info;</highlight></codeline>
+<codeline><highlight class="normal">info.width<sp/>=<sp/>info.height<sp/>=<sp/>25;</highlight></codeline>
+<codeline><highlight class="normal">info.channels<sp/>=<sp/>3;</highlight></codeline>
+<codeline><highlight class="normal">info.quality<sp/>=<sp/>90;</highlight></codeline>
+<codeline><highlight class="normal">std::vector&lt;std::string&gt;&gt;<sp/>files{&quot;test_image1.bmp&quot;,<sp/>&quot;test_image2.bmp&quot;};</highlight></codeline>
+<codeline><highlight class="normal">data::Save(files,<sp/>matrix,<sp/>info,<sp/>false,<sp/>true);</highlight></codeline>
+</programlisting></para><para>Multiple images are saved according to the vector of filenames specified.</para></sect1>
+<sect1 id="formatdoc_1formatmodels">
+<title>Loading and saving models</title>
+<para>Using <computeroutput>cereal</computeroutput>, mlpack is able to load and save machine learning models with ease. These models can currently be saved in three formats:</para><para><itemizedlist>
+<listitem><para>binary (.bin); this is not human-readable, but it is small</para></listitem><listitem><para>json (.json); this is sort of human-readable and relatively small</para></listitem><listitem><para>xml (.xml); this is human-readable but very verbose and large</para></listitem></itemizedlist>
+</para><para>The type of file to save is determined by the given file extension, as with the other loading and saving functionality in mlpack. Below is an example where a dataset stored as TSV and labels stored as ASCII text are used to train a logistic regression model, which is then saved to model.xml.</para><para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_logistic_regression<sp/>-t<sp/>training_dataset.tsv<sp/>-l<sp/>training_labels.txt<sp/>\</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>-M<sp/>model.xml</highlight></codeline>
+</programlisting></para><para>Many mlpack command-line programs have support for loading and saving models through the <computeroutput><ndash/>input_model_file</computeroutput> (<computeroutput>-m</computeroutput>) and <computeroutput><ndash/>output_model_file</computeroutput> (<computeroutput>-M</computeroutput>) options; for more information, see the documentation for each program (accessible by passing <computeroutput><ndash/>help</computeroutput> as a parameter).</para></sect1>
+<sect1 id="formatdoc_1formatmodelscpp">
+<title>Loading and saving models in C++</title>
+<para>mlpack uses the <computeroutput>cereal</computeroutput> library internally to perform loading and saving of models, and provides convenience overloads of <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> to load and save these models.</para><para>To be serializable, a class must implement the method</para><para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>Archive&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>serialize(Archive&amp;<sp/>ar);</highlight></codeline>
+</programlisting></para><para><simplesect kind="note"><para>For more information on this method and how it works, see the cereal documentation at <ulink url="https://uscilab.github.io/cereal/index.html">https://uscilab.github.io/cereal/index.html</ulink>.</para></simplesect>
+<simplesect kind="note"><para>Examples of serialize() methods can be found in most classes; one fairly straightforward example is found in the mlpack::math::Range class. A more complex example is found <ref refid="classmlpack_1_1tree_1_1BinarySpaceTree_1a72d63b74c8166dff8e1a9006905ad9ca" kindref="member">in the mlpack::tree::BinarySpaceTree class</ref>.</para></simplesect>
+Using the <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> classes is easy if the type being saved has a <computeroutput>serialize()</computeroutput> method implemented: simply call either function with a filename, a name for the object to save, and the object itself. The example below, for instance, creates an mlpack::math::Range object and saves it as range.txt. Then, that range is loaded from file into another mlpack::math::Range object.</para><para><programlisting><codeline><highlight class="normal">//<sp/>Create<sp/>range<sp/>and<sp/>save<sp/>it.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::math::Range<sp/>r(0.0,<sp/>5.0);</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Save(&quot;range.json&quot;,<sp/>&quot;range&quot;,<sp/>r);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Load<sp/>into<sp/>new<sp/>range.</highlight></codeline>
+<codeline><highlight class="normal">mlpack::math::Range<sp/>newRange;</highlight></codeline>
+<codeline><highlight class="normal">mlpack::data::Load(&quot;range.json&quot;,<sp/>&quot;range&quot;,<sp/>newRange);</highlight></codeline>
+</programlisting></para><para>It is important to be sure that you load the appropriate type; if you save, for instance, an <ref refid="classmlpack_1_1regression_1_1LogisticRegression" kindref="compound">mlpack::regression::LogisticRegression</ref> object and attempt to load it as an mlpack::math::Range object, the load will fail and an exception will be thrown. (When the object is saved as binary (.bin), it is possible that the load will not fail, but instead load with mangled data, which is perhaps even worse!)</para></sect1>
+<sect1 id="formatdoc_1formatfinal">
+<title>Final notes</title>
+<para>If the examples here are unclear, it would be worth looking into the ways that <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">mlpack::data::Load()</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">mlpack::data::Save()</ref> are used in the code. Some example files that may be useful to this end:</para><para><itemizedlist>
+<listitem><para>src/mlpack/methods/logistic_regression/logistic_regression_main.cpp</para></listitem><listitem><para>src/mlpack/methods/hoeffding_trees/hoeffding_tree_main.cpp</para></listitem><listitem><para>src/mlpack/methods/neighbor_search/knn_main.cpp</para></listitem></itemizedlist>
+</para><para>If you are interested in adding support for more data types to mlpack, it would be preferable to add the support upstream to Armadillo instead, so that may be a better direction to go first. Then very little code modification for mlpack will be necessary. </para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

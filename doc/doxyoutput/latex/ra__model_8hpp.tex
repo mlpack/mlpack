@@ -1,0 +1,37 @@
+\section{/home/aakash/mlpack/src/mlpack/methods/rann/ra\+\_\+model.hpp File Reference}
+\label{ra__model_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/rann/ra\+\_\+model.\+hpp@{/home/aakash/mlpack/src/mlpack/methods/rann/ra\+\_\+model.\+hpp}}
+Include dependency graph for ra\+\_\+model.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ra__model_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Leaf\+Size\+R\+A\+Wrapper$<$ Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{Leaf\+Size\+R\+A\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper} wraps any \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} type that needs to be able to take the leaf size into account when building trees. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Model}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Wrapper$<$ Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{R\+A\+Wrapper}{p.}{classmlpack_1_1neighbor_1_1RAWrapper} is a wrapper class for most \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} types. \end{DoxyCompactList}\item 
+class \textbf{ R\+A\+Wrapper\+Base}
+\begin{DoxyCompactList}\small\item\em \doxyref{R\+A\+Wrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} is a base wrapper class for holding all \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} types supported by \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::neighbor}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This is a model for rank-\/approximate nearest neighbor search. It provides an easy way to serialize a rank-\/approximate neighbor search model by abstracting the types of trees and reflecting the R\+A\+Search A\+PI.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

@@ -1,0 +1,1125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="regularized__svd__method_8hpp" kind="file" language="C++">
+    <compoundname>regularized_svd_method.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="regularized__svd_8hpp" local="no">mlpack/methods/regularized_svd/regularized_svd.hpp</includes>
+    <incdepgraph>
+      <node id="45189">
+        <label>list</label>
+      </node>
+      <node id="45245">
+        <label>breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45237">
+        <label>binary_space_tree/single_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45234" relation="include">
+        </childnode>
+        <childnode refid="45238" relation="include">
+        </childnode>
+      </node>
+      <node id="45247">
+        <label>binary_space_tree/traits.hpp</label>
+        <link refid="binary__space__tree_2traits_8hpp"/>
+        <childnode refid="45248" relation="include">
+        </childnode>
+        <childnode refid="45209" relation="include">
+        </childnode>
+      </node>
+      <node id="45186">
+        <label>atomic</label>
+      </node>
+      <node id="45176">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="45152">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="45188">
+        <label>iomanip</label>
+      </node>
+      <node id="45244">
+        <label>queue</label>
+      </node>
+      <node id="45258">
+        <label>typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="45199" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45252" relation="include">
+        </childnode>
+        <childnode refid="45259" relation="include">
+        </childnode>
+      </node>
+      <node id="45254">
+        <label>neighbor_search_rules.hpp</label>
+        <link refid="neighbor__search__rules_8hpp"/>
+        <childnode refid="45255" relation="include">
+        </childnode>
+        <childnode refid="45244" relation="include">
+        </childnode>
+        <childnode refid="45256" relation="include">
+        </childnode>
+      </node>
+      <node id="45206">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="45219">
+        <label>binary_space_tree/mean_split.hpp</label>
+        <link refid="mean__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45217" relation="include">
+        </childnode>
+        <childnode refid="45220" relation="include">
+        </childnode>
+      </node>
+      <node id="45205">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="45250">
+        <label>mlpack/core/tree/rectangle_tree.hpp</label>
+      </node>
+      <node id="45261">
+        <label>mlpack/methods/amf/amf.hpp</label>
+        <link refid="amf_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45262" relation="include">
+        </childnode>
+        <childnode refid="45263" relation="include">
+        </childnode>
+        <childnode refid="45264" relation="include">
+        </childnode>
+        <childnode refid="45265" relation="include">
+        </childnode>
+        <childnode refid="45266" relation="include">
+        </childnode>
+        <childnode refid="45267" relation="include">
+        </childnode>
+        <childnode refid="45268" relation="include">
+        </childnode>
+        <childnode refid="45269" relation="include">
+        </childnode>
+        <childnode refid="45270" relation="include">
+        </childnode>
+        <childnode refid="45271" relation="include">
+        </childnode>
+      </node>
+      <node id="45161">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="45162" relation="include">
+        </childnode>
+        <childnode refid="45164" relation="include">
+        </childnode>
+      </node>
+      <node id="45144">
+        <label>cstdint</label>
+      </node>
+      <node id="45153">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="45160">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="45246">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45253">
+        <label>nearest_neighbor_sort_impl.hpp</label>
+      </node>
+      <node id="45138">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45196" relation="include">
+        </childnode>
+      </node>
+      <node id="45223">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="45220">
+        <label>mean_split_impl.hpp</label>
+      </node>
+      <node id="45183">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="45211">
+        <label>hollow_ball_bound.hpp</label>
+        <link refid="hollow__ball__bound_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45206" relation="include">
+        </childnode>
+        <childnode refid="45212" relation="include">
+        </childnode>
+      </node>
+      <node id="45235">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="45281">
+        <label>regularized_svd_function_impl.hpp</label>
+      </node>
+      <node id="45251">
+        <label>neighbor_search_stat.hpp</label>
+        <link refid="neighbor__search__stat_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45230">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="45280">
+        <label>regularized_svd_function.hpp</label>
+        <link refid="regularized__svd__function_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45197" relation="include">
+        </childnode>
+        <childnode refid="45281" relation="include">
+        </childnode>
+      </node>
+      <node id="45173">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="45140">
+        <label>cmath</label>
+      </node>
+      <node id="45202">
+        <label>bounds.hpp</label>
+        <link refid="bounds_8hpp"/>
+        <childnode refid="45203" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45206" relation="include">
+        </childnode>
+        <childnode refid="45207" relation="include">
+        </childnode>
+        <childnode refid="45209" relation="include">
+        </childnode>
+        <childnode refid="45211" relation="include">
+        </childnode>
+        <childnode refid="45213" relation="include">
+        </childnode>
+      </node>
+      <node id="45159">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="45148">
+        <label>stdexcept</label>
+      </node>
+      <node id="45240">
+        <label>binary_space_tree/dual_tree_traverser.hpp</label>
+        <link refid="binary__space__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45234" relation="include">
+        </childnode>
+        <childnode refid="45241" relation="include">
+        </childnode>
+      </node>
+      <node id="45168">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="45153" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45154" relation="include">
+        </childnode>
+      </node>
+      <node id="45203">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="45192">
+        <label>string</label>
+      </node>
+      <node id="45226">
+        <label>binary_space_tree/rp_tree_max_split.hpp</label>
+        <link refid="rp__tree__max__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45217" relation="include">
+        </childnode>
+        <childnode refid="45227" relation="include">
+        </childnode>
+      </node>
+      <node id="45218">
+        <label>midpoint_split_impl.hpp</label>
+      </node>
+      <node id="45180">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="45181" relation="include">
+        </childnode>
+        <childnode refid="45147" relation="include">
+        </childnode>
+      </node>
+      <node id="45198">
+        <label>mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45199" relation="include">
+        </childnode>
+        <childnode refid="45261" relation="include">
+        </childnode>
+        <childnode refid="45263" relation="include">
+        </childnode>
+        <childnode refid="45269" relation="include">
+        </childnode>
+        <childnode refid="45272" relation="include">
+        </childnode>
+        <childnode refid="45273" relation="include">
+        </childnode>
+        <childnode refid="45275" relation="include">
+        </childnode>
+        <childnode refid="45276" relation="include">
+        </childnode>
+        <childnode refid="45277" relation="include">
+        </childnode>
+        <childnode refid="45190" relation="include">
+        </childnode>
+        <childnode refid="45278" relation="include">
+        </childnode>
+        <childnode refid="45279" relation="include">
+        </childnode>
+      </node>
+      <node id="45190">
+        <label>map</label>
+      </node>
+      <node id="45241">
+        <label>dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45229">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45230" relation="include">
+        </childnode>
+      </node>
+      <node id="45142">
+        <label>cfloat</label>
+      </node>
+      <node id="45272">
+        <label>mlpack/methods/cf/normalization/no_normalization.hpp</label>
+        <link refid="no__normalization_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45172">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="45194">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="45156">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="45179">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="45180" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45163" relation="include">
+        </childnode>
+        <childnode refid="45181" relation="include">
+        </childnode>
+      </node>
+      <node id="45169">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="45167">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="45153" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45154" relation="include">
+        </childnode>
+      </node>
+      <node id="45170">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="45153" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45154" relation="include">
+        </childnode>
+      </node>
+      <node id="45236">
+        <label>binary_space_tree_impl.hpp</label>
+      </node>
+      <node id="45158">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="45271">
+        <label>amf_impl.hpp</label>
+      </node>
+      <node id="45178">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="45154" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45166" relation="include">
+        </childnode>
+        <childnode refid="45175" relation="include">
+        </childnode>
+      </node>
+      <node id="45182">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="45183" relation="include">
+        </childnode>
+      </node>
+      <node id="45242">
+        <label>binary_space_tree/dual_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45256">
+        <label>neighbor_search_rules_impl.hpp</label>
+      </node>
+      <node id="45184">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="45139">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="45140" relation="include">
+        </childnode>
+        <childnode refid="45141" relation="include">
+        </childnode>
+        <childnode refid="45142" relation="include">
+        </childnode>
+        <childnode refid="45143" relation="include">
+        </childnode>
+        <childnode refid="45144" relation="include">
+        </childnode>
+        <childnode refid="45145" relation="include">
+        </childnode>
+        <childnode refid="45146" relation="include">
+        </childnode>
+        <childnode refid="45147" relation="include">
+        </childnode>
+        <childnode refid="45148" relation="include">
+        </childnode>
+        <childnode refid="45149" relation="include">
+        </childnode>
+        <childnode refid="45150" relation="include">
+        </childnode>
+        <childnode refid="45151" relation="include">
+        </childnode>
+        <childnode refid="45152" relation="include">
+        </childnode>
+        <childnode refid="45153" relation="include">
+        </childnode>
+        <childnode refid="45154" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45157" relation="include">
+        </childnode>
+        <childnode refid="45158" relation="include">
+        </childnode>
+        <childnode refid="45159" relation="include">
+        </childnode>
+        <childnode refid="45160" relation="include">
+        </childnode>
+        <childnode refid="45161" relation="include">
+        </childnode>
+        <childnode refid="45165" relation="include">
+        </childnode>
+        <childnode refid="45166" relation="include">
+        </childnode>
+        <childnode refid="45167" relation="include">
+        </childnode>
+        <childnode refid="45168" relation="include">
+        </childnode>
+        <childnode refid="45169" relation="include">
+        </childnode>
+        <childnode refid="45170" relation="include">
+        </childnode>
+        <childnode refid="45171" relation="include">
+        </childnode>
+        <childnode refid="45177" relation="include">
+        </childnode>
+        <childnode refid="45178" relation="include">
+        </childnode>
+        <childnode refid="45175" relation="include">
+        </childnode>
+        <childnode refid="45179" relation="include">
+        </childnode>
+        <childnode refid="45182" relation="include">
+        </childnode>
+        <childnode refid="45184" relation="include">
+        </childnode>
+        <childnode refid="45185" relation="include">
+        </childnode>
+        <childnode refid="45194" relation="include">
+        </childnode>
+        <childnode refid="45195" relation="include">
+        </childnode>
+      </node>
+      <node id="45238">
+        <label>single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45260">
+        <label>furthest_neighbor_sort_impl.hpp</label>
+      </node>
+      <node id="45216">
+        <label>binary_space_tree/midpoint_split.hpp</label>
+        <link refid="midpoint__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45217" relation="include">
+        </childnode>
+        <childnode refid="45218" relation="include">
+        </childnode>
+      </node>
+      <node id="45224">
+        <label>random</label>
+      </node>
+      <node id="45210">
+        <label>ballbound_impl.hpp</label>
+      </node>
+      <node id="45239">
+        <label>binary_space_tree/single_tree_traverser_impl.hpp</label>
+      </node>
+      <node id="45264">
+        <label>mlpack/methods/amf/update_rules/svd_batch_learning.hpp</label>
+        <link refid="svd__batch__learning_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45145">
+        <label>cstdio</label>
+      </node>
+      <node id="45275">
+        <label>mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45199" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+      </node>
+      <node id="45214">
+        <label>address.hpp</label>
+        <link refid="address_8hpp"/>
+      </node>
+      <node id="45248">
+        <label>mlpack/core/tree/tree_traits.hpp</label>
+        <link refid="tree__traits_8hpp"/>
+      </node>
+      <node id="45262">
+        <label>mlpack/methods/amf/update_rules/nmf_mult_dist.hpp</label>
+        <link refid="nmf__mult__dist_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45149">
+        <label>tuple</label>
+      </node>
+      <node id="45154">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="45232">
+        <label>binary_space_tree/ub_tree_split.hpp</label>
+        <link refid="ub__tree__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45214" relation="include">
+        </childnode>
+        <childnode refid="45233" relation="include">
+        </childnode>
+      </node>
+      <node id="45171">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="45154" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45158" relation="include">
+        </childnode>
+        <childnode refid="45172" relation="include">
+        </childnode>
+        <childnode refid="45173" relation="include">
+        </childnode>
+        <childnode refid="45174" relation="include">
+        </childnode>
+        <childnode refid="45175" relation="include">
+        </childnode>
+      </node>
+      <node id="45234">
+        <label>binary_space_tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_2binary__space__tree_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45235" relation="include">
+        </childnode>
+        <childnode refid="45216" relation="include">
+        </childnode>
+        <childnode refid="45236" relation="include">
+        </childnode>
+        <childnode refid="45201" relation="include">
+        </childnode>
+      </node>
+      <node id="45207">
+        <label>hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45203" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45206" relation="include">
+        </childnode>
+        <childnode refid="45208" relation="include">
+        </childnode>
+      </node>
+      <node id="45200">
+        <label>vector</label>
+      </node>
+      <node id="45231">
+        <label>rp_tree_mean_split_impl.hpp</label>
+      </node>
+      <node id="45282">
+        <label>regularized_svd_impl.hpp</label>
+      </node>
+      <node id="45222">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45223" relation="include">
+        </childnode>
+        <childnode refid="45224" relation="include">
+        </childnode>
+      </node>
+      <node id="45270">
+        <label>mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp</label>
+        <link refid="simple__tolerance__termination_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45150">
+        <label>utility</label>
+      </node>
+      <node id="45174">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="45165">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="45201">
+        <label>mlpack/core/tree/binary_space_tree.hpp</label>
+        <link refid="binary__space__tree_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45202" relation="include">
+        </childnode>
+        <childnode refid="45216" relation="include">
+        </childnode>
+        <childnode refid="45219" relation="include">
+        </childnode>
+        <childnode refid="45221" relation="include">
+        </childnode>
+        <childnode refid="45226" relation="include">
+        </childnode>
+        <childnode refid="45228" relation="include">
+        </childnode>
+        <childnode refid="45232" relation="include">
+        </childnode>
+        <childnode refid="45234" relation="include">
+        </childnode>
+        <childnode refid="45237" relation="include">
+        </childnode>
+        <childnode refid="45239" relation="include">
+        </childnode>
+        <childnode refid="45240" relation="include">
+        </childnode>
+        <childnode refid="45242" relation="include">
+        </childnode>
+        <childnode refid="45243" relation="include">
+        </childnode>
+        <childnode refid="45246" relation="include">
+        </childnode>
+        <childnode refid="45247" relation="include">
+        </childnode>
+        <childnode refid="45249" relation="include">
+        </childnode>
+      </node>
+      <node id="45267">
+        <label>mlpack/methods/amf/init_rules/random_init.hpp</label>
+        <link refid="amf_2init__rules_2random__init_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45252">
+        <label>sort_policies/nearest_neighbor_sort.hpp</label>
+        <link refid="nearest__neighbor__sort_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45253" relation="include">
+        </childnode>
+      </node>
+      <node id="45196">
+        <label>mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45197" relation="include">
+        </childnode>
+        <childnode refid="45198" relation="include">
+        </childnode>
+        <childnode refid="45280" relation="include">
+        </childnode>
+        <childnode refid="45282" relation="include">
+        </childnode>
+      </node>
+      <node id="45162">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="45163" relation="include">
+        </childnode>
+      </node>
+      <node id="45185">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="45186" relation="include">
+        </childnode>
+        <childnode refid="45187" relation="include">
+        </childnode>
+        <childnode refid="45188" relation="include">
+        </childnode>
+        <childnode refid="45189" relation="include">
+        </childnode>
+        <childnode refid="45190" relation="include">
+        </childnode>
+        <childnode refid="45191" relation="include">
+        </childnode>
+        <childnode refid="45192" relation="include">
+        </childnode>
+        <childnode refid="45193" relation="include">
+        </childnode>
+      </node>
+      <node id="45163">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="45199">
+        <label>mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45200" relation="include">
+        </childnode>
+        <childnode refid="45192" relation="include">
+        </childnode>
+        <childnode refid="45201" relation="include">
+        </childnode>
+        <childnode refid="45250" relation="include">
+        </childnode>
+        <childnode refid="45234" relation="include">
+        </childnode>
+        <childnode refid="45251" relation="include">
+        </childnode>
+        <childnode refid="45252" relation="include">
+        </childnode>
+        <childnode refid="45254" relation="include">
+        </childnode>
+        <childnode refid="45257" relation="include">
+        </childnode>
+        <childnode refid="45258" relation="include">
+        </childnode>
+      </node>
+      <node id="45177">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="45175" relation="include">
+        </childnode>
+        <childnode refid="45171" relation="include">
+        </childnode>
+        <childnode refid="45178" relation="include">
+        </childnode>
+      </node>
+      <node id="45146">
+        <label>cstdlib</label>
+      </node>
+      <node id="45266">
+        <label>mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp</label>
+        <link refid="svd__complete__incremental__learning_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45257">
+        <label>neighbor_search_impl.hpp</label>
+      </node>
+      <node id="45141">
+        <label>cctype</label>
+      </node>
+      <node id="45278">
+        <label>iostream</label>
+      </node>
+      <node id="45279">
+        <label>cf_impl.hpp</label>
+      </node>
+      <node id="45259">
+        <label>sort_policies/furthest_neighbor_sort.hpp</label>
+        <link refid="furthest__neighbor__sort_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45260" relation="include">
+        </childnode>
+      </node>
+      <node id="45263">
+        <label>mlpack/methods/amf/update_rules/nmf_als.hpp</label>
+        <link refid="nmf__als_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45164">
+        <label>unordered_map</label>
+      </node>
+      <node id="45143">
+        <label>climits</label>
+      </node>
+      <node id="45191">
+        <label>mutex</label>
+      </node>
+      <node id="45276">
+        <label>mlpack/methods/cf/interpolation_policies/average_interpolation.hpp</label>
+        <link refid="average__interpolation_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45187">
+        <label>chrono</label>
+      </node>
+      <node id="45255">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+      <node id="45208">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="45195">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="45228">
+        <label>binary_space_tree/rp_tree_mean_split.hpp</label>
+        <link refid="rp__tree__mean__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45226" relation="include">
+        </childnode>
+        <childnode refid="45217" relation="include">
+        </childnode>
+        <childnode refid="45229" relation="include">
+        </childnode>
+        <childnode refid="45231" relation="include">
+        </childnode>
+      </node>
+      <node id="45225">
+        <label>vantage_point_split_impl.hpp</label>
+      </node>
+      <node id="45193">
+        <label>thread</label>
+      </node>
+      <node id="45209">
+        <label>ballbound.hpp</label>
+        <link refid="ballbound_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45206" relation="include">
+        </childnode>
+        <childnode refid="45210" relation="include">
+        </childnode>
+      </node>
+      <node id="45265">
+        <label>mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp</label>
+        <link refid="svd__incomplete__incremental__learning_8hpp"/>
+      </node>
+      <node id="45227">
+        <label>rp_tree_max_split_impl.hpp</label>
+      </node>
+      <node id="45217">
+        <label>mlpack/core/tree/perform_split.hpp</label>
+        <link refid="perform__split_8hpp"/>
+      </node>
+      <node id="45274">
+        <label>mlpack/methods/amf/termination_policies/max_iteration_termination.hpp</label>
+        <link refid="max__iteration__termination_8hpp"/>
+      </node>
+      <node id="45269">
+        <label>mlpack/methods/amf/termination_policies/simple_residue_termination.hpp</label>
+        <link refid="simple__residue__termination_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+      </node>
+      <node id="45181">
+        <label>type_traits</label>
+      </node>
+      <node id="45268">
+        <label>mlpack/methods/amf/init_rules/random_acol_init.hpp</label>
+        <link refid="random__acol__init_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45222" relation="include">
+        </childnode>
+      </node>
+      <node id="45277">
+        <label>set</label>
+      </node>
+      <node id="45243">
+        <label>binary_space_tree/breadth_first_dual_tree_traverser.hpp</label>
+        <link refid="breadth__first__dual__tree__traverser_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45244" relation="include">
+        </childnode>
+        <childnode refid="45201" relation="include">
+        </childnode>
+        <childnode refid="45245" relation="include">
+        </childnode>
+      </node>
+      <node id="45157">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="45249">
+        <label>binary_space_tree/typedef.hpp</label>
+        <link refid="core_2tree_2binary__space__tree_2typedef_8hpp"/>
+        <childnode refid="45201" relation="include">
+        </childnode>
+      </node>
+      <node id="45151">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="45175">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="45153" relation="include">
+        </childnode>
+        <childnode refid="45154" relation="include">
+        </childnode>
+        <childnode refid="45155" relation="include">
+        </childnode>
+        <childnode refid="45156" relation="include">
+        </childnode>
+        <childnode refid="45176" relation="include">
+        </childnode>
+      </node>
+      <node id="45212">
+        <label>hollow_ball_bound_impl.hpp</label>
+      </node>
+      <node id="45147">
+        <label>cstring</label>
+      </node>
+      <node id="45166">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="45215">
+        <label>cellbound_impl.hpp</label>
+      </node>
+      <node id="45233">
+        <label>ub_tree_split_impl.hpp</label>
+      </node>
+      <node id="45213">
+        <label>cellbound.hpp</label>
+        <link refid="cellbound_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45203" relation="include">
+        </childnode>
+        <childnode refid="45204" relation="include">
+        </childnode>
+        <childnode refid="45206" relation="include">
+        </childnode>
+        <childnode refid="45214" relation="include">
+        </childnode>
+        <childnode refid="45215" relation="include">
+        </childnode>
+      </node>
+      <node id="45197">
+        <label>ensmallen.hpp</label>
+      </node>
+      <node id="45155">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="45204">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45205" relation="include">
+        </childnode>
+      </node>
+      <node id="45221">
+        <label>binary_space_tree/vantage_point_split.hpp</label>
+        <link refid="vantage__point__split_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45217" relation="include">
+        </childnode>
+        <childnode refid="45222" relation="include">
+        </childnode>
+        <childnode refid="45225" relation="include">
+        </childnode>
+      </node>
+      <node id="45273">
+        <label>mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
+        <link refid="nmf__method_8hpp"/>
+        <childnode refid="45139" relation="include">
+        </childnode>
+        <childnode refid="45261" relation="include">
+        </childnode>
+        <childnode refid="45263" relation="include">
+        </childnode>
+        <childnode refid="45274" relation="include">
+        </childnode>
+        <childnode refid="45269" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1cf_1_1RegSVDPolicy" prot="public">mlpack::cf::RegSVDPolicy</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cf">mlpack::cf</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Haritha Nair</para></simplesect>
+Implementation of the regularized svd method for use in the Collaborative Filtering.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="14"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_REGULARIZED_SVD_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_REGULARIZED_SVD_METHOD_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="regularized__svd_8hpp" kindref="compound">mlpack/methods/regularized_svd/regularized_svd.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cf<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1cf_1_1RegSVDPolicy" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy" kindref="compound">RegSVDPolicy</ref></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1ac1d53ce600cf622fd3961ed3b3e69dbb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1ac1d53ce600cf622fd3961ed3b3e69dbb" kindref="member">RegSVDPolicy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>10)<sp/>:</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxIterations(maxIterations)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a3b3962a80d1217a799cfab110b487cea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a3b3962a80d1217a799cfab110b487cea" kindref="member">Apply</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::sp_mat&amp;<sp/></highlight><highlight class="comment">/*<sp/>cleanedData<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rank,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>minResidue<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>mit<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>singular<sp/>value<sp/>decomposition<sp/>using<sp/>the<sp/>regularized<sp/>SVD<sp/>algorithm.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1svd_1_1RegularizedSVD" kindref="compound">svd::RegularizedSVD&lt;&gt;</ref><sp/>regsvd(maxIterations);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>regsvd.<ref refid="classmlpack_1_1svd_1_1RegularizedSVD_1a2a573625e4555fd5afc38af3529e07ec" kindref="member">Apply</ref>(data,<sp/>rank,<sp/>w,<sp/>h);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a0c3e16d73c8b25b8934cbc36ac161619" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a0c3e16d73c8b25b8934cbc36ac161619" kindref="member">GetRating</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>item)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="87"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rating<sp/>=<sp/>arma::as_scalar(w.row(item)<sp/>*<sp/>h.col(user));</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rating;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1ae5dc3895f0294bf054cb2ea58084a426" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1ae5dc3895f0294bf054cb2ea58084a426" kindref="member">GetRatingOfUser</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>user,<sp/>arma::vec&amp;<sp/>rating)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="99"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>rating<sp/>=<sp/>w<sp/>*<sp/>h.col(user);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>NeighborSearchPolicy&gt;</highlight></codeline>
+<codeline lineno="116" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a35bca7a6e09f4fb35b9945a9368711e4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a35bca7a6e09f4fb35b9945a9368711e4" kindref="member">GetNeighborhood</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>users,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numUsersForSimilarity,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>neighborhood,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>similarities)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="120"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>want<sp/>to<sp/>avoid<sp/>calculating<sp/>the<sp/>full<sp/>rating<sp/>matrix,<sp/>so<sp/>we<sp/>will<sp/>do</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>nearest<sp/>neighbor<sp/>search<sp/>only<sp/>on<sp/>the<sp/>H<sp/>matrix,<sp/>using<sp/>the<sp/>observation<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>the<sp/>rating<sp/>matrix<sp/>X<sp/>=<sp/>W*H,<sp/>then<sp/>d(X.col(i),<sp/>X.col(j))<sp/>=<sp/>d(W<sp/>H.col(i),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>W<sp/>H.col(j)).<sp/><sp/>This<sp/>can<sp/>be<sp/>seen<sp/>as<sp/>nearest<sp/>neighbor<sp/>search<sp/>on<sp/>the<sp/>H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>matrix<sp/>with<sp/>the<sp/>Mahalanobis<sp/>distance<sp/>where<sp/>M^{-1}<sp/>=<sp/>W^T<sp/>W.<sp/><sp/>So,<sp/>we&apos;ll</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>decompose<sp/>M^{-1}<sp/>=<sp/>L<sp/>L^T<sp/>(the<sp/>Cholesky<sp/>decomposition),<sp/>and<sp/>then<sp/>multiply</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>H<sp/>by<sp/>L^T.<sp/>Then<sp/>we<sp/>can<sp/>perform<sp/>nearest<sp/>neighbor<sp/>search.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>l<sp/>=<sp/>arma::chol(w.t()<sp/>*<sp/>w);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>stretchedH<sp/>=<sp/>l<sp/>*<sp/>h;<sp/></highlight><highlight class="comment">//<sp/>Due<sp/>to<sp/>the<sp/>Armadillo<sp/>API,<sp/>l<sp/>is<sp/>L^T.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Temporarily<sp/>store<sp/>feature<sp/>vector<sp/>of<sp/>queried<sp/>users.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::mat<sp/>query(stretchedH.n_rows,<sp/>users.n_elem);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Select<sp/>feature<sp/>vectors<sp/>of<sp/>queried<sp/>users.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>users.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>query.col(i)<sp/>=<sp/>stretchedH.col(users(i));</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>NeighborSearchPolicy<sp/>neighborSearch(stretchedH);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>neighborSearch.Search(</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>query,<sp/>numUsersForSimilarity,<sp/>neighborhood,<sp/>similarities);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a0f733dde66e23287758de984b5151e36" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a0f733dde66e23287758de984b5151e36" kindref="member">W</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>w;<sp/>}</highlight></codeline>
+<codeline lineno="145" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a71e6a6119b9efde17f4112c6d82d9233" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a71e6a6119b9efde17f4112c6d82d9233" kindref="member">H</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>h;<sp/>}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="150" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cf_1_1RegSVDPolicy_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(w));</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>ar(CEREAL_NVP(h));</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>arma::mat<sp/>w;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/>arma::mat<sp/>h;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp"/>
+  </compounddef>
+</doxygen>

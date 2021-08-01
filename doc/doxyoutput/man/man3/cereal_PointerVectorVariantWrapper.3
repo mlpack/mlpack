@@ -1,0 +1,57 @@
+.TH "PointerVectorVariantWrapper< VariantTypes >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PointerVectorVariantWrapper< VariantTypes > \- The objective of this class is to create a wrapper for a vector of boost::variant that holds pointer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPointerVectorVariantWrapper\fP (std::vector< boost::variant< VariantTypes\&.\&.\&. >> &vecPointerVar)"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBload\fP (Archive &ar)"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBsave\fP (Archive &ar) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename\&.\&.\&. VariantTypes>
+.br
+class cereal::PointerVectorVariantWrapper< VariantTypes >"
+The objective of this class is to create a wrapper for a vector of boost::variant that holds pointer\&. 
+
+Cereal supports the serialization of boost::variant, but we need to serialize it if it holds a vector of boost::variant that holds a pointers\&. 
+.PP
+Definition at line 24 of file pointer_vector_variant_wrapper\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPointerVectorVariantWrapper\fP (std::vector< boost::variant< VariantTypes\&.\&.\&. >> & vecPointerVar)\fC [inline]\fP"
+
+.PP
+Definition at line 52 of file pointer_vector_variant_wrapper\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void load (Archive & ar)\fC [inline]\fP"
+
+.PP
+Definition at line 69 of file pointer_vector_variant_wrapper\&.hpp\&.
+.PP
+References CEREAL_VARIANT_POINTER\&.
+.SS "void save (Archive & ar) const\fC [inline]\fP"
+
+.PP
+Definition at line 58 of file pointer_vector_variant_wrapper\&.hpp\&.
+.PP
+References CEREAL_VARIANT_POINTER\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

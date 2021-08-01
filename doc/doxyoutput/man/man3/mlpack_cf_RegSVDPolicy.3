@@ -1,0 +1,205 @@
+.TH "RegSVDPolicy" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RegSVDPolicy \- Implementation of the Regularized SVD policy to act as a wrapper when accessing Regularized SVD from within \fBCFType\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRegSVDPolicy\fP (const size_t maxIterations=10)"
+.br
+.RI "Use regularized SVD method to perform collaborative filtering\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, const arma::sp_mat &, const size_t rank, const size_t maxIterations, const double, const bool)"
+.br
+.RI "Apply Collaborative Filtering to the provided data set using the regularized SVD\&. "
+.ti -1c
+.RI "template<typename NeighborSearchPolicy > void \fBGetNeighborhood\fP (const arma::Col< size_t > &users, const size_t numUsersForSimilarity, arma::Mat< size_t > &neighborhood, arma::mat &similarities) const"
+.br
+.RI "Get the neighborhood and corresponding similarities for a set of users\&. "
+.ti -1c
+.RI "double \fBGetRating\fP (const size_t user, const size_t item) const"
+.br
+.RI "Return predicted rating given user ID and item ID\&. "
+.ti -1c
+.RI "void \fBGetRatingOfUser\fP (const size_t user, arma::vec &rating) const"
+.br
+.RI "Get predicted ratings for a user\&. "
+.ti -1c
+.RI "const arma::mat & \fBH\fP () const"
+.br
+.RI "Get the User Matrix\&. "
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const"
+.br
+.RI "Get the number of iterations\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Modify the number of iterations\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialization\&. "
+.ti -1c
+.RI "const arma::mat & \fBW\fP () const"
+.br
+.RI "Get the Item Matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of the Regularized SVD policy to act as a wrapper when accessing Regularized SVD from within \fBCFType\fP\&. 
+
+An example of how to use \fBRegSVDPolicy\fP in CF is shown below:
+.PP
+.PP
+.nf
+extern arma::mat data; // data is a (user, item, rating) table\&.
+// Users for whom recommendations are generated\&.
+extern arma::Col<size_t> users;
+arma::Mat<size_t> recommendations; // Resulting recommendations\&.
+
+CFType<RegSVDPolicy> cf(data);
+
+// Generate 10 recommendations for all users\&.
+cf\&.GetRecommendations(10, recommendations);
+.fi
+.PP
+ 
+.PP
+Definition at line 41 of file regularized_svd_method\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRegSVDPolicy\fP (const size_t maxIterations = \fC10\fP)\fC [inline]\fP"
+
+.PP
+Use regularized SVD method to perform collaborative filtering\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxIterations\fP Number of iterations for the power method (Default: 2)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file regularized_svd_method\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Apply (const arma::mat & data, const arma::sp_mat &, const size_t rank, const size_t maxIterations, const double, const bool)\fC [inline]\fP"
+
+.PP
+Apply Collaborative Filtering to the provided data set using the regularized SVD\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix: dense matrix (coordinate lists) or sparse matrix(cleaned)\&. 
+.br
+\fI*\fP (cleanedData) item user table in form of sparse matrix\&. 
+.br
+\fIrank\fP Rank parameter for matrix factorization\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations\&. 
+.br
+\fI*\fP (minResidue) Residue required to terminate\&. 
+.br
+\fI*\fP (mit) Whether to terminate only when maxIterations is reached\&. 
+.RE
+.PP
+
+.PP
+Definition at line 68 of file regularized_svd_method\&.hpp\&.
+.PP
+References RegularizedSVD< OptimizerType >::Apply()\&.
+.SS "void GetNeighborhood (const arma::Col< size_t > & users, const size_t numUsersForSimilarity, arma::Mat< size_t > & neighborhood, arma::mat & similarities) const\fC [inline]\fP"
+
+.PP
+Get the neighborhood and corresponding similarities for a set of users\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fINeighborSearchPolicy\fP The policy to perform neighbor search\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIusers\fP Users whose neighborhood is to be computed\&. 
+.br
+\fInumUsersForSimilarity\fP The number of neighbors returned for each user\&. 
+.br
+\fIneighborhood\fP Neighbors represented by user IDs\&. 
+.br
+\fIsimilarities\fP Similarity between each user and each of its neighbors\&. 
+.RE
+.PP
+
+.PP
+Definition at line 116 of file regularized_svd_method\&.hpp\&.
+.SS "double GetRating (const size_t user, const size_t item) const\fC [inline]\fP"
+
+.PP
+Return predicted rating given user ID and item ID\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIuser\fP User ID\&. 
+.br
+\fIitem\fP Item ID\&. 
+.RE
+.PP
+
+.PP
+Definition at line 86 of file regularized_svd_method\&.hpp\&.
+.SS "void GetRatingOfUser (const size_t user, arma::vec & rating) const\fC [inline]\fP"
+
+.PP
+Get predicted ratings for a user\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIuser\fP User ID\&. 
+.br
+\fIrating\fP Resulting rating vector\&. 
+.RE
+.PP
+
+.PP
+Definition at line 98 of file regularized_svd_method\&.hpp\&.
+.SS "const arma::mat& H () const\fC [inline]\fP"
+
+.PP
+Get the User Matrix\&. 
+.PP
+Definition at line 145 of file regularized_svd_method\&.hpp\&.
+.SS "size_t MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the number of iterations\&. 
+.PP
+Definition at line 148 of file regularized_svd_method\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the number of iterations\&. 
+.PP
+Definition at line 150 of file regularized_svd_method\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialization\&. 
+.PP
+Definition at line 156 of file regularized_svd_method\&.hpp\&.
+.SS "const arma::mat& W () const\fC [inline]\fP"
+
+.PP
+Get the Item Matrix\&. 
+.PP
+Definition at line 143 of file regularized_svd_method\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

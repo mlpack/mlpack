@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="random__partition_8hpp" kind="file" language="C++">
+    <compoundname>random_partition.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <incdepgraph>
+      <node id="51116">
+        <label>list</label>
+      </node>
+      <node id="51113">
+        <label>atomic</label>
+      </node>
+      <node id="51103">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="51079">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="51115">
+        <label>iomanip</label>
+      </node>
+      <node id="51088">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="51089" relation="include">
+        </childnode>
+        <childnode refid="51091" relation="include">
+        </childnode>
+      </node>
+      <node id="51071">
+        <label>cstdint</label>
+      </node>
+      <node id="51080">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="51087">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="51110">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="51100">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="51067">
+        <label>cmath</label>
+      </node>
+      <node id="51086">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="51075">
+        <label>stdexcept</label>
+      </node>
+      <node id="51095">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="51080" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51081" relation="include">
+        </childnode>
+      </node>
+      <node id="51119">
+        <label>string</label>
+      </node>
+      <node id="51107">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="51108" relation="include">
+        </childnode>
+        <childnode refid="51074" relation="include">
+        </childnode>
+      </node>
+      <node id="51117">
+        <label>map</label>
+      </node>
+      <node id="51069">
+        <label>cfloat</label>
+      </node>
+      <node id="51099">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51121">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="51083">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="51106">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="51107" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51090" relation="include">
+        </childnode>
+        <childnode refid="51108" relation="include">
+        </childnode>
+      </node>
+      <node id="51096">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="51094">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="51080" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51081" relation="include">
+        </childnode>
+      </node>
+      <node id="51097">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="51080" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51081" relation="include">
+        </childnode>
+      </node>
+      <node id="51085">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="51105">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="51081" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51093" relation="include">
+        </childnode>
+        <childnode refid="51102" relation="include">
+        </childnode>
+      </node>
+      <node id="51109">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="51110" relation="include">
+        </childnode>
+      </node>
+      <node id="51111">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="51066">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="51067" relation="include">
+        </childnode>
+        <childnode refid="51068" relation="include">
+        </childnode>
+        <childnode refid="51069" relation="include">
+        </childnode>
+        <childnode refid="51070" relation="include">
+        </childnode>
+        <childnode refid="51071" relation="include">
+        </childnode>
+        <childnode refid="51072" relation="include">
+        </childnode>
+        <childnode refid="51073" relation="include">
+        </childnode>
+        <childnode refid="51074" relation="include">
+        </childnode>
+        <childnode refid="51075" relation="include">
+        </childnode>
+        <childnode refid="51076" relation="include">
+        </childnode>
+        <childnode refid="51077" relation="include">
+        </childnode>
+        <childnode refid="51078" relation="include">
+        </childnode>
+        <childnode refid="51079" relation="include">
+        </childnode>
+        <childnode refid="51080" relation="include">
+        </childnode>
+        <childnode refid="51081" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51084" relation="include">
+        </childnode>
+        <childnode refid="51085" relation="include">
+        </childnode>
+        <childnode refid="51086" relation="include">
+        </childnode>
+        <childnode refid="51087" relation="include">
+        </childnode>
+        <childnode refid="51088" relation="include">
+        </childnode>
+        <childnode refid="51092" relation="include">
+        </childnode>
+        <childnode refid="51093" relation="include">
+        </childnode>
+        <childnode refid="51094" relation="include">
+        </childnode>
+        <childnode refid="51095" relation="include">
+        </childnode>
+        <childnode refid="51096" relation="include">
+        </childnode>
+        <childnode refid="51097" relation="include">
+        </childnode>
+        <childnode refid="51098" relation="include">
+        </childnode>
+        <childnode refid="51104" relation="include">
+        </childnode>
+        <childnode refid="51105" relation="include">
+        </childnode>
+        <childnode refid="51102" relation="include">
+        </childnode>
+        <childnode refid="51106" relation="include">
+        </childnode>
+        <childnode refid="51109" relation="include">
+        </childnode>
+        <childnode refid="51111" relation="include">
+        </childnode>
+        <childnode refid="51112" relation="include">
+        </childnode>
+        <childnode refid="51121" relation="include">
+        </childnode>
+        <childnode refid="51122" relation="include">
+        </childnode>
+      </node>
+      <node id="51072">
+        <label>cstdio</label>
+      </node>
+      <node id="51076">
+        <label>tuple</label>
+      </node>
+      <node id="51081">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="51098">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="51081" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51085" relation="include">
+        </childnode>
+        <childnode refid="51099" relation="include">
+        </childnode>
+        <childnode refid="51100" relation="include">
+        </childnode>
+        <childnode refid="51101" relation="include">
+        </childnode>
+        <childnode refid="51102" relation="include">
+        </childnode>
+      </node>
+      <node id="51077">
+        <label>utility</label>
+      </node>
+      <node id="51101">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="51092">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="51089">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="51090" relation="include">
+        </childnode>
+      </node>
+      <node id="51112">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="51113" relation="include">
+        </childnode>
+        <childnode refid="51114" relation="include">
+        </childnode>
+        <childnode refid="51115" relation="include">
+        </childnode>
+        <childnode refid="51116" relation="include">
+        </childnode>
+        <childnode refid="51117" relation="include">
+        </childnode>
+        <childnode refid="51118" relation="include">
+        </childnode>
+        <childnode refid="51119" relation="include">
+        </childnode>
+        <childnode refid="51120" relation="include">
+        </childnode>
+      </node>
+      <node id="51090">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="51104">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="51102" relation="include">
+        </childnode>
+        <childnode refid="51098" relation="include">
+        </childnode>
+        <childnode refid="51105" relation="include">
+        </childnode>
+      </node>
+      <node id="51073">
+        <label>cstdlib</label>
+      </node>
+      <node id="51068">
+        <label>cctype</label>
+      </node>
+      <node id="51091">
+        <label>unordered_map</label>
+      </node>
+      <node id="51070">
+        <label>climits</label>
+      </node>
+      <node id="51118">
+        <label>mutex</label>
+      </node>
+      <node id="51114">
+        <label>chrono</label>
+      </node>
+      <node id="51122">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="51065">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp</label>
+        <link refid="random__partition_8hpp"/>
+        <childnode refid="51066" relation="include">
+        </childnode>
+      </node>
+      <node id="51120">
+        <label>thread</label>
+      </node>
+      <node id="51108">
+        <label>type_traits</label>
+      </node>
+      <node id="51084">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="51078">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="51102">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="51080" relation="include">
+        </childnode>
+        <childnode refid="51081" relation="include">
+        </childnode>
+        <childnode refid="51082" relation="include">
+        </childnode>
+        <childnode refid="51083" relation="include">
+        </childnode>
+        <childnode refid="51103" relation="include">
+        </childnode>
+      </node>
+      <node id="51074">
+        <label>cstring</label>
+      </node>
+      <node id="51093">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="51082">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1kmeans_1_1RandomPartition" prot="public">mlpack::kmeans::RandomPartition</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kmeans">mlpack::kmeans</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para></simplesect>
+Very simple partitioner which partitions the data randomly into the number of desired clusters. Used as the default InitialPartitionPolicy for KMeans.</para><para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="13"><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_KMEANS_RANDOM_PARTITION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kmeans<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1kmeans_1_1RandomPartition" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kmeans_1_1RandomPartition" kindref="compound">RandomPartition</ref></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="30" refid="classmlpack_1_1kmeans_1_1RandomPartition_1ac9affc7889d9b8911bb695c6855896e1" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kmeans_1_1RandomPartition_1ac9affc7889d9b8911bb695c6855896e1" kindref="member">RandomPartition</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType&gt;</highlight></codeline>
+<codeline lineno="44" refid="classmlpack_1_1kmeans_1_1RandomPartition_1a66c98fbe18c8952d61e996c723860a81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1RandomPartition_1a66c98fbe18c8952d61e996c723860a81" kindref="member">Cluster</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>clusters,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>assignments)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Implementation<sp/>is<sp/>so<sp/>simple<sp/>we&apos;ll<sp/>put<sp/>it<sp/>here<sp/>in<sp/>the<sp/>header<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>assignments<sp/>=<sp/>arma::shuffle(arma::linspace&lt;arma::Row&lt;size_t&gt;&gt;(0,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(clusters<sp/>-<sp/>1),<sp/>data.n_cols));</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1kmeans_1_1RandomPartition_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kmeans_1_1RandomPartition_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" kindref="member">serialize</ref>(Archive&amp;<sp/></highlight><highlight class="comment">/*<sp/>ar<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kmeans</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp"/>
+  </compounddef>
+</doxygen>

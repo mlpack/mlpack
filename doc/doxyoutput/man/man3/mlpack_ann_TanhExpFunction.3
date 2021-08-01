@@ -1,0 +1,108 @@
+.TH "TanhExpFunction" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TanhExpFunction \- The TanhExp function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double y)"
+.br
+.RI "Computes the first derivative of the TanhExp function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &y, OutputVecType &x)"
+.br
+.RI "Computes the first derivatives of the tanh function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the TanhExp function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the TanhExp function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The TanhExp function, defined by\&. 
+
+\begin{eqnarray*} f(x) = x * tanh(e^x)\\ f'(x) = tanh(e^x) - x*e^x*(tanh(e^x)^2 - 1)\\ \end{eqnarray*} 
+.PP
+Definition at line 42 of file tanh_exponential_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the TanhExp function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input activation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 74 of file tanh_exponential_function\&.hpp\&.
+.SS "static void Deriv (const InputVecType & y, OutputVecType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input activations\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file tanh_exponential_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the TanhExp function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 51 of file tanh_exponential_function\&.hpp\&.
+.SS "static void Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the TanhExp function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file tanh_exponential_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

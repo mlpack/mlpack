@@ -1,0 +1,76 @@
+.TH "RPTreeMeanSplit< BoundType, MatType >::SplitInfo" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RPTreeMeanSplit< BoundType, MatType >::SplitInfo \- An information about the partition\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::Col< \fBElemType\fP > \fBdirection\fP"
+.br
+.RI "The normal to the hyperplane that will split the node\&. "
+.ti -1c
+.RI "arma::Col< \fBElemType\fP > \fBmean\fP"
+.br
+.RI "The mean of some sampled points\&. "
+.ti -1c
+.RI "bool \fBmeanSplit\fP"
+.br
+.RI "Indicates that we should use the mean split algorithm instead of the median split\&. "
+.ti -1c
+.RI "\fBElemType\fP \fBsplitVal\fP"
+.br
+.RI "The value according to which the split will be performed\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BoundType, typename MatType = arma::mat>
+.br
+struct mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::SplitInfo"
+An information about the partition\&. 
+.PP
+Definition at line 39 of file rp_tree_mean_split\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::Col<\fBElemType\fP> direction"
+
+.PP
+The normal to the hyperplane that will split the node\&. 
+.PP
+Definition at line 42 of file rp_tree_mean_split\&.hpp\&.
+.PP
+Referenced by RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "arma::Col<\fBElemType\fP> mean"
+
+.PP
+The mean of some sampled points\&. 
+.PP
+Definition at line 44 of file rp_tree_mean_split\&.hpp\&.
+.PP
+Referenced by RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "bool meanSplit"
+
+.PP
+Indicates that we should use the mean split algorithm instead of the median split\&. 
+.PP
+Definition at line 49 of file rp_tree_mean_split\&.hpp\&.
+.PP
+Referenced by RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "\fBElemType\fP splitVal"
+
+.PP
+The value according to which the split will be performed\&. 
+.PP
+Definition at line 46 of file rp_tree_mean_split\&.hpp\&.
+.PP
+Referenced by RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

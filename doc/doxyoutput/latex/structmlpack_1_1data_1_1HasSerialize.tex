@@ -1,0 +1,92 @@
+\section{Has\+Serialize$<$ T $>$ Struct Template Reference}
+\label{structmlpack_1_1data_1_1HasSerialize}\index{Has\+Serialize$<$ T $>$@{Has\+Serialize$<$ T $>$}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ check}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef char \textbf{ no}[2]
+\item 
+typedef char \textbf{ yes}[1]
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename U $>$ }\\static \textbf{ yes} \& \textbf{ chk} (\textbf{ check}$<$ U, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ std\+::is\+\_\+class$<$ U $>$\+::\textbf{ value} $>$ $\ast$, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Has\+Serialize\+Function}$<$ U $>$\+::\textbf{ value} $>$ $\ast$$>$ $\ast$)
+\item 
+{\footnotesize template$<$typename $>$ }\\static \textbf{ no} \& \textbf{ chk} (...)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ value} = (sizeof(\textbf{ chk}$<$T$>$(0)) == sizeof(\textbf{ yes}))
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+struct mlpack\+::data\+::\+Has\+Serialize$<$ T $>$}
+
+
+
+Definition at line 47 of file has\+\_\+serialize.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\mbox{\label{structmlpack_1_1data_1_1HasSerialize_a60b821c13604c22450353fa73865c3af}} 
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!no@{no}}
+\index{no@{no}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection{no}
+{\footnotesize\ttfamily typedef char no[2]}
+
+
+
+Definition at line 51 of file has\+\_\+serialize.\+hpp.
+
+\mbox{\label{structmlpack_1_1data_1_1HasSerialize_a8d05d9e44de47fbffe6082ba732f35d3}} 
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!yes@{yes}}
+\index{yes@{yes}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection{yes}
+{\footnotesize\ttfamily typedef char yes[1]}
+
+
+
+Definition at line 50 of file has\+\_\+serialize.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\label{structmlpack_1_1data_1_1HasSerialize_ac27e1314a46e93ff63f509e1f2260841}} 
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!chk@{chk}}
+\index{chk@{chk}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection{chk()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static \textbf{ yes}\& chk (\begin{DoxyParamCaption}\item[{\textbf{ check}$<$ U, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ std\+::is\+\_\+class$<$ U $>$\+::\textbf{ value} $>$ $\ast$, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Has\+Serialize\+Function}$<$ U $>$\+::\textbf{ value} $>$ $\ast$$>$ $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\label{structmlpack_1_1data_1_1HasSerialize_a0f08a85124143fdc0b47ebd46d3b8ae0}} 
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!chk@{chk}}
+\index{chk@{chk}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection{chk()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static \textbf{ no}\& chk (\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\label{structmlpack_1_1data_1_1HasSerialize_a11ddd051208250c32dc4985abcafa86d}} 
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!value@{value}}
+\index{value@{value}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection{value}
+{\footnotesize\ttfamily const bool value = (sizeof(\textbf{ chk}$<$T$>$(0)) == sizeof(\textbf{ yes}))\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 59 of file has\+\_\+serialize.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/\textbf{ has\+\_\+serialize.\+hpp}\end{DoxyCompactItemize}
