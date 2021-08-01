@@ -28,8 +28,7 @@ TEST_CASE("SSEInitialPredictionTest", "[XGBTest]")
 
   double initPred = 5.5;
 
-  SSELoss Loss;
-  REQUIRE(Loss.InitialPrediction(values) == initPred);
+  REQUIRE(SSELoss::InitialPrediction(values) == initPred);
 }
 
 /**

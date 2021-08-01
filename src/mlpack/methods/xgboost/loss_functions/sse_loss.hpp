@@ -44,7 +44,7 @@ class SSELoss
    * Returns the initial predition for gradient boosting.
    */
   template<typename VecType>
-  typename VecType::elem_type InitialPrediction(const VecType& values)
+  static typename VecType::elem_type InitialPrediction(const VecType& values)
   {
     // Sanity check for empty vector.
     if (values.n_elem == 0)
