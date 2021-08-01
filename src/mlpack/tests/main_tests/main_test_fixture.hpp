@@ -16,6 +16,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/params.hpp>
+#include <mlpack/bindings/tests/test_function_map.hpp>
 
 /**
  * Define a test fixture for an mlpack binding test with the name given as
@@ -54,10 +55,18 @@ class MainTestFixture
  public:
   //! Create a MainTestFixture with the given set of parameters.
   MainTestFixture(const util::Params& paramsIn) :
-      paramsClean(paramsIn),
-      params(paramsIn)
+      paramsClean(paramsIn)
   {
-    // Nothing to do.
+    // For a test binding, the parameters will not have the correct maps in
+    // `functionMap`.  This is because the test executable may also be adding
+    // options for different binding types (which happens in
+    // `cli_binding_test.cpp`, for instance).  Therefore, we have to ensure that
+    // the right functions are in the function map, for every type that appears
+    // in any binding.
+    paramsClean.functionMap =
+        mlpack::bindings::tests::TestFunctionMap::FunctionMap();
+
+    params = paramsClean;
   }
 
   //! Clean up any memory associated with the MainTestFixture.
