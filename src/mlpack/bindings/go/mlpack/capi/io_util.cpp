@@ -101,7 +101,7 @@ void mlpackSetParamVectorStr(const char* identifier,
  * Set the parameter to the given value, given that the type is a pointer.
  */
 void mlpackSetParamPtr(const char* identifier,
-                       const double* ptr)
+                       double* ptr)
 {
   util::SetParamPtr(identifier, ptr);
 }
