@@ -92,10 +92,10 @@ class XGBoostTreeRegressor
                    DimensionSelectionType());
 
   template<typename VecType>
-  double Predict(const VecType& point) const;
+  VecType::elem_type Predict(const VecType& point) const;
 
   template<typename MatType>
-  arma::rowvec Predict(const MatType& data) const;
+  void Predict(const MatType& data, arma::rowvec& predictions) const;
 
   //! Access a tree in the forest.
   const DecisionTreeType& Tree(const size_t i) const { return trees[i]; }
