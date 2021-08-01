@@ -54,7 +54,7 @@ template<typename MetricType = metric::EuclideanDistance,
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
-  static_assert(boost::is_same<MetricType, metric::EuclideanDistance>::value,
+  static_assert(std::is_same<MetricType, metric::EuclideanDistance>::value,
       "RectangleTree: MetricType must be metric::EuclideanDistance.");
 
  public:

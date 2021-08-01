@@ -152,10 +152,10 @@ class Padding
 
   //! Locally-stored input width.
   size_t inputWidth;
-  
+
   //! Locally-stored output height.
   size_t outputHeight;
-  
+
   //! Locally-stored output width.
   size_t outputWidth;
 
