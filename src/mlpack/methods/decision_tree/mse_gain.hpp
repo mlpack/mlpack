@@ -97,6 +97,30 @@ class MSEGain
   }
 
   /**
+   * Returns the output value for each leaf node for prediction. The output
+   * value is calculated as the average of all the points in that leaf node.
+   * This calculation is specific to regression trees only.
+   */
+  template<bool UseWeights, typename ResponsesType, typename WeightsType>
+  double OutputLeafValue(const ResponsesType& responses,
+                         const WeightsType& weights)
+  {
+    if (UseWeights)
+    {
+      double accWeights, weightedSum;
+      WeightedSum(responses, weights, 0, responses.n_elem, accWeights,
+          weightedSum);
+      return weightedSum / accWeights;
+    }
+    else
+    {
+      double sum;
+      Sum(responses, 0, responses.n_elem, sum);
+      return sum / responses.n_elem;
+    }
+  }
+
+  /**
    * Calculates the  mean squared error gain for the left and right children
    * for the current index.
    *

@@ -91,6 +91,8 @@ class AllCategoricalSplit
    * @param minimumGainSplit Minimum  gain split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
+   * @param fitnessFunction The FitnessFunction object instance. It it used to
+   *      evaluate the gain for the split.
    */
   template<bool UseWeights, typename VecType, typename ResponsesType,
            typename WeightVecType>
@@ -103,7 +105,8 @@ class AllCategoricalSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       double& splitInfo,
-      AuxiliarySplitInfo& aux);
+      AuxiliarySplitInfo& aux,
+      FitnessFunction& fitnessFunction);
 
   /**
    * Return the number of children in the split.

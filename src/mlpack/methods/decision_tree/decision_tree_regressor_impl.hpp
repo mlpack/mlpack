@@ -432,7 +432,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
@@ -451,7 +452,7 @@ double DecisionTreeRegressor<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -471,7 +472,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
@@ -490,7 +492,7 @@ double DecisionTreeRegressor<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given weighted data.
@@ -513,6 +515,7 @@ double DecisionTreeRegressor<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
@@ -536,7 +539,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given weighted all numeric data.
@@ -558,6 +561,7 @@ double DecisionTreeRegressor<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
@@ -581,7 +585,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given data.
@@ -605,7 +609,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -617,8 +622,8 @@ double DecisionTreeRegressor<FitnessFunction,
   // in numericAux and categoricalAux (and clear them later if we make no
   // split). The split point is stored in splitPointOrPrediction for all
   // internal nodes of the tree.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(
-      responses.subvec(begin, begin + count - 1),
+  double bestGain = fitnessFunction.template Evaluate<UseWeights>(
+      responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   const size_t end = dimensionSelector.End();
@@ -634,23 +639,25 @@ double DecisionTreeRegressor<FitnessFunction,
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
             datasetInfo.NumMappings(i),
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
             splitPointOrPrediction,
-            *this);
+            *this,
+            fitnessFunction);
       }
       else if (datasetInfo.Type(i) == data::Datatype::numeric)
       {
         dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
             splitPointOrPrediction,
-            *this);
+            *this,
+            fitnessFunction);
       }
 
       // If the splitter reported that it did not split, move to the next
@@ -755,10 +762,11 @@ double DecisionTreeRegressor<FitnessFunction,
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
     CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
-    // Calculate prediction label because we are a leaf.
-    CalculatePrediction<UseWeights>(
-        responses.subvec(begin, begin + count - 1),
-        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Calculate prediction value because we are a leaf.
+    splitPointOrPrediction =
+        fitnessFunction.template OutputLeafValue<UseWeights>(
+            responses.cols(begin, begin + count - 1),
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -784,7 +792,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -798,8 +807,8 @@ double DecisionTreeRegressor<FitnessFunction,
   // the best numeric split auxiliary information in numericAux (and clear it
   // later if we don't make a split). The split point is stored in
   // splitPointOrPrediction for all internal nodes of the tree.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(
-      responses.subvec(begin, begin + count - 1),
+  double bestGain = fitnessFunction.template Evaluate<UseWeights>(
+      responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
 
@@ -818,7 +827,8 @@ double DecisionTreeRegressor<FitnessFunction,
                                     minimumLeafSize,
                                     minimumGainSplit,
                                     splitPointOrPrediction,
-                                    *this);
+                                    *this,
+                                    fitnessFunction);
 
       // If the splitter did not report that it improved, then move to the next
       // dimension.
@@ -907,10 +917,11 @@ double DecisionTreeRegressor<FitnessFunction,
     // We won't be needing these members, so reset them.
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
 
-    // Calculate prediction label because we are a leaf.
-    CalculatePrediction<UseWeights>(
-        responses.subvec(begin, begin + count - 1),
-        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Calculate prediction value because we are a leaf.
+    splitPointOrPrediction =
+        fitnessFunction.template OutputLeafValue<UseWeights>(
+            responses.cols(begin, begin + count - 1),
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -963,35 +974,6 @@ void DecisionTreeRegressor<FitnessFunction,
   // Loop over each point.
   for (size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Predict(data.col(i));
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename DimensionSelectionType,
-         bool NoRecursion>
-template<bool UseWeights, typename ResponsesType, typename WeightsType>
-void DecisionTreeRegressor<FitnessFunction,
-                             NumericSplitType,
-                             CategoricalSplitType,
-                             DimensionSelectionType,
-                             NoRecursion
->::CalculatePrediction(const ResponsesType& responses,
-                       const WeightsType& weights)
-{
-  if (UseWeights)
-  {
-    double accWeights, weightedSum;
-    WeightedSum(responses, weights, 0, responses.n_elem, accWeights,
-        weightedSum);
-    splitPointOrPrediction = weightedSum / accWeights;
-  }
-  else
-  {
-    double sum;
-    Sum(responses, 0, responses.n_elem, sum);
-    splitPointOrPrediction = sum / responses.n_elem;
-  }
 }
 
 template<typename FitnessFunction,
