@@ -4,8 +4,8 @@ set(SOURCES
   loss_functions/sse_loss.hpp
   xgb_exact_numeric_split.hpp
   xgb_exact_numeric_split_impl.hpp
-  xgboost.hpp
-  xgboost_impl.hpp
+  xgboost_tree_regressor.hpp
+  xgboost_tree_regressor_impl.hpp
 )
 
 # Add directory name to sources.

@@ -49,6 +49,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   svdplusplus
+  xgboost
 )
 
 foreach(dir ${DIRS})
