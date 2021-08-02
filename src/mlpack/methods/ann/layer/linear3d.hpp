@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/linear3d.hpp
  * @author Mrityunjay Tripathi

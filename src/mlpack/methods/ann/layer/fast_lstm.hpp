@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/fast_lstm.hpp
  * @author Marcus Edel

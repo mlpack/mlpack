@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/gru.hpp
  * @author Sumedh Ghaisas

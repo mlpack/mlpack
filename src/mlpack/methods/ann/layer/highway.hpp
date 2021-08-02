@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/highway.hpp
  * @author Konstantin Sidorov

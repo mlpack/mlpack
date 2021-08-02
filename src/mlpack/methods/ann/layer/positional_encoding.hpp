@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/positional_encoding.hpp
  * @author Mrityunjay Tripathi

@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/bilinear_interpolation.hpp
  * @author Kris Singh

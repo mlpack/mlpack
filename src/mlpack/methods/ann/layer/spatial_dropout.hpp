@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/spatial_dropout.hpp
  * @author Anjishnu Mukherjee

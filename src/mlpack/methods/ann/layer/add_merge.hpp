@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/add_merge.hpp
  * @author Marcus Edel

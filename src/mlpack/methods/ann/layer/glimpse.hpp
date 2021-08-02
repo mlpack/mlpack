@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/glimpse.hpp
  * @author Marcus Edel

@@ -1,3 +1,4 @@
+// Temporarily drop.
 /**
  * @file methods/ann/layer/noisylinear.hpp
  * @author Nishant Kumar
