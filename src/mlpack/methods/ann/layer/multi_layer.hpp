@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 
+#include "../make_alias.hpp"
+
 namespace mlpack {
 namespace ann {
 
@@ -70,22 +72,19 @@ class MultiLayer : public Layer<InputType, OutputType>
                         const OutputType& error,
                         OutputType& gradient)
   {
-    // Pass gradients through each layer, creating an alias for the right
-    // elements of the gradient.
+    InitializeGradientPassMemory(gradient);
 
-    network.front()->Gradient(input, layerDeltas[1], OutputType(
-        gradient.memptr(), 1, network.front()->WeightSize(), false, true));
-    size_t start = network.front()->WeightSize();
+    // Pass gradients through each layer.
+    // TODO: do we need to go back to front?  I guess not?
+    network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
     for (size_t i = 0; i < network.size() - 1; ++i)
     {
-      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1], OutputType(
-          gradient.colptr(start), 1, network[i]->WeightSize(), false, true));
-      start += network[i]->WeightSize();
+      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
+          layerGradients[i]);
     }
 
     network.back()->Gradient(layerOutputs[network.size() - 2], error,
-        OutputType(gradient.colptr(start), 1, network.back()->WeightSize(),
-                   false, true));
+        layerGradients[network.size() - 1]);
   }
 
   virtual void SetWeights(typename OutputType::elem_type* weightsPtr)
@@ -98,7 +97,7 @@ class MultiLayer : public Layer<InputType, OutputType>
     }
   }
 
-  virtual void OutputSize() const
+  virtual size_t OutputSize() const
   {
     // Return the output size of the last layer.
     return network.back()->OutputSize();
@@ -115,13 +114,15 @@ class MultiLayer : public Layer<InputType, OutputType>
 
   virtual void ComputeOutputDimensions()
   {
+    inSize = 0;
     totalInputSize = 0;
     totalOutputSize = 0;
 
     // Propagate the input dimensions forward to the output.
     network.front()->InputDimensions() = this->inputDimensions;
-    totalInputSize += std::accumulate(this->inputDimensions.begin(),
+    inSize = std::accumulate(this->inputDimensions.begin(),
         this->inputDimensions.end(), 0);
+    totalInputSize += inSize;
 
     for (size_t i = 1; i < network.size(); ++i)
     {
@@ -162,7 +163,10 @@ class MultiLayer : public Layer<InputType, OutputType>
     network.push_back(new LayerType(args...));
     layerOutputs.push_back(OutputType());
     layerDeltas.push_back(OutputType());
+    layerGradients.push_back(OutputType());
   }
+
+  // TODO: handle network ownership?
 
   /*
    * Add a new module to the model.
@@ -174,6 +178,7 @@ class MultiLayer : public Layer<InputType, OutputType>
     network.push_back(layer);
     layerOutputs.push_back(OutputType());
     layerDeltas.push_back(OutputType());
+    layerGradients.push_back(OutputType());
   }
 
   const std::vector<Layer<InputType, OutputType>*> Network() const { return
@@ -195,6 +200,7 @@ network; }
       layerDeltaMatrix.clear();
       layerOutputs.resize(network.size(), OutputType());
       layerDeltas.resize(network.size(), OutputType());
+      layerGradients.resize(network.size(), OutputType());
     }
   }
 
@@ -219,9 +225,9 @@ network; }
     size_t start = 0;
     for (size_t i = 0; i < layerOutputs.size(); ++i)
     {
-      const size_t layerOutputSize = network[i].OutputSize();
-      layerOutputs[i] = OutputType(layerOutputMatrix.colptr(start),
-          layerOutputSize, batchSize, false, true);
+      const size_t layerOutputSize = network[i]->OutputSize();
+      MakeAlias(layerOutputs[i], layerOutputMatrix.colptr(start),
+          layerOutputSize, batchSize);
       start += batchSize * layerOutputSize;
     }
   }
@@ -229,9 +235,8 @@ network; }
   void InitializeBackwardPassMemory(const size_t batchSize)
   {
     // We need to initialize memory to store the output of each layer's
-    // Backward() and Gradient() calls.  We do this similarly to
-    // InitializeForwardPassMemory(), but we must store a matrix to use as the
-    // delta for each layer.
+    // Backward() call.  We do this similarly to InitializeForwardPassMemory(),
+    // but we must store a matrix to use as the delta for each layer.
     if (batchSize * totalInputSize > layerDeltaMatrix.n_elem ||
         batchSize * totalInputSize < std::floor(0.1 * layerOutputMatrix.n_elem))
     {
@@ -247,22 +252,41 @@ network; }
       const size_t layerInputSize = (i == 0) ?
           std::accumulate(this->inputDimensions.begin(),
               this->inputDimensions.end(), 0) :
-          network[i - 1].OutputSize();
-      layerDeltas[i] = OutputType(layerDeltaMatrix.colptr(start),
-          layerInputSize, batchSize, false, true);
+          network[i - 1]->OutputSize();
+      MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
+          batchSize);
       start += batchSize * layerInputSize;
+    }
+  }
+
+  void InitializeGradientPassMemory(OutputType& gradient)
+  {
+    // We need to initialize memory to store the gradients of each layer.
+    // To do this, we need to know the weight size of each layer.
+    size_t gradientStart = 0;
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      const size_t weightSize = network[i]->WeightSize();
+      MakeAlias(layerGradients[i], gradient.colptr(gradientStart), weightSize,
+          1);
+      gradientStart += weightSize;
     }
   }
 
   std::vector<Layer<InputType, OutputType>*> network;
 
+  // Total number of elements in the input, cached for convenience.
+  size_t inSize;
+  // Total number of input elements for *every* layer.
   size_t totalInputSize;
+  // Total number of output elements for *every* layer.
   size_t totalOutputSize;
 
-  arma::mat layerOutputMatrix;
-  std::vector<arma::mat> layerOutputs;
-  arma::mat layerDeltaMatrix;
-  std::vector<arma::mat> layerDeltas;
+  OutputType layerOutputMatrix;
+  std::vector<OutputType> layerOutputs;
+  OutputType layerDeltaMatrix;
+  std::vector<OutputType> layerDeltas;
+  std::vector<OutputType> layerGradients;
 };
 
 } // namespace ann

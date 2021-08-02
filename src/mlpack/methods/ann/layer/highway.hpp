@@ -21,7 +21,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Highway layer. The Highway class can vary its behavior
+ * Implementation of the Highway layer.  The Highway class can vary its behavior
  * between that of feed-forward fully connected network container and that
  * of a layer which simply passes its inputs through depending on the transform
  * gate. Note that the size of the input and output matrices of this class
@@ -53,13 +53,6 @@ class HighwayType : public MultiLayer<InputType, OutputType>
  public:
   //! Create the HighwayTest object.
   HighwayType();
-
-  /**
-   * Create the HighwayTest object.
-   *
-   * @param inSize The number of input units.
-   */
-  HighwayType(const size_t inSize);
 
   //! Destroy the Highway object.
   ~HighwayType();
@@ -102,58 +95,18 @@ class HighwayType : public MultiLayer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args)
-  {
-    network.push_back(new LayerType(args...));
-    networkOwnerships.push_back(true);
-  }
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<arma::mat, arma::mat>* layer)
-  {
-    network.push_back(layer);
-    networkOwnerships.push_back(false);
-  }
-
   //! Get the parameters.
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the number of input units.
-  size_t InSize() const { return inSize; }
-
   //! Get the number of trainable weights.
-  const size_t WeightSize() const
+  size_t WeightSize() const
   {
-    size_t result = inSize * (inSize + 1);
-    for (size_t i = 0; i < network.size(); ++i)
-      result += network[i]->WeightSize();
+    size_t result = this->totalInputSize * (this->totalInputSize + 1);
+    for (size_t i = 0; i < this->network.size(); ++i)
+      result += this->network[i]->WeightSize();
     return result;
-  }
-
-  //! Get the output dimensions.
-  const std::vector<size_t>& OutputDimensions() const
-  {
-    // Push the input dimensions through the layers in order to compute the
-    // output size.
-    network.front()->InputDimensions() = inputDimensions;
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-    }
-
-    return network.back()->OutputDimensions();
   }
 
   /**
@@ -163,32 +116,8 @@ class HighwayType : public MultiLayer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
-
-  //! Indicator if we already initialized the model.
-  bool reset;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
-
-  //! The list of network modules we are responsible for.
-  std::vector<bool> networkOwnerships;
-
-  //! Locally-stored empty list of modules.
-  std::vector<Layer<InputType, OutputType>*> empty;
-
   //! Locally-stored weight object.
   OutputType weights;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
 
   //! Weights for transformation of output.
   OutputType transformWeight;
@@ -204,21 +133,6 @@ class HighwayType : public MultiLayer<InputType, OutputType>
 
   //! Locally-stored transform gate error.
   OutputType transformGateError;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! The input width.
-  size_t width;
-
-  //! The input height.
-  size_t height;
-
-  //! The normal output without highway network.
-  OutputType networkOutput;
 }; // class HighwayType
 
 // Standard Highway layer.

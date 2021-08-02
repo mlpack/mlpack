@@ -126,6 +126,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::RBF<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::HighwayType<__VA_ARGS__>); \
 
 // TODO: continue...
 

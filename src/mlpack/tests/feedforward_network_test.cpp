@@ -560,7 +560,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Train the highway network on a larger dataset.
- *
+ */
 TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
@@ -576,7 +576,7 @@ TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear>(10);
-  Highway* highway = new Highway(10, true);
+  Highway* highway = new Highway();
   highway->Add<Linear>(10);
   highway->Add<Sigmoid>();
   model.Add(highway); // This takes ownership of the memory.

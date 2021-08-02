@@ -20,49 +20,31 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-HighwayType<InputType, OutputType>::HighwayType() :
-    inSize(0),
-    reset(false),
-    width(0),
-    height(0)
+HighwayType<InputType, OutputType>::HighwayType()
 {
   // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-HighwayType<InputType, OutputType>::HighwayType(
-    const size_t inSize) :
-    inSize(inSize),
-    reset(false),
-    width(0),
-    height(0)
-{
-  weights.set_size(inSize * inSize + inSize, 1);
+  // TODO: how do we add the child layers ?? (read paper ...)
 }
 
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::~HighwayType()
 {
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    if (networkOwnerships[i])
-      delete network[i];
-  }
 }
 
 template<typename InputType, typename OutputType>
 void HighwayType<InputType, OutputType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {
-  transformWeight = OutputType(weightsPtr, inSize, inSize, false, false);
+  transformWeight = OutputType(weightsPtr, this->inSize,
+      this->inSize, false, false);
   transformBias = OutputType(weightsPtr + transformWeight.n_elem,
-      inSize, 1, false, false);
+      this->inSize, 1, false, false);
 
   size_t start = transformWeight.n_elem + transformBias.n_elem;
-  for (size_t i = 0; i < network.size(); ++i)
+  for (size_t i = 0; i < this->network.size(); ++i)
   {
-    network[i]->SetWeights(weightsPtr + start);
-    start += network[i]->WeightSize();
+    this->network[i]->SetWeights(weightsPtr + start);
+    start += this->network[i]->WeightSize();
   }
 }
 
@@ -70,17 +52,18 @@ template<typename InputType, typename OutputType>
 void HighwayType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  InitializeForwardPassMemory();
+  this->InitializeForwardPassMemory(input.n_cols);
 
-  network.front()->Forward(input, layerOutputs.front());
+  this->network.front()->Forward(input, this->layerOutputs.front());
 
-  for (size_t i = 1; i < network.size(); ++i)
+  for (size_t i = 1; i < this->network.size(); ++i)
   {
-    network[i]->Forward(layerOutputs[i - 1], layerOutputs[i]);
+    this->network[i]->Forward(this->layerOutputs[i - 1], this->layerOutputs[i]);
   }
 
-  output = network.back()->OutputParameter();
+  output = this->layerOutputs.back(); // TODO: can this be cleaned up?
 
+  // TODO: move to ComputeOutputDimensions()
   if (arma::size(output) != arma::size(input))
   {
     Log::Fatal << "The sizes of the output and input matrices of the Highway"
@@ -90,33 +73,33 @@ void HighwayType<InputType, OutputType>::Forward(
   transformGate = transformWeight * input;
   transformGate.each_col() += transformBias;
   transformGateActivation = 1.0 /(1 + arma::exp(-transformGate));
-  inputParameter = input;
-  networkOutput = output; // TODO: what is done with this?
-  output = (layerOutputs.back() % transformGateActivation) +
+  output = (this->layerOutputs.back() % transformGateActivation) +
       (input % (1 - transformGateActivation));
 }
 
 template<typename InputType, typename OutputType>
 void HighwayType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
+    const InputType& input,
     const OutputType& gy,
     OutputType& g)
 {
-  InitializeBackwardPassMemory();
+  this->InitializeBackwardPassMemory(input.n_cols);
 
   OutputType gyTransform = gy % transformGateActivation;
-  network.back()->Backward(layerOutputs.back(), gyTransform,
-      layerDeltas.back());
+  this->network.back()->Backward(this->layerOutputs.back(), gyTransform,
+      this->layerDeltas.back());
 
-  for (size_t i = 2; i < network.size() + 1; ++i)
+  for (size_t i = 2; i < this->network.size() + 1; ++i)
   {
-    network[network.size() - i]->Backward(layerOutputs[network.size() - i],
-        layerDeltas[network.size() - i + 1], layerDeltas[network.size() - i]);
+    this->network[this->network.size() - i]->Backward(
+        this->layerOutputs[this->network.size() - i],
+        this->layerDeltas[this->network.size() - i + 1],
+        this->layerDeltas[this->network.size() - i]);
   }
 
-  transformGateError = gy % (networkOutput - inputParameter) %
+  transformGateError = gy % (gy - input) %
       transformGateActivation % (1.0 - transformGateActivation);
-  g = layerDeltas.front() + (transformWeight.t() * transformGateError) +
+  g = this->layerDeltas.front() + (transformWeight.t() * transformGateError) +
       (gy % (1 - transformGateActivation));
 }
 
@@ -126,32 +109,31 @@ void HighwayType<InputType, OutputType>::Gradient(
     const OutputType& error,
     OutputType& gradient)
 {
-  OutputType errorTransform = error % transformGateActivation;
-  size_t gradientStart = gradient.n_elem -
-      network[network.size() - 1].WeightSize();
-  network.back()->Gradient(
-      layerOutputs[network.size() - 2],
-      errorTransform,
-      OutputType(gradient.colptr(gradientStart), 1,
-          network[network.size() - 1].WeightSize(), false, true)
-    );
+  // Create an alias for the gradient that only refers to the elements in the
+  // network itself.
+  OutputType layerGradient(gradient.memptr() + (this->inSize *
+      (this->inSize + 1)), 1, gradient.n_elem - (this->inSize *
+      (this->inSize + 1)), false, true);
+  this->InitializeGradientPassMemory(layerGradient);
 
-  for (size_t i = 2; i < network.size(); ++i)
+  OutputType errorTransform = error % transformGateActivation;
+  this->network.back()->Gradient(
+      this->layerOutputs[this->network.size() - 2],
+      errorTransform,
+      this->layerGradients[this->network.size() - 1]);
+
+  for (size_t i = 2; i < this->network.size(); ++i)
   {
-    gradientStart -= network[network.size() - i]->WeightSize();
-    network[network.size() - i]->Gradient(
-        layerOutputs[network.size() - i - 1],
-        layerDeltas[network.size() - i],
-        OutputType(gradient.colptr(gradientStart), 1,
-            network[network.size() - i]->WeightSize(), false, true)
-      );
+    this->network[this->network.size() - i]->Gradient(
+        this->layerOutputs[this->network.size() - i - 1],
+        this->layerDeltas[this->network.size() - i],
+        this->layerGradients[this->network.size() - i]);
   }
 
-  network.front()->Gradient(
+  this->network.front()->Gradient(
       input,
-      layerDeltas[1],
-      layerDeltas.front()
-    );
+      this->layerDeltas[1],
+      this->layerGradients.front());
 
   gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = arma::vectorise(
       transformGateError * input.t());
@@ -165,15 +147,6 @@ void HighwayType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
-
-  ar(CEREAL_VECTOR_POINTER(network));
-
-  // Reset the memory.
-  if (Archive::is_loading::value)
-  {
-    networkOwnerships.clear();
-    networkOwnerships.resize(network.size(), true);
-  }
 }
 
 } // namespace ann
