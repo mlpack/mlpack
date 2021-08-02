@@ -3,6 +3,7 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
+  make_alias.hpp
   #rnn.hpp
   #rnn_impl.hpp
   #brnn.hpp

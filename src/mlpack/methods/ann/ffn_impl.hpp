@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "ffn.hpp"
 
+#include "make_alias.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -998,20 +1000,6 @@ void FFN<
     MakeAlias(layerGradients[i], gradient.memptr() + start, layerParamSize, 1);
     start += layerParamSize;
   }
-}
-
-// Utility function to make an alias.
-template<typename MatType>
-void MakeAlias(MatType& m,
-               typename MatType::elem_type* newMem,
-               const size_t numRows,
-               const size_t numCols)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  m.~MatType();
-  new (&m) MatType(newMem, numRows, numCols, false, true);
 }
 
 } // namespace ann
