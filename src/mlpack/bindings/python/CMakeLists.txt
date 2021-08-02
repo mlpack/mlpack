@@ -3,6 +3,9 @@ macro (not_found_return message)
   macro (add_python_binding name)
     # Do nothing.
   endmacro ()
+  macro (add_python_wrapper group_name)
+    # Do nothing.
+  endmacro ()
 
   return()
 endmacro ()
