@@ -291,7 +291,7 @@ void PrintJL(const string& bindingName,
 
   // Extract the results in order.
   cout << "  results = (";
-  string indentStr(12, ' ');
+  string indentStr(13, ' ');
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     ParamData& d = parameters.at(outputOptions[i]);
