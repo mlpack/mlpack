@@ -290,7 +290,7 @@ void PrintJL(const string& bindingName,
   cout << endl;
 
   // Extract the results in order.
-  cout << "  results = ";
+  cout << "  results = (";
   string indentStr(12, ' ');
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
