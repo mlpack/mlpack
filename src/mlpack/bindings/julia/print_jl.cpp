@@ -289,16 +289,9 @@ void PrintJL(const string& bindingName,
   cout << "  call_" << bindingName << "(p, t)" << endl;
   cout << endl;
 
-  // Clean up.
-  cout << "  # We are responsible for cleaning up the `p` and `t` objects."
-      << endl;
-  cout << "  DeleteParameters(p)" << endl;
-  cout << "  DeleteTimers(t)" << endl;
-  cout << endl;
-
   // Extract the results in order.
-  cout << "  return ";
-  string indentStr(9, ' ');
+  cout << "  results = ";
+  string indentStr(12, ' ');
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     ParamData& d = parameters.at(outputOptions[i]);
@@ -309,7 +302,16 @@ void PrintJL(const string& bindingName,
       cout << "," << endl << indentStr;
   }
 
-  cout << endl << "end" << endl;
+  cout << ")" << endl << endl;
+
+  // Clean up.
+  cout << "  # We are responsible for cleaning up the `p` and `t` objects."
+      << endl;
+  cout << "  DeleteParameters(p)" << endl;
+  cout << "  DeleteTimers(t)" << endl;
+  cout << endl;
+  cout << "  return results" << endl;
+  cout << "end" << endl;
 }
 
 } // namespace julia
