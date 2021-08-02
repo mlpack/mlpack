@@ -116,7 +116,8 @@ void PrintDocs(const string& bindingName,
       << bindingName << "_detailed-documentation){: .language-detail-link #"
       << languages[i] << " }";
   }
-  cout << "." << endl;
+  if(!addWrapperDocs[i])
+    cout << "." << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
