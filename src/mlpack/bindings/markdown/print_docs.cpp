@@ -372,6 +372,11 @@ void PrintDocs(const string& bindingName,
                 << PrintLanguage(languages[i]) << " binding.</span>";
           }
           cout << " |";
+          string def = PrintDefault(bindingName, it->second.name);
+          if (def.size() > 0)
+            cout << "`" << def << "` |";
+          else
+            cout << " |";
           cout << endl;
         }
       }
