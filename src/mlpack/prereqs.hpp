@@ -105,14 +105,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
 
-// If we have Boost 1.58 or older and are using C++14, the compilation is likely
-// to fail due to boost::visitor issues.  We will pre-emptively fail.
-#if __cplusplus > 201103L && BOOST_VERSION < 105900
-#error Use of C++14 mode with Boost < 1.59 is known to cause compilation \
-problems.  Instead specify the C++11 standard (-std=c++11 with gcc or clang), \
-or upgrade Boost to 1.59 or newer.
-#endif
-
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
 // it's part of the C++11 standard.
