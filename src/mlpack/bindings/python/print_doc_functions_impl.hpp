@@ -497,7 +497,9 @@ inline std::string CreateObject(const std::string& bindingName,
       isHyperParam = true;
 
     if(!isHyperParam) continue;
-    if(it->second.name == "help" || it->second.name == "info") continue;
+    if(it->second.name == "help" || it->second.name == "info" ||
+        it->second.name == "version")
+        continue;
 
     if (!first)
       createObj += ", ";

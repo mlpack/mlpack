@@ -57,9 +57,7 @@ BINDING_USER_NAME("AdaBoost Training");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
-    "classification.  This can be used to train an AdaBoost model on labeled "
-    "data");
+    "Training AdaBoost model.");
 
 // Long description.
 BINDING_LONG_DESC(

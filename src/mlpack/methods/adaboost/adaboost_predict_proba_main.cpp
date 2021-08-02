@@ -56,7 +56,7 @@ using namespace mlpack::util;
 BINDING_USER_NAME("AdaBoost Probability Prediction");
 
 // Short description.
-BINDING_SHORT_DESC("");
+BINDING_SHORT_DESC("Class probabilities from model.");
 
 // Long description.
 BINDING_LONG_DESC("");

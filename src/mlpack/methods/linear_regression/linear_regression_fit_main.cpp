@@ -32,31 +32,27 @@ BINDING_USER_NAME("Simple Linear Regression Training");
 
 // Short description.
 BINDING_SHORT_DESC(
-  "An implementation of simple linear regression and ridge regression using "
-  "ordinary least squares.  Given a dataset and responses, a model can be "
-  "trained and saved for later use.");
+  "Train a linear regression model.");
 
 // Long description.
 BINDING_LONG_DESC(
   "An implementation of simple linear regression and simple ridge regression "
   "using ordinary least squares. This solves the problem"
   "\n\n"
-  "  y = X * b + e"
-  "\n\n"
-  "where X (specified by " + PRINT_PARAM_STRING("training") + ") and y "
-  "(specified either as the last column of the input matrix " +
-  PRINT_PARAM_STRING("training") + " or via the " +
-  PRINT_PARAM_STRING("training_responses") + " parameter) are known and b is"
-  " the desired variable.  If the covariance matrix (X'X) is not invertible, "
-  "or if the solution is overdetermined, then specify a Tikhonov "
-  "regularization constant (with " + PRINT_PARAM_STRING("lambda") + ") "
-  "greater than 0, which will regularize the covariance matrix to make it "
-  "invertible. The calculated value of b can be used to predict through the "
-  "predict program of linear regression.");
+  "  y = X * b + e");
 
 // Example.
 BINDING_EXAMPLE(
-  "For example, to fit a linear regression on the dataset ");
+    IMPORT_EXT_LIB() + "\n" +
+    IMPORT_SPLIT() + "\n" +
+    IMPORT_THIS("linear_regression") + "\n" +
+    GET_DATASET("X", "https://example.com") + "\n" +
+    GET_DATASET("y", "https://example.com") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
+    "0.2") + "\n" +
+    CREATE_OBJECT("model", "linear_regression") + "\n" +
+    CALL_METHOD("model", "fit", "training", "X_train",
+        "training_responses", "y_train"));
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",

@@ -28,17 +28,17 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Linear Regression Predict");
+BINDING_USER_NAME("Linear Regression Prediction");
 
 // Short description.
-BINDING_SHORT_DESC("");
+BINDING_SHORT_DESC("Predictions from model.");
 
 // Long description.
 BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-  "To use a trained ");
+  CALL_METHOD("model", "predict", "test", "X_test"));
 
 PARAM_MODEL_IN(LinearRegression, "input_model", "Existing LinearRegression "
     "model to use.", "m");
