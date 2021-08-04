@@ -20,8 +20,14 @@ namespace data{
  * A simple trim fucntion to strip off whitespaces 
  * from both the side of string.
  */
-inline std::string trim(std::string str)
+inline void trim(std::string& str)
 {
+  if(str.size() < 2)
+  {
+    str = "";
+    return;
+  }
+
   size_t startIndex = 0;
 
   while(std::isspace(str[startIndex]))
@@ -39,7 +45,7 @@ inline std::string trim(std::string str)
   std::string trimmedStr = (endIndex - startIndex == str.size()) ? 
                              std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
 
-  return trimmedStr;
+  str = trimmedStr;
 }
     
 }  // namespace data

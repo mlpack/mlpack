@@ -170,6 +170,78 @@ namespace data
     return mat_size;
   }
 
+
+  inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f, const char delim = ',')
+  {
+    bool load_okay = f.good();
+
+    f.clear();
+    
+    const std::fstream::pos_type pos1 = f.tellg();
+    
+    size_t f_n_rows = 0;
+    size_t f_n_cols = 0;
+    
+    std::string line_string;
+    std::stringstream line_stream;
+    std::string token;
+
+    while (f.good() && load_okay)
+    {
+      std::getline(f, line_string);
+      if (line_string.size() == 0)
+      {
+        break;
+      }
+      line_stream.clear();
+      line_stream.str(line_string);
+
+      size_t line_n_cols = 0;
+
+      while (line_stream.good())
+      {
+        std::getline(line_stream, token, delim);
+
+	/*size_t found = token.find('"');
+
+	if(found == std::string::npos)
+	{
+	  ++line_n_cols;
+	}
+	else
+	{
+	  std::getline(line_stream, token, delim);
+          ++line_n_cols;
+	}
+	*/
+
+	if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
+	    ) && token[token.size() - 1] != '"')
+	{
+	    while(token[token.size() - 1] != '"')
+            {
+              std::getline(line_stream, token, delim);
+            }
+	}
+
+	++line_n_cols;
+      }
+
+      if (f_n_cols < line_n_cols)
+      {
+        f_n_cols = line_n_cols;
+      }
+
+      ++f_n_rows;
+    }
+
+    f.clear();
+    f.seekg(pos1);
+
+    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+
+    return mat_size;
+  }
   /**
    * Returns a bool value showing whether data was loaded successfully or not.
    * Parses the file and loads the data into the given matrix.

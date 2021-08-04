@@ -212,7 +212,7 @@ class LoadCSV
       if (rows == 1)
       {
         // Extract the number of columns.
-        std::pair<size_t, size_t> dimen = GetMatSize(inFile, delim);
+        std::pair<size_t, size_t> dimen = GetNonNumericMatSize(inFile, delim);
         cols = dimen.second;
       }
 
@@ -238,6 +238,40 @@ class LoadCSV
        {
          std::getline(line_stream, token, delim);
 	 trim(token);
+
+	 /*size_t found = token.find('"');
+
+	 if(found != std::string::npos)
+	 {
+	   std::string firstPart = token + ",";
+	   std::string secondPart;
+
+	   std::getline(line_stream, secondPart, delim);
+	   token = firstPart + secondPart;
+	 }
+	 */
+
+        if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
+            ) && token[token.size() - 1] != '"')
+        {
+	  /*
+          token += delim;
+          std::string part;
+          std::getline(line_stream, part, delim);
+          token += part;
+	  */
+          std::string tok = token;
+
+	  while(token[token.size() - 1] != '"')
+	  {
+	    tok += delim;
+	    std::getline(line_stream, token, delim);
+	    tok += token;
+	  }
+
+	  token = tok;
+	}
+
 	 info.template MapFirstPass<T>(std::move(token), rows - 1);
        }
       }
@@ -280,7 +314,7 @@ class LoadCSV
       if (cols == 1)
       {
         // Extract the number of dimensions.
-        std::pair<size_t, size_t> dimen = GetMatSize(inFile, delim);
+        std::pair<size_t, size_t> dimen = GetNonNumericMatSize(inFile, delim);
         rows = dimen.second;
 
         // Reset the DatasetInfo object, if needed.
@@ -318,6 +352,41 @@ class LoadCSV
         {
           std::getline(line_stream, token, delim);
 	  trim(token);
+
+	  /*size_t found = token.find('"');
+
+	  if(found != std::string::npos)
+	  {
+	    std::string firstPart = token + ",";
+	    std::string secondPart;
+
+	    std::getline(line_stream, secondPart, delim);
+	    token = firstPart + secondPart;
+	  }
+	  */
+  
+          if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
+              ) && token[token.size() - 1] != '"')
+          {
+	    /*
+            token += delim;
+            std::string part;
+            std::getline(line_stream, part, delim);
+            token += part;
+	    */
+
+	    std::string tok = token;
+
+	    while(token[token.size() - 1] != '"')
+	    {
+	      tok += delim;
+	      std::getline(line_stream, token, delim);
+	      tok += token;
+            }
+
+	    token = tok;
+          }
+
           info.template MapFirstPass<T>(std::move(token), dim++);
         }
       }
@@ -391,6 +460,41 @@ class LoadCSV
 
         std::getline(line_stream, token, delim);
         trim(token);
+
+	/*size_t found = token.find('"');
+
+	if(found != std::string::npos)
+	{
+	  std::string firstPart = token + ",";
+	  std::string secondPart;
+
+	  std::getline(line_stream, secondPart, delim);
+	  token = firstPart + secondPart;
+	}
+	*/
+
+        if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
+            ) && token[token.size() - 1] != '"')
+        {
+	  /*
+          token += delim;
+          std::string part;
+          std::getline(line_stream, part, delim);
+          token += part;
+	  */
+
+	  std::string tok = token;
+
+	  while(token[token.size() - 1] != '"')
+	  {
+	    tok += delim;
+	    std::getline(line_stream, token, delim);
+	    tok += token;
+          }
+
+	  token = tok;
+        }
+
 	inout(row, col++) = infoSet.template MapString<T>(std::move(token), row);
       }      
       // Make sure we got the right number of rows.
@@ -464,6 +568,41 @@ class LoadCSV
         std::getline(line_stream, token, delim);
 	trim(token);
 
+	/*size_t found = token.find('"');
+
+	if(found != std::string::npos)
+	{
+	  std::string firstPart = token + ",";
+	  std::string secondPart;
+
+	  std::getline(line_stream, secondPart, delim);
+	  token = firstPart + secondPart;
+	}
+	*/
+
+        if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
+            ) && token[token.size() - 1] != '"')
+        {
+
+            /*
+	    token += delim;
+            std::string part;
+            std::getline(line_stream, part, delim);
+            token += part;
+	    */
+	  // first part of the string
+	  std::string tok = token;
+
+	  while(token[token.size() - 1] != '"')
+	  {
+	    tok += delim;
+	    std::getline(line_stream, token, delim);
+	    tok += token;
+	  }
+
+	  token = tok;
+        }
+
         inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
 	row++;
       }
@@ -496,6 +635,7 @@ class LoadCSV
 
   inline std::pair<size_t, size_t> GetMatSize(std::ifstream& f, const char delim);
 
+  inline std::pair<size_t, size_t> GetNonNumericMatSize(std::ifstream& f, const char delim);
   //! Extension (type) of file.
   std::string extension;
   //! Name of file.
