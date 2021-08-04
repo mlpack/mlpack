@@ -22,11 +22,16 @@ namespace data{
  */
 inline void trim(std::string& str)
 {
-  if(str.size() < 2)
+  /*if(str.size() < 2)
   {
     return;
-  }
+  }*/
 
+  if(str.find_first_not_of(' ') == std::string::npos)
+  {
+    str = "";
+    return;
+  }
   size_t startIndex = 0;
 
   while(std::isspace(str[startIndex]))
