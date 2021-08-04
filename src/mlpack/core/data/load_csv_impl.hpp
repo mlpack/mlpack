@@ -215,8 +215,7 @@ namespace data
 	}
 	*/
 
-	if((token[0] == '"' || (token[0] == '\\' && token[1] == '"')
-	    ) && token[token.size() - 1] != '"')
+	if(token[0] == '"' && token[token.size() - 1] != '"')
 	{
 	    while(token[token.size() - 1] != '"')
             {

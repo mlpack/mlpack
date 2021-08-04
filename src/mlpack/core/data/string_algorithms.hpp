@@ -24,7 +24,6 @@ inline void trim(std::string& str)
 {
   if(str.size() < 2)
   {
-    str = "";
     return;
   }
 
