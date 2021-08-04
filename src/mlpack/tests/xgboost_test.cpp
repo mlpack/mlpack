@@ -47,7 +47,7 @@ TEST_CASE("SSELeafValueTest", "[XGBTest]")
   SSELoss Loss;
   (void) Loss.Evaluate<false>(input, weights);
 
-  REQUIRE(Loss.OutputLeafValue(input, weights) == leafValue);
+  REQUIRE(Loss.OutputLeafValue<false>(input, weights) == leafValue);
 }
 
 /**
@@ -155,4 +155,29 @@ TEST_CASE("EmptyPredictTest", "[XGBTest]")
 
   REQUIRE_THROWS_AS(xgb.Predict(points.col(0)), std::invalid_argument);
   REQUIRE_THROWS_AS(xgb.Predict(points, predictions), std::invalid_argument);
+}
+
+/**
+ * A basic construction of the xgboost---ensure that a forest of trees is
+ * generated.
+ */
+TEST_CASE("BasicConstructionTestXGB", "[XGBTest]")
+{
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::rowvec responses(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 0.0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 1.0;
+  }
+
+  // Use default parameters.
+  XGBoostTreeRegressor<> xgb(dataset, responses);
+
+  REQUIRE(xgb.NumTrees() == 100); // 100 is the default value.
 }

@@ -201,7 +201,8 @@ double XGBoostTreeRegressor<
     Timer::Stop("train_tree");
 
     // Predict the residuals for the current step.
-    arma::rowvec currResidualPred = trees[oldNumTrees + i].Predict(dataset);
+    arma::rowvec currResidualPred;
+    trees[oldNumTrees + i].Predict(dataset, currResidualPred);
 
     // Update the predictions.
     // F_m(x) = F_m-1(x) + learning_rate * tree.Predict(x)

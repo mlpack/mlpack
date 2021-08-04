@@ -56,7 +56,7 @@ class SSELoss
   /**
    * Returns the output value for the leaf in the tree.
    */
-  template<typename MatType, typename WeightVecType>
+  template<bool UseWeights, typename MatType, typename WeightVecType>
   double OutputLeafValue(const MatType& /* input */,
                          const WeightVecType& /* weights */)
   {
