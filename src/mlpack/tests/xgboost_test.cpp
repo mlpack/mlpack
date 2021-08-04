@@ -13,12 +13,16 @@
 #include <mlpack/methods/xgboost/loss_functions/sse_loss.hpp>
 #include <mlpack/methods/xgboost/xgb_exact_numeric_split.hpp>
 #include <mlpack/methods/xgboost/xgboost_tree_regressor.hpp>
+#include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
+#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
+#include "test_function_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ensemble;
+using namespace mlpack::tree;
 
 /**
  * Test that the initial prediction is calculated correctly for SSE loss.
@@ -180,4 +184,73 @@ TEST_CASE("BasicConstructionTestXGB", "[XGBTest]")
   XGBoostTreeRegressor<> xgb(dataset, responses);
 
   REQUIRE(xgb.NumTrees() == 100); // 100 is the default value.
+}
+
+/**
+ * Test unweighted numeric learning, making sure that we get better
+ * performance than a single decision tree.
+ */
+TEST_CASE("NumericalLearningTest", "[XGBTest]")
+{
+  arma::mat X;
+  arma::rowvec Y;
+
+  if (!data::Load("lars_dependent_x.csv", X))
+    FAIL("Cannot load dataset lars_dependent_x.csv");
+  if (!data::Load("lars_dependent_y.csv", Y))
+    FAIL("Cannot load dataset lars_dependent_y.csv");
+
+  arma::mat XTrain, XTest;
+  arma::rowvec YTrain, YTest;
+  data::Split(X, Y, XTrain, XTest, YTrain, YTest, 0.3);
+
+  XGBoostTreeRegressor<> xgb(XTrain, YTrain);
+  DecisionTreeRegressor<> dt(XTrain, YTrain, 5);
+
+  // Making predicstions using xgboost.
+  arma::rowvec xgbPredictions, dtPredictions;
+  xgb.Predict(XTest, xgbPredictions);
+  const double xgbRMSE = RMSE(xgbPredictions, YTest);
+
+  // Making predictions using decision tree.
+  dt.Predict(XTest, dtPredictions);
+  const double treeRMSE = RMSE(dtPredictions, YTest);
+
+  REQUIRE(xgbRMSE < treeRMSE);
+}
+
+/**
+ * Test that different trees get generated.
+ */
+TEST_CASE("DifferentTreesTestXGB", "[XGBTest]")
+{
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::rowvec responses(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 0.0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 1.0;
+  }
+
+  bool success = false;
+  size_t trial = 0;
+
+  // It's possible we might get the same random dimensions selected, so let's do
+  // multiple trials.
+  while (!success && trial < 5)
+  {
+    XGBoostTreeRegressor<SSELoss, RandomDimensionSelect> xgb;
+    xgb.Train(dataset, responses, 2);
+
+    success = (xgb.Tree(0).SplitDimension() != xgb.Tree(1).SplitDimension());
+
+    ++trial;
+  }
+
+  REQUIRE(success == true);
 }
