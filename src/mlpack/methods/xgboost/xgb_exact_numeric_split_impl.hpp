@@ -86,6 +86,19 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   return bestFoundGain;
 }
 
+template<typename LossFunction>
+template<typename ElemType>
+size_t XGBExactNumericSplit<LossFunction>::CalculateDirection(
+    const ElemType& point,
+    const double& splitInfo,
+    const AuxiliarySplitInfo& /* aux */)
+{
+  if (point <= splitInfo)
+    return 0; // Go left.
+  else
+    return 1; // Go right.
+}
+
 } // namespace ensemble
 } // namespace mlpack
 

@@ -47,7 +47,7 @@ XGBoostTreeRegressor<
                         const double alpha,
                         const bool warmStart,
                         DimensionSelectionType dimensionSelector) :
-    eta(eta), initialPred(0.0) avgGain(0.0)
+    eta(eta), initialPred(0.0), avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
@@ -88,7 +88,7 @@ typename VecType::elem_type XGBoostTreeRegressor<
     LossFunction,
     DimensionSelectionType,
     NumericSplitType
->::XGBoostTreeRegressor::Predict(const VecType& point)
+>::XGBoostTreeRegressor::Predict(const VecType& point) const
 {
   // Check edge case.
   if (trees.size() == 0)
@@ -114,7 +114,7 @@ void XGBoostTreeRegressor<
     DimensionSelectionType,
     NumericSplitType
 >::XGBoostTreeRegressor::Predict(const MatType& data,
-                                 arma::rowvec& predictions)
+                                 arma::rowvec& predictions) const
 {
   // Check edge case.
   if (trees.size() == 0)
@@ -143,8 +143,8 @@ double XGBoostTreeRegressor<
     DimensionSelectionType,
     NumericSplitType
 >::XGBoostTreeRegressor::Train(const MatType& dataset,
-                               const ResponsesType& responses,
                                const data::DatasetInfo& datasetInfo,
+                               const ResponsesType& responses,
                                const size_t numTrees,
                                const size_t maxDepth,
                                const double minChildWeight,
@@ -176,7 +176,7 @@ double XGBoostTreeRegressor<
   // F_0. Set initialPred as the prediction for all the data points. This serves
   // as the basis to calculate the initial residuals on which the trees are
   // fitted. This is updated after every iteration of boosting.
-  input.row(1) = arma::vec(responses.size(), arma::fill::initialPred);
+  input.row(1).fill(initialPred);
 
   for (size_t i = 0; i < numTrees; ++i)
   {

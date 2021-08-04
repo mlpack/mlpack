@@ -51,7 +51,7 @@ class XGBoostTreeRegressor
 {
  public:
   //! Allow access to the underlying decision tree type.
-  typedef mlpack::tree::DecisionTreeRegressor<FitnessFunction,
+  typedef mlpack::tree::DecisionTreeRegressor<LossFunction,
       NumericSplitType, mlpack::tree::AllCategoricalSplit,
       DimensionSelectionType> DecisionTreeType;
   /**
@@ -116,7 +116,7 @@ class XGBoostTreeRegressor
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  std::vector<DecisionTreeType*> trees;
+  std::vector<DecisionTreeType> trees;
   double eta;
   double initialPred;
   double avgGain;
@@ -134,12 +134,12 @@ class XGBoostTreeRegressor
                const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
-}
+};
 
 } // namespace ensemble
 } // namespace mlpack
 
 // Include implementation.
-#include "xgboost_impl.hpp"
+#include "xgboost_tree_regressor_impl.hpp"
 
 #endif
