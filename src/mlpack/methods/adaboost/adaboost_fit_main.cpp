@@ -60,14 +60,7 @@ BINDING_SHORT_DESC(
     "Training AdaBoost model.");
 
 // Long description.
-BINDING_LONG_DESC(
-    "This program implements the AdaBoost (or Adaptive "
-    "Boosting) algorithm. The variant of AdaBoost implemented here is "
-    "AdaBoost.MH. It uses a weak learner, either decision stumps or "
-    "perceptrons, and over many iterations, creates a strong learner that is a "
-    "weighted ensemble of weak learners. It runs these iterations until a "
-    "tolerance value is crossed for change in the value of the weighted "
-    "training error.");
+BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(

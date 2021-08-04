@@ -17,6 +17,7 @@
 #include "binding_info.hpp"
 #include "print_docs.hpp"
 #include "print_doc_functions.hpp"
+#include "print_param_table.hpp"
 
 // Make sure that this is defined.
 #ifndef DOXYGEN_PREFIX
@@ -67,6 +68,7 @@ void PrintDocs(const string& bindingName,
 
   // 'params' stores the Params object for non-wrapper bindings.
   Params params = IO::Parameters(bindingName);
+
   const BindingDetails& doc = params.Doc();
 
   // 'paramMethods' stores the Params object for all wrapper bindings.
@@ -116,31 +118,19 @@ void PrintDocs(const string& bindingName,
   }
   cout << endl;
 
+  cout << doc.shortDescription << " ";
+
   for (size_t i = 0; i < languages.size(); ++i)
   {
-    // for wrapper docs, there is a single long description, that is present
-    // in a single _main.cpp file.
-    if(addWrapperDocs[i])
-    {
-      string desc = boost::replace_all_copy(
-          paramMethods[validMethods[0]].Doc().longDescription(), "|", "\\|");
-      cout << desc << "\n";
-    }
+    if(!addWrapperDocs[i])
+      cout << "[Detailed documentation](#" << languages[i] << "_";
     else
-    {
-      // for non-wrappers we just print the short description.
-      cout << doc.shortDescription << " ";
-    }
-    if(addWrapperDocs[i])
-      cout << "[](#";
-    else
-      cout << "[Detailed documentation](#";
+      cout << "[](#" << languages[i] << "_";
 
-    cout  << languages[i] << "_"
-      << bindingName << "_detailed-documentation){: .language-detail-link #"
+    cout << bindingName << "_detailed-documentation){: .language-detail-link #"
       << languages[i] << " }";
-    cout << "." << endl;
   }
+  cout << "." << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -167,65 +157,19 @@ void PrintDocs(const string& bindingName,
           << endl;
       cout << "|------------|------------|-------------------|---------------|"
           << endl;
-      map<string, ParamData>& parameters = params.Parameters();
-      for (map<string, ParamData>::iterator it = parameters.begin();
-          it != parameters.end(); ++it)
-      {
-        if (!it->second.input)
-          continue;
 
-        // There are some special options that don't exist in some languages.
-        if (languages[i] != "python" && it->second.name == "copy_all_inputs")
-          continue;
-        if (languages[i] != "cli" &&
-            (it->second.name == "help" || it->second.name == "info" ||
-            it->second.name == "version"))
-          continue;
+      unordered_set<string> paramsSet;
+      PrintParamTable(bindingName, languages[i], params,
+          {"name", "type", "description", "default"}, paramsSet,
+          false, false, true, false);
+      paramsSet.clear();
 
-        // Print name, type, description, default.
-        cout << "| ";
-        // We need special processing if the language is go then the required
-        // parameter will be lowerCamelCase.
-        if (languages[i] == "go")
-        {
-          if (!it->second.required)
-          {
-            cout << ParamString(bindingName, it->second.name) << " | ";
-          }
-          else
-          {
-            string name = ParamString(bindingName, it->second.name);
-            name[1] = tolower(name[1]);
-            cout << name << " | ";
-          }
-        }
-        else
-        {
-          cout << ParamString(bindingName, it->second.name) << " | ";
-        }
-        cout << ParamType(params, it->second) << " | ";
-        string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
-        cout << desc; // just a string
-        // Print whether or not it's a "special" language-only parameter.
-        if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
-            it->second.name == "info" || it->second.name == "version")
-        {
-          cout << "  <span class=\"special\">Only exists in "
-              << PrintLanguage(languages[i]) << " binding.</span>";
-        }
-        cout << " | ";
-        string def = PrintDefault(bindingName, it->second.name);
-        if (def.size() > 0)
-          cout << "`" << def << "` |";
-        else
-          cout << " |";
-        cout << endl;
-      }
       cout << endl;
 
       // Determine if there are any output options, to see if we need
       // to print the header of the output options table.
       bool hasOutputOptions = false;
+      map<string, ParamData> parameters = params.Parameters();
       for (map<string, ParamData>::iterator it = parameters.begin();
           it != parameters.end(); ++it)
       {
@@ -248,38 +192,12 @@ void PrintDocs(const string& bindingName,
         cout << "| ***name*** | ***type*** | ***description*** |" << endl;
         cout << "|------------|------------|-------------------|" << endl;
       }
-      for (map<string, ParamData>::iterator it = parameters.begin();
-          it != parameters.end(); ++it)
-      {
-        if (it->second.input)
-          continue;
 
-        // Print name, type, description.
-        cout << "| ";
-        // We need special processing if the language is go then the output
-        // parameter will be lowerCamelCase.
-        if (languages[i] == "go")
-        {
-          string name = ParamString(bindingName, it->second.name);
-          name[1] = tolower(name[1]);
-          cout << name << " | ";
-        }
-        else
-        {
-          cout << ParamString(bindingName, it->second.name) << " | ";
-        }
-        cout << ParamType(params, it->second) << " | ";
-        cout << it->second.desc;
-        // Print whether or not it's a "special" language-only parameter.
-        if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
-            it->second.name == "info" || it->second.name == "version")
-        {
-          cout << "  <span class=\"special\">Only exists in "
-              << PrintLanguage(languages[i]) << " binding.</span>";
-        }
-        cout << " |";
-        cout << endl;
-      }
+      PrintParamTable(bindingName, languages[i], params,
+          {"name", "type", "description"}, paramsSet,
+          false, false, false, true);
+      paramsSet.clear();
+
       cout << endl;
 
       cout << "### Detailed documentation" << endl;
@@ -341,6 +259,8 @@ void PrintDocs(const string& bindingName,
       cout << endl;
 
       cout << "### Parameters" << endl;
+      cout << endl;
+
       cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
           << endl;
       cout << "|------------|------------|-------------------|---------------|"
@@ -350,61 +270,15 @@ void PrintDocs(const string& bindingName,
       for(auto mainItr=paramMethods.begin(); mainItr!=paramMethods.end();
           ++mainItr)
       {
-        map<string, ParamData> parameters = mainItr->second.Parameters();
-
-        for (map<string, ParamData>::iterator it = parameters.begin();
-            it != parameters.end(); ++it)
-        {
-          if(it->second.name == "help" || it->second.name == "version" ||
-              it->second.name == "version" || it->second.name == "info")
-            continue;
-
-          bool isSerial;
-          mainItr->second.functionMap[it->second.tname]["IsSerializable"](
-              it->second, NULL, (void*)& isSerial);
-
-          bool isHyperParam = false;
-          size_t foundArma = it->second.cppType.find("arma");
-          if(it->second.input && foundArma == string::npos &&
-              !isSerial)
-            isHyperParam = true;
-
-          if(!isHyperParam) continue;
-
-          if (paramsSet.find(it->second.name) != paramsSet.end()) continue;
-          else paramsSet.insert(it->second.name);
-
-          // Print name, type, description.
-          cout << "| ";
-          // We need special processing if the language is go then the output
-          // parameter will be lowerCamelCase.
-          if (languages[i] == "go")
-          {
-            string name = ParamString(bindingName + "_" + mainItr->first,
-                it->second.name);
-            name[1] = tolower(name[1]);
-            cout << name << " | ";
-          }
-          else
-          {
-            cout << ParamString(bindingName + "_" + mainItr->first,
-                it->second.name) << " | ";
-          }
-          cout << ParamType(params, it->second) << " | ";
-          cout << it->second.desc;
-          cout << " |";
-          string def = PrintDefault(bindingName + "_" + mainItr->first,
-              it->second.name);
-          if (def.size() > 0)
-            cout << "`" << def << "` |";
-          else
-            cout << " |";
-          cout << endl;
-        }
+        PrintParamTable(bindingName + "_" + mainItr->first,
+            languages[i], mainItr->second, {"name", "type", "description",
+            "default"}, paramsSet, true, false, true, false);
       }
+      paramsSet.clear(); // for reusing.
       cout << endl;
 
       cout << "### Example" << endl;
+      cout << endl;
       string example;
       for(auto itr=paramMethods.begin(); itr!=paramMethods.end();
           ++itr)
@@ -417,87 +291,54 @@ void PrintDocs(const string& bindingName,
           example += eg + "\n";
         }
       }
-      cout << "```" << languages[i] << "\n";
-      cout << example << "\n";
-      cout << "```" << "\n";
+
+      cout << "```" << languages[i] << endl;
+      cout << example.substr(0, example.size()-1) << endl; // do not want the last "\n".
+      cout << "```" << endl;
+      cout << endl;
 
       cout << "### Methods" << endl;
+      cout << endl;
       cout << "| **name** | **description** |" << endl;
       cout << "|----------|-----------------|" << endl;
-      for(size_t i=0; i<validMethods.size(); i++)
+      for(size_t j=0; j<validMethods.size(); j++)
       {
-        cout << "| " << validMethods[i] << " | ";
-        cout << paramMethods[validMethods[i]].Doc().shortDescription;
+        cout << "| " << validMethods[j] << " | ";
+        cout << paramMethods[validMethods[j]].Doc().shortDescription;
         cout << " |" << endl;
       }
+      cout << endl;
 
       // Print information for each method.
-      for(size_t i=0; i<validMethods.size(); i++)
+      for(size_t j=0; j<validMethods.size(); j++)
       {
-        cout << "### " << i+1 << ". " << validMethods[i] << "\n";
-        cout << paramMethods[validMethods[i]].Doc().shortDescription << "\n";
-        map<string, ParamData> parameters = paramMethods[validMethods[i]].Parameters();
-        cout << "#### Input Parameters:" << "\n";
-        cout << "| **name** | **type** | **description** |" << "\n";
-        cout << "|----------|----------|-----------------|" << "\n";
-        for (map<string, ParamData>::iterator it = parameters.begin();
-            it != parameters.end(); ++it)
-        {
-          if(!it->second.input) continue;
-
-          // skip if it is not arma type.
-          size_t foundArma = it->second.cppType.find("arma");
-          if(foundArma == string::npos) continue;
-
-          // Print name, type, description.
-          cout << "| ";
-          // We need special processing if the language is go then the output
-          // parameter will be lowerCamelCase.
-          if (languages[i] == "go")
-          {
-            string name = ParamString(bindingName + "_" + validMethods[i],
-                it->second.name);
-            name[1] = tolower(name[1]);
-            cout << name << " | ";
-          }
-          else
-          {
-            cout << ParamString(bindingName + "_" + validMethods[i],
-                it->second.name) << " | ";
-          }
-          cout << ParamType(params, it->second) << " | ";
-          cout << it->second.desc;
-          cout << " |";
-          cout << endl;
-        }
-
+        cout << "### " << j+1 << ". " << validMethods[j] << endl;
         cout << endl;
-        cout << "#### Returns: " << "\n";
-        cout << "| **type** | **description** |" << "\n";
-        cout << "|----------|-----------------|" << "\n";
+        cout << paramMethods[validMethods[j]].Doc().shortDescription << endl;
+        cout << endl;
+        map<string, ParamData> parameters = paramMethods[validMethods[i]].Parameters();
+        cout << "#### Input Parameters:" << endl;
+        cout << endl;
 
-        for (map<string, ParamData>::iterator it = parameters.begin();
-            it != parameters.end(); ++it)
-        {
-          if(it->second.input) continue; // we are printing output options.
+        cout << "| **name** | **type** | **description** |" << endl;
+        cout << "|----------|----------|-----------------|" << endl;
 
-          bool isSerial;
-          paramMethods[validMethods[i]].functionMap[it->second.tname]["IsSerializable"](
-              it->second, NULL, (void*)& isSerial);
+        PrintParamTable(bindingName + "_" + validMethods[j], languages[i],
+            paramMethods[validMethods[j]], {"name", "type", "description"},
+            paramsSet, false, true, true, false);
+        paramsSet.clear();
+        cout << endl;
 
-          // Print type, description.
-          cout << "| ";
-          cout << ParamType(params, it->second) << " | ";
-          cout << it->second.desc;
-          cout << " |";
-          string def = PrintDefault(bindingName + "_" + validMethods[i],
-              it->second.name);
-          if (def.size() > 0)
-            cout << "`" << def << "` |";
-          else
-            cout << " |";
-          cout << endl;
-        }
+        cout << "#### Returns: " << endl;
+        cout << endl;
+
+        cout << "| **type** | **description** |" << endl;
+        cout << "|----------|-----------------|" << endl;
+
+        PrintParamTable(bindingName + "_" + validMethods[j], languages[i],
+            paramMethods[validMethods[j]], {"type", "description"},
+            paramsSet, false, false, false, true);
+        cout << endl;
       }
     }
   }

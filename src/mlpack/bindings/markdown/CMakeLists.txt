@@ -37,6 +37,8 @@ set(SOURCES
   "print_doc_functions_impl.hpp"
   "print_docs.hpp"
   "print_docs.cpp"
+  "print_param_table.hpp"
+  "print_param_table.cpp"
   "print_type_doc.hpp"
   "program_doc_wrapper.hpp"
 )
@@ -203,6 +205,8 @@ function (post_markdown_setup)
       "${BINDING_SOURCE_DIR}/print_doc_functions_impl.hpp"
       "${BINDING_SOURCE_DIR}/print_docs.hpp"
       "${BINDING_SOURCE_DIR}/print_docs.cpp"
+      "${BINDING_SOURCE_DIR}/print_param_table.hpp"
+      "${BINDING_SOURCE_DIR}/print_param_table.cpp"
       "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
       "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
