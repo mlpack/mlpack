@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/xgboost/loss_functions/sse_loss.hpp>
 #include <mlpack/methods/xgboost/xgb_exact_numeric_split.hpp>
+#include <mlpack/methods/xgboost/xgboost_tree_regressor.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
@@ -140,4 +141,18 @@ TEST_CASE("XGBExactNumericSplitMinChildWeightTest", "[XGBTest]")
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
+}
+
+/**
+ * Make sure an empty forest cannot predict.
+ */
+TEST_CASE("EmptyPredictTest", "[XGBTest]")
+{
+  XGBoostTreeRegressor<> xgb; // No training.
+
+  arma::mat points(10, 100, arma::fill::randu);
+  arma::rowvec predictions;
+
+  REQUIRE_THROWS_AS(xgb.Predict(points.col(0)), std::invalid_argument);
+  REQUIRE_THROWS_AS(xgb.Predict(points, predictions), std::invalid_argument);
 }
