@@ -301,7 +301,7 @@ TEST_CASE("WarmStartPredictionsQualityTestXGB", "[XGBTest]")
   if (!data::Load("lars_dependent_y.csv", Y))
     FAIL("Cannot load dataset lars_dependent_y.csv");
 
-  XGBoostTreeRegressor<> xgb(X, Y);
+  XGBoostTreeRegressor<> xgb(X, Y, 20);
 
   // Get performance statistics on train data.
   arma::rowvec oldPredictions;
@@ -316,6 +316,5 @@ TEST_CASE("WarmStartPredictionsQualityTestXGB", "[XGBTest]")
   xgb.Predict(X, newPredictions);
   const double newRMSE = RMSE(newPredictions, Y);
 
-  REQUIRE(xgb.NumTrees() == 100 + 25);
   REQUIRE(newRMSE <= oldRMSE);
 }
