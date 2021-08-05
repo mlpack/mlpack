@@ -120,7 +120,7 @@ namespace data
     return true;
   }
 
-  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::ifstream& f, const char delim = ',')
+  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::fstream& f, const char delim = ',')
   {
     
     bool load_okay = f.good();
@@ -246,7 +246,7 @@ namespace data
    * Parses the file and loads the data into the given matrix.
    */
   template<typename MatType>
-  bool LoadCSV::LoadCSVFile(MatType& x, std::ifstream& f)
+  bool LoadCSV::LoadCSVFile(MatType& x, std::fstream& f)
   {
     bool load_okay = f.good();
 

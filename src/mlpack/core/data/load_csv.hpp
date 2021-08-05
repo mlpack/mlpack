@@ -117,7 +117,7 @@ class LoadCSV
    * @param f File stream to access the data file
    */
   template<typename MatType>
-  bool LoadCSVFile(MatType& x, std::ifstream& f);
+  bool LoadCSVFile(MatType& x, std::fstream& f);
 
   /**
    * Load the file into the given matrix with the given DatasetMapper object.
@@ -629,7 +629,7 @@ class LoadCSV
     }
   }
 
-  inline std::pair<size_t, size_t> GetMatSize(std::ifstream& f, const char delim);
+  inline std::pair<size_t, size_t> GetMatSize(std::fstream& f, const char delim);
 
   inline std::pair<size_t, size_t> GetNonNumericMatSize(std::ifstream& f, const char delim);
   //! Extension (type) of file.

@@ -94,7 +94,6 @@ bool Load(const std::string& filename,
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
-  std::ifstream istream(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
@@ -169,7 +168,7 @@ bool Load(const std::string& filename,
   if (loadType != file_type::HDF5Binary)
   {
     if(loadType == file_type::CSVASCII)
-      success = load.LoadCSVFile(matrix, istream);
+      success = load.LoadCSVFile(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
