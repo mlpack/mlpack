@@ -65,7 +65,8 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
       continue;
 
     // Evaluate the gain for the split.
-    const double gain = lossFunction.BinaryGains();
+    std::tuple<double, double> binaryGains = lossFunction.BinaryGains();
+    double gain = std::get<0>(binaryGains) + std::get<1>(binaryGains);
 
     if (gain > bestFoundGain)
     {

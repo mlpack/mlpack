@@ -141,13 +141,13 @@ class SSELoss
   /**
    * Calculates the gains for the current split.
    */
-  double BinaryGains()
+  std::tuple<double, double> BinaryGains()
   {
     double leftGain = std::pow(ApplyL1(gLeft), 2) / (hLeft + lambda);
     double rightGain = std::pow(ApplyL1(gTotal - gLeft), 2) /
         (hTotal - hLeft + lambda);
 
-    return leftGain + rightGain;
+    return std::make_tuple(leftGain, rightGain);
   }
  private:
   //! The L2 regularization parameter.
