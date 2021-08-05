@@ -26,6 +26,11 @@ class InformationGain
 {
  public:
   /**
+   * This is true if the best possible gain for any node in the tree is 0.
+   */
+  static const bool BestGainIsZero = true;
+
+  /**
    * Evaluate the information gain given a vector of class weight counts.
    */
   template<bool UseWeights, typename CountType>

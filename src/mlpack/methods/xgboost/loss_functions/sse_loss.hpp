@@ -29,7 +29,11 @@ namespace ensemble {
 class SSELoss
 {
  public:
-  static const bool bestGainIsZero = false;
+  /**
+   * This is true if the best possible gain for any node in the tree is 0.
+   */
+  static const bool BestGainIsZero = false;
+
   // Default constructor---No regularization.
   SSELoss(): alpha(0), lambda(0), minChildWeight(1) { /* Nothing to do. */}
 

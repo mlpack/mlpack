@@ -30,7 +30,11 @@ namespace tree {
 class MADGain
 {
  public:
-  static const bool bestGainIsZero = true;
+  /**
+   * This is true if the best possible gain for any node in the tree is 0.
+   */
+  static const bool BestGainIsZero = true;
+
   /**
    * Evaluate the mean absolute deviation gain from begin to end index. Note
    * that gain can be slightly greater than 0 due to floating-point
