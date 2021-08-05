@@ -399,11 +399,11 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   // Initialize and precompute various statistics to efficiently compute gain
   // values for all possible splits.
-  fitnessFunction.template BinaryScanInitialize<UseWeights>(sortedResponses,
-      sortedWeights, minimum);
+  size_t index = fitnessFunction.template BinaryScanInitialize<UseWeights>(
+      sortedResponses, sortedWeights, minimum);
 
   // Loop through all possible split points, choosing the best one.
-  for (size_t index = minimum; index < data.n_elem - minimum + 1; ++index)
+  for (; index < data.n_elem - minimum + 1; ++index)
   {
     if (UseWeights)
     {

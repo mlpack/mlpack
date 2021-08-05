@@ -127,11 +127,12 @@ class MSEGain
    * @param responses The set of responses on which statistics are computed.
    * @param weights The set of weights associated to each response.
    * @param minimum The minimum number of elements in a leaf.
+   * @return The start index for the iteration to find the best split.
    */
   template<bool UseWeights, typename ResponsesType, typename WeightVecType>
-  void BinaryScanInitialize(const ResponsesType& responses,
-                            const WeightVecType& weights,
-                            const size_t minimum)
+  size_t BinaryScanInitialize(const ResponsesType& responses,
+                              const WeightVecType& weights,
+                              const size_t minimum)
   {
     typedef typename ResponsesType::elem_type RType;
     typedef typename WeightVecType::elem_type WType;
@@ -198,6 +199,8 @@ class MSEGain
       if (rightSize > 1e-9)
         rightMean /= rightSize;
     }
+
+    return minimum;
   }
 
   /**

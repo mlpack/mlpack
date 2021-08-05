@@ -102,7 +102,8 @@ class SSELoss
    * @return The start index for the iteration to find the best split.
    */
   size_t BinaryScanInitialize(const arma::vec& sortedGradients,
-                              const arma::vec& sortedHessians)
+                              const arma::vec& sortedHessians,
+                              const size_t /* minimum */ = 0)
   {
     size_t index = 0;
     // Initializing the data members.
