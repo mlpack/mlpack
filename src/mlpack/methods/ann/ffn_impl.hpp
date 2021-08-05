@@ -34,9 +34,7 @@ FFN<
     initializeRule(std::move(initializeRule)),
     training(false),
     layerMemoryIsSet(false),
-    inputDimensionsAreSet(false),
-    totalInputSize(0),
-    totalOutputSize(0)
+    inputDimensionsAreSet(false)
 {
   /* Nothing to do here. */
 }
@@ -53,28 +51,17 @@ FFN<
 >::FFN(const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
+    network(network.network),
     parameters(network.parameters),
     inputDimensions(network.inputDimensions),
     predictors(network.predictors),
     responses(network.responses),
-    error(network.error),
     training(network.training),
     // These will be set correctly in the first Forward() call.
     layerMemoryIsSet(false),
-    inputDimensionsAreSet(false),
-    totalInputSize(0),
-    totalOutputSize(0)
+    inputDimensionsAreSet(false)
 {
-  // Build new layers according to source network
-  for (size_t i = 0; i < network.network.size(); ++i)
-  {
-    this->network.push_back(network.network[i]->Clone());
-  }
-
-  // Initialize cached matrix vectors to the right size.
-  layerOutputs.resize(this->network.size(), OutputType());
-  layerDeltas.resize(this->network.size(), OutputType());
-  layerGradients.resize(this->network.size(), OutputType());
+  // Nothing to do.
 };
 
 template<typename OutputLayerType,
@@ -94,19 +81,13 @@ FFN<
     inputDimensions(std::move(network.inputDimensions)),
     predictors(std::move(network.predictors)),
     responses(std::move(network.responses)),
-    error(std::move(network.error)),
     training(std::move(network.training)),
     // Aliases will not be correct after a std::move(), so we will manually
     // reset them.
     layerMemoryIsSet(false),
-    inputDimensionsAreSet(std::move(network.inputDimensionsAreSet)),
-    totalInputSize(std::move(network.totalInputSize)),
-    totalOutputSize(std::move(network.totalOutputSize))
+    inputDimensionsAreSet(std::move(network.inputDimensionsAreSet))
 {
-  // Initialize cached matrix parameters to the right size.
-  layerOutputs.resize(this->network.size(), OutputType());
-  layerDeltas.resize(this->network.size(), OutputType());
-  layerGradients.resize(this->network.size(), OutputType());
+  // Nothing to do.
 };
 
 template<typename OutputLayerType,
@@ -123,21 +104,6 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>& FFN<
   Swap(network);
   return *this;
 };
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::~FFN()
-{
-  for (size_t i = 0; i < network.size(); ++i)
-    delete network[i];
-}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -277,7 +243,7 @@ template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType
 >::Forward(const PredictorsType& inputs, ResponsesType& results)
 {
-  Forward(inputs, results, 0, network.size() - 1);
+  Forward(inputs, results, 0, network.Network().size() - 1);
 }
 
 template<typename OutputLayerType,
@@ -302,38 +268,8 @@ void FFN<
   // Ensure the network is valid.
   CheckNetwork("FFN::Forward()", inputs.n_rows);
 
-  // Next we need to ensure that space for layerOutputs is allocated correctly.
-  InitializeForwardPassMemory(inputs.n_cols);
-
-  // Ensure that the results matrix is the right size.
-  results.set_size(inputs.n_cols * network[end]->OutputSize());
-
-  if (end > begin)
-  {
-    network[begin]->Forward(inputs, layerOutputs[begin]);
-
-    for (size_t i = 1; i < end - begin; ++i)
-    {
-      network[begin + i]->Forward(layerOutputs[begin + i - 1],
-          layerOutputs[begin + i]);
-    }
-
-    network[end]->Forward(layerOutputs[end - 1], results);
-  }
-  else
-  {
-    network[end]->Forward(inputs, results);
-  }
-
-  // If we computed the pass through all layers, and `results` is not the same
-  // matrix as `layerOutputs.back()`, we must ensure that we cache a copy of it,
-  // since Backward() may be called later.
-  // TODO: clarify this in documentation...
-  if (end == (layerOutputs.size() - 1) &&
-      results.memptr() != layerOutputs.back().memptr())
-  {
-    layerOutputs.back() = results;
-  }
+  results.set_size(network.OutputSize(), inputs.n_cols);
+  network.Forward(inputs, results, begin, end);
 }
 
 template<typename OutputLayerType,
@@ -350,20 +286,19 @@ double FFN<
             const TargetsType& targets,
             GradientsType& gradients)
 {
-  // We assume that Forward() has already been called!
-  double res = outputLayer.Forward(layerOutputs[network.size() - 1], targets);
+  const double res = outputLayer.Forward(networkOutput, targets) +
+      network.Loss();
 
-  for (size_t i = 0; i < network.size(); ++i)
-    res += network[i]->Loss();
+  // Compute the error of the output layer.
+  outputLayer.Backward(networkOutput, targets, error);
 
-  // error's size will be set correctly by outputLayer.Backward().
-  outputLayer.Backward(layerOutputs[network.size() - 1], targets, error);
+  // Perform the backward pass.
+  network.Backward(networkOutput, error, networkDelta);
 
-  // This does nothing if the gradient's size is already set right.
-  gradients.zeros(parameters.n_rows, parameters.n_cols);
-
-  Backward();
-  Gradient(inputs, gradients);
+  // Now compute the gradients.
+  // The gradient should have the same size as the parameters.
+  gradients.set_size(parameters.n_rows, parameters.n_cols);
+  network.Gradient(inputs, networkDelta, gradients);
 
   return res;
 }
@@ -382,7 +317,7 @@ void FFN<
   // Ensure that the network is configured correctly.
   CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
 
-  results.set_size(network.back()->OutputSize(), predictors.n_cols);
+  results.set_size(network.OutputSize(), predictors.n_cols);
 
   for (size_t i = 0; i < predictors.n_cols; i += batchSize)
   {
@@ -413,15 +348,11 @@ double FFN<
   // Sanity check: ensure network is valid.
   CheckNetwork("FFN::Evaluate()", predictors.n_rows);
 
-  // Note that layerOutputs may not yet be initialized correctly, but if it
-  // isn't, this will be handled by Forward().
-  Forward(predictors, layerOutputs.back());
+  // networkOutput will be initialized by network.Forward().
+  OutputType networkOutput;
+  network.Forward(predictors, networkOutput);
 
-  double res = outputLayer.Forward(layerOutputs.back(), responses);
-  for (size_t i = 0; i < network.size(); ++i)
-    res += LossUpdate(network[i]);
-
-  return res;
+  return outputLayer.Forward(networkOutput, responses) + network.Loss();
 }
 
 template<typename OutputLayerType,
@@ -435,8 +366,6 @@ double FFN<
     OutputType
 >::Evaluate(const OutputType& parameters)
 {
-  CheckNetwork("FFN::Evaluate()", predictors.n_rows, true, false);
-
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
     res += Evaluate(parameters, i, 1);
@@ -457,15 +386,15 @@ double FFN<
             const size_t begin,
             const size_t batchSize)
 {
-  Forward(predictors.cols(begin, begin + batchSize - 1), layerOutputs.back());
+  CheckNetwork("FFN::Evaluate()", predictors.n_rows, true, false);
 
-  double res = outputLayer.Forward(layerOutputs.back(),
-      responses.cols(begin, begin + batchSize - 1));
+  // Set networkOutput to the right size if needed, then perform the forward
+  // pass.
+  networkOutput.set_size(network.OutputSize(), batchSize);
+  network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
 
-  for (size_t i = 0; i < network.size(); ++i)
-    res += network[i]->Loss();
-
-  return res;
+  return outputLayer.Forward(networkOutput,
+      responses.cols(begin, begin + batchSize - 1)) + network.Loss();
 }
 
 template<typename OutputLayerType,
@@ -500,19 +429,31 @@ double FFN<
                         OutputType& gradient,
                         const size_t batchSize)
 {
-  double res = Evaluate(parameters, begin, batchSize);
+  CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows, true, false);
 
-  for (size_t i = 0; i < network.size(); ++i)
-    res += network[i]->Loss();
+  // Set networkOutput to the right size if needed, then perform the forward
+  // pass.
+  networkOutput.set_size(network.OutputSize(), batchSize);
+  network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
 
-  outputLayer.Backward(layerOutputs.back(),
-      responses.cols(begin, begin + batchSize - 1),
-      error);
+  const double obj = outputLayer.Forward(networkOutput,
+      responses.cols(begin, begin + batchSize - 1)) + network.Loss();
 
-  Backward();
-  Gradient(predictors.cols(begin, begin + batchSize - 1), gradient);
+  // Now perform the backward pass.
+  outputLayer.Backward(networkOutput,
+      responses.cols(begin, begin + batchSize - 1), error);
 
-  return res;
+  // The delta should have the same size as the input.
+  networkDelta.set_size(predictors.n_rows, batchSize);
+  network.Backward(networkOutput, error, networkDelta);
+
+  // Now compute the gradients.
+  // The gradient should have the same size as the parameters.
+  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  network.Gradient(predictors.cols(begin, begin + batchSize - 1), networkDelta,
+      gradient);
+
+  return obj;
 }
 
 template<typename OutputLayerType,
@@ -587,7 +528,7 @@ void FFN<
 
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
-  networkInit.Initialize(network, parameters);
+  networkInit.Initialize(network.Network(), parameters);
 }
 
 template<typename OutputLayerType,
@@ -601,25 +542,13 @@ void FFN<
     OutputType
 >::SetLayerMemory()
 {
-  size_t totalWeightSize = 0;
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    const size_t weightSize = network[i]->WeightSize();
-
-    // Sanity check: ensure we aren't passing memory past the end of the
-    // parameters.
-    Log::Assert(totalWeightSize + weightSize <= parameters.n_elem,
-        "FNN::SetLayerMemory(): parameter size does not match total layer "
-        "weight size!");
-
-    network[i]->SetWeights(parameters.memptr() + totalWeightSize);
-    totalWeightSize += weightSize;
-  }
+  size_t totalWeightSize = network.WeightSize();
 
   Log::Assert(totalWeightSize == parameters.n_elem,
       "FNN::SetLayerMemory(): total layer weight size does not match parameter "
       "size!");
 
+  network.SetWeights(parameters.memptr());
   layerMemoryIsSet = true;
 }
 
@@ -638,7 +567,7 @@ void FFN<
                 const bool training)
 {
   // If the network is empty, we can't do anything.
-  if (network.size() == 0)
+  if (network.Network().size() == 0)
   {
     throw std::invalid_argument(functionName + ": cannot use network with no "
         "layers!");
@@ -681,7 +610,7 @@ void FFN<
   if (inputDimensions.size() == 0)
     inputDimensions = { inputDimensionality };
 
-  totalInputSize = std::accumulate(inputDimensions.begin(),
+  const size_t totalInputSize = std::accumulate(inputDimensions.begin(),
       inputDimensions.end(), 0);
 
   // TODO: improve this error message...
@@ -694,28 +623,14 @@ void FFN<
   // If the input dimensions have not changed from what has been computed
   // before, we can terminate early---the network already has its dimensions
   // set.
-  if (inputDimensions == network.front()->InputDimensions())
+  if (inputDimensions == network.InputDimensions())
   {
     inputDimensionsAreSet = true;
     return;
   }
 
-  network.front()->InputDimensions() = inputDimensions;
-  totalInputSize += network[0]->OutputSize();
-  totalOutputSize = network[0]->OutputSize();
-  for (size_t i = 1; i < network.size(); ++i)
-  {
-    network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-    const size_t layerOutputSize = network[i]->OutputSize();
-
-    // If we are not at the last layer, then this output is the input to the
-    // next layer.
-    if (i != network.size() - 1)
-      totalInputSize += layerOutputSize;
-
-    totalOutputSize += layerOutputSize;
-  }
-
+  network.InputDimensions() = std::move(inputDimensions);
+  network.ComputeOutputDimensions();
   inputDimensionsAreSet = true;
 }
 
@@ -731,63 +646,7 @@ void FFN<
 >::SetNetworkMode(const bool training)
 {
   this->training = training;
-  for (size_t i = 0; i < network.size(); ++i)
-    network[i]->Training() = this->training;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::Backward()
-{
-  // This actually does the backward computation.  In order to do that, we need
-  // to make sure that the local variables we'll be using are properly
-  // initialized.
-  InitializeBackwardPassMemory(layerOutputs.back().n_cols);
-
-  // layerDeltas.back() will have size
-  // network[network.size() - 2]->OutputSize() * batchSize.
-  network.back()->Backward(layerOutputs.back(), error, layerDeltas.back());
-
-  for (size_t i = 2; i <= network.size(); ++i)
-  {
-    network[network.size() - i]->Backward(
-        layerOutputs[network.size() - i],
-        layerDeltas[network.size() - i + 1],
-        layerDeltas[network.size() - i]);
-  }
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::Gradient(const InputType& input, OutputType& gradient)
-{
-  // Make sure that the memory is initialized for layerGradients.
-  InitializeGradientPassMemory(gradient);
-
-  network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
-
-  for (size_t i = 1; i < network.size() - 1; ++i)
-  {
-    network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
-        layerGradients[i]);
-  }
-
-  network.back()->Gradient(layerOutputs[network.size() - 2], error,
-      layerGradients.back());
+  network.Training() = this->training;
 }
 
 template<typename OutputLayerType,
@@ -807,15 +666,12 @@ void FFN<
   ar(CEREAL_NVP(initializeRule));
 
   // Serialize the network itself.
-  ar(CEREAL_VECTOR_POINTER(network));
+  ar(CEREAL_NVP(network));
   ar(CEREAL_NVP(parameters));
 
   // Serialize the expected input size.
   ar(CEREAL_NVP(inputDimensions));
   ar(CEREAL_NVP(training));
-
-  ar(CEREAL_NVP(totalInputSize));
-  ar(CEREAL_NVP(totalOutputSize));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
@@ -825,21 +681,13 @@ void FFN<
     predictors.clear();
     responses.clear();
 
-    layerOutputMatrix.clear();
-    layerOutputs.clear();
-    layerOutputs.resize(network.size(), OutputType());
-
-    deltaMatrix.clear();
-    layerDeltas.clear();
-    layerDeltas.resize(network.size(), OutputType());
-
-    layerGradients.clear();
-    layerGradients.resize(network.size(), OutputType());
+    networkOutput.clear();
+    networkDelta.clear();
 
     layerMemoryIsSet = false;
     inputDimensionsAreSet = false;
 
-    // The weights in parameters will be correctly set for each layer in the
+    // The weights in `parameters` will be correctly set for each layer in the
     // first call to Forward().
   }
 }
@@ -862,145 +710,15 @@ void FFN<
   std::swap(inputDimensions, network.inputDimensions);
   std::swap(predictors, network.predictors);
   std::swap(responses, network.responses);
-  std::swap(error, network.error);
   std::swap(training, network.training);
   std::swap(inputDimensionsAreSet, network.inputDimensionsAreSet);
-  std::swap(totalInputSize, network.totalInputSize);
-  std::swap(totalOutputSize, network.totalOutputSize);
-  std::swap(layerOutputMatrix, network.layerOutputMatrix);
-  std::swap(layerOutputs, network.layerOutputs);
-  std::swap(deltaMatrix, network.deltaMatrix);
-  std::swap(layerDeltas, network.layerDeltas);
-  std::swap(layerGradients, network.layerGradients);
+  std::swap(networkOutput, network.networkOutput);
+  std::swap(networkDelta, network.networkDelta);
 
   // std::swap() will not preserve Armadillo aliases correctly, so we will reset
   // those.
   layerMemoryIsSet = false;
-  layerOutputs.resize(this->network.size(), OutputType());
-  layerDeltas.resize(this->network.size(), OutputType());
-  layerGradients.resize(this->network.size(), OutputType());
-
-  network.layerMemoryIsSet = false;
-  network.layerOutputs.resize(network.network.size(), OutputType());
-  network.layerDeltas.resize(network.network.size(), OutputType());
-  network.layerGradients.resize(network.network.size(), OutputType());
 };
-
-// Initialize memory to be used for storing the outputs of each layer, if
-// necessary.  This should be called at the start of each forward pass, but does
-// not need to be called at any other time.
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::InitializeForwardPassMemory(const size_t batchSize)
-{
-  // We need to initialize memory to store the output of each layer's Forward()
-  // call.  We'll do this all in one matrix, but, the size of this matrix
-  // depends on the batch size we are using for computation.  We avoid resizing
-  // layerOutputMatrix down, unless we only need 10% or less of it.
-  if (batchSize * totalOutputSize > layerOutputMatrix.n_elem ||
-      batchSize * totalOutputSize < std::floor(0.1 * layerOutputMatrix.n_elem))
-  {
-    // All outputs will be represented by one big block of memory.
-    layerOutputMatrix = OutputType(1, batchSize * totalOutputSize);
-  }
-
-  // Now, create an alias to the right place for each layer.  We assume that
-  // layerOutputs is already sized correctly (this should be done by Add()).
-  size_t start = 0;
-  for (size_t i = 0; i < layerOutputs.size(); ++i)
-  {
-    const size_t layerOutputSize = network[i]->OutputSize();
-
-    Log::Assert(
-        start + layerOutputSize * batchSize <= batchSize * totalOutputSize,
-        "Creating alias outside bounds!");
-
-    MakeAlias(layerOutputs[i], layerOutputMatrix.memptr() + start,
-        layerOutputSize, batchSize);
-    start += batchSize * layerOutputSize;
-  }
-}
-
-// Initialize memory to be used for the backward pass.  This should be called at
-// the start of each backward pass, but does not need to be called at any other
-// time.
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::InitializeBackwardPassMemory(const size_t batchSize)
-{
-  // We need to initialize memory to store the output of each layer's Backward()
-  // and Gradient() calls.  We do this similarly to
-  // InitializeForwardPassMemory(), but we must store a matrix to use as the
-  // delta for each layer.
-  const size_t inputSize = std::accumulate(inputDimensions.begin(),
-      inputDimensions.end(), 0);
-  if (batchSize * totalInputSize > deltaMatrix.n_elem ||
-      batchSize * totalInputSize < std::floor(0.1 * layerOutputMatrix.n_elem))
-  {
-    // All deltas will be represented by one big block of memory.
-    deltaMatrix = OutputType(1, batchSize * totalInputSize);
-  }
-
-  // Now, create an alias to the right place for each layer.  We assume that
-  // layerDeltas is already sized correctly (this should be done by Add()).
-  size_t start = 0;
-  for (size_t i = 0; i < layerDeltas.size(); ++i)
-  {
-    const size_t layerInputSize = (i == 0) ? inputSize :
-        network[i - 1]->OutputSize();
-
-    Log::Assert(
-        start + layerInputSize * batchSize <= batchSize * totalInputSize,
-        "Creating alias outside bounds!");
-
-    MakeAlias(layerDeltas[i], deltaMatrix.memptr() + start, layerInputSize,
-        batchSize);
-    start += batchSize * layerInputSize;
-  }
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::InitializeGradientPassMemory(OutputType& gradient)
-{
-  // Sanity check: make sure the gradient has the right size.
-  size_t totalWeightSize = 0;
-  for (size_t i = 0; i < layerGradients.size(); ++i)
-    totalWeightSize += network[i]->WeightSize();
-  // TODO: cache totalWeightSize ...
-  if (gradient.n_elem != totalWeightSize)
-    gradient.set_size(totalWeightSize);
-
-  // We need to initialize the aliases `layerGradients()` for each layer.
-  size_t start = 0;
-  for (size_t i = 0; i < layerGradients.size(); ++i)
-  {
-    const size_t layerParamSize = network[i]->WeightSize();
-    MakeAlias(layerGradients[i], gradient.memptr() + start, layerParamSize, 1);
-    start += layerParamSize;
-  }
-}
 
 } // namespace ann
 } // namespace mlpack

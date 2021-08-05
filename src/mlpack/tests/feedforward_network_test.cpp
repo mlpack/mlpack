@@ -830,8 +830,8 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
-  const arma::mat parameterA = model.Model()[0]->Parameters();
-  const arma::mat parameterB = model.Model()[1]->Parameters();
+  const arma::mat parameterA = model.Network()[0]->Parameters();
+  const arma::mat parameterB = model.Network()[1]->Parameters();
 
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));

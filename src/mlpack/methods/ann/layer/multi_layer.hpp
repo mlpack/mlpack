@@ -36,65 +36,97 @@ class MultiLayer : public Layer<InputType, OutputType>
   // TODO: implement these types of things...
 //  MultiLayer(const MultiLayer& other);
 
-  virtual void Forward(const InputType& input, OutputType& output)
-  {
-    // Make sure training/testing mode is set right in each layer.
-    for (size_t i = 0; i < network.size(); ++i)
-      network[i]->Training() = this->training;
+  virtual MultiLayer* Clone() const { return new MultiLayer(*this); }
 
-    InitializeForwardPassMemory(input.n_cols);
+  /**
+   * Perform a forward pass with the given input data.  `output` is expected to
+   * have the correct size (e.g. number of rows equal to `OutputSize()` of the
+   * last held layer; number of columns equal to `input.n_cols`).
+   *
+   * @param input Input data to pass through the MultiLayer.
+   * @param output Matrix to store output in.
+   */
+  virtual void Forward(const InputType& input, OutputType& output);
 
-    network.front()->Forward(input, layerOutputs.front());
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      network[i]->Forward(layerOutputs[i - 1], layerOutputs[i]);
-    }
-  }
+  /**
+   * Perform a forward pass with the given input data, but only on a subset of
+   * the layers in the MultiLayer.  `output` is expected to have the correct
+   * size (e.g. number of rows equal to `OutputSize()` of the last layer to be
+   * computed; number of columns equal to `input.n_cols`).
+   *
+   * @param input Input data to pass through the MultiLayer.
+   * @param output Matrix to store output in.
+   * @param start Index of first layer to pass data through.
+   * @param end Index of last layer to pass data through.
+   */
+  void Forward(const InputType& input,
+               OutputType& output,
+               const size_t start,
+               const size_t end);
 
+  /**
+   * Perform a backward pass with the given data.  `gy` is expected to be the
+   * propagated error from the subsequent layer (or output), `input` is expected
+   * to be the output from this layer when `Forward()` was called, and `g` will
+   * store the propagated error from this layer (to be passed to the previous
+   * layer as `gy`).
+   *
+   * It is expected that `g` has the correct size already (e.g., number of rows
+   * equal to `OutputSize()` of the previous layer, and number of columns equal
+   * to `input.n_cols`).
+   *
+   * This function is expected to be called for the same input data as
+   * `Forward()` was just called for.
+   *
+   * @param input Output of Forward().
+   * @param gy Propagated error from next layer.
+   * @param g Matrix to store propagated error in for previous layer.
+   */
   virtual void Backward(const InputType& input,
                         const OutputType& gy,
-                        OutputType& g)
-  {
-    InitializeBackwardPassMemory(input.n_cols);
+                        OutputType& g);
 
-    network.back()->Backward(layerOutputs.back(), gy, layerDeltas.back());
-
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      network[network.size() - i]->Backward(
-          layerOutputs[network.size() - 1],
-          layerDeltas[network.size() - i + 1],
-          layerDeltas[network.size() - i]);
-    }
-  }
-
+  /**
+   * Compute the gradients of each layer.
+   *
+   * This function is expected to be called for the same input data as
+   * `Forward()` and `Backward()` were just called for.  That is, `input` here
+   * should be the same data as `Forward()` was called with.
+   *
+   * `gradient` is expected to have the correct size already (e.g., number of
+   * rows equal to 1, and number of columns equal to `WeightSize()`).
+   *
+   * @param input Original input data provided to Forward().
+   * @param error Error as computed by `Backward()`.
+   * @param gradient Matrix to store the gradients in.
+   */
   virtual void Gradient(const InputType& input,
                         const OutputType& error,
-                        OutputType& gradient)
-  {
-    InitializeGradientPassMemory(gradient);
-
-    // Pass gradients through each layer.
-    // TODO: do we need to go back to front?  I guess not?
-    network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
-    for (size_t i = 0; i < network.size() - 1; ++i)
-    {
-      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
-          layerGradients[i]);
-    }
-
-    network.back()->Gradient(layerOutputs[network.size() - 2], error,
-        layerGradients[network.size() - 1]);
-  }
+                        OutputType& gradient);
 
   virtual void SetWeights(typename OutputType::elem_type* weightsPtr)
   {
     size_t start = 0;
+    const size_t totalWeightSize = WeightSize();
     for (size_t i = 0; i < network.size(); ++i)
     {
+      const size_t weightSize = network[i]->WeightSize();
+
+      // Sanity check: ensure we aren't passing memory past the end of the
+      // parameters.
+      Log::Assert(start + weightSize <= totalWeightSize,
+          "FNN::SetLayerMemory(): parameter size does not match total layer "
+          "weight size!");
+
       network[i]->SetWeights(weightsPtr + start);
-      start += network[i]->WeightSize();
+      start += weightSize;
     }
+
+    // Technically this check should be unnecessary, but there's nothing wrong
+    // with a little paranoia...
+    Log::Assert(start == totalWeightSize,
+        "FNN::SetLayerMemory(): total layer weight size does not match parameter "
+        "size!");
   }
 
   virtual size_t OutputSize() const
@@ -291,5 +323,8 @@ network; }
 
 } // namespace ann
 } // namespace mlpack
+
+// Include implementation.
+#include "multi_layer_impl.hpp"
 
 #endif

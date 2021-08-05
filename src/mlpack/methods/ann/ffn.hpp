@@ -71,9 +71,6 @@ class FFN
   //! Copy/move assignment operator.
   FFN& operator=(FFN);
 
-  //! Destructor to release allocated memory.
-  ~FFN();
-
   /**
    * Check if the optimizer has MaxIterations() parameter, if it does
    * then check if it's value is less than the number of datapoints
@@ -266,10 +263,7 @@ class FFN
   template <class LayerType, class... Args>
   void Add(Args... args)
   {
-    network.push_back(new LayerType(args...));
-    layerOutputs.push_back(OutputType());
-    layerDeltas.push_back(OutputType());
-    layerGradients.push_back(OutputType());
+    network.template Add<LayerType>(args...);
     inputDimensionsAreSet = false;
   }
 
@@ -282,25 +276,24 @@ class FFN
   //cached parameters
   void Add(Layer<InputType, OutputType>* layer)
   {
-    network.push_back(layer);
-    layerOutputs.push_back(OutputType());
-    layerDeltas.push_back(OutputType());
-    layerGradients.push_back(OutputType());
+    network.Add(layer);
     inputDimensionsAreSet = false;
   }
 
   //! Get the network model.
-  const std::vector<Layer<InputType, OutputType>*>& Model() const
+  const std::vector<Layer<InputType, OutputType>*>& Network() const
   {
-    return network;
+    return network.Network();
   }
 
   /**
    * Modify the network model.  Be careful!  If you change the structure of the
    * network or parameters for layers, its state may become invalid, so be sure
-   * to call ResetParameters() afterwards.
+   * to call ResetParameters() afterwards.  Don't add any layers like this; use
+   * `Add()` instead.
    */
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>*>& Network() { return
+network.Network(); }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return responses.n_cols; }
@@ -429,18 +422,6 @@ class FFN
   void SetLayerMemory();
 
   /**
-   * The Backward algorithm (part of the Forward-Backward algorithm). Computes
-   * backward pass for module.
-   */
-  void Backward();
-
-  /**
-   * Iterate through all layer modules and update the the gradient using the
-   * layer defined optimizer.
-   */
-  void Gradient(const InputType& input, OutputType& gradient);
-
-  /**
    * Ensure that all the locally-cached information about the network is valid,
    * all parameter memory is initialized, and we can make forward and backward
    * passes.
@@ -467,14 +448,6 @@ class FFN
                         const size_t inputDimensionality);
 
   /**
-   * Initialize memory to be used for storing the outputs of each layer, if
-   * necessary.
-   */
-  void InitializeForwardPassMemory(const size_t batchSize);
-  void InitializeBackwardPassMemory(const size_t batchSize);
-  void InitializeGradientPassMemory(OutputType& gradient);
-
-  /**
    * Swap the content of this network with given network.
    *
    * @param network Desired source network.
@@ -488,8 +461,8 @@ class FFN
   //! parameter.
   InitializationRuleType initializeRule;
 
-  //! Locally-stored model modules.
-  std::vector<Layer<InputType, OutputType>*> network;
+  //! All of the network is stored inside this multilayer.
+  MultiLayer<InputType, OutputType> network;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
@@ -516,6 +489,8 @@ class FFN
   InputType responses;
 
   //! The current error for the backward pass.
+  OutputType networkOutput;
+  OutputType networkDelta;
   OutputType error;
 
   //! The current evaluation mode (training or testing).
@@ -528,38 +503,7 @@ class FFN
   //! If true, each layer has its inputDimensions properly set, and
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
-
-  //! Cached total number of input elements across all layers (for deltaMatrix
-  //! and layerDeltas).
-  size_t totalInputSize;
-  //! Cached total number of output elements across all layers (for
-  //! layerOutputMatrix and layerOutputs).
-  size_t totalOutputSize;
-
-  //! Locally-stored output parameter object.  This holds the results of
-  //! Forward() for each layer, all in one matrix.
-  OutputType layerOutputMatrix;
-  //! Aliases to different parts of layerOutputMatrix, for convenience.
-  //! layerOutputs[i] stores the results of Forward() for layer i.
-  std::vector<OutputType> layerOutputs;
-
-  //! Locally-stored delta object.
-  OutputType deltaMatrix;
-  std::vector<OutputType> layerDeltas;
-
-  //! Aliases to different parts of the gradient, for convenience.
-  //! gradientOutputs[i] stores the results of Gradient() for layer i.  These
-  //! elements are only valid inside of Gradient().
-  std::vector<OutputType> layerGradients;
 }; // class FFN
-
-// Utility function to make `m` an alias of the given memory at `newMem`, with a
-// size of numElem x 1.
-template<typename MatType>
-void MakeAlias(MatType& m,
-               typename MatType::elem_type* newMem,
-               const size_t numRows,
-               const size_t numCols);
 
 } // namespace ann
 } // namespace mlpack
