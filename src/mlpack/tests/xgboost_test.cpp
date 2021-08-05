@@ -254,3 +254,68 @@ TEST_CASE("DifferentTreesTestXGB", "[XGBTest]")
 
   REQUIRE(success == true);
 }
+
+/**
+ * Test that XGBoostTreeRegressor::Train() when passed warmStart = True
+ * trains on top of exixting forest and adds the newly trained trees to
+ * the previously exixting forest.
+ */
+TEST_CASE("WarmStartTreesTestXGB", "[XGBTest]")
+{
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::rowvec responses(100);
+  for (size_t i = 0; i < 50; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 0.0;
+  }
+  for (size_t i = 50; i < 100; ++i)
+  {
+    dataset(3, i) = i;
+    responses[i] = 1.0;
+  }
+
+  // Train a xgboost regressor.
+  XGBoostTreeRegressor<> xgb(dataset, responses, 25 /* 25 trees */);
+
+  REQUIRE(xgb.NumTrees() == 25);
+
+  xgb.Train(dataset, responses, 20 /* 20 trees */, 6, 1, 0, 1, 0,
+      true /* warmStart */);
+
+  REQUIRE(xgb.NumTrees() == 25 + 20);
+}
+
+/**
+ * Test that XGBoostTreeRegressor::Train() when passed warmStart = True
+ * does not drop prediction quality on train data. Note that prediction
+ * quality on test data may drop due to overfitting in some cases.
+ */
+TEST_CASE("WarmStartPredictionsQualityTestXGB", "[XGBTest]")
+{
+  arma::mat X;
+  arma::rowvec Y;
+
+  if (!data::Load("lars_dependent_x.csv", X))
+    FAIL("Cannot load dataset lars_dependent_x.csv");
+  if (!data::Load("lars_dependent_y.csv", Y))
+    FAIL("Cannot load dataset lars_dependent_y.csv");
+
+  XGBoostTreeRegressor<> xgb(X, Y);
+
+  // Get performance statistics on train data.
+  arma::rowvec oldPredictions;
+  xgb.Predict(X, oldPredictions);
+  const double oldRMSE = RMSE(oldPredictions, Y);
+
+  // Fitting more trees on top of existing ones.
+  xgb.Train(X, Y, 25, 6, 1, 0, 1, 0, true /* warmStart */);
+
+  // Get performance statistics on train data.
+  arma::rowvec newPredictions;
+  xgb.Predict(X, newPredictions);
+  const double newRMSE = RMSE(newPredictions, Y);
+
+  REQUIRE(xgb.NumTrees() == 100 + 25);
+  REQUIRE(newRMSE <= oldRMSE);
+}
