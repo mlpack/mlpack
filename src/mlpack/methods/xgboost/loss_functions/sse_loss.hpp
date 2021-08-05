@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_XGBOOST_LOSS_FUNCTIONS_SSE_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/xgboost/xgb_exact_numeric_split.hpp>
 
 namespace mlpack {
 namespace ensemble {
@@ -203,6 +204,9 @@ class SSELoss
     
     return 0;
   }
+
+  // Allow access of private data members to XGBExactNumericSplit.
+  friend class XGBExactNumericSplit<SSELoss>;
 };
 
 } // namespace ensemble
