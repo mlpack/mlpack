@@ -171,12 +171,24 @@ double XGBoostTreeRegressor<
   arma::Mat<typename ResponsesType::elem_type> input(2, dataset.n_cols);
   input.row(0) = responses;
 
-  // Calculate the value of initial prediction for boosting.
-  initialPred = LossFunction::InitialPrediction(responses);
-  // F_0. Set initialPred as the prediction for all the data points. This serves
-  // as the basis to calculate the initial residuals on which the trees are
-  // fitted. This is updated after every iteration of boosting.
-  input.row(1).fill(initialPred);
+  // Calculate the value of initial prediction for boosting only when
+  // warmStart is false.
+  if (!warmStart)
+  {
+    initialPred = LossFunction::InitialPrediction(responses);
+    // F_0. Set initialPred as the prediction for all the data points. This
+    // serves as the basis to calculate the initial residuals on which the
+    // trees are fitted. This is updated after every iteration of boosting.
+    input.row(1).fill(initialPred);
+  }
+  // Populate the first row with current predictions when warmStart is true.
+  else
+  {
+    arma::rowvec currPredictions;
+    Predict(dataset, currPredictions);
+    input.row(1) = currPredictions;
+  }
+
 
   for (size_t i = 0; i < numTrees; ++i)
   {
