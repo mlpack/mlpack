@@ -54,10 +54,13 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   // minChildWeight is lesser than or equal to zero.
   while (index < data.n_elem - 1)
   {
-    // We have to ensure that the minChildWeight condition is held in the right
-    // child too. So, if at any index, that condition doesn't hold true, then
+    // Steps through the current index and updates the cached data.
+    lossFunction.BinaryStep(sortedGradients, sortedHessians, index);
+    ++index;
+    
+    // If the total weight of right child is lesser than the minChildWeight,
     // terminate the loop.
-    if (!lossFunction.BinaryStep(sortedGradients, sortedHessians, index))
+    if (lossFunction.hTotal - lossFunction.hLeft < lossFunction.minChildWeight)
       break;
 
     // Make sure that the value has changed.
