@@ -34,10 +34,8 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
-  arma::vec sortedGradients(sortedIndices.n_elem);
-  arma::vec sortedHessians(sortedIndices.n_elem);
-  lossFunction.sortGradAndHess(sortedIndices, sortedGradients,
-      sortedHessians);
+  arma::vec sortedGradients = lossFunction.gradients(sortedIndices);
+  arma::vec sortedHessians = lossFunction.hessians(sortedIndices);
 
   // Sanity check: if the first element is the same as the last, we can't split
   // in this dimension.

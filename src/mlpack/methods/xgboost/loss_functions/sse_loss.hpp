@@ -97,26 +97,6 @@ class SSELoss
   }
 
   /**
-   * Sorts the gradients and hessians according to the sorted order of the
-   * feature.
-   *
-   * @param sortedIndices Vector of indices according to the sorted order of
-   *      the feature.
-   * @param sortedGradients Vector to store the sorted gradients.
-   * @param sortedHessians Vector to store the sorted hessians.
-   */
-  void sortGradAndHess(const arma::uvec& sortedIndices,
-                       arma::vec& sortedGradients,
-                       arma::vec& sortedHessians)
-  {
-    for (size_t i = 0; i < sortedIndices.n_elem; ++i)
-    {
-      sortedGradients[i] = gradients[sortedIndices[i]];
-      sortedHessians[i] = hessians[sortedIndices[i]];
-    }
-  }
-
-  /**
    * Calculates the sum of hessians and gradients for the left child.
    *
    * @return The start index for the iteration to find the best split.
