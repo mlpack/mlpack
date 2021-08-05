@@ -181,7 +181,8 @@ double XGBoostTreeRegressor<
     // trees are fitted. This is updated after every iteration of boosting.
     input.row(1).fill(initialPred);
   }
-  // Populate the first row with current predictions when warmStart is true.
+  // Populate the second row of input with current predictions when
+  //  warmStart is true.
   else
   {
     arma::rowvec currPredictions;
