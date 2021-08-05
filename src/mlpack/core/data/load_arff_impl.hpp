@@ -105,7 +105,7 @@ void LoadARFF(const std::string& filename,
           // `origDimType` string here instead (which has not had ::tolower used
           // on it).
           types.push_back(true);
-	  boost::trim_if(origDimType,
+	  trim_if(origDimType,
               [](char c)
               {
                   return c == '{' || c == '}' || c == ' ' || c == '\t';

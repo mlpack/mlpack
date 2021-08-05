@@ -18,7 +18,10 @@ namespace data{
 
 /**
  * A simple trim fucntion to strip off whitespaces 
- * from both the side of string.
+ * from both the side of string. If input is a string
+ * with all spaces then str will be empty string.
+ *
+ * @param str string to be trimmed
  */
 inline void trim(std::string& str)
 {
@@ -51,7 +54,53 @@ inline void trim(std::string& str)
 
   str = trimmedStr;
 }
-    
+
+/**
+ * Trim off characters from start and end of
+ * of the string. The supplied fucntion is
+ * used to determine which characters will
+ * be trimmed off.
+ *
+ * @param str string to be trimmed
+ * @param func fucntion to determine the characters which should be trimmed
+ */
+inline void trim_if(std::string &str, bool (*func)(char))
+{
+  if(str.find_first_not_of(' ') == std::string::npos)
+  {
+    str = "";
+    return;
+  }
+
+  size_t startIndex = 0;
+
+  for(size_t i = 0; i < str.size(); i++)
+  {
+    bool match = func(str[i]);
+
+    if(match)
+      startIndex++;
+    else
+      break;
+  }
+
+  size_t endIndex = str.size() - 1;
+
+  for(int i = str.size() - 1; i >= 0; i--)
+  {
+    bool match = func(str[i]);
+    if(match)
+      endIndex--;
+    else
+      break;
+  }
+
+  std::string trimmedStr = (endIndex - startIndex == str.size()) ?
+                             std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
+
+  str = trimmedStr;
+}
+
 }  // namespace data
 }  // namespace mlpack
 
