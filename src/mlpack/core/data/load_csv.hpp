@@ -46,19 +46,12 @@ namespace mlpack {
 namespace data {
 
 /**
- * Load the csv file.This class use boost::spirit
- * to implement the parser, please refer to following link
- * http://theboostcpplibraries.com/boost.spirit for quick review.
+ * Load the csv file.This class contains fucntions
+ * to load numeric and categorical data.
  */
 class LoadCSV
 {
  public:
-
-  char delim;
-  // Do nothing, just a place holder, to be removed later.
-  LoadCSV()
-  {
-  } 
 
   /**
    * Construct the LoadCSV object on the given file.  This will construct the
@@ -79,8 +72,6 @@ class LoadCSV
     }
     else if(extension == "txt")
     {
-      // Can we have a case where number
-      // of spaces is more than 1
       delim = ' ';
     }
 
@@ -204,11 +195,12 @@ class LoadCSV
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
     rows = 0;
-    
+
     while (std::getline(inFile, line))
     {
-      trim(line);
       ++rows;
+      // Remove whitespaces from either side
+      trim(line);
       if (rows == 1)
       {
         // Extract the number of columns.
@@ -221,8 +213,8 @@ class LoadCSV
       if (MapPolicy::NeedsFirstPass)
       {
         // In this case we must pass everything we parse to the MapPolicy.
-	std::string str(line.begin(), line.end());
-      
+        std::string str(line.begin(), line.end());
+
         std::stringstream line_stream;
         std::string token;
 
@@ -231,48 +223,31 @@ class LoadCSV
 	  break;
         }
 
-       line_stream.clear();
-       line_stream.str(line);
+        line_stream.clear();
+        line_stream.str(line);
 
-       while(line_stream.good())
-       {
-         std::getline(line_stream, token, delim);
-	 trim(token);
-
-	 /*size_t found = token.find('"');
-
-	 if(found != std::string::npos)
-	 {
-	   std::string firstPart = token + ",";
-	   std::string secondPart;
-
-	   std::getline(line_stream, secondPart, delim);
-	   token = firstPart + secondPart;
-	 }
-	 */
-
-        if(token[0] == '"' && token[token.size() - 1] != '"')
+        while(line_stream.good())
         {
-	  /*
-          token += delim;
-          std::string part;
-          std::getline(line_stream, part, delim);
-          token += part;
-	  */
-          std::string tok = token;
+          std::getline(line_stream, token, delim);
+          // Remove whitespace from either side
+	  trim(token);
 
-	  while(token[token.size() - 1] != '"')
-	  {
-	    tok += delim;
-	    std::getline(line_stream, token, delim);
-	    tok += token;
+          if(token[0] == '"' && token[token.size() - 1] != '"')
+          {
+            std::string tok = token;
+
+	    while(token[token.size() - 1] != '"')
+	    {
+	      tok += delim;
+	      std::getline(line_stream, token, delim);
+	      tok += token;
+	    }
+
+	    token = tok;
 	  }
 
-	  token = tok;
-	}
-
-	 info.template MapFirstPass<T>(std::move(token), rows - 1);
-       }
+	  info.template MapFirstPass<T>(std::move(token), rows - 1);
+        }
       }
     }
   }
@@ -307,7 +282,7 @@ class LoadCSV
     while (std::getline(inFile, line))
     {
       ++cols;
-      
+      // Remove whitespaces from either side
       trim(line);
 
       if (cols == 1)
@@ -334,6 +309,7 @@ class LoadCSV
       // If we need to do a first pass for the DatasetMapper, do it.
       if (MapPolicy::NeedsFirstPass)
       {
+        // In this case we must pass everything we parse to the MapPolicy.
         size_t dim = 0;
 
 	std::stringstream line_stream;
@@ -350,29 +326,11 @@ class LoadCSV
 	while(line_stream.good())
         {
           std::getline(line_stream, token, delim);
-	  trim(token);
-
-	  /*size_t found = token.find('"');
-
-	  if(found != std::string::npos)
-	  {
-	    std::string firstPart = token + ",";
-	    std::string secondPart;
-
-	    std::getline(line_stream, secondPart, delim);
-	    token = firstPart + secondPart;
-	  }
-	  */
+	  // Remove whitespace from either side
+          trim(token);
   
           if(token[0] == '"' && token[token.size() - 1] != '"')
           {
-	    /*
-            token += delim;
-            std::string part;
-            std::getline(line_stream, part, delim);
-            token += part;
-	    */
-
 	    std::string tok = token;
 
 	    while(token[token.size() - 1] != '"')
@@ -434,10 +392,9 @@ class LoadCSV
 
     while (std::getline(inFile, line))
     {
-      
+      // Remove whitespaces from either side
       trim(line);
 
-      const bool canParse = true;
       std::stringstream line_stream;
       std::string token;
 
@@ -451,35 +408,17 @@ class LoadCSV
 
       while(line_stream.good())
       {
-	if(token == "\t")
-	{
-	  token.clear();
-	}
+        if(token == "\t")
+        {
+          token.clear();
+        }
 
         std::getline(line_stream, token, delim);
+	// Remove whitespace from either side
         trim(token);
-
-	/*size_t found = token.find('"');
-
-	if(found != std::string::npos)
-	{
-	  std::string firstPart = token + ",";
-	  std::string secondPart;
-
-	  std::getline(line_stream, secondPart, delim);
-	  token = firstPart + secondPart;
-	}
-	*/
 
         if(token[0] == '"' && token[token.size() - 1] != '"')
         {
-	  /*
-          token += delim;
-          std::string part;
-          std::getline(line_stream, part, delim);
-          token += part;
-	  */
-
 	  std::string tok = token;
 
 	  while(token[token.size() - 1] != '"')
@@ -501,18 +440,6 @@ class LoadCSV
         oss << "LoadCSV::NonTransposeParse(): wrong number of dimensions ("
             << col << ") on line " << row << "; should be " << cols
             << " dimensions.";
-        throw std::runtime_error(oss.str());
-      }
-
-      // I am not able to understand when can we enter this case.
-      // I am looking into it, if anyone can give me some hint
-      // it might help, currently I've assigned canParse as true
-      // by default
-      if (!canParse)
-      {
-        std::ostringstream oss;
-        oss << "LoadCSV::NonTransposeParse(): parsing error on line " << col
-            << "!";
         throw std::runtime_error(oss.str());
       }
 
@@ -545,10 +472,10 @@ class LoadCSV
 
     while (std::getline(inFile, line))
     {
+      // Remove whitespaces from either side
       trim(line);
       // Reset the row we are looking at.  (Remember this is transposed.)
       row = 0;
-      const bool canParse = true;
       std::stringstream line_stream;
       std::string token;
 
@@ -563,29 +490,11 @@ class LoadCSV
       while(line_stream.good())
       {
         std::getline(line_stream, token, delim);
+        // Remove whitespaces from either side
 	trim(token);
-
-	/*size_t found = token.find('"');
-
-	if(found != std::string::npos)
-	{
-	  std::string firstPart = token + ",";
-	  std::string secondPart;
-
-	  std::getline(line_stream, secondPart, delim);
-	  token = firstPart + secondPart;
-	}
-	*/
 
         if(token[0] == '"' && token[token.size() - 1] != '"')
         {
-
-            /*
-	    token += delim;
-            std::string part;
-            std::getline(line_stream, part, delim);
-            token += part;
-	    */
 	  // first part of the string
 	  std::string tok = token;
 
@@ -594,7 +503,7 @@ class LoadCSV
 	    tok += delim;
 	    std::getline(line_stream, token, delim);
 	    tok += token;
-	  }
+          }
 
 	  token = tok;
         }
@@ -612,18 +521,6 @@ class LoadCSV
         throw std::runtime_error(oss.str());
       }
       
-      // I am not able to understand when can we enter this case.
-      // I am looking into it, if anyone can give me some hint
-      // it might help, currently I've assigned canParser as true
-      // by default
-      if (!canParse)
-      {
-        std::ostringstream oss;
-        oss << "LoadCSV::TransposeParse(): parsing error on line " << col
-            << "!";
-        throw std::runtime_error(oss.str());
-      }
-
       // Increment the column index.
       ++col;
     }

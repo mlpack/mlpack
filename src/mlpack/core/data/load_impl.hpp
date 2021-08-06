@@ -24,8 +24,6 @@
 #include "types.hpp"
 
 #include "string_algorithms.hpp"
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
 
 namespace mlpack {
 namespace data {
@@ -163,12 +161,12 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  LoadCSV load;
+  LoadCSV loader;
   
   if (loadType != file_type::HDF5Binary)
   {
     if(loadType == file_type::CSVASCII)
-      success = load.LoadCSVFile(matrix, stream);
+      success = loader.LoadCSVFile(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }

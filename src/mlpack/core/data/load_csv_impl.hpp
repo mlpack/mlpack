@@ -46,7 +46,7 @@ namespace data
   /**
    * Given the address of a martix element(val)
    * sets it equal to the provided value(token)
-   * example calling: convert_token<eT>(x.at(row, col), token)
+   * example calling: convert_token(x.at(row, col), token)
    */
   template<typename MatType>
   bool LoadCSV::ConvertToken(typename MatType::elem_type& val, const std::string& token)
@@ -77,7 +77,7 @@ namespace data
           ((sig_c == 'f') || (sig_c == 'F')))
       {
         val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
-            std::numeric_limits<typename MatType::elem_type>::infinity();
+                        std::numeric_limits<typename MatType::elem_type>::infinity();
         return true;
       }
       else if (((sig_a == 'n') || (sig_a == 'N')) &&
@@ -202,25 +202,12 @@ namespace data
       {
         std::getline(line_stream, token, delim);
 
-	/*size_t found = token.find('"');
-
-	if(found == std::string::npos)
-	{
-	  ++line_n_cols;
-	}
-	else
-	{
-	  std::getline(line_stream, token, delim);
-          ++line_n_cols;
-	}
-	*/
-
 	if(token[0] == '"' && token[token.size() - 1] != '"')
 	{
-	    while(token[token.size() - 1] != '"')
-            {
-              std::getline(line_stream, token, delim);
-            }
+	  while(token[token.size() - 1] != '"')
+          {
+            std::getline(line_stream, token, delim);
+          }
 	}
 
 	++line_n_cols;
