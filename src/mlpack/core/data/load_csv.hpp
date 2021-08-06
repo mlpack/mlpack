@@ -55,8 +55,10 @@ class LoadCSV
 
   LoadCSV()
   {
+    // Nothing to do here.
     // To initialize the class object.
   }
+
   /**
    * Construct the LoadCSV object on the given file.  This will construct the
    * rules necessary for loading and attempt to open the file.
