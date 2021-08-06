@@ -59,7 +59,7 @@ inline void trim(std::string& str)
  * @param str string to be trimmed
  * @param func fucntion to determine the characters which should be trimmed
  */
-inline void trim_if(std::string &str, bool (*func)(char))
+inline void trim_if(std::string &str, std::fucntion<bool(char)> func)
 {
   if(str.find_first_not_of(' ') == std::string::npos)
   {
