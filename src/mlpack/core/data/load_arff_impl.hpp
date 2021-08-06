@@ -14,10 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
-
 #include "string_algorithms.hpp"
-#include <boost/algorithm/string/trim.hpp>
-
 #include "is_naninf.hpp"
 
 namespace mlpack {

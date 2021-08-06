@@ -25,11 +25,6 @@ namespace data{
  */
 inline void trim(std::string& str)
 {
-  /*if(str.size() < 2)
-  {
-    return;
-  }*/
-
   if(str.find_first_not_of(' ') == std::string::npos)
   {
     str = "";

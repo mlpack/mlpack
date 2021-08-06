@@ -16,9 +16,6 @@
 #include "detect_file_type.hpp"
 #include "string_algorithms.hpp"
 
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
-
 namespace mlpack {
 namespace data {
 

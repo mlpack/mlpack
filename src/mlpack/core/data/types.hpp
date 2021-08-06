@@ -39,7 +39,7 @@ enum struct file_type
   PGMBinary,         //!< Portable Grey Map (greyscale image)
   PPMBinary,         //!< Portable Pixel Map (colour image), used by the field and cube classes
   HDF5Binary,        //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
-  CoordASCII				 //!< simple co-ordinate format for sparse matrices (indices start at zero)
+  CoordASCII	     //!< simple co-ordinate format for sparse matrices (indices start at zero)
 };
 
 /**
