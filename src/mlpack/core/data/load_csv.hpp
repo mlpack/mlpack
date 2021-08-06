@@ -53,6 +53,10 @@ class LoadCSV
 {
  public:
 
+  LoadCSV()
+  {
+    // To initialize the class object.
+  }
   /**
    * Construct the LoadCSV object on the given file.  This will construct the
    * rules necessary for loading and attempt to open the file.
@@ -535,6 +539,8 @@ class LoadCSV
   std::string filename;
   //! Opened stream for reading.
   std::ifstream inFile;
+  //! Delimiter char
+  char delim;
 };
 
 } // namespace data
