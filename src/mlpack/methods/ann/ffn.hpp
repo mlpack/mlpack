@@ -365,6 +365,7 @@ network.Network(); }
                const size_t begin,
                const size_t end);
 
+  // TODO: this API needs to be changed!
   /**
    * Perform the backward pass of the data in real batch mode.
    *

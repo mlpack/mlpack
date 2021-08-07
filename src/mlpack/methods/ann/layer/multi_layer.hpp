@@ -26,6 +26,12 @@ template<typename InputType, typename OutputType>
 class MultiLayer : public Layer<InputType, OutputType>
 {
  public:
+  // TODO: implement these types of things...
+  MultiLayer();
+  MultiLayer(const MultiLayer& other);
+  MultiLayer(MultiLayer&& other);
+  MultiLayer& operator=(const MultiLayer& other);
+  MultiLayer& operator=(MultiLayer&& other);
 
   virtual ~MultiLayer()
   {
@@ -33,8 +39,6 @@ class MultiLayer : public Layer<InputType, OutputType>
       delete network[i];
   }
 
-  // TODO: implement these types of things...
-//  MultiLayer(const MultiLayer& other);
 
   virtual MultiLayer* Clone() const { return new MultiLayer(*this); }
 
@@ -223,6 +227,7 @@ network; }
     ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
     ar(CEREAL_VECTOR_POINTER(network));
+    ar(CEREAL_NVP(inSize));
     ar(CEREAL_NVP(totalInputSize));
     ar(CEREAL_NVP(totalOutputSize));
 
@@ -230,6 +235,7 @@ network; }
     {
       layerOutputMatrix.clear();
       layerDeltaMatrix.clear();
+      layerGradients.clear();
       layerOutputs.resize(network.size(), OutputType());
       layerDeltas.resize(network.size(), OutputType());
       layerGradients.resize(network.size(), OutputType());
@@ -299,8 +305,8 @@ network; }
     for (size_t i = 0; i < network.size(); ++i)
     {
       const size_t weightSize = network[i]->WeightSize();
-      MakeAlias(layerGradients[i], gradient.colptr(gradientStart), weightSize,
-          1);
+      MakeAlias(layerGradients[i], gradient.memptr() + gradientStart,
+          weightSize, 1);
       gradientStart += weightSize;
     }
   }

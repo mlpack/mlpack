@@ -268,8 +268,15 @@ void FFN<
   // Ensure the network is valid.
   CheckNetwork("FFN::Forward()", inputs.n_rows);
 
-  results.set_size(network.OutputSize(), inputs.n_cols);
-  network.Forward(inputs, results, begin, end);
+  // We must always store a copy of the forward pass in `networkOutputs` in case
+  // we do a backward pass.
+  networkOutput.set_size(network.OutputSize(), inputs.n_cols);
+  network.Forward(inputs, networkOutput, begin, end);
+
+  // It's possible the user passed `networkOutputs` as `results`; in this case,
+  // we don't need to create an alias.
+  if (&results != &networkOutput)
+    results = networkOutput;
 }
 
 template<typename OutputLayerType,
@@ -298,7 +305,7 @@ double FFN<
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
   gradients.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(inputs, networkDelta, gradients);
+  network.Gradient(inputs, error, gradients);
 
   return res;
 }
@@ -348,8 +355,8 @@ double FFN<
   // Sanity check: ensure network is valid.
   CheckNetwork("FFN::Evaluate()", predictors.n_rows);
 
-  // networkOutput will be initialized by network.Forward().
-  OutputType networkOutput;
+  // Set networkOutput to the right size if needed, then perform the forward
+  // pass.
   network.Forward(predictors, networkOutput);
 
   return outputLayer.Forward(networkOutput, responses) + network.Loss();
@@ -386,7 +393,7 @@ double FFN<
             const size_t begin,
             const size_t batchSize)
 {
-  CheckNetwork("FFN::Evaluate()", predictors.n_rows, true, false);
+  CheckNetwork("FFN::Evaluate()", predictors.n_rows);
 
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
@@ -429,7 +436,7 @@ double FFN<
                         OutputType& gradient,
                         const size_t batchSize)
 {
-  CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows, true, false);
+  CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows);
 
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
@@ -450,7 +457,7 @@ double FFN<
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(predictors.cols(begin, begin + batchSize - 1), networkDelta,
+  network.Gradient(predictors.cols(begin, begin + batchSize - 1), error,
       gradient);
 
   return obj;

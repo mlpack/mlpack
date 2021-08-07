@@ -68,7 +68,7 @@ class BaseLayer : public Layer<InputType, OutputType>
   /**
    * Create the BaseLayer object.
    */
-  BaseLayer()
+  BaseLayer() : Layer<InputType, OutputType>()
   {
     // Nothing to do here.
   }
