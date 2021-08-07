@@ -26,15 +26,19 @@ BINDING_NAME("Extra Trees Forest");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of the standard Extra Trees algorithm"
+    "An implementation of the Extra Trees algorithm"
     "for classification. Given labelled data, an extra tree can be trained"
-    "and saved for future use;or,  a pre-trained extra tree can be used for"
+    "and saved for future use; or,  a pre-trained extra tree can be used for"
     "classification.")
 // Long description.
 BINDING_LONG_DESC(
     "This program is an implementation of the extra trees algorithm. "
-    "It can be trained and saved for later use, or it maybe loaded and class"
-    "probabilities for points may be generated."
+    "Developed by Geurts,Ernst, and Wehenkel, it is used as an alternative"
+    "to the random forests algorithm. It can be used to achieve similar or"
+    "even better results than the random forest algorithn. It is an ensemble"
+    "machine learning algorithm thatcombines the predictions from many"
+    "decision trees.It can be trained and saved for later use, or it maybe"   
+    "loaded and class probabilities for points may be generated."
     "\n\n"
     "The training set and the associated labels are specified with the" +
     PRINT_PARAM_STRING("training") + "and" + PRINT_PARAM_STRING("labels") +
