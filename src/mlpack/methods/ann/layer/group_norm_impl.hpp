@@ -1,6 +1,6 @@
 /**
  * @file methods/ann/layer/group_norm_impl.hpp
- * @author Abhinav Anand
+ * @author Shikhar Jaiswal
  *
  * Implementation of the Group Normalization class.
  *
@@ -22,10 +22,8 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
-    inRowSize(0),
-    inColSize(0),
     size(0),
-    groupCount(0),
+    groupCount(1),
     eps(1e-8),
     loading(false)
 {
@@ -34,21 +32,15 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
 
 template <typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm(
-    const size_t inRowSize,
-    const size_t inColSize,
-    const size_t size,
-    const size_t groupCount,
-    const double eps):
-    inRowSize(inRowSize),
-    inColSize(inColSize),
+    const size_t size, const size_t groupCount, const double eps) :
     size(size),
     groupCount(groupCount),
     eps(eps),
     loading(false)
 {
-  if (inRowSize % groupCount != 0)
+  if (size % groupCount != 0)
   {
-    Log::Fatal << "Channel Size must be divisible by groupCount!" << std::endl;
+    Log::Fatal << "Total input Size must be divisible by groupCount!" << std::endl;
   }
 
   weights.set_size(size * groupCount * 2 + 1, 1);
@@ -57,8 +49,8 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm(
 template<typename InputDataType, typename OutputDataType>
 void GroupNorm<InputDataType, OutputDataType>::Reset()
 {
-  gamma = arma::mat(weights.memptr(), 1, groupCount * size, false, false);
-  beta = arma::mat(weights.memptr() + gamma.n_elem, 1, groupCount * size, false, false);
+  gamma = arma::mat(weights.memptr(), size * groupCount, 1, false, false);
+  beta = arma::mat(weights.memptr() + gamma.n_elem, size * groupCount, 1, false, false);
 
   if (!loading)
   {
@@ -74,61 +66,60 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  output = input;
+  arma::mat reshapedInput((input).memptr(),
+    size / groupCount, groupCount * input.n_cols, false, false);
 
-  mean.set_size(1, groupCount * inColSize);
-  variance.set_size(1, groupCount * inColSize);
+  if (output.is_empty())
+    output.zeros(size, input.n_cols);
 
-  arma::cube outputAsCube((output).memptr(),
-    inRowSize / groupCount, 1, groupCount*inColSize, false, false);
+  arma::mat reshapedOutput((output).memptr(),
+    size / groupCount, groupCount * output.n_cols, false, false);
 
-  for (int k = 0; k < groupCount * inColSize; ++k)
-  {
-    // Normalize the input.
-    mean(k) = arma::mean(outputAsCube.slice(k));
-    arma::mat var = arma::sqrt(arma::var(outputAsCube.slice(k), 0, 0) + eps);
-    variance(k) = var(0);
+  mean = arma::mean(reshapedInput, 0);
+  variance = arma::var(reshapedInput, 1, 0);
 
-    outputAsCube.slice(k) -= mean(k);
-    outputAsCube.slice(k) /= variance(k);
-
-    // Scale and shift the output.
-    outputAsCube.slice(k) %= gamma(k);
-    outputAsCube.slice(k) += beta(k);
-  }
+  // Normalize the input.
+  reshapedOutput = reshapedInput.each_row() - mean;
+  inputMean = reshapedOutput;
+  reshapedOutput.each_row() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
   normalized = output;
+
+  // Scale and shift the output.
+  reshapedOutput.each_col() %= gamma;
+  reshapedOutput.each_col() += beta;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input, const arma::Mat<eT>& gradient, arma::Mat<eT>& output)
+    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  if (output.is_empty())
-    output.zeros(inRowSize * inColSize, size);
-  else
-  {
-    assert(output.n_rows == inRowSize * inColSize);
-    assert(output.n_cols == size);
-  }
-
-  arma::cube inputAsCube((input).memptr(),
-    inRowSize / groupCount, 1, groupCount*inColSize, false, false);
-  arma::cube outputAsCube((output).memptr(),
-    inRowSize / groupCount, 1, groupCount*inColSize, false, false);
-  arma::cube gradientAsCube((gradient).memptr(),
-    inRowSize / groupCount, 1, groupCount*inColSize, false, false);
+  arma::mat inputReshaped((input).memptr(),
+    size / groupCount, groupCount * input.n_cols, false, false);
+  arma::mat gyReshaped((gy).memptr(),
+    size / groupCount, groupCount * gy.n_cols, false, false);
+  arma::mat gReshaped((g).memptr(),
+    size / groupCount, groupCount * g.n_cols, false, false);
 
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
-  for (int k = 0; k < groupCount * inColSize; ++k)
-  {
-    outputAsCube.slice(k) += gradientAsCube.slice(k) % gamma(k) % stdInv(k);
-    outputAsCube.slice(k) += (gradientAsCube.slice(k) % (inputAsCube.slice(k) - mean(k))) % gamma(k) % 0.5 % std::pow(stdInv(k), 3.0) % (inputAsCube.slice(k) - mean(k)) % 2 / (inRowSize / groupCount);
-    outputAsCube.slice(k) += gamma(k) % gradientAsCube.slice(k) / (inRowSize / groupCount);
-  }
 
+  // dl / dxhat.
+  const arma::mat norm = gyReshaped.each_col() % gamma;
+
+  // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
+  const arma::mat var = arma::sum(norm % inputMean, 0) %
+      arma::pow(stdInv, 3.0) * -0.5;
+
+  // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
+  // dl / dmu * 1 / m.
+  gReshaped = (norm.each_row() % stdInv) + (inputMean.each_row() %
+      var * 2 / inputReshaped.n_rows);
+
+  // sum (dl / dxhat * -1 / stdInv) + variance *
+  // (sum -2 * (x - mu)) / m.
+  gReshaped.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / inputReshaped.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -153,14 +144,12 @@ template<typename Archive>
 void GroupNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(inRowSize));
-  ar(CEREAL_NVP(inColSize));
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(groupCount));
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size(size + size, 1);
+    weights.set_size(size * groupCount * 2 + 1, 1);
     loading = true;
   }
 

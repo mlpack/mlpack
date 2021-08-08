@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LAYERNORM_HPP
-#define MLPACK_METHODS_ANN_LAYER_LAYERNORM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_GROUPNORM_HPP
+#define MLPACK_METHODS_ANN_LAYER_GROUPNORM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batcg Normalization class. The group transforms
+ * Declaration of the Group Normalization class. The group transforms
  * the input data into zero mean and unit variance and then scales and shifts
  * the data by parameters, gamma and beta respectively over a single training
  * data. These parameters are learnt by the network. Group Normalization is
@@ -59,11 +59,7 @@ class GroupNorm
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  GroupNorm(const size_t inRowSize,
-            const size_t inColSize,
-            const size_t size,
-            const size_t groupCount,
-            const double eps = 1e-8);
+  GroupNorm(const size_t size, const size_t groupCount, const double eps = 1e-8);
 
   /**
    * Reset the layer parameters.
@@ -125,16 +121,6 @@ class GroupNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the row size of the input.
-  size_t const& InRowSize() const { return inRowSize; }
-  //! Modify the row size of the input.
-  size_t& InRowSize() { return inRowSize; }
-
-  //! Get the column size of the input.
-  size_t const& InColSize() const { return inColSize; }
-  //! Modify the column size of the input.
-  size_t& InColSize() { return inColSize; }
-
   //! Get the mean across single training data.
   OutputDataType Mean() { return mean; }
 
@@ -147,15 +133,16 @@ class GroupNorm
   //! Get the value of epsilon.
   double Epsilon() const { return eps; }
 
-  //! Get the number of groups the channels is divided into.
-  size_t const& InGroupCount() const { return groupCount; }
-  //! Modify the number of groups the channels is divided into.
-  size_t& InGroupCount() { return groupCount; }
-
   //! Get the shape of the input.
   size_t InputShape() const
   {
     return size;
+  }
+
+  //! Get the group count.
+  size_t GroupCount() const
+  {
+    return groupCount;
   }
 
   /**
@@ -168,14 +155,8 @@ class GroupNorm
   //! Locally-stored number of input units.
   size_t size;
 
-  //! Locally stored the number of groups the channels is divided into.
+  //! Locally-stored group count.
   size_t groupCount;
-
-  //! Locally stored row size of the input.
-  size_t inRowSize;
-
-  //! Locally stored column size of the input.
-  size_t inColSize;
 
   //! Locally-stored epsilon value.
   double eps;

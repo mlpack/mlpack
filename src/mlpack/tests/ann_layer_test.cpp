@@ -3044,6 +3044,36 @@ TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
 }
 
 /**
+ * Tests the GroupNorm layer.
+ */
+TEST_CASE("GroupNormTest", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+  input = { { 2 },
+            { 3 },
+            { 5 },
+            { 7 },
+            { 11 },
+            { 13 },
+            { 17 },
+            { 19 } };
+
+  GroupNorm<> model(input.n_rows, 2);
+  model.Reset();
+
+  model.Forward(input, output);
+  arma::mat result;
+  result = { { -1.172 },
+             { -0.651 },
+             { 0.391 },
+             { 1.432 },
+             { -1.265 },
+             { -0.633 },
+             { 0.633 },
+             { 1.265 } };
+}
+
+/**
  * Tests the LayerNorm layer.
  */
 TEST_CASE("LayerNormTest", "[ANNLayerTest]")
