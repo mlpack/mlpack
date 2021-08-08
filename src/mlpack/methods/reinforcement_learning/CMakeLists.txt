@@ -7,6 +7,8 @@ set(SOURCES
   q_learning_impl.hpp
   sac.hpp
   sac_impl.hpp
+  eql.hpp
+  eql_impl.hpp
   training_config.hpp
 )
 
