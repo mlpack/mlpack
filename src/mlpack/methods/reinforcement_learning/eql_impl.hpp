@@ -219,12 +219,15 @@ void EQL<
   ReplayType
 >::SelectAction()
 {
-  // Get the action value for each action at current state.
-  arma::vec actionValue;
-  learningNetwork.Predict(state.Encode(), actionValue);
+  // Stores the Q vector of each action.
+  arma::mat actionMatrix;
+  // Get the unrolled form of the matrix.
+  learningNetwork.Predict(state.Encode(), actionMatrix);
+  actionMatrix.resize(decltype(actionValue)::size, numObjectives);
 
+  arma::vec utilityValue = actionMatrix * preference;
   // Select an action according to the behavior policy.
-  action = policy.Sample(actionValue, deterministic, config.NoisyEQL());
+  action = policy.Sample(utilityValue, deterministic, config.NoisyEQL());
 }
 
 template <
