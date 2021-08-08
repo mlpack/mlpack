@@ -223,7 +223,7 @@ void EQL<
   arma::mat actionMatrix;
   // Get the unrolled form of the matrix.
   learningNetwork.Predict(state.Encode(), actionMatrix);
-  actionMatrix.resize(decltype(actionValue)::size, numObjectives);
+  actionMatrix.resize(ActionType::size, EnvironmentType::numObjectives);
 
   arma::vec utilityValue = actionMatrix * preference;
   // Select an action according to the behavior policy.

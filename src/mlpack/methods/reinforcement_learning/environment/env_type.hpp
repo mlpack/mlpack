@@ -104,6 +104,8 @@ class DiscreteActionEnv
    * @return It's of no use but so lets keep it false.
    */
   bool IsTerminal(const State& /* state */) const { return false; }
+
+  static size_t numObjectives;
 };
 
 /**
@@ -198,6 +200,8 @@ class ContinuousActionEnv
    * @return It's of no use but so lets keep it false.
    */
   bool IsTerminal(const State& /* state */) const { return false; }
+
+  static size_t numObjectives;
 };
 
 } // namespace rl

@@ -19,9 +19,11 @@ namespace rl {
 
 size_t DiscreteActionEnv::State::dimension = 0;
 size_t DiscreteActionEnv::Action::size = 0;
+size_t DiscreteActionEnv::numObjectives = 0;
 
 size_t ContinuousActionEnv::State::dimension = 0;
 size_t ContinuousActionEnv::Action::size = 0;
+size_t DiscreteActionEnv::numObjectives = 0;
 
 } // namespace rl
 } // namespace mlpack
