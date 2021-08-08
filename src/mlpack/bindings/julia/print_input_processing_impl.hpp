@@ -148,7 +148,7 @@ void PrintInputProcessing(
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << ").ptr)" << std::endl;
   std::cout << indent << functionName << "_internal.SetParam" << type
-      << "(\"" << d.name << "\", convert("
+      << "(p, \"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << "))" << std::endl;
 

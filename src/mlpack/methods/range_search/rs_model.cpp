@@ -142,19 +142,19 @@ void RSModel::InitializeModel(const bool naive, const bool singleMode)
       break;
 
     case VP_TREE:
-      rSearch = new RSWrapper<tree::VPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::VPTree>(naive, singleMode);
       break;
 
     case RP_TREE:
-      rSearch = new RSWrapper<tree::RPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::RPTree>(naive, singleMode);
       break;
 
     case MAX_RP_TREE:
-      rSearch = new RSWrapper<tree::MaxRPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::MaxRPTree>(naive, singleMode);
       break;
 
     case UB_TREE:
-      rSearch = new RSWrapper<tree::UBTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::UBTree>(naive, singleMode);
       break;
 
     case OCTREE:

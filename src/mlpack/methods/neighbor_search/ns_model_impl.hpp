@@ -432,29 +432,30 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
       }
     case VP_TREE:
       {
-        NSWrapper<SortPolicy, tree::VPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::VPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case RP_TREE:
       {
-        NSWrapper<SortPolicy, tree::RPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::RPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case MAX_RP_TREE:
       {
-        NSWrapper<SortPolicy, tree::MaxRPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::MaxRPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>&>(
+            *nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        NSWrapper<SortPolicy, tree::UBTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::UBTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
@@ -546,19 +547,23 @@ void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
           epsilon);
       break;
     case VP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::VPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::VPTree>(searchMode,
+          epsilon);
       break;
     case RP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::RPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::RPTree>(searchMode,
+          epsilon);
       break;
     case MAX_RP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::MaxRPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>(searchMode,
+          epsilon);
       break;
     case SPILL_TREE:
       nSearch = new SpillNSWrapper<SortPolicy>(searchMode, epsilon);
       break;
     case UB_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::UBTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::UBTree>(searchMode,
+          epsilon);
       break;
     case OCTREE:
       nSearch = new LeafSizeNSWrapper<SortPolicy, tree::Octree>(searchMode,

@@ -724,7 +724,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test forward function for multiple batches with multiple filters.
   // Here it's 3 filters with height = 244, width = 244
   // the output should be [246 * 246 * 3, 3] with 1 padding.
-  Padding<> module2(1 ,1, 1, 1, 244, 244);
+  Padding<> module2(1, 1, 1, 1, 244, 244);
   input1 = arma::randu(244 * 244 * 3, 3);
   module2.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
@@ -2103,6 +2103,69 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 }
 
 /*
+ * Simple test for the NearestInterpolation layer
+ */
+TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against torch.nn.Upsample(mode="nearest").
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 7;
+  size_t depth = 1;
+  input.zeros(inRowSize * inColSize * depth, 1);
+  input[0] = 1.0;
+  input[1] = 3.0;
+  input[2] = 2.0;
+  input[3] = 4.0;
+  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize,
+                               outColSize, depth);
+
+  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
+                 << 4.0000 << 4.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
+                 << 4.0000 << 4.0000 << arma::endr;
+  expectedOutput.reshape(35, 1);
+
+  layer.Forward(input, output);
+  CheckMatrices(output - expectedOutput,
+                arma::zeros(output.n_rows), 1e-4);
+
+  expectedOutput.clear();
+  expectedOutput << 12.0000 << 18.0000 << arma::endr
+                 << 24.0000 << 24.0000 << arma::endr;
+  expectedOutput.reshape(4, 1);
+  layer.Backward(output, output, unzoomedOutput);
+  CheckMatrices(unzoomedOutput - expectedOutput,
+      arma::zeros(input.n_rows), 1e-4);
+
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 17;
+  outColSize = 23;
+  input1 << 1 << 2 << 3 << arma::endr
+         << 4 << 5 << 6 << arma::endr;
+  input1.reshape(6, 1);
+  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize,
+                                outColSize, depth);
+
+  layer1.Forward(input1, output1);
+  layer1.Backward(output1, output1, unzoomedOutput1);
+
+  REQUIRE(arma::accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 ==
+          Approx(0.0).margin(1e-05));
+}
+
+/*
  * Simple test for the BilinearInterpolation layer
  */
 TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
@@ -2166,6 +2229,104 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer1.OutRowSize() == layer2.OutRowSize());
   REQUIRE(layer1.OutColSize() == layer2.OutColSize());
   REQUIRE(layer1.InDepth() == layer2.InDepth());
+}
+
+/*
+ * Simple test for the BicubicInterpolation layer.
+ */
+TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against torch.nn.Upsample(mode="bicubic").
+  // Test case with square input with rectangular output.
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 7;
+  size_t depth = 1;
+  input.zeros(inRowSize * inColSize * depth, 1);
+
+  input << 10 << 20 << arma::endr
+        << 30 << 40 << arma::endr;
+  input.reshape(4, 1);
+  BicubicInterpolation<> layer(inRowSize, inColSize, outRowSize,
+                               outColSize, depth);
+
+  expectedOutput << 6.68803935860  <<  7.33308309038 <<  9.69733236152
+                 << 12.79500000000 << 15.89266763848 << 18.25691690962
+                 << 18.90196064140 << arma::endr
+                 << 10.53303935860 << 11.17808309038 << 13.54233236152
+                 << 16.64000000000 << 19.73766763848 << 22.10191690962
+                 << 22.74696064140 << arma::endr
+                 << 18.89303935860 << 19.53808309038 << 21.90233236152
+                 << 25.00000000000 << 28.09766763848 << 30.46191690962
+                 << 31.10696064140 << arma::endr
+                 << 27.25303935860 << 27.89808309038 << 30.26233236152
+                 << 33.36000000000 << 36.45766763848 << 38.82191690962
+                 << 39.46696064140 << arma::endr
+                 << 31.09803935860 << 31.74308309038 << 34.10733236152
+                 << 37.20500000000 << 40.30266763848 << 42.66691690962
+                 << 43.31196064140 << arma::endr;
+  expectedOutput.reshape(35, 1);
+  layer.Forward(input, output);
+
+  CheckMatrices(output, expectedOutput, 1e-6);
+
+  expectedOutput.clear();
+  expectedOutput << 103.79040654914 << 180.51345595086 << arma::endr
+                 << 256.98654404914 << 333.70959345086 << arma::endr;
+  expectedOutput.reshape(4, 1);
+
+  layer.Backward(output, output, unzoomedOutput);
+
+  CheckMatrices(unzoomedOutput, expectedOutput, 1e-6);
+
+  // Tested output against torch.nn.Upsample(mode="bicubic").
+  // Test case with rectangular input with rectangular output.
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1, expectedUnzoomed;
+
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 5;
+  outColSize = 7;
+  depth = 1;
+  input1.zeros(inRowSize * inColSize * depth, 1);
+
+  input1 << 10 << 20 << 30 << arma::endr
+         << 40 << 50 << 60 << arma::endr;
+  input1.reshape(6, 1);
+
+  BicubicInterpolation<> layer1(inRowSize, inColSize, outRowSize,
+                                outColSize, depth);
+
+  expectedOutput1 << 5.59920553936  << 7.77121720117  << 11.44468658892
+                  << 16.69250000000 << 21.94031341108 << 25.61378279883
+                  << 27.78579446064 << arma::endr
+                  << 11.36670553936 << 13.53871720117 << 17.21218658892
+                  << 22.46000000000 << 27.70781341108 << 31.38128279883
+                  << 33.55329446064 << arma::endr
+                  << 23.90670553936 << 26.07871720117 << 29.75218658892
+                  << 35.00000000000 << 40.24781341108 << 43.92128279883
+                  << 46.09329446064 << arma::endr
+                  << 36.44670553936 << 38.61871720117 << 42.29218658892
+                  << 47.54000000000 << 52.78781341108 << 56.46128279883
+                  << 58.63329446064 << arma::endr
+                  << 42.21420553936 << 44.38621720117 << 48.05968658892
+                  << 53.30750000000 << 58.55531341108 << 62.22878279883
+                  << 64.40079446064 << arma::endr;
+  expectedOutput1.reshape(35, 1);
+  layer1.Forward(input1, output1);
+
+  CheckMatrices(output1, expectedOutput1, 1e-6);
+
+  expectedUnzoomed << 67.65674505130  << 132.29729646501
+                   << 182.75175223368 << arma::endr
+                   << 218.01355388877 << 291.17209129009
+                   << 333.10856107115 << arma::endr;
+  expectedUnzoomed.reshape(6, 1);
+
+  layer1.Backward(output1, output1, unzoomedOutput1);
+  CheckMatrices(unzoomedOutput1, expectedUnzoomed, 1e-6);
 }
 
 /**
@@ -4674,6 +4835,51 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Test for ChannelShuffle layer.
+ */
+TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, outputExpected1, outputBackward1;
+  ChannelShuffle<> module1(2, 2, 6, 2);
+
+  input1 << 1  << 13 << arma::endr
+         << 2  << 14 << arma::endr
+         << 3  << 15 << arma::endr
+         << 4  << 16 << arma::endr
+         << 5  << 17 << arma::endr
+         << 6  << 18 << arma::endr
+         << 7  << 19 << arma::endr
+         << 8  << 20 << arma::endr
+         << 9  << 21 << arma::endr
+         << 10 << 22 << arma::endr
+         << 11 << 23 << arma::endr
+         << 12 << 24 << arma::endr;
+  input1.reshape(24, 1);
+  // Value calculated using torch.nn.ChannelShuffle().
+  outputExpected1 << 1  << 17 << arma::endr
+                  << 2  << 18 << arma::endr
+                  << 3  << 19 << arma::endr
+                  << 4  << 20 << arma::endr
+                  << 13 << 9 << arma::endr
+                  << 14 << 10 << arma::endr
+                  << 15 << 11 << arma::endr
+                  << 16 << 12 << arma::endr
+                  << 5  << 21 << arma::endr
+                  << 6  << 22 << arma::endr
+                  << 7  << 23 << arma::endr
+                  << 8  << 24 << arma::endr;
+  outputExpected1.reshape(24, 1);
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(output1, output1, outputBackward1);
+  CheckMatrices(input1, outputBackward1);
+
 }
 
 /**

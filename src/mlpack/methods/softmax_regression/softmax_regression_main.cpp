@@ -118,6 +118,8 @@ PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_OUT("predictions", "Matrix to save predictions for test dataset "
     "into.", "p");
+PARAM_MATRIX_OUT("probabilities", "Matrix to save class probabilities for test "
+    "dataset into.", "P");
 PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 
 // Softmax configuration options.
@@ -267,6 +269,16 @@ void TestClassifyAcc(util::Params& params,
   // Save predictions, if desired.
   if (params.Has("predictions"))
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+
+  // Compute probabiltiies, if desired.
+  if (params.Has("probabilities"))
+  {
+    Log::Info << "Calculating class probabilities of points in '"
+        << params.GetPrintable<arma::mat>("test") << "'." << endl;
+    arma::mat probabilities;
+    model.Classify(testData, probabilities);
+    params.Get<arma::mat>("probabilities") = std::move(probabilities);
+  }
 }
 
 template<typename Model>

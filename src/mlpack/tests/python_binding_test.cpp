@@ -18,6 +18,27 @@ using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::python;
 
+// If multiple binding types are used in the same test file, we may get the
+// wrong function map.  These functions are utilities to ensure that for these
+// tests, the function maps are accurate.
+
+template<typename N>
+void AddPyMapFunctions(util::Params& p)
+{
+  p.functionMap[TYPENAME(N)]["GetParam"] = &python::GetParam<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParam"] =
+      &python::GetPrintableParam<N>;
+  p.functionMap[TYPENAME(N)]["DefaultParam"] = &python::DefaultParam<N>;
+  p.functionMap[TYPENAME(N)]["PrintClassDefn"] = &python::PrintClassDefn<N>;
+  p.functionMap[TYPENAME(N)]["PrintDefn"] = &python::PrintDefn<N>;
+  p.functionMap[TYPENAME(N)]["PrintDoc"] = &python::PrintDoc<N>;
+  p.functionMap[TYPENAME(N)]["PrintOutputProcessing"] =
+      &python::PrintOutputProcessing<N>;
+  p.functionMap[TYPENAME(N)]["PrintInputProcessing"] =
+      &python::PrintInputProcessing<N>;
+  p.functionMap[TYPENAME(N)]["ImportDecl"] = &python::ImportDecl<N>;
+}
+
 /**
  * Ensure that we can construct a PyOption object, and that it will add itself
  * to the IO instance.
@@ -29,6 +50,8 @@ TEST_CASE("PyOptionTest", "[PythonBindingsTest]")
 
   // Now check that it's in IO.
   util::Params p = IO::Parameters("PyOptionTest");
+  p.functionMap.clear();
+  AddPyMapFunctions<double>(p);
   REQUIRE(p.Parameters().count("test") > 0);
   REQUIRE(p.Aliases().count('t') > 0);
   REQUIRE(p.Parameters()["test"].desc == "test2");
@@ -44,6 +67,8 @@ TEST_CASE("PyOptionTest", "[PythonBindingsTest]")
 
   // Now check that it's in IO.
   p = IO::Parameters("PyOptionTest");
+  p.functionMap.clear();
+  AddPyMapFunctions<arma::mat>(p);
   REQUIRE(p.Parameters().count("mat") > 0);
   REQUIRE(p.Aliases().count('m') > 0);
   REQUIRE(p.Parameters()["mat"].desc == "mat2");

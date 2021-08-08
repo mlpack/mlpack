@@ -20,6 +20,7 @@
 #include "get_param.hpp"
 #include "get_allocated_memory.hpp"
 #include "delete_allocated_memory.hpp"
+#include "test_function_map.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -86,11 +87,17 @@ class TestOption
 
     const std::string tname = data.tname;
 
-    // Set some function pointers that we need.
-    IO::AddFunction(tname, "GetPrintableParam", &GetPrintableParam<N>);
-    IO::AddFunction(tname, "GetParam", &GetParam<N>);
-    IO::AddFunction(tname, "GetAllocatedMemory", &GetAllocatedMemory<N>);
-    IO::AddFunction(tname, "DeleteAllocatedMemory", &DeleteAllocatedMemory<N>);
+    // Set the function pointers in the test function map singleton.  We don't
+    // register them with IO::AddFunction(), because these will be restored as
+    // part of the test binding fixture; see
+    // `src/mlpack/tests/main_tests/main_test_fixture.hpp`.
+    TestFunctionMap::RegisterFunction(tname, "GetPrintableParam",
+        &GetPrintableParam<N>);
+    TestFunctionMap::RegisterFunction(tname, "GetParam", &GetParam<N>);
+    TestFunctionMap::RegisterFunction(tname, "GetAllocatedMemory",
+        &GetAllocatedMemory<N>);
+    TestFunctionMap::RegisterFunction(tname, "DeleteAllocatedMemory",
+        &DeleteAllocatedMemory<N>);
 
     IO::AddParameter(bindingName, std::move(data));
   }

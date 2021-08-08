@@ -225,8 +225,8 @@ void RAModel::serialize(Archive& ar, const uint32_t /* version */)
       }
     case UB_TREE:
       {
-        RAWrapper<tree::UBTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::UBTree>&>(*raSearch);
+        LeafSizeRAWrapper<tree::UBTree>& typedSearch =
+            dynamic_cast<LeafSizeRAWrapper<tree::UBTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
