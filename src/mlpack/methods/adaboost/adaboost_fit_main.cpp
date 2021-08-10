@@ -115,6 +115,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "iterations", [](int x) { return x > 0; },
       true, "invalid number of iterations specified");
 
+  // Sanity check on tolerance value.
+  RequireParamValue<int>(params, "tolerance", [](int x) { return x > 0; },
+      true, "invalid tolerance specified");
+
   AdaBoostModel* m;
 
   mat trainingData = std::move(params.Get<arma::mat>("training"));
@@ -142,6 +146,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     labelsIn = conv_to<Row<size_t>>::from(
         trainingData.row(trainingData.n_rows - 1));
     trainingData.shed_row(trainingData.n_rows - 1);
+  }
+
+  if(labelsIn.n_cols != trainingData.n_cols)
+  {
+    Log::Fatal << "Number of samples in training data is not "
+        << "equal to the number of samples in labels." << endl;
   }
 
   // Helpers for normalizing the labels.
