@@ -64,7 +64,7 @@ steps:
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
     -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
-    -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\include `
+    -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\vcpkg\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
