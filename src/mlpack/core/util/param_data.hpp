@@ -14,7 +14,6 @@
 #define MLPACK_CORE_UTIL_PARAM_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/any.hpp>
 
 /**
  * The TYPENAME macro is used internally to convert a type into a string.
