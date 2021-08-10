@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/methoods/adaboost/adaboost_fit_main.cpp>
+#include <mlpack/methods/adaboost/adaboost_fit_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
@@ -22,10 +22,10 @@
 
 using namespace mlpack;
 
-BINDING_TEST_FIXTURE(AdaBoostFitMainTestFixture);
+BINDING_TEST_FIXTURE(AdaBoostFitTestFixture);
 
 // Test if the error is thrown for invalid tolerance.
-TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitToleranceTest",
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitToleranceTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
@@ -38,15 +38,15 @@ TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitToleranceTest",
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("tolerance", -1); // Invalid!
+  SetInputParam("tolerance", (double) -0.001); // Invalid!
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROW_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Test if error is thrown for invalid iterations.
-TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitIterationsTest",
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitIterationsTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
@@ -62,12 +62,12 @@ TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitIterationsTest",
   SetInputParam("iterations", -1); // Invalid!
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROW_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Test if error is thrown for invalid weak learner.
-TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitWeakLearnerTest",
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitWeakLearnerTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
@@ -80,15 +80,15 @@ TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitWeakLearnerTest",
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("weak_learner", "xyz"); // Invalid!
+  SetInputParam("weak_learner", std::string("xyz")); // Invalid!
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROW_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that the output model is "trained" and usable.
-TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitModelReuseTest",
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitModelReuseTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
@@ -103,66 +103,217 @@ TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitModelReuseTest",
   if (!data::Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
+  size_t trainDims = trainData.n_rows;
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
 
   RUN_BINDING();
 
   AdaBoostModel* model = params.Get<AdaBoostModel*>("output_model");
-  REQUIRE(model->Dimensionality() == trainData.n_rows);
+  REQUIRE(model->Dimensionality() == trainDims);
 
   // Can we make predictions from this model.
-  arma::Row<size_t> predictions, probabilities;
+  arma::Row<size_t> predictions;
+  arma::mat probabilities;
   model->Classify(testData, predictions, probabilities);
 
   // Check if dims of predictions is same as train data.
-  REQUIRE(trainData.n_rows == probabilities.n_rows);
+  REQUIRE(model->Mappings().n_elem == probabilities.n_rows);
 }
 
 /**
- * Check that the last dimension of the training set is
- * used as labels when labels are not passed specifically 
- * and results are same from both label and without label models.
+ * Different Weak learner should give different outputs.
  */
-TEST_CASE_METHOD(AdaBoostFitMainTestFixture, "AdaBoostFitMainWithoutLabelTest",
-                 "[AdaBoostFitMainMainTest][BindingTests]")
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffWeakLearnerOutputTest",
+                 "[AdaBoostFitMainTest][BindingTests]")
 {
-  // Train adaboost without providing labels.
   arma::mat trainData;
-  if (!data::Load("trainSet.csv", trainData))
-    FAIL("Unable to load train dataset trainSet.csv!");
+  if (!data::Load("vc2.csv", trainData))
+    FAIL("Unable to load train dataset vc2.csv!");
 
-  // Give labels.
-  arma::Row<size_t> labels(trainData.n_cols);
-  for (size_t i = 0; i < trainData.n_cols; ++i)
-    labels[i] = trainData(trainData.n_rows - 1, i);
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
-    FAIL("Unable to load test dataset testSet.csv!");
-
-  // Delete the last row containing labels from test dataset.
-  testData.shed_row(testData.n_rows - 1);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Unable to load test dataset vc2.csv!");
 
   SetInputParam("training", trainData);
-  SetInputParam("iterations",(int) 20);
-  SetInputParam("tolerance", 0.001);
+  SetInputParam("labels", labels);
 
   RUN_BINDING();
 
-  // Get predictions from trained model.
-  arma::Row<size_t> predictions;
-  AdaBoostModel* model  = params.Get<AdaBoostModel*>("output_model");
-  model->Classify(testData, predictions);
+  arma::Row<size_t> output;
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData, output);
 
-  // Train new model by providing labels seperately.
-  AdaBoostModel* model2 = new AdaBoostModel(model->Mappings(),
-                                            model->WeakLearnerType());
-  arma::Row<size_t> predictions2;
-  model2->Train(trainData, labels, model->Mappings().n_elem,
-      (int) 20, 0.001);
-  model2->Classify(testData, predictions2);
+  CleanMemory();
+  ResetSettings();
 
-  // Check if both predictions are same or not.
-  CheckMatrices(predictions, predictions2);
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("weak_learner", std::string("perceptron"));
+
+  RUN_BINDING();
+
+  arma::Row<size_t> outputPerceptron;
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+      outputPerceptron);
+
+  REQUIRE(arma::accu(output != outputPerceptron) > 1);
+}
+
+/**
+ * Accuracy increases as Number of Iterations increases.
+ * (Or converges and remains same)
+ */
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffItrTest",
+                 "[AdaBoostFitMainTest][BindingTests]")
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Unable to load test dataset vc2.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Unable to load labels for vc2__test_labels.txt");
+
+  // Iterations = 1
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 1);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  arma::Row<size_t> output;
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  size_t correct = arma::accu(output == testLabels);
+  double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  CleanMemory();
+  ResetSettings();
+
+  // Iterations = 10
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 10);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  CleanMemory();
+  ResetSettings();
+
+  // Iterations = 100
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 100);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  REQUIRE(accuracy1 <= accuracy10);
+  REQUIRE(accuracy10 <= accuracy100);
+}
+
+/**
+ * Accuracy increases as tolerance decreases.
+ * (Execution Time also increases)
+ */
+TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffTolTest",
+                 "[AdaBoostFitMainTest][BindingTests]")
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Unable to load test dataset vc2.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Unable to load labels for vc2__test_labels.txt");
+
+  // tolerance = 0.001
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("tolerance", (double) 0.001);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  arma::Row<size_t> output;
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  size_t correct = arma::accu(output == testLabels);
+  double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  CleanMemory();
+  ResetSettings();
+
+  // tolerance = 0.01
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("tolerance", (double) 0.01);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  CleanMemory();
+  ResetSettings();
+
+  // tolerance = 0.1
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("tolerance", (double) 0.1);
+
+  RUN_BINDING();
+
+  // Calculate accuracy.
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  REQUIRE(accuracy1 <= accuracy2);
+  REQUIRE(accuracy2 <= accuracy3);
 }

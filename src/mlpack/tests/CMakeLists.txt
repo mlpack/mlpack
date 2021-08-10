@@ -132,6 +132,8 @@ add_executable(mlpack_test
   xgboost_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/adaboost_fit_test.cpp
+  main_tests/adaboost_predict_test.cpp
+  main_tests/adaboost_predict_proba_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp

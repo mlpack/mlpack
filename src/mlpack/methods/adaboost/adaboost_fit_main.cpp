@@ -116,7 +116,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       true, "invalid number of iterations specified");
 
   // Sanity check on tolerance value.
-  RequireParamValue<int>(params, "tolerance", [](int x) { return x > 0; },
+  RequireParamValue<double>(params, "tolerance", [](double x) { return x > 0; },
       true, "invalid tolerance specified");
 
   AdaBoostModel* m;
