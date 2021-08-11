@@ -626,19 +626,19 @@ double DecisionTreeRegressor<FitnessFunction,
       responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
-  const size_t end = dimensionSelector.End();
+  const size_t nDims = dimensionSelector.NumDimensions();
 
   if (maximumDepth != 1)
   {
-    for (size_t i = dimensionSelector.Begin(); i != end;
-         i = dimensionSelector.Next())
+    for (size_t i = 0; i < nDims; ++i)
     {
+      size_t dim = dimensionSelector.GetDimension(i);
       double dimGain = -DBL_MAX;
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      if (datasetInfo.Type(dim) == data::Datatype::categorical)
       {
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
-            data.cols(begin, begin + count - 1).row(i),
-            datasetInfo.NumMappings(i),
+            data.cols(begin, begin + count - 1).row(dim),
+            datasetInfo.NumMappings(dim),
             responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
@@ -647,10 +647,10 @@ double DecisionTreeRegressor<FitnessFunction,
             *this,
             fitnessFunction);
       }
-      else if (datasetInfo.Type(i) == data::Datatype::numeric)
+      else if (datasetInfo.Type(dim) == data::Datatype::numeric)
       {
         dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
-            data.cols(begin, begin + count - 1).row(i),
+            data.cols(begin, begin + count - 1).row(dim),
             responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
@@ -666,7 +666,7 @@ double DecisionTreeRegressor<FitnessFunction,
         continue;
 
       // Was there an improvement?  If so mark that it's the new best dimension.
-      bestDim = i;
+      bestDim = dim;
       bestGain = dimGain;
 
       // If the gain is the best possible, no need to keep looking.
@@ -811,15 +811,16 @@ double DecisionTreeRegressor<FitnessFunction,
       responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
+  const size_t nDims = dimensionSelector.NumDimensions();
 
   if (maximumDepth != 1)
   {
-    for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
-         i = dimensionSelector.Next())
+    for (size_t i = 0; i < nDims; ++i)
     {
+      size_t dim = dimensionSelector.GetDimension(i);
       const double dimGain = NumericSplitType<FitnessFunction>::template
           SplitIfBetter<UseWeights>(bestGain,
-                                    data.cols(begin, begin + count - 1).row(i),
+                                    data.cols(begin, begin + count - 1).row(dim),
                                     responses.cols(begin, begin + count - 1),
                                     UseWeights ?
                                         weights.cols(begin, begin + count - 1) :
@@ -835,7 +836,7 @@ double DecisionTreeRegressor<FitnessFunction,
       if (dimGain == DBL_MAX)
         continue;
 
-      bestDim = i;
+      bestDim = dim;
       bestGain = dimGain;
 
       // If the gain is the best possible, no need to keep looking.

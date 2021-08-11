@@ -28,20 +28,14 @@ class RandomDimensionSelect
   RandomDimensionSelect() : dimensions(0) { }
 
   /**
-   * Get the first dimension to select from.
+   * Get the current dimension.
    */
-  size_t Begin() const { return math::RandInt(dimensions); }
+  size_t GetDimension(size_t i) const { return math::RandInt(dimensions); }
 
   /**
-   * Get the last dimension to select from.
+   * Return the total number of dimensions to iterate.
    */
-  size_t End() const { return dimensions; }
-
-  /**
-   * Get the next (last) dimensions.  We only allow one dimension, so any 'next'
-   * dimension is past our bounds.
-   */
-  size_t Next() const { return dimensions; }
+  size_t NumDimensions() const { return 1; }
 
   //! Get the number of dimensions.
   size_t Dimensions() const { return dimensions; }

@@ -25,26 +25,17 @@ class AllDimensionSelect
   /**
    * Construct the AllDimensionSelect object for the given number of dimensions.
    */
-  AllDimensionSelect() : i(0), dimensions(0) { }
+  AllDimensionSelect() : dimensions(0) { }
 
   /**
-   * Get the first dimension to select from.
+   * Get the current dimension.
    */
-  size_t Begin()
-  {
-    i = 0;
-    return 0;
-  }
+  size_t GetDimension(size_t i) const { return i; }
 
   /**
-   * Get the last dimension to select from.
+   * Return the total number of dimensions to iterate.
    */
-  size_t End() const { return dimensions; }
-
-  /**
-   * Get the next dimension.
-   */
-  size_t Next() { return ++i; }
+  size_t NumDimensions() const { return dimensions; }
 
   //! Get the number of dimensions.
   size_t Dimensions() const { return dimensions; }
@@ -52,8 +43,6 @@ class AllDimensionSelect
   size_t& Dimensions() { return dimensions; }
 
  private:
-  //! The current dimension we are looking at.
-  size_t i;
   //! The number of dimensions to select from.
   size_t dimensions;
 };

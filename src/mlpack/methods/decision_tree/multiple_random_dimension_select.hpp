@@ -30,20 +30,25 @@ class MultipleRandomDimensionSelect
    */
   MultipleRandomDimensionSelect(const size_t numDimensions = 0) :
         numDimensions(numDimensions),
-        i(0),
         dimensions(0)
   { }
 
   /**
-   * Get the first random value.
+   * Get the current dimension.
    */
-  size_t Begin()
+  size_t GetDimension(size_t i) const { return values[i]; }
+
+  /**
+   * Populates the set of randomly selected dimensions and 
+   * return the total number of dimensions to iterate.
+   */
+  size_t NumDimensions()
   {
     // Reset if possible.
     if (numDimensions == 0 || numDimensions > dimensions)
       numDimensions = (size_t) std::sqrt(dimensions);
 
-    values.set_size(numDimensions + 1);
+    values.set_size(numDimensions);
 
     // Try setting new values.
     for (size_t i = 0; i < numDimensions; ++i)
@@ -70,23 +75,7 @@ class MultipleRandomDimensionSelect
       values[i] = value;
     }
 
-    values[numDimensions] = std::numeric_limits<size_t>::max();
-
-    i = 0;
-    return values[0];
-  }
-
-  /**
-   * Get the last random value.
-   */
-  size_t End() const { return size_t(-1); }
-
-  /**
-   * Get the next index.
-   */
-  size_t Next()
-  {
-    return values[++i];
+    return numDimensions;
   }
 
   //! Get the number of dimensions.
@@ -99,8 +88,6 @@ class MultipleRandomDimensionSelect
   size_t numDimensions;
   //! The values we select from.
   arma::Col<size_t> values;
-  //! The current value we are looking at.
-  size_t i;
   //! Number of dimensions.
   size_t dimensions;
 };

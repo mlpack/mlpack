@@ -1165,10 +1165,7 @@ TEST_CASE("RandomDimensionSelectTest", "[DecisionTreeTest]")
   RandomDimensionSelect r;
   r.Dimensions() = 10;
 
-  REQUIRE(r.Begin() < 10);
-  REQUIRE(r.Next() == r.End());
-  REQUIRE(r.Next() == r.End());
-  REQUIRE(r.Next() == r.End());
+  REQUIRE(r.NumDimensions() == 1);
 }
 
 /**
@@ -1183,9 +1180,9 @@ TEST_CASE("RandomDimensionSelectRandomTest", "[DecisionTreeTest]")
   r3.Dimensions() = 100000;
   r4.Dimensions() = 100000;
 
-  REQUIRE(((r1.Begin() != r2.Begin()) ||
-           (r1.Begin() != r3.Begin()) ||
-           (r1.Begin() != r4.Begin())));
+  REQUIRE(((r1.GetDimension(0) != r2.GetDimension(0)) ||
+           (r1.GetDimension(0) != r3.GetDimension(0)) ||
+           (r1.GetDimension(0) != r4.GetDimension(0))));
 }
 
 /**
@@ -1198,12 +1195,11 @@ TEST_CASE("MultipleRandomDimensionSelectTest", "[DecisionTreeTest]")
   r.Dimensions() = 10;
 
   // Make sure we get five elements.
-  REQUIRE(r.Begin() < 10);
-  REQUIRE(r.Next() < 10);
-  REQUIRE(r.Next() < 10);
-  REQUIRE(r.Next() < 10);
-  REQUIRE(r.Next() < 10);
-  REQUIRE(r.Next() == r.End());
+  const size_t nDims = r.NumDimensions();
+  REQUIRE(nDims == 5);
+
+  for (size_t i = 0; i < nDims; ++i)
+    REQUIRE(r.GetDimension(i) < 10);
 }
 
 /**
@@ -1217,9 +1213,9 @@ TEST_CASE("MultipleRandomDimensionAllSelectTest", "[DecisionTreeTest]")
   bool found[3];
   found[0] = found[1] = found[2] = false;
 
-  found[r.Begin()] = true;
-  found[r.Next()] = true;
-  found[r.Next()] = true;
+  const size_t nDims = r.NumDimensions();
+  for (size_t i = 0; i < nDims; ++i)
+    found[r.GetDimension(i)] = true;
 
   REQUIRE(found[0] == true);
   REQUIRE(found[1] == true);
