@@ -66,7 +66,7 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  arma::mat reshapedInput((input).memptr(),
+  arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
     size / groupCount, groupCount * input.n_cols, false, false);
 
   if (output.is_empty())
@@ -96,9 +96,9 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  arma::mat inputReshaped((input).memptr(),
+  arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
     size / groupCount, groupCount * input.n_cols, false, false);
-  arma::mat gyReshaped((gy).memptr(),
+  arma::mat gyReshaped(const_cast<arma::Mat<eT>&>(gy).memptr(),
     size / groupCount, groupCount * gy.n_cols, false, false);
   arma::mat gReshaped((g).memptr(),
     size / groupCount, groupCount * g.n_cols, false, false);
