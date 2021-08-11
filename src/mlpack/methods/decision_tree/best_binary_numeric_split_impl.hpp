@@ -200,7 +200,8 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction& fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
@@ -270,9 +271,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       continue;
 
     // Calculate the gain for the left and right child.
-    const double leftGain = FitnessFunction::template
+    const double leftGain = fitnessFunction.template
         Evaluate<UseWeights>(sortedResponses, sortedWeights, 0, index);
-    const double rightGain = FitnessFunction::template
+    const double rightGain = fitnessFunction.template
         Evaluate<UseWeights>(sortedResponses, sortedWeights, index,
             responses.n_elem);
 
@@ -338,12 +339,11 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction& fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
-
-  FitnessFunction fitnessFunction;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
