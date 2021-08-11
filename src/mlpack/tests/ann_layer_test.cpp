@@ -3057,8 +3057,21 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 
   model.Forward(input, output);
   arma::mat result;
-  result = { -1.172, -0.651, 0.391, 1.432, -1.265, -0.633, 0.633, 1.265 };
+  result = { -1.1716986101, -0.6509436723,  0.3905662034,  1.4320760790,
+             -1.2649104316, -0.6324552158,  0.6324552158,  1.2649104316 };
   result.reshape(8, 1);
+
+  CheckMatrices(output, result, 1e-5);
+  result.clear();
+
+  output = model.Mean();
+  result = { 4.25, 15.0 };
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  output = model.Variance();
+  result = { 3.6875, 10.0000 };
 
   CheckMatrices(output, result, 1e-1);
 }
