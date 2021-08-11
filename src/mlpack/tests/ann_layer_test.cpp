@@ -3071,6 +3071,8 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
              { -0.633 },
              { 0.633 },
              { 1.265 } };
+
+  CheckMatrices(output, result, 1e-1);
 }
 
 /**
