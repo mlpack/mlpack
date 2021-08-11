@@ -3063,14 +3063,7 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 
   model.Forward(input, output);
   arma::mat result;
-  result = { { -1.172 },
-             { -0.651 },
-             { 0.391 },
-             { 1.432 },
-             { -1.265 },
-             { -0.633 },
-             { 0.633 },
-             { 1.265 } };
+  result = { -1.172, -0.651, 0.391, 1.432, -1.265, -0.633, 0.633, 1.265 };
 
   CheckMatrices(output, result, 1e-1);
 }
