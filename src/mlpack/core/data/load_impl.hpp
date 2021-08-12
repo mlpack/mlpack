@@ -201,9 +201,9 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
+template<typename MatType, typename PolicyType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal,
           const bool transpose)

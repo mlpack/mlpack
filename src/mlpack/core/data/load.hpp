@@ -176,9 +176,9 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT, typename PolicyType>
+template<typename MatType, typename PolicyType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
