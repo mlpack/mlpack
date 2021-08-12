@@ -215,7 +215,7 @@ void IO_SetParamMatWithInfo(const char* paramName,
       if (dimensions[i])
       {
         // Map the right number of objects.
-        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        for (size_t j = 1; j <= (size_t) maxs[i]; ++j)
         {
           std::ostringstream oss;
           oss << j;
