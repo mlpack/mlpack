@@ -257,14 +257,6 @@ void mlpackSetPassed(void* params, const char* name)
 }
 
 /**
- * Reset the status of all timers.
- */
-void mlpackResetTimers()
-{
-//  IO::GetSingleton().timer.Reset();
-}
-
-/**
  * Enable timing.
  */
 void mlpackEnableTimers()
