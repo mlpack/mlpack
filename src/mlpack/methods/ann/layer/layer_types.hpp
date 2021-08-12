@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
+#include <mlpack/methods/ann/layer/bicubic_interpolation.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/channel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
@@ -40,6 +41,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/lp_pooling.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -47,6 +49,7 @@
 #include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
+#include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
@@ -83,6 +86,7 @@ template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
 template<typename InputDataType, typename OutputDataType> class Padding;
+template<typename InputDataType, typename OutputDataType> class ReLU6;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -233,6 +237,7 @@ using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
+        ReLU6<arma::mat, arma::mat>*,
         Reparametrization<arma::mat, arma::mat>*,
         Select<arma::mat, arma::mat>*,
         SpatialDropout<arma::mat, arma::mat>*,
@@ -242,7 +247,9 @@ using MoreTypes = boost::variant<
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
+        BicubicInterpolation<arma::mat, arma::mat>*,
+        NearestInterpolation<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
