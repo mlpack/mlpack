@@ -28,7 +28,7 @@ class AllDimensionSelect
   AllDimensionSelect() : dimensions(0) { }
 
   /**
-   * Get the current dimension.
+   * Get the `i`th dimension.
    */
   size_t GetDimension(size_t i) const { return i; }
 
