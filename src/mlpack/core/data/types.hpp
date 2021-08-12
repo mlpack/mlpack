@@ -27,7 +27,7 @@ namespace mlpack
 namespace data
 {
 
-enum struct file_type
+enum struct FileType
 {
   FileTypeUnknown,
   AutoDetect,        //!< attempt to automatically detect the file type
@@ -43,13 +43,12 @@ enum struct file_type
 };
 
 /**
- * This fucntion is used to convert mlpack file type to respective
- * arma file type.
+ * This function is used to convert mlpack file types to
+ * their respective Armadillo file types.
  *
- * @param type mlpack::file_type
+ * @param type mlpack::FileType
  */
-inline arma::file_type ToArmaFileType(const file_type& type);
-
+inline arma::file_type ToArmaFileType(const FileType& type);
 
 }  // namespace data
 }  // namespace mlpack

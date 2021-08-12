@@ -65,7 +65,7 @@ bool Save(const std::string& filename,
           const MatType& matrix,
           const bool fatal = false,
           bool transpose = true,
-          file_type inputSaveType = file_type::AutoDetect);
+          FileType inputSaveType = FileType::AutoDetect);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the

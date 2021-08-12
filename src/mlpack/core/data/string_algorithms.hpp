@@ -2,7 +2,7 @@
  * @file core/data/string_algorithms.hpp
  * @author Gopi M. Tatiraju
  *
- * Utility fucntions related to string manipulation
+ * Utility functions related to string manipulation
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -25,34 +25,32 @@ namespace data{
  */
 inline void trim(std::string& str)
 {
-  if(str.find_first_not_of(' ') == std::string::npos)
+  if (str.find_first_not_of(' ') == std::string::npos)
   {
     str = "";
     return;
   }
+
   size_t startIndex = 0;
 
-  while(std::isspace(str[startIndex]))
-  {
+  while (std::isspace(str[startIndex]))
     startIndex++;
-  }
 
   size_t endIndex = str.size() - 1;
 
-  while(std::isspace(str[endIndex]))
-  {
+  while (std::isspace(str[endIndex]))
     endIndex--;
-  }
 
   std::string trimmedStr = (endIndex - startIndex == str.size()) ? 
-                             std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
+    std::move(str) : str.substr(startIndex,
+                                endIndex - startIndex + 1);
 
   str = trimmedStr;
 }
 
 /**
  * Trim off characters from start and end of
- * of the string. The supplied fucntion is
+ * of the string. The supplied function is
  * used to determine which characters will
  * be trimmed off.
  *
@@ -61,7 +59,7 @@ inline void trim(std::string& str)
  */
 inline void trim_if(std::string &str, std::function<bool(char)> func)
 {
-  if(str.find_first_not_of(' ') == std::string::npos)
+  if (str.find_first_not_of(' ') == std::string::npos)
   {
     str = "";
     return;
@@ -69,11 +67,11 @@ inline void trim_if(std::string &str, std::function<bool(char)> func)
 
   size_t startIndex = 0;
 
-  for(size_t i = 0; i < str.size(); i++)
+  for (size_t i = 0; i < str.size(); i++)
   {
     bool match = func(str[i]);
 
-    if(match)
+    if (match)
       startIndex++;
     else
       break;
@@ -84,14 +82,14 @@ inline void trim_if(std::string &str, std::function<bool(char)> func)
   for(int i = str.size() - 1; i >= 0; i--)
   {
     bool match = func(str[i]);
-    if(match)
+    if (match)
       endIndex--;
     else
       break;
   }
 
   std::string trimmedStr = (endIndex - startIndex == str.size()) ?
-                             std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
+  std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
 
   str = trimmedStr;
 }

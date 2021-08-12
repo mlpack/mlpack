@@ -24,17 +24,17 @@ namespace data {
  *
  * @param type Type to get the logical name of.
  */
-std::string GetStringType(const file_type& type)
+std::string GetStringType(const FileType& type)
 {
-   switch (type)
+  switch (type)
   {
-    case file_type::CSVASCII:    return "CSV data";
-    case file_type::RawASCII:    return "raw ASCII formatted data";
-    case file_type::RawBinary:   return "raw binary formatted data";
-    case file_type::ArmaASCII:   return "Armadillo ASCII formatted data";
-    case file_type::ArmaBinary:  return "Armadillo binary formatted data";
-    case file_type::PGMBinary:   return "PGM data";
-    case file_type::HDF5Binary:  return "HDF5 data";
+    case FileType::CSVASCII:    return "CSV data";
+    case FileType::RawASCII:    return "raw ASCII formatted data";
+    case FileType::RawBinary:   return "raw binary formatted data";
+    case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
+    case FileType::ArmaBinary:  return "Armadillo binary formatted data";
+    case FileType::PGMBinary:   return "PGM data";
+    case FileType::HDF5Binary:  return "HDF5 data";
     default:                     return "";
   }
 }
@@ -50,7 +50,7 @@ std::string GetStringType(const file_type& type)
  *
  * @param f Opened istream to look into to guess the file type.
  */
-file_type GuessFileType(std::istream& f)
+FileType GuessFileType(std::istream& f)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
@@ -71,7 +71,7 @@ file_type GuessFileType(std::istream& f)
 
   // Handle empty files.
   if (nMax == 0)
-    return file_type::FileTypeUnknown;
+    return FileType::FileTypeUnknown;
 
   const arma::uword nUse = std::min(nMax, arma::uword(4096));
 
@@ -89,7 +89,7 @@ file_type GuessFileType(std::istream& f)
   if (!loadOkay)
   {
     delete[] dataMem;
-    return file_type::FileTypeUnknown;
+    return FileType::FileTypeUnknown;
   }
 
   bool hasBinary = false;
@@ -165,12 +165,12 @@ file_type GuessFileType(std::istream& f)
   delete[] dataMem;
 
   if (hasBinary)
-    return file_type::RawBinary;
+    return FileType::RawBinary;
 
   if (hasComma && (hasBracket == false))
-    return file_type::CSVASCII;
+    return FileType::CSVASCII;
 
-  return file_type::RawASCII;
+  return FileType::RawASCII;
 }
 
 /**
@@ -186,22 +186,22 @@ file_type GuessFileType(std::istream& f)
  * @param filename Name of the file.
  * @return The detected file type.
  */
-file_type AutoDetect(std::fstream& stream, const std::string& filename)
+FileType AutoDetect(std::fstream& stream, const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);
-  file_type detectedLoadType = file_type::FileTypeUnknown;
+  FileType detectedLoadType = FileType::FileTypeUnknown;
 
   if (extension == "csv" || extension == "tsv")
   {
     detectedLoadType = GuessFileType(stream);
-    if (detectedLoadType == file_type::CSVASCII)
+    if (detectedLoadType == FileType::CSVASCII)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
     }
-    else if (detectedLoadType == file_type::RawASCII) // .csv file can be tsv.
+    else if (detectedLoadType == FileType::RawASCII) // .csv file can be tsv.
     {
       if (extension == "csv")
       {
@@ -228,7 +228,7 @@ file_type AutoDetect(std::fstream& stream, const std::string& filename)
     }
     else
     {
-      detectedLoadType = file_type::FileTypeUnknown;
+      detectedLoadType = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "txt")
@@ -248,15 +248,15 @@ file_type AutoDetect(std::fstream& stream, const std::string& filename)
 
     if (rawHeader == ARMA_MAT_TXT)
     {
-      detectedLoadType = file_type::ArmaASCII;
+      detectedLoadType = FileType::ArmaASCII;
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
       detectedLoadType = GuessFileType(stream);
 
-      if (detectedLoadType != file_type::RawASCII &&
-          detectedLoadType != file_type::CSVASCII)
-        detectedLoadType = file_type::FileTypeUnknown;
+      if (detectedLoadType != FileType::RawASCII &&
+          detectedLoadType != FileType::CSVASCII)
+        detectedLoadType = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "bin")
@@ -274,25 +274,25 @@ file_type AutoDetect(std::fstream& stream, const std::string& filename)
 
     if (rawHeader == ARMA_MAT_BIN)
     {
-      detectedLoadType = file_type::ArmaBinary;
+      detectedLoadType = FileType::ArmaBinary;
     }
     else // We can only assume it's raw binary.
     {
-      detectedLoadType = file_type::RawBinary;
+      detectedLoadType = FileType::RawBinary;
     }
   }
   else if (extension == "pgm")
   {
-    detectedLoadType = file_type::PGMBinary;
+    detectedLoadType = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    detectedLoadType = file_type::HDF5Binary;
+    detectedLoadType = FileType::HDF5Binary;
   }
   else // Unknown extension...
   {
-    detectedLoadType = file_type::FileTypeUnknown;
+    detectedLoadType = FileType::FileTypeUnknown;
   }
 
   return detectedLoadType;
@@ -304,34 +304,34 @@ file_type AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-file_type DetectFromExtension(const std::string& filename)
+FileType DetectFromExtension(const std::string& filename)
 {
   const std::string extension = Extension(filename);
 
   if (extension == "csv")
   {
-    return file_type::CSVASCII;
+    return FileType::CSVASCII;
   }
   else if (extension == "txt")
   {
-    return file_type::RawASCII;
+    return FileType::RawASCII;
   }
   else if (extension == "bin")
   {
-    return file_type::ArmaBinary;
+    return FileType::ArmaBinary;
   }
   else if (extension == "pgm")
   {
-    return file_type::PGMBinary;
+    return FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    return file_type::HDF5Binary;
+    return FileType::HDF5Binary;
   }
   else
   {
-    return file_type::FileTypeUnknown;
+    return FileType::FileTypeUnknown;
   }
 }
 

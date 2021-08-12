@@ -21,56 +21,54 @@
 
 #include "types.hpp"
 
-namespace mlpack
-{
-namespace data
-{
+namespace mlpack{
+namespace data{
 
-inline arma::file_type ToArmaFileType(const file_type& type)
+inline arma::file_type ToArmaFileType(const FileType& type)
 {
   switch(type)
   {
-    case file_type::FileTypeUnknown:
+    case FileType::FileTypeUnknown:
       return arma::file_type_unknown;
       break;
 
-    case file_type::AutoDetect:
+    case FileType::AutoDetect:
       return arma::auto_detect;
       break;
     
-    case file_type::RawASCII:
+    case FileType::RawASCII:
       return arma::raw_ascii;
       break;
     
-    case file_type::ArmaASCII:
+    case FileType::ArmaASCII:
       return arma::arma_ascii;
       break;
     
-    case file_type::CSVASCII:
+    case FileType::CSVASCII:
       return arma::csv_ascii;
       break;
     
-    case file_type::RawBinary:
+    case FileType::RawBinary:
       return arma::raw_binary;
       break;
     
-    case file_type::ArmaBinary:
+    case FileType::ArmaBinary:
       return arma::arma_binary;
       break;
     
-    case file_type::PGMBinary:
+    case FileType::PGMBinary:
       return arma::pgm_binary;
       break;
     
-    case file_type::PPMBinary:
+    case FileType::PPMBinary:
       return arma::ppm_binary;
       break;
     
-    case file_type::HDF5Binary:
+    case FileType::HDF5Binary:
       return arma::hdf5_binary;
       break;
     
-    case file_type::CoordASCII:
+    case FileType::CoordASCII:
       return arma::coord_ascii;
       break;
     

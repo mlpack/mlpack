@@ -42,237 +42,230 @@ namespace mlpack
 {
 namespace data
 {
-  
-  /**
-   * Given the address of a martix element(val)
-   * sets it equal to the provided value(token)
-   * example calling: convert_token(x.at(row, col), token)
-   */
-  template<typename MatType>
-  bool LoadCSV::ConvertToken(typename MatType::elem_type& val, const std::string& token)
+
+/**
+* Given the address of a matrix element(val)
+* sets it equal to the provided value(token)
+* example calling: convert_token(x.at(row, col), token)
+*/
+template<typename MatType>
+bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
+                           const std::string& token)
+{
+  const size_t N = size_t(token.length());
+
+  if (N == 0)
   {
-    const size_t N = size_t(token.length());
-
-    if (N == 0)
-    {
-      val = typename MatType::elem_type(0);
-      return true;
-    }
-
-    const char* str = token.c_str();
-
-    if ((N == 3) || (N == 4))
-    {
-      const bool neg = (str[0] == '-');
-      const bool pos = (str[0] == '+');
-
-      const size_t offset = ((neg || pos) && (N == 4)) ? 1 : 0;
-
-      const char sig_a = str[offset];
-      const char sig_b = str[offset+1];
-      const char sig_c = str[offset+2];
-
-      if (((sig_a == 'i') || (sig_a == 'I')) &&
-          ((sig_b == 'n') || (sig_b == 'N')) &&
-          ((sig_c == 'f') || (sig_c == 'F')))
-      {
-        val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
-                        std::numeric_limits<typename MatType::elem_type>::infinity();
-        return true;
-      }
-      else if (((sig_a == 'n') || (sig_a == 'N')) &&
-         ((sig_b == 'a') || (sig_b == 'A')) &&
-         ((sig_c == 'n') || (sig_c == 'N')))
-      {
-        val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
-        return true;
-      }
-    }
-
-    char* endptr = nullptr;
-
-    if (std::is_floating_point<typename MatType::elem_type>::value)
-    {
-      val = typename MatType::elem_type(std::strtod(str, &endptr));
-    }
-    else if (std::is_integral<typename MatType::elem_type>::value)
-    {
-      if (std::is_signed<typename MatType::elem_type>::value)
-      {
-        val = typename MatType::elem_type(std::strtoll(str, &endptr, 10));
-      }
-      else
-      {
-        if (str[0] == '-')
-        {
-          val = typename MatType::elem_type(0);
-          return true;
-        }
-
-        val = typename MatType::elem_type( std::strtoull(str, &endptr, 10));
-      }
-    }
-
-    if (str == endptr)
-    {
-      return false;
-    }
+    val = typename MatType::elem_type(0);
     return true;
   }
 
-  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::fstream& f, const char delim = ',')
+  const char* str = token.c_str();
+
+  if ((N == 3) || (N == 4))
   {
-    
-    bool load_okay = f.good();
+    const bool neg = (str[0] == '-');
+    const bool pos = (str[0] == '+');
 
-    f.clear();
-    
-    const std::fstream::pos_type pos1 = f.tellg();
-    
-    size_t f_n_rows = 0;
-    size_t f_n_cols = 0;
-    
-    std::string line_string;
-    std::stringstream line_stream;
-    std::string token;
+    const size_t offset = ((neg || pos) && (N == 4)) ? 1 : 0;
 
-    while (f.good() && load_okay)
+    const char sig_a = str[offset];
+    const char sig_b = str[offset+1];
+    const char sig_c = str[offset+2];
+
+    if (((sig_a == 'i') || (sig_a == 'I')) &&
+        ((sig_b == 'n') || (sig_b == 'N')) &&
+        ((sig_c == 'f') || (sig_c == 'F')))
     {
-      std::getline(f, line_string);
-      if (line_string.size() == 0)
-      {
-        break;
-      }
-      line_stream.clear();
-      line_stream.str(line_string);
-
-      size_t line_n_cols = 0;
-
-      while (line_stream.good())
-      {
-        std::getline(line_stream, token, delim);
-        ++line_n_cols;
-      }
-
-      if (f_n_cols < line_n_cols)
-      {
-        f_n_cols = line_n_cols;
-      }
-
-      ++f_n_rows;
+      val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
+      std::numeric_limits<typename MatType::elem_type>::infinity();
+      return true;
     }
-
-    f.clear();
-    f.seekg(pos1);
-
-    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
-
-    return mat_size;
+    else if (((sig_a == 'n') || (sig_a == 'N')) &&
+             ((sig_b == 'a') || (sig_b == 'A')) &&
+             ((sig_c == 'n') || (sig_c == 'N')))
+    {
+      val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
+      return true;
+    }
   }
 
+  char* endptr = nullptr;
 
-  inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f, const char delim = ',')
+  if (std::is_floating_point<typename MatType::elem_type>::value)
   {
-    bool load_okay = f.good();
-
-    f.clear();
-    
-    const std::fstream::pos_type pos1 = f.tellg();
-    
-    size_t f_n_rows = 0;
-    size_t f_n_cols = 0;
-    
-    std::string line_string;
-    std::stringstream line_stream;
-    std::string token;
-
-    while (f.good() && load_okay)
+    val = typename MatType::elem_type(std::strtod(str, &endptr));
+  }
+  else if (std::is_integral<typename MatType::elem_type>::value)
+  {
+    if (std::is_signed<typename MatType::elem_type>::value)
+      val = typename MatType::elem_type(std::strtoll(str, &endptr, 10));
+    else
     {
-      std::getline(f, line_string);
-      if (line_string.size() == 0)
+      if (str[0] == '-')
       {
-        break;
-      }
-      line_stream.clear();
-      line_stream.str(line_string);
-
-      size_t line_n_cols = 0;
-
-      while (line_stream.good())
-      {
-        std::getline(line_stream, token, delim);
-
-	if(token[0] == '"' && token[token.size() - 1] != '"')
-	{
-	  while(token[token.size() - 1] != '"')
-          {
-            std::getline(line_stream, token, delim);
-          }
-	}
-
-	++line_n_cols;
+        val = typename MatType::elem_type(0);
+        return true;
       }
 
-      if (f_n_cols < line_n_cols)
-      {
-        f_n_cols = line_n_cols;
-      }
+      val = typename MatType::elem_type( std::strtoull(str, &endptr, 10));
+    }
+  }
 
-      ++f_n_rows;
+  if (str == endptr)
+    return false;
+
+  return true;
+}
+
+inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::fstream& f, const char delim = ',')
+{
+
+  bool load_okay = f.good();
+
+  f.clear();
+
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  size_t f_n_rows = 0;
+  size_t f_n_cols = 0;
+
+  std::string lineString;
+  std::stringstream lineStream;
+  std::string token;
+
+  while (f.good() && load_okay)
+  {
+    std::getline(f, lineString);
+    if (lineString.size() == 0)
+      break;
+
+    lineStream.clear();
+    lineStream.str(lineString);
+
+    size_t line_n_cols = 0;
+
+    while (lineStream.good())
+    {
+      std::getline(lineStream, token, delim);
+      ++line_n_cols;
     }
 
-    f.clear();
-    f.seekg(pos1);
+    if (f_n_cols < line_n_cols)
+      f_n_cols = line_n_cols;
 
-    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
-
-    return mat_size;
+    ++f_n_rows;
   }
-  /**
-   * Returns a bool value showing whether data was loaded successfully or not.
-   * Parses the file and loads the data into the given matrix.
-   */
-  template<typename MatType>
-  bool LoadCSV::LoadCSVFile(MatType& x, std::fstream& f)
+
+  f.clear();
+  f.seekg(pos1);
+
+  std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+
+  return mat_size;
+}
+
+
+inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f, const char delim = ',')
+{
+  bool load_okay = f.good();
+
+  f.clear();
+
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  size_t f_n_rows = 0;
+  size_t f_n_cols = 0;
+
+  std::string lineString;
+  std::stringstream lineStream;
+  std::string token;
+
+  while (f.good() && load_okay)
   {
-    bool load_okay = f.good();
+    std::getline(f, lineString);
+    if (lineString.size() == 0)
+      break;
 
-    f.clear();
+    lineStream.clear();
+    lineStream.str(lineString);
 
-    std::pair<size_t, size_t> mat_size = GetMatSize(f);
+    size_t line_n_cols = 0;
 
-    x.zeros(mat_size.first, mat_size.second);
-
-    size_t row = 0;
-
-    std::string line_string;
-    std::stringstream line_stream;
-    std::string token;
-
-    while (f.good())
+    while (lineStream.good())
     {
-      std::getline(f, line_string);
+      std::getline(lineStream, token, delim);
 
-      if (line_string.size() == 0)
+      if(token[0] == '"' && token[token.size() - 1] != '"')
       {
-        break;
+        while(token[token.size() - 1] != '"')
+          std::getline(lineStream, token, delim);
       }
 
-      line_stream.clear();
-      line_stream.str(line_string);
+      ++line_n_cols;
+    }
 
-      size_t col = 0;
+    if (f_n_cols < line_n_cols)
+      f_n_cols = line_n_cols;
 
-      while (line_stream.good())
+    ++f_n_rows;
+  }
+
+  f.clear();
+  f.seekg(pos1);
+  std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+  return mat_size;
+}
+
+/**
+* Returns a bool value showing whether data was loaded successfully or not.
+* Parses the file and loads the data into the given matrix.
+*/
+template<typename MatType>
+bool LoadCSV::LoadCSVFile(MatType& x, std::fstream& f)
+{
+  bool load_okay = f.good();
+
+  f.clear();
+
+  std::pair<size_t, size_t> mat_size = GetMatSize(f);
+
+  x.zeros(mat_size.first, mat_size.second);
+
+  size_t row = 0;
+
+  std::string lineString;
+  std::stringstream lineStream;
+  std::string token;
+
+  while (f.good())
+  {
+    std::getline(f, lineString);
+
+    if (lineString.size() == 0)
+      break;
+
+    lineStream.clear();
+    lineStream.str(lineString);
+
+    size_t col = 0;
+
+    while (lineStream.good())
+    {
+      std::getline(lineStream, token, ',');
+      typename MatType::elem_type tmp_val = typename MatType::elem_type(0);
+
+      if (ConvertToken<MatType>(tmp_val, token))
       {
-        std::getline(line_stream, token, ',');
-        ConvertToken<MatType>(x.at(row, col), token);
+        x.at(row, col) = tmp_val;
         ++col;
       }
-      ++row;
     }
-    return load_okay;
+
+    ++row;
   }
+  return load_okay;
+}
 
 } // namespace data
 } // namespace mlpack

@@ -71,10 +71,10 @@ namespace data /** Functions to load and save matrices and models. */ {
  */
 template<typename MatType>
 bool Load(const std::string& filename,
-          MatType& matrix,
-          const bool fatal = false,
-          const bool transpose = true,
-          const file_type inputLoadType = file_type::AutoDetect);
+    MatType& matrix,
+    const bool fatal = false,
+    const bool transpose = true,
+    const FileType inputLoadType = FileType::AutoDetect);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -105,11 +105,13 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
  */
+/*
 template<typename MatType>
-bool Load(const std::string& filename,
-          arma::sp_mat& matrix,
+bool LoadSparseMatrix(const std::string& filename,
+          MatType matrix,
           const bool fatal = false,
           const bool transpose = true);
+*/
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
