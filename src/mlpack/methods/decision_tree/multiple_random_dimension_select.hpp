@@ -40,7 +40,7 @@ class MultipleRandomDimensionSelect
 
   /**
    * Populates the set of randomly selected dimensions and 
-   * return the total number of dimensions to iterate.
+   * returns the total number of dimensions to iterate.
    */
   size_t NumDimensions()
   {
