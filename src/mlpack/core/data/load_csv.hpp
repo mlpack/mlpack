@@ -454,7 +454,7 @@ class LoadCSV
   * @param inout Matrix to load into.
   * @param infoSet DatasetMapper to load with.
   */
-  template<typename MatType, typename PolicyType>
+  template<typename T, typename PolicyType>
   void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet)
   {
     // Get matrix size.  This also initializes infoSet correctly.
@@ -478,7 +478,7 @@ class LoadCSV
       // Reset the row we are looking at.  (Remember this is transposed.)
       row = 0;
       std::stringstream lineStream;
-      std::string ;
+      std::string token;
 
       lineStream.clear();
       lineStream.str(line);
