@@ -815,33 +815,45 @@ double DecisionTreeRegressor<FitnessFunction,
 
   if (maximumDepth != 1)
   {
-    for (size_t i = 0; i < nDims; ++i)
+    #pragma omp parallel
     {
-      size_t dim = dimensionSelector.GetDimension(i);
-      const double dimGain = NumericSplitType<FitnessFunction>::template
-          SplitIfBetter<UseWeights>(bestGain,
-                                    data.cols(begin, begin + count - 1).row(dim),
-                                    responses.cols(begin, begin + count - 1),
-                                    UseWeights ?
-                                        weights.cols(begin, begin + count - 1) :
-                                        weights,
-                                    minimumLeafSize,
-                                    minimumGainSplit,
-                                    splitPointOrPrediction,
-                                    *this,
-                                    fitnessFunction);
+      double localBestGain = 0;
+      size_t localBestDim = 0;
+      #pragma omp for reduction( max : bestGain)
+      for (size_t i = 0; i < nDims; ++i)
+      {
+        size_t dim = dimensionSelector.GetDimension(i);
+        const double dimGain = NumericSplitType<FitnessFunction>::template
+            SplitIfBetter<UseWeights>(bestGain,
+                                      data.cols(begin, begin + count - 1).row(dim),
+                                      responses.cols(begin, begin + count - 1),
+                                      UseWeights ?
+                                          weights.cols(begin, begin + count - 1) :
+                                          weights,
+                                      minimumLeafSize,
+                                      minimumGainSplit,
+                                      splitPointOrPrediction,
+                                      *this,
+                                      fitnessFunction);
 
-      // If the splitter did not report that it improved, then move to the next
-      // dimension.
-      if (dimGain == DBL_MAX)
-        continue;
+        // If the splitter did not report that it improved, then move to the next
+        // dimension.
+        if (dimGain == DBL_MAX)
+          continue;
 
-      bestDim = dim;
-      bestGain = dimGain;
+        if (dimGain > bestGain)
+        {
+          bestGain = dimGain;
+          localBestGain = dimGain;
+          localBestDim = dim;
+        }
 
-      // If the gain is the best possible, no need to keep looking.
-      if (bestGain >= 0.0)
-        break;
+        #pragma omp critical
+        {
+          if (localBestGain == bestGain)
+            bestDim = localBestDim;
+        }
+      }
     }
   }
 
