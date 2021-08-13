@@ -607,7 +607,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
   }
   for i := 0; i < rows; i++ {
     for j := 0; j < cols; j++ {
-      if j == 1 || j == 2 || j == 5 {
+      if j == 0 || j == 1 || j == 4 {
         if x.Data.At(i, j) * 2 != MatrixAndInfoOut.At(i, j) {
           val := MatrixAndInfoOut.At(i, j)
           expected := x.Data.At(i, j)*2
