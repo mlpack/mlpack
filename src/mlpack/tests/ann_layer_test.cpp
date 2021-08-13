@@ -3049,31 +3049,35 @@ TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
 TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
-  input = { 2, 3, 5, 7, 11, 13, 17, 19 };
-  input.reshape(8, 1);
+  input = {
+    { 2, 0, 1 },
+    { 3, 1, 2 },
+    { 5, 1, 3 },
+    { 7, 2, 4 },
+    { 11, 3, 5 },
+    { 13, 5, 6 },
+    { 17, 8, 7 },
+    { 19, 13, 8 }
+  };
 
-  GroupNorm<> model(input.n_rows, 2);
+  GroupNorm<> model(2, 4, 2);
   model.Reset();
 
   model.Forward(input, output);
   arma::mat result;
-  result = { -1.1716986101, -0.6509436723,  0.3905662034,  1.4320760790,
-             -1.2649104316, -0.6324552158,  0.6324552158,  1.2649104316 };
-  result.reshape(8, 1);
+  result = {
+    { -1.1717001972, -1.4142135482, -1.3416407811 },
+    { -0.6509445540, 0.0000000000 , -0.4472135937 },
+    { 0.3905667324 , 0.0000000000 , 0.4472135937  },
+    { 1.4320780188 , 1.4142135482 , 1.341640781   },
+    { -1.2649110634, -1.1283296293, -1.3416407811 },
+    { -0.6324555317, -0.5973509802, -0.4472135937 },
+    { 0.6324555317 , 0.1991169934 , 0.4472135937  },
+    { 1.2649110634 , 1.5265636161 , 1.3416407811  }
+  };
 
   CheckMatrices(output, result, 1e-5);
-  result.clear();
 
-  output = model.Mean();
-  result = { 4.25, 15.0 };
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
-  output = model.Variance();
-  result = { 3.6875, 10.0000 };
-
-  CheckMatrices(output, result, 1e-1);
 }
 
 /**

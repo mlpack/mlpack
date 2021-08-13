@@ -22,6 +22,7 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
+    channelSize(0),
     size(0),
     groupCount(1),
     eps(1e-8),
@@ -32,7 +33,8 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
 
 template <typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm(
-    const size_t size, const size_t groupCount, const double eps) :
+    const size_t channelSize, const size_t size, const size_t groupCount, const double eps) :
+    channelSize(channelSize),
     size(size),
     groupCount(groupCount),
     eps(eps),
@@ -40,17 +42,17 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm(
 {
   if (size % groupCount != 0)
   {
-    Log::Fatal << "Total input Size must be divisible by groupCount!" << std::endl;
+    Log::Fatal << "Total input units must be divisible by groupCount!" << std::endl;
   }
 
-  weights.set_size(size * groupCount * 2 + 1, 1);
+  weights.set_size(size * 2 + 1, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 void GroupNorm<InputDataType, OutputDataType>::Reset()
 {
-  gamma = arma::mat(weights.memptr(), size * groupCount, 1, false, false);
-  beta = arma::mat(weights.memptr() + gamma.n_elem, size * groupCount, 1, false, false);
+  gamma = arma::mat(weights.memptr(), size, 1, false, false);
+  beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {
@@ -66,14 +68,15 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
+  assert(input.n_rows % channelSize == 0);
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
-    size / groupCount, groupCount * input.n_cols, false, false);
+    input.n_rows * groupCount / channelSize, input.n_cols * channelSize / groupCount, false, false);
 
   if (output.is_empty())
-    output.zeros(size, input.n_cols);
+    output.zeros(input.n_rows, input.n_cols);
 
   arma::mat reshapedOutput((output).memptr(),
-    size / groupCount, groupCount * output.n_cols, false, false);
+    input.n_rows * groupCount / channelSize, input.n_cols * channelSize / groupCount, false, false);
 
   mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
@@ -86,9 +89,18 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   // Reused in the backward and gradient step.
   normalized = output;
 
+  arma::mat expandedGamma, expandedBeta;
+  expandedGamma.set_size(output.n_rows, 1);
+  expandedBeta.set_size(output.n_rows, 1);
+  for (int r = 0; r < output.n_rows; ++r)
+  {
+    expandedGamma(r) = gamma(r % size);
+    expandedBeta(r) = beta(r % size);
+  }
+
   // Scale and shift the output.
-  reshapedOutput.each_col() %= gamma;
-  reshapedOutput.each_col() += beta;
+  output.each_col() %= expandedGamma;
+  output.each_col() += expandedBeta;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -98,28 +110,37 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
 {
   arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
     size / groupCount, groupCount * input.n_cols, false, false);
-  arma::mat gyReshaped(const_cast<arma::Mat<eT>&>(gy).memptr(),
-    size / groupCount, groupCount * gy.n_cols, false, false);
   arma::mat gReshaped((g).memptr(),
     size / groupCount, groupCount * g.n_cols, false, false);
 
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  arma::mat expandedGamma;
+  expandedGamma.set_size(output.n_rows, 1);
+  for (int r = 0; r < output.n_rows; ++r)
+  {
+    expandedGamma(r) = gamma(r % size);
+  }
 
   // dl / dxhat.
-  const arma::mat norm = gyReshaped.each_col() % gamma;
+  const arma::mat norm = gy.each_col() % expandedGamma;
+
+  arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
+    size / groupCount, groupCount * gy.n_cols, false, false);
+
+
+  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(norm % inputMean, 0) %
+  const arma::mat var = arma::sum(normReshaped % inputMean, 0) %
       arma::pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
-  gReshaped = (norm.each_row() % stdInv) + (inputMean.each_row() %
+  gReshaped = (normReshaped.each_row() % stdInv) + (inputMean.each_row() %
       var * 2 / inputReshaped.n_rows);
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  gReshaped.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / inputReshaped.n_rows;
+  gReshaped.each_row() += arma::sum(normReshaped.each_row() % -stdInv, 0) / inputReshaped.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -149,7 +170,7 @@ void GroupNorm<InputDataType, OutputDataType>::serialize(
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size(size * groupCount * 2 + 1, 1);
+    weights.set_size(size * 2 + 1, 1);
     loading = true;
   }
 
