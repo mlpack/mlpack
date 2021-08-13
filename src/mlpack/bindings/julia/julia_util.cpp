@@ -208,7 +208,11 @@ void IO_SetParamMatWithInfo(const char* paramName,
   if (hasCategoricals)
   {
     // Compute the maximum in each dimension.
-    arma::vec maxs = pointsAreRows ? arma::max(m, 0).t() : arma::max(m, 1);
+    arma::vec maxs;
+    if (pointsAreRows)
+      maxs = arma::max(m, 0).t();
+    else
+      maxs = arma::max(m, 1);
 
     for (size_t i = 0; i < d.Dimensionality(); ++i)
     {
