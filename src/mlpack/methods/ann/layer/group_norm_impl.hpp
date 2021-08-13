@@ -69,14 +69,15 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   assert(input.n_rows % channelSize == 0);
+  assert(input.n_rows % size == 0);
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
-    input.n_rows * groupCount / channelSize, input.n_cols * channelSize / groupCount, false, false);
+    input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
 
   if (output.is_empty())
     output.zeros(input.n_rows, input.n_cols);
 
   arma::mat reshapedOutput((output).memptr(),
-    input.n_rows * groupCount / channelSize, input.n_cols * channelSize / groupCount, false, false);
+    input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
 
   mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
