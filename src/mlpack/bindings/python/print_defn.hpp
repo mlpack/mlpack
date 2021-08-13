@@ -13,7 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DEFN_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "get_valid_name.hpp"
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {

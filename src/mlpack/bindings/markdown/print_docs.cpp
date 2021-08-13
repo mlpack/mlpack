@@ -18,6 +18,7 @@
 #include "print_docs.hpp"
 #include "print_doc_functions.hpp"
 #include "print_param_table.hpp"
+#include "replace_all_copy.hpp"
 
 // Make sure that this is defined.
 #ifndef DOXYGEN_PREFIX
@@ -75,7 +76,7 @@ void PrintDocs(const string& bindingName,
   map<string, Params> paramMethods;
 
   // adding elements to  'paramMethods'.
-  for (size_t i=0; i<validMethods.size(); ++i)
+  for (size_t i = 0; i < validMethods.size(); ++i)
   {
     Params methodParams = IO::Parameters(bindingName + "_" + validMethods[i]);
     paramMethods[validMethods[i]] = methodParams;
@@ -123,19 +124,19 @@ void PrintDocs(const string& bindingName,
   for (size_t i = 0; i < languages.size(); ++i)
   {
     if(!addWrapperDocs[i])
+    {
       cout << "[Detailed documentation](#" << languages[i] << "_";
-    else
-      cout << "[](#" << languages[i] << "_";
-
-    cout << bindingName << "_detailed-documentation){: .language-detail-link #"
-      << languages[i] << " }";
+      cout << bindingName << "_detailed-documentation){: .language-detail-link #"
+        << languages[i] << " }";
+    }
   }
+
   cout << "." << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
   {
-    if(!addWrapperDocs[i]) // different structure for wrappers.
+    if (!addWrapperDocs[i]) // different structure for wrappers.
     {
       BindingInfo::Language() = languages[i];
 
@@ -169,7 +170,7 @@ void PrintDocs(const string& bindingName,
       // Determine if there are any output options, to see if we need
       // to print the header of the output options table.
       bool hasOutputOptions = false;
-      map<string, ParamData> parameters = params.Parameters();
+      map<string, ParamData>& parameters = params.Parameters();
       for (map<string, ParamData>::iterator it = parameters.begin();
           it != parameters.end(); ++it)
       {
@@ -204,16 +205,16 @@ void PrintDocs(const string& bindingName,
       cout << "{: #" << languages[i] << "_" << bindingName
           << "_detailed-documentation }" << endl;
       cout << endl;
-      string desc = boost::replace_all_copy(doc.longDescription(),
-                                            "|", "\\|");
+      string desc = replace_all_copy(doc.longDescription(),
+                                     "|", "\\|");
       cout << desc << endl << endl;
 
       if (doc.example.size() > 0)
         cout << "### Example" << endl;
       for (size_t j = 0; j < doc.example.size(); ++j)
       {
-        string eg = boost::replace_all_copy(doc.example[j](),
-                                            "|", "\\|");
+        string eg = replace_all_copy(doc.example[j](),
+                                     "|", "\\|");
         cout << eg << endl << endl;
       }
       cout << "### See also" << endl;
@@ -267,7 +268,7 @@ void PrintDocs(const string& bindingName,
           << endl;
 
       unordered_set<string> paramsSet; // to prevent duplicates.
-      for(auto mainItr=paramMethods.begin(); mainItr!=paramMethods.end();
+      for(auto mainItr = paramMethods.begin(); mainItr != paramMethods.end();
           ++mainItr)
       {
         PrintParamTable(bindingName + "_" + mainItr->first,
@@ -280,20 +281,20 @@ void PrintDocs(const string& bindingName,
       cout << "### Example" << endl;
       cout << endl;
       string example;
-      for(auto itr=paramMethods.begin(); itr!=paramMethods.end();
+      for(auto itr = paramMethods.begin(); itr != paramMethods.end();
           ++itr)
       {
         for(size_t j = 0; j < itr->second.Doc().example.size();
             ++j)
         {
-          string eg = boost::replace_all_copy(itr->second.Doc().example[j](),
+          string eg = replace_all_copy(itr->second.Doc().example[j](),
               "|", "\\|");
           example += eg + "\n";
         }
       }
 
       cout << "```" << languages[i] << endl;
-      cout << example.substr(0, example.size()-1) << endl; // do not want the last "\n".
+      cout << example.substr(0, example.size() - 1) << endl; // do not want the last "\n".
       cout << "```" << endl;
       cout << endl;
 
@@ -301,7 +302,7 @@ void PrintDocs(const string& bindingName,
       cout << endl;
       cout << "| **name** | **description** |" << endl;
       cout << "|----------|-----------------|" << endl;
-      for(size_t j=0; j<validMethods.size(); j++)
+      for(size_t j = 0; j < validMethods.size(); j++)
       {
         cout << "| " << validMethods[j] << " | ";
         cout << paramMethods[validMethods[j]].Doc().shortDescription;
@@ -310,13 +311,13 @@ void PrintDocs(const string& bindingName,
       cout << endl;
 
       // Print information for each method.
-      for(size_t j=0; j<validMethods.size(); j++)
+      for(size_t j = 0; j < validMethods.size(); j++)
       {
         cout << "### " << j+1 << ". " << validMethods[j] << endl;
         cout << endl;
         cout << paramMethods[validMethods[j]].Doc().shortDescription << endl;
         cout << endl;
-        map<string, ParamData> parameters = paramMethods[validMethods[i]].Parameters();
+        map<string, ParamData>& parameters = paramMethods[validMethods[i]].Parameters();
         cout << "#### Input Parameters:" << endl;
         cout << endl;
 

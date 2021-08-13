@@ -1,11 +1,21 @@
+/**
+ * @file bindings/markdown/print_param_table.cpp
+ * @author Nippun Sharma
+ *
+ * Implementation of PrintParamTable.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
 
 #include "binding_info.hpp"
 #include "print_param_table.hpp"
 #include "print_doc_functions.hpp"
-
-#include <boost/algorithm/string/replace.hpp>
+#include "replace_all_copy.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -28,13 +38,18 @@ void PrintParamTable(const string& bindingName,
       it != parameters.end(); ++it)
   {
     bool printCondition = true;
+    // print output options if onlyOutputParams is true.
     if (onlyOutputParams) printCondition &= !it->second.input;
+
+    // print input options if onlyInputParams is true.
     if (onlyInputParams) printCondition &= it->second.input;
+
+    // print hyper parameters if onlyHyperParams is true.
     if (onlyHyperParams)
     {
       bool isSerial;
       params.functionMap[it->second.tname]["IsSerializable"](
-          it->second, NULL, (void*)& isSerial);
+          it->second, NULL, (void*) &isSerial);
 
       bool isHyperParam = false;
       size_t foundArma = it->second.cppType.find("arma");
@@ -43,6 +58,8 @@ void PrintParamTable(const string& bindingName,
         isHyperParam = true;
       printCondition &= isHyperParam;
     }
+
+    // print matrix parameters if onlyMatrixParams is true.
     if (onlyMatrixParams)
     {
       size_t foundArma = it->second.cppType.find("arma");
@@ -60,7 +77,9 @@ void PrintParamTable(const string& bindingName,
         it->second.name == "version"))
       continue;
 
-    if (paramsSet.find(it->second.name) != paramsSet.end()) continue; // if already printed.
+    if (paramsSet.find(it->second.name) != paramsSet.end())
+      continue; // if already printed.
+
     paramsSet.insert(it->second.name); // insert if not already there.
 
     // Print name, type, description, default.
@@ -93,7 +112,7 @@ void PrintParamTable(const string& bindingName,
 
     if (headers.find("description") != headers.end())
     {
-      string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
+      string desc = replace_all_copy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||

@@ -41,6 +41,7 @@ set(SOURCES
   "print_param_table.cpp"
   "print_type_doc.hpp"
   "program_doc_wrapper.hpp"
+  "replace_all_copy.hpp"
 )
 
 # Copy all Markdown sources to the build directory.
@@ -61,17 +62,30 @@ endforeach()
 # by the macro.
 macro (add_markdown_docs name languages wrappers)
 
-  set(category ${${name}_category})
+  set(category ${${name}_CATEGORY})
 
   # Next, we should use configure_file() to generate each
   # generate_markdown.<binding>.cpp.  We need to loop over all the languages for
   # this binding to do that.
   set(BINDING ${name})
+
+  # pushes language names to a std::vector<string>.
   set(LANGUAGES_PUSH_BACK_CODE "")
+
+  # pushes whether wrapper is to be added for this language
+  # to a std::vector<bool>.
   set(WRAPPER_PUSH_BACK_CODE "")
+
+  # pushes method names in a group to a std::vector<string>.
   set(VALID_METHODS_PUSH_BACK_CODE "")
+
+  # includes _main.cpp files for all methods.
   set(INCLUDE_MAIN_FILES "")
+
+  # used to create WRAPPER_PUSH_BACK_CODE.
   set(ADD_WRAPPER_LANGUAGES "")
+
+  # list of languages for which wrapper is to be added.
   set(WRAPPERS ${wrappers})
 
   foreach (lang ${languages})
@@ -96,11 +110,11 @@ macro (add_markdown_docs name languages wrappers)
   endforeach()
   
   if(NOT ${WRAPPERS} EQUAL "")
-    foreach(method ${${name}_valid_methods})
+    foreach(method ${${name}_VALID_METHODS})
       set(VALID_METHODS_PUSH_BACK_CODE
           "${VALID_METHODS_PUSH_BACK_CODE}\n  validMethods.push_back(\"${method}\");")
     endforeach()
-    foreach(loc ${${name}_method_main_files})
+    foreach(loc ${${name}_METHOD_MAIN_FILES})
       set(INCLUDE_MAIN_FILES
           "${INCLUDE_MAIN_FILES}\n#include <${loc}>")
     endforeach()
@@ -208,6 +222,7 @@ function (post_markdown_setup)
       "${BINDING_SOURCE_DIR}/print_param_table.hpp"
       "${BINDING_SOURCE_DIR}/print_param_table.cpp"
       "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
+      "${BINDING_SOURCE_DIR}/replace_all_copy.hpp"
       "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)

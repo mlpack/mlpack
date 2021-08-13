@@ -62,7 +62,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param NAME User-friendly name.
  */
-// TODO: use __COUNTER__ here and elsewhere!
 #ifdef __COUNTER__
   #define BINDING_USER_NAME(NAME) static \
       mlpack::util::BindingName \

@@ -11,11 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_wrapper_py.hpp"
-#include "get_methods_wrapper.hpp"
-#include "get_class_name_wrapper.hpp"
-#include "get_program_name.hpp"
 #include "get_arma_type.hpp"
-#include "get_valid_name.hpp"
+#include "wrapper_functions.hpp"
 #include <mlpack/core/util/io.hpp>
 
 using namespace mlpack::util;
@@ -46,45 +43,58 @@ void PrintWrapperPY(const std::string& category,
   else if(category == "classification")
     cout << "class BaseEstimator:\n  pass\n\nclass ClassifierMixin:\n  pass\n\n";
 
-  string importString = "";
-
-  for(auto i: methods)
+  // Import different mlpack programs that are to be wrapped.
+  for(int i=0; i<methods.size(); i++)
   {
-    importString += "from mlpack." + groupName + "_" + i + " ";
-		importString += "import " + groupName + "_" + i + "\n";
+    cout << "from mlpack." << groupName << "_" << methods[i] << " ";
+    cout << "import " << groupName << "_" << methods[i] << endl;
+  }
+
+  // Try importing scikit-learn, only for classification and
+  // regression.
+  if(category == "regression" || category == "classification")
+  {
+    cout << "import warnings" << endl;
+    cout << "warnings.filterwarnings(\"default\"";
+    cout << ", category=ImportWarning)" << endl;
   }
 
   if(category == "regression")
   {
-    importString += "import warnings\nwarnings.filterwarnings(\"default\"";
-    importString += ", category=ImportWarning)\n";
-    importString += "try:\n  from sklearn.base import BaseEstimator\nexcept:\n";
-    importString += "  warnings.warn(\"scikit learn not present\", category";
-    importString += "=ImportWarning)\n\n";
+    cout << "try:" << endl;
+    cout << "  from sklearn.base import BaseEstimator" << endl;
   }
   else if(category == "classification")
   {
-    importString += "import warnings\nwarnings.filterwarnings(\"default\"";
-    importString += ", category=ImportWarning)\n";
-    importString += "try:\n  from sklearn.base import BaseEstimator, ";
-    importString += "ClassifierMixin\nexcept:\n";
-    importString += "  warnings.warn(\"scikit learn not present\", category";
-    importString += "=ImportWarning)\n\n";
+    cout << "try: " << endl;
+    cout << "  from sklearn.base import BaseEstimator, ClassifierMixin" << endl;
   }
 
-  cout << importString << endl;
+  if(category == "regression" || category == "classification")
+  {
+    cout << "except:" << endl;
+    cout << "  warnings.warn(\"scikit learn not present:\\n";
+    cout << "  this mlpack method supports scikit utils, install scikit-learn\\n";
+    cout << "  if you wish to use them!\", category=ImportWarning)" << endl;
+    cout << endl;
+  }
 
+  // Check and store if every parameter is serializable,
+  // a hyperparameter and boolean.
   for(auto i=params.begin(); i!=params.end(); i++)
   {
     map<string, ParamData> methodParams = i->second.Parameters();
+
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
+      // Checking for serializability.
       bool isSerial;
       i->second.functionMap[itr->second.tname]["IsSerializable"](
           itr->second, NULL, (void*)& isSerial);
       if(isSerial)
       	serializable.insert(itr->second.cppType);
 
+      // Checking for hyperparameter.
       bool isHyperParam = false;
       size_t foundArma = itr->second.cppType.find("arma");
       if(itr->second.input && foundArma == string::npos &&
@@ -92,6 +102,7 @@ void PrintWrapperPY(const std::string& category,
         isHyperParam = true;
       hyperParams[itr->first] = isHyperParam;
 
+      // Checking for boolean.
       if(itr->second.cppType == "bool")
         isBool[itr->first] = true;
       else
@@ -112,8 +123,10 @@ void PrintWrapperPY(const std::string& category,
   else
     cout << "class " << className << ":" << endl;
 
+  // print the __init__ method.
   indent += 2;
-	cout << string(indent, ' ') << "def __init__(self," << endl;
+  cout << string(indent, ' ') << "def __init__(self," << endl;
+
   for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
   {
     // indent + 13, here 13 -> def __init__(
@@ -128,9 +141,11 @@ void PrintWrapperPY(const std::string& category,
           << " = None," << endl;
     }
   }
+
   cout << string(indent+12, ' ') << "):" << endl;
   cout << endl;
 
+  // storing given arguments in attributes.
   indent += 2;
   cout << string(indent, ' ') << "# serializable attributes." << endl;
   if(serializable.size() == 0)
@@ -141,8 +156,10 @@ void PrintWrapperPY(const std::string& category,
     cout << string(indent, ' ');
     cout << "self._" << *itr << " = None" << endl;
   }
+
   cout << endl;
   cout << string(indent, ' ') << "# hyper-parameters." << endl;
+
   for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
   {
     if(itr->second)
@@ -157,14 +174,20 @@ void PrintWrapperPY(const std::string& category,
   indent -= 2;
 
   // print all method definitions.
-  for(auto methodName: methods)
+  for(string methodName: methods)
   {
+    // print method name.
     cout << string(indent, ' ') << "def " << methodName << "(self," << endl;
     int addIndent = 4 + methodName.size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
+
     vector<string> inputParamNames;
-    map<string, string> mapToScikitNames; // "train" = ..., "labels" = ...
-    map<string, string> invMapToScikitNames; // "X" = ..., "y" = ...
+
+    // maps matrix parameters to X and vector parameters to y.
+    map<string, string> mapToScikitNames;
+    // maps X to matrix parameter name and y to vector parameter name.
+    map<string, string> invMapToScikitNames;
+
     int numMatrixInputs = 0;
     int numVectorInputs = 0;
 
@@ -172,6 +195,8 @@ void PrintWrapperPY(const std::string& category,
     {
       for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
       {
+        // Throw error if there are more than one matrix input params,
+        // or more than one vector input params.
         if(numMatrixInputs > 1)
           Log::Fatal << "More than one matrix input parameters for " <<
               methodName << " method!" << endl;
@@ -181,6 +206,7 @@ void PrintWrapperPY(const std::string& category,
 
         if(itr->second.input)
         {
+          // If this is a matrix parameter.
           if(itr->second.cppType == "arma::mat" ||
              itr->second.cppType ==
              "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
@@ -190,6 +216,7 @@ void PrintWrapperPY(const std::string& category,
             mapToScikitNames[itr->first] = "X";
             invMapToScikitNames["X"] = itr->first;
           }
+          // If this is a vector parameter.
           else if(itr->second.cppType == "arma::vec" ||
                   itr->second.cppType == "arma::rowvec" ||
                   itr->second.cppType == "arma::Row<size_t>" ||
@@ -203,28 +230,39 @@ void PrintWrapperPY(const std::string& category,
       }
     }
 
+    // Now we print the matrix and vector params.
     if(category == "classification" || category == "regression")
     {
       bool hasX = false;
       bool hasy = false;
-      // print X, y in order.
+
+      // First print X, if it is present.
       if(invMapToScikitNames.find("X") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "X = None," << endl;
         hasX = true;
       }
+
+      // Now print y, if it is present.
       if(invMapToScikitNames.find("y") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "y = None," << endl;
         hasy = true;
       }
+
+      // Now print actual names, to make it work for
+      // both mapped and actual names.
+
+      // Now print actual name for X.
       if(hasX)
       {
         cout << string(indent + addIndent, ' ');
         cout << GetValidName(invMapToScikitNames["X"]) << " = None," << endl;
       }
+
+      // Now print actual name for y.
       if(hasy)
       {
         cout << string(indent + addIndent, ' ');
@@ -243,35 +281,38 @@ void PrintWrapperPY(const std::string& category,
       if(hasX)
       {
         string realName = GetValidName(invMapToScikitNames["X"]);
-        logicString +=
-        string(indent, ' ') + "if X is not None and " + realName +
-            " is None:\n";
-        logicString +=
-        string(indent, ' ') + "  " + realName + " = X\n";
-        logicString +=
-        string(indent, ' ') + "elif X is not None and " + realName +
-            " is not None:\n";
-        logicString +=
-        string(indent, ' ') + "  raise ValueError(\"" + realName +
-            " and X both cannot be not None!!\")\n\n";
+        
+        cout << string(indent, ' ') << "if X is not None and ";
+        cout << realName << " is None:" << endl;
+
+        cout << string(indent, ' ') << "  " << realName << " = X" << endl;
+
+        cout << string(indent, ' ') << "elif X is not None and " << realName;
+        cout << " is not None:" << endl;
+
+        cout << string(indent, ' ') << "  raise ValueError(\"" << realName;
+        cout << " and X both cannot be not None!\")" << endl;
+        cout << endl;
       }
 
       if(hasy)
       {
         string realName = GetValidName(invMapToScikitNames["y"]);
-        logicString +=
-        string(indent, ' ') + "if y is not None and " + realName +
-            " is None:\n";
-        logicString +=
-        string(indent, ' ') + "  " + realName + " = y\n";
-        logicString +=
-        string(indent, ' ') + "elif y is not None and " + realName +
-            " is not None:\n";
-        logicString +=
-        string(indent, ' ') + "  raise ValueError(\"" + realName +
-            " and y both cannot be not None!!\")\n\n";
+
+        cout << string(indent, ' ') << "if y is not None and ";
+        cout << realName << " is None:" << endl;
+
+        cout << string(indent, ' ') << "  " << realName << " = y" << endl;
+
+        cout << string(indent, ' ') << "elif y is not None and " << realName;
+        cout << " is not None:" << endl;
+
+        cout << string(indent, ' ') << "  raise ValueError(\"" << realName;
+        cout << " and y both cannot be not None!\")" << endl;
+        cout << endl;
       }
-      cout << logicString << endl;
+
+      cout << endl;
     }
     else
     {
@@ -298,6 +339,7 @@ void PrintWrapperPY(const std::string& category,
         "(";
     addIndent = 6 + groupName.size() + 1 + methodName.size() + 1;
     int count = 0; // just for reference.
+
     // first pass through the parameters and print all required parameters.
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
@@ -318,6 +360,8 @@ void PrintWrapperPY(const std::string& category,
         count++;
       }
     }
+
+    // Now print all non-required parameters.
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
       if(itr->second.input && !itr->second.required)
@@ -338,6 +382,7 @@ void PrintWrapperPY(const std::string& category,
         count++;
       }
     }
+
     cout << string(indent + addIndent - 1, ' ');
     cout << ")" << endl;
     cout << endl;
@@ -345,6 +390,7 @@ void PrintWrapperPY(const std::string& category,
     // print output parameters.
     string returnString = string(indent, ' ') + "return ";
     bool outputsOnlySerial = true;
+
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
       if(!itr->second.input)
@@ -363,6 +409,7 @@ void PrintWrapperPY(const std::string& category,
       }
     }
     cout << endl;
+
     // return somethings.
     if(outputsOnlySerial)
       cout << returnString + "self" << endl;

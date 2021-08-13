@@ -20,6 +20,7 @@
 
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
+#include <mlpack/bindings/python/wrapper_functions.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
 #include <mlpack/bindings/go/print_doc_functions.hpp>
 #include <mlpack/bindings/R/print_doc_functions.hpp>
@@ -69,11 +70,12 @@ inline std::string GetWrapperName(const std::string& bindingName)
 {
   if (BindingInfo::Language() == "python")
   {
-    return python::GetWrapperName(bindingName);
+    return "class" + python::GetClassName(bindingName);
   }
   else
   {
-    return "Not Supported"; // Wrapper support is added only for Python.
+    throw std::invalid_argument("GetWrapperName(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }
 
@@ -834,7 +836,7 @@ inline std::string GetDataset(const std::string& datasetName,
   else
   {
     throw std::invalid_argument("GetDataset(): unknown "
-    "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 
   return s;
@@ -855,7 +857,7 @@ std::string CreateObject(const std::string& bindingName,
   else
   {
     throw std::invalid_argument("CreateObject(): unknown "
-    "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 
   return s;
@@ -873,7 +875,7 @@ inline std::string CreateObject(const std::string& bindingName,
   else
   {
     throw std::invalid_argument("CreateObject(): unknown "
-    "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 
   return s;
@@ -894,7 +896,7 @@ std::string CallMethod(const std::string& bindingName,
   else
   {
     throw std::invalid_argument("CallMethod(): unknown "
-    "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 
   return s;

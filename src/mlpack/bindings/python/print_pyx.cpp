@@ -128,7 +128,7 @@ void PrintPYX(const util::BindingDetails& doc,
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
-    if(extraDefnSet.find(d.tname) == extraDefnSet.end())
+    if (extraDefnSet.find(d.tname) == extraDefnSet.end())
     {
       params.functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
       extraDefnSet.insert(d.tname);

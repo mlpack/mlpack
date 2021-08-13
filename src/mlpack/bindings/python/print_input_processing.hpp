@@ -18,8 +18,8 @@
 #include "get_numpy_type.hpp"
 #include "get_numpy_type_char.hpp"
 #include "get_cython_type.hpp"
-#include "get_valid_name.hpp"
 #include "strip_type.hpp"
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {

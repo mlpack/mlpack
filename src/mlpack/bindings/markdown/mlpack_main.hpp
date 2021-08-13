@@ -59,7 +59,7 @@
 #define IMPORT_SPLIT mlpack::bindings::markdown::ImportSplit
 
 /**
- * IMPORT_THIS returns a string that imports the current method.
+ * IMPORT_THIS() returns a string that imports the current method.
  */
 #define IMPORT_THIS mlpack::bindings::markdown::ImportThis
 

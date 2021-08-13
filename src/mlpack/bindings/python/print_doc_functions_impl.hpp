@@ -14,8 +14,7 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "get_class_name_wrapper.hpp"
-#include "get_valid_name.hpp"
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -28,25 +27,6 @@ inline std::string GetBindingName(const std::string& bindingName)
 {
   // No modification is needed to the name---we just use it as-is.
   return bindingName + "()";
-}
-
-/**
- * Given the name of a binding, print its Python wrapper name
- * for the documentation.
- */
-inline std::string GetWrapperName(const std::string& groupName)
-{
-	std::string className = "";
-	std::stringstream groupNameStream(groupName);
-	std::string temp;
-
-	while(getline(groupNameStream, temp, '_'))
-	{
-		temp[0] = toupper(temp[0]);
-		className += temp;
-	}
-
-	return "class " + className;
 }
 
 /**
@@ -172,7 +152,7 @@ std::string PrintInputOptions(util::Params& params,
 
     bool isSerial;
     params.functionMap[d.tname]["IsSerializable"](
-        d, NULL, (void*)& isSerial);
+        d, NULL, (void*) &isSerial);
 
     bool isHyperParam = false;
     size_t foundArma = d.cppType.find("arma");
@@ -182,6 +162,8 @@ std::string PrintInputOptions(util::Params& params,
 
     bool printCondition = d.input;
 
+    // no parameter is both a hyper-parameter and a matrix-parmeter
+    // hence the print condition is "false".
     if(onlyHyperParams && onlyMatrixParams) printCondition = false;
     else if(onlyHyperParams) printCondition = isHyperParam;
     else if(onlyMatrixParams) printCondition = foundArma != std::string::npos;
@@ -417,21 +399,17 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 
 inline std::string ImportExtLib()
 {
-  std::string extImports = ">>> import pandas as pd";
-  return extImports;
+  return ">>> import pandas as pd";
 }
 
 inline std::string ImportSplit()
 {
-  std::string splitImport = ">>> from mlpack import preprocess_split";
-  return splitImport;
+  return ">>> from mlpack import preprocess_split";
 }
 
 inline std::string ImportThis(const std::string& groupName)
 {
-  std::string className = GetClassName(groupName);
-  std::string thisString = ">>> from mlpack import " + className;
-  return thisString;
+  return ">>> from mlpack import " + GetClassName(groupName);
 }
 
 inline std::string SplitTrainTest(const std::string& datasetName,
@@ -488,7 +466,7 @@ inline std::string CreateObject(const std::string& bindingName,
   {
     bool isSerial;
     params.functionMap[it->second.tname]["IsSerializable"](
-        it->second, NULL, (void*)& isSerial);
+        it->second, NULL, (void*) &isSerial);
 
     bool isHyperParam = false;
     size_t foundArma = it->second.cppType.find("arma");
@@ -528,7 +506,7 @@ std::string CallMethod(const std::string& bindingName,
                        Args... args)
 {
   util::Params params = IO::Parameters(bindingName);
-  map<string, util::ParamData> parameters = params.Parameters();
+  std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = ">>> ";
 
   // find out if there are any output options.
@@ -537,7 +515,7 @@ std::string CallMethod(const std::string& bindingName,
     if(it->second.input) continue;
     callMethod += it->first + ", ";
   }
-  if(callMethod != "")
+  if (callMethod != "")
     callMethod = callMethod.substr(0, callMethod.size()-2);
   callMethod += " = " + objectName + "." + methodName + "(";
   callMethod += PrintInputOptions(params, false, true, args...);
