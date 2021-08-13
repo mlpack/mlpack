@@ -94,19 +94,7 @@ class LoadCSV
     CheckOpen();
   }
 
-  /**
-  * Convert the given string token to assigned datatype and assign
-  * this value to the given address. The address here will be a
-  * matrix location.
-  * 
-  * Token is always read as a string, if the given token is +/-INF or NAN
-  * it converts them to infinity and NAN using numeric_limits.
-  *
-  * @param val Token's value will be assigned to this address
-  * @param token Value which should be assigned
-  */
-  template<typename MatType>
-  bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
+  // Fucntions for Numeric Parser
 
   /**
   * Returns a bool value showing whether data was loaded successfully or not.
@@ -124,49 +112,27 @@ class LoadCSV
   * @param f File stream to access the data file
   */
   template<typename MatType>
-  bool LoadCSVFile(MatType& x, std::fstream& f);
+  bool LoadNumericCSV(MatType& x, std::fstream& f);
 
-  inline void NumericParse(std::stringstream& lineStream, size_t& col,
-                           const char delim); 
+  /**
+  * Convert the given string token to assigned datatype and assign
+  * this value to the given address. The address here will be a
+  * matrix location.
+  * 
+  * Token is always read as a string, if the given token is +/-INF or NAN
+  * it converts them to infinity and NAN using numeric_limits.
+  *
+  * @param val Token's value will be assigned to this address
+  * @param token Value which should be assigned
+  */
+  template<typename MatType>
+  bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
 
-  inline void CategoricalParse(std::stringstream& lineStream, size_t& col,
-                               const char delim); 
 
-  template<typename T, typename MapPolicy>
-  void MapOnFirstPass(std::string& line, DatasetMapper<MapPolicy>& info, const char delim, size_t& dim)
-  {
-    // In this case we must pass everything we parse to the MapPolicy.
-    std::string str(line.begin(), line.end());
+  inline void NumericMatSize(std::stringstream& lineStream, size_t& col,
+                             const char delim); 
 
-    std::stringstream lineStream;
-    std::string token;
-
-    lineStream.clear();
-    lineStream.str(line);
-    
-    while (lineStream.good())
-    { 
-      std::getline(lineStream, token, delim);
-      // Remove whitespace from either side
-      trim(token);
-
-      if (token[0] == '"' && token[token.size() - 1] != '"')
-      {
-        std::string tok = token;
-
-        while (token[token.size() - 1] != '"')
-        {
-          tok += delim;
-          std::getline(lineStream, token, delim);
-          tok += token;
-        }
-
-        token = tok;
-      }
-
-      info.template MapFirstPass<T>(std::move(token), dim - 1);
-    }
-  }
+  // Functions for Categorical Parse
 
   /**
   * Load the file into the given matrix with the given DatasetMapper object.
@@ -178,31 +144,9 @@ class LoadCSV
   *     (default).
   */
   template<typename MatType, typename PolicyType>
-  void Load(MatType &inout,
-            DatasetMapper<PolicyType> &infoSet,
-            const bool transpose = true)
-  {
-    std::cout << "This is extension: " << extension << "\n";
-    if (extension == "csv")
-    {
-      delim = ',';
-    }
-    else if (extension == "tsv")
-    {
-      delim = '\t';
-    }
-    else if (extension == "txt")
-    {
-      delim = ' ';
-    }
-
-    CheckOpen();
-
-    if (transpose)
-      TransposeParse(inout, infoSet);
-    else
-     NonTransposeParse(inout, infoSet);
-  }
+  void LoadCategoricalCSV(MatType &inout,
+                          DatasetMapper<PolicyType> &infoSet,
+                          const bool transpose = true);
 
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,
@@ -215,94 +159,9 @@ class LoadCSV
   * @param info DatasetMapper object to use for first pass.
   */
   template<typename T, typename MapPolicy>
-  void GetMatrixSize(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
-  {
-    // Take a pass through the file.  If the DatasetMapper policy requires it,
-    // we will pass everything string through MapString().  This might be useful
-    // if, e.g., the MapPolicy needs to find which dimensions are numeric or
-    // categorical.
+  void InitializeMapper(size_t& rows, size_t& cols,
+                        DatasetMapper<MapPolicy>& info);
 
-    // Reset to the start of the file.
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-    rows = 0;
-    cols = 0;
-
-    // First, count the number of rows in the file (this is the dimensionality).
-    std::string line;
-    while (std::getline(inFile, line))
-    {
-      ++rows;
-    }
-
-    // Reset the DatasetInfo object, if needed.
-    if (info.Dimensionality() == 0)
-    {
-      info.SetDimensionality(rows);
-    }
-    else if (info.Dimensionality() != rows)
-    {
-      std::ostringstream oss;
-      oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
-      << info.Dimensionality() << ", but data has dimensionality "
-      << rows;
-      throw std::invalid_argument(oss.str());
-    }
-
-    // Now, jump back to the beginning of the file.
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-    rows = 0;
-
-    while (std::getline(inFile, line))
-    {
-      ++rows;
-      // Remove whitespaces from either side
-      trim(line);
-      if (rows == 1)
-      {
-        // Extract the number of columns.
-        std::pair<size_t, size_t> dimen = GetMatSize(inFile, false, delim);
-        cols = dimen.second;
-      }
-
-      // I guess this is technically a second pass, but that's ok... still the
-      // same idea...
-      if (MapPolicy::NeedsFirstPass)
-      {
-        std::string str(line.begin(), line.end());
-
-        std::stringstream lineStream;
-        std::string token;
-
-        lineStream.clear();
-        lineStream.str(line);
-
-        while (lineStream.good())
-        {
-          std::getline(lineStream, token, delim);
-          // Remove whitespace from either side
-          trim(token);
-
-          if (token[0] == '"' && token[token.size() - 1] != '"')
-          {
-            std::string tok = token;
-
-            while (token[token.size() - 1] != '"')
-            {
-              tok += delim;
-              std::getline(lineStream, token, delim);
-              tok += token;
-            }
-
-            token = tok;
-          }
-
-        info.template MapFirstPass<T>(std::move(token), rows - 1);
-      }
-    }
-  } 
-}
   /**
   * Peek at the file to determine the number of rows and columns in the matrix,
   * assuming a transposed matrix.  This will also take a first pass over the
@@ -314,84 +173,67 @@ class LoadCSV
   * @param info DatasetMapper object to use for first pass.
   */
   template<typename T, typename MapPolicy>
-  void GetTransposeMatrixSize(size_t& rows, size_t& cols,
-                              DatasetMapper<MapPolicy>& info)
+  void InitializeTransposeMapper(size_t& rows, size_t& cols,
+                              DatasetMapper<MapPolicy>& info);
+
+  inline void CategoricalMatSize(std::stringstream& lineStream, size_t& col,
+                                 const char delim); 
+
+  // Functions common to both numeric & categorical parser
+
+  /**
+   * Get the size of the matrix. Based on isNumeric the fucntion can be used
+   * for both numeric_parse and categorical_parse.
+   *
+   * @param f fstream stream to open the data file
+   * @param isNumeric bool to ecide if data is numeric or categorical
+   * @param delim char delimiter charecter
+   */
+  inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f, const bool isNumeric = true, const char delim = ',')
   {
-    // Take a pass through the file.  If the DatasetMapper policy requires it,
-    // we will pass everything string through MapString().  This might be useful
-    // if, e.g., the MapPolicy needs to find which dimensions are numeric or
-    // categorical.
-
-    // Reset to the start of the file.
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-    rows = 0;
-    cols = 0;
-
-    std::string line;
-    while (std::getline(inFile, line))
+    bool load_okay = f.good();
+  
+    f.clear();
+  
+    const std::fstream::pos_type pos1 = f.tellg();
+  
+    size_t f_n_rows = 0;
+    size_t f_n_cols = 0;
+  
+    std::string lineString;
+    std::stringstream lineStream;
+    std::string token;
+  
+    while (f.good() && load_okay)
     {
-      ++cols;
-      // Remove whitespaces from either side
-      trim(line);
-
-      if (cols == 1)
-      {
-        // Extract the number of dimensions.
-        std::pair<size_t, size_t> dimen = GetMatSize(inFile, false, delim);
-        rows = dimen.second;
-
-        if (info.Dimensionality() == 0)
-        {
-          info.SetDimensionality(rows);
-        }
-        else if (info.Dimensionality() != rows)
-        {
-          std::ostringstream oss;
-          oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
-          << info.Dimensionality() << ", but data has dimensionality "
-          << rows;
-          throw std::invalid_argument(oss.str());
-        }
-      }
-
-      // If we need to do a first pass for the DatasetMapper, do it.
-      if (MapPolicy::NeedsFirstPass)
-      {
-        // In this case we must pass everything we parse to the MapPolicy.
-        size_t dim = 0;
-
-        std::stringstream lineStream;
-        std::string token;
-
-        lineStream.clear();
-        lineStream.str(line);
-
-        while (lineStream.good())
-        {
-          std::getline(lineStream, token, delim);
-          // Remove whitespace from either side
-          trim(token);
-
-          if (token[0] == '"' && token[token.size() - 1] != '"')
-          {
-            std::string tok = token;
-
-            while (token[token.size() - 1] != '"')
-            {
-              tok += delim;
-              std::getline(lineStream, token, delim);
-              tok += token;
-            }
-
-            token = tok;
-          }
-
-          info.template MapFirstPass<T>(std::move(token), dim++);
-        }
-      }
+      std::getline(f, lineString);
+      if (lineString.size() == 0)
+        break;
+  
+      lineStream.clear();
+      lineStream.str(lineString);
+  
+      size_t line_n_cols = 0;
+  
+      if (isNumeric)
+        NumericMatSize(lineStream, line_n_cols, delim);
+      else
+        CategoricalMatSize(lineStream, line_n_cols, delim);
+  
+      if (f_n_cols < line_n_cols)
+        f_n_cols = line_n_cols;
+  
+      ++f_n_rows;
     }
+  
+    f.clear();
+    f.seekg(pos1);
+  
+    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+  
+    return mat_size;
   }
+
 
  private:
 
@@ -411,6 +253,8 @@ class LoadCSV
     inFile.unsetf(std::ios::skipws);
   }
 
+  // Fucntions for Categorical Parse
+
   /**
   * Parse a non-transposed matrix.
   *
@@ -419,72 +263,7 @@ class LoadCSV
   */
   template<typename T, typename PolicyType>
   void NonTransposeParse(arma::Mat<T>& inout,
-  DatasetMapper<PolicyType>& infoSet)
-  {
-    // Get the size of the matrix.
-    size_t rows, cols;
-    GetMatrixSize<T>(rows, cols, infoSet);
-
-    // Set up output matrix.
-    inout.set_size(rows, cols);
-    size_t row = 0;
-    size_t col = 0;
-
-    // Reset file position.
-    std::string line;
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-
-    while (std::getline(inFile, line))
-    {
-      // Remove whitespaces from either side
-      trim(line);
-
-      std::stringstream lineStream;
-      std::string token;
-
-      lineStream.clear();
-      lineStream.str(line);
-
-      while (lineStream.good())
-      {
-        if (token == "\t")
-        token.clear();
-
-        std::getline(lineStream, token, delim);
-        // Remove whitespace from either side
-        trim(token);
-
-        if (token[0] == '"' && token[token.size() - 1] != '"')
-        {
-          std::string tok = token;
-
-          while (token[token.size() - 1] != '"')
-          {
-            tok += delim;
-            std::getline(lineStream, token, delim);
-            tok += token;
-          }
-
-          token = tok;
-        }
-
-        inout(row, col++) = infoSet.template MapString<T>(std::move(token), row);
-      }      
-
-      // Make sure we got the right number of rows.
-      if (col != cols)
-      {
-        std::ostringstream oss;
-        oss << "LoadCSV::NonTransposeParse(): wrong number of dimensions ("
-        << col << ") on line " << row << "; should be " << cols
-        << " dimensions.";
-        throw std::runtime_error(oss.str());
-      }
-
-      ++row; col = 0;
-    }
-  }
+                         DatasetMapper<PolicyType>& infoSet);
 
   /**
   * Parse a transposed matrix.
@@ -493,74 +272,7 @@ class LoadCSV
   * @param infoSet DatasetMapper to load with.
   */
   template<typename T, typename PolicyType>
-  void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet)
-  {
-    // Get matrix size.  This also initializes infoSet correctly.
-    size_t rows, cols;
-    GetTransposeMatrixSize<T>(rows, cols, infoSet);
-
-    // Set the matrix size.
-    inout.set_size(rows, cols);
-
-    // Initialize auxiliary variables.
-    size_t row = 0;
-    size_t col = 0;
-    std::string line;
-    inFile.clear();
-    inFile.seekg(0, std::ios::beg);
-
-    while (std::getline(inFile, line))
-    {
-      // Remove whitespaces from either side
-      trim(line);
-      // Reset the row we are looking at.  (Remember this is transposed.)
-      row = 0;
-      std::stringstream lineStream;
-      std::string token;
-
-      lineStream.clear();
-      lineStream.str(line);
-
-      while (lineStream.good())
-      {
-        std::getline(lineStream, token, delim);
-        // Remove whitespaces from either side
-        trim(token);
-
-        if (token[0] == '"' && token[token.size() - 1] != '"')
-        {
-          // first part of the string
-          std::string tok = token;
-
-          while (token[token.size() - 1] != '"')
-          {
-            tok += delim;
-            std::getline(lineStream, token, delim);
-            tok += token;
-          }
-
-          token = tok;
-        }
-
-        inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
-        row++;
-      }
-
-      // Make sure we got the right number of rows.
-      if (row != rows)
-      {
-        std::ostringstream oss;
-        oss << "LoadCSV::TransposeParse(): wrong number of dimensions (" << row
-        << ") on line " << col << "; should be " << rows << " dimensions.";
-        throw std::runtime_error(oss.str());
-      }
-
-      // Increment the column index.
-      ++col;
-    }
-  }
-
-  inline std::pair<size_t, size_t> GetMatSize(std::fstream& f, const bool isNumeric, const char delim);
+  void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet);
 
   //! Extension (type) of file.
   std::string extension;
@@ -575,6 +287,7 @@ class LoadCSV
 } // namespace data
 } // namespace mlpack
 
-#include "load_csv_impl.hpp"
+#include "load_numeric_csv.hpp"
+#include "load_categorical_csv.hpp"
 
 #endif

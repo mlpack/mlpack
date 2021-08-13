@@ -10,7 +10,8 @@ set(SOURCES
   has_serialize.hpp
   is_naninf.hpp
   load_csv.hpp
-  load_csv_impl.hpp
+  load_numeric_csv.hpp
+  load_categorical_csv.hpp
   load.hpp
   load_image_impl.hpp
   load_image.cpp

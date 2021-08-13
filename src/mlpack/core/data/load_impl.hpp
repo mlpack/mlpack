@@ -166,7 +166,7 @@ bool Load(const std::string& filename,
   if (loadType != FileType::HDF5Binary)
   {
     if (loadType == FileType::CSVASCII)
-      success = loader.LoadCSVFile(matrix, stream);
+      success = loader.LoadNumericCSV(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
@@ -236,7 +236,7 @@ bool Load(const std::string& filename,
     try
     {
       LoadCSV loader(filename);
-      loader.Load(matrix, info, transpose);
+      loader.LoadCategoricalCSV(matrix, info, transpose);
     }
     catch (std::exception& e)
     {
