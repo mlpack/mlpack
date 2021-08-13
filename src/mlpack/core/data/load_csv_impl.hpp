@@ -118,55 +118,36 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
   return true;
 }
 
-inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::fstream& f, const char delim = ',')
+inline void LoadCSV::NumericParse(std::stringstream& lineStream, size_t& col, const char delim)
 {
-
-  bool load_okay = f.good();
-
-  f.clear();
-
-  const std::fstream::pos_type pos1 = f.tellg();
-
-  size_t f_n_rows = 0;
-  size_t f_n_cols = 0;
-
-  std::string lineString;
-  std::stringstream lineStream;
   std::string token;
 
-  while (f.good() && load_okay)
+  while (lineStream.good())
   {
-    std::getline(f, lineString);
-    if (lineString.size() == 0)
-      break;
-
-    lineStream.clear();
-    lineStream.str(lineString);
-
-    size_t line_n_cols = 0;
-
-    while (lineStream.good())
-    {
-      std::getline(lineStream, token, delim);
-      ++line_n_cols;
-    }
-
-    if (f_n_cols < line_n_cols)
-      f_n_cols = line_n_cols;
-
-    ++f_n_rows;
+    std::getline(lineStream, token, delim);
+    ++col;
   }
-
-  f.clear();
-  f.seekg(pos1);
-
-  std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
-
-  return mat_size;
 }
 
+inline void LoadCSV::CategoricalParse(std::stringstream& lineStream, size_t& col, const char delim)
+{
+  std::string token;
 
-inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f, const char delim = ',')
+  while (lineStream.good())
+  {
+    std::getline(lineStream, token, delim);
+
+    if (token[0] == '"' && token[token.size() - 1] != '"')
+    {
+      while (token[token.size() - 1] != '"')
+        std::getline(lineStream, token, delim);
+    }
+
+    ++col;
+  }
+}
+
+inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::fstream& f, const bool isNumeric = true, const char delim = ',')
 {
   bool load_okay = f.good();
 
@@ -192,18 +173,10 @@ inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f,
 
     size_t line_n_cols = 0;
 
-    while (lineStream.good())
-    {
-      std::getline(lineStream, token, delim);
-
-      if(token[0] == '"' && token[token.size() - 1] != '"')
-      {
-        while(token[token.size() - 1] != '"')
-          std::getline(lineStream, token, delim);
-      }
-
-      ++line_n_cols;
-    }
+    if (isNumeric)
+      NumericParse(lineStream, line_n_cols, delim);
+    else
+      CategoricalParse(lineStream, line_n_cols, delim);
 
     if (f_n_cols < line_n_cols)
       f_n_cols = line_n_cols;
@@ -213,7 +186,9 @@ inline std::pair<size_t, size_t> LoadCSV::GetNonNumericMatSize(std::ifstream& f,
 
   f.clear();
   f.seekg(pos1);
+
   std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+
   return mat_size;
 }
 

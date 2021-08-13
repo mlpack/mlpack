@@ -126,6 +126,10 @@ class LoadCSV
   template<typename MatType>
   bool LoadCSVFile(MatType& x, std::fstream& f);
 
+  inline void NumericParse(std::stringstream& lineStream, size_t& col, const char delim); 
+
+  inline void CategoricalParse(std::stringstream& lineStream, size_t& col, const char delim); 
+
   /**
   * Load the file into the given matrix with the given DatasetMapper object.
   * Throws exceptions on errors.
@@ -193,20 +197,6 @@ class LoadCSV
       throw std::invalid_argument(oss.str());
     }
 
-    // Reset the DatasetInfo object, if needed.
-    if (info.Dimensionality() == 0)
-    {
-      info.SetDimensionality(rows);
-    }
-    else if (info.Dimensionality() != rows)
-    {
-      std::ostringstream oss;
-      oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
-      << info.Dimensionality() << ", but data has dimensionality "
-      << rows;
-      throw std::invalid_argument(oss.str());
-    }
-
     // Now, jump back to the beginning of the file.
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
@@ -220,7 +210,7 @@ class LoadCSV
       if (rows == 1)
       {
         // Extract the number of columns.
-        std::pair<size_t, size_t> dimen = GetNonNumericMatSize(inFile, delim);
+        std::pair<size_t, size_t> dimen = GetMatSize(inFile, false, delim);
         cols = dimen.second;
       }
 
@@ -274,9 +264,8 @@ class LoadCSV
   * @param info DatasetMapper object to use for first pass.
   */
   template<typename T, typename MapPolicy>
-  void GetTransposeMatrixSize(size_t& rows,
-  size_t& cols,
-  DatasetMapper<MapPolicy>& info)
+  void GetTransposeMatrixSize(size_t& rows, size_t& cols,
+                              DatasetMapper<MapPolicy>& info)
   {
     // Take a pass through the file.  If the DatasetMapper policy requires it,
     // we will pass everything string through MapString().  This might be useful
@@ -299,7 +288,7 @@ class LoadCSV
       if (cols == 1)
       {
         // Extract the number of dimensions.
-        std::pair<size_t, size_t> dimen = GetNonNumericMatSize(inFile, delim);
+        std::pair<size_t, size_t> dimen = GetMatSize(inFile, false, delim);
         rows = dimen.second;
 
         // Reset the DatasetInfo object, if needed.
@@ -522,16 +511,14 @@ class LoadCSV
     }
   }
 
-  inline std::pair<size_t, size_t> GetMatSize(std::fstream& f, const char delim);
-
-  inline std::pair<size_t, size_t> GetNonNumericMatSize(std::ifstream& f, const char delim);
+  inline std::pair<size_t, size_t> GetMatSize(std::fstream& f, const bool isNumeric, const char delim);
 
   //! Extension (type) of file.
   std::string extension;
   //! Name of file.
   std::string filename;
   //! Opened stream for reading.
-  std::ifstream inFile;
+  std::fstream inFile;
   //! Delimiter char
   char delim;
 };
