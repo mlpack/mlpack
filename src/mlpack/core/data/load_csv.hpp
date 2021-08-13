@@ -126,9 +126,47 @@ class LoadCSV
   template<typename MatType>
   bool LoadCSVFile(MatType& x, std::fstream& f);
 
-  inline void NumericParse(std::stringstream& lineStream, size_t& col, const char delim); 
+  inline void NumericParse(std::stringstream& lineStream, size_t& col,
+                           const char delim); 
 
-  inline void CategoricalParse(std::stringstream& lineStream, size_t& col, const char delim); 
+  inline void CategoricalParse(std::stringstream& lineStream, size_t& col,
+                               const char delim); 
+
+template<typename T, typename MapPolicy>
+void MapOnFirstPass(std::string& line, DatasetMapper<MapPolicy>& info, const char delim, size_t& dim)
+{
+  // In this case we must pass everything we parse to the MapPolicy.
+  std::string str(line.begin(), line.end());
+
+  std::stringstream lineStream;
+  std::string token;
+
+  lineStream.clear();
+  lineStream.str(line);
+    
+  while (lineStream.good())
+  { 
+    std::getline(lineStream, token, delim);
+    // Remove whitespace from either side
+    trim(token);
+
+    if (token[0] == '"' && token[token.size() - 1] != '"')
+    {
+      std::string tok = token;
+
+      while (token[token.size() - 1] != '"')
+      {
+        tok += delim;
+        std::getline(lineStream, token, delim);
+        tok += token;
+      }
+
+      token = tok;
+    }
+
+    info.template MapFirstPass<T>(std::move(token), dim - 1);
+  }
+}
 
   /**
   * Load the file into the given matrix with the given DatasetMapper object.
@@ -217,39 +255,7 @@ class LoadCSV
       // I guess this is technically a second pass, but that's ok... still the
       // same idea...
       if (MapPolicy::NeedsFirstPass)
-      {
-        // In this case we must pass everything we parse to the MapPolicy.
-        std::string str(line.begin(), line.end());
-
-        std::stringstream lineStream;
-        std::string token;
-
-        lineStream.clear();
-        lineStream.str(line);
-
-        while (lineStream.good())
-        {
-          std::getline(lineStream, token, delim);
-          // Remove whitespace from either side
-          trim(token);
-
-          if (token[0] == '"' && token[token.size() - 1] != '"')
-          {
-            std::string tok = token;
-
-            while (token[token.size() - 1] != '"')
-            {
-              tok += delim;
-              std::getline(lineStream, token, delim);
-              tok += token;
-            }
-
-            token = tok;
-          }
-
-          info.template MapFirstPass<T>(std::move(token), rows - 1);
-        }
-      }
+        MapOnFirstPass<T, MapPolicy>(line, info, delim, rows);
     }
   } 
 
@@ -309,37 +315,8 @@ class LoadCSV
       // If we need to do a first pass for the DatasetMapper, do it.
       if (MapPolicy::NeedsFirstPass)
       {
-      // In this case we must pass everything we parse to the MapPolicy.
         size_t dim = 0;
-
-        std::stringstream lineStream;
-        std::string token;
-
-        lineStream.clear();
-        lineStream.str(line);
-
-        while (lineStream.good())
-        {
-          std::getline(lineStream, token, delim);
-          // Remove whitespace from either side
-          trim(token);
-
-          if (token[0] == '"' && token[token.size() - 1] != '"')
-          {
-            std::string tok = token;
-
-            while (token[token.size() - 1] != '"')
-            {
-              tok += delim;
-              std::getline(lineStream, token, delim);
-              tok += token;
-            }
-
-            token = tok;
-          }
-
-          info.template MapFirstPass<T>(std::move(token), dim++);
-        }
+        MapOnFirstPass<T, MapPolicy>(line, info, delim, dim);
       }
     }
   }
