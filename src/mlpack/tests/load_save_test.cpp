@@ -85,7 +85,7 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
 
   // Now reload through our interface.
   REQUIRE(
-      data::Load("test_file.csv", test, false, true, file_type::ArmaBinary)
+      data::Load("test_file.csv", test, false, true, FileType::ArmaBinary)
       == true);
 
   REQUIRE(test.n_rows == 4);
@@ -127,7 +127,6 @@ TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
 /**
  * Make sure a TSV is loaded correctly to a sparse matrix.
  */
-/*
 TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
 {
   fstream f;
@@ -164,13 +163,10 @@ TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
   // Remove the file.
   remove("test_sparse_file.tsv");
 }
-*/
-
 
 /**
  * Make sure a CSV in text format is loaded correctly to a sparse matrix.
  */
-/*
 TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
 {
   fstream f;
@@ -206,7 +202,7 @@ TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
   // Remove the file.
   remove("test_sparse_file.txt");
 }
-*/
+
 /**
  * Make sure a TSV is loaded correctly.
  */
@@ -273,7 +269,7 @@ TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.blah", test, false, true, file_type::RawASCII));
+  REQUIRE(data::Load("test_file.blah", test, false, true, FileType::RawASCII));
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -314,7 +310,6 @@ TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
 /**
  * Make sure a TSV is saved correctly for a sparse matrix
  */
-/*
 TEST_CASE("SaveSparseTSVTest", "[LoadSaveTest]")
 {
   arma::sp_mat test = "0.1\t0\t0\t0;"
@@ -346,11 +341,10 @@ TEST_CASE("SaveSparseTSVTest", "[LoadSaveTest]")
   // Remove the file.
   remove("test_sparse_file.tsv");
 }
-*/
+
 /**
  * Make sure a TXT is saved correctly for a sparse matrix
  */
-/*
 TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
 {
   arma::sp_mat test = "0.1 0 0 0;"
@@ -382,11 +376,10 @@ TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
   // Remove the file.
   remove("test_sparse_file.txt");
 }
-*/
+
 /**
  * Make sure a Sparse Matrix is saved and loaded correctly in binary format
  */
-/*
 TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
 {
   arma::sp_mat test = "0.1 0 0 0;"
@@ -418,7 +411,7 @@ TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
   // Remove the file.
   remove("test_sparse_file.bin");
 }
-*/
+
 /**
  * Make sure CSVs can be loaded in transposed form.
  */
@@ -986,10 +979,10 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest]")
                    "4 8;";
 
   REQUIRE(data::Save("test_file.blerp.blah", test, false, true,
-      file_type::ArmaBinary) == true);
+      FileType::ArmaBinary) == true);
 
   REQUIRE(data::Load("test_file.blerp.blah", test, false, true,
-      file_type::ArmaBinary) == true);
+      FileType::ArmaBinary) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
