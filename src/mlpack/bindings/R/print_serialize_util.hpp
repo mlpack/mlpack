@@ -54,12 +54,13 @@ void PrintSerializeUtil(
   /**
    * This gives us code like:
    *
-   *     <param_name> <- IO_GetParam<ModelType>Ptr("<param_name>")
+   *     <param_name> <- IO_GetParam<ModelType>Ptr("<param_name>", inputModels)
    *     attr(<param_name>, "type") <- "<ModelType>"
    *
    */
   MLPACK_COUT_STREAM << "  " << d.name << " <- IO_GetParam"
-      << util::StripType(d.cppType) << "Ptr(\"" << d.name << "\")";
+      << util::StripType(d.cppType) << "Ptr(\"" << d.name << "\", "
+      << "inputModels)";
   MLPACK_COUT_STREAM << std::endl;
   MLPACK_COUT_STREAM << "  attr(" << d.name << ", \"type\") <- \""
       << util::StripType(d.cppType) << "\"";

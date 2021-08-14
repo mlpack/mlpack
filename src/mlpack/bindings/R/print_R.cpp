@@ -172,6 +172,11 @@ void PrintR(const util::BindingDetails& doc,
   cout << "  # Restore IO settings." << endl;
   cout << "  IO_RestoreSettings(\"" << IO::ProgramName()
        << "\")" << endl;
+  cout << "  # Initialize an empty list that will hold all input models the "
+       << "user gave us," << endl;
+  cout << "  # so that we don't accidentally create two XPtrs that point to the"
+       << "same model." << endl;
+  cout << "  inputModels <- vector()" << endl;
   cout << endl;
 
   // Handle each input argument's processing before calling mlpackMain().
