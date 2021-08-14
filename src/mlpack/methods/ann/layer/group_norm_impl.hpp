@@ -83,7 +83,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   variance = arma::var(reshapedInput, 1, 0);
 
   // Normalize the input.
-  reshapedOutput = reshapedInput.each_row() - mean;
+  reshapedOutput += reshapedInput.each_row() - mean;
   inputMean = reshapedOutput;
   reshapedOutput.each_row() /= arma::sqrt(variance + eps);
 
