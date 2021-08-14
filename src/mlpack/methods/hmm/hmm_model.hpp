@@ -15,6 +15,7 @@
 #include "hmm.hpp"
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
+#include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -164,16 +165,16 @@ class HMMModel
    */
   template<typename ActionType,
            typename ExtraInfoType>
-  void PerformAction(ExtraInfoType* x)
+  void PerformAction(util::Params& params, ExtraInfoType* x)
   {
     if (type == HMMType::DiscreteHMM)
-      ActionType::Apply(*discreteHMM, x);
+      ActionType::Apply(params, *discreteHMM, x);
     else if (type == HMMType::GaussianHMM)
-      ActionType::Apply(*gaussianHMM, x);
+      ActionType::Apply(params, *gaussianHMM, x);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ActionType::Apply(*gmmHMM, x);
+      ActionType::Apply(params, *gmmHMM, x);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      ActionType::Apply(*diagGMMHMM, x);
+      ActionType::Apply(params, *diagGMMHMM, x);
   }
 
   //! Serialize the model.

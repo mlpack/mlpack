@@ -208,6 +208,7 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/print_input_processing.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/print_output_processing.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/print_serialize_util.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack_main.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/R_option.hpp"
   )
 
@@ -281,6 +282,11 @@ if (BUILD_R_BINDINGS)
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
+       DESTINATION
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
+
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure"
        DESTINATION
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
 

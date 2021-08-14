@@ -24,11 +24,11 @@ namespace cli {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<util::IsStdVector<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // A flag type.
   if (std::is_same<T, bool>::value)
@@ -98,8 +98,9 @@ std::string PrintTypeDoc(
         "of the data is detected by the extension of the filename.  The storage"
         " should be such that one row corresponds to one point, and one column "
         "corresponds to one dimension (this is the typical storage format for "
-        "on-disk data).  All values of the matrix will be loaded as double-"
-        "precision floating point data.";
+        "on-disk data).  CSV files will be checked for a header; if no header "
+        "is found, the first row will be loaded as a data point.  All values of"
+        " the matrix will be loaded as double-precision floating point data.";
   }
   else if (std::is_same<T, arma::Mat<size_t>>::value)
   {
@@ -111,8 +112,10 @@ std::string PrintTypeDoc(
         "compiled with HDF5 support.  The type of the data is detected by the "
         "extension of the filename.  The storage should be such that one row "
         "corresponds to one point, and one column corresponds to one dimension "
-        "(this is the typical storage format for on-disk data).  All values of "
-        "the matrix will be loaded as unsigned integers.";
+        "(this is the typical storage format for on-disk data).  CSV files will"
+        " be checked for a header; if no header is found, the first row will be"
+        " loaded as a data point.  All values of the matrix will be loaded as "
+        "unsigned integers.";
   }
   else if (std::is_same<T, arma::rowvec>::value ||
            std::is_same<T, arma::vec>::value)
@@ -162,8 +165,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return "A filename containing an mlpack model.  These can have one of three "
       "formats: binary (.bin), text (.txt), and XML (.xml).  The XML format "

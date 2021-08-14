@@ -24,11 +24,11 @@ namespace cli {
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::cout << data.name << ": " << *boost::any_cast<T>(&data.value)
       << std::endl;
@@ -38,7 +38,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
   std::cout << data.name << ": ";
   const T& t = *boost::any_cast<T>(&data.value);
@@ -51,12 +51,12 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* /* junk */)
 {
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
   const T& output = std::get<0>(*boost::any_cast<TupleType>(&data.value));
   const std::string& filename =
-      std::get<1>(*boost::any_cast<TupleType>(&data.value));
+      std::get<0>(std::get<1>(*boost::any_cast<TupleType>(&data.value)));
 
   if (output.n_elem > 0 && filename != "")
   {
@@ -71,8 +71,8 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
@@ -91,14 +91,14 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   // Output the matrix with the mappings.
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
   const T& tuple = std::get<0>(*boost::any_cast<TupleType>(&data.value));
   const std::string& filename =
-      std::get<1>(*boost::any_cast<TupleType>(&data.value));
+      std::get<0>(std::get<1>(*boost::any_cast<TupleType>(&data.value)));
   const arma::mat& matrix = std::get<1>(tuple);
 
   // The mapping isn't taken into account.  We should write a data::Save()

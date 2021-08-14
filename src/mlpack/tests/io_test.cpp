@@ -23,8 +23,6 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 } // namespace util
 } // namespace mlpack
 
-static const std::string testName = "";
-
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
@@ -38,75 +36,75 @@ using namespace mlpack::data;
 using namespace mlpack::bindings::cli;
 using namespace std;
 
-// When we run these tests, we have to nuke the existing CLI object that's
-// created by default.
-struct IOTestDestroyer
-{
-  IOTestDestroyer() { IO::ClearSettings(); }
-};
-
 /**
  * Before running a test that uses the CLI options, we have to add the default
  * options that are required for CLI to function, since it will be destroyed at
  * the end of every test that uses CLI in this test suite.
  */
-void AddRequiredCLIOptions()
+void AddRequiredCLIOptions(const std::string& testName)
 {
-  IO::ClearSettings();
-
   // These will register with CLI immediately.
-  CLIOption<bool> help(false, "help", "Default help info.", "h", "bool");
+  CLIOption<bool> help(false, "help", "Default help info.", "h", "bool", false,
+      true, false, testName);
   CLIOption<string> info("", "info", "Get help on a specific module or option.",
-      "", "string");
+      "", "string", false, true, false, testName);
   CLIOption<bool> verbose(false, "verbose", "Display information messages and "
       "the full list of parameters and timers at the end of execution.", "v",
-      "bool");
+      "bool", false, true, false, testName);
   CLIOption<bool> version(false, "version", "Display the version of mlpack.",
-      "V", "bool");
+      "V", "bool", false, true, false, testName);
 }
 
 /**
  * Tests that CLI works as intended, namely that IO::Add propagates
  * successfully.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestCLIAdd", "[IOTest]")
+TEST_CASE("TestCLIAdd", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestCLIAdd");
 
   // Check that the IO::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLIOption<bool> b(false, "global/bool", "True or false.", "a", "bool");
+  CLIOption<bool> b(false, "global_bool", "True or false.", "a", "bool",
+      false, true, false, "TestCLIAdd");
+
+  util::Params p = IO::Parameters("TestCLIAdd");
 
   // IO::HasParam should return false here.
-  REQUIRE(!IO::HasParam("global/bool"));
+  REQUIRE(!p.Has("global_bool"));
 
   // Check that our aliasing works.
-  REQUIRE(IO::HasParam("global/bool") == IO::HasParam("a"));
-  REQUIRE(IO::GetParam<bool>("global/bool") == IO::GetParam<bool>("a"));
+  REQUIRE(p.Has("global_bool") == p.Has("a"));
+  REQUIRE(p.Get<bool>("global_bool") == p.Get<bool>("a"));
 }
 
 /**
  * Tests that the various PARAM_* macros work properly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestOption", "[IOTest]")
+TEST_CASE("TestOption", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestOption");
 
   // This test will involve creating an option, and making sure CLI reflects
   // this.
-  PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
+  #define BINDING_NAME TestOption
+  PARAM_IN(int, "test", "test desc", "", 42, false);
+  #undef BINDING_NAME
 
-  REQUIRE(IO::GetParam<int>("test_parent/test") == 42);
+  util::Params p = IO::Parameters("TestOption");
+  REQUIRE(p.Get<int>("test") == 42);
 }
 
 /**
  * Test that duplicate flags are filtered out correctly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateFlag", "[IOTest]")
+TEST_CASE("TestDuplicateFlag", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestDuplicateFlag");
 
+  #define BINDING_NAME TestDuplicateFlag
   PARAM_FLAG("test", "test", "t");
+  #undef BINDING_NAME
 
   int argc = 3;
   const char* argv[3];
@@ -116,16 +114,15 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateFlag", "[IOTest]")
 
   // This should not throw an exception.
   REQUIRE_NOTHROW(
-      ParseCommandLine(argc, const_cast<char**>(argv)));
+      ParseCommandLine(argc, const_cast<char**>(argv), "TestDuplicateFlag"));
 }
 
 /**
  * Test that duplicate options throw an exception.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateParam",
-                "[IOTest]")
+TEST_CASE("TestDuplicateParam", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestDuplicateParam");
 
   int argc = 5;
   const char* argv[5];
@@ -137,25 +134,27 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateParam",
 
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
-      std::runtime_error);
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
+      "TestDuplicateParam"), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that a Boolean option which we define is set correctly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestBooleanOption",
-                "[IOTest]")
+TEST_CASE("TestBooleanOption", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestBooleanOption");
 
+  #define BINDING_NAME TestBooleanOption
   PARAM_FLAG("flag_test", "flag test description", "");
+  #undef BINDING_NAME
 
-  REQUIRE(IO::HasParam("flag_test") == false);
+  util::Params p = IO::Parameters("TestBooleanOption");
+  REQUIRE(p.Has("flag_test") == false);
 
   // Now check that CLI reflects that it is false by default.
-  REQUIRE(IO::GetParam<bool>("flag_test") == false);
+  REQUIRE(p.Get<bool>("flag_test") == false);
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
@@ -163,21 +162,22 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestBooleanOption",
   argv[0] = "programname";
   argv[1] = "--flag_test";
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  p = ParseCommandLine(argc, const_cast<char**>(argv), "TestBooleanOption");
 
-  REQUIRE(IO::GetParam<bool>("flag_test") == true);
-  REQUIRE(IO::HasParam("flag_test") == true);
+  REQUIRE(p.Get<bool>("flag_test") == true);
+  REQUIRE(p.Has("flag_test") == true);
 }
 
 /**
  * Test that a vector option works correctly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption",
-                "[IOTest]")
+TEST_CASE("TestVectorOption", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestVectorOption");
 
+  #define BINDING_NAME TestVectorOption
   PARAM_VECTOR_IN(size_t, "test_vec", "test description", "t");
+  #undef BINDING_NAME
 
   int argc = 5;
   const char* argv[5];
@@ -187,11 +187,12 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption",
   argv[3] = "2";
   argv[4] = "4";
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "TestVectorOption");
 
-  REQUIRE(IO::HasParam("test_vec"));
+  REQUIRE(p.Has("test_vec"));
 
-  vector<size_t> v = IO::GetParam<vector<size_t>>("test_vec");
+  vector<size_t> v = p.Get<vector<size_t>>("test_vec");
 
   REQUIRE(v.size() == 3);
   REQUIRE(v[0] == 1);
@@ -202,12 +203,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption",
 /**
  * Test that we can use a vector option by specifying it many times.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption2",
-                "[IOTest]")
+TEST_CASE("TestVectorOption2", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("TestVectorOption2");
 
+  #define BINDING_NAME TestVectorOption2
   PARAM_VECTOR_IN(size_t, "test2_vec", "test description", "T");
+  #undef BINDING_NAME
 
   int argc = 7;
   const char* argv[7];
@@ -219,11 +221,12 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption2",
   argv[5] = "--test2_vec";
   argv[6] = "4";
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "TestVectorOption2");
 
-  REQUIRE(IO::HasParam("test2_vec"));
+  REQUIRE(p.Has("test2_vec"));
 
-  vector<size_t> v = IO::GetParam<vector<size_t>>("test2_vec");
+  vector<size_t> v = p.Get<vector<size_t>>("test2_vec");
 
   REQUIRE(v.size() == 3);
   REQUIRE(v[0] == 1);
@@ -231,12 +234,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption2",
   REQUIRE(v[2] == 4);
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputColVectorParamTest",
-                "[IOTest]")
+TEST_CASE("InputColVectorParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputColVectorParamTest");
 
+  #define BINDING_NAME InputColVectorParamTest
   PARAM_COL_IN("vector", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Fake arguments.
   const char* argv[3];
@@ -247,18 +251,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputColVectorParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputColVectorParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("vector"));
+  REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::vec vec1 = IO::GetParam<arma::vec>("vector");
-  arma::vec vec2 = IO::GetParam<arma::vec>("vector");
+  arma::vec vec1 = p.Get<arma::vec>("vector");
+  arma::vec vec2 = p.Get<arma::vec>("vector");
 
   REQUIRE(vec1.n_rows == 63);
   REQUIRE(vec2.n_rows == 63);
@@ -267,12 +272,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputColVectorParamTest",
     REQUIRE(vec1[i] == Approx(vec2[i]).epsilon(1e-12));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedColVectorParamTest",
-                "[IOTest]")
+TEST_CASE("InputUnsignedColVectorParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputUnsignedColVectorParamTest");
 
+  #define BINDING_NAME InputUnsignedColVectorParamTest
   PARAM_UCOL_IN("vector", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Fake arguments.
   const char* argv[3];
@@ -283,18 +289,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedColVectorParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputUnsignedColVectorParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("vector"));
+  REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::Col<size_t> vec1 = IO::GetParam<arma::Col<size_t>>("vector");
-  arma::Col<size_t> vec2 = IO::GetParam<arma::Col<size_t>>("vector");
+  arma::Col<size_t> vec1 = p.Get<arma::Col<size_t>>("vector");
+  arma::Col<size_t> vec2 = p.Get<arma::Col<size_t>>("vector");
 
   REQUIRE(vec1.n_rows == 63);
   REQUIRE(vec2.n_rows == 63);
@@ -303,12 +310,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedColVectorParamTest",
     REQUIRE(vec1[i] == vec2[i]);
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputRowVectorParamTest",
-                "[IOTest]")
+TEST_CASE("InputRowVectorParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputRowVectorParamTest");
 
+  #define BINDING_NAME InputRowVectorParamTest
   PARAM_ROW_IN("row", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Fake arguments.
   const char* argv[3];
@@ -319,18 +327,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputRowVectorParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputRowVectorParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("row"));
+  REQUIRE(p.Has("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::rowvec vec1 = IO::GetParam<arma::rowvec>("row");
-  arma::rowvec vec2 = IO::GetParam<arma::rowvec>("row");
+  arma::rowvec vec1 = p.Get<arma::rowvec>("row");
+  arma::rowvec vec2 = p.Get<arma::rowvec>("row");
 
   REQUIRE(vec1.n_cols == 7);
   REQUIRE(vec2.n_cols == 7);
@@ -339,12 +348,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputRowVectorParamTest",
     REQUIRE(vec1[i] == Approx(vec2[i]).epsilon(1e-12));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedRowVectorParamTest",
-                "[IOTest]")
+TEST_CASE("InputUnsignedRowVectorParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputUnsignedRowVectorParamTest");
 
+  #define BINDING_NAME InputUnsignedRowVectorParamTest
   PARAM_UROW_IN("row", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Fake arguments.
   const char* argv[3];
@@ -355,18 +365,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedRowVectorParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputUnsignedRowVectorParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("row"));
+  REQUIRE(p.Has("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::Row<size_t> vec1 = IO::GetParam<arma::Row<size_t>>("row");
-  arma::Row<size_t> vec2 = IO::GetParam<arma::Row<size_t>>("row");
+  arma::Row<size_t> vec1 = p.Get<arma::Row<size_t>>("row");
+  arma::Row<size_t> vec2 = p.Get<arma::Row<size_t>>("row");
 
   REQUIRE(vec1.n_cols == 7);
   REQUIRE(vec2.n_cols == 7);
@@ -375,13 +386,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedRowVectorParamTest",
     REQUIRE(vec1[i] == vec2[i]);
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputColParamTest",
-                "[IOTest]")
+TEST_CASE("OutputColParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputColParamTest");
 
   // --vector is an output parameter.
+  #define BINDING_NAME OutputColParamTest
   PARAM_COL_OUT("vector", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -391,29 +403,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputColParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputColParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("vector"));
+  REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::vec dataset = arma::randu<arma::vec>(100);
-  IO::GetParam<arma::vec>("vector") = dataset;
+  p.Get<arma::vec>("vector") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the vector back and make sure it was saved correctly.
   arma::vec dataset2;
-  data::Load("test.csv", dataset2);
+  if (!data::Load("test.csv", dataset2))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -423,13 +436,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputColParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedColParamTest",
-                "[IOTest]")
+TEST_CASE("OutputUnsignedColParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputUnsignedColParamTest");
 
   // --vector is an output parameter.
+  #define BINDING_NAME OutputUnsignedColParamTest
   PARAM_UCOL_OUT("vector", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -439,29 +453,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedColParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputUnsignedColParamTest");
 
   // The --vector parameter should exist.
-  REQUIRE(IO::HasParam("vector"));
+  REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::Col<size_t> dataset = arma::randi<arma::Col<size_t>>(100);
-  IO::GetParam<arma::Col<size_t>>("vector") = dataset;
+  p.Get<arma::Col<size_t>>("vector") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the vector back and make sure it was saved correctly.
   arma::Col<size_t> dataset2;
-  data::Load("test.csv", dataset2);
+  if (!data::Load("test.csv", dataset2))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -471,13 +486,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedColParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
-                "[IOTest]")
+TEST_CASE("OutputRowParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputRowParamTest");
 
   // --row is an output parameter.
+  #define BINDING_NAME OutputRowParamTest
   PARAM_ROW_OUT("row", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -487,29 +503,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputRowParamTest");
 
   // The --row parameter should exist.
-  REQUIRE(IO::HasParam("row"));
+  REQUIRE(p.Has("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::rowvec dataset = arma::randu<arma::rowvec>(100);
-  IO::GetParam<arma::rowvec>("row") = dataset;
+  p.Get<arma::rowvec>("row") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::rowvec dataset2;
-  data::Load("test.csv", dataset2);
+  if (!data::Load("test.csv", dataset2))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -519,12 +536,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
+TEST_CASE("OutputUnsignedRowParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputUnsignedRowParamTest");
 
   // --row is an output parameter.
+  #define BINDING_NAME OutputUnsignedRowParamTest
   PARAM_UROW_OUT("row", "Test vector", "l");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -534,29 +553,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputUnsignedRowParamTest");
 
   // The --row parameter should exist.
-  REQUIRE(IO::HasParam("row"));
+  REQUIRE(p.Has("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::Row<size_t> dataset = arma::randi<arma::Row<size_t>>(100);
-  IO::GetParam<arma::Row<size_t>>("row") = dataset;
+  p.Get<arma::Row<size_t>>("row") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::Row<size_t> dataset2;
-  data::Load("test.csv", dataset2);
+  if (!data::Load("test.csv", dataset2))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -566,13 +586,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixParamTest",
-                "[IOTest]")
+TEST_CASE("InputMatrixParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputMatrixParamTest");
 
   // --matrix is an input parameter; it won't be transposed.
+  #define BINDING_NAME InputMatrixParamTest
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -583,18 +604,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputMatrixParamTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
-  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset = p.Get<arma::mat>("matrix");
+  arma::mat dataset2 = p.Get<arma::mat>("matrix");
 
   REQUIRE(dataset.n_rows == 3);
   REQUIRE(dataset.n_cols == 1000);
@@ -606,13 +628,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixParamTest",
 }
 
 // Make sure we can correctly load required matrix parameters.
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamTest",
-                "[IOTest]")
+TEST_CASE("RequiredInputMatrixParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RequiredInputMatrixParamTest");
 
   // --matrix is an input parameter; it won't be transposed.
+  #define BINDING_NAME RequiredInputMatrixParamTest
   PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -623,18 +646,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "RequiredInputMatrixParamTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
-  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset = p.Get<arma::mat>("matrix");
+  arma::mat dataset2 = p.Get<arma::mat>("matrix");
 
   REQUIRE(dataset.n_rows == 3);
   REQUIRE(dataset.n_cols == 1000);
@@ -646,13 +670,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamTest",
 }
 
 // Make sure loading required matrix options by alias succeeds.
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamAliasTest",
-                "[IOTest]")
+TEST_CASE("RequiredInputMatrixParamAliasTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RequiredInputMatrixParamAliasTest");
 
   // --matrix is an input parameter; it won't be transposed.
+  #define BINDING_NAME RequiredInputMatrixParamAliasTest
   PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -663,18 +688,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamAliasTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "RequiredInputMatrixParamAliasTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
-  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset = p.Get<arma::mat>("matrix");
+  arma::mat dataset2 = p.Get<arma::mat>("matrix");
 
   REQUIRE(dataset.n_rows == 3);
   REQUIRE(dataset.n_cols == 1000);
@@ -686,13 +712,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamAliasTest",
 }
 
 // Make sure that when we don't pass a required matrix, parsing fails.
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredUnspecifiedInputMatrixParamTest",
-                "[IOTest]")
+TEST_CASE("RequiredUnspecifiedInputMatrixParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RequiredUnspecifiedInputMatrixParamTest");
 
   // --matrix is an input parameter; it won't be transposed.
+  #define BINDING_NAME RequiredUnspecifiedInputMatrixParamTest
   PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[1];
@@ -702,18 +729,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredUnspecifiedInputMatrixParamTest",
 
   // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
-      std::exception);
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
+      "RequiredUnspecifiedInputMatrixParamTest"), std::exception);
   Log::Fatal.ignoreInput = false;
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixNoTransposeParamTest",
-                "[IOTest]")
+TEST_CASE("InputMatrixNoTransposeParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("InputMatrixNoTransposeParamTest");
 
   // --matrix is a non-transposed input parameter.
+  #define BINDING_NAME InputMatrixNoTransposeParamTest
   PARAM_TMATRIX_IN("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -724,18 +752,19 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixNoTransposeParamTest",
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "InputMatrixNoTransposeParamTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
-  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset = p.Get<arma::mat>("matrix");
+  arma::mat dataset2 = p.Get<arma::mat>("matrix");
 
   REQUIRE(dataset.n_rows == 1000);
   REQUIRE(dataset.n_cols == 3);
@@ -746,13 +775,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixNoTransposeParamTest",
     REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
-                "[IOTest]")
+TEST_CASE("OutputMatrixParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputMatrixParamTest");
 
   // --matrix is an output parameter.
+  #define BINDING_NAME OutputMatrixParamTest
   PARAM_MATRIX_OUT("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -762,29 +792,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputMatrixParamTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
-  IO::GetParam<arma::mat>("matrix") = dataset;
+  p.Get<arma::mat>("matrix") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
-  data::Load("test.csv", dataset2);
+  if (!data::Load("test.csv", dataset2))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   REQUIRE(dataset.n_rows == dataset2.n_rows);
@@ -795,13 +826,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
-                "[IOTest]")
+TEST_CASE("OutputMatrixNoTransposeParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("OutputMatrixNoTransposeParamTest");
 
   // --matrix is an output parameter.
+  #define BINDING_NAME OutputMatrixNoTransposeParamTest
   PARAM_TMATRIX_OUT("matrix", "Test matrix", "m");
+  #undef BINDING_NAME
 
   // Set some fake arguments.
   const char* argv[3];
@@ -811,29 +843,30 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "OutputMatrixNoTransposeParamTest");
 
   // The --matrix parameter should exist.
-  REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
-  IO::GetParam<arma::mat>("matrix") = dataset;
+  p.Get<arma::mat>("matrix") = dataset;
 
   // Write the file.
-  EndProgram();
-  IO::ClearSettings();
-  AddRequiredCLIOptions();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
-  data::Load("test.csv", dataset2, true, false);
+  if (!data::Load("test.csv", dataset2, false, false))
+    FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   REQUIRE(dataset.n_rows == dataset2.n_rows);
@@ -844,12 +877,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "IntParamTest",
-                "[IOTest]")
+TEST_CASE("IntParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("IntParamTest");
 
+  #define BINDING_NAME IntParamTest
   PARAM_INT_IN("int", "Test int", "i", 0);
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -858,18 +892,20 @@ TEST_CASE_METHOD(IOTestDestroyer, "IntParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "IntParamTest");
 
-  REQUIRE(IO::HasParam("int"));
-  REQUIRE(IO::GetParam<int>("int") == 3);
+  REQUIRE(p.Has("int"));
+  REQUIRE(p.Get<int>("int") == 3);
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "StringParamTest",
-                "[IOTest]")
+TEST_CASE("StringParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("StringParamTest");
 
+  #define BINDING_NAME StringParamTest
   PARAM_STRING_IN("string", "Test string", "s", "");
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -878,18 +914,20 @@ TEST_CASE_METHOD(IOTestDestroyer, "StringParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "StringParamTest");
 
-  REQUIRE(IO::HasParam("string"));
-  REQUIRE(IO::GetParam<string>("string") == string("3"));
+  REQUIRE(p.Has("string"));
+  REQUIRE(p.Get<string>("string") == string("3"));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "DoubleParamTest",
-                "[IOTest]")
+TEST_CASE("DoubleParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("DoubleParamTest");
 
+  #define BINDING_NAME DoubleParamTest
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -898,17 +936,20 @@ TEST_CASE_METHOD(IOTestDestroyer, "DoubleParamTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "DoubleParamTest");
 
-  REQUIRE(IO::HasParam("double"));
-  REQUIRE(IO::GetParam<double>("double") == Approx(3.12).epsilon(1e-12));
+  REQUIRE(p.Has("double"));
+  REQUIRE(p.Get<double>("double") == Approx(3.12).epsilon(1e-12));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredOptionTest", "[IOTest]")
+TEST_CASE("RequiredOptionTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RequiredOptionTest");
 
+  #define BINDING_NAME RequiredOptionTest
   PARAM_DOUBLE_IN_REQ("double", "Required test double", "d");
+  #undef BINDING_NAME
 
   const char* argv[1];
   argv[0] = "./test";
@@ -916,15 +957,14 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredOptionTest", "[IOTest]")
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
+      "RequiredOptionTest"), runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "UnknownOptionTest",
-                "[IOTest]")
+TEST_CASE("UnknownOptionTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("UnknownOptionTest");
 
   const char* argv[2];
   argv[0] = "./test";
@@ -933,23 +973,24 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnknownOptionTest",
   int argc = 2;
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
+      "UnknownOptionTest"), runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Test that GetPrintableParam() works.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
-                "[IOTest]")
+TEST_CASE("UnmappedParamTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("UnmappedParamTest");
 
+  #define BINDING_NAME UnmappedParamTest
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
   PARAM_MATRIX_OUT("matrix2", "Test matrix", "M");
   PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
   PARAM_MODEL_OUT(GaussianKernel, "kernel2", "Test kernel", "K");
+  #undef BINDING_NAME
 
   const char* argv[9];
   argv[0] = "./test";
@@ -964,19 +1005,18 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
 
   int argc = 9;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "UnmappedParamTest");
 
   // Now check that we can get unmapped parameters.
-  REQUIRE(IO::GetPrintableParam<arma::mat>("matrix") ==
-      "'test_data_3_1000.csv' (3x1000 matrix)");
+  REQUIRE(p.GetPrintable<arma::mat>("matrix") ==
+      "'test_data_3_1000.csv' (1000x3 matrix)");
   // This will have size 0x0 since it's an output parameter, and it hasn't been
   // set since ParseCommandLine() was called.
-  REQUIRE(IO::GetPrintableParam<arma::mat>("matrix2") ==
+  REQUIRE(p.GetPrintable<arma::mat>("matrix2") ==
       "'file2.csv' (0x0 matrix)");
-  REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel") ==
-      "kernel.json");
-  REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel2") ==
-      "kernel2.json");
+  REQUIRE(p.GetPrintable<GaussianKernel*>("kernel") == "kernel.json");
+  REQUIRE(p.GetPrintable<GaussianKernel*>("kernel2") == "kernel2.json");
 
   remove("kernel.json");
 }
@@ -985,11 +1025,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
  * Test that we can serialize a model and then deserialize it through the CLI
  * interface.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
+TEST_CASE("IOSerializationTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("IOSerializationTest");
 
+  #define BINDING_NAME IOSerializationTest
   PARAM_MODEL_OUT(GaussianKernel, "kernel", "Test kernel", "k");
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -998,26 +1040,29 @@ TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "IOSerializationTest");
 
   // Create the kernel we'll save.
   GaussianKernel* gk = new GaussianKernel(0.5);
 
-  IO::GetParam<GaussianKernel*>("kernel") = gk;
+  p.Get<GaussianKernel*>("kernel") = gk;
 
   // Save it.
-  EndProgram();
-  IO::ClearSettings();
+  util::Timers t;
+  EndProgram(p, t);
 
   // Now create a new CLI object and load it.
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("IOSerializationTest_2");
 
+  #define BINDING_NAME IOSerializationTest_2
   PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
+  #undef BINDING_NAME
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  p = ParseCommandLine(argc, const_cast<char**>(argv), "IOSerializationTest_2");
 
   // Load the kernel from file.
-  GaussianKernel* gk2 = IO::GetParam<GaussianKernel*>("kernel");
+  GaussianKernel* gk2 = p.Get<GaussianKernel*>("kernel");
 
   REQUIRE(gk2->Bandwidth() == Approx(0.5).epsilon(1e-7));
 
@@ -1031,12 +1076,13 @@ TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
 /**
  * Test that an exception is thrown when a required model is not specified.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredModelTest",
-                "[IOTest]")
+TEST_CASE("RequiredModelTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RequiredModelTest");
 
+  #define BINDING_NAME RequiredModelTest
   PARAM_MODEL_IN_REQ(GaussianKernel, "kernel", "Test kernel", "k");
+  #undef BINDING_NAME
 
   // Don't specify any input parameters.
   const char* argv[1];
@@ -1045,18 +1091,17 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredModelTest",
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
+      "RequiredModelTest"), runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Test that we can load both a dataset and its associated info.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
-                "[IOTest]")
+TEST_CASE("MatrixAndDatasetInfoTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("MatrixAndDatasetInfoTest");
 
   // Write test file to load.
   fstream f;
@@ -1079,7 +1124,9 @@ TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
 
   // Add options.
   typedef tuple<DatasetInfo, arma::mat> TupleType;
+  #define BINDING_NAME MatrixAndDatasetInfoTest
   PARAM_MATRIX_AND_INFO_IN("dataset", "Test dataset", "d");
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -1088,11 +1135,12 @@ TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
 
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "MatrixAndDatasetInfoTest");
 
   // Get the dataset and info.
-  DatasetInfo info = move(get<0>(IO::GetParam<TupleType>("dataset")));
-  arma::mat dataset = move(get<1>(IO::GetParam<TupleType>("dataset")));
+  DatasetInfo info = move(get<0>(p.Get<TupleType>("dataset")));
+  arma::mat dataset = move(get<1>(p.Get<TupleType>("dataset")));
 
   REQUIRE(info.Dimensionality() == 3);
 
@@ -1127,32 +1175,35 @@ TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
 /**
  * Test that we can access a parameter before we load it.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "RawIntegralParameter", "[IOTest]")
+TEST_CASE("RawIntegralParameter", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RawIntegralParameter");
 
+  #define BINDING_NAME RawIntegralParameter
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
+  #undef BINDING_NAME
 
   const char* argv[1];
   argv[0] = "./test";
   int argc = 1;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "RawIntegralParameter");
 
   // Set the double.
-  IO::GetRawParam<double>("double") = 3.0;
+  p.GetRaw<double>("double") = 3.0;
 
   // Now when we get it, it should be what we just set it to.
-  REQUIRE(IO::GetParam<double>("double") == Approx(3.0).epsilon(1e-7));
+  REQUIRE(p.Get<double>("double") == Approx(3.0).epsilon(1e-7));
 }
 
 /**
  * Test that we can load a dataset with a pre-set mapping through
  * IO::GetRawParam().
  */
-TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
+TEST_CASE("RawDatasetInfoLoadParameter", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("RawDatasetInfoLoadParameter");
 
   // Create the ARFF that we will read.
   fstream f;
@@ -1173,7 +1224,9 @@ TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
   f << "hello, -1.3, goodbye" << endl;
   f.close();
 
+  #define BINDING_NAME RawDatasetInfoLoadParameter
   PARAM_MATRIX_AND_INFO_IN("tuple", "Test tuple", "t");
+  #undef BINDING_NAME
 
   const char* argv[3];
   argv[0] = "./test";
@@ -1181,7 +1234,8 @@ TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
   argv[2] = "test.arff";
   int argc = 3;
 
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  util::Params p = ParseCommandLine(argc, const_cast<char**>(argv),
+      "RawDatasetInfoLoadParameter");
 
   // Create a pre-filled DatasetInfo object.
   DatasetInfo info(3);
@@ -1194,11 +1248,11 @@ TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
   info.MapString<size_t>("moo", 2); // This will have mapped value 1.
 
   // Now set the dataset info.
-  std::get<0>(IO::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;
+  std::get<0>(p.GetRaw<tuple<DatasetInfo, arma::mat>>("tuple")) = info;
 
   // Now load the dataset.
   arma::mat dataset =
-      std::get<1>(IO::GetParam<tuple<DatasetInfo, arma::mat>>("tuple"));
+      std::get<1>(p.Get<tuple<DatasetInfo, arma::mat>>("tuple"));
 
   // Check the values.
   REQUIRE(dataset(0, 0) == Approx(2.0).epsilon(1e-7));
@@ -1220,17 +1274,20 @@ TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
 /**
  * Make sure typenames are properly stored.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "CppNameTest",
-                "[IOTest]")
+TEST_CASE("CppNameTest", "[IOTest]")
 {
-  AddRequiredCLIOptions();
+  AddRequiredCLIOptions("CppNameTest");
 
   // Add a few parameters.
+  #define BINDING_NAME CppNameTest
   PARAM_MATRIX_IN("matrix", "Test matrix", "m");
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
+  #undef BINDING_NAME
+
+  util::Params p = IO::Parameters("CppNameTest");
 
   // Check that the C++ typenames are right.
-  REQUIRE(IO::Parameters().at("matrix").cppType == "arma::mat");
-  REQUIRE(IO::Parameters().at("help").cppType == "bool");
-  REQUIRE(IO::Parameters().at("double").cppType == "double");
+  REQUIRE(p.Parameters().at("matrix").cppType == "arma::mat");
+  REQUIRE(p.Parameters().at("help").cppType == "bool");
+  REQUIRE(p.Parameters().at("double").cppType == "double");
 }

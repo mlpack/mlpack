@@ -58,9 +58,7 @@ RASearchRules(const arma::mat& referenceSet,
         << t << " points; because k = " << k << ", this is exact search!"
         << std::endl;
 
-  Timer::Start("computing_number_of_samples_reqd");
   numSamplesReqd = RAUtil::MinimumSamplesReqd(n, k, tau, alpha);
-  Timer::Stop("computing_number_of_samples_reqd");
 
   // Initialize some statistics to be collected during the search.
   numSamplesMade = arma::zeros<arma::Col<size_t> >(querySet.n_cols);

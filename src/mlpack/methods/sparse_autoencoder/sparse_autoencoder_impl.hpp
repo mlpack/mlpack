@@ -38,9 +38,7 @@ SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
   parameters = encoderFunction.GetInitialPoint();
 
   // Train the model.
-  Timer::Start("sparse_autoencoder_optimization");
   const double out = optimizer.Optimize(encoderFunction, parameters);
-  Timer::Stop("sparse_autoencoder_optimization");
 
   Log::Info << "SparseAutoencoder::SparseAutoencoder(): final objective of "
       << "trained model is " << out << "." << std::endl;
@@ -67,10 +65,8 @@ SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
   parameters = encoderFunction.GetInitialPoint();
 
   // Train the model.
-  Timer::Start("sparse_autoencoder_optimization");
   const double out = optimizer.Optimize(encoderFunction, parameters,
       callbacks...);
-  Timer::Stop("sparse_autoencoder_optimization");
 
   Log::Info << "SparseAutoencoder::SparseAutoencoder(): final objective of "
       << "trained model is " << out << "." << std::endl;

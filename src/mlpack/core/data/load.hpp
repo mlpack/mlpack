@@ -34,7 +34,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  *
  *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
  *  - TSV (arma::raw_ascii), denoted by .tsv, .csv, or .txt
- *  - ASCII (arma::raw_ascii), denoted by .json
+ *  - ASCII (arma::raw_ascii), denoted by .txt
  *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
  *  - PGM (arma::pgm_binary), denoted by .pgm
  *  - PPM (arma::ppm_binary), denoted by .ppm
@@ -47,6 +47,10 @@ namespace data /** Functions to load and save matrices and models. */ {
  * the file type and want to specify it manually, override the default
  * `inputLoadType` parameter with the correct type above (e.g.
  * `arma::csv_ascii`.)
+ *
+ * If the detected file type is CSV (`arma::csv_ascii`), the first row will be
+ * checked for a CSV header.  If a CSV header is not detected, the first row
+ * will be treated as data; otherwise, the first row will be skipped.
  *
  * If the parameter 'fatal' is set to true, a std::runtime_error exception will
  * be thrown if the matrix does not load successfully.  The parameter
@@ -269,8 +273,12 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * The DatasetMapper object passed to this function will be re-created, so any
- * mappings from previous loads will be lost.
+ * If the given `info` has already been used with a different `data::Load()`
+ * call where the dataset has the same dimensionality, then the mappings and
+ * dimension types inside of `info` will be *re-used*.  If the given `info` is a
+ * new `DatasetMapper` object (e.g. its dimensionality is 0), then new mappings
+ * will be created.  If the given `info` has a different dimensionality of data
+ * than what is present in `filename`, an exception will be thrown.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.

@@ -241,4 +241,3 @@ TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
   for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
-

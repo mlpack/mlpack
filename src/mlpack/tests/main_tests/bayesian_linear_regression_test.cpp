@@ -2,44 +2,26 @@
  * @file tests/main_tests/bayesian_linear_regression_test.cpp
  * @author Clement Mercier
  *
- * Test mlpackMain() of bayesian_linear_regression_main.cpp.
+ * Test RUN_BINDING() of bayesian_linear_regression_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "BayesianLinearRegression";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct BRTestFixture
-{
- public:
-  BRTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~BRTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(BRTestFixture);
 
 /**
  * Check the center and scale options.
@@ -57,10 +39,10 @@ TEST_CASE_METHOD(BRTestFixture,
   SetInputParam("responses", std::move(y));
   SetInputParam("center", false);
 
-  mlpackMain();
+  RUN_BINDING();
 
   BayesianLinearRegression* estimator =
-      IO::GetParam<BayesianLinearRegression*>("output_model");
+      params.Get<BayesianLinearRegression*>("output_model");
 
   REQUIRE(estimator->DataOffset().n_elem == 0);
   REQUIRE(estimator->DataScale().n_elem == 0);
@@ -88,20 +70,21 @@ TEST_CASE_METHOD(BRTestFixture,
   SetInputParam("input", std::move(matX));
   SetInputParam("responses", std::move(y));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-  IO::GetSingleton().Parameters()["responses"].wasPassed = false;
+  BayesianLinearRegression* mOut =
+      params.Get<BayesianLinearRegression*>("output_model");
 
-  SetInputParam("input_model",
-                IO::GetParam<BayesianLinearRegression*>("output_model"));
+  ResetSettings();
+
+  SetInputParam("input_model", mOut);
   SetInputParam("test", std::move(matXtest));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat ytest = std::move(responses);
   // Check that initial output and output using saved model are same.
-  CheckMatrices(ytest, IO::GetParam<arma::mat>("predictions"));
+  CheckMatrices(ytest, params.Get<arma::mat>("predictions"));
 }
 
 /**
@@ -129,21 +112,21 @@ TEST_CASE_METHOD(BRTestFixture,
   SetInputParam("responses", std::move(y));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Continue only with input passed.
   SetInputParam("input", std::move(matX));
-  mlpackMain();
+  RUN_BINDING();
 
   // Now pass the previous trained model and one input matrix at the same time.
   // An error should occur.
   SetInputParam("input", std::move(matX));
   SetInputParam("input_model",
-                IO::GetParam<BayesianLinearRegression*>("output_model"));
+                params.Get<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

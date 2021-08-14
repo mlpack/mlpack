@@ -44,7 +44,7 @@ class NSWrapperBase
   virtual NSWrapperBase* Clone() const = 0;
 
   //! Destruct the NSWrapperBase (nothing to do).
-  virtual ~NSWrapperBase() { };
+  virtual ~NSWrapperBase() { }
 
   //! Return a reference to the dataset.
   virtual const arma::mat& Dataset() const = 0;
@@ -60,14 +60,16 @@ class NSWrapperBase
   virtual double& Epsilon() = 0;
 
   //! Train the NeighborSearch model with the given parameters.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize,
                      const double tau,
                      const double rho) = 0;
 
   //! Perform bichromatic neighbor search (i.e. search with a separate query
   //! set).
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -76,7 +78,8 @@ class NSWrapperBase
 
   //! Perform monochromatic neighbor search (i.e. use the reference set as the
   //! query set).
-  virtual void Search(const size_t k,
+  virtual void Search(util::Timers& timers,
+                      const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances) = 0;
 };
@@ -130,14 +133,16 @@ class NSWrapper : public NSWrapperBase
 
   //! Train the model with the given options.  For NSWrapper, we ignore the
   //! extra parameters.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t /* leafSize */,
                      const double /* tau */,
                      const double /* rho */);
 
   //! Perform bichromatic neighbor search (i.e. search with a separate query
   //! set).  For NSWrapper, we ignore the extra parameters.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -146,7 +151,8 @@ class NSWrapper : public NSWrapperBase
 
   //! Perform monochromatic neighbor search (i.e. use the reference set as the
   //! query set).
-  virtual void Search(const size_t k,
+  virtual void Search(util::Timers& timers,
+                      const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances);
 
@@ -217,14 +223,16 @@ class LeafSizeNSWrapper :
 
   //! Train a model with the given parameters.  This overload uses leafSize but
   //! ignores the other parameters.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize,
                      const double /* tau */,
                      const double /* rho */);
 
   //! Perform bichromatic search (e.g. search with a separate query set).  This
   //! overload uses the leaf size, but ignores the other parameters.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -286,14 +294,16 @@ class SpillNSWrapper :
   virtual SpillNSWrapper* Clone() const { return new SpillNSWrapper(*this); }
 
   //! Train the model using the given parameters.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize,
                      const double tau,
                      const double rho);
 
   //! Perform bichromatic search (i.e. search with a different query set) using
   //! the given parameters.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -454,18 +464,21 @@ class NSModel
                        const double epsilon);
 
   //! Build the reference tree.
-  void BuildModel(arma::mat&& referenceSet,
+  void BuildModel(util::Timers& timers,
+                  arma::mat&& referenceSet,
                   const NeighborSearchMode searchMode,
                   const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
-  void Search(arma::mat&& querySet,
+  void Search(util::Timers& timers,
+              arma::mat&& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
   //! Perform monochromatic neighbor search.
-  void Search(const size_t k,
+  void Search(util::Timers& timers,
+              const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 

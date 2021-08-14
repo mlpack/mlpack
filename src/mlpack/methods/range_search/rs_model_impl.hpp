@@ -23,38 +23,65 @@ namespace range {
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RSWrapper<TreeType>::Train(arma::mat&& referenceSet,
+void RSWrapper<TreeType>::Train(util::Timers& timers,
+                                arma::mat&& referenceSet,
                                 const size_t /* leafSize */)
 {
+  if (!Naive())
+    timers.Start("tree_building");
+
   rs.Train(std::move(referenceSet));
+  if (!Naive())
+    timers.Stop("tree_building");
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RSWrapper<TreeType>::Search(arma::mat&& querySet,
+void RSWrapper<TreeType>::Search(util::Timers& timers,
+                                 arma::mat&& querySet,
                                  const math::Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances,
                                  const size_t /* leafSize */)
 {
-  rs.Search(std::move(querySet), range, neighbors, distances);
+  if (!Naive() && !SingleMode())
+  {
+    // We build the query tree manually, so that we can time how long it takes.
+    timers.Start("tree_building");
+    typename decltype(rs)::Tree queryTree(std::move(querySet));
+    timers.Stop("tree_building");
+
+    timers.Start("computing_neighbors");
+    rs.Search(&queryTree, range, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
+  else
+  {
+    timers.Start("computing_neighbors");
+    rs.Search(std::move(querySet), range, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RSWrapper<TreeType>::Search(const math::Range& range,
+void RSWrapper<TreeType>::Search(util::Timers& timers,
+                                 const math::Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances)
 {
+  timers.Start("computing_neighbors");
   rs.Search(range, neighbors, distances);
+  timers.Stop("computing_neighbors");
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void LeafSizeRSWrapper<TreeType>::Train(arma::mat&& referenceSet,
+void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
+                                        arma::mat&& referenceSet,
                                         const size_t leafSize)
 {
   if (rs.Naive())
@@ -63,6 +90,7 @@ void LeafSizeRSWrapper<TreeType>::Train(arma::mat&& referenceSet,
   }
   else
   {
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNewReferences;
     typename decltype(rs)::Tree* tree =
         new typename decltype(rs)::Tree(std::move(referenceSet),
@@ -73,6 +101,7 @@ void LeafSizeRSWrapper<TreeType>::Train(arma::mat&& referenceSet,
     // Give the model ownership of the tree and the mappings.
     rs.treeOwner = true;
     rs.oldFromNewReferences = std::move(oldFromNewReferences);
+    timers.Stop("tree_building");
   }
 }
 
@@ -80,6 +109,7 @@ template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void LeafSizeRSWrapper<TreeType>::Search(
+    util::Timers& timers,
     arma::mat&& querySet,
     const math::Range& range,
     std::vector<std::vector<size_t>>& neighbors,
@@ -89,18 +119,20 @@ void LeafSizeRSWrapper<TreeType>::Search(
   if (!rs.Naive() && !rs.SingleMode())
   {
     // Build a second tree and search.
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     Log::Info << "Building query tree..." << std::endl;
     std::vector<size_t> oldFromNewQueries;
     typename decltype(rs)::Tree queryTree(std::move(querySet),
                                           oldFromNewQueries,
                                           leafSize);
     Log::Info << "Tree built." << std::endl;
-    Timer::Stop("tree_building");
+    timers.Stop("tree_building");
 
     std::vector<std::vector<size_t>> neighborsOut;
     std::vector<std::vector<double>> distancesOut;
+    timers.Start("computing_neighbors");
     rs.Search(&queryTree, range, neighborsOut, distancesOut);
+    timers.Stop("computing_neighbors");
 
     // Remap the query points.
     neighbors.resize(queryTree.Dataset().n_cols);
@@ -113,7 +145,9 @@ void LeafSizeRSWrapper<TreeType>::Search(
   }
   else
   {
+    timers.Start("computing_neighbors");
     rs.Search(std::move(querySet), range, neighbors, distances);
+    timers.Stop("computing_neighbors");
   }
 }
 
@@ -204,31 +238,31 @@ void RSModel::serialize(Archive& ar, const uint32_t /* version */)
 
     case VP_TREE:
       {
-        RSWrapper<tree::VPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::VPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::VPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::VPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case RP_TREE:
       {
-        RSWrapper<tree::RPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::RPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::RPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case MAX_RP_TREE:
       {
-        RSWrapper<tree::MaxRPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::MaxRPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::MaxRPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::MaxRPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        RSWrapper<tree::UBTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::UBTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::UBTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::UBTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }

@@ -19,8 +19,6 @@
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
 #include "layer_types.hpp"
 
 namespace mlpack {

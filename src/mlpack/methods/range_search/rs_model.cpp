@@ -142,19 +142,19 @@ void RSModel::InitializeModel(const bool naive, const bool singleMode)
       break;
 
     case VP_TREE:
-      rSearch = new RSWrapper<tree::VPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::VPTree>(naive, singleMode);
       break;
 
     case RP_TREE:
-      rSearch = new RSWrapper<tree::RPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::RPTree>(naive, singleMode);
       break;
 
     case MAX_RP_TREE:
-      rSearch = new RSWrapper<tree::MaxRPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::MaxRPTree>(naive, singleMode);
       break;
 
     case UB_TREE:
-      rSearch = new RSWrapper<tree::UBTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<tree::UBTree>(naive, singleMode);
       break;
 
     case OCTREE:
@@ -163,7 +163,8 @@ void RSModel::InitializeModel(const bool naive, const bool singleMode)
   }
 }
 
-void RSModel::BuildModel(arma::mat&& referenceSet,
+void RSModel::BuildModel(util::Timers& timers,
+                         arma::mat&& referenceSet,
                          const size_t leafSize,
                          const bool naive,
                          const bool singleMode)
@@ -171,42 +172,43 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
   // Initialize random basis if necessary.
   if (randomBasis)
   {
+    timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
     math::RandomBasis(q, referenceSet.n_rows);
+
+    // Do we need to modify the reference set?
+    if (randomBasis)
+      referenceSet = q * referenceSet;
+    timers.Stop("computing_random_basis");
   }
 
   this->leafSize = leafSize;
 
-  // Do we need to modify the reference set?
-  if (randomBasis)
-    referenceSet = q * referenceSet;
-
   if (!naive)
-  {
-    Timer::Start("tree_building");
     Log::Info << "Building reference tree..." << std::endl;
-  }
 
   InitializeModel(naive, singleMode);
 
-  rSearch->Train(std::move(referenceSet), leafSize);
+  rSearch->Train(timers, std::move(referenceSet), leafSize);
 
   if (!naive)
-  {
-    Timer::Stop("tree_building");
     Log::Info << "Tree built." << std::endl;
-  }
 }
 
 // Perform range search.
-void RSModel::Search(arma::mat&& querySet,
+void RSModel::Search(util::Timers& timers,
+                     arma::mat&& querySet,
                      const math::Range& range,
                      std::vector<std::vector<size_t>>& neighbors,
                      std::vector<std::vector<double>>& distances)
 {
   // We may need to map the query set randomly.
   if (randomBasis)
+  {
+    timers.Start("applying_random_basis");
     querySet = q * querySet;
+    timers.Stop("applying_random_basis");
+  }
 
   Log::Info << "Search for points in the range [" << range.Lo() << ", "
       << range.Hi() << "] with ";
@@ -217,11 +219,13 @@ void RSModel::Search(arma::mat&& querySet,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-  rSearch->Search(std::move(querySet), range, neighbors, distances, leafSize);
+  rSearch->Search(timers, std::move(querySet), range, neighbors, distances,
+      leafSize);
 }
 
 // Perform range search (monochromatic case).
-void RSModel::Search(const math::Range& range,
+void RSModel::Search(util::Timers& timers,
+                     const math::Range& range,
                      std::vector<std::vector<size_t>>& neighbors,
                      std::vector<std::vector<double>>& distances)
 {
@@ -234,7 +238,7 @@ void RSModel::Search(const math::Range& range,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-  rSearch->Search(range, neighbors, distances);
+  rSearch->Search(timers, range, neighbors, distances);
 }
 
 // Get the name of the tree type.

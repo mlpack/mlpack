@@ -105,8 +105,6 @@ class DiscreteActionEnv
    */
   bool IsTerminal(const State& /* state */) const { return false; }
 };
-size_t DiscreteActionEnv::State::dimension = 0;
-size_t DiscreteActionEnv::Action::size = 0;
 
 /**
  * To use the dummy environment, one may start by specifying the state and
@@ -201,8 +199,6 @@ class ContinuousActionEnv
    */
   bool IsTerminal(const State& /* state */) const { return false; }
 };
-size_t ContinuousActionEnv::State::dimension = 0;
-size_t ContinuousActionEnv::Action::size = 0;
 
 } // namespace rl
 } // namespace mlpack

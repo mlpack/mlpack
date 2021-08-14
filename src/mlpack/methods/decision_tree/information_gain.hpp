@@ -26,7 +26,7 @@ class InformationGain
 {
  public:
   /**
-   * Evaluate the Gini impurity given a vector of class weight counts.
+   * Evaluate the information gain given a vector of class weight counts.
    */
   template<bool UseWeights, typename CountType>
   static double EvaluatePtr(const CountType* counts,

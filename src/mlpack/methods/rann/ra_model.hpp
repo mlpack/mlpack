@@ -41,7 +41,7 @@ class RAWrapperBase
   virtual RAWrapperBase* Clone() const = 0;
 
   //! Destruct the RAWrapperBase (nothing to do).
-  virtual ~RAWrapperBase() { };
+  virtual ~RAWrapperBase() { }
 
   //! Return a reference to the dataset.
   virtual const arma::mat& Dataset() const = 0;
@@ -82,12 +82,14 @@ class RAWrapperBase
   virtual bool& Naive() = 0;
 
   //! Train the RASearch model with the given parameters.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize) = 0;
 
   //! Perform bichromatic rank-approximate nearest neighbor search (i.e. search
   //! with a separate query set).
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -95,7 +97,8 @@ class RAWrapperBase
 
   //! Perform monochromatic rank-approximate nearest neighbor search (i.e. a
   //! search with the reference set as the query set).
-  virtual void Search(const size_t k,
+  virtual void Search(util::Timers& timers,
+                      const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances) = 0;
 };
@@ -163,12 +166,14 @@ class RAWrapper : public RAWrapperBase
   bool& Naive() { return ra.Naive(); }
 
   //! Train the model.  For RAWrapper, we ignore the leaf size.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t /* leafSize */);
 
   //! Perform bichromatic neighbor search (i.e. search with a separate query
   //! set).  For RAWrapper, we ignore the leaf size.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -176,7 +181,8 @@ class RAWrapper : public RAWrapperBase
 
   //! Perform monochromatic neighbor search (i.e. search where the reference set
   //! is used as the query set).
-  virtual void Search(const size_t k,
+  virtual void Search(util::Timers& timers,
+                      const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances);
 
@@ -226,12 +232,14 @@ class LeafSizeRAWrapper : public RAWrapper<TreeType>
   }
 
   //! Train a model with the given parameters.  This overload uses leafSize.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize);
 
   //! Perform bichromatic search (e.g. search with a separate query set).  This
   //! overload takes the leaf size into account to build the query tree.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const size_t k,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
@@ -389,14 +397,16 @@ class RAModel
   void InitializeModel(const bool naive, const bool singleMode);
 
   //! Build the reference tree.
-  void BuildModel(arma::mat&& referenceSet,
+  void BuildModel(util::Timers& timers,
+                  arma::mat&& referenceSet,
                   const size_t leafSize,
                   const bool naive,
                   const bool singleMode);
 
   //! Perform rank-approximate neighbor search, taking ownership of the query
   //! set.
-  void Search(arma::mat&& querySet,
+  void Search(util::Timers& timers,
+              arma::mat&& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
@@ -405,7 +415,8 @@ class RAModel
    * Perform rank-approximate neighbor search, using the reference set as the
    * query set.
    */
-  void Search(const size_t k,
+  void Search(util::Timers& timers,
+              const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 

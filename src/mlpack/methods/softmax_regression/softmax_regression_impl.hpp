@@ -69,9 +69,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
     parameters = regressor.GetInitialPoint();
 
   // Train the model.
-  Timer::Start("softmax_regression_optimization");
   const double out = optimizer.Optimize(regressor, parameters);
-  Timer::Stop("softmax_regression_optimization");
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -92,9 +90,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
     parameters = regressor.GetInitialPoint();
 
   // Train the model.
-  Timer::Start("softmax_regression_optimization");
   const double out = optimizer.Optimize(regressor, parameters, callbacks...);
-  Timer::Stop("softmax_regression_optimization");
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
             << "trained model is " << out << "." << std::endl;

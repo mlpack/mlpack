@@ -107,7 +107,8 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -157,7 +158,8 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
  */
-TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
+          "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -284,7 +286,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
   // Create training input by 5x5 matrix.
-  arma::mat input = arma::randu(10,1);
+  arma::mat input = arma::randu(10, 1);
   // Create training output by 1 matrix.
   arma::mat output = arma::mat("1");
 
@@ -391,14 +393,16 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -538,14 +542,16 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -639,14 +645,16 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // The range should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -729,14 +737,16 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -780,14 +790,16 @@ TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -861,14 +873,16 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -933,14 +947,16 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
   trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -964,7 +980,8 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -984,9 +1001,10 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   model.Add<LogSoftMax<> >();
 
   std::string expectedMsg = "FFN<>::Train(): ";
-              expectedMsg += "the first layer of the network expects ";
-              expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
-              expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";
+  expectedMsg += "the first layer of the network expects ";
+  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
+  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) +
+      " dimensions! ";
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
 

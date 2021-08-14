@@ -16,8 +16,12 @@ set(SOURCES
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  bicubic_interpolation.hpp
+  bicubic_interpolation_impl.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
+  channel_shuffle.hpp
+  channel_shuffle_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
@@ -36,6 +40,8 @@ set(SOURCES
   elu_impl.hpp
   fast_lstm.hpp
   fast_lstm_impl.hpp
+  flatten_t_swish.hpp
+  flatten_t_swish_impl.hpp
   flexible_relu.hpp
   flexible_relu_impl.hpp
   glimpse.hpp
@@ -81,6 +87,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  nearest_interpolation.hpp
+  nearest_interpolation_impl.hpp
   noisylinear.hpp
   noisylinear_impl.hpp
   parametric_relu.hpp
@@ -95,6 +103,8 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
+  relu6.hpp
+  relu6_impl.hpp
   reparametrization.hpp
   reparametrization_impl.hpp
   radial_basis_function.hpp

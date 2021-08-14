@@ -13,7 +13,6 @@
 #define MLPACK_TESTS_TEST_CATCH_TOOLS_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/version.hpp>
 
 #include "catch.hpp"
 
@@ -48,6 +47,20 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
 
   for (size_t i = 0; i < a.n_elem; ++i)
     REQUIRE(a[i] == b[i]);
+}
+
+template <typename FieldType,
+          typename = std::enable_if_t<
+              arma::is_arma_type<typename FieldType::object_type>::value>>
+// Check the values of two field types.
+inline void CheckFields(const FieldType& a,
+                        const FieldType& b)
+{
+  REQUIRE(a.n_rows == b.n_rows);
+  REQUIRE(a.n_cols == b.n_cols);
+
+  for (size_t i = 0; i < a.n_slices; ++i)
+    CheckMatrices(a(i), b(i));
 }
 
 // Check the values of two cubes.

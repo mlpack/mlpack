@@ -116,37 +116,48 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(util::Params& params,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  if (params.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = params.Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
-      (void*) &defaultValue);
+  params.functionMap[d.tname]["DefaultParam"](d, NULL, (void*) &defaultValue);
 
   return defaultValue;
 }
 
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
+{
+  util::Params params = IO::Parameters(bindingName);
+  return PrintDefault(params, paramName);
+}
+
 // Recursion base case.
-std::string PrintOptionalInputs() { return ""; }
+std::string PrintOptionalInputs(util::Params& /* params */) { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintOptionalInputs(const std::string& paramName,
+std::string PrintOptionalInputs(util::Params& params,
+                                const std::string& paramName,
                                 const T& value,
                                 Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
     if (d.input && !d.required)
     {
       std::string goParamName = util::CamelCase(paramName, false);
@@ -156,7 +167,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
       oss << "param." << goParamName << " = ";
 
       // Special handling is needed for model types.
-      if (PrintDefault(paramName) == "nil")
+      if (PrintDefault(params, paramName) == "nil")
       {
         oss << "&";
         std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -181,7 +192,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
   }
 
   // Continue recursion.
-  std::string rest = PrintOptionalInputs(args...);
+  std::string rest = PrintOptionalInputs(params, args...);
   if (rest != "" && result != "")
     result += rest;
   else if (result == "")
@@ -191,30 +202,31 @@ std::string PrintOptionalInputs(const std::string& paramName,
 }
 
 // Recursion base case.
-std::string PrintInputOptions() { return ""; }
+std::string PrintInputOptions(util::Params& /* params */) { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& params,
+                              const std::string& paramName,
                               const T& value,
                               Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
 
-  if (IO::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
     if (d.input && d.required)
     {
       // Print the input option.
       std::ostringstream oss;
 
       // Special handling is needed for model types.
-      if (PrintDefault(paramName) == "nil")
+      if (PrintDefault(params, paramName) == "nil")
       {
         oss << "&";
         std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -238,7 +250,7 @@ std::string PrintInputOptions(const std::string& paramName,
   }
 
   // Continue recursion.
-  std::string rest = PrintInputOptions(args...);
+  std::string rest = PrintInputOptions(params, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -249,6 +261,7 @@ std::string PrintInputOptions(const std::string& paramName,
 
 // Base case: no modification needed.
 void GetOptions(
+    util::Params& /* params */,
     std::vector<std::tuple<std::string, std::string>>& /* results */)
 {
   // Nothing to do.
@@ -261,18 +274,19 @@ void GetOptions(
  */
 template<typename T, typename... Args>
 void GetOptions(
+    util::Params& params,
     std::vector<std::tuple<std::string, std::string>>& results,
     const std::string& paramName,
     const T& value,
     Args... args)
 {
   // Determine whether or not the value is required.
-  if (IO::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
     std::ostringstream oss;
     oss << value;
     results.push_back(std::make_tuple(paramName, oss.str()));
-    GetOptions(results, args...);
+    GetOptions(params, results, args...);
   }
   else
   {
@@ -284,14 +298,14 @@ void GetOptions(
 }
 
 // Recursion base case.
-inline std::string PrintOutputOptions() { return ""; }
+inline std::string PrintOutputOptions(util::Params& /* params */) { return ""; }
 
 template<typename... Args>
-std::string PrintOutputOptions(Args... args)
+std::string PrintOutputOptions(util::Params& params, Args... args)
 {
   // Get the list of output options for the binding.
   std::vector<std::string> outputOptions;
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
@@ -301,7 +315,7 @@ std::string PrintOutputOptions(Args... args)
 
   // Now get the full list of output options that we have.
   std::vector<std::tuple<std::string, std::string>> passedOptions;
-  GetOptions(passedOptions, args...);
+  GetOptions(params, passedOptions, args...);
 
   // Next, iterate over all the options.
   std::ostringstream oss;
@@ -373,19 +387,21 @@ std::string ProgramCall(const std::string& programName, Args... args)
   result = oss.str();
   oss.str(""); // Reset it.
 
+  util::Params params = IO::Parameters(programName);
+
   // Now process each optional parameters.
-  oss << PrintOptionalInputs(args...) << "\n";
+  oss << PrintOptionalInputs(params, args...) << "\n";
   result = result + oss.str();
   oss.str(""); // Reset it.
 
   // Now process each output parameters.
   std::ostringstream ossOutputs;
-  ossOutputs << PrintOutputOptions(args...);
+  ossOutputs << PrintOutputOptions(params, args...);
 
   ossOutputs << " := mlpack." << goProgramName << "(";
 
   // Now process each required input parameter.
-  oss << PrintInputOptions(args...);
+  oss << PrintInputOptions(params, args...);
   std::string input = oss.str();
   if (input != "")
     ossOutputs << input << ", ";
@@ -418,27 +434,22 @@ inline std::string PrintDataset(const std::string& datasetName)
 /**
  * Given the name of a binding, print its invocation.
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& programName)
 {
   std::ostringstream oss;
   std::string goProgramName = util::CamelCase(programName, false);
 
   std::ostringstream ossInital;
   // Determine if we have any output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
+
   ossInital << "// Initialize optional parameters for " << goProgramName
             << "()." << "\n";
   oss << util::HyphenateString(ossInital.str(), 4);
   std::ostringstream ossOptions;
   ossOptions << "param := mlpack." << goProgramName << "Options()\n";
   oss << util::HyphenateString(ossOptions.str(), 4);
-  std::vector<std::string> outputOptions;
-  for (auto it = parameters.begin(); it != parameters.end(); ++it)
-  {
-    util::ParamData& d = it->second;
-    if (!d.input)
-      outputOptions.push_back(it->first);
-  }
   std::string result = oss.str();
   oss.str("");
   std::ostringstream ossInputs;
@@ -446,13 +457,13 @@ inline std::string ProgramCall(const std::string& programName)
   // Now iterate over every optional input option.
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required && !it->second.persistent)
+    if (it->second.input && !it->second.required)
     {
       // Print the input option.
       ossInputs << "param." << util::CamelCase(it->second.name, false) << " = ";
       std::string value;
-      IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-          it->second, NULL, (void*) &value);
+      params.functionMap[it->second.tname]["DefaultParam"](it->second, NULL,
+          (void*) &value);
       ossInputs << value;
       ossInputs << "\n";
       oss << util::HyphenateString(ossInputs.str(), 4);
@@ -529,25 +540,32 @@ inline std::string ParamString(const std::string& paramName)
  * documentation when referencing that argument.
  */
 template<typename T>
-inline std::string ParamString(const std::string& paramName, const T& value)
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName,
+                               const T& value)
 {
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::Params params = IO::Parameters(bindingName);
+  util::ParamData& d = params.Parameters()[paramName];
   std::ostringstream oss;
   oss << paramName << "="
       << PrintValue(value, d.tname == TYPENAME(std::string));
   return oss.str();
 }
 
-inline bool IgnoreCheck(const std::string& paramName)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+  util::Params params = IO::Parameters(bindingName);
+  return !params.Parameters()[paramName].input;
 }
 
-inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::vector<std::string>& constraints)
 {
+  util::Params params = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!params.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -555,16 +573,18 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 }
 
 inline bool IgnoreCheck(
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+  util::Params params = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!params.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !params.Parameters()[paramName].input;
 }
 
 } // namespace go
