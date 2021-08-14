@@ -319,8 +319,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   if (referenceSet->n_cols == 0)
     return;
 
-  Timer::Start("range_search/computing_neighbors");
-
   // This will hold mappings for query points, if necessary.
   std::vector<size_t> oldFromNewQueries;
 
@@ -390,11 +388,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   else // Dual-tree recursion.
   {
     // Build the query tree.
-    Timer::Stop("range_search/computing_neighbors");
-    Timer::Start("range_search/tree_building");
     Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-    Timer::Stop("range_search/tree_building");
-    Timer::Start("range_search/computing_neighbors");
 
     // Create the traverser.
     RuleType rules(*referenceSet, queryTree->Dataset(), range, *neighborPtr,
@@ -409,8 +403,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Clean up tree memory.
     delete queryTree;
   }
-
-  Timer::Stop("range_search/computing_neighbors");
 
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
@@ -494,8 +486,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   if (referenceSet->n_cols == 0)
     return;
 
-  Timer::Start("range_search/computing_neighbors");
-
   // Get a reference to the query set.
   const MatType& querySet = queryTree->Dataset();
 
@@ -525,8 +515,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
   traverser.Traverse(*queryTree, *referenceTree);
-
-  Timer::Stop("range_search/computing_neighbors");
 
   baseCases = rules.BaseCases();
   scores = rules.Scores();
@@ -563,8 +551,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)
     return;
-
-  Timer::Start("range_search/computing_neighbors");
 
   // Here, we will use the query set as the reference set.
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
@@ -620,8 +606,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     baseCases = rules.BaseCases();
     scores = rules.Scores();
   }
-
-  Timer::Stop("range_search/computing_neighbors");
 
   // Do we need to map the reference indices?
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)

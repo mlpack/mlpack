@@ -2,7 +2,7 @@
  * @file tests/main_tests/perceptron_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of perceptron_main.cpp.
+ * Test RUN_BINDING() of perceptron_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,33 +12,17 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "Perceptron";
-
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/perceptron/perceptron_main.cpp>
-#include "test_helper.hpp"
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct PerceptronTestFixture
-{
- public:
-  PerceptronTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~PerceptronTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(PerceptronTestFixture);
 
 /**
  * Ensure that we get desired dimensions when both training
@@ -75,13 +59,13 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputDimensionTest",
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 }
 
 /**
@@ -117,25 +101,23 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-
-  // Reset data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   inputData.shed_row(inputData.n_rows - 1);
 
   // Store outputs.
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  bindings::tests::CleanMemory();
+  // Reset data passed.
+  CleanMemory();
+  ResetSettings();
 
   // Now train perceptron with labels provided.
 
@@ -145,17 +127,17 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -185,11 +167,11 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputPredictionsCheck",
   SetInputParam("labels", std::move(labelsX1));
 
   // Training model using first training dataset.
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the outputs are the same.
-  CheckMatrices(IO::GetParam<arma::Row<size_t>>("output"),
-                IO::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(params.Get<arma::Row<size_t>>("output"),
+                params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -217,31 +199,32 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronModelReuseTest",
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  PerceptronModel* m = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                IO::GetParam<PerceptronModel*>("output_model"));
+  SetInputParam("input_model", m);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   // Check that initial output and final output matrix
   // using saved model are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -259,7 +242,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronMaxItrTest",
   SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -290,15 +273,15 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
   SetInputParam("labels", std::move(labelsX1));
 
   // Training model using first training dataset.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained after training.
-  PerceptronModel* model =
-      IO::GetParam<PerceptronModel*>("output_model");
+  PerceptronModel* model = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Creating training data with five classes.
   constexpr int D = 3;
@@ -316,7 +299,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
   // Re-training an existing model of 3 classes
   // with training data of 5 classes. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -345,7 +328,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData",
 
   // Test data set with wrong dimensionality. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -369,7 +352,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongResponseSizeTest",
 
   // Labels for training data have wrong size. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -387,7 +370,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoResponsesTest",
 
   // No labels for training data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -404,7 +387,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoTrainingDataTest",
 
   // No training data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -428,15 +411,15 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData2",
   SetInputParam("labels", std::move(trainY));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained after the training.
-  PerceptronModel* model =
-      IO::GetParam<PerceptronModel*>("output_model");
+  PerceptronModel* model = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
@@ -445,6 +428,6 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData2",
 
   // Wrong dimensionality of test data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

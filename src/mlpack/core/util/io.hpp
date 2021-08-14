@@ -28,12 +28,16 @@
 #include "version.hpp"
 
 #include "param_data.hpp"
+#include "params.hpp"
 
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 
+// TODO: this entire set of code is related to the bindings and maybe should go
+// into src/mlpack/bindings/util/.
 namespace mlpack {
 
+// TODO: completely go through this documentation and clean it up
 /**
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
@@ -176,69 +180,77 @@ class IO
    * Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this
    * (i.e. PARAM_INT()).
    *
+   * @param bindingName Name of the binding that this parameter is associated
+   *      with.
    * @param d Utility structure holding parameter data.
    */
-  static void Add(util::ParamData&& d);
+  static void AddParameter(const std::string& bindingName, util::ParamData&& d);
 
   /**
-   * See if the specified flag was found while parsing.
+   * Add a function to the function map.
    *
-   * @param identifier The name of the parameter in question.
+   * @param type Type that this function should be called for.
+   * @param name Name of the function.
+   * @param func Function to call.
    */
-  static bool HasParam(const std::string& identifier);
+  static void AddFunction(const std::string& type,
+                          const std::string& name,
+                          void (*func)(util::ParamData&, const void*, void*));
 
   /**
-   * Get the value of type T found while parsing.  You can set the value using
-   * this reference safely.
+   * Add a user-friendly name for a binding.
    *
-   * @param identifier The name of the parameter in question.
+   * @param bindingName Name of the binding to add the user-friendly name for.
+   * @param name User-friendly name.
    */
-  template<typename T>
-  static T& GetParam(const std::string& identifier);
+  static void AddBindingName(const std::string& bindingName,
+                             const std::string& name);
 
   /**
-   * Cast the given parameter of the given type to a short, printable
-   * std::string, for use in status messages.  Ideally the message returned here
-   * should be only a handful of characters, and certainly no longer than one
-   * line.
+   * Add a short description for a binding.
    *
-   * @param identifier The name of the parameter in question.
+   * @param bindingName Name of the binding to add the description for.
+   * @param shortDescription Description to use.
    */
-  template<typename T>
-  static std::string GetPrintableParam(const std::string& identifier);
+  static void AddShortDescription(const std::string& bindingName,
+                                  const std::string& shortDescription);
 
   /**
-   * Get the raw value of the parameter before any processing that GetParam()
-   * might normally do.  So, e.g., for command-line programs, this does not
-   * perform any data loading or manipulation like GetParam() does.  So if you
-   * want to access a matrix or model (or similar) parameter before it is
-   * loaded, this is the method to use.
+   * Add a long description for a binding.
    *
-   * @param identifier The name of the parameter in question.
+   * @param bindingName Name of the binding to add the description for.
+   * @param longDescription Function that returns the long description.
    */
-  template<typename T>
-  static T& GetRawParam(const std::string& identifier);
+  static void AddLongDescription(
+      const std::string& bindingName,
+      const std::function<std::string()>& longDescription);
 
   /**
-   * Utility function for CheckInputMatrices().
+   * Add an example for a binding.
    *
-   * @param matrix Matrix to check.
-   * @param identifier Name of the parameter in question.
+   * @param bindingName Name of the binding to add the example for.
+   * @param example Function that returns the example.
    */
-  template<typename T>
-  static void CheckInputMatrix(const T& matrix, const std::string& identifier);
+  static void AddExample(const std::string& bindingName,
+                         const std::function<std::string()>& example);
 
   /**
-   * Given two (matrix) parameters, ensure that the first is an in-place copy of
-   * the second.  This will generally do nothing (as the bindings already do
-   * this automatically), except for command-line bindings, where we need to
-   * ensure that the output filename is the same as the input filename.
+   * Add a SeeAlso for a binding.
    *
-   * @param outputParamName Name of output (matrix) parameter.
-   * @param inputParamName Name of input (matrix) parameter.
+   * @param bindingName Name of the binding to add the example for.
+   * @param description Description of the SeeAlso.
+   * @param link Link of the SeeAlso.
    */
-  static void MakeInPlaceCopy(const std::string& outputParamName,
-                              const std::string& inputParamName);
+  static void AddSeeAlso(const std::string& bindingName,
+                         const std::string& description,
+                         const std::string& link);
+
+  /**
+   * Return a new Params object initialized with all the parameters of the
+   * binding `bindingName`.  This is intended to be called at the beginning of
+   * the run of a binding.
+   */
+  static util::Params Parameters(const std::string& bindingName);
 
   /**
    * Retrieve the singleton.  As an end user, if you are just using the IO
@@ -253,87 +265,35 @@ class IO
    */
   static IO& GetSingleton();
 
-  //! Return a modifiable list of parameters that IO knows about.
-  static std::map<std::string, util::ParamData>& Parameters();
-  //! Return a modifiable list of aliases that IO knows about.
-  static std::map<char, std::string>& Aliases();
-
-  //! Get the program name as set by the BINDING_NAME() macro.
-  static std::string ProgramName();
-
   /**
-   * Mark a particular parameter as passed.
-   *
-   * @param name Name of the parameter.
+   * Retrieve the global Timers object.
    */
-  static void SetPassed(const std::string& name);
-
-  /**
-   * Take all parameters and function mappings and store them, under the given
-   * name.  This can later be restored with RestoreSettings().  If settings have
-   * already been saved under the given name, they will be overwritten.  This
-   * also clears the current parameters and function map.
-   *
-   * @param name Name of settings to save.
-   */
-  static void StoreSettings(const std::string& name);
-
-  /**
-   * Restore all of the parameters and function mappings of the given name, if
-   * they exist.  A std::invalid_argument exception will be thrown if fatal is
-   * true and no settings with the given name have been stored (with
-   * StoreSettings()).
-   *
-   * @param name Name of settings to restore.
-   * @param fatal Whether to throw an exception on an unknown name.
-   */
-  static void RestoreSettings(const std::string& name, const bool fatal = true);
-
-  /**
-   * Clear all of the settings, removing all parameters and function mappings.
-   */
-  static void ClearSettings();
-
-  /**
-   * Checks all input matrices for NaN and inf values, exits if found any.
-   */
-  static void CheckInputMatrices();
+  static util::Timers& GetTimers();
 
  private:
-  //! Convenience map from alias values to names.
-  std::map<char, std::string> aliases;
-  //! Map of parameters.
-  std::map<std::string, util::ParamData> parameters;
-
- public:
-  //! Map for functions and types.
-  //! Use as functionMap["typename"]["functionName"].
+  //! Ensure only one thread can call Add() at a time to modify the map.
+  std::mutex mapMutex;
+  //! Map from alias values to names, for each binding name.
+  std::map<std::string, std::map<char, std::string>> aliases;
+  //! Map of parameters, for each binding name.
+  std::map<std::string, std::map<std::string, util::ParamData>> parameters;
+  //! Map of functions.  Note that this is not specific to a binding, so we only
+  //! have one.
   typedef std::map<std::string, std::map<std::string,
       void (*)(util::ParamData&, const void*, void*)>> FunctionMapType;
   FunctionMapType functionMap;
 
- private:
-  //! Storage map for parameters.
-  std::map<std::string, std::tuple<std::map<std::string, util::ParamData>,
-      std::map<char, std::string>, FunctionMapType>> storageMap;
-
- public:
-  //! True, if IO was used to parse command line options.
-  bool didParse;
-
-  //! Holds the name of the program for --version.  This is the true program
-  //! name (argv[0]) not what is given in BindingDetails.
-  std::string programName;
+  //! Ensure only one thread can modify the docs map at a time.
+  std::mutex docMutex;
+  //! Map of binding details.
+  std::map<std::string, util::BindingDetails> docs;
 
   //! Holds the timer objects.
-  Timers timer;
+  util::Timers timer;
 
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
-  //! Holds the bindingDetails objects.
-  util::BindingDetails doc;
- private:
   /**
    * Make the constructor private, to preclude unauthorized instances.
    */

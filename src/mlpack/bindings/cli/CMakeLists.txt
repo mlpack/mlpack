@@ -18,6 +18,7 @@ set(SOURCES
   get_printable_param_value_impl.hpp
   in_place_copy.hpp
   map_parameter_name.hpp
+  mlpack_main.hpp
   output_param.hpp
   output_param_impl.hpp
   parameter_type.hpp

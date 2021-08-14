@@ -3,44 +3,26 @@
  * @author Atharva Khandait
  * @author Heet Sankesara
  *
- * Test mlpackMain() of knn_main.cpp.
+ * Test RUN_BINDING() of knn_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "K-NearestNeighborsSearch";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/neighbor_search/knn_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct KNNTestFixture
-{
- public:
-  KNNTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~KNNTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(KNNTestFixture);
 
 /*
  * Check that we can't provide reference and query matrices
@@ -64,7 +46,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNEqualDimensionTest",
   SetInputParam("k", (int) 10);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -83,15 +65,15 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKTest",
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
 
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -114,7 +96,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKQueryDataTest",
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -132,7 +114,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNLeafSizeTest",
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -149,14 +131,14 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNRefModelTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(IO::GetParam<KNNModel*>("output_model")));
+      std::move(params.Get<KNNModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -175,7 +157,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTreeTypeTest",
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -194,7 +176,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidAlgoTest",
   SetInputParam("algorithm", (string) "triple_tree"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -213,7 +195,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidEpsilonTest",
   SetInputParam("epsilon", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -232,7 +214,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTauTest",
   SetInputParam("tau", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -253,16 +235,16 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidRhoTest",
   SetInputParam("rho", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["rho"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("rho", (double) 1.5); // Invalid.
 
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -280,15 +262,15 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNOutputDimensionTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the neighbors matrix has 10 points for each input point.
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 10);
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 100);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_rows == 10);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 10 points for each input point.
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 10);
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 100);
+  REQUIRE(params.Get<arma::mat>("distances").n_rows == 10);
+  REQUIRE(params.Get<arma::mat>("distances").n_cols == 100);
 }
 
 /**
@@ -308,29 +290,31 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNModelReuseTest",
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   KNNModel* output_model;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
-  output_model = std::move(IO::GetParam<KNNModel*>("output_model"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
+  output_model = std::move(params.Get<KNNModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["query"].wasPassed = false;
+  params.Get<KNNModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", output_model);
   SetInputParam("query", queryData);
+  SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, params.Get<arma::mat>("distances"));
 }
 
 /*
@@ -350,27 +334,25 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentTauTest",
   SetInputParam("tau", (double) 0.2);
   SetInputParam("algorithm", (string) "greedy");
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["tau"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("tau", (double) 0.8);
 
-  mlpackMain();
+  RUN_BINDING();
 
   CheckMatricesNotEqual(neighbors,
-      IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      params.Get<arma::Mat<size_t>>("neighbors"));
   CheckMatricesNotEqual(distances,
-      IO::GetParam<arma::mat>("distances"));
+      params.Get<arma::mat>("distances"));
 }
 
 /*
@@ -391,27 +373,25 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentRhoTest",
   SetInputParam("rho", (double) 0.01);
   SetInputParam("algorithm", (string) "greedy");
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["rho"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("rho", (double) 0.99);
 
-  mlpackMain();
+  RUN_BINDING();
 
   CheckMatricesNotEqual(neighbors,
-      IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      params.Get<arma::Mat<size_t>>("neighbors"));
   CheckMatricesNotEqual(distances,
-      IO::GetParam<arma::mat>("distances"));
+      params.Get<arma::mat>("distances"));
 }
 
 /*
@@ -429,27 +409,25 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentEpsilonTest",
   SetInputParam("k", (int) 10);
   SetInputParam("epsilon", (double) 0.2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 0.8);
 
-  mlpackMain();
+  RUN_BINDING();
 
   CheckMatricesNotEqual(neighbors,
-      IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      params.Get<arma::Mat<size_t>>("neighbors"));
   CheckMatricesNotEqual(distances,
-      IO::GetParam<arma::mat>("distances"));
+      params.Get<arma::mat>("distances"));
 }
 
 /*
@@ -466,28 +444,28 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNRandomBasisTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("algorithm", (string) "dual_tree");
-  IO::SetPassed("random_basis");
+  SetInputParam("random_basis", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
-  REQUIRE(IO::GetParam<KNNModel*>("output_model")->RandomBasis() == true);
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
+  REQUIRE(params.Get<KNNModel*>("output_model")->RandomBasis() == true);
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["random_basis"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("algorithm", (string) "dual_tree");
 
-  mlpackMain();
+  RUN_BINDING();
 
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
-  REQUIRE(IO::GetParam<KNNModel*>("output_model")->RandomBasis() == false);
+  CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, params.Get<arma::mat>("distances"));
+  REQUIRE(params.Get<KNNModel*>("output_model")->RandomBasis() == false);
 }
 
 /*
@@ -504,23 +482,23 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNTrueNeighborDistanceTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", referenceData);
   SetInputParam("true_neighbors", neighbors);
   SetInputParam("true_distances", distances);
   SetInputParam("epsilon", (double) 0.5);
+  SetInputParam("k", (int) 10);
 
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 
   // True output matrices have incorrect shape.
   arma::Mat<size_t> dummyNeighbors;
@@ -528,16 +506,17 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNTrueNeighborDistanceTest",
   dummyNeighbors.randu(100, 20);
   dummyDistances.randu(100, 20);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
-  IO::GetSingleton().Parameters()["true_distances"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("true_neighbors", std::move(dummyNeighbors));
   SetInputParam("true_distances", std::move(dummyDistances));
+  SetInputParam("epsilon", (double) 0.5);
+  SetInputParam("k", (int) 10);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -557,9 +536,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNAllAlgorithmsTest",
   arma::mat queryData;
   queryData.randu(3, 90); // 90 points in 3 dimensions.
 
-  // Keep some k <= number of reference points same over all.
-  SetInputParam("k", (int) 10);
-
   arma::Mat<size_t> neighborsCompare;
   arma::mat distancesCompare;
 
@@ -573,31 +549,30 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNAllAlgorithmsTest",
     SetInputParam("reference", referenceData);
     SetInputParam("query", queryData);
     SetInputParam("algorithm", algorithms[i]);
+    SetInputParam("k", (int) 10);
 
-    mlpackMain();
+    RUN_BINDING();
 
     if (i == 0)
     {
       neighborsCompare = std::move(
-          IO::GetParam<arma::Mat<size_t>>("neighbors"));
-      distancesCompare = std::move(IO::GetParam<arma::mat>("distances"));
+          params.Get<arma::Mat<size_t>>("neighbors"));
+      distancesCompare = std::move(params.Get<arma::mat>("distances"));
     }
     else
     {
-      neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-      distances = std::move(IO::GetParam<arma::mat>("distances"));
+      neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(params.Get<arma::mat>("distances"));
 
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
 
-    delete IO::GetParam<KNNModel*>("output_model");
-    IO::GetParam<KNNModel*>("output_model") = NULL;
+    delete params.Get<KNNModel*>("output_model");
+    params.Get<KNNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
-    IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-    IO::GetSingleton().Parameters()["query"].wasPassed = false;
-    IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+    ResetSettings();
   }
 }
 
@@ -619,9 +594,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNAllTreeTypesTest",
   arma::mat queryData;
   queryData.randu(3, 90); // 90 points in 3 dimensions.
 
-  // Keep some k <= number of reference points same over all.
-  SetInputParam("k", (int) 15);
-
   arma::Mat<size_t> neighborsCompare;
   arma::mat distancesCompare;
 
@@ -635,31 +607,30 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNAllTreeTypesTest",
     SetInputParam("reference", referenceData);
     SetInputParam("query", queryData);
     SetInputParam("tree_type", treetypes[i]);
+    SetInputParam("k", (int) 15);
 
-    mlpackMain();
+    RUN_BINDING();
 
     if (i == 0)
     {
       neighborsCompare = std::move(
-          IO::GetParam<arma::Mat<size_t>>("neighbors"));
-      distancesCompare = std::move(IO::GetParam<arma::mat>("distances"));
+          params.Get<arma::Mat<size_t>>("neighbors"));
+      distancesCompare = std::move(params.Get<arma::mat>("distances"));
     }
     else
     {
-      neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-      distances = std::move(IO::GetParam<arma::mat>("distances"));
+      neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(params.Get<arma::mat>("distances"));
 
       CheckMatrices(neighborsCompare, neighbors);
       CheckMatrices(distancesCompare, distances);
     }
 
-    delete IO::GetParam<KNNModel*>("output_model");
-    IO::GetParam<KNNModel*>("output_model") = NULL;
+    delete params.Get<KNNModel*>("output_model");
+    params.Get<KNNModel*>("output_model") = NULL;
 
     // Reset passed parameters.
-    IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-    IO::GetSingleton().Parameters()["query"].wasPassed = false;
-    IO::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+    ResetSettings();
   }
 }
 
@@ -677,24 +648,24 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentLeafSizes",
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   KNNModel* output_model;
-  output_model = std::move(IO::GetParam<KNNModel*>("output_model"));
+  output_model = std::move(params.Get<KNNModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
   SetInputParam("leaf_size", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
   REQUIRE(output_model->LeafSize() == (int) 1);
-  REQUIRE(IO::GetParam<KNNModel*>("output_model")->LeafSize() == (int) 10);
+  REQUIRE(params.Get<KNNModel*>("output_model")->LeafSize() == (int) 10);
   delete output_model;
 }
