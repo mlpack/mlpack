@@ -17,6 +17,7 @@
 namespace mlpack{
 namespace data{
 
+template<typename MatType>
 bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
                            const std::string& token)
 {
