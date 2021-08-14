@@ -31,20 +31,20 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
   inFile.seekg(0, std::ios::beg);
   rows = 0;
   cols = 0;
-  
+
   std::string line;
   while (std::getline(inFile, line))
   {
     ++cols;
     // Remove whitespaces from either side
     trim(line);
-  
+
     if (cols == 1)
     {
       // Extract the number of dimensions.
       std::pair<size_t, size_t> dimen = GetMatrixSize(inFile, false, delim);
       rows = dimen.second;
-  
+
       if (info.Dimensionality() == 0)
       {
         info.SetDimensionality(rows);
@@ -58,39 +58,39 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
         throw std::invalid_argument(oss.str());
       }
     }
-  
+
     // If we need to do a first pass for the DatasetMapper, do it.
     if (MapPolicy::NeedsFirstPass)
     {
       // In this case we must pass everything we parse to the MapPolicy.
       size_t dim = 0;
-  
+
       std::stringstream lineStream;
       std::string token;
-  
+
       lineStream.clear();
       lineStream.str(line);
-  
+
       while (lineStream.good())
       {
         std::getline(lineStream, token, delim);
         // Remove whitespace from either side
         trim(token);
-  
+
         if (token[0] == '"' && token[token.size() - 1] != '"')
         {
           std::string tok = token;
-  
+
           while (token[token.size() - 1] != '"')
           {
             tok += delim;
             std::getline(lineStream, token, delim);
             tok += token;
           }
- 
+
           token = tok;
         }
-  
+
         info.template MapFirstPass<T>(std::move(token), dim++);
       }
     }
@@ -175,7 +175,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
             std::getline(lineStream, token, delim);
             tok += token;
           }
- 
+
           token = tok;
         }
 
@@ -219,7 +219,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
       std::getline(lineStream, token, delim);
       // Remove whitespaces from either side
       trim(token);
- 
+
       if (token[0] == '"' && token[token.size() - 1] != '"')
       {
         // first part of the string
@@ -301,7 +301,7 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
           std::getline(lineStream, token, delim);
           tok += token;
         }
- 
+
         token = tok;
       }
 
@@ -328,14 +328,12 @@ void LoadCSV::LoadCategoricalCSV(MatType &inout,
                                  const bool transpose)
 {
   CheckOpen();
-  
+
   if (transpose)
     TransposeParse(inout, infoSet);
   else
     NonTransposeParse(inout, infoSet);
 }
-
-
 
 inline void LoadCSV::CategoricalMatSize(std::stringstream& lineStream, size_t& col, const char delim)
 {

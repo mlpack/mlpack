@@ -17,17 +17,12 @@
 namespace mlpack{
 namespace data{
 
-/**
-* Given the address of a matrix element(val)
-* sets it equal to the provided value(token)
-* example calling: convert_token(x.at(row, col), token)
-*/
-template<typename MatType>
 bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
                            const std::string& token)
 {
   const size_t N = size_t(token.length());
 
+  // Fill empty data points with 0
   if (N == 0)
   {
     val = typename MatType::elem_type(0);
@@ -36,6 +31,9 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
 
   const char* str = token.c_str();
 
+  // Checks for +/-INF and NAN
+  // Converts them to their equivalent representation
+  // from numeric_limits 
   if ((N == 3) || (N == 4))
   {
     const bool neg = (str[0] == '-');
@@ -51,8 +49,9 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
         ((sig_b == 'n') || (sig_b == 'N')) &&
         ((sig_c == 'f') || (sig_c == 'F')))
     {
-      val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
-      std::numeric_limits<typename MatType::elem_type>::infinity();
+      val = neg ? -(std::numeric_limits<typename MatType::elem_type>
+                    ::infinity()) : std::numeric_limits<typename MatType::
+                                    elem_type>::infinity();
       return true;
     }
     else if (((sig_a == 'n') || (sig_a == 'N')) &&
@@ -66,6 +65,9 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
 
   char* endptr = nullptr;
 
+  // Convert the token into ccorrect type.
+  // If we have a MatType::elem_type as unsigned int,
+  // it will convert all negative numbers to 0
   if (std::is_floating_point<typename MatType::elem_type>::value)
   {
     val = typename MatType::elem_type(std::strtod(str, &endptr));
@@ -111,6 +113,7 @@ bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
 
   while (f.good())
   {
+    // Parse the file line by line
     std::getline(f, lineString);
 
     if (lineString.size() == 0)
@@ -123,7 +126,11 @@ bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
 
     while (lineStream.good())
     {
+      // Parse each line
       std::getline(lineStream, token, ',');
+
+      // This will handle loading of both dense and sparse.
+      // Initialize tmp_val of type MatType::elem_type with value 0.
       typename MatType::elem_type tmp_val = typename MatType::elem_type(0);
 
       if (ConvertToken<MatType>(tmp_val, token))

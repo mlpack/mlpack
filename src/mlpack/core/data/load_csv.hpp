@@ -128,7 +128,15 @@ class LoadCSV
   template<typename MatType>
   bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
 
-
+  /**
+   * Caluculate number of columns in each row
+   * and assign the value to the col. This fucntion
+   * will work only for numeric data.
+   *
+   * @param lineStream a single row of data
+   * @param col number of columns in lineStream
+   * @param delim delimiter character
+   */
   inline void NumericMatSize(std::stringstream& lineStream, size_t& col,
                              const char delim); 
 
@@ -176,6 +184,15 @@ class LoadCSV
   void InitializeTransposeMapper(size_t& rows, size_t& cols,
                               DatasetMapper<MapPolicy>& info);
 
+  /**
+   * Caluculate number of columns in each row
+   * and assign the value to the col. This fucntion
+   * will work for categorical data.
+   *
+   * @param lineStream a single row of data
+   * @param col number of columns in lineStream
+   * @param delim delimiter character
+   */
   inline void CategoricalMatSize(std::stringstream& lineStream, size_t& col,
                                  const char delim); 
 
@@ -189,7 +206,9 @@ class LoadCSV
    * @param isNumeric bool to ecide if data is numeric or categorical
    * @param delim char delimiter charecter
    */
-  inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f, const bool isNumeric = true, const char delim = ',')
+  inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
+                                                 const bool isNumeric = true,
+                                                 const char delim = ',')
   {
     bool load_okay = f.good();
   
@@ -206,31 +225,37 @@ class LoadCSV
   
     while (f.good() && load_okay)
     {
+      // Get a row of data
       std::getline(f, lineString);
       if (lineString.size() == 0)
         break;
-  
+
       lineStream.clear();
       lineStream.str(lineString);
-  
+
       size_t line_n_cols = 0;
-  
+
+      // Get number of columns based on the type of data
       if (isNumeric)
         NumericMatSize(lineStream, line_n_cols, delim);
       else
         CategoricalMatSize(lineStream, line_n_cols, delim);
-  
+
+      // If there are different number of columns in each
+      // row, then the highest number of cols will be
+      // considered as the size of the matrix. Missing
+      // elements will be filled as 0
       if (f_n_cols < line_n_cols)
         f_n_cols = line_n_cols;
-  
+
       ++f_n_rows;
     }
-  
+
     f.clear();
     f.seekg(pos1);
-  
+
     std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
-  
+
     return mat_size;
   }
 
