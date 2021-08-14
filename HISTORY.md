@@ -2,7 +2,7 @@
 ###### ????-??-??
   * Added Decision Tree Regressor (#2905). It can be used using the class
     `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
-    
+
   * Added dict-style inspection of mlpack models in python bindings (#2868).
 
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
@@ -68,6 +68,8 @@
 
   * Add `probabilities` option to softmax regression binding, to get class
     probabilities for test points (#3001).
+
+  * Fix double-free of model pointers in R bindings (#3034).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
