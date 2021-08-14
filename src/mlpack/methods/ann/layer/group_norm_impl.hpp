@@ -1,6 +1,6 @@
 /**
  * @file methods/ann/layer/group_norm_impl.hpp
- * @author Shikhar Jaiswal
+ * @author Abhinav Anand
  *
  * Implementation of the Group Normalization class.
  *
@@ -93,7 +93,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   arma::mat expandedGamma, expandedBeta;
   expandedGamma.set_size(output.n_rows, 1);
   expandedBeta.set_size(output.n_rows, 1);
-  for (int r = 0; r < output.n_rows; ++r)
+  for (size_t r = 0; r < output.n_rows; ++r)
   {
     expandedGamma(r) = gamma(r % size);
     expandedBeta(r) = beta(r % size);
@@ -116,7 +116,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
 
   arma::mat expandedGamma;
   expandedGamma.set_size(input.n_rows, 1);
-  for (int r = 0; r < input.n_rows; ++r)
+  for (size_t r = 0; r < input.n_rows; ++r)
   {
     expandedGamma(r) = gamma(r % size);
   }
