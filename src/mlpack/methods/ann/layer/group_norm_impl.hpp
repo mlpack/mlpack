@@ -109,6 +109,9 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
+  if (g.is_empty())
+    g.zeros(input.n_rows, input.n_cols);
+
   arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
       input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
   arma::mat gReshaped((g).memptr(),
