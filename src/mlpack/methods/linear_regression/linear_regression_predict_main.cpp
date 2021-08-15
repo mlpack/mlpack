@@ -51,11 +51,6 @@ PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
-  if(!params.Has("test"))
-  {
-    Log::Fatal << "must pass test data" << endl;
-  }
-
   // A model file was passed in, so load it.
   timer.Start("load_model");
   LinearRegression* lr = params.Get<LinearRegression*>("input_model");

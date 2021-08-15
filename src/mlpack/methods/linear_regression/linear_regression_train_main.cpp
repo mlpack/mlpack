@@ -72,11 +72,6 @@ PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
-  if(!params.Has("training"))
-  {
-    Log::Fatal << "must pass training data" << endl;
-  }
-
   const double lambda = params.Get<double>("lambda");
 
   mat regressors;

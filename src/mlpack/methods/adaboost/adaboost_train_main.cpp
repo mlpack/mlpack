@@ -113,11 +113,6 @@ PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  if (!params.Has("training"))
-  {
-    Log::Fatal << "must pass the training data" << endl;
-  }
-
   // The weak learner must make sense.
   RequireParamInSet<std::string>(params, "weak_learner",
       { "decision_stump", "perceptron" }, true, "unknown weak learner type");

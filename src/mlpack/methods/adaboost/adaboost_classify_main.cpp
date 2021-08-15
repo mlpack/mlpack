@@ -75,11 +75,6 @@ PARAM_MODEL_IN_REQ(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  // if(!params.Has("test"))
-  // {
-  //   Log::Fatal << "must pass the test data" << endl;
-  // }
-
   AdaBoostModel* m = params.Get<AdaBoostModel*>("input_model");
 
   mat testingData = std::move(params.Get<arma::mat>("test"));
