@@ -3081,6 +3081,49 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 }
 
 /**
+ * GroupNorm layer numerical gradient test.
+ */
+TEST_CASE("GradientGroupNormTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(10, 256)),
+        target(arma::zeros(1, 256))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
+      model->Add<GroupNorm<> >(2, 5, 5);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 256, false);
+      model->Gradient(model->Parameters(), 0, gradient, 256);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
+
+/**
  * Tests the LayerNorm layer.
  */
 TEST_CASE("LayerNormTest", "[ANNLayerTest]")

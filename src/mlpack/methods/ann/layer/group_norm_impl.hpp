@@ -95,8 +95,8 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   expandedBeta.set_size(output.n_rows, 1);
   for (size_t r = 0; r < output.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r % size);
-    expandedBeta(r) = beta(r % size);
+    expandedGamma(r) = gamma(r / channelSize);
+    expandedBeta(r) = beta(r / channelSize);
   }
 
   // Scale and shift the output.
@@ -110,22 +110,22 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
-      size / groupCount, groupCount * input.n_cols, false, false);
+      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
   arma::mat gReshaped((g).memptr(),
-      size / groupCount, groupCount * g.n_cols, false, false);
+      g.n_rows * groupCount / size, g.n_cols * size / groupCount, false, false);
 
   arma::mat expandedGamma;
   expandedGamma.set_size(input.n_rows, 1);
   for (size_t r = 0; r < input.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r % size);
+    expandedGamma(r) = gamma(r / channelSize);
   }
 
   // dl / dxhat.
   const arma::mat norm = gy.each_col() % expandedGamma;
 
   arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
-      size / groupCount, groupCount * gy.n_cols, false, false);
+      gy.n_rows * groupCount / size, gy.n_cols * size / groupCount, false, false);
 
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
