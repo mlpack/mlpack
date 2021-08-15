@@ -50,6 +50,7 @@ progress to complex, extensible uses.
  - \ref akfntutorial
  - \ref anntutorial
  - \ref rltutorial
+ - \ref datasetmapper
 
 @section adv_tut Advanced Tutorials
 
