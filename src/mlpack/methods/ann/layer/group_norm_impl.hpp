@@ -71,13 +71,13 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   assert(input.n_rows % channelSize == 0);
   assert(input.n_rows % size == 0);
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
-    input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
+      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
 
   if (output.is_empty())
     output.zeros(input.n_rows, input.n_cols);
 
   arma::mat reshapedOutput((output).memptr(),
-    input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
+      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
 
   mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
@@ -110,9 +110,9 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
-    size / groupCount, groupCount * input.n_cols, false, false);
+      size / groupCount, groupCount * input.n_cols, false, false);
   arma::mat gReshaped((g).memptr(),
-    size / groupCount, groupCount * g.n_cols, false, false);
+      size / groupCount, groupCount * g.n_cols, false, false);
 
   arma::mat expandedGamma;
   expandedGamma.set_size(input.n_rows, 1);
@@ -125,8 +125,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   const arma::mat norm = gy.each_col() % expandedGamma;
 
   arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
-    size / groupCount, groupCount * gy.n_cols, false, false);
-
+      size / groupCount, groupCount * gy.n_cols, false, false);
 
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -141,7 +140,8 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  gReshaped.each_row() += arma::sum(normReshaped.each_row() % -stdInv, 0) / inputReshaped.n_rows;
+  gReshaped.each_row() += arma::sum(normReshaped.each_row() % -stdInv, 0) /
+      inputReshaped.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>
