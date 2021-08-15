@@ -71,13 +71,13 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   assert(input.n_rows % channelSize == 0);
   assert(input.n_rows % size == 0);
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
-      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
+      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
 
   if (output.is_empty())
     output.zeros(input.n_rows, input.n_cols);
 
   arma::mat reshapedOutput((output).memptr(),
-      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
+      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
 
   mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
@@ -113,9 +113,9 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
     g.zeros(input.n_rows, input.n_cols);
 
   arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
-      input.n_rows * groupCount / size, input.n_cols * size / groupCount, false, false);
+      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
   arma::mat gReshaped((g).memptr(),
-      g.n_rows * groupCount / size, g.n_cols * size / groupCount, false, false);
+      g.n_rows / groupCount, g.n_cols * groupCount, false, false);
 
   arma::mat expandedGamma;
   expandedGamma.set_size(input.n_rows, 1);
@@ -128,7 +128,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   const arma::mat norm = gy.each_col() % expandedGamma;
 
   arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
-      gy.n_rows * groupCount / size, gy.n_cols * size / groupCount, false, false);
+      gy.n_rows / groupCount, gy.n_cols * groupCount, false, false);
 
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -169,6 +169,7 @@ template<typename Archive>
 void GroupNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(CEREAL_NVP(channelSize));
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(groupCount));
 
