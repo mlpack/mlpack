@@ -73,13 +73,13 @@ void PrintDocs(const string& bindingName,
   const BindingDetails& doc = params.Doc();
 
   // 'paramMethods' stores the Params object for all wrapper bindings.
-  map<string, Params> paramMethods;
+  vector<Params> paramMethods;
 
   // adding elements to  'paramMethods'.
   for (size_t i = 0; i < validMethods.size(); ++i)
   {
     Params methodParams = IO::Parameters(bindingName + "_" + validMethods[i]);
-    paramMethods[validMethods[i]] = methodParams;
+    paramMethods.push_back(methodParams);
   }
 
   // First, for this section, print each of the names.
@@ -96,42 +96,71 @@ void PrintDocs(const string& bindingName,
             GetBindingName(bindingName);
 
     cout << "## " << langBindingName << endl;
-    cout << "{: #" << languages[i] << "_" << bindingName << " }" << endl;
+    cout << "{: #" << languages[i] << "_";
+
+    if (addWrapperDocs[i])
+      cout  << GetWrapperLink(bindingName);
+    else
+      cout << bindingName;
+
+    cout << " }" << endl;
     cout << "</div>" << endl;
   }
   cout << endl;
 
   // Next, print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "#### " << doc.name << endl;
-  cout << endl;
-
   for (size_t i = 0; i < languages.size(); ++i)
   {
     BindingInfo::Language() = languages[i];
-
-    cout << "<div class=\"language-decl\" id=\"" << languages[i]
+    cout << "<div class=\"language-logical-name\" id=\"" << languages[i]
         << "\" markdown=\"1\">" << endl;
-    // no need to print ProgramCall for wrappers (already included in example).
-    if(!addWrapperDocs[i])
-      cout << ProgramCall(bindingName);
+    cout << "#### ";
+    if (addWrapperDocs[i])
+      cout << paramMethods[0].Doc().name << endl;
+    else
+      cout << doc.name << endl; 
     cout << "</div>" << endl;
   }
   cout << endl;
 
-  cout << doc.shortDescription << " ";
-
   for (size_t i = 0; i < languages.size(); ++i)
   {
-    if(!addWrapperDocs[i])
+    // no need to print ProgramCall for wrappers (already included in example).
+    if (addWrapperDocs[i])
+      continue;
+
+    BindingInfo::Language() = languages[i];
+
+    cout << "<div class=\"language-decl\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
+    cout << ProgramCall(bindingName);
+    cout << "</div>" << endl;
+  }
+  cout << endl;
+
+  // Print short description for each language.
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    BindingInfo::Language() = languages[i];
+    cout << "<div class=\"language-short-desc\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
+    if (addWrapperDocs[i])
     {
+      string desc = replace_all_copy(
+          paramMethods[0].Doc().longDescription(), "|", "\\|");
+      cout << desc;
+    }
+    else
+    {
+      cout << doc.shortDescription << " ";
       cout << "[Detailed documentation](#" << languages[i] << "_";
       cout << bindingName << "_detailed-documentation){: .language-detail-link #"
-        << languages[i] << " }";
+        << languages[i] << " }.";
     }
+    cout << "</div>" << endl;
   }
-
-  cout << "." << endl;
+  cout << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -268,11 +297,11 @@ void PrintDocs(const string& bindingName,
           << endl;
 
       unordered_set<string> paramsSet; // to prevent duplicates.
-      for(auto mainItr = paramMethods.begin(); mainItr != paramMethods.end();
-          ++mainItr)
+
+      for(size_t i = 0; i < paramMethods.size(); ++i)
       {
-        PrintParamTable(bindingName + "_" + mainItr->first,
-            languages[i], mainItr->second, {"name", "type", "description",
+        PrintParamTable(bindingName + "_" + validMethods[i],
+            languages[i], paramMethods[i], {"name", "type", "description",
             "default"}, paramsSet, true, false, true, false);
       }
       paramsSet.clear(); // for reusing.
@@ -281,13 +310,13 @@ void PrintDocs(const string& bindingName,
       cout << "### Example" << endl;
       cout << endl;
       string example;
-      for(auto itr = paramMethods.begin(); itr != paramMethods.end();
-          ++itr)
+
+      for(size_t i = 0; i < paramMethods.size(); ++i)
       {
-        for(size_t j = 0; j < itr->second.Doc().example.size();
+        for(size_t j = 0; j < paramMethods[i].Doc().example.size();
             ++j)
         {
-          string eg = replace_all_copy(itr->second.Doc().example[j](),
+          string eg = replace_all_copy(paramMethods[i].Doc().example[j](),
               "|", "\\|");
           example += eg + "\n";
         }
@@ -304,8 +333,8 @@ void PrintDocs(const string& bindingName,
       cout << "|----------|-----------------|" << endl;
       for(size_t j = 0; j < validMethods.size(); j++)
       {
-        cout << "| " << validMethods[j] << " | ";
-        cout << paramMethods[validMethods[j]].Doc().shortDescription;
+        cout << "| " << GetMappedName(validMethods[j]) << " | ";
+        cout << paramMethods[j].Doc().shortDescription;
         cout << " |" << endl;
       }
       cout << endl;
@@ -313,11 +342,11 @@ void PrintDocs(const string& bindingName,
       // Print information for each method.
       for(size_t j = 0; j < validMethods.size(); j++)
       {
-        cout << "### " << j+1 << ". " << validMethods[j] << endl;
+        cout << "### " << j+1 << ". " << GetMappedName(validMethods[j]) << endl;
         cout << endl;
-        cout << paramMethods[validMethods[j]].Doc().shortDescription << endl;
+        cout << paramMethods[j].Doc().shortDescription << endl;
         cout << endl;
-        map<string, ParamData>& parameters = paramMethods[validMethods[i]].Parameters();
+
         cout << "#### Input Parameters:" << endl;
         cout << endl;
 
@@ -325,7 +354,7 @@ void PrintDocs(const string& bindingName,
         cout << "|----------|----------|-----------------|" << endl;
 
         PrintParamTable(bindingName + "_" + validMethods[j], languages[i],
-            paramMethods[validMethods[j]], {"name", "type", "description"},
+            paramMethods[j], {"name", "type", "description"},
             paramsSet, false, true, true, false);
         paramsSet.clear();
         cout << endl;
@@ -337,7 +366,7 @@ void PrintDocs(const string& bindingName,
         cout << "|----------|-----------------|" << endl;
 
         PrintParamTable(bindingName + "_" + validMethods[j], languages[i],
-            paramMethods[validMethods[j]], {"type", "description"},
+            paramMethods[j], {"type", "description"},
             paramsSet, false, false, false, true);
         cout << endl;
       }

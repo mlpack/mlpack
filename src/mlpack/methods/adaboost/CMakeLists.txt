@@ -17,7 +17,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_category(adaboost "classification")
-group_bindings(adaboost "fit;predict;predict_proba")
+group_bindings(adaboost "train;classify;probabilities")
 add_python_wrapper(adaboost)
 
 add_cli_executable(adaboost)

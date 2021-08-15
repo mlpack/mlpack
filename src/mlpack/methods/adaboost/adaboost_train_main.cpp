@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_fit_main.cpp
+ * @file methods/adaboost/adaboost_train_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -37,7 +37,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME adaboost_fit
+#define BINDING_NAME adaboost_train
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
@@ -53,14 +53,25 @@ using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("AdaBoost Training");
+BINDING_USER_NAME("AdaBoost");
 
 // Short description.
 BINDING_SHORT_DESC(
     "Training AdaBoost model.");
 
 // Long description.
-BINDING_LONG_DESC("");
+BINDING_LONG_DESC(
+    "This program implements the AdaBoost (or Adaptive "
+    "Boosting) algorithm. The variant of AdaBoost implemented here is "
+    "AdaBoost.MH. It uses a weak learner, either decision stumps or "
+    "perceptrons, and over many iterations, creates a strong learner that is a "
+    "weighted ensemble of weak learners. It runs these iterations until a "
+    "tolerance value is crossed for change in the value of the weighted "
+    "training error."
+    "\n\n"
+    "For more information about the algorithm, see the paper \"Improved "
+    "Boosting Algorithms Using Confidence-Rated Predictions\", by R.E. Schapire"
+    " and Y. Singer.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -72,7 +83,7 @@ BINDING_EXAMPLE(
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
     "0.2") + "\n" +
     CREATE_OBJECT("model", "adaboost") + "\n" +
-    CALL_METHOD("model", "fit", "training", "X_train", "labels", "y_train"));
+    CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train"));
 
 // See also...
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
@@ -85,7 +96,7 @@ BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
         "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html");
 
 // Input for training.
-PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
+PARAM_MATRIX_IN_REQ("training", "Dataset for training AdaBoost.", "t");
 PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Training options.
@@ -96,16 +107,16 @@ PARAM_DOUBLE_IN("tolerance", "The tolerance for change in values of the "
 PARAM_STRING_IN("weak_learner", "The type of weak learner to use: "
     "'decision_stump', or 'perceptron'.", "w", "decision_stump");
 
-// Loading/saving of a model.
-// PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
+// Allow saving the model.
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  // Check input parameters and issue warnings/errors as necessary.
-  RequireOnlyOnePassed(params, {"training"});
-  RequireOnlyOnePassed(params, {"labels"});
+  if (!params.Has("training"))
+  {
+    Log::Fatal << "must pass the training data" << endl;
+  }
 
   // The weak learner must make sense.
   RequireParamInSet<std::string>(params, "weak_learner",
@@ -119,10 +130,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<double>(params, "tolerance", [](double x) { return x > 0; },
       true, "invalid tolerance specified");
 
-  AdaBoostModel* m;
-
   mat trainingData = std::move(params.Get<arma::mat>("training"));
-  m = new AdaBoostModel();
+  AdaBoostModel* m = new AdaBoostModel();
 
   // Load labels.
   arma::Row<size_t> labelsIn;

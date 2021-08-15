@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_predict_main.cpp
+ * @file methods/adaboost/adaboost_classify_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -37,7 +37,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME adaboost_predict
+#define BINDING_NAME adaboost_classify
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
@@ -63,25 +63,24 @@ BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-    CALL_METHOD("model", "predict", "test", "X_test"));
+    CALL_METHOD("model", "classify", "test", "X_test"));
 
 // Classification options.
-PARAM_MATRIX_IN("test", "Test dataset.", "T");
+PARAM_MATRIX_IN_REQ("test", "Test dataset.", "T");
 // PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 
 // Loading/saving of a model.
-PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
+PARAM_MODEL_IN_REQ(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  // Check input parameters and issue warnings/errors as necessary.
+  // if(!params.Has("test"))
+  // {
+  //   Log::Fatal << "must pass the test data" << endl;
+  // }
 
-  RequireOnlyOnePassed(params, {"test"});
-  RequireOnlyOnePassed(params, {"input_model"});
-
-  AdaBoostModel* m;
-  m = params.Get<AdaBoostModel*>("input_model");
+  AdaBoostModel* m = params.Get<AdaBoostModel*>("input_model");
 
   mat testingData = std::move(params.Get<arma::mat>("test"));
 

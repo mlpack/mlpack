@@ -16,7 +16,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_category(linear_regression "regression")
-group_bindings(linear_regression "fit;predict")
+group_bindings(linear_regression "train;predict")
 add_python_wrapper(linear_regression)
 
 add_cli_executable(linear_regression)

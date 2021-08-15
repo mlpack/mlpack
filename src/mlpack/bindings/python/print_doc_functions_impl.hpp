@@ -517,7 +517,7 @@ std::string CallMethod(const std::string& bindingName,
   }
   if (callMethod != "")
     callMethod = callMethod.substr(0, callMethod.size()-2);
-  callMethod += " = " + objectName + "." + methodName + "(";
+  callMethod += " = " + objectName + "." + GetMappedName(methodName) + "(";
   callMethod += PrintInputOptions(params, false, true, args...);
   callMethod += ")";
   return util::HyphenateString(callMethod, 2);

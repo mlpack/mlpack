@@ -56,6 +56,16 @@ inline std::vector<std::string> GetMethods(const std::string& validMethods)
   return methods;
 }
 
+inline std::string GetMappedName(const std::string& methodName)
+{
+  std::map<std::string, std::string> nameMap;
+  nameMap["train"] = "fit";
+  nameMap["classify"] = "predict";
+  nameMap["predict"] = "predict";
+  nameMap["probabilities"] = "predict_proba";
+  return nameMap[methodName];
+}
+
 } // python.
 } // bindings.
 } // mlpack.

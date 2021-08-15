@@ -140,6 +140,10 @@ std::string CallMethod(const std::string& bindingName,
                        const std::string& methodName,
                        Args... args);
 
+inline std::string GetMappedName(const std::string& methodName);
+
+inline std::string GetWrapperLink(const std::string& bindingName);
+
 /**
  * Return whether or not a runtime check on parameters should be ignored.
  */

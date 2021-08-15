@@ -353,7 +353,7 @@ void PrintInputProcessing(
       std::cout << prefix << name << "_tuple = to_matrix(" << name
           << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=p.Has('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "if len(" << name << "_tuple[0].shape) > 2:"
+      std::cout << prefix << "if len(" << name << "_tuple[0].shape) < 2:"
           << std::endl;
       std::cout << prefix << "  " << name << "_tuple[0].shape = (" << name
           << "_tuple[0].shape[0], 1)" << std::endl;

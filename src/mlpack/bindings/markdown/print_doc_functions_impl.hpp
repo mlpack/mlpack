@@ -70,7 +70,7 @@ inline std::string GetWrapperName(const std::string& bindingName)
 {
   if (BindingInfo::Language() == "python")
   {
-    return "class" + python::GetClassName(bindingName);
+    return "class " + python::GetClassName(bindingName);
   }
   else
   {
@@ -928,6 +928,32 @@ inline bool IgnoreCheck(const std::string& bindingName, const T& t)
   else
   {
     throw std::invalid_argument("IgnoreCheck(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+inline std::string GetMappedName(const std::string& methodName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return python::GetMappedName(methodName);
+  }
+  else
+  {
+    throw std::invalid_argument("GetMappedName(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+inline std::string GetWrapperLink(const std::string& bindingName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return "class-" + bindingName;
+  }
+  else
+  {
+    throw std::invalid_argument("GetWrapperLink(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }

@@ -39,9 +39,17 @@ void PrintWrapperPY(const std::string& category,
   }
 
   if(category == "regression")
-    cout << "class BaseEstimator:\n  pass\n\n";
+  {
+    cout << "class BaseEstimator:" << endl;
+    cout << "  pass" << endl << endl;
+  }
   else if(category == "classification")
-    cout << "class BaseEstimator:\n  pass\n\nclass ClassifierMixin:\n  pass\n\n";
+  {
+    cout << "class BaseEstimator:" << endl;
+    cout << "  pass" << endl << endl;
+    cout << "class ClassifierMixin:" << endl;
+    cout << "  pass" << endl << endl;
+  }
 
   // Import different mlpack programs that are to be wrapped.
   for(int i=0; i<methods.size(); i++)
@@ -177,8 +185,9 @@ void PrintWrapperPY(const std::string& category,
   for(string methodName: methods)
   {
     // print method name.
-    cout << string(indent, ' ') << "def " << methodName << "(self," << endl;
-    int addIndent = 4 + methodName.size() + 1;
+    cout << string(indent, ' ') << "def " << GetMappedName(methodName);
+    cout << "(self," << endl;
+    int addIndent = 4 + GetMappedName(methodName).size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
 
     vector<string> inputParamNames;
@@ -199,10 +208,10 @@ void PrintWrapperPY(const std::string& category,
         // or more than one vector input params.
         if(numMatrixInputs > 1)
           Log::Fatal << "More than one matrix input parameters for " <<
-              methodName << " method!" << endl;
+              methodName << "(" << GetMappedName(methodName) << ") method!" << endl;
         if(numVectorInputs > 1)
           Log::Fatal << "More than one vector input parameters for " <<
-              methodName << " method!" << endl;
+              methodName << "(" << GetMappedName(methodName) << ") method!" << endl;
 
         if(itr->second.input)
         {

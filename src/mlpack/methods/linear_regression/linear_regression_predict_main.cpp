@@ -40,10 +40,10 @@ BINDING_LONG_DESC("");
 BINDING_EXAMPLE(
   CALL_METHOD("model", "predict", "test", "X_test"));
 
-PARAM_MODEL_IN(LinearRegression, "input_model", "Existing LinearRegression "
+PARAM_MODEL_IN_REQ(LinearRegression, "input_model", "Existing LinearRegression "
     "model to use.", "m");
 
-PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
+PARAM_MATRIX_IN_REQ("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
 PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
@@ -51,13 +51,14 @@ PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
-  LinearRegression* lr;
-	RequireOnlyOnePassed(params, {"input_model"}, true); // input_model must be passed.
-	RequireOnlyOnePassed(params, {"test"}, true); // test matrix must be passed.
+  if(!params.Has("test"))
+  {
+    Log::Fatal << "must pass test data" << endl;
+  }
 
   // A model file was passed in, so load it.
   timer.Start("load_model");
-  lr = params.Get<LinearRegression*>("input_model");
+  LinearRegression* lr = params.Get<LinearRegression*>("input_model");
   timer.Stop("load_model");
 
   // Cache the output of GetPrintable before we std::move() the test

@@ -1,5 +1,5 @@
 /**
- * @file methods/linear_regression/linear_regression_fit_main.cpp
+ * @file methods/linear_regression/linear_regression_train_main.cpp
  * @author James Cline
  *
  * Main function for least-squares linear regression.
@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME linear_regression_fit
+#define BINDING_NAME linear_regression_train
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -28,7 +28,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Simple Linear Regression Training");
+BINDING_USER_NAME("Simple Linear Regression");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -51,14 +51,14 @@ BINDING_EXAMPLE(
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
     "0.2") + "\n" +
     CREATE_OBJECT("model", "linear_regression") + "\n" +
-    CALL_METHOD("model", "fit", "training", "X_train",
+    CALL_METHOD("model", "train", "training", "X_train",
         "training_responses", "y_train"));
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
        "@doxygen/lrtutorial.html");
 
-PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
+PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X (regressors).",
     "t");
 PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
@@ -72,13 +72,15 @@ PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
+  if(!params.Has("training"))
+  {
+    Log::Fatal << "must pass training data" << endl;
+  }
+
   const double lambda = params.Get<double>("lambda");
-  RequireOnlyOnePassed(params, {"training"}, true); // training must be passsed.
 
   mat regressors;
   rowvec responses;
-
-  LinearRegression* lr;
 
   timer.Start("load_regressors");
   regressors = std::move(params.Get<mat>("training"));
@@ -114,7 +116,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
     Log::Fatal << "Regressors and Responses must have the same number of data points!" << endl;
 
   timer.Start("regression");
-  lr = new LinearRegression(regressors, responses, lambda);
+  LinearRegression* lr = new LinearRegression(regressors, responses, lambda);
   timer.Stop("regression");
 
   // Save the model if needed.
