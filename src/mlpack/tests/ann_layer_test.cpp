@@ -3048,7 +3048,7 @@ TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
  */
 TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 {
-  arma::mat input, output;
+  arma::mat input, output, backwardOutput;
   input = {
     { 2, 0, 1 },
     { 3, 1, 2 },
@@ -3078,6 +3078,9 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
 
   CheckMatrices(output, result, 1e-5);
 
+  model.Backward(output, output, backwardOutput);
+  cout.precision(20);
+  backwardOutput.raw_print(std::cout);
 }
 
 /**
