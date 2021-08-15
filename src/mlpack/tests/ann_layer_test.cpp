@@ -3079,7 +3079,7 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
   CheckMatrices(output, result, 1e-5);
 
   model.Backward(output, output, backwardOutput);
-  cout.precision(20);
+  std::cout.precision(20);
   backwardOutput.raw_print(std::cout);
 }
 
