@@ -71,7 +71,10 @@ class LoadCSV
 
   /**
   * Construct the LoadCSV object on the given file.  This will construct the
-  * rules necessary for loading and attempt to open the file.
+  * rules necessary for loading and attempt to open the file. This will also
+  * initialize the delimiter character for parsing.
+  *
+  * @param file path of the dataset
   */
   LoadCSV(const std::string& file) :
     extension(Extension(file)),
@@ -203,26 +206,25 @@ class LoadCSV
    * for both numeric_parse and categorical_parse.
    *
    * @param f fstream stream to open the data file
-   * @param isNumeric bool to ecide if data is numeric or categorical
    * @param delim char delimiter charecter
    */
+  template<bool isNumeric>
   inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
-                                                 const bool isNumeric = true,
                                                  const char delim = ',')
   {
     bool load_okay = f.good();
-  
+
     f.clear();
-  
+
     const std::fstream::pos_type pos1 = f.tellg();
-  
+
     size_t f_n_rows = 0;
     size_t f_n_cols = 0;
-  
+
     std::string lineString;
     std::stringstream lineStream;
     std::string token;
-  
+
     while (f.good() && load_okay)
     {
       // Get a row of data
@@ -266,15 +268,18 @@ class LoadCSV
   * Check whether or not the file has successfully opened; throw an exception
   * if not.
   */
-  void CheckOpen()
+  inline void CheckOpen()
   {
+    // check if file is opening
     if (!inFile.is_open())
     {
       std::ostringstream oss;
       oss << "Cannot open file '" << filename << "'. " << std::endl;
+      // throw an exception if file is not opening
       throw std::runtime_error(oss.str());
     }
 
+    // clear format flag 
     inFile.unsetf(std::ios::skipws);
   }
 

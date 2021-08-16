@@ -22,7 +22,6 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
                            const std::string& token)
 {
   const size_t N = size_t(token.length());
-
   // Fill empty data points with 0
   if (N == 0)
   {
@@ -84,7 +83,6 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
         val = typename MatType::elem_type(0);
         return true;
       }
-
       val = typename MatType::elem_type( std::strtoull(str, &endptr, 10));
     }
   }
@@ -99,13 +97,9 @@ template<typename MatType>
 bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
 {
   bool load_okay = f.good();
-
   f.clear();
-
-  std::pair<size_t, size_t> mat_size = GetMatrixSize(f);
-
+  std::pair<size_t, size_t> mat_size = GetMatrixSize<true>(f);
   x.zeros(mat_size.first, mat_size.second);
-
   size_t row = 0;
 
   std::string lineString;
@@ -140,7 +134,6 @@ bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
         ++col;
       }
     }
-
     ++row;
   }
   return load_okay;

@@ -93,11 +93,11 @@ bool Load(const std::string& filename,
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
 
-  #ifdef  _WIN32 // Always open in binary mode on Windows.
+#ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-  #else
+#else
   stream.open(filename.c_str(), std::fstream::in);
-  #endif
+#endif
   if (!stream.is_open())
   {
     Timer::Stop("loading_data");
@@ -133,7 +133,7 @@ bool Load(const std::string& filename,
 
   stringType = GetStringType(loadType);
 
-  #ifndef ARMA_USE_HDF5
+#ifndef ARMA_USE_HDF5
   if (inputLoadType == FileType::HDF5Binary)
   {
     // Ensure that HDF5 is supported.
@@ -149,7 +149,7 @@ bool Load(const std::string& filename,
 
     return false;
   }
-  #endif
+#endif
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
   if (loadType == FileType::RawBinary)

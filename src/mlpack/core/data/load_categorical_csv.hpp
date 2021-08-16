@@ -17,9 +17,39 @@
 namespace mlpack{
 namespace data{
 
+template<typename MatType, typename PolicyType>
+void LoadCSV::LoadCategoricalCSV(MatType &inout,
+                                 DatasetMapper<PolicyType> &infoSet,
+                                 const bool transpose)
+{
+  CheckOpen();
+
+  if (transpose)
+    TransposeParse(inout, infoSet);
+  else
+    NonTransposeParse(inout, infoSet);
+}
+
+inline void LoadCSV::CategoricalMatSize(std::stringstream& lineStream, size_t& col, const char delim)
+{
+  std::string token;
+  while (lineStream.good())
+  {
+    std::getline(lineStream, token, delim);
+
+    if (token[0] == '"' && token[token.size() - 1] != '"')
+    {
+      while (token[token.size() - 1] != '"')
+        std::getline(lineStream, token, delim);
+    }
+
+    ++col;
+  }
+}
+
 template<typename T, typename MapPolicy>
 void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
-                               DatasetMapper<MapPolicy>& info)
+                                        DatasetMapper<MapPolicy>& info)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it,
   // we will pass everything string through MapString().  This might be useful
@@ -42,7 +72,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     if (cols == 1)
     {
       // Extract the number of dimensions.
-      std::pair<size_t, size_t> dimen = GetMatrixSize(inFile, false, delim);
+      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
       rows = dimen.second;
 
       if (info.Dimensionality() == 0)
@@ -64,7 +94,6 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     {
       // In this case we must pass everything we parse to the MapPolicy.
       size_t dim = 0;
-
       std::stringstream lineStream;
       std::string token;
 
@@ -87,10 +116,8 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
             std::getline(lineStream, token, delim);
             tok += token;
           }
-
           token = tok;
         }
-
         info.template MapFirstPass<T>(std::move(token), dim++);
       }
     }
@@ -143,7 +170,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
     if (rows == 1)
     {
       // Extract the number of columns.
-      std::pair<size_t, size_t> dimen = GetMatrixSize(inFile, false, delim);
+      std::pair<size_t, size_t> dimen = GetMatrixSize<false>(inFile, delim);
       cols = dimen.second;
     }
 
@@ -152,7 +179,6 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
     if (MapPolicy::NeedsFirstPass)
     {
       std::string str(line.begin(), line.end());
-
       std::stringstream lineStream;
       std::string token;
 
@@ -168,17 +194,14 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
         if (token[0] == '"' && token[token.size() - 1] != '"')
         {
           std::string tok = token;
-
           while (token[token.size() - 1] != '"')
           {
             tok += delim;
             std::getline(lineStream, token, delim);
             tok += token;
           }
-
           token = tok;
         }
-
         info.template MapFirstPass<T>(std::move(token), rows - 1);
       }
     }
@@ -210,7 +233,6 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
     row = 0;
     std::stringstream lineStream;
     std::string token;
-
     lineStream.clear();
     lineStream.str(line);
 
@@ -224,17 +246,14 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
       {
         // first part of the string
         std::string tok = token;
-
         while (token[token.size() - 1] != '"')
         {
           tok += delim;
           std::getline(lineStream, token, delim);
           tok += token;
         }
-
         token = tok;
       }
-
       inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
       row++;
     }
@@ -247,7 +266,6 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
       << ") on line " << col << "; should be " << rows << " dimensions.";
       throw std::runtime_error(oss.str());
     }
-
     // Increment the column index.
     ++col;
   }
@@ -294,17 +312,14 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
       if (token[0] == '"' && token[token.size() - 1] != '"')
       {
         std::string tok = token;
-
         while (token[token.size() - 1] != '"')
         {
           tok += delim;
           std::getline(lineStream, token, delim);
           tok += token;
         }
-
         token = tok;
       }
-
       inout(row, col++) = infoSet.template MapString<T>(std::move(token), row);
     }
 
@@ -317,39 +332,7 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
       << " dimensions.";
       throw std::runtime_error(oss.str());
     }
-
     ++row; col = 0;
-  }
-}
-
-template<typename MatType, typename PolicyType>
-void LoadCSV::LoadCategoricalCSV(MatType &inout,
-                                 DatasetMapper<PolicyType> &infoSet,
-                                 const bool transpose)
-{
-  CheckOpen();
-
-  if (transpose)
-    TransposeParse(inout, infoSet);
-  else
-    NonTransposeParse(inout, infoSet);
-}
-
-inline void LoadCSV::CategoricalMatSize(std::stringstream& lineStream, size_t& col, const char delim)
-{
-  std::string token;
-
-  while (lineStream.good())
-  {
-    std::getline(lineStream, token, delim);
-
-    if (token[0] == '"' && token[token.size() - 1] != '"')
-    {
-      while (token[token.size() - 1] != '"')
-        std::getline(lineStream, token, delim);
-    }
-
-    ++col;
   }
 }
 
