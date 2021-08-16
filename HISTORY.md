@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+
   * Added Decision Tree Regressor (#2905). It can be used using the class
     `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
 

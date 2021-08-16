@@ -107,36 +107,38 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  util::Params p = IO::Parameters(bindingName);
+  if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = p.Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL, (void*)
-      &defaultValue);
+  p.functionMap[d.tname]["DefaultParam"](d, NULL, (void*) &defaultValue);
 
   return defaultValue;
 }
 
 // Recursion base case.
-inline std::string CreateInputArguments() { return ""; }
+inline std::string CreateInputArguments(util::Params& /* p */) { return ""; }
 
 /**
  * This prints anything that is required to create an input value.  We only need
  * to create input values for matrices.
  */
 template<typename T, typename... Args>
-inline std::string CreateInputArguments(const std::string& paramName,
+inline std::string CreateInputArguments(util::Params& p,
+                                        const std::string& paramName,
                                         const T& value,
                                         Args... args)
 {
   // We only need to do anything if it is an input option.
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
     std::ostringstream oss;
 
     if (d.input)
@@ -158,7 +160,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
       }
     }
 
-    oss << CreateInputArguments(args...);
+    oss << CreateInputArguments(p, args...);
 
     return oss.str();
   }
@@ -172,7 +174,7 @@ inline std::string CreateInputArguments(const std::string& paramName,
 }
 
 // Recursion base case.
-inline std::string PrintInputOptions() { return ""; }
+inline std::string PrintInputOptions(util::Params& /* params */) { return ""; }
 
 /**
  * This prints an argument, assuming that it is already known whether or not it
@@ -201,6 +203,7 @@ inline std::string PrintInputOption(const std::string& paramName,
 
 // Base case: no modification needed.
 inline void GetOptions(
+    util::Params& /* p */,
     std::vector<std::tuple<std::string, std::string>>& /* results */,
     bool /* input */)
 {
@@ -214,6 +217,7 @@ inline void GetOptions(
  */
 template<typename T, typename... Args>
 inline void GetOptions(
+    util::Params& p,
     std::vector<std::tuple<std::string, std::string>>& results,
     bool input,
     const std::string& paramName,
@@ -221,9 +225,9 @@ inline void GetOptions(
     Args... args)
 {
   // Determine whether or not the value is required.
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
 
     if (d.input && input)
     {
@@ -239,7 +243,7 @@ inline void GetOptions(
       results.push_back(std::make_tuple(paramName, oss.str()));
     }
 
-    GetOptions(results, input, args...);
+    GetOptions(p, results, input, args...);
   }
   else
   {
@@ -256,34 +260,32 @@ inline void GetOptions(
  * the parameter is required.
  */
 template<typename... Args>
-inline std::string PrintInputOptions(Args... args)
+inline std::string PrintInputOptions(util::Params& p, Args... args)
 {
   // Gather list of required and non-required options.
   std::vector<std::string> inputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = p.Parameters().begin(); it != p.Parameters().end(); ++it)
   {
     util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" &&
-          d.name != "version")
+      if (d.name != "help" && d.name != "info" && d.name != "version")
         inputOptions.push_back(it->first);
     }
   }
 
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = p.Parameters().begin(); it != p.Parameters().end(); ++it)
   {
     util::ParamData& d = it->second;
-    if (d.input && !d.required &&
-        d.name != "help" && d.name != "info" &&
+    if (d.input && !d.required && d.name != "help" && d.name != "info" &&
         d.name != "version")
       inputOptions.push_back(it->first);
   }
 
   // Now collect the way that we print all the parameters.
   std::vector<std::tuple<std::string, std::string>> printedParameters;
-  GetOptions(printedParameters, true, args...);
+  GetOptions(p, printedParameters, true, args...);
 
   // Next, we need to match each option.  Note that required options will come
   // first.
@@ -292,7 +294,7 @@ inline std::string PrintInputOptions(Args... args)
   bool printedAny = false;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    util::ParamData& d = IO::Parameters()[inputOptions[i]];
+    util::ParamData& d = p.Parameters()[inputOptions[i]];
     // Does this option exist?
     bool found = false;
     size_t index = printedParameters.size();
@@ -342,14 +344,14 @@ inline std::string PrintInputOptions(Args... args)
 }
 
 // Recursion base case.
-inline std::string PrintOutputOptions() { return ""; }
+inline std::string PrintOutputOptions(util::Params& /* p */) { return ""; }
 
 template<typename... Args>
-inline std::string PrintOutputOptions(Args... args)
+inline std::string PrintOutputOptions(util::Params& p, Args... args)
 {
   // Get the list of output options for the binding.
   std::vector<std::string> outputOptions;
-  for (auto it = IO::Parameters().begin(); it != IO::Parameters().end(); ++it)
+  for (auto it = p.Parameters().begin(); it != p.Parameters().end(); ++it)
   {
     util::ParamData& d = it->second;
     if (!d.input)
@@ -358,7 +360,7 @@ inline std::string PrintOutputOptions(Args... args)
 
   // Now get the full list of output options that we have.
   std::vector<std::tuple<std::string, std::string>> passedOptions;
-  GetOptions(passedOptions, false, args...);
+  GetOptions(p, passedOptions, false, args...);
 
   // Next, iterate over all the options.
   std::ostringstream oss;
@@ -401,8 +403,11 @@ inline std::string PrintOutputOptions(Args... args)
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-inline std::string ProgramCall(const std::string& programName, Args... args)
+inline std::string ProgramCall(const std::string& programName,
+                               Args... args)
 {
+  util::Params p = IO::Parameters(programName);
+
   std::ostringstream oss;
 
   // The code should appear in a Markdown code block.
@@ -411,7 +416,7 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
   // Print any input argument definitions.  The only input argument definitions
   // will be the definitions of matrices, which use the CSV.jl package, so we
   // should also include a `using CSV` in there too.
-  std::string inputArgs = CreateInputArguments(args...);
+  std::string inputArgs = CreateInputArguments(p, args...);
   if (inputArgs != "")
     inputArgs = "julia> using CSV\n" + inputArgs;
 
@@ -422,13 +427,13 @@ inline std::string ProgramCall(const std::string& programName, Args... args)
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
-  ossOutput << PrintOutputOptions(args...);
+  ossOutput << PrintOutputOptions(p, args...);
   if (ossOutput.str() != "")
     ossCall << ossOutput.str() << " = ";
   ossCall << programName << "(";
 
   // Now process each input option.
-  ossCall << PrintInputOptions(args...);
+  ossCall << PrintInputOptions(p, args...);
   ossCall << ")";
 
   // Since `julia> ` is 8 characters, let's indent 12 otherwise it looks weird.
@@ -460,13 +465,13 @@ inline std::string PrintDataset(const std::string& datasetName)
 /**
  * Given the name of a binding, print its invocation.
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream result;
   result << "julia> ";
 
   // First, print all output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = p.Parameters();
   size_t outputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -505,8 +510,7 @@ inline std::string ProgramCall(const std::string& programName)
   size_t nonreqInputs = 0;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required &&
-       (it->second.name == "verbose" || !it->second.persistent))
+    if (it->second.input && !it->second.required)
     {
       if (inputs == 0 && nonreqInputs == 0)
         result << " ; ";
@@ -518,8 +522,8 @@ inline std::string ProgramCall(const std::string& programName)
       result << it->second.name;
       result << "=";
       std::string value;
-      IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-          it->second, NULL, (void*) &value);
+      p.functionMap[it->second.tname]["DefaultParam"]( it->second, NULL,
+          (void*) &value);
       result << value;
       ++nonreqInputs;
     }
@@ -561,16 +565,20 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
-inline bool IgnoreCheck(const std::string& paramName)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+  util::Params p = IO::Parameters(bindingName);
+  return !p.Parameters()[paramName].input;
 }
 
-inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::vector<std::string>& constraints)
 {
+  util::Params p = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!p.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -578,16 +586,18 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 }
 
 inline bool IgnoreCheck(
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+  util::Params p = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!p.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !p.Parameters()[paramName].input;
 }
 
 } // namespace julia

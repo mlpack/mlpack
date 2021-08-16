@@ -53,10 +53,12 @@ inline std::string PrintValue(const bool& value, bool quotes);
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 // Base case: no modification needed.
 inline void GetOptions(
+    util::Params& /* params */,
     std::vector<std::tuple<std::string, std::string>>& /* results */);
 
 /**
@@ -66,23 +68,25 @@ inline void GetOptions(
  */
 template<typename T, typename... Args>
 void GetOptions(
+    util::Params& params,
     std::vector<std::tuple<std::string, std::string>>& results,
     const std::string& paramName,
     const T& value,
     Args... args);
 
 // Recursion base case.
-inline std::string PrintOptionalInputs(/* option */);
+inline std::string PrintOptionalInputs(util::Params& /* params */);
 
 // Recursion base case.
-inline std::string PrintInputOptions(/* option */);
+inline std::string PrintInputOptions(util::Params& /* params */);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintOptionalInputs(const std::string& paramName,
+std::string PrintOptionalInputs(util::Params& params,
+                                const std::string& paramName,
                                 const T& value,
                                 Args... args);
 
@@ -91,15 +95,16 @@ std::string PrintOptionalInputs(const std::string& paramName,
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& params,
+                              const std::string& paramName,
                               const T& value,
                               Args... args);
 
 // Recursion base case.
-inline std::string PrintOutputOptions();
+inline std::string PrintOutputOptions(util::Params& /* params */);
 
 template<typename... Args>
-std::string PrintOutputOptions(Args... args);
+std::string PrintOutputOptions(util::Params& params, Args... args);
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
@@ -107,6 +112,12 @@ std::string PrintOutputOptions(Args... args);
  */
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
+
+/**
+ * Given the name of a binding, print its invocation.
+ */
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.

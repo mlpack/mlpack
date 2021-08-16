@@ -14,8 +14,14 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/data/normalize_labels.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME perceptron
+
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/data/normalize_labels.hpp>
 
 #include "perceptron.hpp"
 
@@ -26,7 +32,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_NAME("Perceptron");
+BINDING_USER_NAME("Perceptron");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -149,34 +155,34 @@ PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "P");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // First, get all parameters and validate them.
-  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+  const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
 
   // We must either load a model or train a model.
-  RequireAtLeastOnePassed({ "input_model", "training" }, true);
+  RequireAtLeastOnePassed(params, { "input_model", "training" }, true);
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "output", "predictions" },
+      false, "no output will be saved");
   // "output" will be removed in mlpack 4.0.0.
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
   // Check parameter validity.
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "maximum number of iterations must be nonnegative");
 
   // Now, load our model, if there is one.
   PerceptronModel* p;
-  if (IO::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
     Log::Info << "Using saved perceptron from "
-        << IO::GetPrintableParam<PerceptronModel*>("input_model") << "."
+        << params.GetPrintable<PerceptronModel*>("input_model") << "."
         << endl;
 
-    p = IO::GetParam<PerceptronModel*>("input_model");
+    p = params.Get<PerceptronModel*>("input_model");
   }
   else
   {
@@ -184,18 +190,18 @@ static void mlpackMain()
   }
 
   // Next, load the training data and labels (if they have been given).
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
     // Get and cache the value of GetPrintableParam<mat>("training").
     std::ostringstream oss;
-    oss << IO::GetPrintableParam<mat>("training");
+    oss << params.GetPrintable<mat>("training");
     std::string trainingOutput = oss.str();
 
     Log::Info << "Training perceptron on dataset '" << trainingOutput;
-    if (IO::HasParam("labels"))
+    if (params.Has("labels"))
     {
       Log::Info << "' with labels in '"
-          << IO::GetPrintableParam<Row<size_t>>("labels") << "'";
+          << params.GetPrintable<Row<size_t>>("labels") << "'";
     }
     else
     {
@@ -204,21 +210,21 @@ static void mlpackMain()
     Log::Info << " for a maximum of " << maxIterations << " iterations."
         << endl;
 
-    mat trainingData = std::move(IO::GetParam<mat>("training"));
+    mat trainingData = std::move(params.Get<mat>("training"));
 
     // Load labels.
     Row<size_t> labelsIn;
 
     // Did the user pass in labels?
-    if (IO::HasParam("labels"))
+    if (params.Has("labels"))
     {
-      labelsIn = std::move(IO::GetParam<Row<size_t>>("labels"));
+      labelsIn = std::move(params.Get<Row<size_t>>("labels"));
 
       // Checking the size of the responses and training data.
       if (labelsIn.n_cols != trainingData.n_cols)
       {
         // Clean memory if needed.
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete p;
 
         Log::Fatal << "The responses must have the same number of columns "
@@ -231,7 +237,7 @@ static void mlpackMain()
       if (trainingData.n_rows < 2)
       {
         // Clean memory if needed.
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete p;
 
         Log::Fatal << "Can't get responses from training data "
@@ -253,12 +259,12 @@ static void mlpackMain()
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
     // sure the dimensions are right, then continue training.
-    if (!IO::HasParam("input_model"))
+    if (!params.Has("input_model"))
     {
       // Create and train the classifier.
-      Timer::Start("training");
+      timers.Start("training");
       p->P() = Perceptron<>(trainingData, labels, numClasses, maxIterations);
-      Timer::Stop("training");
+      timers.Stop("training");
     }
     else
     {
@@ -266,7 +272,7 @@ static void mlpackMain()
       if (p->P().Weights().n_rows != trainingData.n_rows)
       {
         Log::Fatal << "Perceptron from '"
-            << IO::GetPrintableParam<PerceptronModel*>("input_model")
+            << params.GetPrintable<PerceptronModel*>("input_model")
             << "' is built on data with " << p->P().Weights().n_rows
             << " dimensions, but data in '" << trainingOutput << "' has "
             << trainingData.n_rows << "dimensions!" << endl;
@@ -276,31 +282,31 @@ static void mlpackMain()
       if (numClasses > p->P().Weights().n_cols)
       {
         Log::Fatal << "Perceptron from '"
-            << IO::GetPrintableParam<PerceptronModel*>("input_model") << "' "
+            << params.GetPrintable<PerceptronModel*>("input_model") << "' "
             << "has " << p->P().Weights().n_cols << " classes, but the training"
             << " data has " << numClasses + 1 << " classes!" << endl;
       }
 
       // Now train.
-      Timer::Start("training");
+      timers.Start("training");
       p->P().MaxIterations() = maxIterations;
       p->P().Train(trainingData, labels.t(), numClasses);
-      Timer::Stop("training");
+      timers.Stop("training");
     }
   }
 
   // Now, the training procedure is complete.  Do we have any test data?
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
     Log::Info << "Classifying dataset '"
-        << IO::GetPrintableParam<arma::mat>("test") << "'." << endl;
-    mat testData = std::move(IO::GetParam<arma::mat>("test"));
+        << params.GetPrintable<arma::mat>("test") << "'." << endl;
+    mat testData = std::move(params.Get<arma::mat>("test"));
 
     if (testData.n_rows != p->P().Weights().n_rows)
     {
       // Clean memory if needed.
       const size_t perceptronDimensionality = p->P().Weights().n_rows;
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete p;
 
       Log::Fatal << "Test data dimensionality (" << testData.n_rows << ") must "
@@ -310,21 +316,21 @@ static void mlpackMain()
 
     // Time the running of the perceptron classifier.
     Row<size_t> predictedLabels(testData.n_cols);
-    Timer::Start("testing");
+    timers.Start("testing");
     p->P().Classify(testData, predictedLabels);
-    Timer::Stop("testing");
+    timers.Stop("testing");
 
     // Un-normalize labels to prepare output.
     Row<size_t> results;
     data::RevertLabels(predictedLabels, p->Map(), results);
 
     // Save the predicted labels.
-    if (IO::HasParam("output"))
-      IO::GetParam<arma::Row<size_t>>("output") = results;
-    if (IO::HasParam("predictions"))
-      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (params.Has("output"))
+      params.Get<arma::Row<size_t>>("output") = results;
+    if (params.Has("predictions"))
+      params.Get<arma::Row<size_t>>("predictions") = std::move(results);
   }
 
   // Lastly, save the output model.
-  IO::GetParam<PerceptronModel*>("output_model") = p;
+  params.Get<PerceptronModel*>("output_model") = p;
 }

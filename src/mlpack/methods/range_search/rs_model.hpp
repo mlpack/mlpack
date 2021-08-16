@@ -59,12 +59,14 @@ class RSWrapperBase
   virtual bool& Naive() = 0;
 
   //! Train the model (build the reference tree if needed).
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize) = 0;
 
   //! Perform bichromatic range search (i.e. a search with a separate query
   //! set).
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const math::Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
@@ -72,7 +74,8 @@ class RSWrapperBase
 
   //! Perform monochromatic range search (i.e. a search with the reference set
   //! as the query set).
-  virtual void Search(const math::Range& range,
+  virtual void Search(util::Timers& timers,
+                      const math::Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances) = 0;
 };
@@ -115,12 +118,14 @@ class RSWrapper : public RSWrapperBase
 
   //! Train the model (build the reference tree if needed).  This ignores the
   //! leaf size.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t /* leafSize */);
 
   //! Perform bichromatic range search (i.e. a search with a separate query
   //! set).  This ignores the leaf size.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const math::Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
@@ -128,7 +133,8 @@ class RSWrapper : public RSWrapperBase
 
   //! Perform monochromatic range search (i.e. a search with the reference set
   //! as the query set).
-  virtual void Search(const math::Range& range,
+  virtual void Search(util::Timers& timers,
+                      const math::Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances);
 
@@ -175,12 +181,14 @@ class LeafSizeRSWrapper : public RSWrapper<TreeType>
   }
 
   //! Train a model with the given parameters.  This overload uses leafSize.
-  virtual void Train(arma::mat&& referenceSet,
+  virtual void Train(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize);
 
   //! Perform bichromatic search (e.g. search with a separate query set).  This
   //! overload takes the leaf size into account when building the query tree.
-  virtual void Search(arma::mat&& querySet,
+  virtual void Search(util::Timers& timers,
+                      arma::mat&& querySet,
                       const math::Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
@@ -314,7 +322,8 @@ class RSModel
    * @param naive Whether naive search should be used.
    * @param singleMode Whether single-tree search should be used.
    */
-  void BuildModel(arma::mat&& referenceSet,
+  void BuildModel(util::Timers& timers,
+                  arma::mat&& referenceSet,
                   const size_t leafSize,
                   const bool naive,
                   const bool singleMode);
@@ -329,7 +338,8 @@ class RSModel
    * @param neighbors Output: neighbors falling within the desired range.
    * @param distances Output: distances of neighbors.
    */
-  void Search(arma::mat&& querySet,
+  void Search(util::Timers& timers,
+              arma::mat&& querySet,
               const math::Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
@@ -343,7 +353,8 @@ class RSModel
    * @param neighbors Output: neighbors falling within the desired range.
    * @param distances Output: distances of neighbors.
    */
-  void Search(const math::Range& range,
+  void Search(util::Timers& timers,
+              const math::Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 

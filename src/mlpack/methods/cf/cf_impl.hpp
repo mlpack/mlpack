@@ -107,10 +107,8 @@ Train(const arma::mat& data,
 
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
-  Timer::Start("cf_factorization");
   this->decomposition.Apply(
       normalizedData, cleanedData, rank, maxIterations, minResidue, mit);
-  Timer::Stop("cf_factorization");
 }
 
 // Train when data is given as sparse matrix of user item table.
@@ -148,10 +146,8 @@ Train(const arma::sp_mat& data,
 
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
-  Timer::Start("cf_factorization");
   this->decomposition.Apply(
       data, cleanedData, rank, maxIterations, minResidue, mit);
-  Timer::Stop("cf_factorization");
 }
 
 template<typename DecompositionPolicy,

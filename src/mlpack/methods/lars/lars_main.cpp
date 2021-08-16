@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME lars
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "lars.hpp"
@@ -22,7 +28,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("LARS");
+BINDING_USER_NAME("LARS");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -121,39 +127,39 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  double lambda1 = IO::GetParam<double>("lambda1");
-  double lambda2 = IO::GetParam<double>("lambda2");
-  bool useCholesky = IO::HasParam("use_cholesky");
+  double lambda1 = params.Get<double>("lambda1");
+  double lambda2 = params.Get<double>("lambda2");
+  bool useCholesky = params.Has("use_cholesky");
 
   // Check parameters -- make sure everything given makes sense.
-  RequireOnlyOnePassed({ "input", "input_model" }, true);
-  if (IO::HasParam("input"))
+  RequireOnlyOnePassed(params, { "input", "input_model" }, true);
+  if (params.Has("input"))
   {
-    RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
-        "responses must also be specified");
+    RequireOnlyOnePassed(params, { "responses" }, true, "if input data is "
+        "specified, responses must also be specified");
   }
-  ReportIgnoredParam({{ "input", false }}, "responses");
+  ReportIgnoredParam(params, {{ "input", false }}, "responses");
 
-  RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
-      "no results will be saved");
-  ReportIgnoredParam({{ "test", true }}, "output_predictions");
+  RequireAtLeastOnePassed(params, { "output_predictions", "output_model" },
+      false, "no results will be saved");
+  ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
   LARS* lars;
-  if (IO::HasParam("input"))
+  if (params.Has("input"))
   {
     // Initialize the object.
     lars = new LARS(useCholesky, lambda1, lambda2);
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
-    mat matX = std::move(IO::GetParam<arma::mat>("input"));
+    mat matX = std::move(params.Get<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row).  So we should not transpose upon loading.
-    mat matY = std::move(IO::GetParam<arma::mat>("responses"));
+    mat matY = std::move(params.Get<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
     if (matY.n_cols == 1)
@@ -167,19 +173,21 @@ static void mlpackMain()
 
     vec beta;
     arma::rowvec y = std::move(matY);
+    timers.Start("lars_regression");
     lars->Train(matX, y, beta, false /* do not transpose */);
+    timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
   {
-    lars = IO::GetParam<LARS*>("input_model");
+    lars = params.Get<LARS*>("input_model");
   }
 
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
     Log::Info << "Regressing on test points." << endl;
 
     // Load test points.
-    mat testPoints = std::move(IO::GetParam<arma::mat>("test"));
+    mat testPoints = std::move(params.Get<arma::mat>("test"));
 
     // Make sure the dimensionality is right.  We haven't transposed, so, we
     // check n_cols not n_rows.
@@ -192,8 +200,8 @@ static void mlpackMain()
     lars->Predict(testPoints.t(), predictions, false);
 
     // Save test predictions (one per line).
-    IO::GetParam<arma::mat>("output_predictions") = predictions.t();
+    params.Get<arma::mat>("output_predictions") = predictions.t();
   }
 
-  IO::GetParam<LARS*>("output_model") = lars;
+  params.Get<LARS*>("output_model") = lars;
 }
