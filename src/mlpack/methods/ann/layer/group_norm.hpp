@@ -198,6 +198,9 @@ class GroupNorm
   //! Locally-stored normalized input.
   OutputDataType normalized;
 
+  //! Locally-stored temp matrix.
+  OutputDataType temp;
+
   //! Locally-stored zero mean input.
   OutputDataType inputMean;
 }; // class GroupNorm
