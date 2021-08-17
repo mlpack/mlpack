@@ -35,9 +35,9 @@ if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
       set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
-SEXP IO_GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
-                                      const std::string& paramName,
-                                      SEXP inputModels)
+SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
+                                   const std::string& paramName,
+                                   SEXP inputModels)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   Rcpp::List inputModelsList(inputModels);
