@@ -109,7 +109,10 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * Specify the long description of a binding.  Only one instance of this macro
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding binding) in your program.
- *
+ * If you wish to "revamp" some bindings, then use the BINDING_LONG_DESC()
+ * of the method that you pass first into the group_bindings() macro. For all other
+ * methods, it is fine if you keep the BINDING_LONG_DESC() empty.
+ * 
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
  * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),

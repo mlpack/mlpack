@@ -37,6 +37,18 @@ void PrintParamTable(const string& bindingName,
   for (map<string, ParamData>::iterator it = parameters.begin();
       it != parameters.end(); ++it)
   {
+    // There are some special options that don't exist in some languages.
+    if (language != "python" && it->second.name == "copy_all_inputs")
+      continue;
+
+    if (language != "cli" &&
+        (it->second.name == "help" || it->second.name == "info" ||
+        it->second.name == "version"))
+      continue;
+
+    if (paramsSet.find(it->second.name) != paramsSet.end())
+      continue; // if already printed.
+
     bool printCondition = true;
     // print output options if onlyOutputParams is true.
     if (onlyOutputParams) printCondition &= !it->second.input;
@@ -53,8 +65,7 @@ void PrintParamTable(const string& bindingName,
 
       bool isHyperParam = false;
       size_t foundArma = it->second.cppType.find("arma");
-      if(it->second.input && foundArma == string::npos &&
-          !isSerial)
+      if(it->second.input && foundArma == string::npos && !isSerial)
         isHyperParam = true;
       printCondition &= isHyperParam;
     }
@@ -68,17 +79,6 @@ void PrintParamTable(const string& bindingName,
 
     if (!printCondition)
       continue;
-
-    // There are some special options that don't exist in some languages.
-    if (language != "python" && it->second.name == "copy_all_inputs")
-      continue;
-    if (language != "cli" &&
-        (it->second.name == "help" || it->second.name == "info" ||
-        it->second.name == "version"))
-      continue;
-
-    if (paramsSet.find(it->second.name) != paramsSet.end())
-      continue; // if already printed.
 
     paramsSet.insert(it->second.name); // insert if not already there.
 
@@ -112,7 +112,7 @@ void PrintParamTable(const string& bindingName,
 
     if (headers.find("description") != headers.end())
     {
-      string desc = replace_all_copy(it->second.desc, "|", "\\|");
+      string desc = ReplaceAllCopy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||

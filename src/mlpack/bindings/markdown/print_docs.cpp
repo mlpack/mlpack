@@ -147,7 +147,7 @@ void PrintDocs(const string& bindingName,
         << "\" markdown=\"1\">" << endl;
     if (addWrapperDocs[i])
     {
-      string desc = replace_all_copy(
+      string desc = ReplaceAllCopy(
           paramMethods[0].Doc().longDescription(), "|", "\\|");
       cout << desc;
     }
@@ -156,8 +156,9 @@ void PrintDocs(const string& bindingName,
       cout << doc.shortDescription << " ";
       cout << "[Detailed documentation](#" << languages[i] << "_";
       cout << bindingName << "_detailed-documentation){: .language-detail-link #"
-        << languages[i] << " }.";
+          << languages[i] << " }.";
     }
+    cout << endl;
     cout << "</div>" << endl;
   }
   cout << endl;
@@ -234,7 +235,7 @@ void PrintDocs(const string& bindingName,
       cout << "{: #" << languages[i] << "_" << bindingName
           << "_detailed-documentation }" << endl;
       cout << endl;
-      string desc = replace_all_copy(doc.longDescription(),
+      string desc = ReplaceAllCopy(doc.longDescription(),
                                      "|", "\\|");
       cout << desc << endl << endl;
 
@@ -242,7 +243,7 @@ void PrintDocs(const string& bindingName,
         cout << "### Example" << endl;
       for (size_t j = 0; j < doc.example.size(); ++j)
       {
-        string eg = replace_all_copy(doc.example[j](),
+        string eg = ReplaceAllCopy(doc.example[j](),
                                      "|", "\\|");
         cout << eg << endl << endl;
       }
@@ -298,10 +299,10 @@ void PrintDocs(const string& bindingName,
 
       unordered_set<string> paramsSet; // to prevent duplicates.
 
-      for(size_t i = 0; i < paramMethods.size(); ++i)
+      for(size_t j = 0; j < paramMethods.size(); ++j)
       {
-        PrintParamTable(bindingName + "_" + validMethods[i],
-            languages[i], paramMethods[i], {"name", "type", "description",
+        PrintParamTable(bindingName + "_" + validMethods[j],
+            languages[i], paramMethods[j], {"name", "type", "description",
             "default"}, paramsSet, true, false, true, false);
       }
       paramsSet.clear(); // for reusing.
@@ -311,12 +312,12 @@ void PrintDocs(const string& bindingName,
       cout << endl;
       string example;
 
-      for(size_t i = 0; i < paramMethods.size(); ++i)
+      for(size_t j = 0; j < paramMethods.size(); ++j)
       {
-        for(size_t j = 0; j < paramMethods[i].Doc().example.size();
-            ++j)
+        for(size_t k = 0; k < paramMethods[j].Doc().example.size();
+            ++k)
         {
-          string eg = replace_all_copy(paramMethods[i].Doc().example[j](),
+          string eg = ReplaceAllCopy(paramMethods[j].Doc().example[k](),
               "|", "\\|");
           example += eg + "\n";
         }

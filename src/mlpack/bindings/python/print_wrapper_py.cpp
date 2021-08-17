@@ -100,13 +100,12 @@ void PrintWrapperPY(const std::string& category,
       i->second.functionMap[itr->second.tname]["IsSerializable"](
           itr->second, NULL, (void*)& isSerial);
       if(isSerial)
-      	serializable.insert(itr->second.cppType);
+        serializable.insert(itr->second.cppType);
 
       // Checking for hyperparameter.
       bool isHyperParam = false;
       size_t foundArma = itr->second.cppType.find("arma");
-      if(itr->second.input && foundArma == string::npos &&
-          !isSerial)
+      if(itr->second.input && foundArma == string::npos && !isSerial)
         isHyperParam = true;
       hyperParams[itr->first] = isHyperParam;
 

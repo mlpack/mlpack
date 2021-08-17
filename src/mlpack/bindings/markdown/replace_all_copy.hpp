@@ -15,18 +15,18 @@
 #include <mlpack/prereqs.hpp>
 
 // Replaces all occurences of "from" in "str" to "to".
-inline std::string replace_all_copy(const std::string& str,
-                                    const std::string& from,
-                                    const std::string& to)
+inline std::string ReplaceAllCopy(const std::string& str,
+                                  const std::string& from,
+                                  const std::string& to)
 {
-  std::string str_copy = str;
-  size_t start_pos = 0;
-  while ((start_pos = str_copy.find(from, start_pos)) != std::string::npos)
+  std::string strCopy = str;
+  size_t startPos = 0;
+  while ((startPos = strCopy.find(from, startPos)) != std::string::npos)
   {
-    str_copy.replace(start_pos, from.length(), to);
-    start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    strCopy.replace(startPos, from.length(), to);
+    startPos += to.length(); // Handles case where 'to' is a substring of 'from'
   }
-  return str_copy;
+  return strCopy;
 }
 
 #endif
