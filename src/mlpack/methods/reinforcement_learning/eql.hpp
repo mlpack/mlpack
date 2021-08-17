@@ -179,7 +179,7 @@ class EQL
   //! Locally-stored action of the agent.
   ActionType action;
 
-  //! Locally-stored current preference of the agent.
+  //! Locally-stored preference of current episode.
   arma::vec preference;
 
   //! Locally-stored flag indicating training mode or test mode.
