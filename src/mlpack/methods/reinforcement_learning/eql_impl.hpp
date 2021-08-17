@@ -137,29 +137,29 @@ void EQL<
   // Sample from previous experience.
   arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
-  arma::rowvec sampledRewards;
+  arma::mat sampledRewardLists;
   arma::mat sampledNextStates;
   arma::irowvec isTerminal;
 
-  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewardLists,
       sampledNextStates, isTerminal);
 
-  // Compute action value for next state with target network.
-  arma::mat nextActionValues;
-  targetNetwork.Predict(sampledNextStates, nextActionValues);
+  size_t batchSize = sampledStates.n_cols;
+  size_t extendedSize = numWeights * batchSize;
 
-  arma::uvec bestActions;
-  if (config.DoubleQLearning())
-  {
-    // If use double Q-Learning, use learning network to select the best action.
-    arma::mat nextActionValues;
-    learningNetwork.Predict(sampledNextStates, nextActionValues);
-    bestActions = BestAction(nextActionValues);
-  }
-  else
-  {
-    bestActions = BestAction(nextActionValues);
-  }
+  // Generate a repository of preference vectors.
+  // TODO: The distribution should be set by user.
+  arma::mat weightSpace = arma::randn(EnvironmentType::numObjectives, numWeights);
+  weightSpace = arma::normalise(weightSpace, 1, 1);
+
+  arma::mat statePreference = arma::join_cols(sampledStates, weightSpace);
+
+  arma::mat nextActionValues;
+  config.DoubleQLearning() ? learningEQLNetwork.Predict(sampledNextStates, nextActionValues)
+                           : targetEQLNetwork.Predict(sampledNextStates, nextActionValues);
+
+  arma::uvec bestActions = BestAction(nextActionValues);
+
 
   // Compute the update target.
   arma::mat target;
