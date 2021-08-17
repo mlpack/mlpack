@@ -148,10 +148,13 @@ void IO_SetParamMatWithInfo(const std::string& paramName,
                             const arma::mat& paramValue)
 {
   data::DatasetInfo d(paramValue.n_cols);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
 
   arma::mat m = paramValue.t();
