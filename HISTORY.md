@@ -72,6 +72,8 @@
   * Add `probabilities` option to softmax regression binding, to get class
     probabilities for test points (#3001).
 
+  * Fix thread safety issues in mlpack bindings to other languages (#2995).
+
   * Fix double-free of model pointers in R bindings (#3034).
 
 ### mlpack 3.4.2
