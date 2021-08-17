@@ -1,8 +1,11 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+
   * Added Decision Tree Regressor (#2905). It can be used using the class
     `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
-    
+
   * Added dict-style inspection of mlpack models in python bindings (#2868).
 
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
@@ -68,6 +71,8 @@
 
   * Add `probabilities` option to softmax regression binding, to get class
     probabilities for test points (#3001).
+
+  * Fix thread safety issues in mlpack bindings to other languages (#2995).
 
   * Fix Julia, Python, R, and Go handling of categorical data for
     `decision_tree()` and `hoeffding_tree()` (#2971).

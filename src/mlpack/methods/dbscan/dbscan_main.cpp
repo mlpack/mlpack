@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME dbscan
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
@@ -28,7 +34,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("DBSCAN clustering");
+BINDING_USER_NAME("DBSCAN clustering");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -101,122 +107,124 @@ PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
 
 // Actually run the clustering, and process the output.
 template<typename RangeSearchType, typename PointSelectionPolicy>
-void RunDBSCAN(RangeSearchType rs,
+void RunDBSCAN(util::Params& params,
+               RangeSearchType rs,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
-  if (IO::HasParam("single_mode"))
+  if (params.Has("single_mode"))
     rs.SingleMode() = true;
 
   // Load dataset.
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
-  const double epsilon = IO::GetParam<double>("epsilon");
-  const size_t minSize = (size_t) IO::GetParam<int>("min_size");
+  arma::mat dataset = std::move(params.Get<arma::mat>("input"));
+  const double epsilon = params.Get<double>("epsilon");
+  const size_t minSize = (size_t) params.Get<int>("min_size");
   arma::Row<size_t> assignments;
 
   DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
-      !IO::HasParam("single_mode"), rs, pointSelector);
+      !params.Has("single_mode"), rs, pointSelector);
 
   // If possible, avoid the overhead of calculating centroids.
-  if (IO::HasParam("centroids"))
+  if (params.Has("centroids"))
   {
     arma::mat centroids;
 
     d.Cluster(dataset, assignments, centroids);
 
-    IO::GetParam<arma::mat>("centroids") = std::move(centroids);
+    params.Get<arma::mat>("centroids") = std::move(centroids);
   }
   else
   {
     d.Cluster(dataset, assignments);
   }
 
-  if (IO::HasParam("assignments"))
-    IO::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
+  if (params.Has("assignments"))
+    params.Get<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
 // Choose the point selection policy.
 template<typename RangeSearchType>
-void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
+void ChoosePointSelectionPolicy(util::Params& params,
+                                RangeSearchType rs = RangeSearchType())
 {
-  const string selectionType = IO::GetParam<string>("selection_type");
+  const string selectionType = params.Get<string>("selection_type");
 
   if (selectionType == "ordered")
-    RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
+    RunDBSCAN<RangeSearchType, OrderedPointSelection>(params, rs);
   else if (selectionType == "random")
-    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(params, rs);
 }
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
-  RequireAtLeastOnePassed({ "assignments", "centroids" }, false,
+  RequireAtLeastOnePassed(params, { "assignments", "centroids" }, false,
       "no output will be saved");
 
-  ReportIgnoredParam({{ "naive", true }}, "single_mode");
+  ReportIgnoredParam(params, {{ "naive", true }}, "single_mode");
 
-  RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
-      "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
+  RequireParamInSet<string>(params, "tree_type", { "kd", "cover", "r", "r-star",
+      "x", "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
       "unknown tree type");
 
   // Value of epsilon should be positive.
-  RequireParamValue<double>("epsilon", [](double x) { return x > 0; },
+  RequireParamValue<double>(params, "epsilon", [](double x) { return x > 0; },
       true, "invalid value of epsilon specified");
 
   // Value of min_size should be positive.
-  RequireParamValue<int>("min_size", [](int y) { return y > 0; },
+  RequireParamValue<int>(params, "min_size", [](int y) { return y > 0; },
       true, "invalid value of min_size specified");
 
   // Fire off naive search if needed.
-  if (IO::HasParam("naive"))
+  if (params.Has("naive"))
   {
     RangeSearch<> rs(true);
-    ChoosePointSelectionPolicy(rs);
+    ChoosePointSelectionPolicy(params, rs);
   }
   else
   {
-    const string treeType = IO::GetParam<string>("tree_type");
+    const string treeType = params.Get<string>("tree_type");
     if (treeType == "kd")
     {
-      ChoosePointSelectionPolicy<RangeSearch<>>();
+      ChoosePointSelectionPolicy<RangeSearch<>>(params);
     }
     else if (treeType == "cover")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          StandardCoverTree>>();
+          StandardCoverTree>>(params);
     }
     else if (treeType == "r")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RTree>>();
+          RTree>>(params);
     }
     else if (treeType == "r-star")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RStarTree>>();
+          RStarTree>>(params);
     }
     else if (treeType == "x")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          XTree>>();
+          XTree>>(params);
     }
     else if (treeType == "hilbert-r")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          HilbertRTree>>();
+          HilbertRTree>>(params);
     }
     else if (treeType == "r-plus")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RPlusTree>>();
+          RPlusTree>>(params);
     }
     else if (treeType == "r-plus-plus")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RPlusPlusTree>>();
+          RPlusPlusTree>>(params);
     }
     else if (treeType == "ball")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          BallTree>>();
+          BallTree>>(params);
     }
   }
 }

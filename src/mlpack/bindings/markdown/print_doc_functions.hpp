@@ -61,7 +61,8 @@ inline std::string PrintValue(const T& value, bool quotes);
  * Print the default value of an option, unless it is required (in which case
  * Markdown italicized '--' is printed).
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Print a dataset type parameter (add .csv and return).
@@ -92,18 +93,19 @@ inline std::string ProgramCall(const std::string& programName);
  * that all of the PARAM_*() declarataions need to come before
  * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName);
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName);
 
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(util::ParamData& d);
+inline std::string ParamType(util::Params& p, util::ParamData& d);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.
  */
 template<typename T>
-inline bool IgnoreCheck(const T& t);
+inline bool IgnoreCheck(const std::string& bindingName, const T& t);
 
 } // namespace markdown
 } // namespace bindings

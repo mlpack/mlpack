@@ -33,8 +33,6 @@ BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
 double BayesianLinearRegression::Train(const arma::mat& data,
                                        const arma::rowvec& responses)
 {
-  Timer::Start("bayesian_linear_regression");
-
   arma::mat phi;
   arma::rowvec t;
   arma::colvec eigVal;
@@ -84,8 +82,6 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   }
   // Compute the covariance matrix for the uncertainties later.
   matCovariance = eigVec * diagmat(1 / (beta * eigVal + alpha)) * eigVecInv;
-
-  Timer::Stop("bayesian_linear_regression");
 
   return RMSE(data, responses);
 }

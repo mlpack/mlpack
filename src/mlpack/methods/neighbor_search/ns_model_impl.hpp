@@ -31,12 +31,19 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 void NSWrapper<
     SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType
->::Train(arma::mat&& referenceSet,
+>::Train(util::Timers& timers,
+         arma::mat&& referenceSet,
          const size_t /* leafSize */,
          const double /* tau */,
          const double /* rho */)
 {
+  if (ns.SearchMode() != NAIVE_MODE)
+    timers.Start("tree_building");
+
   ns.Train(std::move(referenceSet));
+
+  if (ns.SearchMode() != NAIVE_MODE)
+    timers.Stop("tree_building");
 }
 
 //! Perform bichromatic neighbor search (i.e. search with a separate query
@@ -49,14 +56,31 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 void NSWrapper<
     SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType
->::Search(arma::mat&& querySet,
+>::Search(util::Timers& timers,
+          arma::mat&& querySet,
           const size_t k,
           arma::Mat<size_t>& neighbors,
           arma::mat& distances,
           const size_t /* leafSize */,
           const double /* rho */)
 {
-  ns.Search(std::move(querySet), k, neighbors, distances);
+  if (ns.SearchMode() == DUAL_TREE_MODE)
+  {
+    // We build the query tree manually, so that we can time how long it takes.
+    timers.Start("tree_building");
+    typename decltype(ns)::Tree queryTree(std::move(querySet));
+    timers.Stop("tree_building");
+
+    timers.Start("computing_neighbors");
+    ns.Search(queryTree, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
+  else
+  {
+    timers.Start("computing_neighbors");
+    ns.Search(std::move(querySet), k, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
 }
 
 //! Perform monochromatic neighbor search (i.e. use the reference set as the
@@ -69,11 +93,14 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 void NSWrapper<
     SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType
->::Search(const size_t k,
+>::Search(util::Timers& timers,
+          const size_t k,
           arma::Mat<size_t>& neighbors,
           arma::mat& distances)
 {
+  timers.Start("computing_neighbors");
   ns.Search(k, neighbors, distances);
+  timers.Stop("computing_neighbors");
 }
 
 //! Train a model with the given parameters.  This overload uses leafSize but
@@ -86,7 +113,8 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 void LeafSizeNSWrapper<
     SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType
->::Train(arma::mat&& referenceSet,
+>::Train(util::Timers& timers,
+         arma::mat&& referenceSet,
          const size_t leafSize,
          const double /* tau */,
          const double /* rho */)
@@ -98,11 +126,13 @@ void LeafSizeNSWrapper<
   else
   {
     // Build the tree with the specified leaf size.
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNewReferences;
     typename decltype(ns)::Tree referenceTree(std::move(referenceSet),
         oldFromNewReferences, leafSize);
     ns.Train(std::move(referenceTree));
     ns.oldFromNewReferences = std::move(oldFromNewReferences);
+    timers.Stop("tree_building");
   }
 }
 
@@ -116,7 +146,8 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 void LeafSizeNSWrapper<
     SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType
->::Search(arma::mat&& querySet,
+>::Search(util::Timers& timers,
+          arma::mat&& querySet,
           const size_t k,
           arma::Mat<size_t>& neighbors,
           arma::mat& distances,
@@ -129,13 +160,17 @@ void LeafSizeNSWrapper<
     // NeighborSearch class does not provide a way for us to specify the leaf
     // size when building the query tree.  (Therefore we must also build the
     // query tree manually.)
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNewQueries;
     typename decltype(ns)::Tree queryTree(std::move(querySet),
         oldFromNewQueries, leafSize);
+    timers.Stop("tree_building");
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
+    timers.Start("computing_neighbors");
     ns.Search(queryTree, k, neighborsOut, distancesOut);
+    timers.Stop("computing_neighbors");
 
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
@@ -148,26 +183,33 @@ void LeafSizeNSWrapper<
   }
   else
   {
+    timers.Start("computing_neighbors");
     ns.Search(querySet, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
   }
 }
 
 //! Train the model using the given parameters.
 template<typename SortPolicy>
-void SpillNSWrapper<SortPolicy>::Train(arma::mat&& referenceSet,
+void SpillNSWrapper<SortPolicy>::Train(util::Timers& timers,
+                                       arma::mat&& referenceSet,
                                        const size_t leafSize,
                                        const double tau,
                                        const double rho)
 {
+  timers.Start("tree_building");
   typename decltype(ns)::Tree tree(std::move(referenceSet), tau, leafSize,
       rho);
+  timers.Stop("tree_building");
+
   ns.Train(std::move(tree));
 }
 
 //! Perform bichromatic search (i.e. search with a different query set) using
 //! the given parameters.
 template<typename SortPolicy>
-void SpillNSWrapper<SortPolicy>::Search(arma::mat&& querySet,
+void SpillNSWrapper<SortPolicy>::Search(util::Timers& timers,
+                                        arma::mat&& querySet,
                                         const size_t k,
                                         arma::Mat<size_t>& neighbors,
                                         arma::mat& distances,
@@ -178,13 +220,20 @@ void SpillNSWrapper<SortPolicy>::Search(arma::mat&& querySet,
   {
     // For Dual Tree Search on SpillTrees, the queryTree must be built with
     // non overlapping (tau = 0).
+    timers.Start("tree_building");
     typename decltype(ns)::Tree queryTree(std::move(querySet), 0 /* tau */,
         leafSize, rho);
+    timers.Stop("tree_building");
+
+    timers.Start("computing_neighbors");
     ns.Search(queryTree, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
   }
   else
   {
+    timers.Start("computing_neighbors");
     ns.Search(querySet, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
   }
 }
 
@@ -383,29 +432,30 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
       }
     case VP_TREE:
       {
-        NSWrapper<SortPolicy, tree::VPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::VPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case RP_TREE:
       {
-        NSWrapper<SortPolicy, tree::RPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::RPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case MAX_RP_TREE:
       {
-        NSWrapper<SortPolicy, tree::MaxRPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::MaxRPTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>&>(
+            *nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        NSWrapper<SortPolicy, tree::UBTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
+        LeafSizeNSWrapper<SortPolicy, tree::UBTree>& typedSearch =
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
@@ -497,19 +547,23 @@ void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
           epsilon);
       break;
     case VP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::VPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::VPTree>(searchMode,
+          epsilon);
       break;
     case RP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::RPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::RPTree>(searchMode,
+          epsilon);
       break;
     case MAX_RP_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::MaxRPTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>(searchMode,
+          epsilon);
       break;
     case SPILL_TREE:
       nSearch = new SpillNSWrapper<SortPolicy>(searchMode, epsilon);
       break;
     case UB_TREE:
-      nSearch = new NSWrapper<SortPolicy, tree::UBTree>(searchMode, epsilon);
+      nSearch = new LeafSizeNSWrapper<SortPolicy, tree::UBTree>(searchMode,
+          epsilon);
       break;
     case OCTREE:
       nSearch = new LeafSizeNSWrapper<SortPolicy, tree::Octree>(searchMode,
@@ -520,13 +574,15 @@ void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
 
 //! Build the reference tree.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
+void NSModel<SortPolicy>::BuildModel(util::Timers& timers,
+                                     arma::mat&& referenceSet,
                                      const NeighborSearchMode searchMode,
                                      const double epsilon)
 {
   // Initialize random basis if necessary.
   if (randomBasis)
   {
+    timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
     while (true)
     {
@@ -554,38 +610,36 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
           break;
       }
     }
-  }
 
-  // Do we need to modify the reference set?
-  if (randomBasis)
     referenceSet = q * referenceSet;
+    timers.Stop("computing_random_basis");
+  }
 
   if (searchMode != NAIVE_MODE)
-  {
-    Timer::Start("tree_building");
     Log::Info << "Building reference tree..." << std::endl;
-  }
 
   InitializeModel(searchMode, epsilon);
-  nSearch->Train(std::move(referenceSet), leafSize, tau, rho);
+  nSearch->Train(timers, std::move(referenceSet), leafSize, tau, rho);
 
   if (searchMode != NAIVE_MODE)
-  {
-    Timer::Stop("tree_building");
     Log::Info << "Tree built." << std::endl;
-  }
 }
 
 //! Perform neighbor search.  The query set will be reordered.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::Search(arma::mat&& querySet,
+void NSModel<SortPolicy>::Search(util::Timers& timers,
+                                 arma::mat&& querySet,
                                  const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
   // We may need to map the query set randomly.
   if (randomBasis)
+  {
+    timers.Start("applying_random_basis");
     querySet = q * querySet;
+    timers.Stop("applying_random_basis");
+  }
 
   Log::Info << "Searching for " << k << " neighbors with ";
 
@@ -606,12 +660,14 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
       break;
   }
 
-  nSearch->Search(std::move(querySet), k, neighbors, distances, leafSize, rho);
+  nSearch->Search(timers, std::move(querySet), k, neighbors, distances,
+      leafSize, rho);
 }
 
 //! Perform neighbor search.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::Search(const size_t k,
+void NSModel<SortPolicy>::Search(util::Timers& timers,
+                                 const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
@@ -638,7 +694,7 @@ void NSModel<SortPolicy>::Search(const size_t k,
     Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
         << std::endl;
 
-  nSearch->Search(k, neighbors, distances);
+  nSearch->Search(timers, k, neighbors, distances);
 }
 
 //! Get the name of the tree type.

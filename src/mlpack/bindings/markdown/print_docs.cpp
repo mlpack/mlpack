@@ -57,9 +57,8 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  BindingDetails& doc = BindingInfo::GetBindingDetails(bindingName);
-
-  IO::RestoreSettings(bindingName);
+  Params params = IO::Parameters(bindingName);
+  const BindingDetails& doc = params.Doc();
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -76,7 +75,7 @@ void PrintDocs(const std::string& bindingName,
 
   // Next, print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "#### " << doc.programName << endl;
+  cout << "#### " << doc.name << endl;
   cout << endl;
 
   for (size_t i = 0; i < languages.size(); ++i)
@@ -122,7 +121,7 @@ void PrintDocs(const std::string& bindingName,
         << endl;
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
-    map<string, ParamData>& parameters = IO::Parameters();
+    map<string, ParamData>& parameters = params.Parameters();
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -145,20 +144,20 @@ void PrintDocs(const std::string& bindingName,
       {
         if (!it->second.required)
         {
-          cout << ParamString(it->second.name) << " | ";
+          cout << ParamString(bindingName, it->second.name) << " | ";
         }
         else
         {
-          std::string name = ParamString(it->second.name);
+          std::string name = ParamString(bindingName, it->second.name);
           name[1] = std::tolower(name[1]);
           cout << name << " | ";
         }
       }
       else
       {
-        cout << ParamString(it->second.name) << " | ";
+        cout << ParamString(bindingName, it->second.name) << " | ";
       }
-      cout << ParamType(it->second) << " | ";
+      cout << ParamType(params, it->second) << " | ";
       string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
@@ -169,7 +168,7 @@ void PrintDocs(const std::string& bindingName,
             << PrintLanguage(languages[i]) << " binding.</span>";
       }
       cout << " | ";
-      string def = PrintDefault(it->second.name);
+      string def = PrintDefault(bindingName, it->second.name);
       if (def.size() > 0)
         cout << "`" << def << "` |";
       else
@@ -215,15 +214,15 @@ void PrintDocs(const std::string& bindingName,
       // parameter will be lowerCamelCase.
       if (languages[i] == "go")
       {
-        std::string name = ParamString(it->second.name);
+        std::string name = ParamString(bindingName, it->second.name);
         name[1] = std::tolower(name[1]);
         cout << name << " | ";
       }
       else
       {
-        cout << ParamString(it->second.name) << " | ";
+        cout << ParamString(bindingName, it->second.name) << " | ";
       }
-      cout << ParamType(it->second) << " | ";
+      cout << ParamType(params, it->second) << " | ";
       cout << it->second.desc;
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
@@ -288,6 +287,4 @@ void PrintDocs(const std::string& bindingName,
     cout << "</div>" << endl;
     cout << endl;
   }
-
-  IO::ClearSettings();
 }

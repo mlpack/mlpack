@@ -90,16 +90,17 @@ inline std::string PrintValue(const std::vector<T>& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  util::Params p = IO::Parameters(bindingName);
+  if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = p.Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
-      (void*) &defaultValue);
+  p.functionMap[d.tname]["DefaultParam"](d, NULL, (void*) &defaultValue);
 
   return defaultValue;
 }
@@ -121,32 +122,33 @@ inline std::string PrintModel(const std::string& model)
 }
 
 // Base case for recursion.
-inline std::string ProcessOptions() { return ""; }
+inline std::string ProcessOptions(util::Params& /* params */) { return ""; }
 
 /**
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
+std::string ProcessOptions(util::Params& params,
+                           const std::string& paramName,
                            const T& value,
                            Args... args)
 {
   // See if it is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
 
     std::string name;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    params.functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &name);
 
     std::ostringstream ossValue;
     ossValue << value;
     std::string rawValue = ossValue.str();
     std::string fullValue;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
-        (void*) &rawValue, (void*) &fullValue);
+    params.functionMap[d.tname]["GetPrintableParamValue"](d, (void*) &rawValue,
+        (void*) &fullValue);
 
     std::ostringstream oss;
     if (d.tname != TYPENAME(bool))
@@ -162,7 +164,7 @@ std::string ProcessOptions(const std::string& paramName,
         + " and BINDING_EXAMPLE() declaration.");
   }
 
-  std::string rest = ProcessOptions(args...);
+  std::string rest = ProcessOptions(params, args...);
   if (rest != "")
     result += " " + rest;
 
@@ -176,35 +178,36 @@ std::string ProcessOptions(const std::string& paramName,
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
+  util::Params params = IO::Parameters(programName);
   return util::HyphenateString("$ " + GetBindingName(programName) + " " +
-      ProcessOptions(args...), 2);
+      ProcessOptions(params, args...), 2);
 }
 
 /**
  * Given a program name, print a program call invocation assuming that all
  * options are specified.
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream oss;
   oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = p.Parameters();
 
   for (auto& it : parameters)
   {
-    if (!it.second.input || it.second.persistent)
+    if (!it.second.input)
       continue;
 
     // Otherwise, print the name and the default value.
     std::string name;
-    IO::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
-        it.second, NULL, (void*) &name);
+    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+        (void*) &name);
 
     std::string value;
-    IO::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
-        it.second, NULL, (void*) &value);
+    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+        (void*) &value);
     if (value == "''")
       value = "<string>";
 
@@ -228,12 +231,12 @@ inline std::string ProgramCall(const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    IO::GetSingleton().functionMap[it.second.tname]["GetPrintableParamName"](
-        it.second, NULL, (void*) &name);
+    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+        (void*) &name);
 
     std::string value;
-    IO::GetSingleton().functionMap[it.second.tname]["DefaultParam"](
-        it.second, NULL, (void*) &value);
+    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+        (void*) &value);
     if (value == "''")
       value = "<string>";
 
@@ -253,16 +256,18 @@ inline std::string ProgramCall(const std::string& programName)
  * that all of the PARAM_*() declarataions need to come before
  * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName)
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName)
 {
+  util::Params p = IO::Parameters(bindingName);
+
   // Return the correct parameter name.
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
 
     std::string output;
-    IO::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
-        (void*) &output);
+    p.functionMap[d.tname]["GetPrintableParamName"](d, NULL, (void*) &output);
     // Is there an alias?
     std::string alias = "";
     if (d.alias != '\0')
