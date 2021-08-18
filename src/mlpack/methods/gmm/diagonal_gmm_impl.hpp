@@ -44,7 +44,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
     // If each trial must start from the same initial location,
     // we must save it.
-    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
+    std::vector<distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -62,8 +62,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
-        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
+    std::vector<distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>> distsTrial(
+        gaussians, distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -131,7 +131,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
+    std::vector<distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -150,8 +150,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
-        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
+    std::vector<distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>> distsTrial(
+        gaussians, distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)

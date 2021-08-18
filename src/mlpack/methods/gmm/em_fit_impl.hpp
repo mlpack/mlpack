@@ -46,7 +46,7 @@ Estimate(const arma::mat& observations,
          const bool useInitialModel)
 {
   if (std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value)
+      distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>>::value)
   {
     #ifdef _WIN32
       Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
@@ -132,7 +132,7 @@ Estimate(const arma::mat& observations,
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
       if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+          distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>>::value)
       {
         arma::vec covariance = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -244,7 +244,7 @@ Estimate(const arma::mat& observations,
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
       if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+          distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>>::value)
       {
         arma::vec cov = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -297,7 +297,7 @@ InitialClustering(const arma::mat& observations,
   // we can get faster performance by using diagonal elements when calculating
   // the covariance.
   const bool isDiagGaussDist = std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value;
+      distribution::DiagonalGaussianDistribution<arma::mat, arma::vec>>::value;
 
   std::vector<arma::vec> means(dists.size());
 

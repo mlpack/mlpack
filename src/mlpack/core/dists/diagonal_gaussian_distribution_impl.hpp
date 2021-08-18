@@ -19,7 +19,7 @@ namespace mlpack {
 namespace distribution {
 
 template<typename MatType, typename Vectype>
-DiagonalGaussianDistribution<MatType, Vectype>::DiagonalGaussianDistribution<MatType, Vectype>(
+DiagonalGaussianDistribution<MatType, Vectype>::DiagonalGaussianDistribution(
     const Vectype& mean,
     const Vectype& covariance) :
     mean(mean)

@@ -1273,7 +1273,7 @@ TEST_CASE("RegressionDistributionTest", "[DistributionTest]")
  */
 TEST_CASE("DiagonalGaussianDistributionEmptyConstructor", "[DistributionTest]")
 {
-  DiagonalGaussianDistribution d;
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d;
 
   REQUIRE(d.Mean().n_elem == 0);
   REQUIRE(d.Covariance().n_elem == 0);
@@ -1286,7 +1286,7 @@ TEST_CASE("DiagonalGaussianDistributionEmptyConstructor", "[DistributionTest]")
 TEST_CASE("DiagonalGaussianDistributionDimensionalityConstructor",
           "[DistributionTest]")
 {
-  DiagonalGaussianDistribution d(4);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(4);
 
   REQUIRE(d.Mean().n_elem == 4);
   REQUIRE(d.Covariance().n_elem == 4);
@@ -1301,7 +1301,7 @@ TEST_CASE("DiagonalGaussianDistributionConstructor", "[DistributionTest]")
   arma::vec mean = arma::randu<arma::vec>(3);
   arma::vec covariance = arma::randu<arma::vec>(3);
 
-  DiagonalGaussianDistribution d(mean, covariance);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(mean, covariance);
 
   // Make sure the mean and covariance is correct.
   for (size_t i = 0; i < 3; ++i)
@@ -1320,7 +1320,7 @@ TEST_CASE("DiagonalGaussianDistributionProbabilityTest", "[DistributionTest]")
   arma::vec mean("2 5 3 4 1");
   arma::vec cov("3 1 5 3 2");
 
-  DiagonalGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(mean, cov);
 
   // Observations lists randomly selected.
   REQUIRE(d.LogProbability("3 5 2 7 8") ==
@@ -1341,7 +1341,7 @@ TEST_CASE("DiagonalGaussianDistributionProbabilityTest", "[DistributionTest]")
  */
 TEST_CASE("DiagonalGaussianUnivariateProbabilityTest", "[DistributionTest]")
 {
-  DiagonalGaussianDistribution d(arma::vec("0.0"), arma::vec("1.0"));
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(arma::vec("0.0"), arma::vec("1.0"));
 
   // Mean: 0.0, Covariance: 1.0
   REQUIRE(d.Probability("0.0") == Approx(0.3989422804014327).epsilon(1e-7));
@@ -1378,7 +1378,7 @@ TEST_CASE("DiagonalGaussianMultivariateProbabilityTest", "[DistributionTest]")
   arma::vec cov("2 2");
   arma::vec obs("0 0");
 
-  DiagonalGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(mean, cov);
 
   REQUIRE(d.Probability(obs) == Approx(0.079577471545947673).epsilon(1e-7));
 
@@ -1411,7 +1411,7 @@ TEST_CASE("DiagonalGaussianMultipointMultivariateProbabilityTest",
                      "6 8 4 7 9 2;"
                      "4 6 7 7 3 2";
   arma::vec phis;
-  DiagonalGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(mean, cov);
   d.LogProbability(points, phis);
 
   REQUIRE(phis.n_elem == 6);
@@ -1432,7 +1432,7 @@ TEST_CASE("DiagonalGaussianDistributionRandomTest", "[DistributionTest]")
   arma::vec mean("2.5 1.25");
   arma::vec cov("0.50 0.25");
 
-  DiagonalGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d(mean, cov);
 
   arma::mat obs(2, 5000);
 
@@ -1465,7 +1465,7 @@ TEST_CASE("DiagonalGaussianDistributionTrainTest", "[DistributionTest]")
   for (size_t i = 0; i < 10000; ++i)
     observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
-  DiagonalGaussianDistribution d;
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d;
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
@@ -1496,7 +1496,7 @@ TEST_CASE("DiagonalGaussianUnbiasedEstimatorTest", "[DistributionTest]")
 
   arma::vec probs("0.3 0.4 0.1 0.2");
 
-  DiagonalGaussianDistribution d;
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d;
 
   // Estimate the parameters.
   d.Train(observations, probs);
@@ -1530,8 +1530,8 @@ TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
   for (size_t i = 0; i < 5; ++i)
     obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
-  DiagonalGaussianDistribution d1;
-  DiagonalGaussianDistribution d2;
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d1;
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d2;
 
   // Estimate the parameters.
   d1.Train(obs);

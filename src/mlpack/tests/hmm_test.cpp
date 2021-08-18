@@ -1524,18 +1524,18 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
     std::vector<DiagonalGMM> gmms(2);
     gmms[0] = DiagonalGMM(2, 2);
 
-    gmms[0].Component(0) = DiagonalGaussianDistribution("3.25 2.10",
+    gmms[0].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("3.25 2.10",
         "0.97 1.00");
-    gmms[0].Component(1) = DiagonalGaussianDistribution("5.03 7.28",
+    gmms[0].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("5.03 7.28",
         "1.20 0.89");
 
     gmms[1] = DiagonalGMM(3, 2);
     gmms[1].Weights() = arma::vec("0.3 0.2 0.5");
-    gmms[1].Component(0) = DiagonalGaussianDistribution("-2.48 -3.02",
+    gmms[1].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-2.48 -3.02",
         "1.02 0.80");
-    gmms[1].Component(1) = DiagonalGaussianDistribution("-1.24 -2.40",
+    gmms[1].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-1.24 -2.40",
         "0.85 0.78");
-    gmms[1].Component(2) = DiagonalGaussianDistribution("-5.68 -4.83",
+    gmms[1].Component(2) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-5.68 -4.83",
         "1.42 0.96");
 
     // Initial probabilities.
@@ -1597,14 +1597,14 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
 TEST_CASE("DiagonalGMMHMMGenerateTest", "[HMMTest]")
 {
   // Build the model.
-  HMM<DiagonalGaussianDistribution> hmm(3, DiagonalGaussianDistribution(2));
+  HMM<DiagonalGaussianDistribution<arma::mat, arma::vec>> hmm(3, DiagonalGaussianDistribution<arma::mat, arma::vec>(2));
   hmm.Transition() = arma::mat("0.2 0.3 0.8;"
                                "0.4 0.5 0.1;"
                                "0.4 0.2 0.1");
 
-  hmm.Emission()[0] = DiagonalGaussianDistribution("0.0 0.0", "1.0 0.7");
-  hmm.Emission()[1] = DiagonalGaussianDistribution("1.0 1.0", "0.7 0.5");
-  hmm.Emission()[2] = DiagonalGaussianDistribution("-3.0 2.0", "2.0 0.3");
+  hmm.Emission()[0] = DiagonalGaussianDistribution<arma::mat, arma::vec>("0.0 0.0", "1.0 0.7");
+  hmm.Emission()[1] = DiagonalGaussianDistribution<arma::mat, arma::vec>("1.0 1.0", "0.7 0.5");
+  hmm.Emission()[2] = DiagonalGaussianDistribution<arma::mat, arma::vec>("-3.0 2.0", "2.0 0.3");
 
   // Now we will generate a long sequence.
   std::vector<arma::mat> observations(1);
@@ -1614,7 +1614,7 @@ TEST_CASE("DiagonalGMMHMMGenerateTest", "[HMMTest]")
   hmm.Generate(10000, observations[0], states[0], 1);
 
   // Build the hmm2.
-  HMM<DiagonalGaussianDistribution> hmm2(3, DiagonalGaussianDistribution(2));
+  HMM<DiagonalGaussianDistribution<arma::mat, arma::vec>> hmm2(3, DiagonalGaussianDistribution<arma::mat, arma::vec>(2));
 
   // Now estimate the HMM from the generated sequence.
   hmm2.Train(observations, states);
@@ -1639,7 +1639,7 @@ TEST_CASE("DiagonalGMMHMMGenerateTest", "[HMMTest]")
 TEST_CASE("DiagonalGMMHMMOneGaussianOneStateTrainingTest", "[HMMTest]")
 {
   // Create a Gaussian distribution with diagonal covariance.
-  DiagonalGaussianDistribution d("2.05 3.45", "0.89 1.05");
+  DiagonalGaussianDistribution<arma::mat, arma::vec> d("2.05 3.45", "0.89 1.05");
 
   // Make a sequence of observations.
   std::vector<arma::mat> observations(1, arma::mat(2, 5000));
@@ -1678,10 +1678,10 @@ TEST_CASE("DiagonalGMMHMMOneGaussianUnlabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs. Each GMM has one gaussian distribution.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(1, 2));
-  gmms[0].Component(0) = DiagonalGaussianDistribution("1.25 2.10",
+  gmms[0].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("1.25 2.10",
       "0.97 1.00");
 
-  gmms[1].Component(0) = DiagonalGaussianDistribution("-2.48 -3.02",
+  gmms[1].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-2.48 -3.02",
       "1.02 0.80");
 
   // Transition matrix.
@@ -1752,13 +1752,13 @@ TEST_CASE("DiagonalGMMHMMOneGaussianLabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(3, DiagonalGMM(1, 2));
-  gmms[0].Component(0) = DiagonalGaussianDistribution("5.25 7.10",
+  gmms[0].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("5.25 7.10",
       "0.97 1.00");
 
-  gmms[1].Component(0) = DiagonalGaussianDistribution("4.48 6.02",
+  gmms[1].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("4.48 6.02",
       "1.02 0.80");
 
-  gmms[2].Component(0) = DiagonalGaussianDistribution("-3.28 -5.30",
+  gmms[2].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-3.28 -5.30",
       "0.87 1.05");
 
   // Transition matrix.
@@ -1836,15 +1836,15 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
-  gmms[0].Component(0) = DiagonalGaussianDistribution("8.25 7.10",
+  gmms[0].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("8.25 7.10",
       "0.97 1.00");
-  gmms[0].Component(1) = DiagonalGaussianDistribution("-3.03 -2.28",
+  gmms[0].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-3.03 -2.28",
       "1.20 0.89");
 
   gmms[1].Weights() = arma::vec("0.4 0.6");
-  gmms[1].Component(0) = DiagonalGaussianDistribution("4.48 6.02",
+  gmms[1].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("4.48 6.02",
         "1.02 0.80");
-  gmms[1].Component(1) = DiagonalGaussianDistribution("-9.24 -8.40",
+  gmms[1].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-9.24 -8.40",
         "0.85 1.58");
 
   // Transition matrix.
@@ -1943,15 +1943,15 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
-  gmms[0].Component(0) = DiagonalGaussianDistribution("2.25 5.30",
+  gmms[0].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("2.25 5.30",
       "0.97 1.00");
-  gmms[0].Component(1) = DiagonalGaussianDistribution("-3.15 -2.50",
+  gmms[0].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-3.15 -2.50",
       "1.20 0.89");
 
   gmms[1].Weights() = arma::vec("0.4 0.6");
-  gmms[1].Component(0) = DiagonalGaussianDistribution("-4.48 -6.30",
+  gmms[1].Component(0) = DiagonalGaussianDistribution<arma::mat, arma::vec>("-4.48 -6.30",
         "1.02 0.80");
-  gmms[1].Component(1) = DiagonalGaussianDistribution("5.24 2.40",
+  gmms[1].Component(1) = DiagonalGaussianDistribution<arma::mat, arma::vec>("5.24 2.40",
         "0.85 1.58");
 
   // Transition matrix.
