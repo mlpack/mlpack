@@ -52,7 +52,7 @@ jobs:
           run: |
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev
-            curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+            curl https://files.mlpack.org/armadillo-8.400.0.tar.gz | tar -xzv && cd armadillo*
             cmake . && make && sudo make install && cd ..
 
         - name: Install R-bindings dependencies
@@ -68,7 +68,7 @@ jobs:
 
         - name: Build
           run: |
-            cd build && make -j2 && make -j2 mlpack_test
+            cd build && make && make mlpack_test
 
         - name: Run tests via ctest
           run: |
