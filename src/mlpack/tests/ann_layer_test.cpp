@@ -3100,7 +3100,7 @@ TEST_CASE("GradientGroupNormTest", "[ANNLayerTest]")
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 10);
-      model->Add<GroupNorm<> >(1, 1, 10);
+      model->Add<GroupNorm<> >(1, 10, 1);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
