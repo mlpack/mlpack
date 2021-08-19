@@ -164,12 +164,12 @@ void GroupNorm<InputDataType, OutputDataType>::Gradient(
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(tempReshaped, 0).t();
 
   temp = arma::sum(error, 1);
-  arma::mat tempReshaped((temp).memptr(),
+  arma::mat tempErrorReshaped((temp).memptr(),
       channelSize, temp.n_elem / channelSize, false, false);
 
   // Step 6: dl / dy.
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(tempReshaped, 0).t();
+      arma::sum(tempErrorReshaped, 0).t();
 }
 
 template<typename InputDataType, typename OutputDataType>
