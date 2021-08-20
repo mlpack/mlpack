@@ -90,8 +90,8 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   normalized = output;
 
   arma::mat expandedGamma, expandedBeta;
-  expandedGamma.set_size(output.n_rows, 1);
-  expandedBeta.set_size(output.n_rows, 1);
+  expandedGamma.set_size(input.n_rows, 1);
+  expandedBeta.set_size(input.n_rows, 1);
   for (size_t r = 0; r < output.n_rows; ++r)
   {
     expandedGamma(r) = gamma(r / channelSize);
