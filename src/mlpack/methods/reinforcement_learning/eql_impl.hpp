@@ -161,8 +161,8 @@ void EQL<
   arma::irowvec isTerminal;
 
   // Generate a repository of preference vectors.
-  const arma::mat weightSpace = arma::randn(rewardSize, numWeights);
-  weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
+  const arma::mat weightSpace =
+      arma::normalise(arma::abs(arma::randn(rewardSize, numWeights)), 1, 1);
 
   learningNetwork.Forward(sampledStatePref, target);
   replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
