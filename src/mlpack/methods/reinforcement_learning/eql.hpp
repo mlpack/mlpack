@@ -142,9 +142,10 @@ class EQL
   /**
    * Select the best action based on given action value.
    * @param actionValues Action values.
+   * @param weightSpace The preference direction repository.
    * @return Selected actions.
    */
-  arma::uvec BestAction(const arma::mat& actionValues);
+  arma::uvec BestAction(const arma::mat& actionValues, const arma::mat& weightSpace);
 
   //! Locally-stored hyper-parameters.
   TrainingConfig& config;

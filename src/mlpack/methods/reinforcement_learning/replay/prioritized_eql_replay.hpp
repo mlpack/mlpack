@@ -241,8 +241,7 @@ class PrioritizedReplay
     const arma::mat batchWeights = [&]()
     {
       arma::mat retval(rewardSize, extendedSize);
-      size_t colIdx = 0;
-      size_t start = 0;
+      size_t colIdx {}, start {};
 
       while (colIdx < numWeights)
       {

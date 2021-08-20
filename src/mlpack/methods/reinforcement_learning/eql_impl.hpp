@@ -104,17 +104,36 @@ arma::uvec EQL<
   UpdaterType,
   PolicyType,
   ReplayType
->::BestAction(const arma::mat& actionValues)
+>::BestAction(const arma::mat& actionValues, const arma::mat& weightSpace)
 {
-  // Take best possible action at a particular instance.
-  arma::uvec bestActions(actionValues.n_cols);
-  arma::rowvec maxActionValues = arma::max(actionValues, 0);
-  for (size_t i = 0; i < actionValues.n_cols; ++i)
+  size_t numWeights = weightSpace.n_cols;
+  size_t actionSize = EnvironmentType::Action::size;
+  size_t batchSize = actionValues.n_cols / (numWeights * actionSize);
+  size_t extendedSize = numWeights * batchSize;
+
+  // Each preference vector is repeated batchSize * actionSize
+  // number of times. Shape: (rewardSize, extendedSize * actionSize).
+  const arma::mat extWeights = [&]()
   {
-    bestActions(i) = arma::as_scalar(
-        arma::find(actionValues.col(i) == maxActionValues[i], 1));
-  }
-  return bestActions;
+    arma::mat retval(rewardSize, extendedSize * actionSize);
+    size_t colIdx {}, start {};
+    size_t gap = batchSize * actionSize;
+
+    while (colIdx < numWeights)
+    {
+      retval.submat(arma::span(0, rewardSize),
+                    arma::span(start, start + gap - 1)) =
+          arma::repmat(weightSpace.col(colIdx), 1, gap);
+      start += gap;
+      ++colIdx;
+    }
+
+    return retval;
+  }();
+
+  // Batch multiply extWeights and actionValues and take the max index.
+  return arma::index_max(arma::reshape(arma::sum(extWeights % actionValues, 0),
+                                       actionSize, extendedSize), 0);
 };
 
 template <
