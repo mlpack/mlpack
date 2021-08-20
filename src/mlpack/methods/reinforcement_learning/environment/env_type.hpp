@@ -105,7 +105,7 @@ class DiscreteActionEnv
    */
   bool IsTerminal(const State& /* state */) const { return false; }
 
-  static size_t numObjectives;
+  static size_t rewardSize;
 };
 
 /**
@@ -201,7 +201,7 @@ class ContinuousActionEnv
    */
   bool IsTerminal(const State& /* state */) const { return false; }
 
-  static size_t numObjectives;
+  static size_t rewardSize;
 };
 
 } // namespace rl
