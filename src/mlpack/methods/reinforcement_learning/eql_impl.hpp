@@ -143,6 +143,7 @@ void EQL<
   const arma::mat weightSpace = arma::randn(rewardSize, numWeights);
   weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
 
+  learningNetwork.Forward(sampledInputs, target);
   replayMethod.SampleEQL(sampledInputs, sampledActions, sampledRewardLists,
       sampledNextInputs, weightSpace, isTerminal);
 
@@ -163,13 +164,13 @@ void EQL<
 
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions[i].action, i) = sampledRewards(i) + discount *
+    target(sampledActions[i].action, i) = sampledRewardLists(i) + discount *
         nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
   }
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.Backward(sampledInputs, target, gradients);
+  learningNetwork.BackwardEQL(sampledInputs, target, gradients, weightSpace);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
