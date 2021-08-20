@@ -250,18 +250,18 @@ class PrioritizedReplay
   /**
    * Sample some experience according to their priorities. Multi-objective case.
    *
-   * @param sampledInputs Sampled state-preference pair.
+   * @param sampledStatePref Sampled state-preference pair.
    * @param sampledActions Sampled actions.
    * @param sampledRewardLists Sampled reward lists.
-   * @param sampledNextInputs Sampled next state-preference pair.
+   * @param sampledNextStatePref Sampled next state-preference pair.
    * @param weightSpace The preference direction repository.
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-    void SampleEQL(arma::mat& /* sampledInputs */,
+    void SampleEQL(arma::mat& /* sampledStatePref */,
                    std::vector<ActionType>& /* sampledActions */,
                    arma::mat& /* sampledRewardList */,
-                   arma::mat& /* sampledNextInputs */,
+                   arma::mat& /* sampledNextStatePref */,
                    const arma::mat& /* weightSpace */,
                    arma::irowvec& /* isTerminal */)
     { /* Nothing to do here */ }

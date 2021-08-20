@@ -152,33 +152,35 @@ void EQL<
 >::TrainAgent()
 {
   // Begin experience replay. Sample from past experiences.
-  arma::mat sampledInputs;
+  // Each input is a unique state-preference pair.
+  arma::mat sampledStatePref;
   std::vector<ActionType> sampledActions;
+  // Each action results a list of reward.
   arma::mat sampledRewardLists;
-  arma::mat sampledNextInputs;
+  arma::mat sampledNextStatePref;
   arma::irowvec isTerminal;
 
   // Generate a repository of preference vectors.
   const arma::mat weightSpace = arma::randn(rewardSize, numWeights);
   weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
 
-  learningNetwork.Forward(sampledInputs, target);
-  replayMethod.SampleEQL(sampledInputs, sampledActions, sampledRewardLists,
-      sampledNextInputs, weightSpace, isTerminal);
+  learningNetwork.Forward(sampledStatePref, target);
+  replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
+      sampledNextStatePref, weightSpace, isTerminal);
 
   size_t batchSize = sampledStates.n_cols;
   size_t extendedSize = numWeights * batchSize;
   size_t actionSize = sampledActions.n_rows;
 
   arma::mat nextActionValues(rewardSize, extendedSize * actionSize);
-  targetNetwork.Predict(sampledNextInputs, nextActionValues);
+  targetNetwork.Predict(sampledNextStatePref, nextActionValues);
 
   arma::uvec bestActions{};
   if (config.DoubleQLearning())
   {
     // If use double Q-Learning, use learning network to select the best action.
     arma::mat nextActionValues;
-    learningNetwork.Predict(sampledNextInputs, nextActionValues);
+    learningNetwork.Predict(sampledNextStatePref, nextActionValues);
     bestActions = BestAction(nextActionValues);
   }
   else
@@ -187,19 +189,13 @@ void EQL<
   }
 
   arma::mat target(rewardSize, extendedSize * actionSize);
-  learningNetwork.Forward(sampledInputs, target);
+  learningNetwork.Forward(sampledStatePref, target);
 
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
-  for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
-  {
-    target(sampledActions[i].action, i) = sampledRewardLists(i) + discount *
-        nextActionValues(bestActions(i), i) * (1 - isTerminal[i]);
-  }
-
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.BackwardEQL(sampledInputs, target, gradients, weightSpace);
+  learningNetwork.BackwardEQL(sampledStatePref, target, gradients, weightSpace);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 

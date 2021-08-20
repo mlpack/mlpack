@@ -228,18 +228,18 @@ class PrioritizedReplay
   /**
    * Sample some experience according to their priorities. Multi-objective case.
    *
-   * @param sampledInputs Sampled state-preference pair.
+   * @param sampledStatePref Sampled state-preference pair.
    * @param sampledActions Sampled actions.
    * @param sampledRewardLists Sampled reward lists.
-   * @param sampledNextInputs Sampled next state-preference pair.
+   * @param sampledNextStatePref Sampled next state-preference pair.
    * @param weightSpace The preference direction repository.
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-  void SampleEQL(arma::mat& sampledInputs,
+  void SampleEQL(arma::mat& sampledStatePref,
                  std::vector<ActionType>& sampledActions,
                  arma::mat& sampledRewardList,
-                 arma::mat& sampledNextInputs,
+                 arma::mat& sampledNextStatePref,
                  const arma::mat& weightSpace,
                  arma::irowvec& isTerminal)
   {
@@ -268,10 +268,10 @@ class PrioritizedReplay
 
     // Each input is a unique combination of weights and states.
     // Shape: (stateSize + rewardSize, extendedSize).
-    sampledInputs = arma::join_cols(
+    sampledStatePref = arma::join_cols(
         arma::repmat(states.cols(sampledIndices), 1, batchSize), batchWeights);
 
-    sampledNextInputs = arma::join_cols(
+    sampledNextStatePref = arma::join_cols(
         arma::repmat(nextStates.cols(sampledIndices), 1, batchSize), batchWeights);
 
     for (size_t t = 0; t < sampledIndices.n_rows; t ++)
