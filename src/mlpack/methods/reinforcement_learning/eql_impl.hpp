@@ -146,32 +146,49 @@ void EQL<
 
   size_t batchSize = sampledStates.n_cols;
   size_t extendedSize = numWeights * batchSize;
+  size_t actionSize = sampledActions.n_rows;
 
   // Generate a repository of preference vectors.
   // TODO: The distribution should be set by user.
-  arma::mat weightSpace = arma::randn(EnvironmentType::numObjectives, numWeights);
-  weightSpace = arma::normalise(weightSpace, 1, 1);
+  arma::mat weightSpace = arma::randn(EnvironmentType::rewardSize, numWeights);
+  weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
 
-  arma::mat statePreference = arma::join_cols(sampledStates, weightSpace);
+  // Extended weight space. Each weight vector is repeated
+  // batchSize number of times.
+  arma::mat extWeightSpace = [&]()
+  {
+    arma::mat retval(EnvironmentType::rewardSize, extendedSize);
+    size_t colIdx = 0;
+    size_t start = 0;
 
-  arma::mat nextActionValues;
-  config.DoubleQLearning() ? learningEQLNetwork.Predict(sampledNextStates, nextActionValues)
-                           : targetEQLNetwork.Predict(sampledNextStates, nextActionValues);
+    while (colIdx < numWeights)
+    {
+      retval.submat(arma::span(0, EnvironmentType::rewardSize),
+                    arma::span(start, start + batchSize - 1)) =
+          arma::repmat(weightSpace.col(colIdx), 1, batchSize);
+      start += batchSize;
+      ++colIdx;
+    }
 
+    return retval;
+  }();
+
+  // Every combination of weights and states. (rewardSize + stateSize, extendedSize).
+  arma::mat sampledInputs =
+      arma::join_cols(arma::repmat(sampledStates, 1, batchSize), extWeightSpace);
+
+  arma::mat nextActionValues(actionSize * rewardSize, extendedSize);
+  config.DoubleQLearning() ? learningEQLNetwork.Predict(nextStatePreference, nextActionValues)
+                           : targetEQLNetwork.Predict(nextStatePreference, nextActionValues);
+
+  arma::cube nextActionValues(nextActionValuesTmp.memptr(), actionSize, rewardSize, extendedSize);
   arma::uvec bestActions = BestAction(nextActionValues);
 
-
-  // Compute the update target.
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
 
   double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
-  /**
-   * If the agent is at a terminal state, then we don't need to add the
-   * discounted reward. At terminal state, the agent wont perform any
-   * action.
-   */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
     target(sampledActions[i].action, i) = sampledRewards(i) + discount *
@@ -223,7 +240,7 @@ void EQL<
   arma::mat actionMatrix;
   // Get the unrolled form of the matrix.
   learningNetwork.Predict(state.Encode(), actionMatrix);
-  actionMatrix.resize(ActionType::size, EnvironmentType::numObjectives);
+  actionMatrix.resize(ActionType::size, EnvironmentType::rewardSize);
 
   arma::vec utilityValue = actionMatrix * preference;
   // Select an action according to the behavior policy.
