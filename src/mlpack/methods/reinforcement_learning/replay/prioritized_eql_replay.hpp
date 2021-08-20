@@ -240,13 +240,13 @@ class PrioritizedReplay
 
     const arma::mat batchWeights = [&]()
     {
-      arma::mat retval(EnvironmentType::rewardSize, extendedSize);
+      arma::mat retval(rewardSize, extendedSize);
       size_t colIdx = 0;
       size_t start = 0;
 
       while (colIdx < numWeights)
       {
-        retval.submat(arma::span(0, EnvironmentType::rewardSize),
+        retval.submat(arma::span(0, rewardSize),
                       arma::span(start, start + batchSize - 1)) =
             arma::repmat(weightSpace.col(colIdx), 1, batchSize);
         start += batchSize;
@@ -262,8 +262,7 @@ class PrioritizedReplay
         arma::repmat(states.cols(sampledIndices), 1, batchSize), batchWeights);
 
     arma::mat sampledNextInputs = arma::join_cols(
-        arma::repmat(nextStates.cols(sampledIndices), 1, batchSize),
-        batchWeights);
+        arma::repmat(nextStates.cols(sampledIndices), 1, batchSize), batchWeights);
 
     for (size_t t = 0; t < sampledIndices.n_rows; t ++)
       sampledActions.push_back(actions[sampledIndices[t]]);
@@ -400,6 +399,9 @@ class PrioritizedReplay
 
   //! Locally-stored termination information of previous experience.
   arma::irowvec isTerminal;
+
+  //! Locally stored reward size for convenience.
+  const size_t rewardSize = EnvironmentType::rewardSize;
 };
 
 } // namespace rl

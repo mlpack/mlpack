@@ -185,7 +185,7 @@ class EQL
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
 
-  //! Locally stored reward size for convenience..
+  //! Locally stored reward size for convenience.
   const size_t rewardSize = EnvironmentType::rewardSize;
 };
 

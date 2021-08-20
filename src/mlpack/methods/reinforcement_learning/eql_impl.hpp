@@ -132,9 +132,7 @@ void EQL<
   ReplayType
 >::TrainAgent()
 {
-  // Start experience replay.
-
-  // Sample from previous experience.
+  // Begin experience replay. Sample from past experiences.
   arma::mat sampledInputs;
   std::vector<ActionType> sampledActions;
   arma::mat sampledRewardLists;
@@ -142,7 +140,7 @@ void EQL<
   arma::irowvec isTerminal;
 
   // Generate a repository of preference vectors.
-  const arma::mat weightSpace = arma::randn(EnvironmentType::rewardSize, numWeights);
+  const arma::mat weightSpace = arma::randn(rewardSize, numWeights);
   weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
 
   replayMethod.SampleEQL(sampledInputs, sampledActions, sampledRewardLists,
@@ -159,9 +157,9 @@ void EQL<
   const arma::uvec bestActions = BestAction(nextActionValues);
 
   arma::mat target(rewardSize, extendedSize * actionSize);
-  learningNetwork.Forward(sampledStates, target);
+  learningNetwork.Forward(sampledInputs, target);
 
-  double discount = std::pow(config.Discount(), replayMethod.NSteps());
+  const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
@@ -171,7 +169,7 @@ void EQL<
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.Backward(sampledStates, target, gradients);
+  learningNetwork.Backward(sampledInputs, target, gradients);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
@@ -214,7 +212,7 @@ void EQL<
   arma::mat actionMatrix;
   // Get the unrolled form of the matrix.
   learningNetwork.Predict(state.Encode(), actionMatrix);
-  actionMatrix.resize(ActionType::size, EnvironmentType::rewardSize);
+  actionMatrix.resize(ActionType::size, rewardSize);
 
   arma::vec utilityValue = actionMatrix * preference;
   // Select an action according to the behavior policy.
