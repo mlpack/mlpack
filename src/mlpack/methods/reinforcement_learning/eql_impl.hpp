@@ -178,8 +178,8 @@ void EQL<
       arma::join_cols(arma::repmat(sampledStates, 1, batchSize), extWeightSpace);
 
   arma::mat nextActionValues(actionSize * rewardSize, extendedSize);
-  config.DoubleQLearning() ? learningEQLNetwork.Predict(nextStatePreference, nextActionValues)
-                           : targetEQLNetwork.Predict(nextStatePreference, nextActionValues);
+  config.DoubleQLearning() ? learningNetwork.Predict(nextStatePreference, nextActionValues)
+                           : targetNetwork.Predict(nextStatePreference, nextActionValues);
 
   arma::cube nextActionValues(nextActionValuesTmp.memptr(), actionSize, rewardSize, extendedSize);
   arma::uvec bestActions = BestAction(nextActionValues);
