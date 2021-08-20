@@ -135,56 +135,30 @@ void EQL<
   // Start experience replay.
 
   // Sample from previous experience.
-  arma::mat sampledStates;
+  arma::mat sampledInputs;
   std::vector<ActionType> sampledActions;
   arma::mat sampledRewardLists;
-  arma::mat sampledNextStates;
+  arma::mat sampledNextInputs;
   arma::irowvec isTerminal;
 
-  replayMethod.Sample(sampledStates, sampledActions, sampledRewardLists,
-      sampledNextStates, isTerminal);
+  // Generate a repository of preference vectors.
+  const arma::mat weightSpace = arma::randn(EnvironmentType::rewardSize, numWeights);
+  weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
+
+  replayMethod.SampleEQL(sampledInputs, sampledActions, sampledRewardLists,
+      sampledNextInputs, weightSpace, isTerminal);
 
   size_t batchSize = sampledStates.n_cols;
   size_t extendedSize = numWeights * batchSize;
   size_t actionSize = sampledActions.n_rows;
 
-  // Generate a repository of preference vectors.
-  // TODO: The distribution should be set by user.
-  arma::mat weightSpace = arma::randn(EnvironmentType::rewardSize, numWeights);
-  weightSpace = arma::normalise(arma::abs(weightSpace), 1, 1);
+  arma::mat nextActionValues(rewardSize, extendedSize * actionSize);
+  config.DoubleQLearning() ? learningNetwork.Predict(sampledNextInputs, nextActionValues)
+                           : targetNetwork.Predict(sampledNextInputs, nextActionValues);
 
-  // Extended weight space. Each weight vector is repeated
-  // batchSize number of times.
-  arma::mat extWeightSpace = [&]()
-  {
-    arma::mat retval(EnvironmentType::rewardSize, extendedSize);
-    size_t colIdx = 0;
-    size_t start = 0;
+  const arma::uvec bestActions = BestAction(nextActionValues);
 
-    while (colIdx < numWeights)
-    {
-      retval.submat(arma::span(0, EnvironmentType::rewardSize),
-                    arma::span(start, start + batchSize - 1)) =
-          arma::repmat(weightSpace.col(colIdx), 1, batchSize);
-      start += batchSize;
-      ++colIdx;
-    }
-
-    return retval;
-  }();
-
-  // Every combination of weights and states. (rewardSize + stateSize, extendedSize).
-  arma::mat sampledInputs =
-      arma::join_cols(arma::repmat(sampledStates, 1, batchSize), extWeightSpace);
-
-  arma::mat nextActionValues(actionSize * rewardSize, extendedSize);
-  config.DoubleQLearning() ? learningNetwork.Predict(nextStatePreference, nextActionValues)
-                           : targetNetwork.Predict(nextStatePreference, nextActionValues);
-
-  arma::cube nextActionValues(nextActionValuesTmp.memptr(), actionSize, rewardSize, extendedSize);
-  arma::uvec bestActions = BestAction(nextActionValues);
-
-  arma::mat target;
+  arma::mat target(rewardSize, extendedSize * actionSize);
   learningNetwork.Forward(sampledStates, target);
 
   double discount = std::pow(config.Discount(), replayMethod.NSteps());
