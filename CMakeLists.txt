@@ -380,6 +380,7 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
 set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
+message(STATUS "ARMADILLO LIBRARIES: ${ARMADILLO_LIBRARIES}")
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
