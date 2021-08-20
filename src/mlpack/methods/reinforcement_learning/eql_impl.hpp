@@ -116,7 +116,7 @@ arma::uvec EQL<
   const arma::mat extWeights = [&]()
   {
     arma::mat retval(rewardSize, extendedSize * actionSize);
-    size_t colIdx {}, start {};
+    size_t colIdx = 0, start = 0;
     const size_t gap = batchSize * actionSize;
 
     while (colIdx < numWeights)
