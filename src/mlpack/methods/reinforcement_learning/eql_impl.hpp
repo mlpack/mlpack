@@ -152,10 +152,20 @@ void EQL<
   size_t actionSize = sampledActions.n_rows;
 
   arma::mat nextActionValues(rewardSize, extendedSize * actionSize);
-  config.DoubleQLearning() ? learningNetwork.Predict(sampledNextInputs, nextActionValues)
-                           : targetNetwork.Predict(sampledNextInputs, nextActionValues);
+  targetNetwork.Predict(sampledNextInputs, nextActionValues);
 
-  const arma::uvec bestActions = BestAction(nextActionValues);
+  arma::uvec bestActions{};
+  if (config.DoubleQLearning())
+  {
+    // If use double Q-Learning, use learning network to select the best action.
+    arma::mat nextActionValues;
+    learningNetwork.Predict(sampledNextInputs, nextActionValues);
+    bestActions = BestAction(nextActionValues);
+  }
+  else
+  {
+    bestActions = BestAction(nextActionValues);
+  }
 
   arma::mat target(rewardSize, extendedSize * actionSize);
   learningNetwork.Forward(sampledInputs, target);
