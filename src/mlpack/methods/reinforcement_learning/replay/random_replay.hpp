@@ -199,6 +199,25 @@ class RandomReplay
   }
 
   /**
+   * Sample some experience according to their priorities. Multi-objective case.
+   *
+   * @param sampledInputs Sampled state-preference pair.
+   * @param sampledActions Sampled actions.
+   * @param sampledRewardLists Sampled reward lists.
+   * @param sampledNextInputs Sampled next state-preference pair.
+   * @param weightSpace The preference direction repository.
+   * @param isTerminal Indicate whether corresponding next state is terminal
+   *        state.
+   */
+    void SampleEQL(arma::mat& /* sampledInputs */,
+                   std::vector<ActionType>& /* sampledActions */,
+                   arma::mat& /* sampledRewardList */,
+                   arma::mat& /* sampledNextInputs */,
+                   const arma::mat& /* weightSpace */,
+                   arma::irowvec& /* isTerminal */)
+    { /* Nothing to do here */ }
+
+  /**
    * Get the number of transitions in the memory.
    *
    * @return Actual used memory size
