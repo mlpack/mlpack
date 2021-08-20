@@ -117,7 +117,7 @@ arma::uvec EQL<
   {
     arma::mat retval(rewardSize, extendedSize * actionSize);
     size_t colIdx {}, start {};
-    size_t gap = batchSize * actionSize;
+    const size_t gap = batchSize * actionSize;
 
     while (colIdx < numWeights)
     {
