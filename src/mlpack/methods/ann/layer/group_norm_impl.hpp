@@ -74,19 +74,17 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
       input.n_rows / groupCount, input.n_cols * groupCount, false, false);
 
   if (output.is_empty())
-    output.zeros(input.n_rows, input.n_cols);
-
-  arma::mat reshapedOutput((output).memptr(),
-      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
+    output.set_size(input.n_rows / groupCount, input.n_cols * groupCount);
 
   mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
 
   // Normalize the input.
-  reshapedOutput += reshapedInput.each_row() - mean;
-  inputMean = reshapedOutput;
-  reshapedOutput.each_row() /= arma::sqrt(variance + eps);
+  output = reshapedInput.each_row() - mean;
+  inputMean = output;
+  output.each_row() /= arma::sqrt(variance + eps);
 
+  output.reshape(input.n_rows, input.n_cols);
   // Reused in the backward and gradient step.
   normalized = output;
 
