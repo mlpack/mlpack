@@ -193,6 +193,18 @@ void EQL<
 
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
+  arma::cube targetCube(target.memptr(), rewardSize, actionSize, extendedSize);
+  arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize, actionSize, extendedSize);
+
+  for (size_t i = 0; i < extendedSize; ++i)
+  {
+    // The multi-objective Bellman filter (H) applied over nextActionValue.
+    const arma::vec& hQ = nextActionValCube.slice(i).col(bestAction(i));
+
+    targetCube.slice(i).col(sampledActions(i).action) =
+        sampledRewardLists(i) + discount * hQ * (1 - isTerminal(i));
+  }
+
   // Learn from experience.
   arma::mat gradients;
   learningNetwork.BackwardEQL(sampledStatePref, target, gradients, weightSpace);
