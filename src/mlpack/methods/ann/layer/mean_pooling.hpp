@@ -129,8 +129,9 @@ class MeanPoolingType : public Layer<InputType, OutputType>
       outputDimensions[i] = this->inputDimensions[i];
 
     // Cache input size and output size.
-    channels = std::accumulate(this->inputDimensions.begin() + 2,
-        this->inputDimensions.end(), 0);
+    channels = 1;
+    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+      channels *= this->inputDimensions[i];
 
     return outputDimensions;
   }

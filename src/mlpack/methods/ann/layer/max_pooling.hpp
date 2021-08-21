@@ -121,38 +121,35 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Modify the value of the rounding operation.
   bool& Floor() { return floor; }
 
-  //! Get the size of the output.
-  const std::vector<size_t>& OutputDimensions() const
+  //! Compute the size of the output.
+  void ComputeOutputDimensions()
   {
-    outputDimensions = this->inputDimensions;
+    this->outputDimensions = this->inputDimensions;
 
     // Compute the size of the output.
     if (floor)
     {
-      outputDimensions[0] = std::floor((this->inputDimensions[0] -
+      this->outputDimensions[0] = std::floor((this->inputDimensions[0] -
           (double) kernelWidth) / (double) strideWidth + 1);
-      outputDimensions[1] = std::floor((this->inputDimensions[1] -
+      this->outputDimensions[1] = std::floor((this->inputDimensions[1] -
           (double) kernelHeight) / (double) strideHeight + 1);
       offset = 0;
     }
     else
     {
-      outputDimensions[0] = std::ceil((this->inputDimensions[0] -
+      this->outputDimensions[0] = std::ceil((this->inputDimensions[0] -
           (double) kernelWidth) / (double) strideWidth + 1);
-      outputDimensions[1] = std::ceil((this->inputDimensions[1] -
+      this->outputDimensions[1] = std::ceil((this->inputDimensions[1] -
           (double) kernelHeight) / (double) strideHeight + 1);
       offset = 1;
     }
 
     // Higher dimensions are not modified.
-    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
-      outputDimensions[i] = this->inputDimensions[i];
 
     // Cache input size and output size.
-    channels = std::accumulate(this->inputDimensions.begin() + 2,
-        this->inputDimensions.end(), 0);
-
-    return outputDimensions;
+    channels = 1;
+    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+      channels *= this->inputDimensions[i];
   }
 
   /**

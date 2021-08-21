@@ -54,10 +54,9 @@ void MaxPoolingType<InputType, OutputType>::Forward(
       const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
       this->inputDimensions[1], batchSize * channels, false, false);
 
-  const std::vector<size_t> outputDimensions = OutputDimensions();
   arma::Cube<typename OutputType::elem_type> outputTemp(output.memptr(),
-      outputDimensions[0], outputDimensions[1], batchSize * channels, false,
-      true);
+      this->outputDimensions[0], this->outputDimensions[1],
+      batchSize * channels, false, true);
 
   if (this->training)
   {
@@ -95,11 +94,10 @@ template<typename InputType, typename OutputType>
 void MaxPoolingType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  const std::vector<size_t> outputDimensions = OutputDimensions();
   arma::Cube<typename OutputType::elem_type> mappedError =
       arma::Cube<typename OutputType::elem_type>(((OutputType&) gy).memptr(),
-      outputDimensions[0], outputDimensions[1], channels * batchSize, false,
-      false);
+      this->outputDimensions[0], this->outputDimensions[1],
+      channels * batchSize, false, false);
 
   arma::Cube<typename OutputType::elem_type> gTemp(g.memptr(),
       this->inputDimensions[0], this->inputDimensions[1], channels * batchSize,
@@ -128,7 +126,6 @@ void MaxPoolingType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(strideHeight));
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(channels));
-  ar(CEREAL_NVP(outputDimensions));
   ar(CEREAL_NVP(floor));
   ar(CEREAL_NVP(offset));
 

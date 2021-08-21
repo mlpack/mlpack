@@ -29,8 +29,7 @@ PaddingType<InputType, OutputType>::PaddingType(
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
-    nRows(0),
-    nCols(0)
+    totalInMaps(0)
 {
   // Nothing to do here.
 }
@@ -39,10 +38,54 @@ template<typename InputType, typename OutputType>
 void PaddingType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  // TODO: this implementation could be faster---no need to zero everything.
-  output.zeros();
-  output.submat(padWLeft, padHTop, padWLeft + inputDimensions[0] - 1,
-      padHTop + inputDimensions[1] - 1) = input;
+  // Make an alias of the input and output so that we can deal with the first
+  // two dimensions directly.
+  arma::Cube<typename InputType::elem_type> reshapedInput(
+      (typename InputType::elem_type*) input.memptr(),
+      this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
+      input.n_cols, false, true);
+  arma::Cube<typename OutputType::elem_type> reshapedOutput(output.memptr(),
+      this->outputDimensions[0], this->outputDimensions[1], totalInMaps *
+      output.n_cols, false, true);
+
+  // Set the padding parts to 0.
+  if (padWLeft > 0)
+  {
+    reshapedOutput.tube(0,
+                        0,
+                        padWLeft - 1,
+                        reshapedOutput.n_cols - 1).zeros();
+  }
+
+  if (padHTop > 0)
+  {
+    reshapedOutput.tube(padWLeft,
+                        0,
+                        padWLeft + this->inputDimensions[0] - 1,
+                        padHTop - 1).zeros();
+  }
+
+  if (padWRight > 0)
+  {
+    reshapedOutput.tube(padWLeft + this->inputDimensions[0],
+                        padHTop + this->inputDimensions[1],
+                        reshapedOutput.n_rows - 1,
+                        reshapedOutput.n_cols - 1).zeros();
+  }
+
+  if (padHBottom > 0)
+  {
+    reshapedOutput.tube(padWLeft,
+                        0,
+                        padWLeft + this->inputDimensions[0] - 1,
+                        reshapedOutput.n_cols - 1).zeros();
+  }
+
+  // Copy the input matrix.
+  reshapedOutput.tube(padWLeft,
+                      padHTop,
+                      padWLeft + this->inputDimensions[0] - 1,
+                      padHTop + this->inputDimensions[1] - 1) = reshapedInput;
 }
 
 template<typename InputType, typename OutputType>
@@ -51,8 +94,19 @@ void PaddingType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  g = gy.submat(padWLeft, padHTop, padWLeft + inputDimensions[0] - 1,
-      padHTop + inputDimensions[1] - 1);
+  // Reshape g and gy so that extracting the un-padded input is easier to
+  // understand.
+  arma::Cube<typename OutputType::elem_type> reshapedGy(
+      (typename OutputType::elem_type*) gy.memptr(), this->outputDimensions[0],
+      this->outputDimensions[1], totalInMaps * gy.n_cols, false, true);
+  arma::Cube<typename OutputType::elem_type> reshapedG(g.memptr(),
+      this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
+      g.n_cols, false, true);
+
+  reshapedG = reshapedGy.tube(padWLeft,
+                              padHTop,
+                              padWLeft + this->inputDimensions[0] - 1,
+                              padHTop + this->inputDimensions[1] - 1);
 }
 
 template<typename InputType, typename OutputType>
@@ -66,6 +120,7 @@ void PaddingType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(padHBottom));
+  ar(CEREAL_NVP(totalInMaps));
 }
 
 } // namespace ann

@@ -50,28 +50,22 @@ ConvolutionType<
     InputType,
     OutputType
 >::ConvolutionType(
-    const size_t inSize,
-    const size_t outSize,
+    const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
-    const size_t inputWidth,
-    const size_t inputHeight,
     const std::string& paddingType) :
     ConvolutionType(
-      inSize,
-      outSize,
+      maps,
       kernelWidth,
       kernelHeight,
       strideWidth,
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
-      inputWidth,
-      inputHeight,
       paddingType)
 {
   // Nothing to do here.
@@ -91,19 +85,15 @@ ConvolutionType<
     InputType,
     OutputType
 >::ConvolutionType(
-    const size_t inSize,
-    const size_t outSize,
+    const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
-    const size_t inputWidth,
-    const size_t inputHeight,
     const std::string& paddingType) :
-    inSize(inSize),
-    outSize(outSize),
+    maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
@@ -111,11 +101,7 @@ ConvolutionType<
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
-    padHTop(std::get<0>(padH)),
-    inputWidth(inputWidth),
-    inputHeight(inputHeight),
-    outputWidth(0),
-    outputHeight(0)
+    padHTop(std::get<0>(padH))
 {
   weights.set_size(WeightSize(), 1);
 
@@ -154,8 +140,8 @@ void ConvolutionType<
 >::SetWeights(const typename OutputType::elem_type* weightPtr)
 {
   weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
-      kernelWidth, kernelHeight, outSize * inSize, false, false);
-  bias = OutputType(weightPtr + weight.n_elem, outSize, 1, false, false);
+      kernelWidth, kernelHeight, maps * totalInMaps, false, false);
+  bias = OutputType(weightPtr + weight.n_elem, maps, 1, false, false);
 }
 
 template<
@@ -175,8 +161,8 @@ void ConvolutionType<
 {
   batchSize = input.n_cols;
   arma::Cube<typename InputType::elem_type> inputTemp(
-      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight, inSize *
-      batchSize, false, false);
+      const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], totalInMaps * batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {
@@ -189,50 +175,44 @@ void ConvolutionType<
     }
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kernelWidth, strideWidth, padWLeft,
-      padWRight);
-  size_t hConv = ConvOutSize(inputHeight, kernelHeight, strideHeight, padHTop,
-      padHBottom);
-
-  output.set_size(wConv * hConv * outSize, batchSize);
+  output.set_size(this->outputDimensions[0] * this->outputDimensions[1] * maps,
+      batchSize);
   outputTemp = arma::Cube<typename OutputType::elem_type>(output.memptr(),
-      wConv, hConv, outSize * batchSize, false, false);
+      this->outputDimensions[0], this->outputDimensions[1], maps * batchSize,
+      false, false);
   outputTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+      maps * batchSize; outMap++)
   {
-    if (outMap != 0 && outMap % outSize == 0)
+    if (outMap != 0 && outMap % maps == 0)
     {
       batchCount++;
       outMapIdx = 0;
     }
 
-    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    for (size_t inMap = 0; inMap < totalInMaps; inMap++, outMapIdx++)
     {
       OutputType convOutput;
 
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            batchCount * totalInMaps), weight.slice(outMapIdx), convOutput,
             strideWidth, strideHeight);
       }
       else
       {
         ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-            batchCount * inSize), weight.slice(outMapIdx), convOutput,
+            batchCount * totalInMaps), weight.slice(outMapIdx), convOutput,
             strideWidth, strideHeight);
       }
 
       outputTemp.slice(outMap) += convOutput;
     }
 
-    outputTemp.slice(outMap) += bias(outMap % outSize);
+    outputTemp.slice(outMap) += bias(outMap % maps);
   }
-
-  outputWidth = outputTemp.n_rows;
-  outputHeight = outputTemp.n_cols;
 }
 
 template<
@@ -252,24 +232,26 @@ void ConvolutionType<
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   arma::Cube<typename OutputType::elem_type> mappedError(
-      ((OutputType&) gy).memptr(), outputWidth, outputHeight, outSize *
-      batchSize, false, false);
+      ((OutputType&) gy).memptr(), this->outputDimensions[0],
+      this->outputDimensions[1], maps * batchSize, false, false);
 
-  g.set_size(inputWidth * inputHeight * inSize, batchSize);
-  gTemp = arma::Cube<typename OutputType::elem_type>(g.memptr(), inputWidth,
-      inputHeight, inSize * batchSize, false, false);
+  g.set_size(this->inputDimensions[0] * this->inputDimensions[1] * totalInMaps,
+      batchSize);
+  gTemp = arma::Cube<typename OutputType::elem_type>(g.memptr(),
+      this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
+      batchSize, false, false);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+      maps * batchSize; outMap++)
   {
-    if (outMap != 0 && outMap % outSize == 0)
+    if (outMap != 0 && outMap % maps == 0)
     {
       batchCount++;
       outMapIdx = 0;
     }
 
-    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    for (size_t inMap = 0; inMap < totalInMaps; inMap++, outMapIdx++)
     {
       OutputType output, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
@@ -279,12 +261,12 @@ void ConvolutionType<
 
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
-        gTemp.slice(inMap + batchCount * inSize) += output.submat(padWLeft,
+        gTemp.slice(inMap + batchCount * totalInMaps) += output.submat(padWLeft,
             padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
       }
       else
       {
-        gTemp.slice(inMap + batchCount * inSize) += output;
+        gTemp.slice(inMap + batchCount * totalInMaps) += output;
       }
     }
   }
@@ -309,11 +291,11 @@ void ConvolutionType<
     OutputType& gradient)
 {
   arma::Cube<typename OutputType::elem_type> mappedError(
-      ((OutputType&) error).memptr(), outputWidth, outputHeight, outSize *
-      batchSize, false, false);
+      ((OutputType&) error).memptr(), this->outputDimensions[0],
+      this->outputDimensions[1], maps * batchSize, false, false);
   arma::Cube<typename InputType::elem_type> inputTemp(
-      ((InputType&) input).memptr(), inputWidth, inputHeight, inSize *
-      batchSize, false, false);
+      ((InputType&) input).memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], maps * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<typename OutputType::elem_type>(gradient.memptr(),
@@ -321,31 +303,31 @@ void ConvolutionType<
   gradientTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      outSize * batchSize; outMap++)
+      maps * batchSize; outMap++)
   {
-    if (outMap != 0 && outMap % outSize == 0)
+    if (outMap != 0 && outMap % maps == 0)
     {
       batchCount++;
       outMapIdx = 0;
     }
 
-    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    for (size_t inMap = 0; inMap < totalInMaps; inMap++, outMapIdx++)
     {
       InputType inputSlice;
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
-        inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
+        inputSlice = inputPaddedTemp.slice(inMap + batchCount * totalInMaps);
       }
       else
       {
-        inputSlice = inputTemp.slice(inMap + batchCount * inSize);
+        inputSlice = inputTemp.slice(inMap + batchCount * totalInMaps);
       }
 
       OutputType deltaSlice = mappedError.slice(outMap);
 
       OutputType output;
-      GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
-          output, strideWidth, strideHeight);
+      GradientConvolutionRule::Convolution(inputSlice, deltaSlice, output,
+          strideWidth, strideHeight);
 
       if (gradientTemp.n_rows < output.n_rows ||
           gradientTemp.n_cols < output.n_cols)
@@ -365,8 +347,8 @@ void ConvolutionType<
       }
     }
 
-    gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
-        (outMap % outSize), 0) = arma::accu(mappedError.slice(outMap));
+    gradient.submat(weight.n_elem + (outMap % maps), 0, weight.n_elem +
+        (outMap % maps), 0) = arma::accu(mappedError.slice(outMap));
   }
 }
 
@@ -388,8 +370,7 @@ void ConvolutionType<
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(inSize));
-  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(maps));
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
@@ -399,11 +380,8 @@ void ConvolutionType<
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHBottom));
   ar(CEREAL_NVP(padHTop));
-  ar(CEREAL_NVP(inputWidth));
-  ar(CEREAL_NVP(inputHeight));
-  ar(CEREAL_NVP(outputWidth));
-  ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(padding));
+  ar(CEREAL_NVP(totalInMaps));
 }
 
 template<
@@ -424,10 +402,10 @@ void ConvolutionType<
   /*
    * Using O = (W - F + 2P) / s + 1;
    */
-  size_t totalVerticalPadding = (strideWidth - 1) * inputWidth + kernelWidth -
-      strideWidth;
-  size_t totalHorizontalPadding = (strideHeight - 1) * inputHeight +
-      kernelHeight - strideHeight;
+  size_t totalVerticalPadding = (strideWidth - 1) * this->inputDimensions[0] +
+      kernelWidth - strideWidth;
+  size_t totalHorizontalPadding = (strideHeight - 1) * this->inputDimensions[1]
+      + kernelHeight - strideHeight;
 
   padWLeft = totalVerticalPadding / 2;
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;

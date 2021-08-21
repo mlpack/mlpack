@@ -89,8 +89,10 @@ class AddType : public Layer<InputType, OutputType>
   void ComputeOutputDimensions()
   {
     this->outputDimensions = this->inputDimensions;
-    outSize = std::accumulate(this->outputDimensions.begin(),
-        this->outputDimensions.end(), 0);
+
+    outSize = this->outputDimensions[0];
+    for (size_t i = 1; i < this->outputDimensions.size(); ++i)
+      outSize *= this->outputDimensions[i];
   }
 
   void SetWeights(typename OutputType::elem_type* weightPtr);

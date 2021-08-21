@@ -28,7 +28,7 @@
 //#include <mlpack/methods/ann/layer/constant.hpp>
 //#include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
-//#include <mlpack/methods/ann/layer/convolution.hpp>
+#include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 //#include <mlpack/methods/ann/layer/elu.hpp>
@@ -52,7 +52,7 @@
 //#include <mlpack/methods/ann/layer/multihead_attention.hpp>
 //#include <mlpack/methods/ann/layer/multiply_constant.hpp>
 //#include <mlpack/methods/ann/layer/multiply_merge.hpp>
-//#include <mlpack/methods/ann/layer/max_pooling.hpp>
+#include <mlpack/methods/ann/layer/max_pooling.hpp>
 //#include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 //#include <mlpack/methods/ann/layer/padding.hpp>

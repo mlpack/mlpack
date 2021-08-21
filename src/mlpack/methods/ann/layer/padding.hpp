@@ -92,17 +92,18 @@ class PaddingType : public Layer<InputType, OutputType>
   //! Modify the bottom padding width.
   size_t& PadHBottom() { return padHBottom; }
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> outputDimensions(inputDimensions);
+    this->outputDimensions = this->inputDimensions;
 
-    // TODO: throw an error if the input dimensions are greater than 2?
-    // or adapt accordingly?
+    this->outputDimensions[0] += padWLeft + padWRight;
+    this->outputDimensions[1] += padHTop + padHBottom;
 
-    outputDimensions[0] += padWLeft + padWRight;
-    outputDimensions[1] += padHTop + padHBottom;
-
-    return outputDimensions;
+    // Higher dimensions remain unchanged.  But, we will cache the product of
+    // these higher dimensions.
+    totalInMaps = 1;
+    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+      totalInMaps *= this->inputDimensions[i];
   }
 
   /**
@@ -123,6 +124,9 @@ class PaddingType : public Layer<InputType, OutputType>
 
   //! Locally-stored bottom padding height.
   size_t padHBottom;
+
+  //! Cached number of input maps.
+  size_t totalInMaps;
 }; // class PaddingType
 
 // Standard Padding layer.

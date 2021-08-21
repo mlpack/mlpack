@@ -127,6 +127,12 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::RBF<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::HighwayType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::ConvolutionType< \
+        mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \
+        mlpack::ann::NaiveConvolution<mlpack::ann::FullConvolution>, \
+        mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \
+        __VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::MaxPoolingType<__VA_ARGS__>); \
 
 // TODO: continue...
 

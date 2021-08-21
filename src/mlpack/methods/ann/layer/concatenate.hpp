@@ -79,8 +79,10 @@ class ConcatenateType : public Layer<InputType, OutputType>
   void ComputeOutputDimensions()
   {
     // This flattens the input.
-    const size_t inSize = std::accumulate(this->inputDimensions.begin(),
-        this->inputDimensions.end(), 0);
+    size_t inSize = this->inputDimensions[1];
+    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+        inSize *= this->inputDimensions[i];
+
     this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
         1);
     this->outputDimensions[0] = inSize + concat.n_elem;

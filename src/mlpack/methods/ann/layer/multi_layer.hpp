@@ -156,26 +156,27 @@ class MultiLayer : public Layer<InputType, OutputType>
 
     // Propagate the input dimensions forward to the output.
     network.front()->InputDimensions() = this->inputDimensions;
-    inSize = std::accumulate(this->inputDimensions.begin(),
-        this->inputDimensions.end(), 0);
+    inSize = this->inputDimensions[1];
+    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
     totalInputSize += inSize;
 
     for (size_t i = 1; i < network.size(); ++i)
     {
       network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-      const size_t layerInputSize = std::accumulate(
-          network[i]->InputDimensions().begin(),
-          network[i]->InputDimensions().end(),
-          0);
+      size_t layerInputSize = network[i]->InputDimensions()[0];
+      for (size_t j = 1; j < network[i]->InputDimensions().size(); ++j)
+        layerInputSize *= network[i]->InputDimensions()[j];
 
       totalInputSize += layerInputSize;
       totalOutputSize += layerInputSize;
     }
 
-    const std::vector<size_t>& outputDimensions =
-        network.back()->OutputDimensions();
-    totalOutputSize += std::accumulate(outputDimensions.begin(),
-        outputDimensions.end(), 0);
+    size_t lastLayerSize = network.back()->OutputDimensions()[0];
+    for (size_t i = 1; i < network.back()->OutputDimensions().size(); ++i)
+      lastLayerSize *= network.back()->OutputDimensions()[i];
+
+    totalOutputSize += lastLayerSize;
     this->outputDimensions = network.back()->OutputDimensions();
   }
 
@@ -287,10 +288,16 @@ network; }
     size_t start = 0;
     for (size_t i = 0; i < layerDeltas.size(); ++i)
     {
-      const size_t layerInputSize = (i == 0) ?
-          std::accumulate(this->inputDimensions.begin(),
-              this->inputDimensions.end(), 0) :
-          network[i - 1]->OutputSize();
+      size_t layerInputSize = 1;
+      if (i == 0)
+      {
+        for (size_t j = 0; j < this->inputDimensions.size(); ++j)
+          layerInputSize *= this->inputDimensions[j];
+      }
+      else
+      {
+        layerInputSize = network[i - 1]->OutputSize();
+      }
       MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
           batchSize);
       start += batchSize * layerInputSize;

@@ -20,7 +20,7 @@ add_executable(mlpack_test
   # callback_test.cpp
   # cf_test.cpp
   # cli_binding_test.cpp
-  # convolutional_network_test.cpp
+  convolutional_network_test.cpp
   # convolution_test.cpp
   # cosine_tree_test.cpp
   # cv_test.cpp

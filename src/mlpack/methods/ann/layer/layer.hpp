@@ -247,8 +247,10 @@ class Layer
       validOutputDimensions = true;
     }
 
-    return std::accumulate(this->outputDimensions.begin(),
-        this->outputDimensions.end(), 0);
+    size_t outputSize = 1;
+    for (size_t i = 0; i < this->outputDimensions.size(); ++i)
+      outputSize *= this->outputDimensions[i];
+    return outputSize;
   }
 
   template<typename Archive>

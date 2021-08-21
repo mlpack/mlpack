@@ -14,6 +14,7 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <ensmallen.hpp>
@@ -24,6 +25,52 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
+
+/**
+ * Build a trivial network with a single padding layer, and make sure it
+ * successfully pads the input.
+ */
+TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Create the network.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+
+  model.Add<Padding>(1, 2, 3, 4);
+
+  // Now, pass the data through.
+  arma::mat results;
+  model.InputDimensions() = std::vector<size_t>({ 28, 28 });
+  model.Forward(X, results);
+
+  // Ensure that things are correctly padded.
+  arma::cube reshapedResults(results.memptr(), 31, 35, results.n_cols, false,
+      true);
+
+  for (size_t i = 0; i < reshapedResults.n_slices; ++i)
+  {
+    // Check left.
+    for (size_t j = 0; j < reshapedResults.n_cols; ++j)
+      REQUIRE(reshapedResults(0, j, i) == 0.0);
+
+    // Check top.
+    for (size_t j = 0; j < 3; ++j)
+      for (size_t k = 0; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
+
+    // Check bottom.
+    for (size_t j = 31; j < reshapedResults.n_cols; ++j)
+      for (size_t k = 0; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
+
+    // Check right.
+    for (size_t j = 0; j < reshapedResults.n_cols; ++j)
+      for (size_t k = 29; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
+  }
+}
 
 /**
  * Train the vanilla network on a larger dataset.
@@ -82,18 +129,18 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
   {
     FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
-    model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+    model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
+    model.Add<ReLULayer<>>();
+    model.Add<MaxPooling>(2, 2);
+    model.Add<Convolution>(12, 2, 2);
     model.Add<ReLULayer<> >();
-    model.Add<MaxPooling<> >(8, 8, 2, 2);
-    model.Add<Convolution<> >(8, 12, 2, 2);
+    model.Add<MaxPooling>(2, 2);
+    model.Add<Linear>(20);
     model.Add<ReLULayer<> >();
-    model.Add<MaxPooling<> >(2, 2, 2, 2);
-    model.Add<Linear<> >(192, 20);
+    model.Add<Linear>(10);
     model.Add<ReLULayer<> >();
-    model.Add<Linear<> >(20, 10);
-    model.Add<ReLULayer<> >();
-    model.Add<Linear<> >(10, 2);
-    model.Add<LogSoftMax<> >();
+    model.Add<Linear>(2);
+    model.Add<LogSoftMax>();
 
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);

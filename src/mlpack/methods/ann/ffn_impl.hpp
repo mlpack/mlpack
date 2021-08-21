@@ -617,8 +617,9 @@ void FFN<
   if (inputDimensions.size() == 0)
     inputDimensions = { inputDimensionality };
 
-  const size_t totalInputSize = std::accumulate(inputDimensions.begin(),
-      inputDimensions.end(), 0);
+  size_t totalInputSize = 1;
+  for (size_t i = 0; i < inputDimensions.size(); ++i)
+    totalInputSize *= inputDimensions[i];
 
   // TODO: improve this error message...
   if (totalInputSize != inputDimensionality)
