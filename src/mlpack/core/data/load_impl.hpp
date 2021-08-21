@@ -81,9 +81,9 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename MatType>
+template<typename eT>
 bool Load(const std::string& filename,
-          MatType& matrix,
+          arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
           const FileType inputLoadType)
@@ -201,9 +201,9 @@ bool Load(const std::string& filename,
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename MatType, typename PolicyType>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
-          MatType& matrix,
+          arma::Mat<eT>& matrix,
           DatasetMapper<PolicyType>& info,
           const bool fatal,
           const bool transpose)
@@ -294,6 +294,130 @@ bool Load(const std::string& filename,
   Timer::Stop("loading_data");
 
   return true;
+}
+
+// For loading data into sparse matrix
+template <typename eT>
+bool Load(const std::string& filename,
+          arma::SpMat<eT>& matrix,
+          const bool fatal,
+          const bool transpose)
+{
+  Timer::Start("loading_data");
+
+  // Get the extension.
+  std::string extension = Extension(filename);
+
+  // Catch nonexistent files by opening the stream ourselves.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::in);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "'; load failed."
+          << std::endl;
+
+    return false;
+  }
+
+  bool unknownType = false;
+  arma::file_type loadType;
+  std::string stringType;
+
+  if (extension == "tsv" || extension == "txt")
+  {
+    loadType = arma::coord_ascii;
+    stringType = "Coordinate Formatted Data for Sparse Matrix";
+  }
+  else if (extension == "bin")
+  {
+    // This could be raw binary or Armadillo binary (binary with header).  We
+    // will check to see if it is Armadillo binary.
+    const std::string ARMA_SPM_BIN = "ARMA_SPM_BIN";
+    std::string rawHeader(ARMA_SPM_BIN.length(), '\0');
+
+    std::streampos pos = stream.tellg();
+
+    stream.read(&rawHeader[0], std::streamsize(ARMA_SPM_BIN.length()));
+    stream.clear();
+    stream.seekg(pos); // Reset stream position after peeking.
+
+    if (rawHeader == ARMA_SPM_BIN)
+    {
+      stringType = "Armadillo binary formatted data for sparse matrix";
+      loadType = arma::arma_binary;
+    }
+    else // We can only assume it's raw binary.
+    {
+      stringType = "raw binary formatted data";
+      loadType = arma::raw_binary;
+    }
+  }
+  else // Unknown extension...
+  {
+    unknownType = true;
+    loadType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
+  }
+
+  // Provide error if we don't know the type.
+  if (unknownType)
+  {
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Unable to detect type of '" << filename << "'; "
+          << "incorrect extension?" << std::endl;
+    else
+      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
+          << " Incorrect extension?" << std::endl;
+
+    return false;
+  }
+
+  // Try to load the file; but if it's raw_binary, it could be a problem.
+  if (loadType == arma::raw_binary)
+    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
+        << "but this may not be the actual filetype!" << std::endl;
+  else
+    Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
+        << std::flush;
+
+  bool success;
+
+  success = matrix.load(stream, loadType);
+
+  if (!success)
+  {
+    Log::Info << std::endl;
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
+
+    return false;
+  }
+  else
+    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
+        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
+
+  // Now transpose the matrix, if necessary.
+  if (transpose)
+  {
+    success = inplace_transpose(matrix, fatal);
+  }
+
+  Timer::Stop("loading_data");
+
+  // Finally, return the success indicator.
+  return success;
 }
 
 } // namespace data

@@ -17,15 +17,15 @@
 namespace mlpack{
 namespace data{
 
-template<typename MatType>
-bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
+template<typename eT>
+bool LoadCSV::ConvertToken(eT& val,
                            const std::string& token)
 {
   const size_t N = size_t(token.length());
   // Fill empty data points with 0
   if (N == 0)
   {
-    val = typename MatType::elem_type(0);
+    val = eT(0);
     return true;
   }
 
@@ -49,16 +49,15 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
         ((sig_b == 'n') || (sig_b == 'N')) &&
         ((sig_c == 'f') || (sig_c == 'F')))
     {
-      val = neg ? -(std::numeric_limits<typename MatType::elem_type>
-                    ::infinity()) : std::numeric_limits<typename MatType::
-                                    elem_type>::infinity();
+      val = neg ? -(std::numeric_limits<eT>
+                    ::infinity()) : std::numeric_limits<eT>::infinity();
       return true;
     }
     else if (((sig_a == 'n') || (sig_a == 'N')) &&
              ((sig_b == 'a') || (sig_b == 'A')) &&
              ((sig_c == 'n') || (sig_c == 'N')))
     {
-      val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
+      val = std::numeric_limits<eT>::quiet_NaN();
       return true;
     }
   }
@@ -66,24 +65,24 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
   char* endptr = nullptr;
 
   // Convert the token into ccorrect type.
-  // If we have a MatType::elem_type as unsigned int,
+  // If we have a eT as unsigned int,
   // it will convert all negative numbers to 0
-  if (std::is_floating_point<typename MatType::elem_type>::value)
+  if (std::is_floating_point<eT>::value)
   {
-    val = typename MatType::elem_type(std::strtod(str, &endptr));
+    val = eT(std::strtod(str, &endptr));
   }
-  else if (std::is_integral<typename MatType::elem_type>::value)
+  else if (std::is_integral<eT>::value)
   {
-    if (std::is_signed<typename MatType::elem_type>::value)
-      val = typename MatType::elem_type(std::strtoll(str, &endptr, 10));
+    if (std::is_signed<eT>::value)
+      val = eT(std::strtoll(str, &endptr, 10));
     else
     {
       if (str[0] == '-')
       {
-        val = typename MatType::elem_type(0);
+        val = eT(0);
         return true;
       }
-      val = typename MatType::elem_type( std::strtoull(str, &endptr, 10));
+      val = eT(std::strtoull(str, &endptr, 10));
     }
   }
 
@@ -93,8 +92,8 @@ bool LoadCSV::ConvertToken(typename MatType::elem_type& val,
   return true;
 }
 
-template<typename MatType>
-bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
+template<typename eT>
+bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 {
   bool load_okay = f.good();
   f.clear();
@@ -125,10 +124,10 @@ bool LoadCSV::LoadNumericCSV(MatType& x, std::fstream& f)
       std::getline(lineStream, token, ',');
 
       // This will handle loading of both dense and sparse.
-      // Initialize tmp_val of type MatType::elem_type with value 0.
-      typename MatType::elem_type tmp_val = typename MatType::elem_type(0);
+      // Initialize tmp_val of type eT with value 0.
+      eT tmp_val = eT(0);
 
-      if (ConvertToken<MatType>(tmp_val, token))
+      if (ConvertToken<eT>(tmp_val, token))
       {
         x.at(row, col) = tmp_val;
         ++col;

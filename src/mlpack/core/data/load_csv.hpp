@@ -108,14 +108,11 @@ class LoadCSV
   * the second pass, the function converts each value to required datatype
   * and sets it equal to val. 
   *
-  * This function uses MatType as template parameter in order to provide
-  * support for any type of matrices from any linear algebra library. 
-  *
   * @param x Matrix in which data will be loaded
   * @param f File stream to access the data file
   */
-  template<typename MatType>
-  bool LoadNumericCSV(MatType& x, std::fstream& f);
+  template<typename eT>
+  bool LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f);
 
   /**
   * Convert the given string token to assigned datatype and assign
@@ -128,8 +125,8 @@ class LoadCSV
   * @param val Token's value will be assigned to this address
   * @param token Value which should be assigned
   */
-  template<typename MatType>
-  bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
+  template<typename eT>
+  bool ConvertToken(eT& val, const std::string& token);
 
   /**
    * Caluculate number of columns in each row
@@ -154,8 +151,8 @@ class LoadCSV
   * @param transpose If true, the matrix should be transposed on loading
   *     (default).
   */
-  template<typename MatType, typename PolicyType>
-  void LoadCategoricalCSV(MatType &inout,
+  template<typename eT, typename PolicyType>
+  void LoadCategoricalCSV(arma::Mat<eT> &inout,
                           DatasetMapper<PolicyType> &infoSet,
                           const bool transpose = true);
 

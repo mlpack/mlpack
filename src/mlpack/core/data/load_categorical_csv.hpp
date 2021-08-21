@@ -17,8 +17,8 @@
 namespace mlpack{
 namespace data{
 
-template<typename MatType, typename PolicyType>
-void LoadCSV::LoadCategoricalCSV(MatType &inout,
+template<typename eT, typename PolicyType>
+void LoadCSV::LoadCategoricalCSV(arma::Mat<eT> &inout,
                                  DatasetMapper<PolicyType> &infoSet,
                                  const bool transpose)
 {
