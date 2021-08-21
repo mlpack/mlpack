@@ -114,24 +114,14 @@ void GroupNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  assert(error.n_rows % size == 0);
-  const size_t channelSize = error.n_rows / size;
-  temp = arma::sum(normalized % error, 1);
-  arma::mat tempReshaped((temp).memptr(),
-      channelSize, temp.n_elem / channelSize, false, false);
-
-  gradient.set_size(size + size, 1);
+    gradient.set_size(size + size, 1);
 
   // Step 5: dl / dy * xhat.
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(tempReshaped, 0).t();
-
-  temp = arma::sum(error, 1);
-  arma::mat tempErrorReshaped((temp).memptr(),
-      channelSize, temp.n_elem / channelSize, false, false);
+  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
 
   // Step 6: dl / dy.
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(tempErrorReshaped, 0).t();
+      arma::sum(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
