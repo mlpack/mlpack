@@ -56,11 +56,10 @@ class GroupNorm
   /**
    * Create the GroupNorm object for a specified number of input units.
    *
-   * @param channelSize The size of one channel
    * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  GroupNorm(const size_t channelSize, const size_t size, const size_t groupCount, const double eps = 1e-8);
+  GroupNorm(const size_t size, const size_t groupCount, const double eps = 1e-8);
 
   /**
    * Reset the layer parameters.
@@ -128,9 +127,6 @@ class GroupNorm
   //! Get the variance across single training data.
   OutputDataType Variance() { return variance; }
 
-  //! Get the size of 1 input unit.
-  size_t InchannelSize() const { return channelSize; }
-
   //! Get the number of input units.
   size_t InSize() const { return size; }
 
@@ -158,9 +154,6 @@ class GroupNorm
  private:
   //! Locally-stored number of input units.
   size_t size;
-
-  //! Locally-stored size of one input unit.
-  size_t channelSize;
 
   //! Locally-stored group count.
   size_t groupCount;

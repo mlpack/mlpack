@@ -22,7 +22,6 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
-    channelSize(0),
     size(0),
     groupCount(1),
     eps(1e-8),
@@ -33,8 +32,7 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
 
 template <typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm(
-    const size_t channelSize, const size_t size, const size_t groupCount, const double eps) :
-    channelSize(channelSize),
+    const size_t size, const size_t groupCount, const double eps) :
     size(size),
     groupCount(groupCount),
     eps(eps),
@@ -71,7 +69,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   if (output.is_empty())
     output.set_size(input.n_rows / groupCount, input.n_cols * groupCount);
 
-  assert(input.n_rows % channelSize == 0);
+  assert(size % groupCount == 0);
   assert(input.n_rows % size == 0);
 
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
@@ -92,10 +90,11 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   arma::mat expandedGamma, expandedBeta;
   expandedGamma.set_size(input.n_rows, 1);
   expandedBeta.set_size(input.n_rows, 1);
-  for (size_t r = 0; r < output.n_rows; ++r)
+
+  for (size_t r = 0; r < input.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r / channelSize);
-    expandedBeta(r) = beta(r / channelSize);
+    expandedGamma(r) = gamma(r * input.n_rows / size);
+    expandedBeta(r) = beta(r * input.n_rows / size);
   }
 
   // Scale and shift the output.
@@ -118,7 +117,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   expandedGamma.set_size(input.n_rows, 1);
   for (size_t r = 0; r < input.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r / channelSize);
+    expandedGamma(r) = gamma(r * input.n_rows / size);
   }
 
   // dl / dxhat.
@@ -152,6 +151,8 @@ void GroupNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
+  assert(error.n_rows % size == 0);
+  const channelSize = error.n_rows / size;
   temp = arma::sum(normalized % error, 1);
   arma::mat tempReshaped((temp).memptr(),
       channelSize, temp.n_elem / channelSize, false, false);
@@ -175,7 +176,6 @@ template<typename Archive>
 void GroupNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(channelSize));
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(groupCount));
 
