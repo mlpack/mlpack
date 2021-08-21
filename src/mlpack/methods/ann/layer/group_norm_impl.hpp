@@ -93,8 +93,8 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
 
   for (size_t r = 0; r < input.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r * input.n_rows / size);
-    expandedBeta(r) = beta(r * input.n_rows / size);
+    expandedGamma(r) = gamma(r * size / input.n_rows);
+    expandedBeta(r) = beta(r * size / input.n_rows);
   }
 
   // Scale and shift the output.
@@ -117,7 +117,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   expandedGamma.set_size(input.n_rows, 1);
   for (size_t r = 0; r < input.n_rows; ++r)
   {
-    expandedGamma(r) = gamma(r * input.n_rows / size);
+    expandedGamma(r) = gamma(r * size / input.n_rows);
   }
 
   // dl / dxhat.
