@@ -87,41 +87,24 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  if (g.is_empty())
-    g.set_size(input.n_rows / groupCount, input.n_cols * groupCount);
-
-  arma::mat inputReshaped(const_cast<arma::Mat<eT>&>(input).memptr(),
-      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
-
-  arma::mat expandedGamma;
-  expandedGamma.set_size(input.n_rows, 1);
-  for (size_t r = 0; r < input.n_rows; ++r)
-  {
-    expandedGamma(r) = gamma(r * size / input.n_rows);
-  }
+    const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // dl / dxhat.
-  const arma::mat norm = gy.each_col() % expandedGamma;
-
-  arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
-      gy.n_rows / groupCount, gy.n_cols * groupCount, false, false);
-
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(normReshaped % inputMean, 0) %
+  const arma::mat var = arma::sum(norm % inputMean, 0) %
       arma::pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
-  g = (normReshaped.each_row() % stdInv) + (inputMean.each_row() %
-      var * 2 / inputReshaped.n_rows);
+  g = (norm.each_row() % stdInv) + (inputMean.each_row() %
+      var * 2 / input.n_rows);
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += arma::sum(normReshaped.each_row() % -stdInv, 0) /
-      inputReshaped.n_rows;
-  g.reshape(input.n_rows, input.n_cols);
+  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
+
 }
 
 template<typename InputDataType, typename OutputDataType>
