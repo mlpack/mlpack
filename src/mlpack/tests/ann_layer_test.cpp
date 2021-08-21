@@ -3075,12 +3075,12 @@ TEST_CASE("GroupNormTest", "[ANNLayerTest]")
     { 0.6324555317 , 0.1991169934 , 0.4472135937  },
     { 1.2649110634 , 1.5265636161 , 1.3416407811  }
   };
-
+  std::cout.precision(20);
+  output.raw_print(std::cout);
+  result.raw_print(std::cout);
   CheckMatrices(output, result, 1e-5);
 
   model.Backward(output, output, backwardOutput);
-  std::cout.precision(20);
-  backwardOutput.raw_print(std::cout);
 }
 
 /**
