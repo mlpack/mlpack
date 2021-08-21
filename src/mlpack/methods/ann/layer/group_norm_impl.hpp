@@ -22,8 +22,8 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
-    size(0),
     groupCount(1),
+    size(0),
     eps(1e-8),
     loading(false)
 {
@@ -32,9 +32,9 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm() :
 
 template <typename InputDataType, typename OutputDataType>
 GroupNorm<InputDataType, OutputDataType>::GroupNorm(
-    const size_t size, const size_t groupCount, const double eps) :
-    size(size),
+    const size_t groupCount, const size_t size, const double eps) :
     groupCount(groupCount),
+    size(size),
     eps(eps),
     loading(false)
 {
@@ -176,8 +176,8 @@ template<typename Archive>
 void GroupNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(groupCount));
+  ar(CEREAL_NVP(size));
 
   if (cereal::is_loading<Archive>())
   {
