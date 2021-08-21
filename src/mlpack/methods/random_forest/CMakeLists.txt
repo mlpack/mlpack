@@ -21,7 +21,6 @@ add_julia_binding(random_forest)
 add_go_binding(random_forest)
 add_r_binding(random_forest)
 add_markdown_docs(random_forest "cli;python;julia;go;r" "classification")
-#Adding extra trees binding
 add_cli_executable(extra_trees)
 add_python_binding(extra_trees)
 add_julia_binding(extra_trees)

@@ -26,7 +26,7 @@ BINDING_NAME("Extra Trees");
 BINDING_SHORT_DESC(
     "An implementation of the  Extra Trees algorithm"
     "for classification. Given labelled data, an extra tree can be trained"
-    "and saved for future use;or,  a pre-trained extra tree can be used for"
+    "and saved for future use; or,  a pre-trained extra tree can be used for"
     "classification.")
 // Long description.
 BINDING_LONG_DESC(
