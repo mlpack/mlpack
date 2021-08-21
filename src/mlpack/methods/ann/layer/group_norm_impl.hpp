@@ -152,7 +152,7 @@ void GroupNorm<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>& gradient)
 {
   assert(error.n_rows % size == 0);
-  const channelSize = error.n_rows / size;
+  const size_t channelSize = error.n_rows / size;
   temp = arma::sum(normalized % error, 1);
   arma::mat tempReshaped((temp).memptr(),
       channelSize, temp.n_elem / channelSize, false, false);
