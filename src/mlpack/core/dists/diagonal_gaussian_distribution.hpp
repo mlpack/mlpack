@@ -19,7 +19,7 @@ namespace distribution {
 
 //! A single multivariate Gaussian distribution with diagonal covariance.
 template<typename MatType, typename Vectype>
-class DiagonalGaussianDistribution
+class DiagonalGaussianDistributionType
 {
  private:
   //! Mean of the distribution.
@@ -36,7 +36,7 @@ class DiagonalGaussianDistribution
 
  public:
   //! Default constructor, which creates a Gaussian with zero dimension.
-  DiagonalGaussianDistribution() : logDetCov(0.0) { /* nothing to do. */ }
+  DiagonalGaussianDistributionType() : logDetCov(0.0) { /* nothing to do. */ }
 
   /**
    * Create a Gaussian Distribution with zero mean and diagonal covariance
@@ -44,7 +44,7 @@ class DiagonalGaussianDistribution
    *
    * @param dimension Number of dimensions.
    */
-  DiagonalGaussianDistribution(const size_t dimension) :
+  DiagonalGaussianDistributionType(const size_t dimension) :
       mean(arma::zeros<Vectype>(dimension)),
       covariance(arma::ones<Vectype>(dimension)),
       invCov(arma::ones<Vectype>(dimension)),
@@ -58,8 +58,8 @@ class DiagonalGaussianDistribution
    * @param mean Mean of distribution.
    * @param covariance Covariance of distribution.
    */
-  DiagonalGaussianDistribution(const Vectype& mean,
-                               const Vectype& covariance);
+  DiagonalGaussianDistributionType(const Vectype& mean,
+                                   const Vectype& covariance);
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -150,6 +150,8 @@ class DiagonalGaussianDistribution
     ar(CEREAL_NVP(logDetCov));
   }
 };
+
+using DiagonalGaussianDistribution = DiagonalGaussianDistributionType<arma::mat, arma::vec>;
 
 } // namespace distribution
 } // namespace mlpack

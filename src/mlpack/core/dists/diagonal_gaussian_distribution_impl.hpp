@@ -19,7 +19,7 @@ namespace mlpack {
 namespace distribution {
 
 template<typename MatType, typename Vectype>
-DiagonalGaussianDistribution<MatType, Vectype>::DiagonalGaussianDistribution(
+DiagonalGaussianDistributionType<MatType, Vectype>::DiagonalGaussianDistributionType(
     const Vectype& mean,
     const Vectype& covariance) :
     mean(mean)
@@ -28,7 +28,8 @@ DiagonalGaussianDistribution<MatType, Vectype>::DiagonalGaussianDistribution(
 }
 
 template<typename MatType, typename Vectype>
-void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(const Vectype& covariance)
+void DiagonalGaussianDistributionType<MatType, Vectype>::Covariance(
+    const Vectype& covariance)
 {
   this->invCov = 1 / covariance;
   this->logDetCov = arma::accu(log(covariance));
@@ -36,7 +37,8 @@ void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(const Vectype& c
 }
 
 template<typename MatType, typename Vectype>
-void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(Vectype&& covariance)
+void DiagonalGaussianDistributionType<MatType, Vectype>::Covariance(
+    Vectype&& covariance)
 {
   this->invCov = 1 / covariance;
   this->logDetCov = arma::accu(log(covariance));
@@ -44,7 +46,7 @@ void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(Vectype&& covari
 }
 
 template<typename MatType, typename Vectype>
-double DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
+double DiagonalGaussianDistributionType<MatType, Vectype>::LogProbability(
     const Vectype& observation) const
 {
   const size_t k = observation.n_elem;
@@ -54,7 +56,7 @@ double DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
 }
 
 template<typename MatType, typename Vectype>
-void DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
+void DiagonalGaussianDistributionType<MatType, Vectype>::LogProbability(
     const MatType& observations,
     Vectype& logProbabilities) const
 {
@@ -72,13 +74,14 @@ void DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
 }
 
 template<typename MatType, typename Vectype>
-Vectype DiagonalGaussianDistribution<MatType, Vectype>::Random() const
+Vectype DiagonalGaussianDistributionType<MatType, Vectype>::Random() const
 {
   return (arma::sqrt(covariance) % arma::randn<Vectype>(mean.n_elem)) + mean;
 }
 
 template<typename MatType, typename Vectype>
-void DiagonalGaussianDistribution<MatType, Vectype>::Train(const MatType& observations)
+void DiagonalGaussianDistributionType<MatType, Vectype>::Train(
+    const MatType& observations)
 {
   if (observations.n_cols > 1)
   {
@@ -106,8 +109,9 @@ void DiagonalGaussianDistribution<MatType, Vectype>::Train(const MatType& observ
 }
 
 template<typename MatType, typename Vectype>
-void DiagonalGaussianDistribution<MatType, Vectype>::Train(const MatType& observations,
-                                                           const Vectype& probabilities)
+void DiagonalGaussianDistributionType<MatType, Vectype>::Train(
+    const MatType& observations,
+    const Vectype& probabilities)
 {
   if (observations.n_cols > 0)
   {
