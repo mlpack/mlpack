@@ -8,6 +8,8 @@ set(SOURCES
   extension.hpp
   format.hpp
   has_serialize.hpp
+  histogram.hpp
+  histogram_impl.hpp
   is_naninf.hpp
   load_csv.hpp
   load_csv.cpp
