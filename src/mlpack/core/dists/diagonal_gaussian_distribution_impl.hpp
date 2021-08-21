@@ -9,66 +9,76 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+
 #include "diagonal_gaussian_distribution.hpp"
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution {
 
-DiagonalGaussianDistribution::DiagonalGaussianDistribution(
-    const arma::vec& mean,
-    const arma::vec& covariance) :
+template<typename MatType, typename Vectype>
+DiagonalGaussianDistribution<MatType, Vectype>::DiagonalGaussianDistribution(
+    const Vectype& mean,
+    const Vectype& covariance) :
     mean(mean)
 {
   Covariance(covariance);
 }
 
-void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
+template<typename MatType, typename Vectype>
+void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(const Vectype& covariance)
 {
   this->invCov = 1 / covariance;
   this->logDetCov = arma::accu(log(covariance));
   this->covariance = covariance;
 }
 
-void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
+template<typename MatType, typename Vectype>
+void DiagonalGaussianDistribution<MatType, Vectype>::Covariance(Vectype&& covariance)
 {
   this->invCov = 1 / covariance;
   this->logDetCov = arma::accu(log(covariance));
   this->covariance = std::move(covariance);
 }
 
-double DiagonalGaussianDistribution::LogProbability(
-    const arma::vec& observation) const
+template<typename MatType, typename Vectype>
+double DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
+    const Vectype& observation) const
 {
   const size_t k = observation.n_elem;
-  const arma::vec diff = observation - mean;
-  const arma::vec logExponent = diff.t() * arma::diagmat(invCov) * diff;
+  const Vectype diff = observation - mean;
+  const Vectype logExponent = diff.t() * arma::diagmat(invCov) * diff;
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
-void DiagonalGaussianDistribution::LogProbability(
-    const arma::mat& observations,
-    arma::vec& logProbabilities) const
+template<typename MatType, typename Vectype>
+void DiagonalGaussianDistribution<MatType, Vectype>::LogProbability(
+    const MatType& observations,
+    Vectype& logProbabilities) const
 {
   const size_t k = observations.n_rows;
 
   // Column i of 'diffs' is the difference between observations.col(i) and
   // the mean.
-  arma::mat diffs = observations.each_col() - mean;
+  MatType diffs = observations.each_col() - mean;
 
   // Calculates log of exponent equation in multivariate Gaussian
   // distribution. We use only diagonal part for faster computation.
-  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
+  Vectype logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
-arma::vec DiagonalGaussianDistribution::Random() const
+template<typename MatType, typename Vectype>
+Vectype DiagonalGaussianDistribution<MatType, Vectype>::Random() const
 {
-  return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
+  return (arma::sqrt(covariance) % arma::randn<Vectype>(mean.n_elem)) + mean;
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations)
+template<typename MatType, typename Vectype>
+void DiagonalGaussianDistribution<MatType, Vectype>::Train(const MatType& observations)
 {
   if (observations.n_cols > 1)
   {
@@ -85,7 +95,7 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   mean = arma::sum(observations, 1) / observations.n_cols;
 
   // Now calculate the covariance.
-  const arma::mat diffs = observations.each_col() - mean;
+  const MatType diffs = observations.each_col() - mean;
   covariance += arma::sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
@@ -95,8 +105,9 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   logDetCov = arma::accu(log(covariance));
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations,
-                                         const arma::vec& probabilities)
+template<typename MatType, typename Vectype>
+void DiagonalGaussianDistribution<MatType, Vectype>::Train(const MatType& observations,
+                                                           const Vectype& probabilities)
 {
   if (observations.n_cols > 0)
   {
@@ -126,13 +137,13 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   }
 
   // Normalize the probabilities.
-  arma::vec normalizedProbs = probabilities / v1;
+  Vectype normalizedProbs = probabilities / v1;
 
   // Calculate the mean.
   mean = observations * normalizedProbs;
 
   // Now calculate the covariance.
-  const arma::mat diffs = observations.each_col() - mean;
+  const MatType diffs = observations.each_col() - mean;
   covariance += (diffs % diffs) * normalizedProbs;
 
   // Calculate the sum of each weight squared.
@@ -146,3 +157,8 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif
