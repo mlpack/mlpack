@@ -66,40 +66,20 @@ template<typename eT>
 void GroupNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  if (output.is_empty())
-    output.set_size(input.n_rows / groupCount, input.n_cols * groupCount);
-
-  assert(size % groupCount == 0);
-  assert(input.n_rows % size == 0);
-
-  arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
-      input.n_rows / groupCount, input.n_cols * groupCount, false, false);
-
-  mean = arma::mean(reshapedInput, 0);
-  variance = arma::var(reshapedInput, 1, 0);
+  mean = arma::mean(input, 0);
+  variance = arma::var(input, 1, 0);
 
   // Normalize the input.
-  output = reshapedInput.each_row() - mean;
+  output = input.each_row() - mean;
   inputMean = output;
   output.each_row() /= arma::sqrt(variance + eps);
 
-  output.reshape(input.n_rows, input.n_cols);
   // Reused in the backward and gradient step.
   normalized = output;
 
-  arma::mat expandedGamma, expandedBeta;
-  expandedGamma.set_size(input.n_rows, 1);
-  expandedBeta.set_size(input.n_rows, 1);
-
-  for (size_t r = 0; r < input.n_rows; ++r)
-  {
-    expandedGamma(r) = gamma(r * size / input.n_rows);
-    expandedBeta(r) = beta(r * size / input.n_rows);
-  }
-
   // Scale and shift the output.
-  output.each_col() %= expandedGamma;
-  output.each_col() += expandedBeta;
+  output.each_col() %= gamma;
+  output.each_col() += beta;
 }
 
 template<typename InputDataType, typename OutputDataType>
