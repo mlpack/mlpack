@@ -1,0 +1,599 @@
+/*!
+
+@file fastmks.txt
+@author Ryan Curtin
+@brief Tutorial for how to use FastMKS in mlpack.
+
+@page fmkstutorial Fast max-kernel search tutorial (fastmks)
+
+@section intro_fmkstut Introduction
+
+The FastMKS algorithm (fast exact max-kernel search) is a recent algorithm
+proposed in the following papers:
+
+@code
+@inproceedings{curtin2013fast,
+  title={Fast Exact Max-Kernel Search},
+  author={Curtin, Ryan R. and Ram, Parikshit and Gray, Alexander G.},
+  booktitle={Proceedings of the 2013 SIAM International Conference on Data
+      Mining (SDM '13)},
+  year={2013},
+  pages={1--9}
+}
+
+@article{curtin2014dual,
+  author = {Curtin, Ryan R. and Ram, Parikshit},
+  title = {Dual-tree fast exact max-kernel search},
+  journal = {Statistical Analysis and Data Mining},
+  volume = {7},
+  number = {4},
+  publisher = {Wiley Subscription Services, Inc., A Wiley Company},
+  issn = {1932-1872},
+  url = {http://dx.doi.org/10.1002/sam.11218},
+  doi = {10.1002/sam.11218},
+  pages = {229--253},
+  year = {2014},
+}
+@endcode
+
+Given a set of query points \f$Q\f$ and a set of reference points \f$R\f$, the
+FastMKS algorithm is a fast dual-tree (or single-tree) algorithm which finds
+
+\f[
+\arg\max_{p_r \in R} K(p_q, p_r)
+\f]
+
+for all points \f$p_q \in Q\f$ and for some Mercer kernel \f$K(\cdot, \cdot)\f$.
+A Mercer kernel is a kernel that is positive semidefinite; these are the classes
+of kernels that can be used with the kernel trick.  In short, the positive
+semidefiniteness of a Mercer kernel means that any kernel matrix (or Gram
+matrix) created on a dataset must be positive semidefinite.
+
+The FastMKS algorithm builds trees on the datasets \f$Q\f$ and \f$R\f$ in such a
+way that explicit representation of the points in the kernel space is
+unnecessary, by using cover trees (\ref mlpack::tree::CoverTree).  This allows
+the algorithm to be run, for instance, on string kernels, where there is no
+sensible explicit representation.  The \b mlpack implementation allows any type
+of tree that does not require an explicit representation to be used.  For more
+details, see the paper.
+
+At the time of this writing there is no other fast algorithm for exact
+max-kernel search.  \b mlpack implements both single-tree and dual-tree fast
+max-kernel search.
+
+\b mlpack provides:
+
+ - a \ref cli_fmkstut "simple command-line executable" to run FastMKS
+ - a \ref fastmks_fmkstut "C++ interface" to run FastMKS
+
+@section toc_fmkstut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro_fmkstut
+ - \ref toc_fmkstut
+ - \ref cli_fmkstut
+   - \ref cli_ex1_fmkstut
+   - \ref cli_ex2_fmkstut
+   - \ref cli_ex3_fmkstut
+   - \ref cli_ex4_fmkstut
+   - \ref cli_ex5_fmkstut
+   - \ref cli_ex6_fmkstut
+   - \ref cli_ex7_fmkstut
+ - \ref fastmks_fmkstut
+   - \ref fastmks_ex1_fmkstut
+   - \ref fastmks_ex2_fmkstut
+   - \ref fastmks_ex3_fmkstut
+   - \ref fastmks_ex4_fmkstut
+ - \ref writing_kernel_fmkstut
+ - \ref custom_tree_fmkstut
+ - \ref objects_fmkstut
+ - \ref further_doc_fmkstut
+
+@section cli_fmkstut Command-line FastMKS (mlpack_fastmks)
+
+\b mlpack provides a command-line program, \c mlpack_fastmks, which is used to
+perform FastMKS on a given query and reference dataset.  It supports numerous
+different types of kernels:
+
+ - \ref mlpack::kernel::LinearKernel "linear kernel"
+ - \ref mlpack::kernel::PolynomialKernel "polynomial kernel"
+ - \ref mlpack::kernel::CosineDistance "cosine distance"
+ - \ref mlpack::kernel::GaussianKernel "Gaussian kernel"
+ - \ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel"
+ - \ref mlpack::kernel::TriangularKernel "triangular kernel"
+ - \ref mlpack::kernel::HyperbolicTangentKernel "hyperbolic tangent kernel"
+
+Note that when a shift-invariant kernel is used, the results will be the same as
+nearest neighbor search, so @ref nstutorial "KNN" may be a better option.  A
+shift-invariant kernel is a kernel that depends only on the distance between the
+two input points.  The \ref mlpack::kernel::GaussianKernel "Gaussian kernel",
+\ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", and \ref
+mlpack::kernel::TriangularKernel "triangular kernel" are instances of
+shift-invariant kernels.  The paper contains more details on this situation.
+The \c mlpack_fastmks executable still provides these kernels as options,
+though.
+
+The following examples detail usage of the \c mlpack_fastmks program.  Note that
+you can get documentation on all the possible parameters by typing:
+
+@code
+$ mlpack_fastmks --help
+@endcode
+
+@subsection cli_ex1_fmkstut FastMKS with a linear kernel on one dataset
+
+If only one dataset is specified (with \c -r or \c --reference_file), the
+reference dataset is taken to be both the query and reference datasets.  The
+example below finds the 4 maximum kernels of each point in dataset.csv, using
+the default linear kernel.
+
+@code
+$ mlpack_fastmks -r dataset.csv -k 4 -v -p products.csv -i indices.csv
+@endcode
+
+When the operation completes, the values of the kernels are saved in
+products.csv and the indices of the points which give the maximum kernels are
+saved in indices.csv.
+
+@code
+$ head indices.csv
+762,910,863,890
+762,910,426,568
+910,762,863,426
+762,910,863,426
+863,910,614,762
+762,863,910,614
+762,910,488,568
+762,910,863,426
+910,762,863,426
+863,762,910,614
+@endcode
+
+@code
+$ head products.csv
+1.6221652894e+00,1.5998743443e+00,1.5898890769e+00,1.5406789753e+00
+1.3387953449e+00,1.3317349486e+00,1.2966613184e+00,1.2774493620e+00
+1.6386110476e+00,1.6332029753e+00,1.5952629124e+00,1.5887195330e+00
+1.0917545803e+00,1.0820878726e+00,1.0668992636e+00,1.0419838050e+00
+1.2272441028e+00,1.2169643942e+00,1.2104597963e+00,1.2067780154e+00
+1.5720962456e+00,1.5618504956e+00,1.5609069923e+00,1.5235605095e+00
+1.3655478674e+00,1.3548593212e+00,1.3311547298e+00,1.3250728881e+00
+2.0119149744e+00,2.0043668067e+00,1.9847289214e+00,1.9298280046e+00
+1.1586923205e+00,1.1494586097e+00,1.1274872962e+00,1.1248172766e+00
+4.4789820372e-01,4.4618539778e-01,4.4200024852e-01,4.3989721792e-01
+@endcode
+
+We can see in this example that for point 0, the point with maximum kernel value
+is point 762, with a kernel value of 1.622165.  For point 3, the point with
+third largest kernel value is point 863, with a kernel value of 1.0669.
+
+@subsection cli_ex2_fmkstut FastMKS on a reference and query dataset
+
+The query points may be different than the reference points.  To specify a
+different query set, the \c -q (or \c --query_file) option is used, as in the
+example below.
+
+@code
+$ mlpack_fastmks -q query_set.csv -r reference_set.csv -k 5 -i indices.csv \
+> -p products.csv
+@endcode
+
+@subsection cli_ex3_fmkstut FastMKS with a different kernel
+
+The \c mlpack_fastmks program offers more than just the linear kernel.  Valid
+options are \c 'linear', \c 'polynomial', \c 'cosine', \c 'gaussian',
+\c 'epanechnikov', \c 'triangular' and \c 'hyptan' (the hyperbolic tangent
+kernel).  Note that the hyperbolic tangent kernel is provably not a Mercer
+kernel but is positive semidefinite on most datasets and is commonly used as a
+kernel.  Note also that the Gaussian kernel and other shift-invariant kernels
+give the same results as nearest neighbor search (see \ref nstutorial).
+
+The kernel to use is specified with the \c -K (or \c --kernel) option.  The
+example below uses the cosine similarity as a kernel.
+
+@code
+$ mlpack_fastmks -r dataset.csv -k 5 -K cosine -i indices.csv -p products.csv -v
+@endcode
+
+@subsection cli_ex4_fmkstut Using single-tree search or naive search
+
+In some cases, it may be useful to not use the dual-tree FastMKS algorithm.
+Instead you can specify the \c --single option, indicating that a tree should be
+built only on the reference set, and then the queries should be processed in a
+linear scan (instead of in a tree).  Alternately, the \c -N (or \c --naive)
+option makes the program not build trees at all and instead use brute-force
+search to find the solutions.
+
+The example below uses single-tree search on two datasets with the linear
+kernel.
+
+@code
+$ mlpack_fastmks -q query_set.csv -r reference_set.csv --single -k 5 \
+> -p products.csv -i indices.csv -K linear
+@endcode
+
+The example below uses naive search on one dataset.
+
+@code
+$ mlpack_fastmks -r reference_set.csv -k 5 -N -p products.csv -i indices.csv
+@endcode
+
+@subsection cli_ex5_fmkstut Parameters for alternate kernels
+
+Many of the alternate kernel choices have parameters which can be chosen; these
+are detailed in this section.
+
+ - \b \c -w (\c --bandwidth): this sets the bandwidth of the kernel, and is
+   applicable to the \c 'gaussian', \c 'epanechnikov', and \c 'triangular'
+   kernels.  This is the "spread" of the kernel.
+
+ - \b \c -d (\c --degree): this sets the degree of the polynomial kernel (the
+   power to which the result is raised).  It is only applicable to the \c
+   'polynomial' kernel.
+
+ - \b \c -o (\c --offset): this sets the offset of the kernel, for the \c
+   'polynomial' and \c 'hyptan' kernel.  See \ref
+   mlpack::kernel::PolynomialKernel "the polynomial kernel documentation" and
+   \ref mlpack::kernel::HyperbolicTangentKernel
+   "the hyperbolic tangent kernel documentation" for more information.
+
+ - \b \c -s (\c --scale): this sets the scale of the kernel, and is only
+   applicable to the \c 'hyptan' kernel.  See \ref
+   mlpack::kernel::HyperbolicTangentKernel
+   "the hyperbolic tangent kernel documentation" for more information.
+
+@subsection cli_ex6_fmkstut Saving a FastMKS model/tree
+
+The \c mlpack_fastmks program also supports saving a model built on a reference
+dataset (this model includes the tree, the kernel, and the search parameters).
+The \c --output_model_file or \c -M option allows one to save these parameters
+to disk for later usage.  An example is below:
+
+@code
+$ mlpack_fastmks -r reference_set.csv -K cosine -M fastmks_model.xml
+@endcode
+
+This example builds a tree on the dataset in \c reference_set.csv using the
+cosine similarity kernel, and saves the resulting model to \c fastmks_model.xml.
+This model may then be used in later calls to the \c mlpack_fastmks program.
+
+@subsection cli_ex7_fmkstut Loading a FastMKS model for further searches
+
+Supposing that a FastMKS model has been saved with the \c --output_model_file or
+\c -M parameter, that model can then be later loaded in subsequent calls to the
+\c mlpack_fastmks program, using the \c --input_model_file or \c -m option.  For
+instance, with a model saved in \c fastmks_model.xml and a query set in
+\c query_set.csv, we can find 3 max-kernel candidates, saving to \c indices.csv
+and \c kernels.csv:
+
+@code
+$ mlpack_fastmks -m fastmks_model.xml -k 3 -i indices.csv -p kernels.csv
+@endcode
+
+Loading a model as opposed to building a model is advantageous because the
+reference tree is already built.  So, among other situations, this could be
+useful in the setting where many different query sets (or many different values
+of k) will be used.
+
+Note that the kernel cannot be changed in a saved model without rebuilding the
+model entirely.
+
+@section fastmks_fmkstut The 'FastMKS' class
+
+The \c FastMKS<> class offers a simple API for use within C++ applications, and
+allows further flexibility in kernel choice and tree type choice.  However,
+\c FastMKS<> has no default template parameter for the kernel type -- that must
+be manually specified.  Choices that \b mlpack provides include:
+
+ - \ref mlpack::kernel::LinearKernel
+ - \ref mlpack::kernel::PolynomialKernel
+ - \ref mlpack::kernel::CosineDistance
+ - \ref mlpack::kernel::GaussianKernel
+ - \ref mlpack::kernel::EpanechnikovKernel
+ - \ref mlpack::kernel::TriangularKernel
+ - \ref mlpack::kernel::HyperbolicTangentKernel
+ - \ref mlpack::kernel::LaplacianKernel
+ - \ref mlpack::kernel::PSpectrumStringKernel
+
+The following examples use kernels from that list.  Writing your own kernel is
+detailed in \ref writing_kernel_fmkstut "the next section".  Remember that when
+you are using the C++ interface, the data matrices must be column-major.  See
+\ref matrices for more information.
+
+@subsection fastmks_ex1_fmkstut FastMKS on one dataset
+
+Given only a reference dataset, the following code will run FastMKS with k set
+to 5.
+
+@code
+#include <mlpack/methods/fastmks/fastmks.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
+
+using namespace mlpack::fastmks;
+
+// The reference dataset, which is column-major.
+extern arma::mat data;
+
+// This will initialize the FastMKS object with the linear kernel with default
+// options: K(x, y) = x^T y.  The tree is built in the constructor.
+FastMKS<LinearKernel> f(data);
+
+// The results will be stored in these matrices.
+arma::Mat<size_t> indices;
+arma::mat products;
+
+// Run FastMKS.
+f.Search(5, indices, products);
+@endcode
+
+@subsection fastmks_ex2_fmkstut FastMKS with a query and reference dataset
+
+In this setting we have both a query and reference dataset.  We search for 10
+maximum kernels.
+
+@code
+#include <mlpack/methods/fastmks/fastmks.hpp>
+#include <mlpack/core/kernels/triangular_kernel.hpp>
+
+using namespace mlpack::fastmks;
+using namespace mlpack::kernel;
+
+// The reference and query datasets, which are column-major.
+extern arma::mat referenceData;
+extern arma::mat queryData;
+
+// This will initialize the FastMKS object with the triangular kernel with
+// default options (bandwidth of 1).  The reference tree is built in the
+// constructor.
+FastMKS<TriangularKernel> f(referenceData);
+
+// The results will be stored in these matrices.
+arma::Mat<size_t> indices;
+arma::mat products;
+
+// Run FastMKS.  The query tree is built during the call to Search().
+f.Search(queryData, 10, indices, products);
+@endcode
+
+@subsection fastmks_ex3_fmkstut FastMKS with an initialized kernel
+
+Often, kernels have parameters which need to be specified.  \c FastMKS<> has
+constructors which take initialized kernels.  Note that temporary kernels cannot
+be passed as an argument.  The example below initializes a \c PolynomialKernel
+object and then runs FastMKS with a query and reference dataset.
+
+@code
+#include <mlpack/methods/fastmks/fastmks.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+
+using namespace mlpack::fastmks;
+using namespace mlpack::kernel;
+
+// The reference and query datasets, which are column-major.
+extern arma::mat referenceData;
+extern arma::mat queryData;
+
+// Initialize the polynomial kernel with degree of 3 and offset of 2.5.
+PolynomialKernel pk(3.0, 2.5);
+
+// Create the FastMKS object with the initialized kernel.
+FastMKS<PolynomialKernel> f(referenceData, pk);
+
+// The results will be stored in these matrices.
+arma::Mat<size_t> indices;
+arma::mat products;
+
+// Run FastMKS.
+f.Search(queryData, 10, indices, products);
+@endcode
+
+The syntax for running FastMKS with one dataset and an initialized kernel is
+very similar:
+
+@code
+f.Search(10, indices, products);
+@endcode
+
+@subsection fastmks_ex4_fmkstut FastMKS with an already-created tree
+
+By default, \c FastMKS<> uses the cover tree datastructure (see \ref
+mlpack::tree::CoverTree).  Sometimes, it is useful to modify the parameters of
+the cover tree.  In this scenario, a tree must be built outside of the
+constructor, and then passed to the appropriate \c FastMKS<> constructor.  An
+example on just a reference dataset is shown below, where the base of the cover
+tree is modified.
+
+We also use an instantiated kernel, but because we are building our own tree, we
+must use \ref mlpack::metric::IPMetric "IPMetric" so that our tree is built on
+the metric induced by our kernel function.
+
+@code
+#include <mlpack/methods/fastmks/fastmks.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+
+// The reference dataset, which is column-major.
+extern arma::mat data;
+
+// Initialize the polynomial kernel with a degree of 4 and offset of 2.0.
+PolynomialKernel pk(4.0, 2.0);
+
+// Create the metric induced by this kernel (because a kernel is not a metric
+// and we can't build a tree on a kernel alone).
+IPMetric<PolynomialKernel> metric(pk);
+
+// Now build a tree on the reference dataset using the instantiated metric and
+// the custom base of 1.5 (default is 1.3).  We have to be sure to use the right
+// type here -- FastMKS needs the FastMKSStat object as the tree's
+// StatisticType.
+typedef tree::CoverTree<IPMetric<PolynomialKernel>, tree::FirstPointIsRoot,
+    FastMKSStat> TreeType; // Convenience typedef.
+TreeType* tree = new TreeType(data, metric, 1.5);
+
+// Now initialize FastMKS with that statistic.  We don't need to specify the
+// TreeType template parameter since we are still using the default.  We don't
+// need to pass the kernel because that is contained in the tree.
+FastMKS<PolynomialKernel> f(tree);
+
+// The results will be stored in these matrices.
+arma::Mat<size_t> indices;
+arma::mat products;
+
+// Run FastMKS.
+f.Search(10, indices, products);
+@endcode
+
+The syntax is similar for the case where different query and reference datasets
+are given; but trees for both need to be built in the manner specified above.
+Be sure to build both trees using the same metric (or at least a metric with the
+exact same parameters).
+
+@code
+f.Search(queryTree, 10, indices, products);
+@endcode
+
+@section writing_kernel_fmkstut Writing a custom kernel for FastMKS
+
+While \b mlpack provides some number of kernels in the mlpack::kernel namespace,
+it is easy to create a custom kernel.  To satisfy the KernelType policy, a class
+must implement the following methods:
+
+@code
+// Empty constructor is required.
+KernelType();
+
+// Evaluate the kernel between two points.
+template<typename VecType>
+double Evaluate(const VecType& a, const VecType& b);
+@endcode
+
+The template parameter \c VecType is helpful (but not necessary) so that the
+kernel can be used with both sparse and dense matrices (\c arma::sp_mat and \c
+arma::mat).
+
+@section custom_tree_fmkstut Using other tree types for FastMKS
+
+The use of the cover tree (see \ref mlpack::tree::CoverTree "CoverTree") is not
+necessary for FastMKS, although it is the default tree type.  A different type
+of tree can be specified with the TreeType template parameter.  However, the
+tree type is required to have \ref mlpack::fastmks::FastMKSStat "FastMKSStat" as
+the StatisticType, and for FastMKS to work, the tree must be built only on
+kernel evaluations (or distance evaluations in the kernel space via
+\ref mlpack::metric::IPMetric "IPMetric::Evaluate()").
+
+Below is an example where a custom tree class, \c CustomTree, is used as the
+tree type for FastMKS.  In this example FastMKS is only run on one dataset.
+
+@code
+#include <mlpack/methods/fastmks/fastmks.hpp>
+#include "custom_tree.hpp"
+
+using namespace mlpack::fastmks;
+using namespace mlpack::tree;
+
+// The dataset that FastMKS will be run on.
+extern arma::mat data;
+
+// The custom tree type.  We'll assume that the first template parameter is the
+// statistic type.
+typedef CustomTree<FastMKSStat> TreeType;
+
+// The FastMKS constructor will create the tree.
+FastMKS<LinearKernel, arma::mat, TreeType> f(data);
+
+// These will hold the results.
+arma::Mat<size_t> indices;
+arma::mat products;
+
+// Run FastMKS.
+f.Search(5, indices, products);
+@endcode
+
+@section objects_fmkstut Running FastMKS on objects
+
+FastMKS has a lot of utility on objects which are not representable in some sort
+of metric space.  These objects might be strings, graphs, models, or other
+objects.  For these types of objects, questions based on distance don't really
+make sense.  One good example is with strings.  The question "how far is 'dog'
+from 'Taki Inoue'?" simply doesn't make sense.  We can't have a centroid of the
+terms 'Fritz', 'E28', and 'popsicle'.
+
+However, what we can do is define some sort of kernel on these objects.  These
+kernels generally correspond to some similarity measure, with one example being
+the p-spectrum string kernel (see \ref mlpack::kernel::PSpectrumStringKernel).
+Using that, we can say "how similar is 'dog' to 'Taki Inoue'?" and get an actual
+numerical result by evaluating K('dog', 'Taki Inoue') (where K is our p-spectrum
+string kernel).
+
+The only requirement on these kernels is that they are positive definite kernels
+(or Mercer kernels).  For more information on those details, refer to the
+FastMKS paper.
+
+Remember that FastMKS is a tree-based method.  But trees like the binary space
+tree require centroids -- and as we said earlier, centroids often don't make
+sense with these types of objects.  Therefore, we need a type of tree which is
+built \b exclusively on points in the dataset -- those are points which we can
+evaluate our kernel function on.  The cover tree is one example of a type of
+tree satisfying this condition; its construction will only call the kernel
+function on two points that are in the dataset.
+
+But, we have one more problem.  The \c CoverTree class is built on \c arma::mat
+objects (dense matrices).  Our objects, however, are not necessarily
+representable in a column of a matrix.  To use the example we have been using,
+strings cannot be represented easily in a matrix because they may all have
+different lengths.
+
+The way to work around this problem is to create a "fake" data matrix which
+simply holds indices to objects.  A good example of how to do this is detailed
+in the documentation for the \ref mlpack::kernel::PSpectrumStringKernel
+"PSpectrumStringKernel".
+
+In short, the trick is to make each data matrix one-dimensional and containing
+linear indices:
+
+@code
+arma::mat data = "0 1 2 3 4 5 6 7 8";
+@endcode
+
+Then, when \c Evaluate() is called on the kernel function, the parameters will
+be two one-dimensional vectors that simply contain indices to objects.  The
+example below details the process a little better:
+
+@code
+// This function evaluates the kernel on two Objects (in this example, its
+// implementation is not important; the only important thing is that the
+// function exists).
+double ObjectKernel::Evaluate(const Object& a, const Object& b) const;
+
+template<typename VecType>
+double ObjectKernel::Evaluate(const VecType& a, const VecType& b) const
+{
+  // Extract the indices from the vectors.
+  const size_t indexA = size_t(a[0]);
+  const size_t indexB = size_t(b[0]);
+
+  // Assume that 'objects' is an array (or std::vector or other container)
+  // holding Objects.
+  const Object& objectA = objects[indexA];
+  const Object& objectB = objects[indexB];
+
+  // Now call the function that does the actual evaluation on the objects and
+  // return its result.
+  return Evaluate(objectA, objectB);
+}
+@endcode
+
+As written earlier, the documentation for \ref
+mlpack::kernel::PSpectrumStringKernel "PSpectrumStringKernel" is a good place to
+consult for further reference on this.  That kernel uses two dimensional
+indices; one dimension represents the index of the string, and the other
+represents whether it is referring to the query set or the reference set.  If
+your kernel is meant to work on separate query and reference sets, that strategy
+should be considered.
+
+@section further_doc_fmkstut Further documentation
+
+For further documentation on the FastMKS class, consult the \ref
+mlpack::fastmks::FastMKS "complete API documentation".
+
+*/
