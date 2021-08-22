@@ -2,7 +2,7 @@
  * @file tests/main_tests/image_converter_test.cpp
  * @author Jeffin Sam
  *
- * Test mlpackMain() of load_save_image_main.cpp.
+ * Test RUN_BINDING() of load_save_image_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,47 +12,31 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "ImageConverter";
-
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/image_converter_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include "test_helper.hpp"
+#include "main_test_fixture.hpp"
+
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
-
 using namespace mlpack;
 
-struct ImageConverterTestFixture
-{
- public:
-  ImageConverterTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~ImageConverterTestFixture()
-  {
-    // Clear the settings.
-    remove("test_image777.png");
-    remove("test_image999.png");
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(ImageConverterTestFixture);
 
 TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
   // width * height * channels.
   REQUIRE(output.n_rows == 50 * 50 * 3);
   REQUIRE(output.n_cols == 2);
+
+  remove("test_image777.png");
+  remove("test_image999.png");
 }
 
 TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
@@ -67,10 +51,9 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
   SetInputParam("channels", 3);
   SetInputParam("save", true);
   SetInputParam("dataset", testimage);
-  mlpackMain();
+  RUN_BINDING();
 
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   SetInputParam<vector<string>>("input", {"test_image777.png",
     "test_image999.png"});
@@ -78,12 +61,15 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
   SetInputParam("width", 5);
   SetInputParam("channels", 3);
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
   REQUIRE(output.n_rows == 5 * 5 * 3);
   REQUIRE(output.n_cols == 2);
   for (size_t i = 0; i < output.n_elem; ++i)
     REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-7));
+
+  remove("test_image777.png");
+  remove("test_image999.png");
 }
 
 /**
@@ -103,7 +89,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
   SetInputParam("dataset", testimage);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -125,7 +111,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
   SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -146,7 +132,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
   SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -167,7 +153,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
   SetInputParam("channels", -1);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -183,6 +169,6 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
   SetInputParam("channels", 50);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

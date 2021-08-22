@@ -167,8 +167,6 @@ double LARS::Train(const arma::mat& matX,
                    arma::vec& beta,
                    const bool transposeData)
 {
-  Timer::Start("lars_regression");
-
   // Clear any previous solution information.
   betaPath.clear();
   lambdaPath.clear();
@@ -226,7 +224,6 @@ double LARS::Train(const arma::mat& matX,
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
-    Timer::Stop("lars_regression");
     return maxCorr;
   }
 
@@ -461,7 +458,6 @@ double LARS::Train(const arma::mat& matX,
   // Unfortunate copy...
   beta = betaPath.back();
 
-  Timer::Stop("lars_regression");
   return ComputeError(matX, y, !transposeData);
 }
 

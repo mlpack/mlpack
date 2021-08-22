@@ -37,6 +37,7 @@ set(SOURCES
   "get_printable_param_name_impl.hpp"
   "get_printable_type.hpp"
   "md_option.hpp"
+  "mlpack_main.hpp"
   "print_doc_functions.hpp"
   "print_doc_functions_impl.hpp"
   "print_docs.hpp"

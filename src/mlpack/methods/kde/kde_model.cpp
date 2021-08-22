@@ -216,7 +216,7 @@ void KDEModel::InitializeModel()
   }
 }
 
-void KDEModel::BuildModel(arma::mat&& referenceSet)
+void KDEModel::BuildModel(util::Timers& timers, arma::mat&& referenceSet)
 {
   InitializeModel();
 
@@ -236,19 +236,21 @@ void KDEModel::BuildModel(arma::mat&& referenceSet)
   kdeModel->MCBreakCoef(mcBreakCoef);
 
   // Train the model.
-  kdeModel->Train(std::move(referenceSet));
+  kdeModel->Train(timers, std::move(referenceSet));
 }
 
 // Perform bichromatic evaluation.
-void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimates)
+void KDEModel::Evaluate(util::Timers& timers,
+                        arma::mat&& querySet,
+                        arma::vec& estimates)
 {
-  kdeModel->Evaluate(std::move(querySet), estimates);
+  kdeModel->Evaluate(timers, std::move(querySet), estimates);
 }
 
 // Perform monochromatic evaluation.
-void KDEModel::Evaluate(arma::vec& estimates)
+void KDEModel::Evaluate(util::Timers& timers, arma::vec& estimates)
 {
-  kdeModel->Evaluate(estimates);
+  kdeModel->Evaluate(timers, estimates);
 }
 
 // Clean memory.

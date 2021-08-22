@@ -400,8 +400,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     throw std::invalid_argument(ss.str());
   }
 
-  Timer::Start("computing_neighbors");
-
   baseCases = 0;
   scores = 0;
 
@@ -476,11 +474,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     case DUAL_TREE_MODE:
     {
       // Build the query tree.
-      Timer::Stop("computing_neighbors");
-      Timer::Start("tree_building");
       Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-      Timer::Stop("tree_building");
-      Timer::Start("computing_neighbors");
 
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, epsilon);
@@ -527,8 +521,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       break;
     }
   }
-
-  Timer::Stop("computing_neighbors");
 
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
@@ -619,8 +611,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
         "query tree when naive or singleMode are set to true");
 
-  Timer::Start("computing_neighbors");
-
   baseCases = 0;
   scores = 0;
 
@@ -655,8 +645,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   Log::Info << rules.Scores() << " node combinations were scored.\n";
   Log::Info << rules.BaseCases() << " base cases were calculated.\n";
-
-  Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
   if (!oldFromNewReferences.empty() &&
@@ -704,8 +692,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
-
-  Timer::Start("computing_neighbors");
 
   baseCases = 0;
   scores = 0;
@@ -832,8 +818,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   }
 
   rules.GetResults(*neighborPtr, *distancePtr);
-
-  Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
   if (!oldFromNewReferences.empty() &&

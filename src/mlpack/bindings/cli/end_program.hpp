@@ -23,21 +23,21 @@ namespace cli {
  * Handle command-line program termination.  If --help or --info was passed, we
  * won't make it here, so we don't have to write any contingencies for that.
  */
-inline void EndProgram()
+inline void EndProgram(util::Params& params, util::Timers& timers)
 {
-  // Stop the CLI timers.
-  IO::GetSingleton().timer.StopAllTimers();
+  // Stop the timers.
+  timers.StopAllTimers();
 
   // Print any output.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   for (auto& it : parameters)
   {
     util::ParamData& d = it.second;
     if (!d.input)
-      IO::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
+      params.functionMap[d.tname]["OutputParam"](d, NULL, NULL);
   }
 
-  if (IO::HasParam("verbose"))
+  if (params.Has("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
@@ -48,21 +48,34 @@ inline void EndProgram()
       // We can handle strings, ints, bools, doubles.
       util::ParamData& data = it.second;
       std::string cliName;
-      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
-          NULL, (void*) &cliName);
+      params.functionMap[data.tname]["MapParameterName"](data, NULL,
+          (void*) &cliName);
       Log::Info << "  " << cliName << ": ";
 
       std::string printableParam;
-      IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
-          NULL, (void*) &printableParam);
+      params.functionMap[data.tname]["GetPrintableParam"](data, NULL,
+          (void*) &printableParam);
       Log::Info << printableParam << std::endl;
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto& it2 : IO::GetSingleton().timer.GetAllTimers())
+
+    // Merge the global timers with the binding-specific ones.
+    std::map<std::string, std::chrono::microseconds> timerMap =
+        timers.GetAllTimers();
+    std::map<std::string, std::chrono::microseconds> globalTimerMap =
+        Timer::GetAllTimers();
+    for (auto& it : globalTimerMap)
     {
-      Log::Info << "  " << it2.first << ": ";
-      IO::GetSingleton().timer.PrintTimer(it2.first);
+      if (timerMap.count(it.first) == 1)
+        timerMap[it.first] += it.second;
+      else
+        timerMap[it.first] = it.second;
+    }
+
+    for (auto& it2 : timerMap)
+    {
+      Log::Info << "  " << it2.first << ": " << timers.Print(it2.second);
     }
   }
 
@@ -75,8 +88,8 @@ inline void EndProgram()
     util::ParamData& data = it.second;
 
     void* result;
-    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
-        NULL, (void*) &result);
+    params.functionMap[data.tname]["GetAllocatedMemory"](data, NULL,
+        (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
   }
@@ -88,8 +101,7 @@ inline void EndProgram()
   {
     util::ParamData& data = *(it2->second);
 
-    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
-        NULL, NULL);
+    params.functionMap[data.tname]["DeleteAllocatedMemory"](data, NULL, NULL);
 
     ++it2;
   }

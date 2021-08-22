@@ -139,9 +139,7 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("BRNN_optimization");
   const double out = optimizer.Optimize(*this, parameter);
-  Timer::Stop("BRNN_optimization");
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
       << "." << std::endl;

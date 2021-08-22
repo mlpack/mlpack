@@ -21,7 +21,9 @@
 struct InitHMMModel
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<mat>* trainSeq)
+  static void Apply(util::Params& /* params */,
+                    HMMType& hmm,
+                    vector<mat>* trainSeq)
   {
     const size_t states = 2;
 
@@ -202,7 +204,9 @@ struct InitHMMModel
 struct TrainHMMModel
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<arma::mat>* trainSeq)
+  static void Apply(util::Params& /* params */,
+                    HMMType& hmm,
+                    vector<arma::mat>* trainSeq)
   {
     // For now, perform unsupervised (Baum-Welch) training.
     hmm.Train(*trainSeq);

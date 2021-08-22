@@ -665,6 +665,8 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
   models[18] = RAModel(RAModel::TreeTypes::OCTREE, false);
   models[19] = RAModel(RAModel::TreeTypes::OCTREE, true);
 
+  util::Timers timers;
+
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
@@ -676,11 +678,18 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, false);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), 20, false,
+            false);
+      }
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20, false, true);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), 20, false, true);
+      }
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, true, false);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), 20, true, false);
+      }
 
       // Set the search parameters.
       models[i].Tau() = 1.0;
@@ -702,7 +711,7 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
       for (size_t round = 0; round < numRounds; round++)
       {
         arma::mat queryCopy(queryData);
-        models[i].Search(std::move(queryCopy), 1, neighbors, distances);
+        models[i].Search(timers, std::move(queryCopy), 1, neighbors, distances);
         for (size_t k = 0; k < queryData.n_cols; ++k)
           if (qrRanks(k, neighbors(0, k)) < expectedRankErrorUB)
             numSuccessRounds[k]++;
