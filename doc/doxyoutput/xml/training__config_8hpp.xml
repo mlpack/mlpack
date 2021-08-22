@@ -10,56 +10,56 @@
     <includedby refid="categorical__dqn_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</includedby>
     <includedby refid="sac_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/sac.hpp</includedby>
     <invincdepgraph>
-      <node id="57531">
+      <node id="59085">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp</label>
         <link refid="q__learning_8hpp"/>
       </node>
-      <node id="57532">
+      <node id="59086">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
         <link refid="categorical__dqn_8hpp"/>
       </node>
-      <node id="57533">
+      <node id="59087">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/sac.hpp</label>
         <link refid="sac_8hpp"/>
       </node>
-      <node id="57527">
+      <node id="59081">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/one_step_q_learning_worker.hpp</label>
         <link refid="one__step__q__learning__worker_8hpp"/>
-        <childnode refid="57528" relation="include">
+        <childnode refid="59082" relation="include">
         </childnode>
       </node>
-      <node id="57529">
+      <node id="59083">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/one_step_sarsa_worker.hpp</label>
         <link refid="one__step__sarsa__worker_8hpp"/>
-        <childnode refid="57528" relation="include">
+        <childnode refid="59082" relation="include">
         </childnode>
       </node>
-      <node id="57528">
+      <node id="59082">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/async_learning.hpp</label>
         <link refid="async__learning_8hpp"/>
       </node>
-      <node id="57530">
+      <node id="59084">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp</label>
         <link refid="n__step__q__learning__worker_8hpp"/>
-        <childnode refid="57528" relation="include">
+        <childnode refid="59082" relation="include">
         </childnode>
       </node>
-      <node id="57526">
+      <node id="59080">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp</label>
         <link refid="training__config_8hpp"/>
-        <childnode refid="57527" relation="include">
+        <childnode refid="59081" relation="include">
         </childnode>
-        <childnode refid="57529" relation="include">
+        <childnode refid="59083" relation="include">
         </childnode>
-        <childnode refid="57530" relation="include">
+        <childnode refid="59084" relation="include">
         </childnode>
-        <childnode refid="57528" relation="include">
+        <childnode refid="59082" relation="include">
         </childnode>
-        <childnode refid="57531" relation="include">
+        <childnode refid="59085" relation="include">
         </childnode>
-        <childnode refid="57532" relation="include">
+        <childnode refid="59086" relation="include">
         </childnode>
-        <childnode refid="57533" relation="include">
+        <childnode refid="59087" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

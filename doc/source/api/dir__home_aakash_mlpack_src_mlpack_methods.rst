@@ -62,6 +62,7 @@ Subdirectories
 - :ref:`dir__home_aakash_mlpack_src_mlpack_methods_sparse_autoencoder`
 - :ref:`dir__home_aakash_mlpack_src_mlpack_methods_sparse_coding`
 - :ref:`dir__home_aakash_mlpack_src_mlpack_methods_svdplusplus`
+- :ref:`dir__home_aakash_mlpack_src_mlpack_methods_xgboost`
 
 
 

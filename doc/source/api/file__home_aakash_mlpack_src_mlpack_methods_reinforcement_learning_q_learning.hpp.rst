@@ -36,6 +36,8 @@ Includes
 --------
 
 
+- ``ensmallen.hpp``
+
 - ``mlpack/prereqs.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_prereqs.hpp`)
 
 - ``q_learning_impl.hpp``

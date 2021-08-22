@@ -1,4 +1,4 @@
-.TH "Highway< InputDataType, OutputDataType, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Highway< InputDataType, OutputDataType, CustomLayers >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -136,7 +136,7 @@ For more information, refer the following paper\&.
 .PP
 
 .PP
-Definition at line 60 of file highway\&.hpp\&.
+Definition at line 58 of file highway\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBHighway\fP ()"
@@ -174,7 +174,7 @@ Destroy the \fBHighway\fP object\&.
 .PP
 
 .PP
-Definition at line 124 of file highway\&.hpp\&.
+Definition at line 122 of file highway\&.hpp\&.
 .SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
 
 .PP
@@ -187,7 +187,7 @@ Definition at line 124 of file highway\&.hpp\&.
 .PP
 
 .PP
-Definition at line 135 of file highway\&.hpp\&.
+Definition at line 133 of file highway\&.hpp\&.
 .SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
 
 .PP
@@ -208,13 +208,13 @@ Ordinary feed-backward pass of a neural network, calculating the function f(x) b
 .PP
 Get the delta\&. 
 .PP
-Definition at line 168 of file highway\&.hpp\&.
+Definition at line 166 of file highway\&.hpp\&.
 .SS "OutputDataType& Delta ()\fC [inline]\fP"
 
 .PP
 Modify the delta\&. 
 .PP
-Definition at line 170 of file highway\&.hpp\&.
+Definition at line 168 of file highway\&.hpp\&.
 .SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
 
 .PP
@@ -248,31 +248,31 @@ Calculate the gradient using the output delta and the input activation\&.
 .PP
 Get the gradient\&. 
 .PP
-Definition at line 173 of file highway\&.hpp\&.
+Definition at line 171 of file highway\&.hpp\&.
 .SS "OutputDataType& Gradient ()\fC [inline]\fP"
 
 .PP
 Modify the gradient\&. 
 .PP
-Definition at line 175 of file highway\&.hpp\&.
+Definition at line 173 of file highway\&.hpp\&.
 .SS "InputDataType const& InputParameter () const\fC [inline]\fP"
 
 .PP
 Get the input parameter\&. 
 .PP
-Definition at line 158 of file highway\&.hpp\&.
+Definition at line 156 of file highway\&.hpp\&.
 .SS "InputDataType& InputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the input parameter\&. 
 .PP
-Definition at line 160 of file highway\&.hpp\&.
+Definition at line 158 of file highway\&.hpp\&.
 .SS "size_t InputShape () const\fC [inline]\fP"
 
 .PP
 Get the shape of the input\&. 
 .PP
-Definition at line 181 of file highway\&.hpp\&.
+Definition at line 179 of file highway\&.hpp\&.
 .PP
 References Highway< InputDataType, OutputDataType, CustomLayers >::serialize()\&.
 .SS "size_t InSize () const\fC [inline]\fP"
@@ -280,37 +280,37 @@ References Highway< InputDataType, OutputDataType, CustomLayers >::serialize()\&
 .PP
 Get the number of input units\&. 
 .PP
-Definition at line 178 of file highway\&.hpp\&.
+Definition at line 176 of file highway\&.hpp\&.
 .SS "std::vector<\fBLayerTypes\fP<CustomLayers\&.\&.\&.> >& Model ()\fC [inline]\fP"
 
 .PP
 Return the modules of the model\&. 
 .PP
-Definition at line 142 of file highway\&.hpp\&.
+Definition at line 140 of file highway\&.hpp\&.
 .SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
 
 .PP
 Get the output parameter\&. 
 .PP
-Definition at line 163 of file highway\&.hpp\&.
+Definition at line 161 of file highway\&.hpp\&.
 .SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the output parameter\&. 
 .PP
-Definition at line 165 of file highway\&.hpp\&.
+Definition at line 163 of file highway\&.hpp\&.
 .SS "OutputDataType const& Parameters () const\fC [inline]\fP"
 
 .PP
 Get the parameters\&. 
 .PP
-Definition at line 153 of file highway\&.hpp\&.
+Definition at line 151 of file highway\&.hpp\&.
 .SS "OutputDataType& Parameters ()\fC [inline]\fP"
 
 .PP
 Modify the parameters\&. 
 .PP
-Definition at line 155 of file highway\&.hpp\&.
+Definition at line 153 of file highway\&.hpp\&.
 .SS "void Reset ()"
 
 .PP

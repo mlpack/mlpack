@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="209" bodyend="225"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="218" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="217" bodyend="233"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -125,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="355" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="355" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="366" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="366" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a58d43069f572c93d4569d25c57a9cb6a" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -138,7 +138,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="360" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="360" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="371" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="371" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a68c01c84182e9de56ad31dbf792d7a5b" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="358" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="358" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="369" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="369" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a511db816a013b9cb26130c551a4e6561" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> *</type>
@@ -164,7 +164,7 @@
 <para>It is initialized every time BuildModel is executed. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="366" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="366" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="377" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="377" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a4c037c9b8e9f3f7d429a0f3f4326a067" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="352" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="352" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="363" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="363" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -217,7 +217,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="234" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="242" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a8ed1e3cec17df0626ac2a5034df3b537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -242,7 +242,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="242" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="250" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a178ee2403468f92eadfe0d269e858aeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -267,7 +267,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="249" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="257" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a5f50179749aa6dfe66e789d6049c49ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -280,13 +280,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="268" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="276" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a394d212c5373090724aaea3ba24b482e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1af1d54669ea759a3308ff5e0a6fbde91e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void BuildModel</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize, const bool naive, const bool singleMode)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t leafSize, const bool naive, const bool singleMode)</argsstring>
         <name>BuildModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -338,7 +342,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="317" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="325" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const arma::mat &amp;</type>
@@ -351,7 +355,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="275" bodyend="275"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="283" bodyend="283"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a7f40b35e0dbe4860397eeeda65197d64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -372,7 +376,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="306" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="314" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1ab81b93ebb200783ca4c5747f31889fa0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -385,7 +389,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="288" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="288" bodyend="288"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="296" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="296" bodyend="296"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a0966773f5b7ef0c324ed40b1cf4b94d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -398,7 +402,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="290" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="290" bodyend="290"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="298" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="298" bodyend="298"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -411,7 +415,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="283" bodyend="283"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="291" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="291" bodyend="291"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -424,7 +428,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="285" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="285" bodyend="285"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="293" bodyend="293"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1aea8c23e3a7f72594cce88439d7a8e4e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
@@ -449,7 +453,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="256" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="264" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a6ac7e5a1e637c462fb01537fb14b2d40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
@@ -474,7 +478,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="263" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="271" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1ae3053ad1e3b42eb1ae4105aecd060cf6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -487,7 +491,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="298" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="298" bodyend="298"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="306" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="306" bodyend="306"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a8111114602e748b38c0875f82f323544" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -500,14 +504,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="301" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="301" bodyend="301"/>
-        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc">RSWrapperBase::Search</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="309" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="309" bodyend="309"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a268ab91f4980bf9e2e6c13bbf06aa649">RSWrapperBase::Search</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a24f05d38662b2832148f426ebc930a30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a51aaa455230d1d9320e00e178a2ca203" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -559,13 +567,17 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="332" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="341" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a3868480bcd41a740550657144b5f7018" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1ac46c4e1cedf6c94c99c5f2e2dbf0070c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const math::Range &amp;</type>
           <declname>range</declname>
@@ -606,7 +618,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="346" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="356" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -631,7 +643,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="272" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="280" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -644,7 +656,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="278" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="278" bodyend="278"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="286" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="286" bodyend="286"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -657,7 +669,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="280" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="280" bodyend="280"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="288" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="288" bodyend="288"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1adb3d0b75d7754ec6741d890232576ffc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -670,7 +682,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="293" bodyend="293"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="301" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="301" bodyend="301"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a56b0460c7769ea1ef9d8314026ef36c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref> &amp;</type>
@@ -683,7 +695,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="295" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="295" bodyend="295"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="303" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="303" bodyend="303"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -698,7 +710,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="377" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="388" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a98cbe53c61f1681514056f78a89a57b8" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -711,17 +723,17 @@
 <para>This is used for logging output. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="372" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="383" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> class provides an abstraction for the <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> class, abstracting away the TreeType parameter and allowing it to be specified at runtime. </para>    </briefdescription>
     <detaileddescription>
 <para>This class is written for the sake of the <computeroutput>range_search</computeroutput> binding, but is not necessarily restricted to that usage. </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="206" bodyend="378"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="214" bodyend="389"/>
     <listofallmembers>
       <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>BALL_TREE</name></member>
-      <member refid="classmlpack_1_1range_1_1RSModel_1a394d212c5373090724aaea3ba24b482e" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1af1d54669ea759a3308ff5e0a6fbde91e" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>BuildModel</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a444067d1e8832ff9d5c90d5d73045e5d" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>CleanMemory</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>COVER_TREE</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Dataset</name></member>
@@ -750,8 +762,8 @@
       <member refid="classmlpack_1_1range_1_1RSModel_1a3dd8fd1e68320b3ec82950d839664350" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a8ed1e3cec17df0626ac2a5034df3b537" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a178ee2403468f92eadfe0d269e858aeb" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
-      <member refid="classmlpack_1_1range_1_1RSModel_1a24f05d38662b2832148f426ebc930a30" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1range_1_1RSModel_1a3868480bcd41a740550657144b5f7018" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a51aaa455230d1d9320e00e178a2ca203" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1ac46c4e1cedf6c94c99c5f2e2dbf0070c" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1range_1_1RSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>SingleMode</name></member>

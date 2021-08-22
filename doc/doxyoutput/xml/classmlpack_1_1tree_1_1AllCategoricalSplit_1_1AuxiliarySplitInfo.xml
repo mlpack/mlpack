@@ -7,7 +7,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_categorical_split.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_categorical_split.hpp" bodystart="32" bodyend="32"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_categorical_split.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_categorical_split.hpp" bodystart="34" bodyend="34"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

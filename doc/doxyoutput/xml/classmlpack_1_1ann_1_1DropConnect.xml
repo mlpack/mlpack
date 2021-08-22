@@ -15,7 +15,7 @@
     </templateparamlist>
       <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1DropConnect_1abde3e75c79ec47746ecb88dcc4dba712" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes baseLayer</definition>
         <argsstring></argsstring>
         <name>baseLayer</name>
@@ -93,7 +93,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp" bodystart="182" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1DropConnect_1a3e8fe5d26eb4292120dcd0ecb21cd2b6" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -443,7 +443,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp" bodystart="135" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1DropConnect_1a50c707b4f7c009339d8d661539baf38f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>

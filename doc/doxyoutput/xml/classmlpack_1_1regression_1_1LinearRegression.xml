@@ -208,7 +208,7 @@
         <briefdescription>
 <para>Calculate the L2 squared error on the given predictors and responses using this linear regression model. </para>        </briefdescription>
         <detaileddescription>
-<para>This calculation returns</para><para><formula id="161">\[ (1 / n) * \| y - X B \|^2_2 \]</formula></para><para>where <formula id="37">$ y $</formula> is the responses vector, <formula id="154">$ X $</formula> is the matrix of predictors, and <formula id="162">$ B $</formula> is the parameters of the trained linear regression model.</para><para>As this number decreases to 0, the linear regression fit is better.</para><para><parameterlist kind="param"><parameteritem>
+<para>This calculation returns</para><para><formula id="162">\[ (1 / n) * \| y - X B \|^2_2 \]</formula></para><para>where <formula id="37">$ y $</formula> is the responses vector, <formula id="155">$ X $</formula> is the matrix of predictors, and <formula id="163">$ B $</formula> is the parameters of the trained linear regression model.</para><para>As this number decreases to 0, the linear regression fit is better.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>points</parametername>
 </parameternamelist>

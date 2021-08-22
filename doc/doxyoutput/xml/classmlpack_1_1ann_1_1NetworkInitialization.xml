@@ -92,7 +92,7 @@
         <argsstring>(const std::vector&lt; LayerTypes&lt; CustomLayers... &gt; &gt; &amp;network, arma::Mat&lt; eT &gt; &amp;parameter, size_t parameterOffset=0)</argsstring>
         <name>Initialize</name>
         <param>
-          <type>const std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+          <type>const std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
           <declname>network</declname>
         </param>
         <param>

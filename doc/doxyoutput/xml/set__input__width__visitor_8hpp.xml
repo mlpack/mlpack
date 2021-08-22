@@ -6,40 +6,40 @@
     <includes local="no">boost/variant.hpp</includes>
     <includes local="yes">set_input_width_visitor_impl.hpp</includes>
     <incdepgraph>
-      <node id="43871">
+      <node id="45128">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="43872" relation="include">
+        <childnode refid="45129" relation="include">
         </childnode>
-        <childnode refid="43873" relation="include">
+        <childnode refid="45130" relation="include">
         </childnode>
       </node>
-      <node id="43874">
+      <node id="45131">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="43875">
+      <node id="45132">
         <label>set_input_width_visitor_impl.hpp</label>
       </node>
-      <node id="43870">
+      <node id="45127">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="43871" relation="include">
+        <childnode refid="45128" relation="include">
         </childnode>
       </node>
-      <node id="43869">
+      <node id="45126">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/set_input_width_visitor.hpp</label>
         <link refid="set__input__width__visitor_8hpp"/>
-        <childnode refid="43870" relation="include">
+        <childnode refid="45127" relation="include">
         </childnode>
-        <childnode refid="43874" relation="include">
+        <childnode refid="45131" relation="include">
         </childnode>
-        <childnode refid="43875" relation="include">
+        <childnode refid="45132" relation="include">
         </childnode>
       </node>
-      <node id="43872">
+      <node id="45129">
         <label>type_traits</label>
       </node>
-      <node id="43873">
+      <node id="45130">
         <label>cstring</label>
       </node>
     </incdepgraph>
@@ -71,7 +71,7 @@ This file provides an abstraction for the InputWidth() function for different la
 <codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SetInputWidthVisitor_1ad358e269435d5a1b10367bec96793a17" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SetInputWidthVisitor_1ad358e269435d5a1b10367bec96793a17" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1SetInputWidthVisitor_1ad358e269435d5a1b10367bec96793a17" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>inputWidth;</highlight></codeline>

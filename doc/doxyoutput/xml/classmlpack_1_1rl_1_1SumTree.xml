@@ -336,14 +336,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1297">
+      <node id="1309">
         <label>SumTree&lt; T &gt;</label>
         <link refid="classmlpack_1_1rl_1_1SumTree"/>
       </node>
-      <node id="1298">
+      <node id="1310">
         <label>SumTree&lt; double &gt;</label>
         <link refid="classmlpack_1_1rl_1_1SumTree"/>
-        <childnode refid="1297" relation="template-instance">
+        <childnode refid="1309" relation="template-instance">
           <edgelabel>&lt; double &gt;</edgelabel>
         </childnode>
       </node>

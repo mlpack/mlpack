@@ -1253,7 +1253,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="79" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="83" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1LSTM_1ab2f5417bbabbf195ffec6e34c6adcd52" prot="public" virt="non-virtual"><scope>mlpack::ann::LSTM</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1LSTM_1a8bc49e0436f58eba80dd7c8ee78dda06" prot="private" virt="non-virtual"><scope>mlpack::ann::LSTM</scope><name>backwardStep</name></member>

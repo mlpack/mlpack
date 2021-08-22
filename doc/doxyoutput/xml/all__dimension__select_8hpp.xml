@@ -3,28 +3,35 @@
   <compounddef id="all__dimension__select_8hpp" kind="file" language="C++">
     <compoundname>all_dimension_select.hpp</compoundname>
     <includedby refid="decision__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</includedby>
+    <includedby refid="decision__tree__regressor_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree_regressor.hpp</includedby>
     <invincdepgraph>
-      <node id="46918">
+      <node id="48179">
         <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
         <link refid="decision__tree_8hpp"/>
-        <childnode refid="46919" relation="include">
+        <childnode refid="48180" relation="include">
         </childnode>
-        <childnode refid="46920" relation="include">
+        <childnode refid="48181" relation="include">
         </childnode>
       </node>
-      <node id="46919">
+      <node id="48180">
         <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
         <link refid="adaboost_8hpp"/>
       </node>
-      <node id="46917">
+      <node id="48178">
         <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp</label>
         <link refid="all__dimension__select_8hpp"/>
-        <childnode refid="46918" relation="include">
+        <childnode refid="48179" relation="include">
+        </childnode>
+        <childnode refid="48182" relation="include">
         </childnode>
       </node>
-      <node id="46920">
+      <node id="48181">
         <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
         <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="48182">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree_regressor.hpp</label>
+        <link refid="decision__tree__regressor_8hpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classmlpack_1_1tree_1_1AllDimensionSelect" prot="public">mlpack::tree::AllDimensionSelect</innerclass>

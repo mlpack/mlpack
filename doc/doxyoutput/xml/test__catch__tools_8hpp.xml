@@ -3,924 +3,933 @@
   <compounddef id="test__catch__tools_8hpp" kind="file" language="C++">
     <compoundname>test_catch_tools.hpp</compoundname>
     <includes refid="core_8hpp" local="no">mlpack/core.hpp</includes>
-    <includes local="no">boost/version.hpp</includes>
     <includes local="yes">catch.hpp</includes>
     <includedby refid="serialization_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</includedby>
     <incdepgraph>
-      <node id="59867">
+      <node id="61579">
         <label>list</label>
       </node>
-      <node id="59894">
+      <node id="61608">
         <label>save_impl.hpp</label>
       </node>
-      <node id="59864">
+      <node id="61576">
         <label>atomic</label>
       </node>
-      <node id="59886">
+      <node id="61600">
         <label>dataset_mapper_impl.hpp</label>
       </node>
-      <node id="59892">
+      <node id="61606">
         <label>load_image_impl.hpp</label>
       </node>
-      <node id="59943">
+      <node id="61656">
         <label>catch.hpp</label>
       </node>
-      <node id="59854">
+      <node id="61566">
         <label>cereal/types/memory.hpp</label>
       </node>
-      <node id="59830">
+      <node id="61542">
         <label>mlpack/core/util/arma_traits.hpp</label>
         <link refid="arma__traits_8hpp"/>
       </node>
-      <node id="59866">
+      <node id="61578">
         <label>iomanip</label>
       </node>
-      <node id="59942">
-        <label>boost/version.hpp</label>
-      </node>
-      <node id="59924">
+      <node id="61638">
         <label>mlpack/core/kernels/linear_kernel.hpp</label>
         <link refid="linear__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59919">
+      <node id="61633">
         <label>mlpack/core/data/confusion_matrix.hpp</label>
         <link refid="confusion__matrix_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59920" relation="include">
+        <childnode refid="61634" relation="include">
         </childnode>
       </node>
-      <node id="59934">
+      <node id="61648">
         <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
         <link refid="laplacian__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59901">
+      <node id="61615">
         <label>float.h</label>
       </node>
-      <node id="59930">
+      <node id="61644">
         <label>lmetric_impl.hpp</label>
       </node>
-      <node id="59839">
+      <node id="61551">
         <label>mlpack/core/cereal/unordered_map.hpp</label>
         <link refid="unordered__map_8hpp"/>
-        <childnode refid="59840" relation="include">
+        <childnode refid="61552" relation="include">
         </childnode>
-        <childnode refid="59842" relation="include">
+        <childnode refid="61554" relation="include">
         </childnode>
       </node>
-      <node id="59822">
+      <node id="61534">
         <label>cstdint</label>
       </node>
-      <node id="59932">
+      <node id="61646">
         <label>epanechnikov_kernel_impl.hpp</label>
       </node>
-      <node id="59923">
+      <node id="61637">
         <label>mlpack/core/kernels/kernel_traits.hpp</label>
         <link refid="kernel__traits_8hpp"/>
       </node>
-      <node id="59831">
+      <node id="61543">
         <label>cereal/archives/binary.hpp</label>
       </node>
-      <node id="59838">
+      <node id="61550">
         <label>cereal/types/tuple.hpp</label>
       </node>
-      <node id="59917">
+      <node id="61631">
         <label>mlpack/core/dists/gamma_distribution.hpp</label>
         <link refid="gamma__distribution_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59902" relation="include">
+        <childnode refid="61616" relation="include">
         </childnode>
       </node>
-      <node id="59881">
+      <node id="61595">
         <label>mlpack/core/data/load.hpp</label>
         <link refid="load_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
-        <childnode refid="59882" relation="include">
+        <childnode refid="61596" relation="include">
         </childnode>
-        <childnode refid="59883" relation="include">
+        <childnode refid="61597" relation="include">
         </childnode>
-        <childnode refid="59887" relation="include">
+        <childnode refid="61601" relation="include">
         </childnode>
-        <childnode refid="59890" relation="include">
+        <childnode refid="61604" relation="include">
         </childnode>
-        <childnode refid="59891" relation="include">
+        <childnode refid="61605" relation="include">
         </childnode>
-        <childnode refid="59892" relation="include">
+        <childnode refid="61606" relation="include">
         </childnode>
       </node>
-      <node id="59878">
+      <node id="61590">
         <label>program_doc.hpp</label>
         <link refid="program__doc_8hpp"/>
       </node>
-      <node id="59899">
+      <node id="61613">
         <label>stdlib.h</label>
       </node>
-      <node id="59903">
+      <node id="61617">
         <label>mlpack/mlpack_export.hpp</label>
       </node>
-      <node id="59861">
+      <node id="61573">
         <label>arma_config.hpp</label>
       </node>
-      <node id="59938">
+      <node id="61652">
         <label>mlpack/core/kernels/spherical_kernel.hpp</label>
         <link refid="spherical__kernel_8hpp"/>
-        <childnode refid="59939" relation="include">
+        <childnode refid="61653" relation="include">
         </childnode>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59907">
+      <node id="61593">
+        <label>params.hpp</label>
+        <link refid="params_8hpp"/>
+        <childnode refid="61592" relation="include">
+        </childnode>
+        <childnode refid="61589" relation="include">
+        </childnode>
+        <childnode refid="61594" relation="include">
+        </childnode>
+      </node>
+      <node id="61621">
         <label>lin_alg_impl.hpp</label>
       </node>
-      <node id="59933">
+      <node id="61647">
         <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
         <link refid="hyperbolic__tangent__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59816">
+      <node id="61528">
         <label>mlpack/core.hpp</label>
         <link refid="core_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59830" relation="include">
+        <childnode refid="61542" relation="include">
         </childnode>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59874" relation="include">
+        <childnode refid="61586" relation="include">
         </childnode>
-        <childnode refid="59872" relation="include">
+        <childnode refid="61584" relation="include">
         </childnode>
-        <childnode refid="59881" relation="include">
+        <childnode refid="61595" relation="include">
         </childnode>
-        <childnode refid="59893" relation="include">
+        <childnode refid="61607" relation="include">
         </childnode>
-        <childnode refid="59896" relation="include">
+        <childnode refid="61610" relation="include">
         </childnode>
-        <childnode refid="59898" relation="include">
+        <childnode refid="61612" relation="include">
         </childnode>
-        <childnode refid="59902" relation="include">
+        <childnode refid="61616" relation="include">
         </childnode>
-        <childnode refid="59905" relation="include">
+        <childnode refid="61619" relation="include">
         </childnode>
-        <childnode refid="59906" relation="include">
+        <childnode refid="61620" relation="include">
         </childnode>
-        <childnode refid="59908" relation="include">
+        <childnode refid="61622" relation="include">
         </childnode>
-        <childnode refid="59909" relation="include">
+        <childnode refid="61623" relation="include">
         </childnode>
-        <childnode refid="59910" relation="include">
+        <childnode refid="61624" relation="include">
         </childnode>
-        <childnode refid="59911" relation="include">
+        <childnode refid="61625" relation="include">
         </childnode>
-        <childnode refid="59913" relation="include">
+        <childnode refid="61627" relation="include">
         </childnode>
-        <childnode refid="59914" relation="include">
+        <childnode refid="61628" relation="include">
         </childnode>
-        <childnode refid="59915" relation="include">
+        <childnode refid="61629" relation="include">
         </childnode>
-        <childnode refid="59916" relation="include">
+        <childnode refid="61630" relation="include">
         </childnode>
-        <childnode refid="59917" relation="include">
+        <childnode refid="61631" relation="include">
         </childnode>
-        <childnode refid="59918" relation="include">
+        <childnode refid="61632" relation="include">
         </childnode>
-        <childnode refid="59919" relation="include">
+        <childnode refid="61633" relation="include">
         </childnode>
-        <childnode refid="59921" relation="include">
+        <childnode refid="61635" relation="include">
         </childnode>
-        <childnode refid="59923" relation="include">
+        <childnode refid="61637" relation="include">
         </childnode>
-        <childnode refid="59924" relation="include">
+        <childnode refid="61638" relation="include">
         </childnode>
-        <childnode refid="59925" relation="include">
+        <childnode refid="61639" relation="include">
         </childnode>
-        <childnode refid="59926" relation="include">
+        <childnode refid="61640" relation="include">
         </childnode>
-        <childnode refid="59928" relation="include">
+        <childnode refid="61642" relation="include">
         </childnode>
-        <childnode refid="59931" relation="include">
+        <childnode refid="61645" relation="include">
         </childnode>
-        <childnode refid="59933" relation="include">
+        <childnode refid="61647" relation="include">
         </childnode>
-        <childnode refid="59934" relation="include">
+        <childnode refid="61648" relation="include">
         </childnode>
-        <childnode refid="59935" relation="include">
+        <childnode refid="61649" relation="include">
         </childnode>
-        <childnode refid="59938" relation="include">
+        <childnode refid="61652" relation="include">
         </childnode>
-        <childnode refid="59940" relation="include">
+        <childnode refid="61654" relation="include">
         </childnode>
-        <childnode refid="59941" relation="include">
+        <childnode refid="61655" relation="include">
         </childnode>
       </node>
-      <node id="59895">
+      <node id="61609">
         <label>io_impl.hpp</label>
       </node>
-      <node id="59851">
+      <node id="61563">
         <label>boost/variant/variant_fwd.hpp</label>
       </node>
-      <node id="59921">
+      <node id="61635">
         <label>mlpack/core/data/one_hot_encoding.hpp</label>
         <link refid="one__hot__encoding_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59816" relation="include">
+        <childnode refid="61528" relation="include">
         </childnode>
-        <childnode refid="59922" relation="include">
+        <childnode refid="61636" relation="include">
         </childnode>
       </node>
-      <node id="59818">
+      <node id="61530">
         <label>cmath</label>
       </node>
-      <node id="59837">
+      <node id="61549">
         <label>cereal/types/string.hpp</label>
       </node>
-      <node id="59826">
+      <node id="61538">
         <label>stdexcept</label>
       </node>
-      <node id="59846">
+      <node id="61558">
         <label>mlpack/core/cereal/is_saving.hpp</label>
         <link refid="is__saving_8hpp"/>
-        <childnode refid="59831" relation="include">
+        <childnode refid="61543" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
       </node>
-      <node id="59908">
+      <node id="61622">
         <label>mlpack/core/math/range.hpp</label>
       </node>
-      <node id="59927">
+      <node id="61641">
         <label>cosine_distance_impl.hpp</label>
       </node>
-      <node id="59885">
+      <node id="61599">
         <label>mlpack/core/data/map_policies/datatype.hpp</label>
         <link refid="datatype_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59870">
+      <node id="61582">
         <label>string</label>
       </node>
-      <node id="59858">
+      <node id="61570">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="59859" relation="include">
+        <childnode refid="61571" relation="include">
         </childnode>
-        <childnode refid="59825" relation="include">
+        <childnode refid="61537" relation="include">
         </childnode>
       </node>
-      <node id="59926">
+      <node id="61640">
         <label>mlpack/core/kernels/cosine_distance.hpp</label>
         <link refid="cosine__distance_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59923" relation="include">
+        <childnode refid="61637" relation="include">
         </childnode>
-        <childnode refid="59927" relation="include">
+        <childnode refid="61641" relation="include">
         </childnode>
       </node>
-      <node id="59868">
+      <node id="61580">
         <label>map</label>
       </node>
-      <node id="59906">
+      <node id="61620">
         <label>mlpack/core/math/lin_alg.hpp</label>
         <link refid="lin__alg_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59907" relation="include">
+        <childnode refid="61621" relation="include">
         </childnode>
       </node>
-      <node id="59820">
+      <node id="61532">
         <label>cfloat</label>
       </node>
-      <node id="59877">
+      <node id="61589">
         <label>binding_details.hpp</label>
         <link refid="binding__details_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59878" relation="include">
+        <childnode refid="61590" relation="include">
         </childnode>
       </node>
-      <node id="59850">
+      <node id="61562">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="59916">
+      <node id="61630">
         <label>mlpack/core/dists/laplace_distribution.hpp</label>
         <link refid="laplace__distribution_8hpp"/>
       </node>
-      <node id="59872">
+      <node id="61584">
         <label>mlpack/core/util/deprecated.hpp</label>
         <link refid="deprecated_8hpp"/>
       </node>
-      <node id="59834">
+      <node id="61546">
         <label>cereal/archives/xml.hpp</label>
       </node>
-      <node id="59857">
+      <node id="61569">
         <label>mlpack/core/data/has_serialize.hpp</label>
         <link refid="has__serialize_8hpp"/>
-        <childnode refid="59858" relation="include">
+        <childnode refid="61570" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59841" relation="include">
+        <childnode refid="61553" relation="include">
         </childnode>
-        <childnode refid="59859" relation="include">
+        <childnode refid="61571" relation="include">
         </childnode>
       </node>
-      <node id="59847">
+      <node id="61559">
         <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
       </node>
-      <node id="59913">
+      <node id="61627">
         <label>mlpack/core/math/make_alias.hpp</label>
         <link refid="make__alias_8hpp"/>
       </node>
-      <node id="59931">
+      <node id="61645">
         <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
         <link refid="epanechnikov__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59923" relation="include">
+        <childnode refid="61637" relation="include">
         </childnode>
-        <childnode refid="59932" relation="include">
+        <childnode refid="61646" relation="include">
         </childnode>
       </node>
-      <node id="59918">
+      <node id="61632">
         <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
         <link refid="diagonal__gaussian__distribution_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59845">
+      <node id="61557">
         <label>mlpack/core/cereal/is_loading.hpp</label>
         <link refid="is__loading_8hpp"/>
-        <childnode refid="59831" relation="include">
+        <childnode refid="61543" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
       </node>
-      <node id="59848">
+      <node id="61560">
         <label>mlpack/core/cereal/array_wrapper.hpp</label>
         <link refid="array__wrapper_8hpp"/>
-        <childnode refid="59831" relation="include">
+        <childnode refid="61543" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
       </node>
-      <node id="59905">
+      <node id="61619">
         <label>mlpack/core/math/random_basis.hpp</label>
         <link refid="random__basis_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59876">
+      <node id="61588">
         <label>boost/any.hpp</label>
       </node>
-      <node id="59836">
+      <node id="61548">
         <label>cereal/types/boost_variant.hpp</label>
       </node>
-      <node id="59856">
+      <node id="61568">
         <label>pointer_vector_wrapper.hpp</label>
         <link refid="pointer__vector__wrapper_8hpp"/>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59844" relation="include">
+        <childnode refid="61556" relation="include">
         </childnode>
-        <childnode refid="59853" relation="include">
+        <childnode refid="61565" relation="include">
         </childnode>
       </node>
-      <node id="59860">
+      <node id="61572">
         <label>mlpack/core/util/arma_config_check.hpp</label>
         <link refid="arma__config__check_8hpp"/>
-        <childnode refid="59861" relation="include">
+        <childnode refid="61573" relation="include">
         </childnode>
       </node>
-      <node id="59862">
+      <node id="61574">
         <label>mlpack/core/util/log.hpp</label>
       </node>
-      <node id="59817">
+      <node id="61529">
         <label>mlpack/prereqs.hpp</label>
         <link refid="prereqs_8hpp"/>
-        <childnode refid="59818" relation="include">
+        <childnode refid="61530" relation="include">
         </childnode>
-        <childnode refid="59819" relation="include">
+        <childnode refid="61531" relation="include">
         </childnode>
-        <childnode refid="59820" relation="include">
+        <childnode refid="61532" relation="include">
         </childnode>
-        <childnode refid="59821" relation="include">
+        <childnode refid="61533" relation="include">
         </childnode>
-        <childnode refid="59822" relation="include">
+        <childnode refid="61534" relation="include">
         </childnode>
-        <childnode refid="59823" relation="include">
+        <childnode refid="61535" relation="include">
         </childnode>
-        <childnode refid="59824" relation="include">
+        <childnode refid="61536" relation="include">
         </childnode>
-        <childnode refid="59825" relation="include">
+        <childnode refid="61537" relation="include">
         </childnode>
-        <childnode refid="59826" relation="include">
+        <childnode refid="61538" relation="include">
         </childnode>
-        <childnode refid="59827" relation="include">
+        <childnode refid="61539" relation="include">
         </childnode>
-        <childnode refid="59828" relation="include">
+        <childnode refid="61540" relation="include">
         </childnode>
-        <childnode refid="59829" relation="include">
+        <childnode refid="61541" relation="include">
         </childnode>
-        <childnode refid="59830" relation="include">
+        <childnode refid="61542" relation="include">
         </childnode>
-        <childnode refid="59831" relation="include">
+        <childnode refid="61543" relation="include">
         </childnode>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59835" relation="include">
+        <childnode refid="61547" relation="include">
         </childnode>
-        <childnode refid="59836" relation="include">
+        <childnode refid="61548" relation="include">
         </childnode>
-        <childnode refid="59837" relation="include">
+        <childnode refid="61549" relation="include">
         </childnode>
-        <childnode refid="59838" relation="include">
+        <childnode refid="61550" relation="include">
         </childnode>
-        <childnode refid="59839" relation="include">
+        <childnode refid="61551" relation="include">
         </childnode>
-        <childnode refid="59843" relation="include">
+        <childnode refid="61555" relation="include">
         </childnode>
-        <childnode refid="59844" relation="include">
+        <childnode refid="61556" relation="include">
         </childnode>
-        <childnode refid="59845" relation="include">
+        <childnode refid="61557" relation="include">
         </childnode>
-        <childnode refid="59846" relation="include">
+        <childnode refid="61558" relation="include">
         </childnode>
-        <childnode refid="59847" relation="include">
+        <childnode refid="61559" relation="include">
         </childnode>
-        <childnode refid="59848" relation="include">
+        <childnode refid="61560" relation="include">
         </childnode>
-        <childnode refid="59849" relation="include">
+        <childnode refid="61561" relation="include">
         </childnode>
-        <childnode refid="59855" relation="include">
+        <childnode refid="61567" relation="include">
         </childnode>
-        <childnode refid="59856" relation="include">
+        <childnode refid="61568" relation="include">
         </childnode>
-        <childnode refid="59853" relation="include">
+        <childnode refid="61565" relation="include">
         </childnode>
-        <childnode refid="59857" relation="include">
+        <childnode refid="61569" relation="include">
         </childnode>
-        <childnode refid="59860" relation="include">
+        <childnode refid="61572" relation="include">
         </childnode>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59863" relation="include">
+        <childnode refid="61575" relation="include">
         </childnode>
-        <childnode refid="59872" relation="include">
+        <childnode refid="61584" relation="include">
         </childnode>
-        <childnode refid="59873" relation="include">
+        <childnode refid="61585" relation="include">
         </childnode>
       </node>
-      <node id="59815">
+      <node id="61527">
         <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
         <link refid="test__catch__tools_8hpp"/>
-        <childnode refid="59816" relation="include">
+        <childnode refid="61528" relation="include">
         </childnode>
-        <childnode refid="59942" relation="include">
-        </childnode>
-        <childnode refid="59943" relation="include">
+        <childnode refid="61656" relation="include">
         </childnode>
       </node>
-      <node id="59897">
+      <node id="61611">
         <label>normalize_labels_impl.hpp</label>
       </node>
-      <node id="59922">
+      <node id="61636">
         <label>one_hot_encoding_impl.hpp</label>
       </node>
-      <node id="59904">
+      <node id="61618">
         <label>random</label>
       </node>
-      <node id="59928">
+      <node id="61642">
         <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
         <link refid="gaussian__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59929" relation="include">
+        <childnode refid="61643" relation="include">
         </childnode>
-        <childnode refid="59923" relation="include">
+        <childnode refid="61637" relation="include">
         </childnode>
       </node>
-      <node id="59884">
+      <node id="61598">
         <label>map_policies/increment_policy.hpp</label>
         <link refid="increment__policy_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59842" relation="include">
+        <childnode refid="61554" relation="include">
         </childnode>
-        <childnode refid="59885" relation="include">
+        <childnode refid="61599" relation="include">
         </childnode>
       </node>
-      <node id="59823">
+      <node id="61535">
         <label>cstdio</label>
       </node>
-      <node id="59888">
+      <node id="61602">
         <label>extension.hpp</label>
         <link refid="extension_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59827">
+      <node id="61539">
         <label>tuple</label>
       </node>
-      <node id="59832">
+      <node id="61544">
         <label>cereal/archives/json.hpp</label>
       </node>
-      <node id="59849">
+      <node id="61561">
         <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
         <link refid="pointer__variant__wrapper_8hpp"/>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59836" relation="include">
+        <childnode refid="61548" relation="include">
         </childnode>
-        <childnode refid="59850" relation="include">
+        <childnode refid="61562" relation="include">
         </childnode>
-        <childnode refid="59851" relation="include">
+        <childnode refid="61563" relation="include">
         </childnode>
-        <childnode refid="59852" relation="include">
+        <childnode refid="61564" relation="include">
         </childnode>
-        <childnode refid="59853" relation="include">
+        <childnode refid="61565" relation="include">
         </childnode>
       </node>
-      <node id="59889">
+      <node id="61603">
         <label>image_info_impl.hpp</label>
       </node>
-      <node id="59936">
+      <node id="61650">
         <label>vector</label>
       </node>
-      <node id="59891">
+      <node id="61605">
         <label>load_vec_impl.hpp</label>
       </node>
-      <node id="59879">
+      <node id="61591">
         <label>version.hpp</label>
         <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
       </node>
-      <node id="59898">
+      <node id="61612">
         <label>mlpack/core/math/clamp.hpp</label>
         <link refid="clamp_8hpp"/>
-        <childnode refid="59899" relation="include">
+        <childnode refid="61613" relation="include">
         </childnode>
-        <childnode refid="59900" relation="include">
+        <childnode refid="61614" relation="include">
         </childnode>
-        <childnode refid="59901" relation="include">
+        <childnode refid="61615" relation="include">
         </childnode>
       </node>
-      <node id="59902">
+      <node id="61616">
         <label>mlpack/core/math/random.hpp</label>
         <link refid="random_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59903" relation="include">
+        <childnode refid="61617" relation="include">
         </childnode>
-        <childnode refid="59904" relation="include">
+        <childnode refid="61618" relation="include">
         </childnode>
       </node>
-      <node id="59828">
+      <node id="61540">
         <label>utility</label>
       </node>
-      <node id="59852">
+      <node id="61564">
         <label>boost/variant/static_visitor.hpp</label>
       </node>
-      <node id="59890">
+      <node id="61604">
         <label>load_model_impl.hpp</label>
       </node>
-      <node id="59843">
+      <node id="61555">
         <label>cereal/types/utility.hpp</label>
       </node>
-      <node id="59840">
+      <node id="61552">
         <label>pair_associative_container.hpp</label>
         <link refid="pair__associative__container_8hpp"/>
-        <childnode refid="59841" relation="include">
+        <childnode refid="61553" relation="include">
         </childnode>
       </node>
-      <node id="59935">
+      <node id="61649">
         <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
         <link refid="pspectrum__string__kernel_8hpp"/>
-        <childnode refid="59868" relation="include">
+        <childnode refid="61580" relation="include">
         </childnode>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
-        <childnode refid="59936" relation="include">
+        <childnode refid="61650" relation="include">
         </childnode>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59937" relation="include">
+        <childnode refid="61651" relation="include">
         </childnode>
       </node>
-      <node id="59910">
+      <node id="61624">
         <label>mlpack/core/math/shuffle_data.hpp</label>
         <link refid="shuffle__data_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59896">
+      <node id="61610">
         <label>mlpack/core/data/normalize_labels.hpp</label>
         <link refid="normalize__labels_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59897" relation="include">
+        <childnode refid="61611" relation="include">
         </childnode>
       </node>
-      <node id="59863">
+      <node id="61575">
         <label>mlpack/core/util/timers.hpp</label>
         <link refid="timers_8hpp"/>
-        <childnode refid="59864" relation="include">
+        <childnode refid="61576" relation="include">
         </childnode>
-        <childnode refid="59865" relation="include">
+        <childnode refid="61577" relation="include">
         </childnode>
-        <childnode refid="59866" relation="include">
+        <childnode refid="61578" relation="include">
         </childnode>
-        <childnode refid="59867" relation="include">
+        <childnode refid="61579" relation="include">
         </childnode>
-        <childnode refid="59868" relation="include">
+        <childnode refid="61580" relation="include">
         </childnode>
-        <childnode refid="59869" relation="include">
+        <childnode refid="61581" relation="include">
         </childnode>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
-        <childnode refid="59871" relation="include">
+        <childnode refid="61583" relation="include">
         </childnode>
       </node>
-      <node id="59841">
+      <node id="61553">
         <label>cereal/cereal.hpp</label>
       </node>
-      <node id="59855">
+      <node id="61567">
         <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
         <link refid="pointer__vector__variant__wrapper_8hpp"/>
-        <childnode refid="59853" relation="include">
+        <childnode refid="61565" relation="include">
         </childnode>
-        <childnode refid="59849" relation="include">
+        <childnode refid="61561" relation="include">
         </childnode>
-        <childnode refid="59856" relation="include">
+        <childnode refid="61568" relation="include">
         </childnode>
       </node>
-      <node id="59900">
+      <node id="61614">
         <label>math.h</label>
       </node>
-      <node id="59880">
+      <node id="61592">
         <label>param_data.hpp</label>
         <link refid="param__data_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59876" relation="include">
+        <childnode refid="61588" relation="include">
         </childnode>
       </node>
-      <node id="59824">
+      <node id="61536">
         <label>cstdlib</label>
       </node>
-      <node id="59914">
+      <node id="61628">
         <label>mlpack/core/dists/discrete_distribution.hpp</label>
         <link refid="discrete__distribution_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59902" relation="include">
+        <childnode refid="61616" relation="include">
         </childnode>
       </node>
-      <node id="59819">
+      <node id="61531">
         <label>cctype</label>
       </node>
-      <node id="59875">
+      <node id="61587">
         <label>iostream</label>
       </node>
-      <node id="59925">
+      <node id="61639">
         <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
         <link refid="polynomial__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59920">
+      <node id="61634">
         <label>confusion_matrix_impl.hpp</label>
       </node>
-      <node id="59842">
+      <node id="61554">
         <label>unordered_map</label>
       </node>
-      <node id="59887">
+      <node id="61601">
         <label>image_info.hpp</label>
         <link refid="image__info_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59888" relation="include">
+        <childnode refid="61602" relation="include">
         </childnode>
-        <childnode refid="59889" relation="include">
+        <childnode refid="61603" relation="include">
         </childnode>
       </node>
-      <node id="59821">
+      <node id="61533">
         <label>climits</label>
       </node>
-      <node id="59883">
+      <node id="61597">
         <label>dataset_mapper.hpp</label>
         <link refid="dataset__mapper_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59842" relation="include">
+        <childnode refid="61554" relation="include">
         </childnode>
-        <childnode refid="59884" relation="include">
+        <childnode refid="61598" relation="include">
         </childnode>
-        <childnode refid="59886" relation="include">
+        <childnode refid="61600" relation="include">
         </childnode>
       </node>
-      <node id="59911">
+      <node id="61625">
         <label>mlpack/core/math/ccov.hpp</label>
         <link refid="ccov_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59912" relation="include">
+        <childnode refid="61626" relation="include">
         </childnode>
       </node>
-      <node id="59869">
+      <node id="61581">
         <label>mutex</label>
       </node>
-      <node id="59893">
+      <node id="61607">
         <label>mlpack/core/data/save.hpp</label>
         <link refid="save_8hpp"/>
-        <childnode refid="59862" relation="include">
+        <childnode refid="61574" relation="include">
         </childnode>
-        <childnode refid="59829" relation="include">
+        <childnode refid="61541" relation="include">
         </childnode>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
-        <childnode refid="59882" relation="include">
+        <childnode refid="61596" relation="include">
         </childnode>
-        <childnode refid="59887" relation="include">
+        <childnode refid="61601" relation="include">
         </childnode>
-        <childnode refid="59894" relation="include">
+        <childnode refid="61608" relation="include">
         </childnode>
       </node>
-      <node id="59865">
+      <node id="61577">
         <label>chrono</label>
       </node>
-      <node id="59873">
+      <node id="61585">
         <label>mlpack/core/util/size_checks.hpp</label>
         <link refid="size__checks_8hpp"/>
       </node>
-      <node id="59912">
+      <node id="61626">
         <label>ccov_impl.hpp</label>
       </node>
-      <node id="59939">
+      <node id="61653">
         <label>boost/math/special_functions/gamma.hpp</label>
       </node>
-      <node id="59871">
+      <node id="61583">
         <label>thread</label>
       </node>
-      <node id="59941">
+      <node id="61655">
         <label>mlpack/core/kernels/cauchy_kernel.hpp</label>
         <link refid="cauchy__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59929" relation="include">
+        <childnode refid="61643" relation="include">
         </childnode>
-        <childnode refid="59923" relation="include">
+        <childnode refid="61637" relation="include">
         </childnode>
       </node>
-      <node id="59859">
+      <node id="61594">
+        <label>params_impl.hpp</label>
+      </node>
+      <node id="61571">
         <label>type_traits</label>
       </node>
-      <node id="59835">
+      <node id="61547">
         <label>cereal/types/array.hpp</label>
       </node>
-      <node id="59937">
+      <node id="61651">
         <label>pspectrum_string_kernel_impl.hpp</label>
       </node>
-      <node id="59829">
+      <node id="61541">
         <label>mlpack/core/arma_extend/arma_extend.hpp</label>
       </node>
-      <node id="59853">
+      <node id="61565">
         <label>pointer_wrapper.hpp</label>
         <link refid="pointer__wrapper_8hpp"/>
-        <childnode refid="59831" relation="include">
+        <childnode refid="61543" relation="include">
         </childnode>
-        <childnode refid="59832" relation="include">
+        <childnode refid="61544" relation="include">
         </childnode>
-        <childnode refid="59833" relation="include">
+        <childnode refid="61545" relation="include">
         </childnode>
-        <childnode refid="59834" relation="include">
+        <childnode refid="61546" relation="include">
         </childnode>
-        <childnode refid="59854" relation="include">
+        <childnode refid="61566" relation="include">
         </childnode>
       </node>
-      <node id="59909">
+      <node id="61623">
         <label>mlpack/core/math/round.hpp</label>
         <link refid="round_8hpp"/>
       </node>
-      <node id="59940">
+      <node id="61654">
         <label>mlpack/core/kernels/triangular_kernel.hpp</label>
         <link refid="triangular__kernel_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59929" relation="include">
+        <childnode refid="61643" relation="include">
         </childnode>
       </node>
-      <node id="59825">
+      <node id="61537">
         <label>cstring</label>
       </node>
-      <node id="59844">
+      <node id="61556">
         <label>cereal/types/vector.hpp</label>
       </node>
-      <node id="59874">
+      <node id="61586">
         <label>mlpack/core/util/io.hpp</label>
         <link refid="io_8hpp"/>
-        <childnode refid="59875" relation="include">
+        <childnode refid="61587" relation="include">
         </childnode>
-        <childnode refid="59867" relation="include">
+        <childnode refid="61579" relation="include">
         </childnode>
-        <childnode refid="59868" relation="include">
+        <childnode refid="61580" relation="include">
         </childnode>
-        <childnode refid="59870" relation="include">
+        <childnode refid="61582" relation="include">
         </childnode>
-        <childnode refid="59876" relation="include">
+        <childnode refid="61588" relation="include">
         </childnode>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59863" relation="include">
+        <childnode refid="61575" relation="include">
         </childnode>
-        <childnode refid="59877" relation="include">
+        <childnode refid="61589" relation="include">
         </childnode>
-        <childnode refid="59878" relation="include">
+        <childnode refid="61590" relation="include">
         </childnode>
-        <childnode refid="59879" relation="include">
+        <childnode refid="61591" relation="include">
         </childnode>
-        <childnode refid="59880" relation="include">
+        <childnode refid="61592" relation="include">
         </childnode>
-        <childnode refid="59881" relation="include">
+        <childnode refid="61593" relation="include">
         </childnode>
-        <childnode refid="59893" relation="include">
+        <childnode refid="61595" relation="include">
         </childnode>
-        <childnode refid="59895" relation="include">
+        <childnode refid="61607" relation="include">
+        </childnode>
+        <childnode refid="61609" relation="include">
         </childnode>
       </node>
-      <node id="59833">
+      <node id="61545">
         <label>cereal/archives/portable_binary.hpp</label>
       </node>
-      <node id="59915">
+      <node id="61629">
         <label>mlpack/core/dists/gaussian_distribution.hpp</label>
         <link refid="gaussian__distribution_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
       </node>
-      <node id="59929">
+      <node id="61643">
         <label>mlpack/core/metrics/lmetric.hpp</label>
         <link refid="lmetric_8hpp"/>
-        <childnode refid="59817" relation="include">
+        <childnode refid="61529" relation="include">
         </childnode>
-        <childnode refid="59930" relation="include">
+        <childnode refid="61644" relation="include">
         </childnode>
       </node>
-      <node id="59882">
+      <node id="61596">
         <label>format.hpp</label>
         <link refid="format_8hpp"/>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="59945">
+      <node id="61658">
         <label>/home/aakash/mlpack/src/mlpack/tests/serialization.hpp</label>
         <link refid="serialization_8hpp"/>
       </node>
-      <node id="59944">
+      <node id="61657">
         <label>/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp</label>
         <link refid="test__catch__tools_8hpp"/>
-        <childnode refid="59945" relation="include">
+        <childnode refid="61658" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -937,7 +946,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="22" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="22" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="21" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -969,8 +978,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="57" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="57" bodyend="65"/>
-        <references refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" compoundref="test__catch__tools_8hpp" startline="26" endline="40">CheckMatrices</references>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="56" bodyend="64"/>
+        <references refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" compoundref="test__catch__tools_8hpp" startline="25" endline="39">CheckMatrices</references>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -996,8 +1005,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="26" bodyend="40"/>
-        <referencedby refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" compoundref="test__catch__tools_8hpp" startline="57" endline="65">CheckFields</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="25" bodyend="39"/>
+        <referencedby refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" compoundref="test__catch__tools_8hpp" startline="56" endline="64">CheckFields</referencedby>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1a55e4e6a1b90fa29f377545ada95d9c13" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1018,7 +1027,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="43" bodyend="51"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="42" bodyend="50"/>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1afe966f828dc9f987f9f46f348947a729" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1044,7 +1053,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="68" bodyend="83"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="67" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="67" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1070,7 +1079,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="86" bodyend="115"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="85" bodyend="114"/>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1a91052523ffe67c0b11c6731ad14689e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1091,7 +1100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="118" bodyend="140"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="117" bodyend="139"/>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1ab8511b32e7ccb9f8b0c09b92f810908f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1117,7 +1126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="143" bodyend="173"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="142" bodyend="172"/>
       </memberdef>
       <memberdef kind="function" id="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>std::string</type>
@@ -1134,7 +1143,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="176" bodyend="188"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp" bodystart="175" bodyend="187"/>
         <referencedby refid="namespacemlpack_1a60e0769fd629305e7b5ea41569bc64ae" compoundref="serialization_8hpp" startline="145" endline="168">mlpack::SerializeObject</referencedby>
         <referencedby refid="namespacemlpack_1a4aa2fa900138dc71a37b9b3922d6faff" compoundref="serialization_8hpp" startline="184" endline="203">mlpack::SerializePointerObject</referencedby>
         <referencedby refid="namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf" compoundref="serialization_8hpp" startline="26" endline="74">mlpack::TestArmadilloSerialization</referencedby>
@@ -1151,181 +1160,180 @@ This file includes some useful macros for tests.</para><para>mlpack is free soft
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_TESTS_TEST_CATCH_TOOLS_HPP</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight></codeline>
 <codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="core_8hpp" kindref="compound">mlpack/core.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;boost/version.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;catch.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Require<sp/>the<sp/>approximation<sp/>L<sp/>to<sp/>be<sp/>within<sp/>a<sp/>relative<sp/>error<sp/>of<sp/>E<sp/>respect<sp/>to<sp/>the</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">//<sp/>actual<sp/>value<sp/>R.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="22" refid="test__catch__tools_8hpp_1aa02380f99fe064c7efddccac3ba7befb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REQUIRE_RELATIVE_ERR(L,<sp/>R,<sp/>E)<sp/>\</highlight></codeline>
-<codeline lineno="23"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>REQUIRE(std::abs((R)<sp/>-<sp/>(L))<sp/>&lt;=<sp/>(E)<sp/>*<sp/>std::abs(R))</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="26" refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>b,</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
-<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(b[i]<sp/>==<sp/>Approx(0.0).margin(tolerance<sp/>/<sp/>2));</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>Approx(b[i]).epsilon(tolerance<sp/>/<sp/>100));</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>unsigned<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="43" refid="test__catch__tools_8hpp_1a55e4e6a1b90fa29f377545ada95d9c13" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>b)</highlight></codeline>
-<codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>b[i]);</highlight></codeline>
-<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>FieldType,</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::is_arma_type&lt;typename<sp/>FieldType::object_type&gt;::value&gt;&gt;</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>field<sp/>types.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="57" refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" kindref="member">CheckFields</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FieldType&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FieldType&amp;<sp/>b)</highlight></codeline>
-<codeline lineno="59"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_slices;<sp/>++i)</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(a(i),<sp/>b(i));</highlight></codeline>
-<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>cubes.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="68" refid="test__catch__tools_8hpp_1afe966f828dc9f987f9f46f348947a729" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>b,</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
-<codeline lineno="71"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_slices<sp/>==<sp/>b.n_slices);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(b[i]<sp/>==<sp/>Approx(0.0).margin(tolerance<sp/>/<sp/>2));</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>Approx(b[i]).epsilon(tolerance<sp/>/<sp/>100));</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="83"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>matrices<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86" refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>b,</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
-<codeline lineno="89"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols)</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2<sp/>&amp;&amp;</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b[i]<sp/>&gt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i]<sp/>-<sp/>b[i])<sp/>&gt;<sp/>tolerance)</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>unsigned<sp/>matrices<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="118" refid="test__catch__tools_8hpp_1a91052523ffe67c0b11c6731ad14689e1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>b)</highlight></codeline>
-<codeline lineno="120"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols)</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a[i]<sp/>!=<sp/>b[i])</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="140"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"></highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>cubes<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="143" refid="test__catch__tools_8hpp_1ab8511b32e7ccb9f8b0c09b92f810908f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>a,</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>b,</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
-<codeline lineno="146"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols<sp/>&amp;&amp;</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>a.n_slices<sp/>==<sp/>b.n_slices)</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2<sp/>&amp;&amp;</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b[i]<sp/>&gt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i]<sp/>-<sp/>b[i])<sp/>&gt;<sp/>tolerance)</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"></highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"></highlight></codeline>
-<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Filter<sp/>typeinfo<sp/>string<sp/>to<sp/>generate<sp/>unique<sp/>filenames<sp/>for<sp/>serialization<sp/>tests.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="176" refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>inputString)</highlight></codeline>
-<codeline lineno="177"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Take<sp/>the<sp/>last<sp/>valid<sp/>32<sp/>characters<sp/>for<sp/>the<sp/>filename.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName;</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>inputString.rbegin();<sp/>it<sp/>!=<sp/>inputString.rend()<sp/>&amp;&amp;</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fileName.size()<sp/>!=<sp/>32;<sp/>++it)</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isalnum(*it))</highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fileName.push_back(*it);</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fileName;</highlight></codeline>
-<codeline lineno="188"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;catch.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Require<sp/>the<sp/>approximation<sp/>L<sp/>to<sp/>be<sp/>within<sp/>a<sp/>relative<sp/>error<sp/>of<sp/>E<sp/>respect<sp/>to<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//<sp/>actual<sp/>value<sp/>R.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="test__catch__tools_8hpp_1aa02380f99fe064c7efddccac3ba7befb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REQUIRE_RELATIVE_ERR(L,<sp/>R,<sp/>E)<sp/>\</highlight></codeline>
+<codeline lineno="22"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>REQUIRE(std::abs((R)<sp/>-<sp/>(L))<sp/>&lt;=<sp/>(E)<sp/>*<sp/>std::abs(R))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>b,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(b[i]<sp/>==<sp/>Approx(0.0).margin(tolerance<sp/>/<sp/>2));</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>Approx(b[i]).epsilon(tolerance<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>unsigned<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="test__catch__tools_8hpp_1a55e4e6a1b90fa29f377545ada95d9c13" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>b)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>b[i]);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>FieldType,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>=<sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::is_arma_type&lt;typename<sp/>FieldType::object_type&gt;::value&gt;&gt;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>field<sp/>types.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c" kindref="member">CheckFields</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FieldType&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>FieldType&amp;<sp/>b)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_slices;<sp/>++i)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(a(i),<sp/>b(i));</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>the<sp/>values<sp/>of<sp/>two<sp/>cubes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="test__catch__tools_8hpp_1afe966f828dc9f987f9f46f348947a729" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84" kindref="member">CheckMatrices</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>b,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_rows<sp/>==<sp/>b.n_rows);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_cols<sp/>==<sp/>b.n_cols);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>REQUIRE(a.n_slices<sp/>==<sp/>b.n_slices);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(b[i]<sp/>==<sp/>Approx(0.0).margin(tolerance<sp/>/<sp/>2));</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>REQUIRE(a[i]<sp/>==<sp/>Approx(b[i]).epsilon(tolerance<sp/>/<sp/>100));</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>matrices<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>b,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b[i]<sp/>&gt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i]<sp/>-<sp/>b[i])<sp/>&gt;<sp/>tolerance)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>unsigned<sp/>matrices<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="test__catch__tools_8hpp_1a91052523ffe67c0b11c6731ad14689e1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;size_t&gt;&amp;<sp/>b)</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a[i]<sp/>!=<sp/>b[i])</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>two<sp/>cubes<sp/>are<sp/>different.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="test__catch__tools_8hpp_1ab8511b32e7ccb9f8b0c09b92f810908f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d" kindref="member">CheckMatricesNotEqual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::cube&amp;<sp/>b,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Only<sp/>check<sp/>the<sp/>elements<sp/>if<sp/>the<sp/>dimensions<sp/>are<sp/>equal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.n_rows<sp/>==<sp/>b.n_rows<sp/>&amp;&amp;<sp/>a.n_cols<sp/>==<sp/>b.n_cols<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>a.n_slices<sp/>==<sp/>b.n_slices)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.n_elem;<sp/>++i)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i])<sp/>&lt;<sp/>tolerance<sp/>/<sp/>2<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>b[i]<sp/>&gt;<sp/>tolerance<sp/>/<sp/>2)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(a[i]<sp/>-<sp/>b[i])<sp/>&gt;<sp/>tolerance)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>areDifferent<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!areDifferent)</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>FAIL(</highlight><highlight class="stringliteral">&quot;The<sp/>matrices<sp/>are<sp/>equal.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Filter<sp/>typeinfo<sp/>string<sp/>to<sp/>generate<sp/>unique<sp/>filenames<sp/>for<sp/>serialization<sp/>tests.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kindref="member">FilterFileName</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>inputString)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Take<sp/>the<sp/>last<sp/>valid<sp/>32<sp/>characters<sp/>for<sp/>the<sp/>filename.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>std::string<sp/>fileName;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>inputString.rbegin();<sp/>it<sp/>!=<sp/>inputString.rend()<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fileName.size()<sp/>!=<sp/>32;<sp/>++it)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isalnum(*it))</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fileName.push_back(*it);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fileName;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
     <location file="/home/aakash/mlpack/src/mlpack/tests/test_catch_tools.hpp"/>
   </compounddef>

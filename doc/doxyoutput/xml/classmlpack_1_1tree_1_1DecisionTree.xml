@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="53" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1a883756287d5ce0957ad6f806571f2815" prot="public" static="no">
         <type>DimensionSelectionType</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="55" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="55" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1aaa2e2873f405118872db87975cce0124" prot="public" static="no">
         <type>NumericSplitType&lt; FitnessFunction &gt;</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="51" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="46" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-type">
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="509" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="509" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="505" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="505" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1acb5a60716e91f30f215e742e00a4668b" prot="private" static="no">
         <type>NumericSplit::AuxiliarySplitInfo</type>
@@ -99,7 +99,7 @@
 <para>We&apos;ll define some convenience typedefs here. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="507" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="507" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="503" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="503" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="488" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="488" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="484" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="484" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1a360b25ccaf5cb0f26ec696cb1781b634" prot="private" static="no" mutable="no">
         <type>arma::vec</type>
@@ -127,7 +127,7 @@
 <para>If the node has no children, then it is guaranteed to hold the probabilities of each class. If the node has children, then it may be used arbitrarily by the split type&apos;s <ref refid="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" kindref="member">CalculateDirection()</ref> function and may not necessarily hold class probabilities. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="501" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="501" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="497" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="497" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1af92348422caa896bc857ebd6ace89cd8" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -140,7 +140,7 @@
 <para>If we are a leaf, then this is the index of the majority class. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="493" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="493" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="489" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="489" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1a351b01278d3022d478536e0a84a1808e" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -153,7 +153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="490" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="490" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="486" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="486" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -269,7 +269,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="75" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="70" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a36d85b32851469b82df02ae96d5a80ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -372,7 +372,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="102" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="97" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ab011cce7d07f5b26e5feafea993c346b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -504,7 +504,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="131" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="126" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a33a796e18df021c0af3d388889986570" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -561,7 +561,7 @@
           <defval>0</defval>
         </param>
         <briefdescription>
-<para>Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical. </para>        </briefdescription>
+<para>Using the hyperparameters of another decision tree, train on the given data and labels with weights, where the data can be both numeric and categorical. </para>        </briefdescription>
         <detaileddescription>
 <para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para><para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
@@ -623,7 +623,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="163" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="159" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a7f1af37a41b01eef41a238843f107b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -744,7 +744,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="193" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="189" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a06062274e5618491d9170383550fe3da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -876,7 +876,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="224" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="220" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9a0cd79275bd950f9cb697bfc578db06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -902,7 +902,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="243" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="239" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a6e7969dd400c7138c6dfbe9aa60cf1ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -927,7 +927,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="251" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="247" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a23ec8f18d9cf97e1427afea56226b656" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -952,7 +952,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="258" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="254" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a3a25d7741519bf2fe87f19c38dd3baee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -965,7 +965,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="278" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="274" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -995,8 +995,8 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="479" column="1"/>
-        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="469" endline="469">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="475" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="465" endline="465">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1acb851aa7ee90f5617afe77d6942f1d35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
@@ -1013,7 +1013,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="463" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="463" bodyend="463"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="459" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="459" bodyend="459"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a914ce4cf047ff8fdcae13fdd7311839f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
@@ -1030,7 +1030,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="465" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="465" bodyend="465"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="461" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="461" bodyend="461"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1060,7 +1060,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="411" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="407" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1abddb69ee5b97027cd4eebd398bf39ac6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1112,7 +1112,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="423" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="419" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1abd3c3812715d2e249e47476782d8e95e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1153,7 +1153,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="435" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="431" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a255d0a8b26a14cfd6a1f745568b83017" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1205,7 +1205,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="449" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="445" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1218,7 +1218,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="460" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="460" bodyend="460"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="456" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="456" bodyend="456"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -1231,8 +1231,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="484" column="1"/>
-        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="469" endline="469">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="480" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="465" endline="465">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ad6d265fac56dc40fbd5da0f792400d73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
@@ -1257,7 +1257,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="266" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="262" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ac1ff2d7454c0e6480e42a68b6a6d18ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
@@ -1282,7 +1282,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="273" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="269" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1307,7 +1307,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="457" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="453" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1320,7 +1320,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="469" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="469" bodyend="469"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="465" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="465" bodyend="465"/>
         <references refid="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::CalculateDirection</references>
         <references refid="classmlpack_1_1tree_1_1DecisionTree_1a088ebfdf3c7a9e7eea81716d0c55b5a3">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::NumClasses</references>
         <references refid="classmlpack_1_1tree_1_1DecisionTree_1abf1f81b5ed54a8492b4f42166a9c6346">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::Train</references>
@@ -1438,8 +1438,8 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="300" column="1"/>
-        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="469" endline="469">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="296" column="1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" compoundref="decision__tree_8hpp" startline="465" endline="465">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;::SplitDimension</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1af69d321e90bae4cc196f83467379a8ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1543,7 +1543,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="328" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="324" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ac63e8f9e1a6c2203b79aeb0225bac9ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1676,7 +1676,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="359" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="355" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a85cf750767690c035a8cf37c7bffac65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1798,7 +1798,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="392" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="388" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -1838,7 +1838,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="515" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="511" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9252d7287c3db6e33590918d372f404e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1970,7 +1970,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="537" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="533" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a2b6ceacf0054d7c421512056a59d5409" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -2091,46 +2091,46 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="566" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="562" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>This class implements a generic decision tree learner. </para>    </briefdescription>
     <detaileddescription>
-<para>Its behavior can be controlled via its template arguments.</para><para>The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size.</para><para>Note that <computeroutput>ElemType</computeroutput> is a template parameter controlling the type that is used to store split information. In general, you would want to set this to be the same as the type of the data that you will be using, but it&apos;s not required to do that. </para>    </detaileddescription>
+<para>Its behavior can be controlled via its template arguments.</para><para>The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1396">
+      <node id="1406">
         <label>DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</label>
         <link refid="classmlpack_1_1tree_1_1DecisionTree"/>
-        <childnode refid="1397" relation="public-inheritance">
+        <childnode refid="1407" relation="public-inheritance">
         </childnode>
-        <childnode refid="1398" relation="public-inheritance">
+        <childnode refid="1408" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1397">
-        <label>AuxiliarySplitInfo</label>
+      <node id="1407">
+        <label>AuxiliarySplitInfo&lt; FitnessFunction &gt;</label>
       </node>
-      <node id="1398">
-        <label>AuxiliarySplitInfo</label>
+      <node id="1408">
+        <label>AuxiliarySplitInfo&lt; FitnessFunction &gt;</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1399">
+      <node id="1409">
         <label>DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</label>
         <link refid="classmlpack_1_1tree_1_1DecisionTree"/>
-        <childnode refid="1400" relation="public-inheritance">
+        <childnode refid="1410" relation="public-inheritance">
         </childnode>
-        <childnode refid="1401" relation="public-inheritance">
+        <childnode refid="1411" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1400">
-        <label>AuxiliarySplitInfo</label>
+      <node id="1410">
+        <label>AuxiliarySplitInfo&lt; FitnessFunction &gt;</label>
       </node>
-      <node id="1401">
-        <label>AuxiliarySplitInfo</label>
+      <node id="1411">
+        <label>AuxiliarySplitInfo&lt; FitnessFunction &gt;</label>
       </node>
     </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="45" bodyend="576"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="43" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="40" bodyend="572"/>
     <listofallmembers>
       <member refid="classmlpack_1_1tree_1_1DecisionTree_1ae48b2792a5a4157611d23905fb2dba77" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CalculateClassProbabilities</name></member>
       <member refid="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CalculateDirection</name></member>

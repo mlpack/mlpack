@@ -38,6 +38,8 @@ Includes
 
 - ``mlpack/core.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core.hpp`)
 
+- ``mlpack/core/data/split_data.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_data_split_data.hpp`)
+
 - ``mlpack/methods/logistic_regression/logistic_regression.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_logistic_regression_logistic_regression.hpp`)
 
 
@@ -49,7 +51,11 @@ Functions
 ---------
 
 
+- :ref:`exhale_function_test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155`
+
 - :ref:`exhale_function_test__function__tools_8hpp_1a4fca855ff4c9772ee30ed0a171812953`
+
+- :ref:`exhale_function_test__function__tools_8hpp_1a0bb90d590a15bd57bafd7578ce621932`
 
 
 Full File Listing

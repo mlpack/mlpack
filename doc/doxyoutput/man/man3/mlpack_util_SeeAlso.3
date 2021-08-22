@@ -1,4 +1,4 @@
-.TH "SeeAlso" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "SeeAlso" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,22 +10,24 @@ SeeAlso
 
 .in +1c
 .ti -1c
-.RI "\fBSeeAlso\fP (const std::string &description, const std::string &link)"
+.RI "\fBSeeAlso\fP (const std::string &bindingName, const std::string &description, const std::string &link)"
 .br
 .RI "Construct a \fBSeeAlso\fP object\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
-Definition at line 72 of file program_doc\&.hpp\&.
+Definition at line 81 of file program_doc\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBSeeAlso\fP (const std::string & description, const std::string & link)"
+.SS "\fBSeeAlso\fP (const std::string & bindingName, const std::string & description, const std::string & link)"
 
 .PP
-Construct a \fBSeeAlso\fP object\&. When constructed, it will register itself with \fBIO\fP\&.
+Construct a \fBSeeAlso\fP object\&. When constructed, it will register itself with \fBIO\fP for the given \fCbindingName\fP\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIbindingName\fP Name of the binding\&. 
+.br
 \fIdescription\fP Description of \fBSeeAlso\fP\&. 
 .br
 \fIlink\fP Link of \fBSeeAlso\fP\&. 

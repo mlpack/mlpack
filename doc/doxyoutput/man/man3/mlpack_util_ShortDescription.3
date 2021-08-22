@@ -1,4 +1,4 @@
-.TH "ShortDescription" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "ShortDescription" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,22 +10,24 @@ ShortDescription
 
 .in +1c
 .ti -1c
-.RI "\fBShortDescription\fP (const std::string &shortDescription)"
+.RI "\fBShortDescription\fP (const std::string &bindingName, const std::string &shortDescription)"
 .br
 .RI "Construct a \fBShortDescription\fP object\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
-Definition at line 32 of file program_doc\&.hpp\&.
+Definition at line 34 of file program_doc\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBShortDescription\fP (const std::string & shortDescription)"
+.SS "\fBShortDescription\fP (const std::string & bindingName, const std::string & shortDescription)"
 
 .PP
 Construct a \fBShortDescription\fP object\&. When constructed, it will register itself with \fBIO\fP\&. A fatal error will be thrown if more than one is constructed\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIbindingName\fP Name of the binding\&. 
+.br
 \fIshortDescription\fP A short two-sentence description of the binding, what it does, and what it is useful for\&. 
 .RE
 .PP

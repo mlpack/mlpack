@@ -141,7 +141,7 @@ Program Listing for File mean_pooling.hpp
        // `errorArea * kernalArea` and for each element in error we are doing `kernalArea`
        // number of operations. Whereas in the prefix method the total number of operations
        // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
-       // prefix sums performed (col-wise and row-wise). 
+       // prefix sums performed (col-wise and row-wise).
        // We can use this to determine which method to use.
        const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
            (4 * error.n_elem + 2 * input.n_elem);

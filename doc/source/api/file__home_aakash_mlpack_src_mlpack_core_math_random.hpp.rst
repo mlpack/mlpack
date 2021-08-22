@@ -98,9 +98,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a2befbd48db5691a0ed3b87bb4b423095`
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a731e1fe0fb09c263299222a594a73e7f`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1a4ad431d20545de6887998188074989af`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d`
 

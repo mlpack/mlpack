@@ -5,462 +5,462 @@
     <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
     <includedby refid="amf_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp</includedby>
     <incdepgraph>
-      <node id="23584">
+      <node id="23967">
         <label>list</label>
       </node>
-      <node id="23581">
+      <node id="23964">
         <label>atomic</label>
       </node>
-      <node id="23571">
+      <node id="23954">
         <label>cereal/types/memory.hpp</label>
       </node>
-      <node id="23547">
+      <node id="23930">
         <label>mlpack/core/util/arma_traits.hpp</label>
         <link refid="arma__traits_8hpp"/>
       </node>
-      <node id="23583">
+      <node id="23966">
         <label>iomanip</label>
       </node>
-      <node id="23556">
+      <node id="23939">
         <label>mlpack/core/cereal/unordered_map.hpp</label>
         <link refid="unordered__map_8hpp"/>
-        <childnode refid="23557" relation="include">
+        <childnode refid="23940" relation="include">
         </childnode>
-        <childnode refid="23559" relation="include">
+        <childnode refid="23942" relation="include">
         </childnode>
       </node>
-      <node id="23539">
+      <node id="23922">
         <label>cstdint</label>
       </node>
-      <node id="23548">
+      <node id="23931">
         <label>cereal/archives/binary.hpp</label>
       </node>
-      <node id="23555">
+      <node id="23938">
         <label>cereal/types/tuple.hpp</label>
       </node>
-      <node id="23578">
+      <node id="23961">
         <label>arma_config.hpp</label>
       </node>
-      <node id="23568">
+      <node id="23951">
         <label>boost/variant/variant_fwd.hpp</label>
       </node>
-      <node id="23535">
+      <node id="23918">
         <label>cmath</label>
       </node>
-      <node id="23554">
+      <node id="23937">
         <label>cereal/types/string.hpp</label>
       </node>
-      <node id="23543">
+      <node id="23926">
         <label>stdexcept</label>
       </node>
-      <node id="23563">
+      <node id="23946">
         <label>mlpack/core/cereal/is_saving.hpp</label>
         <link refid="is__saving_8hpp"/>
-        <childnode refid="23548" relation="include">
+        <childnode refid="23931" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
       </node>
-      <node id="23587">
+      <node id="23970">
         <label>string</label>
       </node>
-      <node id="23575">
+      <node id="23958">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="23576" relation="include">
+        <childnode refid="23959" relation="include">
         </childnode>
-        <childnode refid="23542" relation="include">
+        <childnode refid="23925" relation="include">
         </childnode>
       </node>
-      <node id="23585">
+      <node id="23968">
         <label>map</label>
       </node>
-      <node id="23537">
+      <node id="23920">
         <label>cfloat</label>
       </node>
-      <node id="23567">
+      <node id="23950">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="23589">
+      <node id="23972">
         <label>mlpack/core/util/deprecated.hpp</label>
         <link refid="deprecated_8hpp"/>
       </node>
-      <node id="23551">
+      <node id="23934">
         <label>cereal/archives/xml.hpp</label>
       </node>
-      <node id="23574">
+      <node id="23957">
         <label>mlpack/core/data/has_serialize.hpp</label>
         <link refid="has__serialize_8hpp"/>
-        <childnode refid="23575" relation="include">
+        <childnode refid="23958" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23558" relation="include">
+        <childnode refid="23941" relation="include">
         </childnode>
-        <childnode refid="23576" relation="include">
+        <childnode refid="23959" relation="include">
         </childnode>
       </node>
-      <node id="23564">
+      <node id="23947">
         <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
       </node>
-      <node id="23562">
+      <node id="23945">
         <label>mlpack/core/cereal/is_loading.hpp</label>
         <link refid="is__loading_8hpp"/>
-        <childnode refid="23548" relation="include">
+        <childnode refid="23931" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
       </node>
-      <node id="23565">
+      <node id="23948">
         <label>mlpack/core/cereal/array_wrapper.hpp</label>
         <link refid="array__wrapper_8hpp"/>
-        <childnode refid="23548" relation="include">
+        <childnode refid="23931" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
       </node>
-      <node id="23553">
+      <node id="23936">
         <label>cereal/types/boost_variant.hpp</label>
       </node>
-      <node id="23573">
+      <node id="23956">
         <label>pointer_vector_wrapper.hpp</label>
         <link refid="pointer__vector__wrapper_8hpp"/>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23561" relation="include">
+        <childnode refid="23944" relation="include">
         </childnode>
-        <childnode refid="23570" relation="include">
+        <childnode refid="23953" relation="include">
         </childnode>
       </node>
-      <node id="23577">
+      <node id="23960">
         <label>mlpack/core/util/arma_config_check.hpp</label>
         <link refid="arma__config__check_8hpp"/>
-        <childnode refid="23578" relation="include">
+        <childnode refid="23961" relation="include">
         </childnode>
       </node>
-      <node id="23579">
+      <node id="23962">
         <label>mlpack/core/util/log.hpp</label>
       </node>
-      <node id="23534">
+      <node id="23917">
         <label>mlpack/prereqs.hpp</label>
         <link refid="prereqs_8hpp"/>
-        <childnode refid="23535" relation="include">
+        <childnode refid="23918" relation="include">
         </childnode>
-        <childnode refid="23536" relation="include">
+        <childnode refid="23919" relation="include">
         </childnode>
-        <childnode refid="23537" relation="include">
+        <childnode refid="23920" relation="include">
         </childnode>
-        <childnode refid="23538" relation="include">
+        <childnode refid="23921" relation="include">
         </childnode>
-        <childnode refid="23539" relation="include">
+        <childnode refid="23922" relation="include">
         </childnode>
-        <childnode refid="23540" relation="include">
+        <childnode refid="23923" relation="include">
         </childnode>
-        <childnode refid="23541" relation="include">
+        <childnode refid="23924" relation="include">
         </childnode>
-        <childnode refid="23542" relation="include">
+        <childnode refid="23925" relation="include">
         </childnode>
-        <childnode refid="23543" relation="include">
+        <childnode refid="23926" relation="include">
         </childnode>
-        <childnode refid="23544" relation="include">
+        <childnode refid="23927" relation="include">
         </childnode>
-        <childnode refid="23545" relation="include">
+        <childnode refid="23928" relation="include">
         </childnode>
-        <childnode refid="23546" relation="include">
+        <childnode refid="23929" relation="include">
         </childnode>
-        <childnode refid="23547" relation="include">
+        <childnode refid="23930" relation="include">
         </childnode>
-        <childnode refid="23548" relation="include">
+        <childnode refid="23931" relation="include">
         </childnode>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23552" relation="include">
+        <childnode refid="23935" relation="include">
         </childnode>
-        <childnode refid="23553" relation="include">
+        <childnode refid="23936" relation="include">
         </childnode>
-        <childnode refid="23554" relation="include">
+        <childnode refid="23937" relation="include">
         </childnode>
-        <childnode refid="23555" relation="include">
+        <childnode refid="23938" relation="include">
         </childnode>
-        <childnode refid="23556" relation="include">
+        <childnode refid="23939" relation="include">
         </childnode>
-        <childnode refid="23560" relation="include">
+        <childnode refid="23943" relation="include">
         </childnode>
-        <childnode refid="23561" relation="include">
+        <childnode refid="23944" relation="include">
         </childnode>
-        <childnode refid="23562" relation="include">
+        <childnode refid="23945" relation="include">
         </childnode>
-        <childnode refid="23563" relation="include">
+        <childnode refid="23946" relation="include">
         </childnode>
-        <childnode refid="23564" relation="include">
+        <childnode refid="23947" relation="include">
         </childnode>
-        <childnode refid="23565" relation="include">
+        <childnode refid="23948" relation="include">
         </childnode>
-        <childnode refid="23566" relation="include">
+        <childnode refid="23949" relation="include">
         </childnode>
-        <childnode refid="23572" relation="include">
+        <childnode refid="23955" relation="include">
         </childnode>
-        <childnode refid="23573" relation="include">
+        <childnode refid="23956" relation="include">
         </childnode>
-        <childnode refid="23570" relation="include">
+        <childnode refid="23953" relation="include">
         </childnode>
-        <childnode refid="23574" relation="include">
+        <childnode refid="23957" relation="include">
         </childnode>
-        <childnode refid="23577" relation="include">
+        <childnode refid="23960" relation="include">
         </childnode>
-        <childnode refid="23579" relation="include">
+        <childnode refid="23962" relation="include">
         </childnode>
-        <childnode refid="23580" relation="include">
+        <childnode refid="23963" relation="include">
         </childnode>
-        <childnode refid="23589" relation="include">
+        <childnode refid="23972" relation="include">
         </childnode>
-        <childnode refid="23590" relation="include">
+        <childnode refid="23973" relation="include">
         </childnode>
       </node>
-      <node id="23540">
+      <node id="23923">
         <label>cstdio</label>
       </node>
-      <node id="23544">
+      <node id="23927">
         <label>tuple</label>
       </node>
-      <node id="23549">
+      <node id="23932">
         <label>cereal/archives/json.hpp</label>
       </node>
-      <node id="23566">
+      <node id="23949">
         <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
         <link refid="pointer__variant__wrapper_8hpp"/>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23553" relation="include">
+        <childnode refid="23936" relation="include">
         </childnode>
-        <childnode refid="23567" relation="include">
+        <childnode refid="23950" relation="include">
         </childnode>
-        <childnode refid="23568" relation="include">
+        <childnode refid="23951" relation="include">
         </childnode>
-        <childnode refid="23569" relation="include">
+        <childnode refid="23952" relation="include">
         </childnode>
-        <childnode refid="23570" relation="include">
+        <childnode refid="23953" relation="include">
         </childnode>
       </node>
-      <node id="23533">
+      <node id="23916">
         <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp</label>
         <link refid="simple__tolerance__termination_8hpp"/>
-        <childnode refid="23534" relation="include">
+        <childnode refid="23917" relation="include">
         </childnode>
       </node>
-      <node id="23545">
+      <node id="23928">
         <label>utility</label>
       </node>
-      <node id="23569">
+      <node id="23952">
         <label>boost/variant/static_visitor.hpp</label>
       </node>
-      <node id="23560">
+      <node id="23943">
         <label>cereal/types/utility.hpp</label>
       </node>
-      <node id="23557">
+      <node id="23940">
         <label>pair_associative_container.hpp</label>
         <link refid="pair__associative__container_8hpp"/>
-        <childnode refid="23558" relation="include">
+        <childnode refid="23941" relation="include">
         </childnode>
       </node>
-      <node id="23580">
+      <node id="23963">
         <label>mlpack/core/util/timers.hpp</label>
         <link refid="timers_8hpp"/>
-        <childnode refid="23581" relation="include">
+        <childnode refid="23964" relation="include">
         </childnode>
-        <childnode refid="23582" relation="include">
+        <childnode refid="23965" relation="include">
         </childnode>
-        <childnode refid="23583" relation="include">
+        <childnode refid="23966" relation="include">
         </childnode>
-        <childnode refid="23584" relation="include">
+        <childnode refid="23967" relation="include">
         </childnode>
-        <childnode refid="23585" relation="include">
+        <childnode refid="23968" relation="include">
         </childnode>
-        <childnode refid="23586" relation="include">
+        <childnode refid="23969" relation="include">
         </childnode>
-        <childnode refid="23587" relation="include">
+        <childnode refid="23970" relation="include">
         </childnode>
-        <childnode refid="23588" relation="include">
+        <childnode refid="23971" relation="include">
         </childnode>
       </node>
-      <node id="23558">
+      <node id="23941">
         <label>cereal/cereal.hpp</label>
       </node>
-      <node id="23572">
+      <node id="23955">
         <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
         <link refid="pointer__vector__variant__wrapper_8hpp"/>
-        <childnode refid="23570" relation="include">
+        <childnode refid="23953" relation="include">
         </childnode>
-        <childnode refid="23566" relation="include">
+        <childnode refid="23949" relation="include">
         </childnode>
-        <childnode refid="23573" relation="include">
+        <childnode refid="23956" relation="include">
         </childnode>
       </node>
-      <node id="23541">
+      <node id="23924">
         <label>cstdlib</label>
       </node>
-      <node id="23536">
+      <node id="23919">
         <label>cctype</label>
       </node>
-      <node id="23559">
+      <node id="23942">
         <label>unordered_map</label>
       </node>
-      <node id="23538">
+      <node id="23921">
         <label>climits</label>
       </node>
-      <node id="23586">
+      <node id="23969">
         <label>mutex</label>
       </node>
-      <node id="23582">
+      <node id="23965">
         <label>chrono</label>
       </node>
-      <node id="23590">
+      <node id="23973">
         <label>mlpack/core/util/size_checks.hpp</label>
         <link refid="size__checks_8hpp"/>
       </node>
-      <node id="23588">
+      <node id="23971">
         <label>thread</label>
       </node>
-      <node id="23576">
+      <node id="23959">
         <label>type_traits</label>
       </node>
-      <node id="23552">
+      <node id="23935">
         <label>cereal/types/array.hpp</label>
       </node>
-      <node id="23546">
+      <node id="23929">
         <label>mlpack/core/arma_extend/arma_extend.hpp</label>
       </node>
-      <node id="23570">
+      <node id="23953">
         <label>pointer_wrapper.hpp</label>
         <link refid="pointer__wrapper_8hpp"/>
-        <childnode refid="23548" relation="include">
+        <childnode refid="23931" relation="include">
         </childnode>
-        <childnode refid="23549" relation="include">
+        <childnode refid="23932" relation="include">
         </childnode>
-        <childnode refid="23550" relation="include">
+        <childnode refid="23933" relation="include">
         </childnode>
-        <childnode refid="23551" relation="include">
+        <childnode refid="23934" relation="include">
         </childnode>
-        <childnode refid="23571" relation="include">
+        <childnode refid="23954" relation="include">
         </childnode>
       </node>
-      <node id="23542">
+      <node id="23925">
         <label>cstring</label>
       </node>
-      <node id="23561">
+      <node id="23944">
         <label>cereal/types/vector.hpp</label>
       </node>
-      <node id="23550">
+      <node id="23933">
         <label>cereal/archives/portable_binary.hpp</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="23592">
+      <node id="23975">
         <label>/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp</label>
         <link refid="amf_8hpp"/>
-        <childnode refid="23593" relation="include">
+        <childnode refid="23976" relation="include">
         </childnode>
-        <childnode refid="23601" relation="include">
+        <childnode refid="23984" relation="include">
         </childnode>
-        <childnode refid="23602" relation="include">
+        <childnode refid="23985" relation="include">
         </childnode>
-        <childnode refid="23603" relation="include">
+        <childnode refid="23986" relation="include">
         </childnode>
-        <childnode refid="23604" relation="include">
+        <childnode refid="23987" relation="include">
         </childnode>
       </node>
-      <node id="23596">
+      <node id="23979">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
         <link refid="cf__model_8hpp"/>
       </node>
-      <node id="23598">
+      <node id="23981">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
         <link refid="regularized__svd__method_8hpp"/>
       </node>
-      <node id="23595">
+      <node id="23978">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
         <link refid="bias__svd__method_8hpp"/>
       </node>
-      <node id="23593">
+      <node id="23976">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
         <link refid="cf_8hpp"/>
-        <childnode refid="23594" relation="include">
+        <childnode refid="23977" relation="include">
         </childnode>
-        <childnode refid="23596" relation="include">
+        <childnode refid="23979" relation="include">
         </childnode>
-        <childnode refid="23597" relation="include">
+        <childnode refid="23980" relation="include">
         </childnode>
-        <childnode refid="23599" relation="include">
+        <childnode refid="23982" relation="include">
         </childnode>
       </node>
-      <node id="23599">
+      <node id="23982">
         <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
         <link refid="svdplusplus_8hpp"/>
-        <childnode refid="23600" relation="include">
+        <childnode refid="23983" relation="include">
         </childnode>
       </node>
-      <node id="23604">
+      <node id="23987">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</label>
         <link refid="svd__incomplete__method_8hpp"/>
       </node>
-      <node id="23601">
+      <node id="23984">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp</label>
         <link refid="batch__svd__method_8hpp"/>
       </node>
-      <node id="23594">
+      <node id="23977">
         <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
         <link refid="bias__svd_8hpp"/>
-        <childnode refid="23595" relation="include">
+        <childnode refid="23978" relation="include">
         </childnode>
       </node>
-      <node id="23591">
+      <node id="23974">
         <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp</label>
         <link refid="simple__tolerance__termination_8hpp"/>
-        <childnode refid="23592" relation="include">
+        <childnode refid="23975" relation="include">
         </childnode>
       </node>
-      <node id="23600">
+      <node id="23983">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
         <link refid="svdplusplus__method_8hpp"/>
       </node>
-      <node id="23597">
+      <node id="23980">
         <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
         <link refid="regularized__svd_8hpp"/>
-        <childnode refid="23598" relation="include">
+        <childnode refid="23981" relation="include">
         </childnode>
       </node>
-      <node id="23603">
+      <node id="23986">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</label>
         <link refid="svd__complete__method_8hpp"/>
       </node>
-      <node id="23602">
+      <node id="23985">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
         <link refid="nmf__method_8hpp"/>
-        <childnode refid="23593" relation="include">
+        <childnode refid="23976" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

@@ -26,26 +26,41 @@ Program Listing for File all_categorical_split.hpp
      // No extra info needed for split.
      class AuxiliarySplitInfo { };
    
-     template<bool UseWeights, typename VecType, typename WeightVecType>
+     template<bool UseWeights, typename VecType, typename LabelsType,
+              typename WeightVecType>
      static double SplitIfBetter(
          const double bestGain,
          const VecType& data,
          const size_t numCategories,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const WeightVecType& weights,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
-         arma::vec& classProbabilities,
+         arma::vec& splitInfo,
          AuxiliarySplitInfo& aux);
    
-     static size_t NumChildren(const arma::vec& classProbabilities,
+     template<bool UseWeights, typename VecType, typename ResponsesType,
+              typename WeightVecType>
+     static double SplitIfBetter(
+         const double bestGain,
+         const VecType& data,
+         const size_t numCategories,
+         const ResponsesType& responses,
+         const WeightVecType& weights,
+         const size_t minimumLeafSize,
+         const double minimumGainSplit,
+         double& splitInfo,
+         AuxiliarySplitInfo& aux,
+         FitnessFunction& fitnessFunction);
+   
+     static size_t NumChildren(const double& splitInfo,
                                const AuxiliarySplitInfo& /* aux */);
    
      template<typename ElemType>
      static size_t CalculateDirection(
          const ElemType& point,
-         const arma::vec& classProbabilities,
+         const double& splitInfo,
          const AuxiliarySplitInfo& /* aux */);
    };
    

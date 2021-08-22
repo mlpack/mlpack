@@ -75,9 +75,9 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacecereal_1ae36f718d7a857ad4bbfbc7c8f4c52ade`
-
 - :ref:`exhale_function_namespacecereal_1a02f9ef803550085b28fc61c79abc0147`
+
+- :ref:`exhale_function_namespacecereal_1ae36f718d7a857ad4bbfbc7c8f4c52ade`
 
 
 Full File Listing

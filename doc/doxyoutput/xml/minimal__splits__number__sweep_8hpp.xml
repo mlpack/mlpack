@@ -4,13 +4,13 @@
     <compoundname>minimal_splits_number_sweep.hpp</compoundname>
     <includes local="yes">minimal_splits_number_sweep_impl.hpp</includes>
     <incdepgraph>
-      <node id="17339">
+      <node id="17524">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_splits_number_sweep.hpp</label>
         <link refid="minimal__splits__number__sweep_8hpp"/>
-        <childnode refid="17340" relation="include">
+        <childnode refid="17525" relation="include">
         </childnode>
       </node>
-      <node id="17340">
+      <node id="17525">
         <label>minimal_splits_number_sweep_impl.hpp</label>
       </node>
     </incdepgraph>

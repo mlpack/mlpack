@@ -66,11 +66,11 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacemlpack_1_1data_1a91f3e880da9955942bd129414fe617a9`
-
 - :ref:`exhale_function_namespacemlpack_1_1data_1a007765ae6ce1f59513e6644bd2c66988`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1a0d41d92266983ceb192346478a54ec23`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1a91f3e880da9955942bd129414fe617a9`
 
 
 Full File Listing

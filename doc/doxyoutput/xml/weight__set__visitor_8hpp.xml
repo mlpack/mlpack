@@ -9,132 +9,132 @@
     <includedby refid="gan_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</includedby>
     <includedby refid="weight__norm_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp</includedby>
     <incdepgraph>
-      <node id="43879">
+      <node id="45136">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="43880" relation="include">
+        <childnode refid="45137" relation="include">
         </childnode>
-        <childnode refid="43881" relation="include">
+        <childnode refid="45138" relation="include">
         </childnode>
       </node>
-      <node id="43882">
+      <node id="45139">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="43883">
+      <node id="45140">
         <label>weight_set_visitor_impl.hpp</label>
       </node>
-      <node id="43878">
+      <node id="45135">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="43879" relation="include">
+        <childnode refid="45136" relation="include">
         </childnode>
       </node>
-      <node id="43880">
+      <node id="45137">
         <label>type_traits</label>
       </node>
-      <node id="43881">
+      <node id="45138">
         <label>cstring</label>
       </node>
-      <node id="43877">
+      <node id="45134">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_set_visitor.hpp</label>
         <link refid="weight__set__visitor_8hpp"/>
-        <childnode refid="43878" relation="include">
+        <childnode refid="45135" relation="include">
         </childnode>
-        <childnode refid="43882" relation="include">
+        <childnode refid="45139" relation="include">
         </childnode>
-        <childnode refid="43883" relation="include">
+        <childnode refid="45140" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="43894">
+      <node id="45151">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
         <link refid="layer_8hpp"/>
-        <childnode refid="43886" relation="include">
+        <childnode refid="45143" relation="include">
         </childnode>
-        <childnode refid="43887" relation="include">
+        <childnode refid="45144" relation="include">
         </childnode>
-        <childnode refid="43895" relation="include">
+        <childnode refid="45152" relation="include">
         </childnode>
-        <childnode refid="43892" relation="include">
+        <childnode refid="45149" relation="include">
         </childnode>
-        <childnode refid="43889" relation="include">
+        <childnode refid="45146" relation="include">
         </childnode>
-        <childnode refid="43890" relation="include">
+        <childnode refid="45147" relation="include">
         </childnode>
-        <childnode refid="43891" relation="include">
+        <childnode refid="45148" relation="include">
         </childnode>
-        <childnode refid="43896" relation="include">
+        <childnode refid="45153" relation="include">
         </childnode>
       </node>
-      <node id="43892">
+      <node id="45149">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
         <link refid="rnn_8hpp"/>
       </node>
-      <node id="43889">
+      <node id="45146">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
         <link refid="categorical__dqn_8hpp"/>
       </node>
-      <node id="43893">
+      <node id="45150">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp</label>
         <link refid="weight__norm_8hpp"/>
-        <childnode refid="43894" relation="include">
+        <childnode refid="45151" relation="include">
         </childnode>
       </node>
-      <node id="43885">
+      <node id="45142">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp</label>
         <link refid="network__init_8hpp"/>
-        <childnode refid="43886" relation="include">
+        <childnode refid="45143" relation="include">
         </childnode>
-        <childnode refid="43887" relation="include">
+        <childnode refid="45144" relation="include">
         </childnode>
-        <childnode refid="43892" relation="include">
+        <childnode refid="45149" relation="include">
         </childnode>
       </node>
-      <node id="43886">
+      <node id="45143">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
         <link refid="brnn_8hpp"/>
       </node>
-      <node id="43895">
+      <node id="45152">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
         <link refid="layer__names_8hpp"/>
       </node>
-      <node id="43896">
+      <node id="45153">
         <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
         <link refid="custom__layer_8hpp"/>
       </node>
-      <node id="43887">
+      <node id="45144">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
         <link refid="ffn_8hpp"/>
-        <childnode refid="43888" relation="include">
+        <childnode refid="45145" relation="include">
         </childnode>
-        <childnode refid="43889" relation="include">
+        <childnode refid="45146" relation="include">
         </childnode>
-        <childnode refid="43890" relation="include">
+        <childnode refid="45147" relation="include">
         </childnode>
-        <childnode refid="43891" relation="include">
+        <childnode refid="45148" relation="include">
         </childnode>
       </node>
-      <node id="43890">
+      <node id="45147">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
         <link refid="dueling__dqn_8hpp"/>
       </node>
-      <node id="43888">
+      <node id="45145">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
         <link refid="gan_8hpp"/>
       </node>
-      <node id="43891">
+      <node id="45148">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
         <link refid="simple__dqn_8hpp"/>
       </node>
-      <node id="43884">
+      <node id="45141">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_set_visitor.hpp</label>
         <link refid="weight__set__visitor_8hpp"/>
-        <childnode refid="43885" relation="include">
+        <childnode refid="45142" relation="include">
         </childnode>
-        <childnode refid="43888" relation="include">
+        <childnode refid="45145" relation="include">
         </childnode>
-        <childnode refid="43893" relation="include">
+        <childnode refid="45150" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -166,7 +166,7 @@ This file provides an abstraction for the Weight() function for different layers
 <codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1WeightSetVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1WeightSetVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1WeightSetVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/>weight;</highlight></codeline>

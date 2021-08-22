@@ -4,13 +4,13 @@
     <compoundname>hilbert_r_tree_auxiliary_information.hpp</compoundname>
     <includes local="yes">hilbert_r_tree_auxiliary_information_impl.hpp</includes>
     <incdepgraph>
-      <node id="17213">
+      <node id="17398">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/hilbert_r_tree_auxiliary_information.hpp</label>
         <link refid="hilbert__r__tree__auxiliary__information_8hpp"/>
-        <childnode refid="17214" relation="include">
+        <childnode refid="17399" relation="include">
         </childnode>
       </node>
-      <node id="17214">
+      <node id="17399">
         <label>hilbert_r_tree_auxiliary_information_impl.hpp</label>
       </node>
     </incdepgraph>

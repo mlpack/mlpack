@@ -1,4 +1,4 @@
-.TH "NSWrapperBase" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "NSWrapperBase" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -37,11 +37,11 @@ Inherited by \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTr
 .br
 .RI "Modify the approximation parameter epsilon\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize, const double rho)=0"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize, const double rho)=0"
 .br
 .RI "Perform bichromatic neighbor search (i\&.e\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)=0"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)=0"
 .br
 .RI "Perform monochromatic neighbor search (i\&.e\&. "
 .ti -1c
@@ -53,7 +53,7 @@ Inherited by \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTr
 .br
 .RI "Modify the search modem\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize, const double tau, const double rho)=0"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t leafSize, const double tau, const double rho)=0"
 .br
 .RI "Train the \fBNeighborSearch\fP model with the given parameters\&. "
 .in -1c
@@ -114,7 +114,7 @@ Referenced by NSModel< SortPolicy >::Rho(), and NSWrapperBase::~NSWrapperBase()\
 Modify the approximation parameter epsilon\&. 
 .PP
 Implemented in \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP, and \fBNSWrapper< SortPolicy, tree::SPTree, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistDualTreeTraverser, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistSingleTreeTraverser >\fP\&.
-.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize, const double rho)\fC [pure virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize, const double rho)\fC [pure virtual]\fP"
 
 .PP
 Perform bichromatic neighbor search (i\&.e\&. search with a separate query set)\&. 
@@ -122,7 +122,7 @@ Perform bichromatic neighbor search (i\&.e\&. search with a separate query set)\
 Implemented in \fBSpillNSWrapper< SortPolicy >\fP, \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP, \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP, and \fBNSWrapper< SortPolicy, tree::SPTree, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistDualTreeTraverser, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistSingleTreeTraverser >\fP\&.
 .PP
 Referenced by LeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Clone(), SpillNSWrapper< SortPolicy >::Clone(), NSWrapper< SortPolicy, tree::SPTree, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistDualTreeTraverser, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistSingleTreeTraverser >::Epsilon(), NSModel< SortPolicy >::RandomBasis(), and NSWrapperBase::~NSWrapperBase()\&.
-.SS "virtual void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [pure virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [pure virtual]\fP"
 
 .PP
 Perform monochromatic neighbor search (i\&.e\&. use the reference set as the query set)\&. 
@@ -142,7 +142,7 @@ Referenced by NSWrapperBase::~NSWrapperBase()\&.
 Modify the search modem\&. 
 .PP
 Implemented in \fBNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP, and \fBNSWrapper< SortPolicy, tree::SPTree, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistDualTreeTraverser, tree::SPTree< metric::EuclideanDistance, NeighborSearchStat< SortPolicy >, arma::mat >::template DefeatistSingleTreeTraverser >\fP\&.
-.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize, const double tau, const double rho)\fC [pure virtual]\fP"
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t leafSize, const double tau, const double rho)\fC [pure virtual]\fP"
 
 .PP
 Train the \fBNeighborSearch\fP model with the given parameters\&. 

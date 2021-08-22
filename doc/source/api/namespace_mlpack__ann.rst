@@ -61,6 +61,8 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1BiasSetVisitor`
 
+- :ref:`exhale_class_classmlpack_1_1ann_1_1BicubicInterpolation`
+
 - :ref:`exhale_class_classmlpack_1_1ann_1_1BilinearInterpolation`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1BinaryRBM`
@@ -68,6 +70,8 @@ Classes
 - :ref:`exhale_class_classmlpack_1_1ann_1_1BRNN`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1CELU`
+
+- :ref:`exhale_class_classmlpack_1_1ann_1_1ChannelShuffle`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1Concat`
 
@@ -245,6 +249,8 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1MultiheadAttention`
 
+- :ref:`exhale_class_classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss`
+
 - :ref:`exhale_class_classmlpack_1_1ann_1_1MultiplyConstant`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1MultiplyMerge`
@@ -252,6 +258,8 @@ Classes
 - :ref:`exhale_class_classmlpack_1_1ann_1_1MultiQuadFunction`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1NaiveConvolution`
+
+- :ref:`exhale_class_classmlpack_1_1ann_1_1NearestInterpolation`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1NegativeLogLikelihood`
 
@@ -310,6 +318,8 @@ Classes
 - :ref:`exhale_class_classmlpack_1_1ann_1_1RecurrentAttention`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1ReinforceNormal`
+
+- :ref:`exhale_class_classmlpack_1_1ann_1_1ReLU6`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1Reparametrization`
 
@@ -461,13 +471,13 @@ Typedefs
 
 - :ref:`exhale_typedef_namespacemlpack_1_1ann_1ac3b4459576bd0564e145e049ee1549ce`
 
-- :ref:`exhale_typedef_namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6`
+- :ref:`exhale_typedef_namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337`
 
 - :ref:`exhale_typedef_namespacemlpack_1_1ann_1aebe38e4259931f33c44701ba75d6240d`
 
 - :ref:`exhale_typedef_namespacemlpack_1_1ann_1a52aa33cac06fc8dbf5eefcb4e1858fea`
 
-- :ref:`exhale_typedef_namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0`
+- :ref:`exhale_typedef_namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844`
 
 - :ref:`exhale_typedef_namespacemlpack_1_1ann_1a06b6e29ab52ee62d0bccbf108d64d1a2`
 

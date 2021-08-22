@@ -58,7 +58,8 @@ Program Listing for File fastmks_model.hpp
      ~FastMKSModel();
    
      template<typename TKernelType>
-     void BuildModel(arma::mat&& referenceData,
+     void BuildModel(util::Timers& timers,
+                     arma::mat&& referenceData,
                      TKernelType& kernel,
                      const bool singleMode,
                      const bool naive,
@@ -73,13 +74,15 @@ Program Listing for File fastmks_model.hpp
      int KernelType() const { return kernelType; }
      int& KernelType() { return kernelType; }
    
-     void Search(const arma::mat& querySet,
+     void Search(util::Timers& timers,
+                 const arma::mat& querySet,
                  const size_t k,
                  arma::Mat<size_t>& indices,
                  arma::mat& kernels,
                  const double base);
    
-     void Search(const size_t k,
+     void Search(util::Timers& timers,
+                 const size_t k,
                  arma::Mat<size_t>& indices,
                  arma::mat& kernels);
    
@@ -98,7 +101,8 @@ Program Listing for File fastmks_model.hpp
      FastMKS<kernel::HyperbolicTangentKernel>* hyptan;
    
      template<typename FastMKSType>
-     void Search(FastMKSType& f,
+     void Search(util::Timers& timers,
+                 FastMKSType& f,
                  const arma::mat& querySet,
                  const size_t k,
                  arma::Mat<size_t>& indices,

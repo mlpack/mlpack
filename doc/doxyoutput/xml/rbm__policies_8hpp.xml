@@ -4,14 +4,14 @@
     <compoundname>rbm_policies.hpp</compoundname>
     <includedby refid="rbm_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</includedby>
     <invincdepgraph>
-      <node id="40558">
+      <node id="41694">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm.hpp</label>
         <link refid="rbm_8hpp"/>
       </node>
-      <node id="40557">
+      <node id="41693">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/rbm/rbm_policies.hpp</label>
         <link refid="rbm__policies_8hpp"/>
-        <childnode refid="40558" relation="include">
+        <childnode refid="41694" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

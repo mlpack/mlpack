@@ -1,4 +1,4 @@
-.TH "RAModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "RAModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -43,7 +43,7 @@ RAModel \- The \fBRAModel\fP class provides an abstraction for the \fBRASearch\f
 .br
 .RI "Modify the desired success probability\&. "
 .ti -1c
-.RI "void \fBBuildModel\fP (arma::mat &&referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
+.RI "void \fBBuildModel\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
 .br
 .RI "Build the reference tree\&. "
 .ti -1c
@@ -103,11 +103,11 @@ RAModel \- The \fBRAModel\fP class provides an abstraction for the \fBRASearch\f
 .br
 .RI "Modify whether or not sampling is done at the leaves\&. "
 .ti -1c
-.RI "void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
 .br
 .RI "Perform rank-approximate neighbor search, taking ownership of the query set\&. "
 .ti -1c
-.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
 .br
 .RI "Perform rank-approximate neighbor search, using the reference set as the query set\&. "
 .ti -1c
@@ -157,7 +157,7 @@ The \fBRAModel\fP class provides an abstraction for the \fBRASearch\fP class, ab
 
 This class is written for the sake of the 'allkrann' program, but is not necessarily restricted to that use\&. 
 .PP
-Definition at line 257 of file ra_model\&.hpp\&.
+Definition at line 265 of file ra_model\&.hpp\&.
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBTreeTypes\fP"
@@ -188,7 +188,7 @@ The list of tree types we can use with \fBRASearch\fP\&. Does not include ball t
 .TP
 \fB\fIOCTREE \fP\fP
 .PP
-Definition at line 264 of file ra_model\&.hpp\&.
+Definition at line 272 of file ra_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBRAModel\fP (\fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, bool randomBasis = \fCfalse\fP)"
@@ -228,7 +228,7 @@ Clean memory, if necessary\&.
 .PP
 Get the desired success probability\&. 
 .PP
-Definition at line 353 of file ra_model\&.hpp\&.
+Definition at line 361 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Alpha()\&.
 .SS "double& Alpha ()\fC [inline]\fP"
@@ -236,10 +236,10 @@ References RAWrapperBase::Alpha()\&.
 .PP
 Modify the desired success probability\&. 
 .PP
-Definition at line 355 of file ra_model\&.hpp\&.
+Definition at line 363 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Alpha()\&.
-.SS "void BuildModel (arma::mat && referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
+.SS "void BuildModel (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
 
 .PP
 Build the reference tree\&. 
@@ -248,7 +248,7 @@ Build the reference tree\&.
 .PP
 Expose the dataset\&. 
 .PP
-Definition at line 335 of file ra_model\&.hpp\&.
+Definition at line 343 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Dataset()\&.
 .SS "bool FirstLeafExact () const\fC [inline]\fP"
@@ -256,7 +256,7 @@ References RAWrapperBase::Dataset()\&.
 .PP
 Get whether or not we traverse to the first leaf without approximation\&. 
 .PP
-Definition at line 363 of file ra_model\&.hpp\&.
+Definition at line 371 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::FirstLeafExact()\&.
 .SS "bool& FirstLeafExact ()\fC [inline]\fP"
@@ -264,7 +264,7 @@ References RAWrapperBase::FirstLeafExact()\&.
 .PP
 Modify whether or not we traverse to the first leaf without approximation\&. 
 .PP
-Definition at line 365 of file ra_model\&.hpp\&.
+Definition at line 373 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::FirstLeafExact()\&.
 .SS "void InitializeModel (const bool naive, const bool singleMode)"
@@ -276,19 +276,19 @@ Initialize the model's memory\&.
 .PP
 Get the leaf size (only relevant when the kd-tree is used)\&. 
 .PP
-Definition at line 373 of file ra_model\&.hpp\&.
+Definition at line 381 of file ra_model\&.hpp\&.
 .SS "size_t& LeafSize ()\fC [inline]\fP"
 
 .PP
 Modify the leaf size (only relevant when the kd-tree is used)\&. 
 .PP
-Definition at line 375 of file ra_model\&.hpp\&.
+Definition at line 383 of file ra_model\&.hpp\&.
 .SS "bool Naive () const\fC [inline]\fP"
 
 .PP
 Get whether or not naive search is being used\&. 
 .PP
-Definition at line 343 of file ra_model\&.hpp\&.
+Definition at line 351 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Naive()\&.
 .SS "bool& Naive ()\fC [inline]\fP"
@@ -296,7 +296,7 @@ References RAWrapperBase::Naive()\&.
 .PP
 Modify whether or not naive search is being used\&. 
 .PP
-Definition at line 345 of file ra_model\&.hpp\&.
+Definition at line 353 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Naive()\&.
 .SS "\fBRAModel\fP& operator= (const \fBRAModel\fP & other)"
@@ -326,13 +326,13 @@ Take ownership of the given \fBRAModel\fP\&.
 .PP
 Get whether or not a random basis is being used\&. 
 .PP
-Definition at line 383 of file ra_model\&.hpp\&.
+Definition at line 391 of file ra_model\&.hpp\&.
 .SS "bool& RandomBasis ()\fC [inline]\fP"
 
 .PP
 Modify whether or not a random basis is being used\&. Be sure to rebuild the model using \fBBuildModel()\fP\&. 
 .PP
-Definition at line 386 of file ra_model\&.hpp\&.
+Definition at line 394 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Search()\&.
 .SS "bool SampleAtLeaves () const\fC [inline]\fP"
@@ -340,7 +340,7 @@ References RAWrapperBase::Search()\&.
 .PP
 Get whether or not sampling is done at the leaves\&. 
 .PP
-Definition at line 358 of file ra_model\&.hpp\&.
+Definition at line 366 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SampleAtLeaves()\&.
 .SS "bool& SampleAtLeaves ()\fC [inline]\fP"
@@ -348,14 +348,14 @@ References RAWrapperBase::SampleAtLeaves()\&.
 .PP
 Modify whether or not sampling is done at the leaves\&. 
 .PP
-Definition at line 360 of file ra_model\&.hpp\&.
+Definition at line 368 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SampleAtLeaves()\&.
-.SS "void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
 
 .PP
 Perform rank-approximate neighbor search, taking ownership of the query set\&. 
-.SS "void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
 
 .PP
 Perform rank-approximate neighbor search, using the reference set as the query set\&. 
@@ -368,7 +368,7 @@ Serialize the model\&.
 .PP
 Get whether or not single-tree search is being used\&. 
 .PP
-Definition at line 338 of file ra_model\&.hpp\&.
+Definition at line 346 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SingleMode()\&.
 .SS "bool& SingleMode ()\fC [inline]\fP"
@@ -376,7 +376,7 @@ References RAWrapperBase::SingleMode()\&.
 .PP
 Modify whether or not single-tree search is being used\&. 
 .PP
-Definition at line 340 of file ra_model\&.hpp\&.
+Definition at line 348 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SingleMode()\&.
 .SS "size_t SingleSampleLimit () const\fC [inline]\fP"
@@ -384,7 +384,7 @@ References RAWrapperBase::SingleMode()\&.
 .PP
 Get the limit on the size of a node that can be approximated\&. 
 .PP
-Definition at line 368 of file ra_model\&.hpp\&.
+Definition at line 376 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SingleSampleLimit()\&.
 .SS "size_t& SingleSampleLimit ()\fC [inline]\fP"
@@ -392,7 +392,7 @@ References RAWrapperBase::SingleSampleLimit()\&.
 .PP
 Modify the limit on the size of a node that can be approximation\&. 
 .PP
-Definition at line 370 of file ra_model\&.hpp\&.
+Definition at line 378 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::SingleSampleLimit()\&.
 .SS "double Tau () const\fC [inline]\fP"
@@ -400,7 +400,7 @@ References RAWrapperBase::SingleSampleLimit()\&.
 .PP
 Get the rank-approximation in percentile of the data\&. 
 .PP
-Definition at line 348 of file ra_model\&.hpp\&.
+Definition at line 356 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Tau()\&.
 .SS "double& Tau ()\fC [inline]\fP"
@@ -408,7 +408,7 @@ References RAWrapperBase::Tau()\&.
 .PP
 Modify the rank-approximation in percentile of the data\&. 
 .PP
-Definition at line 350 of file ra_model\&.hpp\&.
+Definition at line 358 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Tau()\&.
 .SS "std::string TreeName () const"
@@ -420,13 +420,13 @@ Get the name of the tree type\&.
 .PP
 Get the type of tree being used\&. 
 .PP
-Definition at line 378 of file ra_model\&.hpp\&.
+Definition at line 386 of file ra_model\&.hpp\&.
 .SS "\fBTreeTypes\fP& TreeType ()\fC [inline]\fP"
 
 .PP
 Modify the type of tree being used\&. 
 .PP
-Definition at line 380 of file ra_model\&.hpp\&.
+Definition at line 388 of file ra_model\&.hpp\&.
 
 .SH "Author"
 .PP 

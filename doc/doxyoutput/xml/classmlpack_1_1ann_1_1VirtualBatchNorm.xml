@@ -656,7 +656,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="113" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="118" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1VirtualBatchNorm_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::VirtualBatchNorm</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1VirtualBatchNorm_1a153dbc71d626975f31fd9e384a31d356" prot="private" virt="non-virtual"><scope>mlpack::ann::VirtualBatchNorm</scope><name>beta</name></member>

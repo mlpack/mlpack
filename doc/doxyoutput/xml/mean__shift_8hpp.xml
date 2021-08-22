@@ -6,420 +6,414 @@
     <includes refid="gaussian__kernel_8hpp" local="no">mlpack/core/kernels/gaussian_kernel.hpp</includes>
     <includes refid="kernel__traits_8hpp" local="no">mlpack/core/kernels/kernel_traits.hpp</includes>
     <includes refid="lmetric_8hpp" local="no">mlpack/core/metrics/lmetric.hpp</includes>
-    <includes local="no">boost/utility.hpp</includes>
     <includes local="yes">mean_shift_impl.hpp</includes>
     <incdepgraph>
-      <node id="52249">
+      <node id="53734">
         <label>list</label>
       </node>
-      <node id="52246">
+      <node id="53731">
         <label>atomic</label>
       </node>
-      <node id="52236">
+      <node id="53721">
         <label>cereal/types/memory.hpp</label>
       </node>
-      <node id="52212">
+      <node id="53697">
         <label>mlpack/core/util/arma_traits.hpp</label>
         <link refid="arma__traits_8hpp"/>
       </node>
-      <node id="52248">
+      <node id="53733">
         <label>iomanip</label>
       </node>
-      <node id="52258">
+      <node id="53743">
         <label>lmetric_impl.hpp</label>
       </node>
-      <node id="52221">
+      <node id="53706">
         <label>mlpack/core/cereal/unordered_map.hpp</label>
         <link refid="unordered__map_8hpp"/>
-        <childnode refid="52222" relation="include">
+        <childnode refid="53707" relation="include">
         </childnode>
-        <childnode refid="52224" relation="include">
+        <childnode refid="53709" relation="include">
         </childnode>
       </node>
-      <node id="52204">
+      <node id="53689">
         <label>cstdint</label>
       </node>
-      <node id="52259">
+      <node id="53744">
         <label>mlpack/core/kernels/kernel_traits.hpp</label>
         <link refid="kernel__traits_8hpp"/>
       </node>
-      <node id="52213">
+      <node id="53698">
         <label>cereal/archives/binary.hpp</label>
       </node>
-      <node id="52220">
+      <node id="53705">
         <label>cereal/types/tuple.hpp</label>
       </node>
-      <node id="52243">
+      <node id="53728">
         <label>arma_config.hpp</label>
       </node>
-      <node id="52233">
+      <node id="53718">
         <label>boost/variant/variant_fwd.hpp</label>
       </node>
-      <node id="52200">
+      <node id="53685">
         <label>cmath</label>
       </node>
-      <node id="52219">
+      <node id="53704">
         <label>cereal/types/string.hpp</label>
       </node>
-      <node id="52208">
+      <node id="53693">
         <label>stdexcept</label>
       </node>
-      <node id="52228">
+      <node id="53713">
         <label>mlpack/core/cereal/is_saving.hpp</label>
         <link refid="is__saving_8hpp"/>
-        <childnode refid="52213" relation="include">
+        <childnode refid="53698" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
       </node>
-      <node id="52252">
+      <node id="53737">
         <label>string</label>
       </node>
-      <node id="52240">
+      <node id="53725">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="52241" relation="include">
+        <childnode refid="53726" relation="include">
         </childnode>
-        <childnode refid="52207" relation="include">
+        <childnode refid="53692" relation="include">
         </childnode>
       </node>
-      <node id="52250">
+      <node id="53735">
         <label>map</label>
       </node>
-      <node id="52202">
+      <node id="53687">
         <label>cfloat</label>
       </node>
-      <node id="52232">
+      <node id="53717">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="52254">
+      <node id="53739">
         <label>mlpack/core/util/deprecated.hpp</label>
         <link refid="deprecated_8hpp"/>
       </node>
-      <node id="52216">
+      <node id="53701">
         <label>cereal/archives/xml.hpp</label>
       </node>
-      <node id="52239">
+      <node id="53724">
         <label>mlpack/core/data/has_serialize.hpp</label>
         <link refid="has__serialize_8hpp"/>
-        <childnode refid="52240" relation="include">
+        <childnode refid="53725" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52223" relation="include">
+        <childnode refid="53708" relation="include">
         </childnode>
-        <childnode refid="52241" relation="include">
+        <childnode refid="53726" relation="include">
         </childnode>
       </node>
-      <node id="52229">
+      <node id="53714">
         <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
       </node>
-      <node id="52198">
+      <node id="53683">
         <label>/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp</label>
         <link refid="mean__shift_8hpp"/>
-        <childnode refid="52199" relation="include">
+        <childnode refid="53684" relation="include">
         </childnode>
-        <childnode refid="52256" relation="include">
+        <childnode refid="53741" relation="include">
         </childnode>
-        <childnode refid="52259" relation="include">
+        <childnode refid="53744" relation="include">
         </childnode>
-        <childnode refid="52257" relation="include">
+        <childnode refid="53742" relation="include">
         </childnode>
-        <childnode refid="52260" relation="include">
-        </childnode>
-        <childnode refid="52261" relation="include">
+        <childnode refid="53745" relation="include">
         </childnode>
       </node>
-      <node id="52227">
+      <node id="53712">
         <label>mlpack/core/cereal/is_loading.hpp</label>
         <link refid="is__loading_8hpp"/>
-        <childnode refid="52213" relation="include">
+        <childnode refid="53698" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
       </node>
-      <node id="52230">
+      <node id="53715">
         <label>mlpack/core/cereal/array_wrapper.hpp</label>
         <link refid="array__wrapper_8hpp"/>
-        <childnode refid="52213" relation="include">
+        <childnode refid="53698" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
       </node>
-      <node id="52218">
+      <node id="53703">
         <label>cereal/types/boost_variant.hpp</label>
       </node>
-      <node id="52238">
+      <node id="53723">
         <label>pointer_vector_wrapper.hpp</label>
         <link refid="pointer__vector__wrapper_8hpp"/>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52226" relation="include">
+        <childnode refid="53711" relation="include">
         </childnode>
-        <childnode refid="52235" relation="include">
+        <childnode refid="53720" relation="include">
         </childnode>
       </node>
-      <node id="52242">
+      <node id="53727">
         <label>mlpack/core/util/arma_config_check.hpp</label>
         <link refid="arma__config__check_8hpp"/>
-        <childnode refid="52243" relation="include">
+        <childnode refid="53728" relation="include">
         </childnode>
       </node>
-      <node id="52244">
+      <node id="53729">
         <label>mlpack/core/util/log.hpp</label>
       </node>
-      <node id="52199">
+      <node id="53684">
         <label>mlpack/prereqs.hpp</label>
         <link refid="prereqs_8hpp"/>
-        <childnode refid="52200" relation="include">
+        <childnode refid="53685" relation="include">
         </childnode>
-        <childnode refid="52201" relation="include">
+        <childnode refid="53686" relation="include">
         </childnode>
-        <childnode refid="52202" relation="include">
+        <childnode refid="53687" relation="include">
         </childnode>
-        <childnode refid="52203" relation="include">
+        <childnode refid="53688" relation="include">
         </childnode>
-        <childnode refid="52204" relation="include">
+        <childnode refid="53689" relation="include">
         </childnode>
-        <childnode refid="52205" relation="include">
+        <childnode refid="53690" relation="include">
         </childnode>
-        <childnode refid="52206" relation="include">
+        <childnode refid="53691" relation="include">
         </childnode>
-        <childnode refid="52207" relation="include">
+        <childnode refid="53692" relation="include">
         </childnode>
-        <childnode refid="52208" relation="include">
+        <childnode refid="53693" relation="include">
         </childnode>
-        <childnode refid="52209" relation="include">
+        <childnode refid="53694" relation="include">
         </childnode>
-        <childnode refid="52210" relation="include">
+        <childnode refid="53695" relation="include">
         </childnode>
-        <childnode refid="52211" relation="include">
+        <childnode refid="53696" relation="include">
         </childnode>
-        <childnode refid="52212" relation="include">
+        <childnode refid="53697" relation="include">
         </childnode>
-        <childnode refid="52213" relation="include">
+        <childnode refid="53698" relation="include">
         </childnode>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52217" relation="include">
+        <childnode refid="53702" relation="include">
         </childnode>
-        <childnode refid="52218" relation="include">
+        <childnode refid="53703" relation="include">
         </childnode>
-        <childnode refid="52219" relation="include">
+        <childnode refid="53704" relation="include">
         </childnode>
-        <childnode refid="52220" relation="include">
+        <childnode refid="53705" relation="include">
         </childnode>
-        <childnode refid="52221" relation="include">
+        <childnode refid="53706" relation="include">
         </childnode>
-        <childnode refid="52225" relation="include">
+        <childnode refid="53710" relation="include">
         </childnode>
-        <childnode refid="52226" relation="include">
+        <childnode refid="53711" relation="include">
         </childnode>
-        <childnode refid="52227" relation="include">
+        <childnode refid="53712" relation="include">
         </childnode>
-        <childnode refid="52228" relation="include">
+        <childnode refid="53713" relation="include">
         </childnode>
-        <childnode refid="52229" relation="include">
+        <childnode refid="53714" relation="include">
         </childnode>
-        <childnode refid="52230" relation="include">
+        <childnode refid="53715" relation="include">
         </childnode>
-        <childnode refid="52231" relation="include">
+        <childnode refid="53716" relation="include">
         </childnode>
-        <childnode refid="52237" relation="include">
+        <childnode refid="53722" relation="include">
         </childnode>
-        <childnode refid="52238" relation="include">
+        <childnode refid="53723" relation="include">
         </childnode>
-        <childnode refid="52235" relation="include">
+        <childnode refid="53720" relation="include">
         </childnode>
-        <childnode refid="52239" relation="include">
+        <childnode refid="53724" relation="include">
         </childnode>
-        <childnode refid="52242" relation="include">
+        <childnode refid="53727" relation="include">
         </childnode>
-        <childnode refid="52244" relation="include">
+        <childnode refid="53729" relation="include">
         </childnode>
-        <childnode refid="52245" relation="include">
+        <childnode refid="53730" relation="include">
         </childnode>
-        <childnode refid="52254" relation="include">
+        <childnode refid="53739" relation="include">
         </childnode>
-        <childnode refid="52255" relation="include">
+        <childnode refid="53740" relation="include">
         </childnode>
       </node>
-      <node id="52256">
+      <node id="53741">
         <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
         <link refid="gaussian__kernel_8hpp"/>
-        <childnode refid="52199" relation="include">
+        <childnode refid="53684" relation="include">
         </childnode>
-        <childnode refid="52257" relation="include">
+        <childnode refid="53742" relation="include">
         </childnode>
-        <childnode refid="52259" relation="include">
+        <childnode refid="53744" relation="include">
         </childnode>
       </node>
-      <node id="52205">
+      <node id="53690">
         <label>cstdio</label>
       </node>
-      <node id="52209">
+      <node id="53694">
         <label>tuple</label>
       </node>
-      <node id="52214">
+      <node id="53699">
         <label>cereal/archives/json.hpp</label>
       </node>
-      <node id="52231">
+      <node id="53716">
         <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
         <link refid="pointer__variant__wrapper_8hpp"/>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52218" relation="include">
+        <childnode refid="53703" relation="include">
         </childnode>
-        <childnode refid="52232" relation="include">
+        <childnode refid="53717" relation="include">
         </childnode>
-        <childnode refid="52233" relation="include">
+        <childnode refid="53718" relation="include">
         </childnode>
-        <childnode refid="52234" relation="include">
+        <childnode refid="53719" relation="include">
         </childnode>
-        <childnode refid="52235" relation="include">
+        <childnode refid="53720" relation="include">
         </childnode>
       </node>
-      <node id="52210">
+      <node id="53695">
         <label>utility</label>
       </node>
-      <node id="52234">
+      <node id="53719">
         <label>boost/variant/static_visitor.hpp</label>
       </node>
-      <node id="52225">
+      <node id="53710">
         <label>cereal/types/utility.hpp</label>
       </node>
-      <node id="52260">
-        <label>boost/utility.hpp</label>
-      </node>
-      <node id="52222">
+      <node id="53707">
         <label>pair_associative_container.hpp</label>
         <link refid="pair__associative__container_8hpp"/>
-        <childnode refid="52223" relation="include">
+        <childnode refid="53708" relation="include">
         </childnode>
       </node>
-      <node id="52261">
+      <node id="53745">
         <label>mean_shift_impl.hpp</label>
       </node>
-      <node id="52245">
+      <node id="53730">
         <label>mlpack/core/util/timers.hpp</label>
         <link refid="timers_8hpp"/>
-        <childnode refid="52246" relation="include">
+        <childnode refid="53731" relation="include">
         </childnode>
-        <childnode refid="52247" relation="include">
+        <childnode refid="53732" relation="include">
         </childnode>
-        <childnode refid="52248" relation="include">
+        <childnode refid="53733" relation="include">
         </childnode>
-        <childnode refid="52249" relation="include">
+        <childnode refid="53734" relation="include">
         </childnode>
-        <childnode refid="52250" relation="include">
+        <childnode refid="53735" relation="include">
         </childnode>
-        <childnode refid="52251" relation="include">
+        <childnode refid="53736" relation="include">
         </childnode>
-        <childnode refid="52252" relation="include">
+        <childnode refid="53737" relation="include">
         </childnode>
-        <childnode refid="52253" relation="include">
+        <childnode refid="53738" relation="include">
         </childnode>
       </node>
-      <node id="52223">
+      <node id="53708">
         <label>cereal/cereal.hpp</label>
       </node>
-      <node id="52237">
+      <node id="53722">
         <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
         <link refid="pointer__vector__variant__wrapper_8hpp"/>
-        <childnode refid="52235" relation="include">
+        <childnode refid="53720" relation="include">
         </childnode>
-        <childnode refid="52231" relation="include">
+        <childnode refid="53716" relation="include">
         </childnode>
-        <childnode refid="52238" relation="include">
+        <childnode refid="53723" relation="include">
         </childnode>
       </node>
-      <node id="52206">
+      <node id="53691">
         <label>cstdlib</label>
       </node>
-      <node id="52201">
+      <node id="53686">
         <label>cctype</label>
       </node>
-      <node id="52224">
+      <node id="53709">
         <label>unordered_map</label>
       </node>
-      <node id="52203">
+      <node id="53688">
         <label>climits</label>
       </node>
-      <node id="52251">
+      <node id="53736">
         <label>mutex</label>
       </node>
-      <node id="52247">
+      <node id="53732">
         <label>chrono</label>
       </node>
-      <node id="52255">
+      <node id="53740">
         <label>mlpack/core/util/size_checks.hpp</label>
         <link refid="size__checks_8hpp"/>
       </node>
-      <node id="52253">
+      <node id="53738">
         <label>thread</label>
       </node>
-      <node id="52241">
+      <node id="53726">
         <label>type_traits</label>
       </node>
-      <node id="52217">
+      <node id="53702">
         <label>cereal/types/array.hpp</label>
       </node>
-      <node id="52211">
+      <node id="53696">
         <label>mlpack/core/arma_extend/arma_extend.hpp</label>
       </node>
-      <node id="52235">
+      <node id="53720">
         <label>pointer_wrapper.hpp</label>
         <link refid="pointer__wrapper_8hpp"/>
-        <childnode refid="52213" relation="include">
+        <childnode refid="53698" relation="include">
         </childnode>
-        <childnode refid="52214" relation="include">
+        <childnode refid="53699" relation="include">
         </childnode>
-        <childnode refid="52215" relation="include">
+        <childnode refid="53700" relation="include">
         </childnode>
-        <childnode refid="52216" relation="include">
+        <childnode refid="53701" relation="include">
         </childnode>
-        <childnode refid="52236" relation="include">
+        <childnode refid="53721" relation="include">
         </childnode>
       </node>
-      <node id="52207">
+      <node id="53692">
         <label>cstring</label>
       </node>
-      <node id="52226">
+      <node id="53711">
         <label>cereal/types/vector.hpp</label>
       </node>
-      <node id="52215">
+      <node id="53700">
         <label>cereal/archives/portable_binary.hpp</label>
       </node>
-      <node id="52257">
+      <node id="53742">
         <label>mlpack/core/metrics/lmetric.hpp</label>
         <link refid="lmetric_8hpp"/>
-        <childnode refid="52199" relation="include">
+        <childnode refid="53684" relation="include">
         </childnode>
-        <childnode refid="52258" relation="include">
+        <childnode refid="53743" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -440,72 +434,71 @@ Mean Shift clustering</para><para>mlpack is free software; you may redistribute 
 <codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gaussian__kernel_8hpp" kindref="compound">mlpack/core/kernels/gaussian_kernel.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="kernel__traits_8hpp" kindref="compound">mlpack/core/kernels/kernel_traits.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lmetric_8hpp" kindref="compound">mlpack/core/metrics/lmetric.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;boost/utility.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
-<codeline lineno="23" refid="namespacemlpack_1_1meanshift" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">meanshift<sp/><sp/>{</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseKernel<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType<sp/>=<sp/><ref refid="classmlpack_1_1kernel_1_1GaussianKernel" kindref="compound">kernel::GaussianKernel</ref>,</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
-<codeline lineno="51" refid="classmlpack_1_1meanshift_1_1MeanShift" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1meanshift_1_1MeanShift" kindref="compound">MeanShift</ref></highlight></codeline>
-<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a2d412008ae2244778bfd2afb1e292858" kindref="member">MeanShift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius<sp/>=<sp/>0,</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>1000,</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>KernelType<sp/>kernel<sp/>=<sp/>KernelType());</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a18e16a5764b4b09cd46402c5ac40e711" kindref="member">EstimateRadius</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ratio<sp/>=<sp/>0.2);</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1ae6c156618ab407e37eb42f6843e46005" kindref="member">Cluster</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>assignments,</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>centroids,</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>forceConvergence<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>useSeeds<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96" refid="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
-<codeline lineno="98" refid="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101" refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" kindref="member">Radius</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>radius;<sp/>}</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" kindref="member">Radius</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius);</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106" refid="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>KernelType&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" kindref="member">Kernel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernel;<sp/>}</highlight></codeline>
-<codeline lineno="108" refid="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" refkind="member"><highlight class="normal"><sp/><sp/>KernelType&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" kindref="member">Kernel</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernel;<sp/>}</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GenSeeds(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>binSize,</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>minFreq,</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatType&amp;<sp/>seeds);</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ApplyKernel<sp/>=<sp/>UseKernel&gt;</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;ApplyKernel,<sp/>bool&gt;::type</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/>CalculateCentroid(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;&amp;<sp/>distances,</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/>centroid);</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"></highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ApplyKernel<sp/>=<sp/>UseKernel&gt;</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;!ApplyKernel,<sp/>bool&gt;::type</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/>CalculateCentroid(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;&amp;,<sp/></highlight><highlight class="comment">/*unused*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/>centroid);</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius;</highlight></codeline>
-<codeline lineno="165"><highlight class="normal"></highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"></highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/>KernelType<sp/>kernel;</highlight></codeline>
-<codeline lineno="171"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>meanshift</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="174"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="175"><highlight class="normal"></highlight></codeline>
-<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="177"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;mean_shift_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="178"><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="22" refid="namespacemlpack_1_1meanshift" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">meanshift<sp/><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseKernel<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType<sp/>=<sp/><ref refid="classmlpack_1_1kernel_1_1GaussianKernel" kindref="compound">kernel::GaussianKernel</ref>,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat&gt;</highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1meanshift_1_1MeanShift" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1meanshift_1_1MeanShift" kindref="compound">MeanShift</ref></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a2d412008ae2244778bfd2afb1e292858" kindref="member">MeanShift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations<sp/>=<sp/>1000,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>KernelType<sp/>kernel<sp/>=<sp/>KernelType());</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a18e16a5764b4b09cd46402c5ac40e711" kindref="member">EstimateRadius</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ratio<sp/>=<sp/>0.2);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1ae6c156618ab407e37eb42f6843e46005" kindref="member">Cluster</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>assignments,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>centroids,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>forceConvergence<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>useSeeds<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" kindref="member">MaxIterations</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="97" refid="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" kindref="member">MaxIterations</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxIterations;<sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" kindref="member">Radius</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>radius;<sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" kindref="member">Radius</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>KernelType&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" kindref="member">Kernel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernel;<sp/>}</highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" refkind="member"><highlight class="normal"><sp/><sp/>KernelType&amp;<sp/><ref refid="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" kindref="member">Kernel</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>kernel;<sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>GenSeeds(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>binSize,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>minFreq,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatType&amp;<sp/>seeds);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ApplyKernel<sp/>=<sp/>UseKernel&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;ApplyKernel,<sp/>bool&gt;::type</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>CalculateCentroid(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;&amp;<sp/>distances,</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/>centroid);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ApplyKernel<sp/>=<sp/>UseKernel&gt;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;!ApplyKernel,<sp/>bool&gt;::type</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>CalculateCentroid(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/>neighbors,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;&amp;,<sp/></highlight><highlight class="comment">/*unused*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/>centroid);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>radius;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxIterations;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/>KernelType<sp/>kernel;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>meanshift</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;mean_shift_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP</highlight></codeline>
     </programlisting>
     <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp"/>
   </compounddef>

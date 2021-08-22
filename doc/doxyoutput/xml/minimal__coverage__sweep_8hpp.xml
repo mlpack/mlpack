@@ -4,13 +4,13 @@
     <compoundname>minimal_coverage_sweep.hpp</compoundname>
     <includes local="yes">minimal_coverage_sweep_impl.hpp</includes>
     <incdepgraph>
-      <node id="17336">
+      <node id="17521">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp</label>
         <link refid="minimal__coverage__sweep_8hpp"/>
-        <childnode refid="17337" relation="include">
+        <childnode refid="17522" relation="include">
         </childnode>
       </node>
-      <node id="17337">
+      <node id="17522">
         <label>minimal_coverage_sweep_impl.hpp</label>
       </node>
     </incdepgraph>

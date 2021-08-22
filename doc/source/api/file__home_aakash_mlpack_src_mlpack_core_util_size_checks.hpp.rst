@@ -57,9 +57,9 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacemlpack_1_1util_1a157fecedf39b2a38c83eb0f83c731494`
-
 - :ref:`exhale_function_namespacemlpack_1_1util_1ad3edb223b2cb9147f26f1f7e6cd84874`
+
+- :ref:`exhale_function_namespacemlpack_1_1util_1a157fecedf39b2a38c83eb0f83c731494`
 
 - :ref:`exhale_function_namespacemlpack_1_1util_1a45a020ff6df656fc4948ffe17e4cec6e`
 

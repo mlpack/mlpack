@@ -1,4 +1,4 @@
-.TH "/home/aakash/mlpack/src/mlpack/tests/mock_categorical_data.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "/home/aakash/mlpack/src/mlpack/tests/mock_categorical_data.hpp" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,7 +13,11 @@
 .ti -1c
 .RI "void \fBMockCategoricalData\fP (arma::mat &d, arma::Row< size_t > &l, \fBmlpack::data::DatasetInfo\fP &datasetInfo)"
 .br
-.RI "Create a mock categorical dataset for testing\&. "
+.RI "Create a mock categorical dataset for testing classification\&. "
+.ti -1c
+.RI "void \fBMockCategoricalData\fP (arma::mat &d, arma::Row< double > &l, \fBmlpack::data::DatasetInfo\fP &datasetInfo)"
+.br
+.RI "Create a mock categorical dataset for testing regression\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -27,11 +31,19 @@ Definition in file \fBmock_categorical_data\&.hpp\fP\&.
 .SS "void MockCategoricalData (arma::mat & d, arma::Row< size_t > & l, \fBmlpack::data::DatasetInfo\fP & datasetInfo)\fC [inline]\fP"
 
 .PP
-Create a mock categorical dataset for testing\&. 
+Create a mock categorical dataset for testing classification\&. 
 .PP
 Definition at line 20 of file mock_categorical_data\&.hpp\&.
 .PP
 References mlpack::data::categorical, M_PI, DatasetMapper< PolicyType, InputType >::MapString(), mlpack::math::Random(), DiscreteDistribution::Random(), and DatasetMapper< PolicyType, InputType >::Type()\&.
+.SS "void MockCategoricalData (arma::mat & d, arma::Row< double > & l, \fBmlpack::data::DatasetInfo\fP & datasetInfo)\fC [inline]\fP"
+
+.PP
+Create a mock categorical dataset for testing regression\&. 
+.PP
+Definition at line 119 of file mock_categorical_data\&.hpp\&.
+.PP
+References mlpack::data::categorical, DatasetMapper< PolicyType, InputType >::MapString(), mlpack::math::RandInt(), mlpack::math::Random(), and DatasetMapper< PolicyType, InputType >::Type()\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for mlpack from the source code\&.

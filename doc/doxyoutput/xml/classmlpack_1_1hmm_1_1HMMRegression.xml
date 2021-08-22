@@ -701,7 +701,7 @@
     <briefdescription>
 <para>A class that represents a Hidden Markov Model Regression (HMMR). </para>    </briefdescription>
     <detaileddescription>
-<para>HMMR is an extension of Hidden Markov Models to regression analysis. The method is described in (Fridman, 1993) <ulink url="https://www.ima.umn.edu/preprints/January1994/1195.pdf">https://www.ima.umn.edu/preprints/January1994/1195.pdf</ulink> An HMMR is a linear regression model whose coefficients are determined by a finite-state Markov chain. The error terms are conditionally independently normally distributed with zero mean and state-dependent variance. Let Q_t be a finite-state Markov chain, X_t a vector of predictors and Y_t a response. The HMMR is <formula id="151">$ Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t $</formula></para><para>This HMMR class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, filtering and smoothing of responses, and calculation of the log-likelihood of a given sequence.</para><para>Usage of the HMMR class generally involves either training an HMMR or loading an already-known HMMR and using to filter a sequence. Example code for supervised training of an HMMR is given below.</para><para><programlisting><codeline><highlight class="normal">//<sp/>Each<sp/>column<sp/>is<sp/>a<sp/>vector<sp/>of<sp/>predictors<sp/>for<sp/>a<sp/>single<sp/>observation.</highlight></codeline>
+<para>HMMR is an extension of Hidden Markov Models to regression analysis. The method is described in (Fridman, 1993) <ulink url="https://www.ima.umn.edu/preprints/January1994/1195.pdf">https://www.ima.umn.edu/preprints/January1994/1195.pdf</ulink> An HMMR is a linear regression model whose coefficients are determined by a finite-state Markov chain. The error terms are conditionally independently normally distributed with zero mean and state-dependent variance. Let Q_t be a finite-state Markov chain, X_t a vector of predictors and Y_t a response. The HMMR is <formula id="152">$ Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t $</formula></para><para>This HMMR class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, filtering and smoothing of responses, and calculation of the log-likelihood of a given sequence.</para><para>Usage of the HMMR class generally involves either training an HMMR or loading an already-known HMMR and using to filter a sequence. Example code for supervised training of an HMMR is given below.</para><para><programlisting><codeline><highlight class="normal">//<sp/>Each<sp/>column<sp/>is<sp/>a<sp/>vector<sp/>of<sp/>predictors<sp/>for<sp/>a<sp/>single<sp/>observation.</highlight></codeline>
 <codeline><highlight class="normal">arma::mat<sp/>predictors(5,<sp/>100,<sp/>arma::fill::randn);</highlight></codeline>
 <codeline><highlight class="normal">//<sp/>Responses<sp/>for<sp/>each<sp/>observation</highlight></codeline>
 <codeline><highlight class="normal">arma::vec<sp/>responses(100,<sp/>arma::fill::randn);</highlight></codeline>
@@ -719,39 +719,39 @@
 <codeline><highlight class="normal">hmm.Train(observations,<sp/>states);</highlight></codeline>
 </programlisting></para><para>Once initialized, the HMMR can evaluate the probability of a certain sequence (with <ref refid="classmlpack_1_1hmm_1_1HMMRegression_1a5e7c4dbe9cfacdf2746e92cd20aa2a66" kindref="member">LogLikelihood()</ref>), predict the most likely sequence of hidden states (with <ref refid="classmlpack_1_1hmm_1_1HMMRegression_1a039bc421248d00ffae03def696c0cfbd" kindref="member">Predict()</ref>), estimate the probabilities of each state for a sequence of observations (with <ref refid="classmlpack_1_1hmm_1_1HMMRegression_1a58cd0299f6951072a3ae4a10cf698853" kindref="member">Estimate()</ref>), or perform filtering or smoothing of observations. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="847">
+      <node id="861">
         <label>HMM&lt; distribution::RegressionDistribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="848" relation="template-instance">
+        <childnode refid="862" relation="template-instance">
           <edgelabel>&lt; distribution::RegressionDistribution &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="846">
+      <node id="860">
         <label>HMMRegression</label>
         <link refid="classmlpack_1_1hmm_1_1HMMRegression"/>
-        <childnode refid="847" relation="public-inheritance">
+        <childnode refid="861" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="848">
+      <node id="862">
         <label>HMM&lt; Distribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="850">
+      <node id="864">
         <label>HMM&lt; distribution::RegressionDistribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="851" relation="template-instance">
+        <childnode refid="865" relation="template-instance">
           <edgelabel>&lt; distribution::RegressionDistribution &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="849">
+      <node id="863">
         <label>HMMRegression</label>
         <link refid="classmlpack_1_1hmm_1_1HMMRegression"/>
-        <childnode refid="850" relation="public-inheritance">
+        <childnode refid="864" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="851">
+      <node id="865">
         <label>HMM&lt; Distribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
       </node>

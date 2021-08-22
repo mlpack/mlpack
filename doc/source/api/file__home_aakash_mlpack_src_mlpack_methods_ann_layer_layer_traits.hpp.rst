@@ -141,19 +141,7 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1aa333dabed73cee663a9adb47c167570e`
 
-- :ref:`exhale_function_namespacemlpack_1_1ann_1ad4b16a6a10d1b1d3999d177f03b1f4a0`
-
-- :ref:`exhale_function_namespacemlpack_1_1ann_1a4dfcd41ff0d3c6ea37dda6c9a35c832f`
-
-- :ref:`exhale_function_namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4`
-
-- :ref:`exhale_function_namespacemlpack_1_1ann_1addfd94f5ac2aa2225484ddddb06b8320`
-
-- :ref:`exhale_function_namespacemlpack_1_1ann_1aa339cfab0c5987cfec78736f19e50373`
-
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a1e25664538ca94074ff5636b85902c8a`
-
-- :ref:`exhale_function_namespacemlpack_1_1ann_1ae95d86bb222cc89639472577da586357`
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1add5ad48dbc07b098c8df806a7d100de7`
 
@@ -163,13 +151,25 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a923497f92d9b28cfe7143d40e00c6bfc`
 
+- :ref:`exhale_function_namespacemlpack_1_1ann_1addfd94f5ac2aa2225484ddddb06b8320`
+
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a9ddaef84cd236998b57624b9b4d2eebe`
+
+- :ref:`exhale_function_namespacemlpack_1_1ann_1aa339cfab0c5987cfec78736f19e50373`
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a8e7950714181dc8adf55752f45467dd8`
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a7af914cacab417f183e2fc0051a5345a`
 
 - :ref:`exhale_function_namespacemlpack_1_1ann_1a5278fc5426da6ac56df6540dabd508e8`
+
+- :ref:`exhale_function_namespacemlpack_1_1ann_1ad4b16a6a10d1b1d3999d177f03b1f4a0`
+
+- :ref:`exhale_function_namespacemlpack_1_1ann_1a4dfcd41ff0d3c6ea37dda6c9a35c832f`
+
+- :ref:`exhale_function_namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4`
+
+- :ref:`exhale_function_namespacemlpack_1_1ann_1ae95d86bb222cc89639472577da586357`
 
 
 Full File Listing

@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="199" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="199" bodyend="207"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="205" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="205" bodyend="213"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a2f174f3ce09e29ae6ee6ecc2f22c0a7a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type></type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="210" bodyend="210"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="216" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="216" bodyend="216"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a1ada05f817cfde693b0ce9cb758f8e4d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper" kindref="compound">LeafSizeNSWrapper</ref> *</type>
@@ -73,16 +73,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="213" bodyend="216"/>
-        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9e7389351073f295e1aee942dbd7942a">NSWrapperBase::Search</references>
-        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a870763190dedf5ec0d9a2118f742a517">NSWrapperBase::Train</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="219" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="219" bodyend="222"/>
+        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a77e0c8a26bf09774799738767d39e898">NSWrapperBase::Search</references>
+        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a17c2adbcf179c81dd6337d0424b945b8">NSWrapperBase::Train</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a4aef4b9e215d07dbc33e97f5ff574ab2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a634675a41e944aef3847ddd6b385570b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize, const double)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize, const double)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1a1f033e50f5a14937123de77cb439fcb5">Search</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1a9e5c7f49611693baf982d577abcdffc4">Search</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -112,7 +116,7 @@
 <para>search with a separate query set). This overload uses the leaf size, but ignores the other parameters. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="227" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="234" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -137,14 +141,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="236" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="236" bodyend="239"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="244" bodyend="247"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1af1b6a13a041581bdb250c303a2736c7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a54098b5e4f618049ad776a55e7b1ef59" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize, const double, const double)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t leafSize, const double, const double)</argsstring>
         <name>Train</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1ae4fcf39ad7ed7dca39fe8bd00fd76082">Train</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1af9d87167b758e59c7cc44492904d9acb">Train</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -165,60 +173,60 @@
 <para>This overload uses leafSize but ignores the other parameters. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="220" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="226" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para><ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper" kindref="compound">LeafSizeNSWrapper</ref> wraps any <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> types that take a leaf size for tree construction. </para>    </briefdescription>
     <detaileddescription>
-<para>The implementations of <ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1af1b6a13a041581bdb250c303a2736c7c" kindref="member">Train()</ref> and <ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a4aef4b9e215d07dbc33e97f5ff574ab2" kindref="member">Search()</ref> take the leaf size into account. </para>    </detaileddescription>
+<para>The implementations of <ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a54098b5e4f618049ad776a55e7b1ef59" kindref="member">Train()</ref> and <ref refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a634675a41e944aef3847ddd6b385570b" kindref="member">Search()</ref> take the leaf size into account. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1057">
+      <node id="1069">
         <label>NSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1058" relation="public-inheritance">
+        <childnode refid="1070" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1058">
+      <node id="1070">
         <label>NSWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapperBase"/>
       </node>
-      <node id="1056">
+      <node id="1068">
         <label>LeafSizeNSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper"/>
-        <childnode refid="1057" relation="public-inheritance">
+        <childnode refid="1069" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1063">
+      <node id="1075">
         <label>NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
       </node>
-      <node id="1060">
+      <node id="1072">
         <label>NSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1061" relation="public-inheritance">
+        <childnode refid="1073" relation="public-inheritance">
         </childnode>
-        <childnode refid="1062" relation="usage">
+        <childnode refid="1074" relation="usage">
           <edgelabel>ns</edgelabel>
         </childnode>
       </node>
-      <node id="1061">
+      <node id="1073">
         <label>NSWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapperBase"/>
       </node>
-      <node id="1062">
+      <node id="1074">
         <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1063" relation="template-instance">
+        <childnode refid="1075" relation="template-instance">
           <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1059">
+      <node id="1071">
         <label>LeafSizeNSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper"/>
-        <childnode refid="1060" relation="public-inheritance">
+        <childnode refid="1072" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -233,12 +241,12 @@
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1ad2fc06b46e6469a058f3a27bcc1ba9ef" prot="protected" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>NSType</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aa5e9531452fb70b839ae680037add615" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>NSWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1afe3cd9a0f215a7de10b6d31cbfc33dca" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>NSWrapperBase</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a4aef4b9e215d07dbc33e97f5ff574ab2" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aeb3fa1fab8680898b6326556ea81a55b" prot="public" virt="virtual" ambiguityscope="mlpack::neighbor::NSWrapper::"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a634675a41e944aef3847ddd6b385570b" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" prot="public" virt="virtual" ambiguityscope="mlpack::neighbor::NSWrapper::"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>serialize</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1af1b6a13a041581bdb250c303a2736c7c" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a54098b5e4f618049ad776a55e7b1ef59" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>Train</name></member>
       <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a2f174f3ce09e29ae6ee6ecc2f22c0a7a" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>~LeafSizeNSWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a33da04d4db6bb80d7354d3a3839bb408" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>~NSWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a62d0554213b6a374ac784bd040c4377d" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeNSWrapper</scope><name>~NSWrapperBase</name></member>

@@ -155,13 +155,13 @@
     <detaileddescription>
 <para>All CF wrapper types inherit from this base class. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="556">
+      <node id="568">
         <label>CFWrapper&lt; DecompositionPolicy, NormalizationPolicy &gt;</label>
         <link refid="classmlpack_1_1cf_1_1CFWrapper"/>
-        <childnode refid="555" relation="public-inheritance">
+        <childnode refid="567" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="555">
+      <node id="567">
         <label>CFWrapperBase</label>
         <link refid="classmlpack_1_1cf_1_1CFWrapperBase"/>
       </node>

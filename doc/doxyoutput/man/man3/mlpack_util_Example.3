@@ -1,4 +1,4 @@
-.TH "Example" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Example" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,22 +10,24 @@ Example
 
 .in +1c
 .ti -1c
-.RI "\fBExample\fP (const std::function< std::string()> &example)"
+.RI "\fBExample\fP (const std::string &bindingName, const std::function< std::string()> &example)"
 .br
 .RI "Construct a \fBExample\fP object\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
-Definition at line 60 of file program_doc\&.hpp\&.
+Definition at line 67 of file program_doc\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBExample\fP (const std::function< std::string()> & example)"
+.SS "\fBExample\fP (const std::string & bindingName, const std::function< std::string()> & example)"
 
 .PP
-Construct a \fBExample\fP object\&. When constructed, it will register itself with \fBIO\fP\&.
+Construct a \fBExample\fP object\&. When constructed, it will register itself with \fBIO\fP for the given \fCbindingName\fP\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIbindingName\fP Name of the binding\&. 
+.br
 \fIexample\fP Documentation on how to use the binding\&. 
 .RE
 .PP

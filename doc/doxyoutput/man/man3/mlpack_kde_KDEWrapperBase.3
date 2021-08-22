@@ -1,4 +1,4 @@
-.TH "KDEWrapperBase" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "KDEWrapperBase" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -33,11 +33,11 @@ Inherited by \fBKDEWrapper< KernelType, TreeType >\fP\&.
 .br
 .RI "Create a new \fBKDEWrapperBase\fP that is the same as this one\&. "
 .ti -1c
-.RI "virtual void \fBEvaluate\fP (arma::mat &&querySet, arma::vec &estimates)=0"
+.RI "virtual void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, arma::vec &estimates)=0"
 .br
 .RI "Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. "
 .ti -1c
-.RI "virtual void \fBEvaluate\fP (arma::vec &estimates)=0"
+.RI "virtual void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::vec &estimates)=0"
 .br
 .RI "Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. "
 .ti -1c
@@ -81,7 +81,7 @@ Inherited by \fBKDEWrapper< KernelType, TreeType >\fP\&.
 .br
 .RI "Modify the relative error tolerance\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet)=0"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet)=0"
 .br
 .RI "Train the model (build the tree)\&. "
 .in -1c
@@ -126,13 +126,13 @@ Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
 Create a new \fBKDEWrapperBase\fP that is the same as this one\&. This function will properly handle polymorphism\&. 
 .PP
 Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
-.SS "virtual void Evaluate (arma::mat && querySet, arma::vec & estimates)\fC [pure virtual]\fP"
+.SS "virtual void Evaluate (\fButil::Timers\fP & timers, arma::mat && querySet, arma::vec & estimates)\fC [pure virtual]\fP"
 
 .PP
 Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. 
 .PP
 Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
-.SS "virtual void Evaluate (arma::vec & estimates)\fC [pure virtual]\fP"
+.SS "virtual void Evaluate (\fButil::Timers\fP & timers, arma::vec & estimates)\fC [pure virtual]\fP"
 
 .PP
 Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. 
@@ -200,7 +200,7 @@ Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
 Modify the relative error tolerance\&. 
 .PP
 Implemented in \fBKDEWrapper< KernelType, TreeType >\fP\&.
-.SS "virtual void Train (arma::mat && referenceSet)\fC [pure virtual]\fP"
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet)\fC [pure virtual]\fP"
 
 .PP
 Train the model (build the tree)\&. 

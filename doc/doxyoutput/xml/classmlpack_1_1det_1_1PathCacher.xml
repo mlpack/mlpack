@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="86" bodyend="94"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="87" bodyend="95"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-type">
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="136" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="137" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="137" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1det_1_1PathCacher_1af21ffd6b8b037b9235c00547b371def3" prot="protected" static="no">
         <type>std::list&lt; std::pair&lt; bool, int &gt; &gt;</type>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="135" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="136" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-attrib">
@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="139" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="140" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1det_1_1PathCacher_1a137e67424ef34c606fa1dfea3e80ac12" prot="protected" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1det_1_1PathCacher_1af21ffd6b8b037b9235c00547b371def3" kindref="member">PathType</ref></type>
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="138" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="139" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" prot="protected" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1det_1_1PathCacher_1a3556ea9f8a86ca23b6c205c23f0e0f11" kindref="member">PathCacheType</ref></type>
@@ -102,8 +102,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="140" bodyend="-1"/>
-        <referencedby refid="classmlpack_1_1det_1_1PathCacher_1a5745ee58508df730d6557dc103ede353" compoundref="dt__utils_8hpp" startline="132" endline="132">PathCacher::NumNodes</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="141" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1det_1_1PathCacher_1a5745ee58508df730d6557dc103ede353" compoundref="dt__utils_8hpp" startline="133" endline="133">PathCacher::NumNodes</referencedby>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -146,7 +146,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="103" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="104" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1det_1_1PathCacher_1a7825e68e15d3d8cc33e44db3d0801527" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="109" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="110" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1det_1_1PathCacher_1a1cac9b036f3b4aadf7bbf098d65ff37e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="116" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="117" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1det_1_1PathCacher_1a5745ee58508df730d6557dc103ede353" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -211,8 +211,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="132" bodyend="132"/>
-        <references refid="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" compoundref="dt__utils_8hpp" startline="140">PathCacher::pathCache</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="133" bodyend="133"/>
+        <references refid="classmlpack_1_1det_1_1PathCacher_1af671c808edc779f96d20c26e301d46be" compoundref="dt__utils_8hpp" startline="141">PathCacher::pathCache</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1det_1_1PathCacher_1ab3f0e671c8ef70476a2a3b0dffb3d24d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="127" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="128" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1det_1_1PathCacher_1a1cf438e5bc7c1c934766705a081885d8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const std::string &amp;</type>
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="122" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="123" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
@@ -261,14 +261,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="142" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="143" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>This class is responsible for caching the path to each node of the tree. </para>    </briefdescription>
     <detaileddescription>
 <para>Its instance is provided to <ref refid="namespacemlpack_1_1tree_1abab37b0038f14ab4dcdf83c60468e923" kindref="member">EnumerateTree()</ref> utility ONCE and it caches the paths to all the leafs and then easily (and quickly) retrieves these paths for each test entry. </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="80" bodyend="143"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" bodystart="81" bodyend="144"/>
     <listofallmembers>
       <member refid="classmlpack_1_1det_1_1PathCacher_1ad564bef941bc27ad1a335367f504af66" prot="protected" virt="non-virtual"><scope>mlpack::det::PathCacher</scope><name>BuildString</name></member>
       <member refid="classmlpack_1_1det_1_1PathCacher_1a7825e68e15d3d8cc33e44db3d0801527" prot="public" virt="non-virtual"><scope>mlpack::det::PathCacher</scope><name>Enter</name></member>

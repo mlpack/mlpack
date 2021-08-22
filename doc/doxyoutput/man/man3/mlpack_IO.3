@@ -1,4 +1,4 @@
-.TH "IO" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "IO" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -7,110 +7,55 @@ IO \- Parses the command line for parameters and holds user-specified parameters
 .SH SYNOPSIS
 .br
 .PP
-.SS "Public Types"
-
-.in +1c
-.ti -1c
-.RI "typedef std::map< std::string, std::map< std::string, void(*)(\fButil::ParamData\fP &, const void *, void *)> > \fBFunctionMapType\fP"
-.br
-.RI "Map for functions and types\&. "
-.in -1c
 .SS "Static Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "static void \fBAdd\fP (\fButil::ParamData\fP &&d)"
+.RI "static void \fBAddBindingName\fP (const std::string &bindingName, const std::string &name)"
+.br
+.RI "Add a user-friendly name for a binding\&. "
+.ti -1c
+.RI "static void \fBAddExample\fP (const std::string &bindingName, const std::function< std::string()> &example)"
+.br
+.RI "Add an example for a binding\&. "
+.ti -1c
+.RI "static void \fBAddFunction\fP (const std::string &type, const std::string &name, void(*func)(\fButil::ParamData\fP &, const void *, void *))"
+.br
+.RI "Add a function to the function map\&. "
+.ti -1c
+.RI "static void \fBAddLongDescription\fP (const std::string &bindingName, const std::function< std::string()> &longDescription)"
+.br
+.RI "Add a long description for a binding\&. "
+.ti -1c
+.RI "static void \fBAddParameter\fP (const std::string &bindingName, \fButil::ParamData\fP &&d)"
 .br
 .RI "Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i\&.e\&. "
 .ti -1c
-.RI "static std::map< char, std::string > & \fBAliases\fP ()"
+.RI "static void \fBAddSeeAlso\fP (const std::string &bindingName, const std::string &description, const std::string &link)"
 .br
-.RI "Return a modifiable list of aliases that \fBIO\fP knows about\&. "
+.RI "Add a SeeAlso for a binding\&. "
 .ti -1c
-.RI "static void \fBCheckInputMatrices\fP ()"
+.RI "static void \fBAddShortDescription\fP (const std::string &bindingName, const std::string &shortDescription)"
 .br
-.RI "Checks all input matrices for NaN and inf values, exits if found any\&. "
-.ti -1c
-.RI "template<typename T > static void \fBCheckInputMatrix\fP (const T &matrix, const std::string &identifier)"
-.br
-.RI "Utility function for \fBCheckInputMatrices()\fP\&. "
-.ti -1c
-.RI "static void \fBClearSettings\fP ()"
-.br
-.RI "Clear all of the settings, removing all parameters and function mappings\&. "
-.ti -1c
-.RI "template<typename T > static T & \fBGetParam\fP (const std::string &identifier)"
-.br
-.RI "Get the value of type T found while parsing\&. "
-.ti -1c
-.RI "template<typename T > static std::string \fBGetPrintableParam\fP (const std::string &identifier)"
-.br
-.RI "Cast the given parameter of the given type to a short, printable std::string, for use in status messages\&. "
-.ti -1c
-.RI "template<typename T > static T & \fBGetRawParam\fP (const std::string &identifier)"
-.br
-.RI "Get the raw value of the parameter before any processing that \fBGetParam()\fP might normally do\&. "
+.RI "Add a short description for a binding\&. "
 .ti -1c
 .RI "static \fBIO\fP & \fBGetSingleton\fP ()"
 .br
 .RI "Retrieve the singleton\&. "
 .ti -1c
-.RI "static bool \fBHasParam\fP (const std::string &identifier)"
+.RI "static \fButil::Timers\fP & \fBGetTimers\fP ()"
 .br
-.RI "See if the specified flag was found while parsing\&. "
+.RI "Retrieve the global Timers object\&. "
 .ti -1c
-.RI "static void \fBMakeInPlaceCopy\fP (const std::string &outputParamName, const std::string &inputParamName)"
+.RI "static \fButil::Params\fP \fBParameters\fP (const std::string &bindingName)"
 .br
-.RI "Given two (matrix) parameters, ensure that the first is an in-place copy of the second\&. "
-.ti -1c
-.RI "static std::map< std::string, \fButil::ParamData\fP > & \fBParameters\fP ()"
-.br
-.RI "Return a modifiable list of parameters that \fBIO\fP knows about\&. "
-.ti -1c
-.RI "static std::string \fBProgramName\fP ()"
-.br
-.RI "Get the program name as set by the BINDING_NAME() macro\&. "
-.ti -1c
-.RI "static void \fBRestoreSettings\fP (const std::string &name, const bool fatal=true)"
-.br
-.RI "Restore all of the parameters and function mappings of the given name, if they exist\&. "
-.ti -1c
-.RI "static void \fBSetPassed\fP (const std::string &name)"
-.br
-.RI "Mark a particular parameter as passed\&. "
-.ti -1c
-.RI "static void \fBStoreSettings\fP (const std::string &name)"
-.br
-.RI "Take all parameters and function mappings and store them, under the given name\&. "
-.in -1c
-.SS "Public Attributes"
-
-.in +1c
-.ti -1c
-.RI "bool \fBdidParse\fP"
-.br
-.RI "True, if \fBIO\fP was used to parse command line options\&. "
-.ti -1c
-.RI "\fButil::BindingDetails\fP \fBdoc\fP"
-.br
-.RI "Holds the bindingDetails objects\&. "
-.ti -1c
-.RI "\fBFunctionMapType\fP \fBfunctionMap\fP"
-.br
-.ti -1c
-.RI "std::string \fBprogramName\fP"
-.br
-.RI "Holds the name of the program for --version\&. "
-.ti -1c
-.RI "\fBTimers\fP \fBtimer\fP"
-.br
-.RI "Holds the timer objects\&. "
+.RI "Return a new Params object initialized with all the parameters of the binding \fCbindingName\fP\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
 Parses the command line for parameters and holds user-specified parameters\&. 
 
-The \fBIO\fP class is a subsystem by which parameters for machine learning methods can be specified and accessed\&. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy\&. There are only three methods in \fBIO\fP that a user should need: IO::ParseCommandLine(), \fBIO::GetParam()\fP, and \fBIO::HasParam()\fP (in addition to the PARAM_*() macros)\&.
+The \fBIO\fP class is a subsystem by which parameters for machine learning methods can be specified and accessed\&. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy\&. There are only three methods in \fBIO\fP that a user should need: IO::ParseCommandLine(), IO::GetParam(), and IO::HasParam() (in addition to the PARAM_*() macros)\&.
 .SH "Adding parameters to a program"
 .PP
 .PP
@@ -204,7 +149,7 @@ int main(int argc, char** argv)
 \fBIO\fP provides --help and --info options which give nicely formatted documentation of each option; the documentation is generated from the DESC arguments in the PARAM_*() macros\&.
 .SH "Getting parameters with IO"
 .PP
-When the parameters have been defined, the next important thing is how to access them\&. For this, the \fBHasParam()\fP and \fBGetParam()\fP methods are used\&. For instance, to see if the user passed the flag (boolean) 'naive':
+When the parameters have been defined, the next important thing is how to access them\&. For this, the HasParam() and GetParam() methods are used\&. For instance, to see if the user passed the flag (boolean) 'naive':
 .PP
 .PP
 .nf
@@ -235,83 +180,101 @@ The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global id
 .PP
 
 .PP
-Definition at line 172 of file io\&.hpp\&.
-.SH "Member Typedef Documentation"
-.PP 
-.SS "typedef std::map<std::string, std::map<std::string, void (*)(\fButil::ParamData\fP&, const void*, void*)> > \fBFunctionMapType\fP"
-
-.PP
-Map for functions and types\&. Use as functionMap['typename']['functionName']\&. 
-.PP
-Definition at line 312 of file io\&.hpp\&.
+Definition at line 176 of file io\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "static void Add (\fButil::ParamData\fP && d)\fC [static]\fP"
+.SS "static void AddBindingName (const std::string & bindingName, const std::string & name)\fC [static]\fP"
+
+.PP
+Add a user-friendly name for a binding\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbindingName\fP Name of the binding to add the user-friendly name for\&. 
+.br
+\fIname\fP User-friendly name\&. 
+.RE
+.PP
+
+.SS "static void AddExample (const std::string & bindingName, const std::function< std::string()> & example)\fC [static]\fP"
+
+.PP
+Add an example for a binding\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbindingName\fP Name of the binding to add the example for\&. 
+.br
+\fIexample\fP Function that returns the example\&. 
+.RE
+.PP
+
+.SS "static void AddFunction (const std::string & type, const std::string & name, void(*)(\fButil::ParamData\fP &, const void *, void *) func)\fC [static]\fP"
+
+.PP
+Add a function to the function map\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItype\fP Type that this function should be called for\&. 
+.br
+\fIname\fP Name of the function\&. 
+.br
+\fIfunc\fP Function to call\&. 
+.RE
+.PP
+
+.SS "static void AddLongDescription (const std::string & bindingName, const std::function< std::string()> & longDescription)\fC [static]\fP"
+
+.PP
+Add a long description for a binding\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbindingName\fP Name of the binding to add the description for\&. 
+.br
+\fIlongDescription\fP Function that returns the long description\&. 
+.RE
+.PP
+
+.SS "static void AddParameter (const std::string & bindingName, \fButil::ParamData\fP && d)\fC [static]\fP"
 
 .PP
 Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i\&.e\&. PARAM_INT())\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIbindingName\fP Name of the binding that this parameter is associated with\&. 
+.br
 \fId\fP Utility structure holding parameter data\&. 
 .RE
 .PP
 
-.SS "static std::map<char, std::string>& Aliases ()\fC [static]\fP"
+.SS "static void AddSeeAlso (const std::string & bindingName, const std::string & description, const std::string & link)\fC [static]\fP"
 
 .PP
-Return a modifiable list of aliases that \fBIO\fP knows about\&. 
-.SS "static void CheckInputMatrices ()\fC [static]\fP"
-
-.PP
-Checks all input matrices for NaN and inf values, exits if found any\&. 
-.SS "static void CheckInputMatrix (const T & matrix, const std::string & identifier)\fC [static]\fP"
-
-.PP
-Utility function for \fBCheckInputMatrices()\fP\&. 
+Add a SeeAlso for a binding\&. 
 .PP
 \fBParameters:\fP
 .RS 4
-\fImatrix\fP Matrix to check\&. 
+\fIbindingName\fP Name of the binding to add the example for\&. 
 .br
-\fIidentifier\fP Name of the parameter in question\&. 
+\fIdescription\fP Description of the SeeAlso\&. 
+.br
+\fIlink\fP Link of the SeeAlso\&. 
 .RE
 .PP
 
-.SS "static void ClearSettings ()\fC [static]\fP"
+.SS "static void AddShortDescription (const std::string & bindingName, const std::string & shortDescription)\fC [static]\fP"
 
 .PP
-Clear all of the settings, removing all parameters and function mappings\&. 
-.SS "static T& GetParam (const std::string & identifier)\fC [static]\fP"
-
-.PP
-Get the value of type T found while parsing\&. You can set the value using this reference safely\&.
+Add a short description for a binding\&. 
 .PP
 \fBParameters:\fP
 .RS 4
-\fIidentifier\fP The name of the parameter in question\&. 
-.RE
-.PP
-
-.SS "static std::string GetPrintableParam (const std::string & identifier)\fC [static]\fP"
-
-.PP
-Cast the given parameter of the given type to a short, printable std::string, for use in status messages\&. Ideally the message returned here should be only a handful of characters, and certainly no longer than one line\&.
-.PP
-\fBParameters:\fP
-.RS 4
-\fIidentifier\fP The name of the parameter in question\&. 
-.RE
-.PP
-
-.SS "static T& GetRawParam (const std::string & identifier)\fC [static]\fP"
-
-.PP
-Get the raw value of the parameter before any processing that \fBGetParam()\fP might normally do\&. So, e\&.g\&., for command-line programs, this does not perform any data loading or manipulation like \fBGetParam()\fP does\&. So if you want to access a matrix or model (or similar) parameter before it is loaded, this is the method to use\&.
-.PP
-\fBParameters:\fP
-.RS 4
-\fIidentifier\fP The name of the parameter in question\&. 
+\fIbindingName\fP Name of the binding to add the description for\&. 
+.br
+\fIshortDescription\fP Description to use\&. 
 .RE
 .PP
 
@@ -328,105 +291,14 @@ The singleton instance for use in the static methods\&.
 .RE
 .PP
 
-.SS "static bool HasParam (const std::string & identifier)\fC [static]\fP"
+.SS "static \fButil::Timers\fP& GetTimers ()\fC [static]\fP"
 
 .PP
-See if the specified flag was found while parsing\&. 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIidentifier\fP The name of the parameter in question\&. 
-.RE
-.PP
-
-.SS "static void MakeInPlaceCopy (const std::string & outputParamName, const std::string & inputParamName)\fC [static]\fP"
+Retrieve the global Timers object\&. 
+.SS "static \fButil::Params\fP Parameters (const std::string & bindingName)\fC [static]\fP"
 
 .PP
-Given two (matrix) parameters, ensure that the first is an in-place copy of the second\&. This will generally do nothing (as the bindings already do this automatically), except for command-line bindings, where we need to ensure that the output filename is the same as the input filename\&.
-.PP
-\fBParameters:\fP
-.RS 4
-\fIoutputParamName\fP Name of output (matrix) parameter\&. 
-.br
-\fIinputParamName\fP Name of input (matrix) parameter\&. 
-.RE
-.PP
-
-.SS "static std::map<std::string, \fButil::ParamData\fP>& Parameters ()\fC [static]\fP"
-
-.PP
-Return a modifiable list of parameters that \fBIO\fP knows about\&. 
-.SS "static std::string ProgramName ()\fC [static]\fP"
-
-.PP
-Get the program name as set by the BINDING_NAME() macro\&. 
-.SS "static void RestoreSettings (const std::string & name, const bool fatal = \fCtrue\fP)\fC [static]\fP"
-
-.PP
-Restore all of the parameters and function mappings of the given name, if they exist\&. A std::invalid_argument exception will be thrown if fatal is true and no settings with the given name have been stored (with \fBStoreSettings()\fP)\&.
-.PP
-\fBParameters:\fP
-.RS 4
-\fIname\fP Name of settings to restore\&. 
-.br
-\fIfatal\fP Whether to throw an exception on an unknown name\&. 
-.RE
-.PP
-
-.SS "static void SetPassed (const std::string & name)\fC [static]\fP"
-
-.PP
-Mark a particular parameter as passed\&. 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIname\fP Name of the parameter\&. 
-.RE
-.PP
-
-.PP
-Referenced by mlpack::util::SetInputParam()\&.
-.SS "static void StoreSettings (const std::string & name)\fC [static]\fP"
-
-.PP
-Take all parameters and function mappings and store them, under the given name\&. This can later be restored with \fBRestoreSettings()\fP\&. If settings have already been saved under the given name, they will be overwritten\&. This also clears the current parameters and function map\&.
-.PP
-\fBParameters:\fP
-.RS 4
-\fIname\fP Name of settings to save\&. 
-.RE
-.PP
-
-.SH "Member Data Documentation"
-.PP 
-.SS "bool didParse"
-
-.PP
-True, if \fBIO\fP was used to parse command line options\&. 
-.PP
-Definition at line 322 of file io\&.hpp\&.
-.SS "\fButil::BindingDetails\fP doc"
-
-.PP
-Holds the bindingDetails objects\&. 
-.PP
-Definition at line 335 of file io\&.hpp\&.
-.SS "\fBFunctionMapType\fP functionMap"
-
-.PP
-Definition at line 313 of file io\&.hpp\&.
-.SS "std::string programName"
-
-.PP
-Holds the name of the program for --version\&. This is the true program name (argv[0]) not what is given in BindingDetails\&. 
-.PP
-Definition at line 326 of file io\&.hpp\&.
-.SS "\fBTimers\fP timer"
-
-.PP
-Holds the timer objects\&. 
-.PP
-Definition at line 329 of file io\&.hpp\&.
+Return a new Params object initialized with all the parameters of the binding \fCbindingName\fP\&. This is intended to be called at the beginning of the run of a binding\&. 
 
 .SH "Author"
 .PP 

@@ -97,46 +97,46 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="698">
+      <node id="710">
         <label>TrainForm&lt; MT, PT, WT, false, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4"/>
-        <childnode refid="697" relation="public-inheritance">
+        <childnode refid="709" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="702">
+      <node id="714">
         <label>TrainForm&lt; MT, PT, void, true, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4"/>
-        <childnode refid="701" relation="public-inheritance">
+        <childnode refid="713" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="701">
+      <node id="713">
         <label>TrainFormBase6&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="696" relation="template-instance">
+        <childnode refid="708" relation="template-instance">
           <edgelabel>&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="696">
+      <node id="708">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
-      <node id="699">
+      <node id="711">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="696" relation="template-instance">
+        <childnode refid="708" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>
-      <node id="700">
+      <node id="712">
         <label>TrainForm&lt; MT, PT, WT, true, false &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4"/>
-        <childnode refid="699" relation="public-inheritance">
+        <childnode refid="711" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="697">
+      <node id="709">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="696" relation="template-instance">
+        <childnode refid="708" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>

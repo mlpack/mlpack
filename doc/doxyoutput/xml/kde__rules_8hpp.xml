@@ -5,19 +5,19 @@
     <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
     <includes local="yes">kde_rules_impl.hpp</includes>
     <incdepgraph>
-      <node id="50007">
+      <node id="51492">
         <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp</label>
         <link refid="kde__rules_8hpp"/>
-        <childnode refid="50008" relation="include">
+        <childnode refid="51493" relation="include">
         </childnode>
-        <childnode refid="50009" relation="include">
+        <childnode refid="51494" relation="include">
         </childnode>
       </node>
-      <node id="50008">
+      <node id="51493">
         <label>mlpack/core/tree/traversal_info.hpp</label>
         <link refid="traversal__info_8hpp"/>
       </node>
-      <node id="50009">
+      <node id="51494">
         <label>kde_rules_impl.hpp</label>
       </node>
     </incdepgraph>

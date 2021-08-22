@@ -4,11 +4,15 @@
     <compoundname>mlpack::util::LongDescription</compoundname>
     <includes refid="program__doc_8hpp" local="no">program_doc.hpp</includes>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classmlpack_1_1util_1_1LongDescription_1a9934b2a482aaea19f987f8fbb33c7681" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1util_1_1LongDescription_1a743dee03a0f4da759eda45cbea00edd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>LongDescription</definition>
-        <argsstring>(const std::function&lt; std::string()&gt; &amp;longDescription)</argsstring>
+        <argsstring>(const std::string &amp;bindingName, const std::function&lt; std::string()&gt; &amp;longDescription)</argsstring>
         <name>LongDescription</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
         <param>
           <type>const std::function&lt; std::string()&gt; &amp;</type>
           <declname>longDescription</declname>
@@ -16,7 +20,14 @@
         <briefdescription>
 <para>Construct a <ref refid="classmlpack_1_1util_1_1LongDescription" kindref="compound">LongDescription</ref> object. </para>        </briefdescription>
         <detaileddescription>
-<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. A fatal error will be thrown if more than one is constructed.</para><para><parameterlist kind="param"><parameteritem>
+<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. A fatal error will be thrown if more than one is constructed for a given <computeroutput>bindingName</computeroutput>.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>longDescription</parametername>
 </parameternamelist>
@@ -27,16 +38,16 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="57" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="63" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="46" bodyend="58"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="50" bodyend="65"/>
     <listofallmembers>
-      <member refid="classmlpack_1_1util_1_1LongDescription_1a9934b2a482aaea19f987f8fbb33c7681" prot="public" virt="non-virtual"><scope>mlpack::util::LongDescription</scope><name>LongDescription</name></member>
+      <member refid="classmlpack_1_1util_1_1LongDescription_1a743dee03a0f4da759eda45cbea00edd4" prot="public" virt="non-virtual"><scope>mlpack::util::LongDescription</scope><name>LongDescription</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

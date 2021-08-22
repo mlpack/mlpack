@@ -494,11 +494,15 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_batch_norm.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bicubic_interpolation.hpp`
+
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bilinear_interpolation.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_c_relu.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_celu.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_channel_shuffle.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_concat.hpp`
 
@@ -568,6 +572,8 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multiply_merge.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_nearest_interpolation.hpp`
+
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_noisylinear.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_parametric_relu.hpp`
@@ -579,6 +585,8 @@ Included By
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_recurrent_attention.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reinforce_normal.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_relu6.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reparametrization.hpp`
 
@@ -635,6 +643,8 @@ Included By
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_squared_error.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_squared_logarithmic_error.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_multilabel_softmargin_loss.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_negative_log_likelihood.hpp`
 
@@ -720,11 +730,17 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_best_binary_numeric_split.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_mse_gain.hpp`
+
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_information_gain.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_random_binary_numeric_split.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree_regressor.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_mad_gain.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_det_dt_utils.hpp`
 
@@ -956,11 +972,11 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_svdplusplus_svdplusplus_function.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_xgboost_loss_functions_sse_loss.hpp`
+
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_custom_layer.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_hmm_test_utils.hpp`
-
-- :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_test_helper.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_mock_categorical_data.hpp`
 

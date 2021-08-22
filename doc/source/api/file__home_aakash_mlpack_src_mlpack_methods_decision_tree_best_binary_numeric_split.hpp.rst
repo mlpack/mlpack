@@ -38,7 +38,11 @@ Includes
 
 - ``best_binary_numeric_split_impl.hpp``
 
+- ``mlpack/core/util/sfinae_utility.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_sfinae_utility.hpp`)
+
 - ``mlpack/prereqs.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_prereqs.hpp`)
+
+- ``mse_gain.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_mse_gain.hpp`)
 
 
 
@@ -47,6 +51,8 @@ Included By
 
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree_regressor.hpp`
 
 
 
@@ -64,9 +70,18 @@ Classes
 -------
 
 
+- :ref:`exhale_struct_structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms`
+
 - :ref:`exhale_class_classmlpack_1_1tree_1_1BestBinaryNumericSplit`
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_namespacemlpack_1_1tree_1a5a0616a02855490670d1d895a6195ac7`
 
 
 Full File Listing

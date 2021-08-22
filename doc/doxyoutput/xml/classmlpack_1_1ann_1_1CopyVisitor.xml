@@ -18,7 +18,7 @@
             <type>typename LayerType</type>
           </param>
         </templateparamlist>
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; operator()</definition>
         <argsstring>(LayerType *) const</argsstring>
         <name>operator()</name>
@@ -34,12 +34,12 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/copy_visitor.hpp" line="30" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1CopyVisitor_1a8229a3baafceb83bbf28a6bfd8b62d93" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; operator()</definition>
         <argsstring>(MoreTypes) const</argsstring>
         <name>operator()</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <type><ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref></type>
         </param>
         <briefdescription>
         </briefdescription>
@@ -55,31 +55,31 @@
     <detaileddescription>
 <para>We want a layer-wise copy rather than simple duplicate the pointer. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="149">
+      <node id="155">
         <label>static_visitor&lt; LayerTypes&lt; CustomLayers... &gt; &gt;</label>
       </node>
-      <node id="150">
+      <node id="156">
         <label>CopyVisitor&lt; CustomLayers... &gt;</label>
         <link refid="classmlpack_1_1ann_1_1CopyVisitor"/>
-        <childnode refid="148" relation="template-instance">
+        <childnode refid="154" relation="template-instance">
           <edgelabel>&lt; CustomLayers... &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="148">
+      <node id="154">
         <label>CopyVisitor&lt; CustomLayers &gt;</label>
         <link refid="classmlpack_1_1ann_1_1CopyVisitor"/>
-        <childnode refid="149" relation="public-inheritance">
+        <childnode refid="155" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="152">
+      <node id="158">
         <label>static_visitor&lt; LayerTypes&lt; CustomLayers... &gt; &gt;</label>
       </node>
-      <node id="151">
+      <node id="157">
         <label>CopyVisitor&lt; CustomLayers &gt;</label>
         <link refid="classmlpack_1_1ann_1_1CopyVisitor"/>
-        <childnode refid="152" relation="public-inheritance">
+        <childnode refid="158" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

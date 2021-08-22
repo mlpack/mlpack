@@ -28,7 +28,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/vr_class_reward.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/vr_class_reward.hpp" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1VRClassReward_1a3e8fe5d26eb4292120dcd0ecb21cd2b6" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -165,7 +165,7 @@
         <argsstring>(LayerTypes&lt;&gt; layer)</argsstring>
         <name>Add</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt;</type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -305,7 +305,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/vr_class_reward.hpp" line="58" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1VRClassReward_1a50c707b4f7c009339d8d661539baf38f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>
@@ -415,7 +415,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="82" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="86" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="86" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1VRClassReward_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" virt="non-virtual"><scope>mlpack::ann::VRClassReward</scope><name>Add</name></member>
       <member refid="classmlpack_1_1ann_1_1VRClassReward_1a1812979d65642be34dd28899d312ce19" prot="public" virt="non-virtual"><scope>mlpack::ann::VRClassReward</scope><name>Add</name></member>

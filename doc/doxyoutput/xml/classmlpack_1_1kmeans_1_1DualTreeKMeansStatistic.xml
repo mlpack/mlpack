@@ -459,39 +459,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="976">
+      <node id="988">
         <label>DualTreeKMeansStatistic</label>
         <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
-        <childnode refid="977" relation="public-inheritance">
+        <childnode refid="989" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="978">
+      <node id="990">
         <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
       </node>
-      <node id="977">
+      <node id="989">
         <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
-        <childnode refid="978" relation="template-instance">
+        <childnode refid="990" relation="template-instance">
           <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="979">
+      <node id="991">
         <label>DualTreeKMeansStatistic</label>
         <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
-        <childnode refid="980" relation="public-inheritance">
+        <childnode refid="992" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="981">
+      <node id="993">
         <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
       </node>
-      <node id="980">
+      <node id="992">
         <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
-        <childnode refid="981" relation="template-instance">
+        <childnode refid="993" relation="template-instance">
           <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
         </childnode>
       </node>

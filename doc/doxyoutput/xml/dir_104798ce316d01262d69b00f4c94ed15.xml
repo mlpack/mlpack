@@ -10,9 +10,11 @@
     <innerfile refid="atrous__convolution_8hpp">atrous_convolution.hpp</innerfile>
     <innerfile refid="base__layer_8hpp">base_layer.hpp</innerfile>
     <innerfile refid="batch__norm_8hpp">batch_norm.hpp</innerfile>
+    <innerfile refid="bicubic__interpolation_8hpp">bicubic_interpolation.hpp</innerfile>
     <innerfile refid="bilinear__interpolation_8hpp">bilinear_interpolation.hpp</innerfile>
     <innerfile refid="c__relu_8hpp">c_relu.hpp</innerfile>
     <innerfile refid="celu_8hpp">celu.hpp</innerfile>
+    <innerfile refid="channel__shuffle_8hpp">channel_shuffle.hpp</innerfile>
     <innerfile refid="concat_8hpp">concat.hpp</innerfile>
     <innerfile refid="concat__performance_8hpp">concat_performance.hpp</innerfile>
     <innerfile refid="concatenate_8hpp">concatenate.hpp</innerfile>
@@ -49,6 +51,7 @@
     <innerfile refid="multihead__attention_8hpp">multihead_attention.hpp</innerfile>
     <innerfile refid="multiply__constant_8hpp">multiply_constant.hpp</innerfile>
     <innerfile refid="multiply__merge_8hpp">multiply_merge.hpp</innerfile>
+    <innerfile refid="nearest__interpolation_8hpp">nearest_interpolation.hpp</innerfile>
     <innerfile refid="noisylinear_8hpp">noisylinear.hpp</innerfile>
     <innerfile refid="padding_8hpp">padding.hpp</innerfile>
     <innerfile refid="parametric__relu_8hpp">parametric_relu.hpp</innerfile>
@@ -58,6 +61,7 @@
     <innerfile refid="recurrent_8hpp">recurrent.hpp</innerfile>
     <innerfile refid="recurrent__attention_8hpp">recurrent_attention.hpp</innerfile>
     <innerfile refid="reinforce__normal_8hpp">reinforce_normal.hpp</innerfile>
+    <innerfile refid="relu6_8hpp">relu6.hpp</innerfile>
     <innerfile refid="reparametrization_8hpp">reparametrization.hpp</innerfile>
     <innerfile refid="select_8hpp">select.hpp</innerfile>
     <innerfile refid="sequential_8hpp">sequential.hpp</innerfile>

@@ -7,141 +7,141 @@
     <includes local="yes">neighbor_search_rules_impl.hpp</includes>
     <includedby refid="neighbor__search_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</includedby>
     <incdepgraph>
-      <node id="52653">
+      <node id="54137">
         <label>queue</label>
       </node>
-      <node id="52651">
+      <node id="54135">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp</label>
         <link refid="neighbor__search__rules_8hpp"/>
-        <childnode refid="52652" relation="include">
+        <childnode refid="54136" relation="include">
         </childnode>
-        <childnode refid="52653" relation="include">
+        <childnode refid="54137" relation="include">
         </childnode>
-        <childnode refid="52654" relation="include">
+        <childnode refid="54138" relation="include">
         </childnode>
       </node>
-      <node id="52654">
+      <node id="54138">
         <label>neighbor_search_rules_impl.hpp</label>
       </node>
-      <node id="52652">
+      <node id="54136">
         <label>mlpack/core/tree/traversal_info.hpp</label>
         <link refid="traversal__info_8hpp"/>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="52670">
+      <node id="54154">
         <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
         <link refid="lmnn__function_8hpp"/>
-        <childnode refid="52671" relation="include">
+        <childnode refid="54155" relation="include">
         </childnode>
       </node>
-      <node id="52672">
+      <node id="54156">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
         <link refid="methods_2neighbor__search_2typedef_8hpp"/>
-        <childnode refid="52656" relation="include">
+        <childnode refid="54140" relation="include">
         </childnode>
       </node>
-      <node id="52655">
+      <node id="54139">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp</label>
         <link refid="neighbor__search__rules_8hpp"/>
-        <childnode refid="52656" relation="include">
+        <childnode refid="54140" relation="include">
         </childnode>
       </node>
-      <node id="52660">
+      <node id="54144">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
         <link refid="cf__model_8hpp"/>
       </node>
-      <node id="52662">
+      <node id="54146">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
         <link refid="regularized__svd__method_8hpp"/>
       </node>
-      <node id="52659">
+      <node id="54143">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
         <link refid="bias__svd__method_8hpp"/>
       </node>
-      <node id="52657">
+      <node id="54141">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
         <link refid="cf_8hpp"/>
-        <childnode refid="52658" relation="include">
+        <childnode refid="54142" relation="include">
         </childnode>
-        <childnode refid="52660" relation="include">
+        <childnode refid="54144" relation="include">
         </childnode>
-        <childnode refid="52661" relation="include">
+        <childnode refid="54145" relation="include">
         </childnode>
-        <childnode refid="52663" relation="include">
+        <childnode refid="54147" relation="include">
         </childnode>
       </node>
-      <node id="52665">
+      <node id="54149">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
         <link refid="cosine__search_8hpp"/>
       </node>
-      <node id="52668">
+      <node id="54152">
         <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
         <link refid="dual__tree__kmeans_8hpp"/>
       </node>
-      <node id="52663">
+      <node id="54147">
         <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
         <link refid="svdplusplus_8hpp"/>
-        <childnode refid="52664" relation="include">
+        <childnode refid="54148" relation="include">
         </childnode>
       </node>
-      <node id="52673">
+      <node id="54157">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
         <link refid="ns__model_8hpp"/>
       </node>
-      <node id="52669">
+      <node id="54153">
         <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
         <link refid="constraints_8hpp"/>
-        <childnode refid="52670" relation="include">
+        <childnode refid="54154" relation="include">
         </childnode>
       </node>
-      <node id="52666">
+      <node id="54150">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
         <link refid="lmetric__search_8hpp"/>
-        <childnode refid="52657" relation="include">
+        <childnode refid="54141" relation="include">
         </childnode>
       </node>
-      <node id="52671">
+      <node id="54155">
         <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
         <link refid="lmnn_8hpp"/>
       </node>
-      <node id="52658">
+      <node id="54142">
         <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
         <link refid="bias__svd_8hpp"/>
-        <childnode refid="52659" relation="include">
+        <childnode refid="54143" relation="include">
         </childnode>
       </node>
-      <node id="52664">
+      <node id="54148">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
         <link refid="svdplusplus__method_8hpp"/>
       </node>
-      <node id="52661">
+      <node id="54145">
         <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
         <link refid="regularized__svd_8hpp"/>
-        <childnode refid="52662" relation="include">
+        <childnode refid="54146" relation="include">
         </childnode>
       </node>
-      <node id="52656">
+      <node id="54140">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
         <link refid="neighbor__search_8hpp"/>
-        <childnode refid="52657" relation="include">
+        <childnode refid="54141" relation="include">
         </childnode>
-        <childnode refid="52665" relation="include">
+        <childnode refid="54149" relation="include">
         </childnode>
-        <childnode refid="52666" relation="include">
+        <childnode refid="54150" relation="include">
         </childnode>
-        <childnode refid="52667" relation="include">
+        <childnode refid="54151" relation="include">
         </childnode>
-        <childnode refid="52668" relation="include">
+        <childnode refid="54152" relation="include">
         </childnode>
-        <childnode refid="52669" relation="include">
+        <childnode refid="54153" relation="include">
         </childnode>
-        <childnode refid="52672" relation="include">
+        <childnode refid="54156" relation="include">
         </childnode>
-        <childnode refid="52673" relation="include">
+        <childnode refid="54157" relation="include">
         </childnode>
       </node>
-      <node id="52667">
+      <node id="54151">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
         <link refid="pearson__search_8hpp"/>
       </node>

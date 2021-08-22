@@ -52,6 +52,8 @@ Namespaces
 
 - :ref:`namespace_mlpack__emst`
 
+- :ref:`namespace_mlpack__ensemble`
+
 - :ref:`namespace_mlpack__fastmks`
 
 - :ref:`namespace_mlpack__gmm`
@@ -126,8 +128,6 @@ Classes
 - :ref:`exhale_class_classmlpack_1_1IO`
 
 - :ref:`exhale_class_classmlpack_1_1Timer`
-
-- :ref:`exhale_class_classmlpack_1_1Timers`
 
 
 Functions

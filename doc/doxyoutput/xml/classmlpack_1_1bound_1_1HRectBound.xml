@@ -741,21 +741,21 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="529">
+      <node id="541">
         <label>HRectBound&lt; metric::EuclideanDistance, ElemType &gt;</label>
         <link refid="classmlpack_1_1bound_1_1HRectBound"/>
-        <childnode refid="528" relation="template-instance">
+        <childnode refid="540" relation="template-instance">
           <edgelabel>&lt; metric::EuclideanDistance, ElemType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="528">
+      <node id="540">
         <label>HRectBound&lt; MetricType, ElemType &gt;</label>
         <link refid="classmlpack_1_1bound_1_1HRectBound"/>
       </node>
-      <node id="530">
+      <node id="542">
         <label>HRectBound&lt; MetricType &gt;</label>
         <link refid="classmlpack_1_1bound_1_1HRectBound"/>
-        <childnode refid="528" relation="template-instance">
+        <childnode refid="540" relation="template-instance">
           <edgelabel>&lt; MetricType &gt;</edgelabel>
         </childnode>
       </node>

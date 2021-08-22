@@ -5,104 +5,104 @@
     <includes refid="tree__traits_8hpp" local="no">mlpack/core/tree/tree_traits.hpp</includes>
     <includedby refid="cover__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/cover_tree.hpp</includedby>
     <incdepgraph>
-      <node id="15224">
+      <node id="15409">
         <label>mlpack/core/tree/tree_traits.hpp</label>
         <link refid="tree__traits_8hpp"/>
       </node>
-      <node id="15223">
+      <node id="15408">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/traits.hpp</label>
         <link refid="cover__tree_2traits_8hpp"/>
-        <childnode refid="15224" relation="include">
+        <childnode refid="15409" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="15232">
+      <node id="15417">
         <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp</label>
         <link refid="fastmks__model_8hpp"/>
       </node>
-      <node id="15229">
+      <node id="15414">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/typedef.hpp</label>
         <link refid="core_2tree_2cover__tree_2typedef_8hpp"/>
-        <childnode refid="15226" relation="include">
+        <childnode refid="15411" relation="include">
         </childnode>
       </node>
-      <node id="15231">
+      <node id="15416">
         <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp</label>
         <link refid="fastmks_8hpp"/>
-        <childnode refid="15232" relation="include">
+        <childnode refid="15417" relation="include">
         </childnode>
       </node>
-      <node id="15237">
+      <node id="15422">
         <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
         <link refid="range__search__utils_8hpp"/>
       </node>
-      <node id="15234">
+      <node id="15419">
         <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
         <link refid="dual__tree__kmeans_8hpp"/>
       </node>
-      <node id="15227">
+      <node id="15412">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/cover_tree.hpp</label>
         <link refid="cover__tree_2cover__tree_8hpp"/>
-        <childnode refid="15226" relation="include">
+        <childnode refid="15411" relation="include">
         </childnode>
-        <childnode refid="15228" relation="include">
+        <childnode refid="15413" relation="include">
         </childnode>
-        <childnode refid="15229" relation="include">
+        <childnode refid="15414" relation="include">
         </childnode>
-        <childnode refid="15230" relation="include">
+        <childnode refid="15415" relation="include">
         </childnode>
       </node>
-      <node id="15235">
+      <node id="15420">
         <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
         <link refid="ns__model_8hpp"/>
       </node>
-      <node id="15226">
+      <node id="15411">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree.hpp</label>
         <link refid="cover__tree_8hpp"/>
-        <childnode refid="15227" relation="include">
+        <childnode refid="15412" relation="include">
         </childnode>
-        <childnode refid="15231" relation="include">
+        <childnode refid="15416" relation="include">
         </childnode>
-        <childnode refid="15233" relation="include">
+        <childnode refid="15418" relation="include">
         </childnode>
-        <childnode refid="15234" relation="include">
+        <childnode refid="15419" relation="include">
         </childnode>
-        <childnode refid="15235" relation="include">
+        <childnode refid="15420" relation="include">
         </childnode>
-        <childnode refid="15236" relation="include">
+        <childnode refid="15421" relation="include">
         </childnode>
-        <childnode refid="15238" relation="include">
+        <childnode refid="15423" relation="include">
         </childnode>
       </node>
-      <node id="15230">
+      <node id="15415">
         <label>/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_rules.hpp</label>
         <link refid="fastmks__rules_8hpp"/>
       </node>
-      <node id="15238">
+      <node id="15423">
         <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
         <link refid="ra__model_8hpp"/>
       </node>
-      <node id="15233">
+      <node id="15418">
         <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
         <link refid="kde__model_8hpp"/>
       </node>
-      <node id="15228">
+      <node id="15413">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/single_tree_traverser.hpp</label>
         <link refid="cover__tree_2single__tree__traverser_8hpp"/>
-        <childnode refid="15226" relation="include">
+        <childnode refid="15411" relation="include">
         </childnode>
       </node>
-      <node id="15236">
+      <node id="15421">
         <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
         <link refid="rs__model_8hpp"/>
-        <childnode refid="15237" relation="include">
+        <childnode refid="15422" relation="include">
         </childnode>
       </node>
-      <node id="15225">
+      <node id="15410">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/cover_tree/traits.hpp</label>
         <link refid="cover__tree_2traits_8hpp"/>
-        <childnode refid="15226" relation="include">
+        <childnode refid="15411" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

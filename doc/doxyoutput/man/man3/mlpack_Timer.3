@@ -1,4 +1,4 @@
-.TH "Timer" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Timer" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -22,6 +22,10 @@ Timer \- The timer class provides a way for mlpack methods to be timed\&.
 .RI "static std::chrono::microseconds \fBGet\fP (const std::string &name)"
 .br
 .RI "Get the value of the given timer\&. "
+.ti -1c
+.RI "static std::map< std::string, std::chrono::microseconds > \fBGetAllTimers\fP ()"
+.br
+.RI "Returns a copy of all the timers used via this interface\&. "
 .ti -1c
 .RI "static void \fBResetAll\fP ()"
 .br
@@ -63,6 +67,14 @@ Get the value of the given timer\&.
 .RE
 .PP
 
+.PP
+Referenced by Timers::Timers()\&.
+.SS "static std::map<std::string, std::chrono::microseconds> GetAllTimers ()\fC [static]\fP"
+
+.PP
+Returns a copy of all the timers used via this interface\&. 
+.PP
+Referenced by Timers::Timers()\&.
 .SS "static void ResetAll ()\fC [static]\fP"
 
 .PP
@@ -83,6 +95,8 @@ A std::runtime_error exception will be thrown if a timer is started twice\&.
 .RE
 .PP
 
+.PP
+Referenced by Timers::Timers()\&.
 .SS "static void Stop (const std::string & name)\fC [static]\fP"
 
 .PP
@@ -99,6 +113,8 @@ A std::runtime_error exception will be thrown if a timer is started twice\&.
 .RE
 .PP
 
+.PP
+Referenced by Timers::Timers()\&.
 
 .SH "Author"
 .PP 

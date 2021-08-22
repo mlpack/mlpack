@@ -243,56 +243,56 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1033">
+      <node id="1045">
         <label>IPMetric&lt; mlpack::kernel::PolynomialKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::PolynomialKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1030">
+      <node id="1042">
         <label>IPMetric&lt; mlpack::kernel::TriangularKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::TriangularKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1032">
+      <node id="1044">
         <label>IPMetric&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1029">
+      <node id="1041">
         <label>IPMetric&lt; mlpack::kernel::GaussianKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::GaussianKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1028">
+      <node id="1040">
         <label>IPMetric&lt; KernelType &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
       </node>
-      <node id="1035">
+      <node id="1047">
         <label>IPMetric&lt; mlpack::kernel::CosineDistance &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::CosineDistance &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1034">
+      <node id="1046">
         <label>IPMetric&lt; mlpack::kernel::LinearKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::LinearKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1031">
+      <node id="1043">
         <label>IPMetric&lt; mlpack::kernel::EpanechnikovKernel &gt;</label>
         <link refid="classmlpack_1_1metric_1_1IPMetric"/>
-        <childnode refid="1028" relation="template-instance">
+        <childnode refid="1040" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::EpanechnikovKernel &gt;</edgelabel>
         </childnode>
       </node>

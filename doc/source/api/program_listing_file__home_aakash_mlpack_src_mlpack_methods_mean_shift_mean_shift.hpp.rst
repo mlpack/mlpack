@@ -18,7 +18,6 @@ Program Listing for File mean_shift.hpp
    #include <mlpack/core/kernels/gaussian_kernel.hpp>
    #include <mlpack/core/kernels/kernel_traits.hpp>
    #include <mlpack/core/metrics/lmetric.hpp>
-   #include <boost/utility.hpp>
    
    namespace mlpack {
    namespace meanshift  {

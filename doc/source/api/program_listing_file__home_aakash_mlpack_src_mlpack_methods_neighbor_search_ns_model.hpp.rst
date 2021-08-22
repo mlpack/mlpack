@@ -41,19 +41,22 @@ Program Listing for File ns_model.hpp
      virtual double Epsilon() const = 0;
      virtual double& Epsilon() = 0;
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize,
                         const double tau,
                         const double rho) = 0;
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
                          const size_t leafSize,
                          const double rho) = 0;
    
-     virtual void Search(const size_t k,
+     virtual void Search(util::Timers& timers,
+                         const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances) = 0;
    };
@@ -92,19 +95,22 @@ Program Listing for File ns_model.hpp
      double Epsilon() const { return ns.Epsilon(); }
      double& Epsilon() { return ns.Epsilon(); }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t /* leafSize */,
                         const double /* tau */,
                         const double /* rho */);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
                          const size_t /* leafSize */,
                          const double /* rho */);
    
-     virtual void Search(const size_t k,
+     virtual void Search(util::Timers& timers,
+                         const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances);
    
@@ -162,12 +168,14 @@ Program Listing for File ns_model.hpp
        return new LeafSizeNSWrapper(*this);
      }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize,
                         const double /* tau */,
                         const double /* rho */);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
@@ -220,12 +228,14 @@ Program Listing for File ns_model.hpp
    
      virtual SpillNSWrapper* Clone() const { return new SpillNSWrapper(*this); }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize,
                         const double tau,
                         const double rho);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
@@ -327,16 +337,19 @@ Program Listing for File ns_model.hpp
      void InitializeModel(const NeighborSearchMode searchMode,
                           const double epsilon);
    
-     void BuildModel(arma::mat&& referenceSet,
+     void BuildModel(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const NeighborSearchMode searchMode,
                      const double epsilon = 0);
    
-     void Search(arma::mat&& querySet,
+     void Search(util::Timers& timers,
+                 arma::mat&& querySet,
                  const size_t k,
                  arma::Mat<size_t>& neighbors,
                  arma::mat& distances);
    
-     void Search(const size_t k,
+     void Search(util::Timers& timers,
+                 const size_t k,
                  arma::Mat<size_t>& neighbors,
                  arma::mat& distances);
    

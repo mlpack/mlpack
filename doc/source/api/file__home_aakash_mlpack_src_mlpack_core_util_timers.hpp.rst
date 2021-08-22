@@ -73,6 +73,8 @@ Namespaces
 
 - :ref:`namespace_mlpack`
 
+- :ref:`namespace_mlpack__util`
+
 
 Classes
 -------
@@ -80,7 +82,7 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1Timer`
 
-- :ref:`exhale_class_classmlpack_1_1Timers`
+- :ref:`exhale_class_classmlpack_1_1util_1_1Timers`
 
 
 Full File Listing

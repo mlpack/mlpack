@@ -668,6 +668,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="70" column="1"/>
+        <referencedby refid="test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155" compoundref="test__function__tools_8hpp" startline="85" endline="106">LoadBostonHousingDataset</referencedby>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1a7bfd894be870a3409cc7d3b10b08d689" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -889,7 +890,7 @@
         <detaileddescription>
 <para>This will transpose the matrix (unless the transpose parameter is set to false). This particular overload of <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">Load()</ref> can only load text-based formats, such as those given below:</para><para><itemizedlist>
 <listitem><para>CSV (csv_ascii), denoted by .csv, or optionally .txt</para></listitem><listitem><para>TSV (raw_ascii), denoted by .tsv, .csv, or .txt</para></listitem><listitem><para>ASCII (raw_ascii), denoted by .txt</para></listitem></itemizedlist>
-</para><para>If the file extension is not one of those types, an error will be given. This is preferable to Armadillo&apos;s default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects.</para><para>If the parameter &apos;fatal&apos; is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully. The parameter &apos;transpose&apos; controls whether or not the matrix is transposed after loading. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of &apos;true&apos;.</para><para>The <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object passed to this function will be re-created, so any mappings from previous loads will be lost.</para><para><parameterlist kind="param"><parameteritem>
+</para><para>If the file extension is not one of those types, an error will be given. This is preferable to Armadillo&apos;s default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects.</para><para>If the parameter &apos;fatal&apos; is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully. The parameter &apos;transpose&apos; controls whether or not the matrix is transposed after loading. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of &apos;true&apos;.</para><para>If the given <computeroutput>info</computeroutput> has already been used with a different <computeroutput><ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">data::Load()</ref></computeroutput> call where the dataset has the same dimensionality, then the mappings and dimension types inside of <computeroutput>info</computeroutput> will be <emphasis>re-used</emphasis>. If the given <computeroutput>info</computeroutput> is a new <computeroutput><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref></computeroutput> object (e.g. its dimensionality is 0), then new mappings will be created. If the given <computeroutput>info</computeroutput> has a different dimensionality of data than what is present in <computeroutput>filename</computeroutput>, an exception will be thrown.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>filename</parametername>
 </parameternamelist>
@@ -929,7 +930,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="287" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="291" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1ac0441d5f7e76f0fcdeec487d4a9732ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -971,7 +972,7 @@
 </para><para>The format parameter can take any of the values in the &apos;format&apos; enum: &apos;format::autodetect&apos;, &apos;format::json&apos;, &apos;format::xml&apos;, and &apos;format::binary&apos;. The autodetect functionality operates on the file extension (so, &quot;file.txt&quot; would be autodetected as text).</para><para>The name parameter should be specified to indicate the name of the structure to be loaded. This should be the same as the name that was used to save the structure (otherwise, the loading procedure will fail).</para><para>If the parameter &apos;fatal&apos; is set to true, then an exception will be thrown in the event of load failure. Otherwise, the method will return false and the relevant error information will be printed to Log::Warn. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="365" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="369" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1aa05aba27ed8693c1c4ed538240a549b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1036,7 +1037,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="385" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="389" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1adf6afb44303645116a32d1ed168e0ff1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1101,7 +1102,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="400" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="404" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1a951a7dc1fd86524b8dd245bb91841731" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1212,7 +1213,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="406" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load.hpp" line="410" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1a664b3fa5243889e2aed47ee750f840ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1506,7 +1507,7 @@
 <para>Saves a matrix to file, guessing the filetype from the extension. </para>        </briefdescription>
         <detaileddescription>
 <para>This will transpose the matrix at save time. If the filetype cannot be determined, an error will be given.</para><para>The supported types of files are the same as found in Armadillo:</para><para><itemizedlist>
-<listitem><para>CSV (arma::csv_ascii), denoted by .csv, or optionally .txt</para></listitem><listitem><para>ASCII (arma::raw_ascii), denoted by .json</para></listitem><listitem><para>Armadillo ASCII (arma::arma_ascii), also denoted by .txt</para></listitem><listitem><para>PGM (arma::pgm_binary), denoted by .pgm</para></listitem><listitem><para>PPM (arma::ppm_binary), denoted by .ppm</para></listitem><listitem><para>Raw binary (arma::raw_binary), denoted by .bin</para></listitem><listitem><para>Armadillo binary (arma::arma_binary), denoted by .bin</para></listitem><listitem><para>HDF5 (arma::hdf5_binary), denoted by .hdf5, .hdf, .h5, or .he5</para></listitem></itemizedlist>
+<listitem><para>CSV (arma::csv_ascii), denoted by .csv, or optionally .txt</para></listitem><listitem><para>ASCII (arma::raw_ascii), denoted by .txt</para></listitem><listitem><para>Armadillo ASCII (arma::arma_ascii), also denoted by .txt</para></listitem><listitem><para>PGM (arma::pgm_binary), denoted by .pgm</para></listitem><listitem><para>PPM (arma::ppm_binary), denoted by .ppm</para></listitem><listitem><para>Raw binary (arma::raw_binary), denoted by .bin</para></listitem><listitem><para>Armadillo binary (arma::arma_binary), denoted by .bin</para></listitem><listitem><para>HDF5 (arma::hdf5_binary), denoted by .hdf5, .hdf, .h5, or .he5</para></listitem></itemizedlist>
 </para><para>By default, this function will try to automatically determine the format to save with based only on the filename&apos;s extension. If you would prefer to specify a file type manually, override the default <computeroutput>inputSaveType</computeroutput> parameter with the correct type above (e.g. <computeroutput>arma::csv_ascii</computeroutput>.)</para><para>If the &apos;fatal&apos; parameter is set to true, a std::runtime_error exception will be thrown upon failure. If the &apos;transpose&apos; parameter is set to true, the matrix will be transposed before saving. Generally, because mlpack stores matrices in a column-major format and most datasets are stored on disk as row-major, this parameter should be left at its default value of &apos;true&apos;.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>filename</parametername>
@@ -1961,6 +1962,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/data/split_data.hpp" line="255" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/split_data.hpp" bodystart="255" bodyend="276"/>
         <references refid="namespacemlpack_1_1data_1aa8ba4ec838f0ac7dd92c69b6c60dfb22" compoundref="split__data_8hpp" startline="27" endline="63">SplitHelper</references>
+        <referencedby refid="test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155" compoundref="test__function__tools_8hpp" startline="85" endline="106">LoadBostonHousingDataset</referencedby>
         <referencedby refid="namespacemlpack_1_1data_1a38ad55a3d28296d823078fe7d0ced9b2" compoundref="split__data_8hpp" startline="351" endline="377">Split</referencedby>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1data_1a0ac4c8b737e134361d49d5c1c3f9f6ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">

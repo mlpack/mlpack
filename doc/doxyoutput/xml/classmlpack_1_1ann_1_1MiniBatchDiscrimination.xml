@@ -624,7 +624,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="118" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="123" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1MiniBatchDiscrimination_1ab744b141c917654cc6ddb84e3968f303" prot="private" virt="non-virtual"><scope>mlpack::ann::MiniBatchDiscrimination</scope><name>A</name></member>
       <member refid="classmlpack_1_1ann_1_1MiniBatchDiscrimination_1ae7162d16c9c9f8505490c7ecc55b4d62" prot="private" virt="non-virtual"><scope>mlpack::ann::MiniBatchDiscrimination</scope><name>B</name></member>

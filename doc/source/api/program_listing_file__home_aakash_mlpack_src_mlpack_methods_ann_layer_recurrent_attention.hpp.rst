@@ -15,7 +15,6 @@ Program Listing for File recurrent_attention.hpp
    #define MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
    
    #include <mlpack/prereqs.hpp>
-   #include <boost/ptr_container/ptr_vector.hpp>
    
    #include "../visitor/delta_visitor.hpp"
    #include "../visitor/output_parameter_visitor.hpp"

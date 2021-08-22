@@ -151,6 +151,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="148" column="1"/>
+        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1ac22f0004512d4333b29b2e685ef3a5d7" compoundref="load__csv_8hpp" startline="78" endline="151">LoadCSV::GetMatrixSize</referencedby>
+        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" compoundref="load__csv_8hpp" startline="164" endline="229">LoadCSV::GetTransposeMatrixSize</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1abc9d3b17fb4bc99d9dc00052658c19b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -379,7 +381,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="64" column="1"/>
-        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" compoundref="load__csv_8hpp" startline="151" endline="205">LoadCSV::GetTransposeMatrixSize</referencedby>
+        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1ac22f0004512d4333b29b2e685ef3a5d7" compoundref="load__csv_8hpp" startline="78" endline="151">LoadCSV::GetMatrixSize</referencedby>
+        <referencedby refid="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" compoundref="load__csv_8hpp" startline="164" endline="229">LoadCSV::GetTransposeMatrixSize</referencedby>
+        <referencedby refid="test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155" compoundref="test__function__tools_8hpp" startline="85" endline="106">LoadBostonHousingDataset</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1af46c276f8b3c130454e23447bcb959e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="namespacemlpack_1_1data_1aa7714fa0b7efc7b31cbda21da607c5b6" kindref="member">Datatype</ref></type>
@@ -397,6 +401,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/data/dataset_mapper.hpp" line="132" column="1"/>
+        <referencedby refid="test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155" compoundref="test__function__tools_8hpp" startline="85" endline="106">LoadBostonHousingDataset</referencedby>
         <referencedby refid="mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6" compoundref="mock__categorical__data_8hpp" startline="20" endline="114">MockCategoricalData</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1DatasetMapper_1a1283ad10b330a96190ef575e7a471827" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -526,14 +531,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="715">
+      <node id="727">
         <label>DatasetMapper&lt; mlpack::data::IncrementPolicy, double &gt;</label>
         <link refid="classmlpack_1_1data_1_1DatasetMapper"/>
-        <childnode refid="714" relation="template-instance">
+        <childnode refid="726" relation="template-instance">
           <edgelabel>&lt; mlpack::data::IncrementPolicy, double &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="714">
+      <node id="726">
         <label>DatasetMapper&lt; PolicyType, InputType &gt;</label>
         <link refid="classmlpack_1_1data_1_1DatasetMapper"/>
       </node>

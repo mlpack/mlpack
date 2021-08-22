@@ -36,6 +36,8 @@ Includes
 --------
 
 
+- ``mlpack/core/util/io.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_io.hpp`)
+
 - ``mlpack/prereqs.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_prereqs.hpp`)
 
 

@@ -46,8 +46,6 @@ Includes
 
 - ``add_merge.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_add_merge.hpp`)
 
-- ``boost/ptr_container/ptr_vector.hpp``
-
 - ``layer_types.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_layer_types.hpp`)
 
 - ``mlpack/prereqs.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_prereqs.hpp`)

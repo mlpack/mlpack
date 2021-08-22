@@ -4,13 +4,13 @@
     <compoundname>is_std_vector.hpp</compoundname>
     <includes local="no">vector</includes>
     <incdepgraph>
-      <node id="20667">
+      <node id="20890">
         <label>/home/aakash/mlpack/src/mlpack/core/util/is_std_vector.hpp</label>
         <link refid="is__std__vector_8hpp"/>
-        <childnode refid="20668" relation="include">
+        <childnode refid="20891" relation="include">
         </childnode>
       </node>
-      <node id="20668">
+      <node id="20891">
         <label>vector</label>
       </node>
     </incdepgraph>

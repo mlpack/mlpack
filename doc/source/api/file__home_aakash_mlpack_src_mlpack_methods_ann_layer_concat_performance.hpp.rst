@@ -36,8 +36,6 @@ Includes
 --------
 
 
-- ``boost/ptr_container/ptr_vector.hpp``
-
 - ``concat_performance_impl.hpp``
 
 - ``layer_types.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_layer_types.hpp`)

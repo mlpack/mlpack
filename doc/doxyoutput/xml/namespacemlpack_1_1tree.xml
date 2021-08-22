@@ -14,6 +14,7 @@
     <innerclass refid="classmlpack_1_1tree_1_1CosineTree" prot="public">mlpack::tree::CosineTree</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1CoverTree" prot="public">mlpack::tree::CoverTree</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1DecisionTree" prot="public">mlpack::tree::DecisionTree</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1DecisionTreeRegressor" prot="public">mlpack::tree::DecisionTreeRegressor</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" prot="public">mlpack::tree::DiscreteHilbertValue</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1EmptyStatistic" prot="public">mlpack::tree::EmptyStatistic</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1ExampleTree" prot="public">mlpack::tree::ExampleTree</innerclass>
@@ -21,6 +22,7 @@
     <innerclass refid="classmlpack_1_1tree_1_1GiniGain" prot="public">mlpack::tree::GiniGain</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1GiniImpurity" prot="public">mlpack::tree::GiniImpurity</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser" prot="public">mlpack::tree::GreedySingleTreeTraverser</innerclass>
+    <innerclass refid="structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms" prot="public">mlpack::tree::HasOptimizedBinarySplitForms</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1HilbertRTreeAuxiliaryInformation" prot="public">mlpack::tree::HilbertRTreeAuxiliaryInformation</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1HilbertRTreeDescentHeuristic" prot="public">mlpack::tree::HilbertRTreeDescentHeuristic</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1HilbertRTreeSplit" prot="public">mlpack::tree::HilbertRTreeSplit</innerclass>
@@ -33,12 +35,14 @@
     <innerclass refid="classmlpack_1_1tree_1_1InformationGain" prot="public">mlpack::tree::InformationGain</innerclass>
     <innerclass refid="structmlpack_1_1tree_1_1IsSpillTree" prot="public">mlpack::tree::IsSpillTree</innerclass>
     <innerclass refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340" prot="public">mlpack::tree::IsSpillTree&lt; tree::SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1MADGain" prot="public">mlpack::tree::MADGain</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MeanSpaceSplit" prot="public">mlpack::tree::MeanSpaceSplit</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MeanSplit" prot="public">mlpack::tree::MeanSplit</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MidpointSpaceSplit" prot="public">mlpack::tree::MidpointSpaceSplit</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MidpointSplit" prot="public">mlpack::tree::MidpointSplit</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MinimalCoverageSweep" prot="public">mlpack::tree::MinimalCoverageSweep</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MinimalSplitsNumberSweep" prot="public">mlpack::tree::MinimalSplitsNumberSweep</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1MSEGain" prot="public">mlpack::tree::MSEGain</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect" prot="public">mlpack::tree::MultipleRandomDimensionSelect</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" prot="public">mlpack::tree::NoAuxiliaryInformation</innerclass>
     <innerclass refid="classmlpack_1_1tree_1_1NumericSplitInfo" prot="public">mlpack::tree::NumericSplitInfo</innerclass>
@@ -155,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="585" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="589" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="581" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="585" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacemlpack_1_1tree_1a6168a0dfd946fa930c61e8d5b480b688" prot="public" static="no">
         <type><ref refid="classmlpack_1_1tree_1_1HilbertRTreeAuxiliaryInformation" kindref="compound">HilbertRTreeAuxiliaryInformation</ref>&lt; TreeType, <ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref> &gt;</type>
@@ -278,7 +282,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="599" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="599" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="595" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="595" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacemlpack_1_1tree_1a73c2146f8d1da65d927c7746bfe7e750" prot="public" static="no">
         <type><ref refid="classmlpack_1_1tree_1_1BinarySpaceTree" kindref="compound">BinarySpaceTree</ref>&lt; MetricType, StatisticType, MatType, <ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound</ref>, <ref refid="classmlpack_1_1tree_1_1MidpointSplit" kindref="compound">MidpointSplit</ref> &gt;</type>
@@ -806,6 +810,25 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/tree/enumerate_tree.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/enumerate_tree.hpp" bodystart="56" bodyend="59"/>
         <references refid="namespacemlpack_1_1tree_1_1enumerate_1a3dd4930ca0f3b9f5779a4efe7e4703ad" compoundref="enumerate__tree_8hpp" startline="24" endline="40">mlpack::tree::enumerate::EnumerateTreeImpl</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1tree_1a5a0616a02855490670d1d895a6195ac7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mlpack::tree::HAS_MEM_FUNC</definition>
+        <argsstring>(BinaryGains, HasBinaryGains)</argsstring>
+        <name>HAS_MEM_FUNC</name>
+        <param>
+          <type>BinaryGains</type>
+        </param>
+        <param>
+          <type>HasBinaryGains</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/best_binary_numeric_split.hpp" line="25" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

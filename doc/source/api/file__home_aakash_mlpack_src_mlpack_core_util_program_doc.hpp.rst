@@ -59,11 +59,11 @@ Classes
 -------
 
 
+- :ref:`exhale_class_classmlpack_1_1util_1_1BindingName`
+
 - :ref:`exhale_class_classmlpack_1_1util_1_1Example`
 
 - :ref:`exhale_class_classmlpack_1_1util_1_1LongDescription`
-
-- :ref:`exhale_class_classmlpack_1_1util_1_1ProgramName`
 
 - :ref:`exhale_class_classmlpack_1_1util_1_1SeeAlso`
 

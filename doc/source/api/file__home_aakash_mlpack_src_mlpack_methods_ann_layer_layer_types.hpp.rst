@@ -56,11 +56,15 @@ Includes
 
 - ``mlpack/methods/ann/layer/batch_norm.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_batch_norm.hpp`)
 
+- ``mlpack/methods/ann/layer/bicubic_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bicubic_interpolation.hpp`)
+
 - ``mlpack/methods/ann/layer/bilinear_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bilinear_interpolation.hpp`)
 
 - ``mlpack/methods/ann/layer/c_relu.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_c_relu.hpp`)
 
 - ``mlpack/methods/ann/layer/celu.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_celu.hpp`)
+
+- ``mlpack/methods/ann/layer/channel_shuffle.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_channel_shuffle.hpp`)
 
 - ``mlpack/methods/ann/layer/concatenate.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_concatenate.hpp`)
 
@@ -102,6 +106,8 @@ Includes
 
 - ``mlpack/methods/ann/layer/multiply_constant.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multiply_constant.hpp`)
 
+- ``mlpack/methods/ann/layer/nearest_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_nearest_interpolation.hpp`)
+
 - ``mlpack/methods/ann/layer/noisylinear.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_noisylinear.hpp`)
 
 - ``mlpack/methods/ann/layer/parametric_relu.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_parametric_relu.hpp`)
@@ -113,6 +119,8 @@ Includes
 - ``mlpack/methods/ann/layer/radial_basis_function.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_radial_basis_function.hpp`)
 
 - ``mlpack/methods/ann/layer/reinforce_normal.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reinforce_normal.hpp`)
+
+- ``mlpack/methods/ann/layer/relu6.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_relu6.hpp`)
 
 - ``mlpack/methods/ann/layer/reparametrization.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reparametrization.hpp`)
 
@@ -294,6 +302,8 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1RecurrentAttention`
 
+- :ref:`exhale_class_classmlpack_1_1ann_1_1ReLU6`
+
 - :ref:`exhale_class_classmlpack_1_1ann_1_1Reparametrization`
 
 - :ref:`exhale_class_classmlpack_1_1ann_1_1Sequential`
@@ -311,9 +321,9 @@ Typedefs
 --------
 
 
-- :ref:`exhale_typedef_namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6`
+- :ref:`exhale_typedef_namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337`
 
-- :ref:`exhale_typedef_namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0`
+- :ref:`exhale_typedef_namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844`
 
 
 Full File Listing

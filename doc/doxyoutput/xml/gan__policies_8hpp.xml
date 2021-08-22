@@ -4,13 +4,13 @@
     <compoundname>gan_policies.hpp</compoundname>
     <includedby refid="gan_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</includedby>
     <invincdepgraph>
-      <node id="28018">
+      <node id="28428">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan_policies.hpp</label>
         <link refid="gan__policies_8hpp"/>
-        <childnode refid="28019" relation="include">
+        <childnode refid="28429" relation="include">
         </childnode>
       </node>
-      <node id="28019">
+      <node id="28429">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
         <link refid="gan_8hpp"/>
       </node>

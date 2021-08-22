@@ -4,13 +4,13 @@
     <compoundname>information_gain.hpp</compoundname>
     <includedby refid="hoeffding__tree__model_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp</includedby>
     <invincdepgraph>
-      <node id="47318">
+      <node id="48659">
         <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/information_gain.hpp</label>
         <link refid="hoeffding__trees_2information__gain_8hpp"/>
-        <childnode refid="47319" relation="include">
+        <childnode refid="48660" relation="include">
         </childnode>
       </node>
-      <node id="47319">
+      <node id="48660">
         <label>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp</label>
         <link refid="hoeffding__tree__model_8hpp"/>
       </node>

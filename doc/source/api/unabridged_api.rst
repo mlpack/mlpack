@@ -99,6 +99,11 @@ Namespaces
 .. toctree::
    :maxdepth: 5
 
+   namespace_mlpack__ensemble.rst
+
+.. toctree::
+   :maxdepth: 5
+
    namespace_mlpack__fastmks.rst
 
 .. toctree::
@@ -708,6 +713,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms.rst
+
+.. toctree::
+   :maxdepth: 5
+
    structmlpack_1_1tree_1_1IsSpillTree.rst
 
 .. toctree::
@@ -839,6 +849,11 @@ Classes and Structs
    :maxdepth: 5
 
    classLayerNameVisitor.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classMainTestFixture.rst
 
 .. toctree::
    :maxdepth: 5
@@ -1028,6 +1043,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classmlpack_1_1ann_1_1BicubicInterpolation.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classmlpack_1_1ann_1_1BilinearInterpolation.rst
 
 .. toctree::
@@ -1044,6 +1064,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1ann_1_1CELU.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1ann_1_1ChannelShuffle.rst
 
 .. toctree::
    :maxdepth: 5
@@ -1488,6 +1513,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classmlpack_1_1ann_1_1MultiplyConstant.rst
 
 .. toctree::
@@ -1504,6 +1534,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1ann_1_1NaiveConvolution.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1ann_1_1NearestInterpolation.rst
 
 .. toctree::
    :maxdepth: 5
@@ -1649,6 +1684,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1ann_1_1ReinforceNormal.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1ann_1_1ReLU6.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2259,6 +2299,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1emst_1_1UnionFind.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1ensemble_1_1SSELoss.rst
 
 .. toctree::
    :maxdepth: 5
@@ -3203,11 +3248,6 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classmlpack_1_1Timers.rst
-
-.. toctree::
-   :maxdepth: 5
-
    classmlpack_1_1tree_1_1AllCategoricalSplit.rst
 
 .. toctree::
@@ -3303,6 +3343,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classmlpack_1_1tree_1_1DecisionTreeRegressor.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classmlpack_1_1tree_1_1DiscreteHilbertValue.rst
 
 .. toctree::
@@ -3388,6 +3433,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classmlpack_1_1tree_1_1MADGain.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classmlpack_1_1tree_1_1MeanSpaceSplit.rst
 
 .. toctree::
@@ -3414,6 +3464,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1tree_1_1MinimalSplitsNumberSweep.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1tree_1_1MSEGain.rst
 
 .. toctree::
    :maxdepth: 5
@@ -3648,6 +3703,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classmlpack_1_1util_1_1BindingName.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classmlpack_1_1util_1_1Example.rst
 
 .. toctree::
@@ -3663,12 +3723,12 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classmlpack_1_1util_1_1PrefixedOutStream.rst
+   classmlpack_1_1util_1_1Params.rst
 
 .. toctree::
    :maxdepth: 5
 
-   classmlpack_1_1util_1_1ProgramName.rst
+   classmlpack_1_1util_1_1PrefixedOutStream.rst
 
 .. toctree::
    :maxdepth: 5
@@ -3679,6 +3739,11 @@ Classes and Structs
    :maxdepth: 5
 
    classmlpack_1_1util_1_1ShortDescription.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classmlpack_1_1util_1_1Timers.rst
 
 Enums
 *****
@@ -3862,6 +3927,11 @@ Functions
    :maxdepth: 5
 
    function_ann__test__tools_8hpp_1a6c1852980c9a5957091df64a2e33016c.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4256,7 +4326,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c.rst
+   function_namespacemlpack_1_1det_1aea896dfbe00d9361ef2b2ade9ce94973.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4631,6 +4701,11 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_namespacemlpack_1_1tree_1a5a0616a02855490670d1d895a6195ac7.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a.rst
 
 .. toctree::
@@ -4676,7 +4751,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1ab244b3b942d525edebe5d0e08b056bf1.rst
+   function_namespacemlpack_1_1util_1a15d3dd71420e35891f2383141e55a17d.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4686,32 +4761,27 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1ae19bc258d5d2bc0f4c5ac52da8d2992e.rst
+   function_namespacemlpack_1_1util_1a6d1c576544a52b021a857c40b3b1d841.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1a37ad0ecd07b5b006bf8135c2880779dd.rst
+   function_namespacemlpack_1_1util_1a504ee55c910ffb18c1e12e2b067b1e8f.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1aa885d1e461234b74a7afaeffb9fa65e0.rst
+   function_namespacemlpack_1_1util_1a015ed435ccbb64bf7e4408a100fa095d.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1a103bcfe2b3a7641fe3f3c59b2436bb63.rst
+   function_namespacemlpack_1_1util_1adb04a1f1e20036f06efea1ad226fc116.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_namespacemlpack_1_1util_1ae93b13d8041246b4d1d697d7f00155ca.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_namespacemlpack_1_1util_1a997283ede9320ae143e5cf3314efe0a4.rst
+   function_namespacemlpack_1_1util_1af6914a72a7b265d07fba2137a8b85451.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4722,6 +4792,11 @@ Functions
    :maxdepth: 5
 
    function_mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_mock__categorical__data_8hpp_1ae4e74e2b4630092d7822ceb0fbe232c1.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4746,7 +4821,22 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_test__function__tools_8hpp_1a0bb90d590a15bd57bafd7578ce621932.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_namespacestd_1ac00ab9944702fa0bd9edaa48df3bf164.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_utils_8hpp_1adc8ddbc780db03bed571d6037f5c43bb.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_utils_8hpp_1a35e413f3a13582a02d7b51fa3fb7fc8f.rst
 
 Variables
 *********
@@ -4780,6 +4870,11 @@ Defines
    :maxdepth: 5
 
    define_prereqs_8hpp_1a525335710b53cb064ca56b936120431e.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   define_main__test__fixture_8hpp_1a06c49141318e550eb6a46f6828e4fa21.rst
 
 .. toctree::
    :maxdepth: 5
@@ -4894,6 +4989,11 @@ Defines
 .. toctree::
    :maxdepth: 5
 
+   define_main__test__fixture_8hpp_1ad202b4a5b5ed6985c8a368ed2dfe9eb2.rst
+
+.. toctree::
+   :maxdepth: 5
+
    define_sfinae__utility_8hpp_1afa8624400132dca5f52f93deec70706b.rst
 
 .. toctree::
@@ -4993,7 +5093,7 @@ Typedefs
 .. toctree::
    :maxdepth: 5
 
-   typedef_namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6.rst
+   typedef_namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337.rst
 
 .. toctree::
    :maxdepth: 5
@@ -5008,7 +5108,7 @@ Typedefs
 .. toctree::
    :maxdepth: 5
 
-   typedef_namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0.rst
+   typedef_namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844.rst
 
 .. toctree::
    :maxdepth: 5

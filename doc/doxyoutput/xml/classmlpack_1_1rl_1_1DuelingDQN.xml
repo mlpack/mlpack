@@ -161,7 +161,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" line="60" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" bodystart="60" bodyend="72"/>
-        <references refid="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="sequential_8hpp" startline="143" endline="143">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Add</references>
+        <references refid="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="sequential_8hpp" startline="141" endline="141">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Add</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1DuelingDQN_1a820e73dd1061693f3281ddbc20e08b16" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -256,8 +256,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" bodystart="85" bodyend="134"/>
-        <references refid="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="sequential_8hpp" startline="143" endline="143">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Add</references>
-        <references refid="classmlpack_1_1ann_1_1Concat_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="concat_8hpp" startline="147" endline="147">Concat&lt; InputDataType, OutputDataType, CustomLayers &gt;::Add</references>
+        <references refid="classmlpack_1_1ann_1_1Sequential_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="sequential_8hpp" startline="141" endline="141">Sequential&lt; InputDataType, OutputDataType, Residual, CustomLayers &gt;::Add</references>
+        <references refid="classmlpack_1_1ann_1_1Concat_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="concat_8hpp" startline="145" endline="145">Concat&lt; InputDataType, OutputDataType, CustomLayers &gt;::Add</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1DuelingDQN_1acbde6caaa3601be4429d799f1f88f8a3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -317,7 +317,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" line="144" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp" bodystart="144" bodyend="160"/>
-        <references refid="classmlpack_1_1ann_1_1Concat_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="concat_8hpp" startline="147" endline="147">Concat&lt; InputDataType, OutputDataType, CustomLayers &gt;::Add</references>
+        <references refid="classmlpack_1_1ann_1_1Concat_1a8b5234495846c00f6b2c8296ca6bc718" compoundref="concat_8hpp" startline="145" endline="145">Concat&lt; InputDataType, OutputDataType, CustomLayers &gt;::Add</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1DuelingDQN_1a7d21e28890605be3b558ec79037560ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>

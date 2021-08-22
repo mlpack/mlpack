@@ -59,7 +59,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="183" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; empty</definition>
         <argsstring></argsstring>
         <name>empty</name>
@@ -98,7 +98,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="161" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1MultiplyMerge_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -295,7 +295,7 @@
         <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
         <name>Add</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -483,7 +483,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp" bodystart="132" bodyend="132"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1MultiplyMerge_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>
@@ -648,7 +648,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="205" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="205" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="210" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Add</name></member>
       <member refid="classmlpack_1_1ann_1_1MultiplyMerge_1a503a807740e6c729be9efc89520db728" prot="public" virt="non-virtual"><scope>mlpack::ann::MultiplyMerge</scope><name>Add</name></member>

@@ -50,7 +50,11 @@ Program Listing for File timers.hpp
      static void DisableTiming();
    
      static void ResetAll();
+   
+     static std::map<std::string, std::chrono::microseconds> GetAllTimers();
    };
+   
+   namespace util {
    
    class Timers
    {
@@ -61,18 +65,15 @@ Program Listing for File timers.hpp
    
      void Reset();
    
-     std::chrono::microseconds GetTimer(const std::string& timerName);
+     std::chrono::microseconds Get(const std::string& timerName);
    
-     void PrintTimer(const std::string& timerName);
+     static std::string Print(const std::chrono::microseconds& totalDuration);
    
-     void StartTimer(const std::string& timerName,
-                     const std::thread::id& threadId = std::thread::id());
+     void Start(const std::string& timerName,
+                const std::thread::id& threadId = std::thread::id());
    
-     void StopTimer(const std::string& timerName,
-                    const std::thread::id& threadId = std::thread::id());
-   
-     bool GetState(const std::string& timerName,
-                   const std::thread::id& threadId = std::thread::id());
+     void Stop(const std::string& timerName,
+               const std::thread::id& threadId = std::thread::id());
    
      void StopAllTimers();
    
@@ -88,6 +89,7 @@ Program Listing for File timers.hpp
      std::atomic<bool> enabled;
    };
    
+   } // namespace util
    } // namespace mlpack
    
    #endif // MLPACK_CORE_UTILITIES_TIMERS_HPP

@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="241" bodyend="248"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="243" bodyend="250"/>
       </memberdef>
       <memberdef kind="enum" id="classmlpack_1_1kde_1_1KDEModel_1a6597b8539c6114170dc185d332ba4c8d" prot="public" static="no">
         <name>TreeTypes</name>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="233" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="232" bodyend="239"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="235" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="234" bodyend="241"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="258" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="258" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="260" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a3a14628ead92d0afcce5f53e0ff017c8" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="252" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="252" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="254" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a2e3a35723280d717b9c1db0a7d6471f6" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -133,7 +133,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="274" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="274" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="276" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="276" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1af659f94ea6b9232498a689018c164216" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1kde_1_1KDEWrapperBase" kindref="compound">KDEWrapperBase</ref> *</type>
@@ -143,10 +143,10 @@
         <briefdescription>
 <para>kdeModel holds whatever <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> type we are using. </para>        </briefdescription>
         <detaileddescription>
-<para>It is initialized using the <computeroutput><ref refid="classmlpack_1_1kde_1_1KDEModel_1a746b74589783efc0ac89f108ee92cca3" kindref="member">BuildModel()</ref></computeroutput> method. </para>        </detaileddescription>
+<para>It is initialized using the <computeroutput><ref refid="classmlpack_1_1kde_1_1KDEModel_1aae862a34d4eddf91808db13789d4e08b" kindref="member">BuildModel()</ref></computeroutput> method. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="286" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="286" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="288" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="288" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a5095659d9f5bfca38fb028c37ddbdf64" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" kindref="member">KernelTypes</ref></type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="261" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="261" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="263" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a685ab3f2bb8273358bcfe2870b6ccfbe" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="280" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="280" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="282" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="282" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1ae636b3c1a2b7bf752d59837d40d98976" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -185,7 +185,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="277" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="277" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="279" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="279" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1afb23ca9afeecf748091eac2474625e23" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="271" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="271" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="273" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="273" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1ac095a4deea604e3737439eb0e578e403" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -211,7 +211,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="267" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="267" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="269" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="269" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a2556780cd95fe475d055ddd520d04470" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -224,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="255" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="255" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="257" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEModel_1a4c037c9b8e9f3f7d429a0f3f4326a067" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -237,7 +237,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="264" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="264" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="266" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -373,7 +373,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="313" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="315" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ae0feb41c790cd66b73b9b80ebfee3eee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -390,7 +390,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="325" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="327" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ae8c4ef0a1a70cf8f40d81741998ab553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -407,7 +407,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="328" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="330" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ad8baf08396802e5c81a0231298c676f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -420,7 +420,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="345" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="347" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1aca74512f13027b15d913461e55df3da2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -433,7 +433,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="364" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="364" bodyend="364"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="366" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="366" bodyend="366"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a483f08ac8e9153c13d41e251c99d60b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -450,7 +450,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="367" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="369" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ae9cbd816179d6c36036139ccc8fea8c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -463,7 +463,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="352" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="352" bodyend="352"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="354" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="354" bodyend="354"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a7895968fbbc5b94d25fffbc285a8c5cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -480,13 +480,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="355" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="357" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a746b74589783efc0ac89f108ee92cca3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1aae862a34d4eddf91808db13789d4e08b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void BuildModel</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet)</argsstring>
         <name>BuildModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -495,6 +499,13 @@
 <para>Build the <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> model with the given parameters and then trains it with the given reference data. </para>        </briefdescription>
         <detaileddescription>
 <para>Takes possession of the reference set to avoid a copy, so the reference set will not be usable after this.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to hold timing information in. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>referenceSet</parametername>
 </parameternamelist>
@@ -505,13 +516,17 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="430" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="433" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1af7194c84540dfed2a4aabf1c03acef47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a5a31c87ddb2d9857e11eeff4a3dcae6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Evaluate</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, arma::vec &amp;estimations)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, arma::vec &amp;estimations)</argsstring>
         <name>Evaluate</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -525,6 +540,13 @@
         <detaileddescription>
 <para>Takes possession of the query set to avoid a copy, so the query set will not be usable after this. If possible, it returns normalized estimations.</para><para><simplesect kind="pre"><para>The model has to be previously created with BuildModel. </para></simplesect>
 <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to hold timing information in. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>querySet</parametername>
 </parameternamelist>
@@ -542,13 +564,17 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="443" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="447" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a995ae5cd93b97b9b96f4fb9b87c427c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1afdd0a7b8367158be7ac0db2828ac8517" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Evaluate</definition>
-        <argsstring>(arma::vec &amp;estimations)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::vec &amp;estimations)</argsstring>
         <name>Evaluate</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::vec &amp;</type>
           <declname>estimations</declname>
@@ -559,6 +585,13 @@
 <para>If possible, it returns normalized estimations.</para><para><simplesect kind="pre"><para>The model has to be previously created with BuildModel. </para></simplesect>
 <parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>timers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to hold timing information in. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>estimations</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -568,7 +601,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="453" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="460" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a555a4a9bdced7a608634c924677c71fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -581,7 +614,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="420" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="422" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a0f08fc745756dd035dcf6b42dddd4ed5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" kindref="member">KernelTypes</ref></type>
@@ -594,7 +627,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="376" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="376" bodyend="376"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="378" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="378" bodyend="378"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ad94d196c8fc2a42899de31332737dbf9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" kindref="member">KernelTypes</ref> &amp;</type>
@@ -607,7 +640,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="379" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="379" bodyend="379"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="381" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="381" bodyend="381"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a9c0a8d126dc31ef5571d89a1d8b6652a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -620,7 +653,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="406" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="406" bodyend="406"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="408" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="408" bodyend="408"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a37b06524e3ce6a667818ccd97ca3e7f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -637,7 +670,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="409" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="411" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a0bd2b747cf6abfefe9095240199da326" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -650,7 +683,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="400" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="400" bodyend="400"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="402" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="402" bodyend="402"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a8d16364dbe5a0bc7c5588cb2ba7cfb8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -667,7 +700,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="403" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="405" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a9c03312f8ff7dec25f32ba59dac70881" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -680,7 +713,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="394" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="394" bodyend="394"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="396" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="396" bodyend="396"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1af2700f342fa534312acc8a8387847408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -697,7 +730,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="397" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="399" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a539085b4f4f70fecec611fc7415d0299" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -710,7 +743,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="388" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="388" bodyend="388"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="390" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="390" bodyend="390"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1ae8fd2bcc35a81f8b68d3244ed8d89bc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -727,7 +760,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="391" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="393" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a6f3cb532b850ad02807a209193ff2289" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacemlpack_1_1kde_1a0ff4f94721e558082ebf9d0ef6183d38" kindref="member">KDEMode</ref></type>
@@ -740,7 +773,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="412" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="412" bodyend="412"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="414" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="414" bodyend="414"/>
         <references refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ab38fc729a0a6f58a4d9ef6e38a9959cf">KDEWrapperBase::Mode</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a94b40037a0d33cbb55823d5c36d677a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
@@ -754,7 +787,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="415" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="415" bodyend="415"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="417" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="417" bodyend="417"/>
         <references refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ab38fc729a0a6f58a4d9ef6e38a9959cf">KDEWrapperBase::Mode</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1aa7ca7b5a3a96b5603461debdc82f3c3e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -768,7 +801,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="382" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="382" bodyend="382"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="384" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="384" bodyend="384"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a3640495dcb137b48ad03c29a26fe4080" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -785,7 +818,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="385" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="387" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1af3d32c8f38422d7dcb7a6b3bbbf5f404" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel" kindref="compound">KDEModel</ref> &amp;</type>
@@ -810,7 +843,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="335" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="337" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a3d2f900bed1a1bae950c34099f1c1cb4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel" kindref="compound">KDEModel</ref> &amp;</type>
@@ -835,7 +868,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="342" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="344" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a2cd3d49a6dcafe980d0734421d296828" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -848,7 +881,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="358" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="358" bodyend="358"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="360" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="360" bodyend="360"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a24a6ffff18a48102087ee7fc3339717d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -865,7 +898,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="361" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="363" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -891,7 +924,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="349" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="351" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1adb3d0b75d7754ec6741d890232576ffc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -904,7 +937,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="370" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="370" bodyend="370"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="372" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="372" bodyend="372"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEModel_1a56b0460c7769ea1ef9d8314026ef36c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1kde_1_1KDEModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref> &amp;</type>
@@ -917,7 +950,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="373" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="373" bodyend="373"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="375" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="375" bodyend="375"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -932,14 +965,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="458" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="465" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The <ref refid="classmlpack_1_1kde_1_1KDEModel" kindref="compound">KDEModel</ref> provides an abstraction for the <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> class, abstracting away the KernelType and TreeType parameters and allowing those to be specified at runtime. </para>    </briefdescription>
     <detaileddescription>
 <para>This class is written for the sake of the <computeroutput>kde</computeroutput> binding, but it is not necessarily restricted to that usage. </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="230" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="229" bodyend="459"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="232" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="231" bodyend="466"/>
     <listofallmembers>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a38e57e048afe37ef2a403d310a8dd9f8" prot="private" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>absError</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1aca74512f13027b15d913461e55df3da2" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>AbsoluteError</name></member>
@@ -948,12 +981,12 @@
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a3a14628ead92d0afcce5f53e0ff017c8" prot="private" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>bandwidth</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1ae9cbd816179d6c36036139ccc8fea8c8" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Bandwidth</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a7895968fbbc5b94d25fffbc285a8c5cd" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Bandwidth</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEModel_1a746b74589783efc0ac89f108ee92cca3" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEModel_1aae862a34d4eddf91808db13789d4e08b" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>BuildModel</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a444067d1e8832ff9d5c90d5d73045e5d" prot="private" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>CleanMemory</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>COVER_TREE</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>EPANECHNIKOV_KERNEL</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEModel_1af7194c84540dfed2a4aabf1c03acef47" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Evaluate</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEModel_1a995ae5cd93b97b9b96f4fb9b87c427c9" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEModel_1a5a31c87ddb2d9857e11eeff4a3dcae6e" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEModel_1afdd0a7b8367158be7ac0db2828ac8517" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>Evaluate</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>GAUSSIAN_KERNEL</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a555a4a9bdced7a608634c924677c71fd" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>InitializeModel</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEModel_1a2e3a35723280d717b9c1db0a7d6471f6" prot="private" virt="non-virtual"><scope>mlpack::kde::KDEModel</scope><name>initialSampleSize</name></member>

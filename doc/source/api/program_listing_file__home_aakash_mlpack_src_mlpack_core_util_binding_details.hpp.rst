@@ -22,7 +22,7 @@ Program Listing for File binding_details.hpp
    
    struct BindingDetails
    {
-     std::string programName;
+     std::string name;
      std::string shortDescription;
      std::function<std::string()> longDescription;
      std::vector<std::function<std::string()>> example;

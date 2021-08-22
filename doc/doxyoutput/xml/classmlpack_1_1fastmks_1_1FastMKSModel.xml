@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="143" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="146" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1acd485d0d3dde754e20d321bcf416aabc" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1EpanechnikovKernel" kindref="compound">kernel::EpanechnikovKernel</ref> &gt; *</type>
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="147" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="150" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="150" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a21401dc72fe1e1d593bd76b7407a738c" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1GaussianKernel" kindref="compound">kernel::GaussianKernel</ref> &gt; *</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="145" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="148" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a2332056f6bc89dc986fb65efdbbc853d" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1HyperbolicTangentKernel" kindref="compound">kernel::HyperbolicTangentKernel</ref> &gt; *</type>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="151" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1ac9c1988063c3ac15fd407e48fcfd847b" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="136" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="139" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a4db5ef6a5d3becd3b8e468452a2cec01" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1LinearKernel" kindref="compound">kernel::LinearKernel</ref> &gt; *</type>
@@ -141,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="139" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="142" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a1feda7c24969733165c6a553e97dfb2c" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1PolynomialKernel" kindref="compound">kernel::PolynomialKernel</ref> &gt; *</type>
@@ -154,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="141" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="144" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="144" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a6c78a6d0b3d8601f2a4027f36cae3bb3" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1TriangularKernel" kindref="compound">kernel::TriangularKernel</ref> &gt; *</type>
@@ -167,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="149" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="152" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -236,7 +236,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="69" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a1045389d4f00d0c9a4b48ba693329ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename TKernelType</type>
@@ -244,8 +244,12 @@
         </templateparamlist>
         <type>void</type>
         <definition>void BuildModel</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceData, TKernelType &amp;kernel, const bool singleMode, const bool naive, const double base)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceData, TKernelType &amp;kernel, const bool singleMode, const bool naive, const double base)</argsstring>
         <name>BuildModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceData</declname>
@@ -285,7 +289,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="93" bodyend="93"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="94" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="94" bodyend="94"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int &amp;</type>
@@ -298,8 +302,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="95" bodyend="95"/>
-        <references refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab">FastMKSModel::Search</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="96" bodyend="96"/>
+        <references refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a90131b92865dbbfe1bcdc3f20eb8811c">FastMKSModel::Search</references>
         <references refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51">FastMKSModel::serialize</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
@@ -313,7 +317,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="83" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="84" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool &amp;</type>
@@ -326,7 +330,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="85" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="86" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;</type>
@@ -362,11 +366,15 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="64" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a90131b92865dbbfe1bcdc3f20eb8811c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const arma::mat &amp;</type>
           <declname>querySet</declname>
@@ -429,14 +437,18 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="109" column="1"/>
-        <referencedby refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" compoundref="fastmks__model_8hpp" startline="95" endline="95">FastMKSModel::KernelType</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="110" column="1"/>
+        <referencedby refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" compoundref="fastmks__model_8hpp" startline="96" endline="96">FastMKSModel::KernelType</referencedby>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af21ed3dd588e5375f7fb5b69819b60bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1aaf97f4c4da301a2f08b865d0103fc632" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const size_t</type>
           <declname>k</declname>
@@ -477,7 +489,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="124" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="126" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -502,8 +514,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="132" column="1"/>
-        <referencedby refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" compoundref="fastmks__model_8hpp" startline="95" endline="95">FastMKSModel::KernelType</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="135" column="1"/>
+        <referencedby refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" compoundref="fastmks__model_8hpp" startline="96" endline="96">FastMKSModel::KernelType</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -516,7 +528,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="88" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="89" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool &amp;</type>
@@ -529,11 +541,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="90" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="91" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
-      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a6fe4c483a11bb3c80db7ca5171044707" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a20049744e4fe31e12f916130c8398c34" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename FastMKSType</type>
@@ -541,8 +553,12 @@
         </templateparamlist>
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(FastMKSType &amp;f, const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
+        <argsstring>(util::Timers &amp;timers, FastMKSType &amp;f, const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>FastMKSType &amp;</type>
           <declname>f</declname>
@@ -573,16 +589,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="155" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="158" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>A utility struct to contain all the possible <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> models, for use by the mlpack_fastmks program. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="34" bodyend="161"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="34" bodyend="165"/>
     <listofallmembers>
-      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1045389d4f00d0c9a4b48ba693329ba2" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>BuildModel</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a3bf05c20ce2cc2b23a7d617d786961a7" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>cosine</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>COSINE_DISTANCE</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1acd485d0d3dde754e20d321bcf416aabc" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>epan</name></member>
@@ -606,9 +622,9 @@
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7efa63563a3b3934e96ab230902a744f" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>operator=</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1feda7c24969733165c6a553e97dfb2c" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>polynomial</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>POLYNOMIAL_KERNEL</name></member>
-      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af21ed3dd588e5375f7fb5b69819b60bb" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a6fe4c483a11bb3c80db7ca5171044707" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a90131b92865dbbfe1bcdc3f20eb8811c" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaf97f4c4da301a2f08b865d0103fc632" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a20049744e4fe31e12f916130c8398c34" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>SingleMode</name></member>

@@ -20,40 +20,40 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="674">
+      <node id="686">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
-      <node id="673">
+      <node id="685">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="674" relation="template-instance">
+        <childnode refid="686" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>
-      <node id="672">
+      <node id="684">
         <label>TrainForm&lt; MT, PT, WT, true, false &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4"/>
-        <childnode refid="673" relation="public-inheritance">
+        <childnode refid="685" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="677">
+      <node id="689">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
-      <node id="676">
+      <node id="688">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="677" relation="template-instance">
+        <childnode refid="689" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>
-      <node id="675">
+      <node id="687">
         <label>TrainForm&lt; MT, PT, WT, true, false &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4"/>
-        <childnode refid="676" relation="public-inheritance">
+        <childnode refid="688" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

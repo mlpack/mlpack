@@ -1,4 +1,4 @@
-.TH "DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -43,7 +43,7 @@ Inherits AuxiliarySplitInfo< FitnessFunction >, and AuxiliarySplitInfo< FitnessF
 .ti -1c
 .RI "template<typename MatType , typename LabelsType , typename WeightsType > \fBDecisionTree\fP (const \fBDecisionTree\fP &other, MatType data, const \fBdata::DatasetInfo\fP &datasetInfo, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e\-7, const std::enable_if_t< arma::is_arma_type< typename std::remove_reference< WeightsType >::type >::value > *=0)"
 .br
-.RI "Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical\&. "
+.RI "Using the hyperparameters of another decision tree, train on the given data and labels with weights, where the data can be both numeric and categorical\&. "
 .ti -1c
 .RI "template<typename MatType , typename LabelsType , typename WeightsType > \fBDecisionTree\fP (MatType data, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e\-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t< arma::is_arma_type< typename std::remove_reference< WeightsType >::type >::value > *=0)"
 .br
@@ -147,11 +147,9 @@ This class implements a generic decision tree learner\&.
 
 Its behavior can be controlled via its template arguments\&.
 .PP
-The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size\&.
+The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size\&. 
 .PP
-Note that \fCElemType\fP is a template parameter controlling the type that is used to store split information\&. In general, you would want to set this to be the same as the type of the data that you will be using, but it's not required to do that\&. 
-.PP
-Definition at line 45 of file decision_tree\&.hpp\&.
+Definition at line 40 of file decision_tree\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "typedef CategoricalSplitType<FitnessFunction> \fBCategoricalSplit\fP"
@@ -159,19 +157,19 @@ Definition at line 45 of file decision_tree\&.hpp\&.
 .PP
 Allow access to the categorical split type\&. 
 .PP
-Definition at line 53 of file decision_tree\&.hpp\&.
+Definition at line 48 of file decision_tree\&.hpp\&.
 .SS "typedef DimensionSelectionType \fBDimensionSelection\fP"
 
 .PP
 Allow access to the dimension selection type\&. 
 .PP
-Definition at line 55 of file decision_tree\&.hpp\&.
+Definition at line 50 of file decision_tree\&.hpp\&.
 .SS "typedef NumericSplitType<FitnessFunction> \fBNumericSplit\fP"
 
 .PP
 Allow access to the numeric split type\&. 
 .PP
-Definition at line 51 of file decision_tree\&.hpp\&.
+Definition at line 46 of file decision_tree\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBDecisionTree\fP (MatType data, const \fBdata::DatasetInfo\fP & datasetInfo, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"
@@ -258,7 +256,7 @@ Use std::move if data, labels or weights are no longer needed to avoid copies\&.
 .SS "\fBDecisionTree\fP (const \fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion > & other, MatType data, const \fBdata::DatasetInfo\fP & datasetInfo, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize = \fC10\fP, const double minimumGainSplit = \fC1e\-7\fP, const \fBstd::enable_if_t\fP< arma::is_arma_type< typename std::remove_reference< WeightsType >::type >::value > * = \fC0\fP)"
 
 .PP
-Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical\&. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit\&.
+Using the hyperparameters of another decision tree, train on the given data and labels with weights, where the data can be both numeric and categorical\&. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit\&.
 .PP
 Use std::move if data, labels or weights are no longer needed to avoid copies\&.
 .PP
@@ -395,13 +393,13 @@ Referenced by DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitT
 .PP
 Get the child of the given index\&. 
 .PP
-Definition at line 463 of file decision_tree\&.hpp\&.
+Definition at line 459 of file decision_tree\&.hpp\&.
 .SS "\fBDecisionTree\fP& Child (const size_t i)\fC [inline]\fP"
 
 .PP
 Modify the child of the given index (be careful!)\&. 
 .PP
-Definition at line 465 of file decision_tree\&.hpp\&.
+Definition at line 461 of file decision_tree\&.hpp\&.
 .SS "size_t Classify (const VecType & point) const"
 
 .PP
@@ -461,7 +459,7 @@ Classify the given points and also return estimates of the probabilities for eac
 .PP
 Get the number of children\&. 
 .PP
-Definition at line 460 of file decision_tree\&.hpp\&.
+Definition at line 456 of file decision_tree\&.hpp\&.
 .SS "size_t NumClasses () const"
 
 .PP
@@ -499,7 +497,7 @@ Serialize the tree\&.
 .PP
 Get the split dimension (only meaningful if this is a non-leaf in a trained tree)\&. 
 .PP
-Definition at line 469 of file decision_tree\&.hpp\&.
+Definition at line 465 of file decision_tree\&.hpp\&.
 .PP
 References DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion >::CalculateDirection(), DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion >::NumClasses(), and DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion >::Train()\&.
 .SS "double Train (MatType data, const \fBdata::DatasetInfo\fP & datasetInfo, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP, const double minimumGainSplit = \fC1e\-7\fP, const size_t maximumDepth = \fC0\fP, DimensionSelectionType dimensionSelector = \fCDimensionSelectionType()\fP)"

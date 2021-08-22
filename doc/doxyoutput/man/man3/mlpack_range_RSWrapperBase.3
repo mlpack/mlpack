@@ -1,4 +1,4 @@
-.TH "RSWrapperBase" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "RSWrapperBase" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -37,11 +37,11 @@ Inherited by \fBRSWrapper< TreeType >\fP\&.
 .br
 .RI "Modify whether naive search is being used\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t leafSize)=0"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t leafSize)=0"
 .br
 .RI "Perform bichromatic range search (i\&.e\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)=0"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)=0"
 .br
 .RI "Perform monochromatic range search (i\&.e\&. "
 .ti -1c
@@ -53,7 +53,7 @@ Inherited by \fBRSWrapper< TreeType >\fP\&.
 .br
 .RI "Modify whether single-tree search is being used\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize)=0"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t leafSize)=0"
 .br
 .RI "Train the model (build the reference tree if needed)\&. "
 .in -1c
@@ -114,7 +114,7 @@ Referenced by RSWrapperBase::~RSWrapperBase()\&.
 Modify whether naive search is being used\&. 
 .PP
 Implemented in \fBRSWrapper< TreeType >\fP\&.
-.SS "virtual void Search (arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t leafSize)\fC [pure virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t leafSize)\fC [pure virtual]\fP"
 
 .PP
 Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&. 
@@ -122,7 +122,7 @@ Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&
 Implemented in \fBLeafSizeRSWrapper< TreeType >\fP, and \fBRSWrapper< TreeType >\fP\&.
 .PP
 Referenced by LeafSizeRSWrapper< TreeType >::Clone(), RSWrapper< TreeType >::Naive(), RSModel::RandomBasis(), and RSWrapperBase::~RSWrapperBase()\&.
-.SS "virtual void Search (const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [pure virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [pure virtual]\fP"
 
 .PP
 Perform monochromatic range search (i\&.e\&. a search with the reference set as the query set)\&. 
@@ -142,7 +142,7 @@ Referenced by RSWrapperBase::~RSWrapperBase()\&.
 Modify whether single-tree search is being used\&. 
 .PP
 Implemented in \fBRSWrapper< TreeType >\fP\&.
-.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize)\fC [pure virtual]\fP"
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t leafSize)\fC [pure virtual]\fP"
 
 .PP
 Train the model (build the reference tree if needed)\&. 

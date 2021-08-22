@@ -334,7 +334,7 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as <formula id="164">$ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $</formula>.) </para>    </briefdescription>
+<para>Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as <formula id="165">$ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $</formula>.) </para>    </briefdescription>
     <detaileddescription>
 <para><parameterlist kind="templateparam"><parameteritem>
 <parameternamelist>

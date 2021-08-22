@@ -38,9 +38,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb`
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1aa25733e8424870f1be6b1eb0492503a2`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a61d04fbb64cb618da2dc4305b1e7024f`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1aa25733e8424870f1be6b1eb0492503a2`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a5b2ddc31187ec7a449b6ebcd71b2e52b`
 
@@ -78,9 +78,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a9f6fa0072288d9c1139394683e0c3636`
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1a33495d8fdb79a9b5783d683cf11b0d6b`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a532da68daa876aaa1060fbe54eaa3722`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1a33495d8fdb79a9b5783d683cf11b0d6b`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a6b25c05d1e1c066d6b33aa55bdfd39f6`
 

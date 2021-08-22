@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="138" column="1"/>
-        <referencedby refid="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" compoundref="radical_8hpp" startline="112" endline="112">Radical::Sweeps</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="144" column="1"/>
+        <referencedby refid="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" compoundref="radical_8hpp" startline="118" endline="118">Radical::Sweeps</referencedby>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="20" column="1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="21" column="1"/>
   </compounddef>
 </doxygen>

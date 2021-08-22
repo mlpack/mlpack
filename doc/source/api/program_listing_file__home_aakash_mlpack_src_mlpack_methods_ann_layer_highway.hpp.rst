@@ -16,8 +16,6 @@ Program Listing for File highway.hpp
    
    #include <mlpack/prereqs.hpp>
    
-   #include <boost/ptr_container/ptr_vector.hpp>
-   
    #include "../visitor/delete_visitor.hpp"
    #include "../visitor/delta_visitor.hpp"
    #include "../visitor/output_height_visitor.hpp"

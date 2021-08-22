@@ -34,4 +34,4 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1det_1ac64804c6c73b842b3eb69d9a64fb12e3`
 
-- :ref:`exhale_function_namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c`
+- :ref:`exhale_function_namespacemlpack_1_1det_1aea896dfbe00d9361ef2b2ade9ce94973`

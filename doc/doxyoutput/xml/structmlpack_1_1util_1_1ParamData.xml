@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="84" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a378e4473b8cd1fccf534804887f2bc85" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -95,19 +95,6 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="69" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="69" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1aea39f2c5cb5ec83de4d1f81b1a74f0cc" prot="public" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool persistent</definition>
-        <argsstring></argsstring>
-        <name>persistent</name>
-        <briefdescription>
-<para>If this should be preserved across different settings (i.e. </para>        </briefdescription>
-        <detaileddescription>
-<para>if it should exist for every binding), this should be set to true. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="79" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool required</definition>
@@ -145,7 +132,7 @@
 <para>If the user has passed a different type, this may be a tuple containing multiple values. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="82" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a5afa034ef66e23047379bcba2eb70b8d" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -165,7 +152,7 @@
 <para>This structure holds all of the information about a single parameter, including its value (which is set when ParseCommandLine() is called). </para>    </briefdescription>
     <detaileddescription>
 <para>It does not hold any information about whether or not it was passed<mdash/>that is handled elsewhere. A <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">ParamData</ref> struct is only useful in order to get &quot;static&quot; information about a parameter. Note that some parameter types have internal types but also different types that are used by CLI11 (specifically, matrix and model types map to strings).</para><para>This structure is somewhat unwieldy and is likely to be refactored at some point in the future, but for now it does the job fine. </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="52" bodyend="85"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="52" bodyend="82"/>
     <listofallmembers>
       <member refid="structmlpack_1_1util_1_1ParamData_1a367d2c852ad5beb11758c57d8ece7316" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>alias</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>cppType</name></member>
@@ -174,7 +161,6 @@
       <member refid="structmlpack_1_1util_1_1ParamData_1a992c70a16169035bc9e2e8f9953d91ed" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>loaded</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>name</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1a203e71e5671737f2e7d33147dd19f391" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>noTranspose</name></member>
-      <member refid="structmlpack_1_1util_1_1ParamData_1aea39f2c5cb5ec83de4d1f81b1a74f0cc" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>persistent</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>required</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1a87a03c93b016f6878e3a0609835b426e" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>tname</name></member>
       <member refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>value</name></member>

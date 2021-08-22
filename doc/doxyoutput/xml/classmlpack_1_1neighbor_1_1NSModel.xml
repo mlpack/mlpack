@@ -122,7 +122,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="338" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="337" bodyend="354"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="348" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="347" bodyend="364"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="365" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="365" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="375" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="375" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1ab5d8385d49e2a64b56e6089f0f27c461" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSWrapperBase" kindref="compound">NSWrapperBase</ref> *</type>
@@ -150,7 +150,7 @@
 <para>It is initialized every time BuildModel is executed. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="373" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="373" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="383" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="383" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1a58d43069f572c93d4569d25c57a9cb6a" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -163,7 +163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="363" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="363" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="373" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="373" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1a68c01c84182e9de56ad31dbf792d7a5b" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -176,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="361" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="361" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="371" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="371" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1a3ed57096651b587c2bf716fa78048153" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="367" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="367" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="377" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="377" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1ae5f7c26321910a384f6f0d37910858a2" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="366" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="366" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="376" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="376" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1NSModel_1a4c037c9b8e9f3f7d429a0f3f4326a067" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="358" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="358" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="368" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="368" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -255,7 +255,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="384" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="394" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a6377c3a4b61de368dedff9fa95304359" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -280,7 +280,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="391" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="401" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a8eba8cadae0d4294becc60ec69cf158d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -305,7 +305,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="398" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="408" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a25d5032163e2f4db1c2330d689df8434" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -318,13 +318,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="415" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="425" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1aa5cbba6575bb949e63ace34052516eb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a69bf91e73fafd7d8ecd2e52a0f83b022" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void BuildModel</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const NeighborSearchMode searchMode, const double epsilon=0)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const NeighborSearchMode searchMode, const double epsilon=0)</argsstring>
         <name>BuildModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -344,7 +348,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="457" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="467" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const arma::mat &amp;</type>
@@ -357,7 +361,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="422" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="432" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1af6d960193bb5db37e51416e12bf720de" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -370,7 +374,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="441" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="451" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ab6a080993b32456443eced5df2f8b9b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double &amp;</type>
@@ -383,7 +387,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="442" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="452" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a407a10954f142968edc38f36c321c6b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -404,7 +408,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="453" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="463" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ab81b93ebb200783ca4c5747f31889fa0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -417,7 +421,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="429" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="429" bodyend="429"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="439" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="439" bodyend="439"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a0966773f5b7ef0c324ed40b1cf4b94d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -430,7 +434,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="430" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="430" bodyend="430"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="440" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="440" bodyend="440"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a8423369eb2979b36475f0e3fd533c274" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSModel" kindref="compound">NSModel</ref> &amp;</type>
@@ -455,7 +459,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="405" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="415" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a9a971bffd9a24a23a0e2216b24a60cf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSModel" kindref="compound">NSModel</ref> &amp;</type>
@@ -480,7 +484,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="412" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="422" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ae3053ad1e3b42eb1ae4105aecd060cf6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -493,7 +497,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="449" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="449" bodyend="449"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="459" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="459" bodyend="459"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a8111114602e748b38c0875f82f323544" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -506,8 +510,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="450" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="450" bodyend="450"/>
-        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9e7389351073f295e1aee942dbd7942a">NSWrapperBase::Search</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="460" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="460" bodyend="460"/>
+        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a77e0c8a26bf09774799738767d39e898">NSWrapperBase::Search</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a309719b378c0bb1962982a8162e58e84" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -520,7 +524,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="437" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="437" bodyend="437"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="447" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="447" bodyend="447"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a10001faac75d91c05a3c0bfd711b901a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -533,14 +537,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="438" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="438" bodyend="438"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="448" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="448" bodyend="448"/>
         <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9bd0afbec99b28bbc273e297ec9fe352">NSWrapperBase::Epsilon</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1af621a93ffd3ff29728b4f4d2380ccfd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ae3c1f70a13bbab4c7e217bd1a39a1a6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -563,13 +571,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="462" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="473" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a619c7d4931e628a0c199159c57b34cbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ad0c89bf9e4a4b75a1292795e8657e069" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void Search</definition>
-        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
         <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const size_t</type>
           <declname>k</declname>
@@ -588,7 +600,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="468" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="480" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref></type>
@@ -601,7 +613,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="425" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="435" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="namespacemlpack_1_1neighbor_1a1a65d2ce978562ab36affdc59938ef15" kindref="member">NeighborSearchMode</ref> &amp;</type>
@@ -614,7 +626,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="426" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="436" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -639,7 +651,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="419" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="429" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a4a4b0fafde4cc4c856a53025dc8c4c21" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -652,7 +664,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="433" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="433" bodyend="433"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="443" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="443" bodyend="443"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1ad522d61ed716a322376adea25ebdbc90" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -665,7 +677,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="434" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="434" bodyend="434"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="444" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="444" bodyend="444"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a98cbe53c61f1681514056f78a89a57b8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -678,7 +690,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="473" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="486" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1adb3d0b75d7754ec6741d890232576ffc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
@@ -691,7 +703,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="445" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="445" bodyend="445"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="455" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="455" bodyend="455"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1NSModel_1a56b0460c7769ea1ef9d8314026ef36c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref> &amp;</type>
@@ -704,7 +716,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="446" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="446" bodyend="446"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="456" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="456" bodyend="456"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -719,10 +731,10 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="334" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="333" bodyend="474"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="344" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="343" bodyend="487"/>
     <listofallmembers>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>BALL_TREE</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1NSModel_1aa5cbba6575bb949e63ace34052516eb6" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NSModel_1a69bf91e73fafd7d8ecd2e52a0f83b022" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>BuildModel</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>COVER_TREE</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Dataset</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1af6d960193bb5db37e51416e12bf720de" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Epsilon</name></member>
@@ -753,8 +765,8 @@
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a10001faac75d91c05a3c0bfd711b901a" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Rho</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a3ed57096651b587c2bf716fa78048153" prot="private" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>rho</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>RP_TREE</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1NSModel_1af621a93ffd3ff29728b4f4d2380ccfd5" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1NSModel_1a619c7d4931e628a0c199159c57b34cbd" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NSModel_1ae3c1f70a13bbab4c7e217bd1a39a1a6b" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NSModel_1ad0c89bf9e4a4b75a1292795e8657e069" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::NSModel</scope><name>serialize</name></member>

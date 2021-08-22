@@ -50,6 +50,7 @@
     <innerdir refid="dir_26bd3aa1fbc5e44d8d68d3fa31d9d0ed">/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder</innerdir>
     <innerdir refid="dir_00f0bd3cdd3257def9baafb81b12c5d0">/home/aakash/mlpack/src/mlpack/methods/sparse_coding</innerdir>
     <innerdir refid="dir_8615cbd7f19b1235f5aa609b414bff06">/home/aakash/mlpack/src/mlpack/methods/svdplusplus</innerdir>
+    <innerdir refid="dir_637617be3500e25a9dda4621aecfa323">/home/aakash/mlpack/src/mlpack/methods/xgboost</innerdir>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

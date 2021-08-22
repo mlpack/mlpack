@@ -4,11 +4,15 @@
     <compoundname>mlpack::util::Example</compoundname>
     <includes refid="program__doc_8hpp" local="no">program_doc.hpp</includes>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classmlpack_1_1util_1_1Example_1aa314083ea98c26124b30b91c9f5582bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1util_1_1Example_1a46dca9939120a37c75c78027072e5153" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>Example</definition>
-        <argsstring>(const std::function&lt; std::string()&gt; &amp;example)</argsstring>
+        <argsstring>(const std::string &amp;bindingName, const std::function&lt; std::string()&gt; &amp;example)</argsstring>
         <name>Example</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
         <param>
           <type>const std::function&lt; std::string()&gt; &amp;</type>
           <declname>example</declname>
@@ -16,7 +20,14 @@
         <briefdescription>
 <para>Construct a <ref refid="classmlpack_1_1util_1_1Example" kindref="compound">Example</ref> object. </para>        </briefdescription>
         <detaileddescription>
-<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>.</para><para><parameterlist kind="param"><parameteritem>
+<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> for the given <computeroutput>bindingName</computeroutput>.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>example</parametername>
 </parameternamelist>
@@ -27,16 +38,16 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="69" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="77" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="60" bodyend="70"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="67" bodyend="79"/>
     <listofallmembers>
-      <member refid="classmlpack_1_1util_1_1Example_1aa314083ea98c26124b30b91c9f5582bd" prot="public" virt="non-virtual"><scope>mlpack::util::Example</scope><name>Example</name></member>
+      <member refid="classmlpack_1_1util_1_1Example_1a46dca9939120a37c75c78027072e5153" prot="public" virt="non-virtual"><scope>mlpack::util::Example</scope><name>Example</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

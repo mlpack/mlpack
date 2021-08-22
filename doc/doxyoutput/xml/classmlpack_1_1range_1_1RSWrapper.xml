@@ -24,7 +24,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="143" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="149" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-attrib">
@@ -39,7 +39,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="146" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="152" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -62,7 +62,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="90" bodyend="94"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="93" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="93" bodyend="97"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a8de0259aa7d469f236f7523eadf0da99" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type></type>
@@ -75,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="101" bodyend="101"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="104" bodyend="104"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a84a6ccc6add7d5bf6a055fb02d16a375" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type><ref refid="classmlpack_1_1range_1_1RSWrapper" kindref="compound">RSWrapper</ref> *</type>
@@ -90,7 +90,7 @@
 <para>This function will properly handle polymorphism. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="98" bodyend="98"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="101" bodyend="101"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>const arma::mat &amp;</type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="104" bodyend="104"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="107" bodyend="107"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="112" bodyend="112"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="115" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -132,17 +132,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="114" bodyend="114"/>
-        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc">RSWrapperBase::Search</references>
-        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">RSWrapperBase::Train</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="117" bodyend="117"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a268ab91f4980bf9e2e6c13bbf06aa649">RSWrapperBase::Search</references>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1ae741766424a9f00e5214981ab126248a">RSWrapperBase::Train</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a8113f151289737cd35dd9eaf38e32eb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a3ce85c22fdd511fb13381ed1639651b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances, const size_t)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances, const size_t)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc">Search</reimplements>
-        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a0b90d9dc1269d8b8f186e6053b12fbe3">Search</reimplementedby>
+        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1a268ab91f4980bf9e2e6c13bbf06aa649">Search</reimplements>
+        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a863be19262db8f10b498f47a53c5ab22">Search</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -168,14 +172,18 @@
 <para>a search with a separate query set). This ignores the leaf size. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="123" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="127" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1af3b8f6601dfb1c6fff4d3fc554eea5c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a818a7bef7f7145419ff0535641db747b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1a6dbe6c455e8b22c78913c91fb8f7f5cf">Search</reimplements>
+        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1ad47ab5c92d7e0d88baf7433f4d2dd1d3">Search</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const math::Range &amp;</type>
           <declname>range</declname>
@@ -194,7 +202,7 @@
 <para>a search with the reference set as the query set). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="131" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="136" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -219,7 +227,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="137" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="137" bodyend="140"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="143" bodyend="146"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -233,7 +241,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="107" bodyend="107"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="110" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -247,15 +255,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="109" bodyend="109"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="112" bodyend="112"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1aab4ee663331b914daad05f6f7c22ee9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSWrapper_1a7bc2562f0ea045f22c787ae220649379" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t)</argsstring>
         <name>Train</name>
-        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">Train</reimplements>
-        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a6804dc4af719ba3162ad5f15dbe5553d">Train</reimplementedby>
+        <reimplements refid="classmlpack_1_1range_1_1RSWrapperBase_1ae741766424a9f00e5214981ab126248a">Train</reimplements>
+        <reimplementedby refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a795e90427302e4dacb6e7570a26c55d6">Train</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -269,7 +281,7 @@
 <para>This ignores the leaf size. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="118" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="121" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -277,50 +289,50 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1188">
+      <node id="1200">
         <label>LeafSizeRSWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1LeafSizeRSWrapper"/>
-        <childnode refid="1186" relation="public-inheritance">
+        <childnode refid="1198" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1187">
+      <node id="1199">
         <label>RSWrapperBase</label>
         <link refid="classmlpack_1_1range_1_1RSWrapperBase"/>
       </node>
-      <node id="1186">
+      <node id="1198">
         <label>RSWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RSWrapper"/>
-        <childnode refid="1187" relation="public-inheritance">
+        <childnode refid="1199" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1190">
+      <node id="1202">
         <label>RSWrapperBase</label>
         <link refid="classmlpack_1_1range_1_1RSWrapperBase"/>
       </node>
-      <node id="1189">
+      <node id="1201">
         <label>RSWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RSWrapper"/>
-        <childnode refid="1190" relation="public-inheritance">
+        <childnode refid="1202" relation="public-inheritance">
         </childnode>
-        <childnode refid="1191" relation="usage">
+        <childnode refid="1203" relation="usage">
           <edgelabel>rs</edgelabel>
         </childnode>
       </node>
-      <node id="1192">
+      <node id="1204">
         <label>RangeSearch&lt; MetricType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RangeSearch"/>
       </node>
-      <node id="1191">
+      <node id="1203">
         <label>RangeSearch&lt; metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RangeSearch"/>
-        <childnode refid="1192" relation="template-instance">
+        <childnode refid="1204" relation="template-instance">
           <edgelabel>&lt; metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="86" bodyend="147"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="89" bodyend="153"/>
     <listofallmembers>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1a84a6ccc6add7d5bf6a055fb02d16a375" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Clone</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Dataset</name></member>
@@ -330,12 +342,12 @@
       <member refid="classmlpack_1_1range_1_1RSWrapper_1ab9397958488bbe4e474b155d36e992a0" prot="protected" virt="non-virtual"><scope>mlpack::range::RSWrapper</scope><name>RSType</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1a38b7562aad750f7908c3a488cb7610f5" prot="public" virt="non-virtual"><scope>mlpack::range::RSWrapper</scope><name>RSWrapper</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a3f8141df2cfd91fd784febc7a67b6fbb" prot="public" virt="non-virtual"><scope>mlpack::range::RSWrapper</scope><name>RSWrapperBase</name></member>
-      <member refid="classmlpack_1_1range_1_1RSWrapper_1a8113f151289737cd35dd9eaf38e32eb8" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1range_1_1RSWrapper_1af3b8f6601dfb1c6fff4d3fc554eea5c4" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapper_1a3ce85c22fdd511fb13381ed1639651b1" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapper_1a818a7bef7f7145419ff0535641db747b" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Search</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::range::RSWrapper</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>SingleMode</name></member>
-      <member refid="classmlpack_1_1range_1_1RSWrapper_1aab4ee663331b914daad05f6f7c22ee9b" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1range_1_1RSWrapper_1a7bc2562f0ea045f22c787ae220649379" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>Train</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapper_1a8de0259aa7d469f236f7523eadf0da99" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>~RSWrapper</name></member>
       <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a44c650799934a2609163e5de74f88b2c" prot="public" virt="virtual"><scope>mlpack::range::RSWrapper</scope><name>~RSWrapperBase</name></member>
     </listofallmembers>

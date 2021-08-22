@@ -128,7 +128,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="49" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1det_1aea896dfbe00d9361ef2b2ade9ce94973" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename MatType</type>
@@ -139,7 +139,7 @@
         </templateparamlist>
         <type><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree</ref>&lt; MatType, TagType &gt; *</type>
         <definition>DTree&lt;MatType, TagType&gt;* mlpack::det::Trainer</definition>
-        <argsstring>(MatType &amp;dataset, const size_t folds, const bool useVolumeReg=false, const size_t maxLeafSize=10, const size_t minLeafSize=5, const std::string unprunedTreeOutput=&quot;&quot;, const bool skipPruning=false)</argsstring>
+        <argsstring>(MatType &amp;dataset, const size_t folds, const bool useVolumeReg=false, const size_t maxLeafSize=10, const size_t minLeafSize=5, const std::string unprunedTreeOutput=&quot;&quot;, const bool skipPruning=false, util::Timers &amp;timers=IO::GetTimers())</argsstring>
         <name>Trainer</name>
         <param>
           <type>MatType &amp;</type>
@@ -173,6 +173,11 @@
           <type>const bool</type>
           <declname>skipPruning</declname>
           <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+          <defval><ref refid="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" kindref="member">IO::GetTimers</ref>()</defval>
         </param>
         <briefdescription>
 <para>Train the optimal decision tree using cross-validation with the given number of folds. </para>        </briefdescription>

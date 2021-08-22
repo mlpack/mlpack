@@ -1,4 +1,4 @@
-.TH "HMMModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "HMMModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -48,7 +48,7 @@ HMMModel \- A serializable \fBHMM\fP model that also stores the type\&.
 .br
 .RI "Move assignment operator\&. "
 .ti -1c
-.RI "template<typename ActionType , typename ExtraInfoType > void \fBPerformAction\fP (ExtraInfoType *x)"
+.RI "template<typename ActionType , typename ExtraInfoType > void \fBPerformAction\fP (\fButil::Params\fP &params, ExtraInfoType *x)"
 .br
 .RI "Given a functor type, perform that functor with the optional extra info on the \fBHMM\fP\&. "
 .ti -1c
@@ -63,7 +63,7 @@ HMMModel \- A serializable \fBHMM\fP model that also stores the type\&.
 .PP 
 A serializable \fBHMM\fP model that also stores the type\&. 
 .PP
-Definition at line 33 of file hmm_model\&.hpp\&.
+Definition at line 34 of file hmm_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBHMMModel\fP (const \fBHMMType\fP type = \fCHMMType::DiscreteHMM\fP)\fC [inline]\fP"
@@ -71,7 +71,7 @@ Definition at line 33 of file hmm_model\&.hpp\&.
 .PP
 Construct a model of the given type\&. 
 .PP
-Definition at line 49 of file hmm_model\&.hpp\&.
+Definition at line 50 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
 .SS "\fBHMMModel\fP (const \fBHMMModel\fP & other)\fC [inline]\fP"
@@ -79,7 +79,7 @@ References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHM
 .PP
 Copy another model\&. 
 .PP
-Definition at line 67 of file hmm_model\&.hpp\&.
+Definition at line 68 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
 .SS "\fBHMMModel\fP (\fBHMMModel\fP && other)\fC [inline]\fP"
@@ -87,7 +87,7 @@ References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHM
 .PP
 Take ownership of another model\&. 
 .PP
-Definition at line 87 of file hmm_model\&.hpp\&.
+Definition at line 88 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiscreteHMM\&.
 .SS "~\fBHMMModel\fP ()\fC [inline]\fP"
@@ -95,13 +95,13 @@ References mlpack::hmm::DiscreteHMM\&.
 .PP
 Clean memory\&. 
 .PP
-Definition at line 153 of file hmm_model\&.hpp\&.
+Definition at line 154 of file hmm_model\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBHMM\fP<\fBgmm::DiagonalGMM\fP>* DiagGMMHMM ()\fC [inline]\fP"
 
 .PP
-Definition at line 234 of file hmm_model\&.hpp\&.
+Definition at line 235 of file hmm_model\&.hpp\&.
 .SS "\fBHMM\fP<\fBdistribution::DiscreteDistribution\fP>* DiscreteHMM ()\fC [inline]\fP"
 
 .PP
@@ -111,21 +111,21 @@ For instance, if the \fBHMMModel\fP object holds a discrete \fBHMM\fP, then: typ
 .PP
 Hence, in practice, a user should be careful to first check the type of \fBHMM\fP (by calling the \fBType()\fP accessor) and then perform subsequent actions, to avoid null pointer dereferences\&. 
 .PP
-Definition at line 231 of file hmm_model\&.hpp\&.
+Definition at line 232 of file hmm_model\&.hpp\&.
 .SS "\fBHMM\fP<\fBdistribution::GaussianDistribution\fP>* GaussianHMM ()\fC [inline]\fP"
 
 .PP
-Definition at line 232 of file hmm_model\&.hpp\&.
+Definition at line 233 of file hmm_model\&.hpp\&.
 .SS "\fBHMM\fP<\fBgmm::GMM\fP>* GMMHMM ()\fC [inline]\fP"
 
 .PP
-Definition at line 233 of file hmm_model\&.hpp\&.
+Definition at line 234 of file hmm_model\&.hpp\&.
 .SS "\fBHMMModel\fP& operator= (const \fBHMMModel\fP & other)\fC [inline]\fP"
 
 .PP
 Copy assignment operator\&. 
 .PP
-Definition at line 102 of file hmm_model\&.hpp\&.
+Definition at line 103 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
 .SS "\fBHMMModel\fP& operator= (\fBHMMModel\fP && other)\fC [inline]\fP"
@@ -133,15 +133,15 @@ References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHM
 .PP
 Move assignment operator\&. 
 .PP
-Definition at line 133 of file hmm_model\&.hpp\&.
+Definition at line 134 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiscreteHMM\&.
-.SS "void PerformAction (ExtraInfoType * x)\fC [inline]\fP"
+.SS "void PerformAction (\fButil::Params\fP & params, ExtraInfoType * x)\fC [inline]\fP"
 
 .PP
 Given a functor type, perform that functor with the optional extra info on the \fBHMM\fP\&. 
 .PP
-Definition at line 167 of file hmm_model\&.hpp\&.
+Definition at line 168 of file hmm_model\&.hpp\&.
 .PP
 References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
 .SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
@@ -149,13 +149,13 @@ References mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHM
 .PP
 Serialize the model\&. 
 .PP
-Definition at line 181 of file hmm_model\&.hpp\&.
+Definition at line 182 of file hmm_model\&.hpp\&.
 .PP
 References CEREAL_POINTER, mlpack::hmm::DiagonalGaussianMixtureModelHMM, mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
 .SS "\fBHMMType\fP Type ()\fC [inline]\fP"
 
 .PP
-Definition at line 210 of file hmm_model\&.hpp\&.
+Definition at line 211 of file hmm_model\&.hpp\&.
 
 .SH "Author"
 .PP 

@@ -4,11 +4,15 @@
     <compoundname>mlpack::util::SeeAlso</compoundname>
     <includes refid="program__doc_8hpp" local="no">program_doc.hpp</includes>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classmlpack_1_1util_1_1SeeAlso_1abe010a87003e0458f341fc5ea272b6cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1util_1_1SeeAlso_1ace833f067d33bfd5527153d4e3078238" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>SeeAlso</definition>
-        <argsstring>(const std::string &amp;description, const std::string &amp;link)</argsstring>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;description, const std::string &amp;link)</argsstring>
         <name>SeeAlso</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
         <param>
           <type>const std::string &amp;</type>
           <declname>description</declname>
@@ -20,7 +24,14 @@
         <briefdescription>
 <para>Construct a <ref refid="classmlpack_1_1util_1_1SeeAlso" kindref="compound">SeeAlso</ref> object. </para>        </briefdescription>
         <detaileddescription>
-<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>.</para><para><parameterlist kind="param"><parameteritem>
+<para>When constructed, it will register itself with <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> for the given <computeroutput>bindingName</computeroutput>.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>description</parametername>
 </parameternamelist>
@@ -38,16 +49,16 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="82" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="92" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="73" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="72" bodyend="83"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/program_doc.hpp" bodystart="81" bodyend="95"/>
     <listofallmembers>
-      <member refid="classmlpack_1_1util_1_1SeeAlso_1abe010a87003e0458f341fc5ea272b6cf" prot="public" virt="non-virtual"><scope>mlpack::util::SeeAlso</scope><name>SeeAlso</name></member>
+      <member refid="classmlpack_1_1util_1_1SeeAlso_1ace833f067d33bfd5527153d4e3078238" prot="public" virt="non-virtual"><scope>mlpack::util::SeeAlso</scope><name>SeeAlso</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

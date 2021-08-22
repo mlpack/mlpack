@@ -4,7 +4,7 @@
     <compoundname>InitHMMModel</compoundname>
     <includes refid="hmm__test__utils_8hpp" local="no">hmm_test_utils.hpp</includes>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="structInitHMMModel_1a3b7981fd17dd8132c10744e7d088c347" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="structInitHMMModel_1a9deb0e37cbf9023b2ba8d91c2e08424c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename HMMType</type>
@@ -12,8 +12,11 @@
         </templateparamlist>
         <type>void</type>
         <definition>static void Apply</definition>
-        <argsstring>(HMMType &amp;hmm, vector&lt; mat &gt; *trainSeq)</argsstring>
+        <argsstring>(util::Params &amp;, HMMType &amp;hmm, vector&lt; mat &gt; *trainSeq)</argsstring>
         <name>Apply</name>
+        <param>
+          <type>util::Params &amp;</type>
+        </param>
         <param>
           <type>HMMType &amp;</type>
           <declname>hmm</declname>
@@ -28,9 +31,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="24" bodyend="34"/>
-        <references refid="structInitHMMModel_1a457b36f139f6a11e38f793ffb1276b38" compoundref="hmm__test__utils_8hpp" startline="37" endline="56">Create</references>
-        <references refid="structInitHMMModel_1adb0345a19e57a6724118fd9edebd9422" compoundref="hmm__test__utils_8hpp" startline="136" endline="143">RandomInitialize</references>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="24" bodyend="36"/>
+        <references refid="structInitHMMModel_1a457b36f139f6a11e38f793ffb1276b38" compoundref="hmm__test__utils_8hpp" startline="39" endline="58">Create</references>
+        <references refid="structInitHMMModel_1adb0345a19e57a6724118fd9edebd9422" compoundref="hmm__test__utils_8hpp" startline="138" endline="145">RandomInitialize</references>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1a457b36f139f6a11e38f793ffb1276b38" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -60,8 +63,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="37" bodyend="56"/>
-        <referencedby refid="structInitHMMModel_1a3b7981fd17dd8132c10744e7d088c347" compoundref="hmm__test__utils_8hpp" startline="24" endline="34">Apply</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="39" bodyend="58"/>
+        <referencedby refid="structInitHMMModel_1a9deb0e37cbf9023b2ba8d91c2e08424c" compoundref="hmm__test__utils_8hpp" startline="24" endline="36">Apply</referencedby>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1ada660c2630ff663ac9002121e1e28b5e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -91,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="58" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="58" bodyend="80"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="60" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="60" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1ad22d3a4f18404743629ee3157b071f90" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -121,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="82" bodyend="106"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="84" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1affcc1da5c656ea0f07fcc3e726e9cc1e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -151,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="109" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="109" bodyend="133"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="111" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1adb0345a19e57a6724118fd9edebd9422" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -168,8 +171,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="136" bodyend="143"/>
-        <referencedby refid="structInitHMMModel_1a3b7981fd17dd8132c10744e7d088c347" compoundref="hmm__test__utils_8hpp" startline="24" endline="34">Apply</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="138" bodyend="145"/>
+        <referencedby refid="structInitHMMModel_1a9deb0e37cbf9023b2ba8d91c2e08424c" compoundref="hmm__test__utils_8hpp" startline="24" endline="36">Apply</referencedby>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1a2c484f94002baedf55ddaba775794c7a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -186,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="145" bodyend="155"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="147" bodyend="157"/>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1a09e5ab6763ae40ac05d1f149098dd805" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -203,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="157" bodyend="177"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="159" bodyend="179"/>
       </memberdef>
       <memberdef kind="function" id="structInitHMMModel_1a743d931c6b5fb5aea3e957e0823e11f5" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -220,16 +223,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="180" bodyend="199"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="182" bodyend="201"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="21" bodyend="200"/>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="21" bodyend="202"/>
     <listofallmembers>
-      <member refid="structInitHMMModel_1a3b7981fd17dd8132c10744e7d088c347" prot="public" virt="non-virtual"><scope>InitHMMModel</scope><name>Apply</name></member>
+      <member refid="structInitHMMModel_1a9deb0e37cbf9023b2ba8d91c2e08424c" prot="public" virt="non-virtual"><scope>InitHMMModel</scope><name>Apply</name></member>
       <member refid="structInitHMMModel_1a457b36f139f6a11e38f793ffb1276b38" prot="public" virt="non-virtual"><scope>InitHMMModel</scope><name>Create</name></member>
       <member refid="structInitHMMModel_1ada660c2630ff663ac9002121e1e28b5e" prot="public" virt="non-virtual"><scope>InitHMMModel</scope><name>Create</name></member>
       <member refid="structInitHMMModel_1ad22d3a4f18404743629ee3157b071f90" prot="public" virt="non-virtual"><scope>InitHMMModel</scope><name>Create</name></member>

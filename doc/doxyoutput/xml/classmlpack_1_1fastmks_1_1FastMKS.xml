@@ -983,56 +983,56 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="809">
+      <node id="823">
         <label>FastMKS&lt; mlpack::kernel::LinearKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::LinearKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="804">
+      <node id="818">
         <label>FastMKS&lt; mlpack::kernel::GaussianKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::GaussianKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="808">
+      <node id="822">
         <label>FastMKS&lt; mlpack::kernel::PolynomialKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::PolynomialKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="807">
+      <node id="821">
         <label>FastMKS&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="806">
+      <node id="820">
         <label>FastMKS&lt; mlpack::kernel::EpanechnikovKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::EpanechnikovKernel &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="810">
+      <node id="824">
         <label>FastMKS&lt; mlpack::kernel::CosineDistance &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::CosineDistance &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="803">
+      <node id="817">
         <label>FastMKS&lt; KernelType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
       </node>
-      <node id="805">
+      <node id="819">
         <label>FastMKS&lt; mlpack::kernel::TriangularKernel &gt;</label>
         <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
-        <childnode refid="803" relation="template-instance">
+        <childnode refid="817" relation="template-instance">
           <edgelabel>&lt; mlpack::kernel::TriangularKernel &gt;</edgelabel>
         </childnode>
       </node>

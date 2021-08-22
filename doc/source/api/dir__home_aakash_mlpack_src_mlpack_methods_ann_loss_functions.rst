@@ -31,6 +31,7 @@ Files
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_bias_error.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_squared_error.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_squared_logarithmic_error.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_multilabel_softmargin_loss.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_negative_log_likelihood.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_poisson_nll_loss.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_reconstruction_loss.hpp`

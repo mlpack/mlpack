@@ -314,7 +314,7 @@
         <briefdescription>
 <para>Evaluate the probabilities matrix with the passed parameters. </para>        </briefdescription>
         <detaileddescription>
-<para>probabilities(i, j) = <formula id="165">$ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) $</formula>. It represents the probability of data_j belongs to class i.</para><para><parameterlist kind="param"><parameteritem>
+<para>probabilities(i, j) = <formula id="166">$ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) $</formula>. It represents the probability of data_j belongs to class i.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>parameters</parametername>
 </parameternamelist>

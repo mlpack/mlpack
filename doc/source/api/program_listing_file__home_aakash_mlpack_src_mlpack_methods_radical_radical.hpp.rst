@@ -15,6 +15,7 @@ Program Listing for File radical.hpp
    #define MLPACK_METHODS_RADICAL_RADICAL_HPP
    
    #include <mlpack/prereqs.hpp>
+   #include <mlpack/core/util/io.hpp>
    
    namespace mlpack {
    namespace radical {
@@ -28,13 +29,17 @@ Program Listing for File radical.hpp
              const size_t sweeps = 0,
              const size_t m = 0);
    
-     void DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW);
+     void DoRadical(const arma::mat& matX,
+                    arma::mat& matY,
+                    arma::mat& matW,
+                    util::Timers& timers = IO::GetTimers());
    
      double Vasicek(arma::vec& x) const;
    
      void CopyAndPerturb(arma::mat& xNew, const arma::mat& x) const;
    
-     double DoRadical2D(const arma::mat& matX);
+     double DoRadical2D(const arma::mat& matX,
+                        util::Timers& timers = IO::GetTimers());
    
      double NoiseStdDev() const { return noiseStdDev; }
      double& NoiseStdDev() { return noiseStdDev; }

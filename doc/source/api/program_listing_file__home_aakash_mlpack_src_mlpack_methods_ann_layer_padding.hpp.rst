@@ -89,9 +89,9 @@ Program Listing for File padding.hpp
      size_t inputHeight;
    
      size_t inputWidth;
-     
+   
      size_t outputHeight;
-     
+   
      size_t outputWidth;
    
      size_t inSize;

@@ -81,12 +81,16 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="80" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1a7815883137a47fda73c3ac1f608eef0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1ae3681802259154e350b7910aa47670c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Evaluate</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, arma::vec &amp;estimates)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, arma::vec &amp;estimates)=0</argsstring>
         <name>Evaluate</name>
-        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1a52a2ccd4d4e143187436097916dae748">Evaluate</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1a6eff728391ad985b8554546d822a18b4">Evaluate</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -103,12 +107,16 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="122" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1ae9574287052493ece978538a96a8fb98" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1ad73a61ec48b31ca42f501aac5bb65a98" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Evaluate</definition>
-        <argsstring>(arma::vec &amp;estimates)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::vec &amp;estimates)=0</argsstring>
         <name>Evaluate</name>
-        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1aecea217fc025d169adadd10f78a77fa5">Evaluate</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1a31a166bb678b6f3448a2ecd8bb631ace">Evaluate</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::vec &amp;</type>
           <declname>estimates</declname>
@@ -119,7 +127,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="126" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="127" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1ad7e08030744c69b2c47446d9d846487c" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -216,7 +224,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="114" column="1"/>
-        <referencedby refid="classmlpack_1_1kde_1_1KDEModel_1a6f3cb532b850ad02807a209193ff2289" compoundref="kde__model_8hpp" startline="412" endline="412">KDEModel::Mode</referencedby>
+        <referencedby refid="classmlpack_1_1kde_1_1KDEModel_1a6f3cb532b850ad02807a209193ff2289" compoundref="kde__model_8hpp" startline="414" endline="414">KDEModel::Mode</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1a06cd29610512406d9ea63f325856983a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type><ref refid="namespacemlpack_1_1kde_1a0ff4f94721e558082ebf9d0ef6183d38" kindref="member">KDEMode</ref> &amp;</type>
@@ -278,12 +286,16 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="89" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1af72c25a0ebac1dc4d40f76b9a2f5e149" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapperBase_1a56b67a76ab2b7453e12d863b926061cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet)=0</argsstring>
         <name>Train</name>
-        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1ac9780b7b68f55a2fb2df95768aec1bd4">Train</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1kde_1_1KDEWrapper_1acd008691a985e0877019a2ca9a546ba1">Train</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -302,24 +314,24 @@
     <detaileddescription>
 <para>All <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> type wrappers inheirt from this class, allowing a simple interface via inheritance for all the different types we want to support. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="920">
+      <node id="932">
         <label>KDEWrapper&lt; KernelType, TreeType &gt;</label>
         <link refid="classmlpack_1_1kde_1_1KDEWrapper"/>
-        <childnode refid="919" relation="public-inheritance">
+        <childnode refid="931" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="919">
+      <node id="931">
         <label>KDEWrapperBase</label>
         <link refid="classmlpack_1_1kde_1_1KDEWrapperBase"/>
       </node>
     </inheritancegraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="71" bodyend="127"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="71" bodyend="128"/>
     <listofallmembers>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1c0162417e08001b37ce9aaacc761773" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>AbsoluteError</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1ebaea5971fb978c1e23657dc8c55a17" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Bandwidth</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae7622cb6081c01a9346b9845c916be0a" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Clone</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7815883137a47fda73c3ac1f608eef0a" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Evaluate</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae9574287052493ece978538a96a8fb98" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae3681802259154e350b7910aa47670c7" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad73a61ec48b31ca42f501aac5bb65a98" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Evaluate</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ac1313101961cb19928ea3946dedc6ad9" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>KDEWrapperBase</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad7e08030744c69b2c47446d9d846487c" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>MCBreakCoef</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a2e9a7a651dd745d46880139cc0e7b720" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>MCEntryCoef</name></member>
@@ -331,7 +343,7 @@
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7e1172b47c3d2775ceb49bed772c44cf" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>MonteCarlo</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad5ee40ede39f0233b7f01e74d3c1e1c0" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>MonteCarlo</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1aef3e830b36580b39b0ddb75ea89f4d8a" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>RelativeError</name></member>
-      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1af72c25a0ebac1dc4d40f76b9a2f5e149" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a56b67a76ab2b7453e12d863b926061cd" prot="public" virt="pure-virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>Train</name></member>
       <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae58d12a345c8353b6c5338e620e68d59" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapperBase</scope><name>~KDEWrapperBase</name></member>
     </listofallmembers>
   </compounddef>

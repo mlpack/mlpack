@@ -26,6 +26,7 @@ Files
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_nulloutstream.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_param_checks.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_param_data.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_core_util_params.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_prefixedoutstream.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_program_doc.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_sfinae_utility.hpp`

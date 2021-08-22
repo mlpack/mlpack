@@ -166,6 +166,8 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_ann_test_tools.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_main_test_fixture.hpp`
+
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_range_search_utils.hpp`
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_serialization.hpp`

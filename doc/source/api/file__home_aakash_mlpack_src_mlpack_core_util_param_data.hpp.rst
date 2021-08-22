@@ -48,6 +48,8 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_core_util_io.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_core_util_params.hpp`
+
 
 
 

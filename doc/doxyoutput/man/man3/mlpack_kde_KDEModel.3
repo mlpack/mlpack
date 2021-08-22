@@ -1,4 +1,4 @@
-.TH "KDEModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "KDEModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -53,15 +53,15 @@ KDEModel \- The \fBKDEModel\fP provides an abstraction for the \fBKDE\fP class, 
 .br
 .RI "Modify the bandwidth of the kernel\&. "
 .ti -1c
-.RI "void \fBBuildModel\fP (arma::mat &&referenceSet)"
+.RI "void \fBBuildModel\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet)"
 .br
 .RI "Build the \fBKDE\fP model with the given parameters and then trains it with the given reference data\&. "
 .ti -1c
-.RI "void \fBEvaluate\fP (arma::mat &&querySet, arma::vec &estimations)"
+.RI "void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, arma::vec &estimations)"
 .br
 .RI "Perform kernel density estimation on the given query set\&. "
 .ti -1c
-.RI "void \fBEvaluate\fP (arma::vec &estimations)"
+.RI "void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::vec &estimations)"
 .br
 .RI "Perform kernel density estimation on the reference set\&. "
 .ti -1c
@@ -159,7 +159,7 @@ The \fBKDEModel\fP provides an abstraction for the \fBKDE\fP class, abstracting 
 
 This class is written for the sake of the \fCkde\fP binding, but it is not necessarily restricted to that usage\&. 
 .PP
-Definition at line 229 of file kde_model\&.hpp\&.
+Definition at line 231 of file kde_model\&.hpp\&.
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBKernelTypes\fP"
@@ -178,7 +178,7 @@ Definition at line 229 of file kde_model\&.hpp\&.
 .TP
 \fB\fITRIANGULAR_KERNEL \fP\fP
 .PP
-Definition at line 241 of file kde_model\&.hpp\&.
+Definition at line 243 of file kde_model\&.hpp\&.
 .SS "enum \fBTreeTypes\fP"
 
 .PP
@@ -195,7 +195,7 @@ Definition at line 241 of file kde_model\&.hpp\&.
 .TP
 \fB\fIR_TREE \fP\fP
 .PP
-Definition at line 232 of file kde_model\&.hpp\&.
+Definition at line 234 of file kde_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBKDEModel\fP (const double bandwidth = \fC1\&.0\fP, const double relError = \fC\fBKDEDefaultParams::relError\fP\fP, const double absError = \fC\fBKDEDefaultParams::absError\fP\fP, const \fBKernelTypes\fP kernelType = \fCKernelTypes::GAUSSIAN_KERNEL\fP, const \fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, const bool monteCarlo = \fC\fBKDEDefaultParams::mode\fP\fP, const double mcProb = \fC\fBKDEDefaultParams::mcProb\fP\fP, const size_t initialSampleSize = \fC\fBKDEDefaultParams::initialSampleSize\fP\fP, const double mcEntryCoef = \fC\fBKDEDefaultParams::mcEntryCoef\fP\fP, const double mcBreakCoef = \fC\fBKDEDefaultParams::mcBreakCoef\fP\fP)"
@@ -246,7 +246,7 @@ Destroy the \fBKDEModel\fP object\&.
 .PP
 Get the absolute error tolerance\&. 
 .PP
-Definition at line 364 of file kde_model\&.hpp\&.
+Definition at line 366 of file kde_model\&.hpp\&.
 .SS "void AbsoluteError (const double newAbsError)"
 
 .PP
@@ -256,23 +256,25 @@ Modify the absolute error tolerance\&.
 .PP
 Get the bandwidth of the kernel\&. 
 .PP
-Definition at line 352 of file kde_model\&.hpp\&.
+Definition at line 354 of file kde_model\&.hpp\&.
 .SS "void Bandwidth (const double newBandwidth)"
 
 .PP
 Modify the bandwidth of the kernel\&. 
-.SS "void BuildModel (arma::mat && referenceSet)"
+.SS "void BuildModel (\fButil::Timers\fP & timers, arma::mat && referenceSet)"
 
 .PP
 Build the \fBKDE\fP model with the given parameters and then trains it with the given reference data\&. Takes possession of the reference set to avoid a copy, so the reference set will not be usable after this\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fItimers\fP Object to hold timing information in\&. 
+.br
 \fIreferenceSet\fP Set of reference points\&. 
 .RE
 .PP
 
-.SS "void Evaluate (arma::mat && querySet, arma::vec & estimations)"
+.SS "void Evaluate (\fButil::Timers\fP & timers, arma::mat && querySet, arma::vec & estimations)"
 
 .PP
 Perform kernel density estimation on the given query set\&. Takes possession of the query set to avoid a copy, so the query set will not be usable after this\&. If possible, it returns normalized estimations\&.
@@ -284,13 +286,15 @@ The model has to be previously created with BuildModel\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fItimers\fP Object to hold timing information in\&. 
+.br
 \fIquerySet\fP Set of query points\&. 
 .br
 \fIestimations\fP Vector where the results will be stored in the same order as the query points\&. 
 .RE
 .PP
 
-.SS "void Evaluate (arma::vec & estimations)"
+.SS "void Evaluate (\fButil::Timers\fP & timers, arma::vec & estimations)"
 
 .PP
 Perform kernel density estimation on the reference set\&. If possible, it returns normalized estimations\&.
@@ -302,6 +306,8 @@ The model has to be previously created with BuildModel\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fItimers\fP Object to hold timing information in\&. 
+.br
 \fIestimations\fP Vector where the results will be stored in the same order as the query points\&. 
 .RE
 .PP
@@ -315,19 +321,19 @@ Initialize the \fBKDE\fP model\&.
 .PP
 Get the kernel type of the model\&. 
 .PP
-Definition at line 376 of file kde_model\&.hpp\&.
+Definition at line 378 of file kde_model\&.hpp\&.
 .SS "\fBKernelTypes\fP& KernelType ()\fC [inline]\fP"
 
 .PP
 Modify the kernel type of the model\&. 
 .PP
-Definition at line 379 of file kde_model\&.hpp\&.
+Definition at line 381 of file kde_model\&.hpp\&.
 .SS "double MCBreakCoefficient () const\fC [inline]\fP"
 
 .PP
 Get Monte Carlo break coefficient\&. 
 .PP
-Definition at line 406 of file kde_model\&.hpp\&.
+Definition at line 408 of file kde_model\&.hpp\&.
 .SS "void MCBreakCoefficient (const double newBreakCoef)"
 
 .PP
@@ -337,7 +343,7 @@ Modify Monte Carlo break coefficient\&.
 .PP
 Get Monte Carlo entry coefficient\&. 
 .PP
-Definition at line 400 of file kde_model\&.hpp\&.
+Definition at line 402 of file kde_model\&.hpp\&.
 .SS "void MCEntryCoefficient (const double newEntryCoef)"
 
 .PP
@@ -347,7 +353,7 @@ Modify Monte Carlo entry coefficient\&.
 .PP
 Get the initial sample size for Monte Carlo estimations\&. 
 .PP
-Definition at line 394 of file kde_model\&.hpp\&.
+Definition at line 396 of file kde_model\&.hpp\&.
 .SS "void MCInitialSampleSize (const size_t newSampleSize)"
 
 .PP
@@ -357,7 +363,7 @@ Modify the initial sample size for Monte Carlo estimations\&.
 .PP
 Get Monte Carlo probability of error being bounded by relative error\&. 
 .PP
-Definition at line 388 of file kde_model\&.hpp\&.
+Definition at line 390 of file kde_model\&.hpp\&.
 .SS "void MCProbability (const double newMCProb)"
 
 .PP
@@ -367,7 +373,7 @@ Modify Monte Carlo probability of error being bounded by relative error\&.
 .PP
 Get the mode of the model\&. 
 .PP
-Definition at line 412 of file kde_model\&.hpp\&.
+Definition at line 414 of file kde_model\&.hpp\&.
 .PP
 References KDEWrapperBase::Mode()\&.
 .SS "\fBKDEMode\fP& Mode ()\fC [inline]\fP"
@@ -375,7 +381,7 @@ References KDEWrapperBase::Mode()\&.
 .PP
 Modify the mode of the model\&. 
 .PP
-Definition at line 415 of file kde_model\&.hpp\&.
+Definition at line 417 of file kde_model\&.hpp\&.
 .PP
 References KDEWrapperBase::Mode()\&.
 .SS "bool MonteCarlo () const\fC [inline]\fP"
@@ -383,7 +389,7 @@ References KDEWrapperBase::Mode()\&.
 .PP
 Get whether the model is using Monte Carlo estimations or not\&. 
 .PP
-Definition at line 382 of file kde_model\&.hpp\&.
+Definition at line 384 of file kde_model\&.hpp\&.
 .SS "void MonteCarlo (const bool newMonteCarlo)"
 
 .PP
@@ -415,7 +421,7 @@ Take ownership of the contents of the given model\&.
 .PP
 Get the relative error tolerance\&. 
 .PP
-Definition at line 358 of file kde_model\&.hpp\&.
+Definition at line 360 of file kde_model\&.hpp\&.
 .SS "void RelativeError (const double newRelError)"
 
 .PP
@@ -429,13 +435,13 @@ Serialize the \fBKDE\fP model\&.
 .PP
 Get the tree type of the model\&. 
 .PP
-Definition at line 370 of file kde_model\&.hpp\&.
+Definition at line 372 of file kde_model\&.hpp\&.
 .SS "\fBTreeTypes\fP& TreeType ()\fC [inline]\fP"
 
 .PP
 Modify the tree type of the model\&. 
 .PP
-Definition at line 373 of file kde_model\&.hpp\&.
+Definition at line 375 of file kde_model\&.hpp\&.
 
 .SH "Author"
 .PP 

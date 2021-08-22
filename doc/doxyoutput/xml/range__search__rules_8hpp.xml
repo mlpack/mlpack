@@ -5,19 +5,19 @@
     <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
     <includes local="yes">range_search_rules_impl.hpp</includes>
     <incdepgraph>
-      <node id="54372">
+      <node id="55886">
         <label>range_search_rules_impl.hpp</label>
       </node>
-      <node id="54371">
+      <node id="55885">
         <label>mlpack/core/tree/traversal_info.hpp</label>
         <link refid="traversal__info_8hpp"/>
       </node>
-      <node id="54370">
+      <node id="55884">
         <label>/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp</label>
         <link refid="range__search__rules_8hpp"/>
-        <childnode refid="54371" relation="include">
+        <childnode refid="55885" relation="include">
         </childnode>
-        <childnode refid="54372" relation="include">
+        <childnode refid="55886" relation="include">
         </childnode>
       </node>
     </incdepgraph>

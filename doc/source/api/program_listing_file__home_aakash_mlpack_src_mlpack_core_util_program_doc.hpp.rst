@@ -17,34 +17,39 @@ Program Listing for File program_doc.hpp
    namespace mlpack {
    namespace util {
    
-   class ProgramName
+   class BindingName
    {
     public:
-     ProgramName(const std::string& programName);
+     BindingName(const std::string& bindingName, const std::string& name);
    };
    
    class ShortDescription
    {
     public:
-     ShortDescription(const std::string& shortDescription);
+     ShortDescription(const std::string& bindingName,
+                      const std::string& shortDescription);
    };
    
    class LongDescription
    {
     public:
-     LongDescription(const std::function<std::string()>& longDescription);
+     LongDescription(const std::string& bindingName,
+                     const std::function<std::string()>& longDescription);
    };
    
    class Example
    {
     public:
-     Example(const std::function<std::string()>& example);
+     Example(const std::string& bindingName,
+             const std::function<std::string()>& example);
    };
    
    class SeeAlso
    {
     public:
-     SeeAlso(const std::string& description, const std::string& link);
+     SeeAlso(const std::string& bindingName,
+             const std::string& description,
+             const std::string& link);
    };
    
    } // namespace util

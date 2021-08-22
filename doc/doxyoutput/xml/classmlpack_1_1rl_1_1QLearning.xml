@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="65" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="65" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="66" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="66" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" prot="public" static="no">
         <type>typename EnvironmentType::State</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="62" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="62" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="63" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="180" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="181" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a9256888813dc52f6cc0ac1a7955a8f83" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1rl_1_1TrainingConfig" kindref="compound">TrainingConfig</ref> &amp;</type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="150" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="150" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="151" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -87,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="183" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="184" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" static="no" mutable="no">
         <type>EnvironmentType</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="171" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="172" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="172" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a23327c0e1eab687a29ca58e51e21f7ed" prot="private" static="no" mutable="no">
         <type>NetworkType &amp;</type>
@@ -113,7 +113,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="153" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a08deaeeefbfe947ad6ed511c2464f397" prot="private" static="no" mutable="no">
         <type>PolicyType &amp;</type>
@@ -126,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="159" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="160" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a6bb6f1ff61cda292d713c849f4448935" prot="private" static="no" mutable="no">
         <type>ReplayType &amp;</type>
@@ -139,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="162" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="163" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref></type>
@@ -152,7 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="177" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="177" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="178" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a7bd45a47d1baa632d8517dddb6078675" prot="private" static="no" mutable="no">
         <type>NetworkType</type>
@@ -165,7 +165,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="156" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="157" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1af40d4ff06d1593b3cdb96afe98cfe209" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -178,7 +178,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="174" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="174" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="175" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" static="no" mutable="no">
         <type>UpdaterType</type>
@@ -191,7 +191,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="165" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="165" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="166" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -275,7 +275,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="80" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="81" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3af4fd238d225e0d3c31b9be79b61727" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -288,7 +288,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="90" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="91" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a0d32caed9517e5d2014238a22f78352d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="classmlpack_1_1rl_1_1QLearning_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref> &amp;</type>
@@ -301,7 +301,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="124" bodyend="124"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="125" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -314,7 +314,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="132" bodyend="132"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="133" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a5d262f7871c5cc8b532971fb644f0abf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const bool &amp;</type>
@@ -327,7 +327,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="134" bodyend="134"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="135" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a59cc43eb892c46ea7c50e18fb78b9172" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>EnvironmentType &amp;</type>
@@ -340,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="127" bodyend="127"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="128" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1adc517fd7b152925b4297e09a3bb4afe0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const EnvironmentType &amp;</type>
@@ -353,7 +353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="129" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="129" bodyend="129"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="130" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a1fb26736f2d90010f882f9628cd26612" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -367,7 +367,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="111" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="112" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a0ce8c122193c6a20fd4b397bc8525f7d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const NetworkType &amp;</type>
@@ -380,7 +380,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="137" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="137" bodyend="137"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="138" bodyend="138"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3802bdee893a3f86fb9fa08cbbc8239c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NetworkType &amp;</type>
@@ -393,7 +393,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="139" bodyend="139"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="140" bodyend="140"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1abd126acd7f564c8326dc765232624ae4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -406,7 +406,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="105" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="106" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1ad7a595de4a1a67da528603c20f80315f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &amp;</type>
@@ -419,7 +419,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="119" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="119" bodyend="119"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="120" bodyend="120"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1afa3e388ae5e024c8ec49fd4d1ef725ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &amp;</type>
@@ -432,7 +432,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="121" bodyend="121"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="122" bodyend="122"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1abaf0bb243c2e643c57654b8e65058fa0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -445,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="114" bodyend="114"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="115" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a689af4e6e564ab01f40e6ec49638bdaf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const size_t &amp;</type>
@@ -458,7 +458,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="116" bodyend="116"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="117" bodyend="117"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1af04dfd4648a33410066287689a50ec61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -471,7 +471,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="95" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="96" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3f06484571e0a6d51976b6a93cd34705" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -484,7 +484,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="100" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="101" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -512,7 +512,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="147" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="148" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -568,7 +568,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="58" bodyend="184"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="60" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="59" bodyend="185"/>
     <listofallmembers>
       <member refid="classmlpack_1_1rl_1_1QLearning_1a99189868c044162e6d669fd832ecdc81" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>action</name></member>
       <member refid="classmlpack_1_1rl_1_1QLearning_1a0d32caed9517e5d2014238a22f78352d" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Action</name></member>

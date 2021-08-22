@@ -34,6 +34,8 @@ Classes
 
 - :ref:`exhale_struct_structmlpack_1_1tree_1_1CoverTree_1_1DualTreeTraverser_1_1DualCoverTreeMapEntry`
 
+- :ref:`exhale_struct_structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms`
+
 - :ref:`exhale_struct_structmlpack_1_1tree_1_1IsSpillTree`
 
 - :ref:`exhale_struct_structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340`
@@ -98,6 +100,8 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1DecisionTree`
 
+- :ref:`exhale_class_classmlpack_1_1tree_1_1DecisionTreeRegressor`
+
 - :ref:`exhale_class_classmlpack_1_1tree_1_1DiscreteHilbertValue`
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1EmptyStatistic`
@@ -132,6 +136,8 @@ Classes
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1InformationGain`
 
+- :ref:`exhale_class_classmlpack_1_1tree_1_1MADGain`
+
 - :ref:`exhale_class_classmlpack_1_1tree_1_1MeanSpaceSplit`
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1MeanSplit`
@@ -143,6 +149,8 @@ Classes
 - :ref:`exhale_class_classmlpack_1_1tree_1_1MinimalCoverageSweep`
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1MinimalSplitsNumberSweep`
+
+- :ref:`exhale_class_classmlpack_1_1tree_1_1MSEGain`
 
 - :ref:`exhale_class_classmlpack_1_1tree_1_1MultipleRandomDimensionSelect`
 
@@ -240,6 +248,8 @@ Functions
 - :ref:`exhale_function_namespacemlpack_1_1tree_1aebb06bf0ada277e56a77d80cd1985dbe`
 
 - :ref:`exhale_function_namespacemlpack_1_1tree_1abab37b0038f14ab4dcdf83c60468e923`
+
+- :ref:`exhale_function_namespacemlpack_1_1tree_1a5a0616a02855490670d1d895a6195ac7`
 
 
 Typedefs

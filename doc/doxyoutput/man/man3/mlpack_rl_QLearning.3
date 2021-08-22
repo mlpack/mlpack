@@ -1,4 +1,4 @@
-.TH "QLearning< EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "QLearning< EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -134,7 +134,7 @@ For more details, see the following:
 .PP
 
 .PP
-Definition at line 58 of file q_learning\&.hpp\&.
+Definition at line 59 of file q_learning\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "using \fBActionType\fP =  typename EnvironmentType::Action"
@@ -142,13 +142,13 @@ Definition at line 58 of file q_learning\&.hpp\&.
 .PP
 Convenient typedef for action\&. 
 .PP
-Definition at line 65 of file q_learning\&.hpp\&.
+Definition at line 66 of file q_learning\&.hpp\&.
 .SS "using \fBStateType\fP =  typename EnvironmentType::State"
 
 .PP
 Convenient typedef for state\&. 
 .PP
-Definition at line 62 of file q_learning\&.hpp\&.
+Definition at line 63 of file q_learning\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBQLearning\fP (\fBTrainingConfig\fP & config, NetworkType & network, PolicyType & policy, ReplayType & replayMethod, UpdaterType updater = \fCUpdaterType()\fP, EnvironmentType environment = \fCEnvironmentType()\fP)"
@@ -183,31 +183,31 @@ Clean memory\&.
 .PP
 Get the action of the agent\&. 
 .PP
-Definition at line 124 of file q_learning\&.hpp\&.
+Definition at line 125 of file q_learning\&.hpp\&.
 .SS "bool& Deterministic ()\fC [inline]\fP"
 
 .PP
 Modify the training mode / test mode indicator\&. 
 .PP
-Definition at line 132 of file q_learning\&.hpp\&.
+Definition at line 133 of file q_learning\&.hpp\&.
 .SS "const bool& Deterministic () const\fC [inline]\fP"
 
 .PP
 Get the indicator of training mode / test mode\&. 
 .PP
-Definition at line 134 of file q_learning\&.hpp\&.
+Definition at line 135 of file q_learning\&.hpp\&.
 .SS "EnvironmentType& Environment ()\fC [inline]\fP"
 
 .PP
 Modify the environment in which the agent is\&. 
 .PP
-Definition at line 127 of file q_learning\&.hpp\&.
+Definition at line 128 of file q_learning\&.hpp\&.
 .SS "const EnvironmentType& Environment () const\fC [inline]\fP"
 
 .PP
 Get the environment in which the agent is\&. 
 .PP
-Definition at line 129 of file q_learning\&.hpp\&.
+Definition at line 130 of file q_learning\&.hpp\&.
 .SS "double Episode ()"
 
 .PP
@@ -224,13 +224,13 @@ Return of the episode\&.
 .PP
 Return the learning network\&. 
 .PP
-Definition at line 137 of file q_learning\&.hpp\&.
+Definition at line 138 of file q_learning\&.hpp\&.
 .SS "NetworkType& Network ()\fC [inline]\fP"
 
 .PP
 Modify the learning network\&. 
 .PP
-Definition at line 139 of file q_learning\&.hpp\&.
+Definition at line 140 of file q_learning\&.hpp\&.
 .SS "void SelectAction ()"
 
 .PP
@@ -240,25 +240,25 @@ Select an action, given an agent\&.
 .PP
 Modify the state of the agent\&. 
 .PP
-Definition at line 119 of file q_learning\&.hpp\&.
+Definition at line 120 of file q_learning\&.hpp\&.
 .SS "const \fBStateType\fP& State () const\fC [inline]\fP"
 
 .PP
 Get the state of the agent\&. 
 .PP
-Definition at line 121 of file q_learning\&.hpp\&.
+Definition at line 122 of file q_learning\&.hpp\&.
 .SS "size_t& TotalSteps ()\fC [inline]\fP"
 
 .PP
 Modify total steps from beginning\&. 
 .PP
-Definition at line 114 of file q_learning\&.hpp\&.
+Definition at line 115 of file q_learning\&.hpp\&.
 .SS "const size_t& TotalSteps () const\fC [inline]\fP"
 
 .PP
 Get total steps from beginning\&. 
 .PP
-Definition at line 116 of file q_learning\&.hpp\&.
+Definition at line 117 of file q_learning\&.hpp\&.
 .SS "void TrainAgent ()"
 
 .PP

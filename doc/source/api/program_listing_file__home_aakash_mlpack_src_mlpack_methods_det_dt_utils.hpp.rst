@@ -38,7 +38,8 @@ Program Listing for File dt_utils.hpp
                                     const size_t maxLeafSize = 10,
                                     const size_t minLeafSize = 5,
                                     const std::string unprunedTreeOutput = "",
-                                    const bool skipPruning = false);
+                                    const bool skipPruning = false,
+                                    util::Timers& timers = IO::GetTimers());
    
    class PathCacher
    {

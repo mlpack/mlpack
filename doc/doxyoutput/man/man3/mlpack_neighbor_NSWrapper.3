@@ -1,4 +1,4 @@
-.TH "NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -39,11 +39,11 @@ Inherited by \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, 
 .br
 .RI "Modify epsilon, the approximation parameter\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t, const double)"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t, const double)"
 .br
 .RI "Perform bichromatic neighbor search (i\&.e\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
 .br
 .RI "Perform monochromatic neighbor search (i\&.e\&. "
 .ti -1c
@@ -59,7 +59,7 @@ Inherited by \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, 
 .br
 .RI "Serialize the \fBNeighborSearch\fP model\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t, const double, const double)"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t, const double, const double)"
 .br
 .RI "Train the model with the given options\&. "
 .in -1c
@@ -86,13 +86,13 @@ Inherited by \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, 
 class mlpack::neighbor::NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >"
 \fBNSWrapper\fP is a wrapper class for most \fBNeighborSearch\fP types\&. 
 .PP
-Definition at line 99 of file ns_model\&.hpp\&.
+Definition at line 102 of file ns_model\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "typedef \fBNeighborSearch\fP<SortPolicy, \fBmetric::EuclideanDistance\fP, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType> \fBNSType\fP\fC [protected]\fP"
 
 .PP
-Definition at line 167 of file ns_model\&.hpp\&.
+Definition at line 173 of file ns_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBNSWrapper\fP (const \fBNeighborSearchMode\fP searchMode, const double epsilon)\fC [inline]\fP"
@@ -100,13 +100,13 @@ Definition at line 167 of file ns_model\&.hpp\&.
 .PP
 Construct the \fBNSWrapper\fP object, initializing the internally-held \fBNeighborSearch\fP object\&. 
 .PP
-Definition at line 104 of file ns_model\&.hpp\&.
+Definition at line 107 of file ns_model\&.hpp\&.
 .SS "virtual ~\fBNSWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
 Delete the \fBNSWrapper\fP object\&. 
 .PP
-Definition at line 112 of file ns_model\&.hpp\&.
+Definition at line 115 of file ns_model\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "virtual \fBNSWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
@@ -118,7 +118,7 @@ Implements \fBNSWrapperBase\fP\&.
 .PP
 Reimplemented in \fBSpillNSWrapper< SortPolicy >\fP, and \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
 .PP
-Definition at line 116 of file ns_model\&.hpp\&.
+Definition at line 119 of file ns_model\&.hpp\&.
 .SS "const arma::mat& Dataset () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -126,7 +126,7 @@ Get a reference to the reference set\&.
 .PP
 Implements \fBNSWrapperBase\fP\&.
 .PP
-Definition at line 119 of file ns_model\&.hpp\&.
+Definition at line 122 of file ns_model\&.hpp\&.
 .SS "double Epsilon () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -134,7 +134,7 @@ Get epsilon, the approximation parameter\&.
 .PP
 Implements \fBNSWrapperBase\fP\&.
 .PP
-Definition at line 127 of file ns_model\&.hpp\&.
+Definition at line 130 of file ns_model\&.hpp\&.
 .SS "double& Epsilon ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -142,8 +142,8 @@ Modify epsilon, the approximation parameter\&.
 .PP
 Implements \fBNSWrapperBase\fP\&.
 .PP
-Definition at line 129 of file ns_model\&.hpp\&.
-.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t, const double)\fC [virtual]\fP"
+Definition at line 132 of file ns_model\&.hpp\&.
+.SS "virtual void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t, const double)\fC [virtual]\fP"
 
 .PP
 Perform bichromatic neighbor search (i\&.e\&. search with a separate query set)\&. For \fBNSWrapper\fP, we ignore the extra parameters\&. 
@@ -151,7 +151,7 @@ Perform bichromatic neighbor search (i\&.e\&. search with a separate query set)\
 Implements \fBNSWrapperBase\fP\&.
 .PP
 Reimplemented in \fBSpillNSWrapper< SortPolicy >\fP, and \fBLeafSizeNSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >\fP\&.
-.SS "virtual void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [virtual]\fP"
 
 .PP
 Perform monochromatic neighbor search (i\&.e\&. use the reference set as the query set)\&. 
@@ -164,7 +164,7 @@ Get the search mode\&.
 .PP
 Implements \fBNSWrapperBase\fP\&.
 .PP
-Definition at line 122 of file ns_model\&.hpp\&.
+Definition at line 125 of file ns_model\&.hpp\&.
 .SS "\fBNeighborSearchMode\fP& SearchMode ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -172,14 +172,14 @@ Modify the search mode\&.
 .PP
 Implements \fBNSWrapperBase\fP\&.
 .PP
-Definition at line 124 of file ns_model\&.hpp\&.
+Definition at line 127 of file ns_model\&.hpp\&.
 .SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
 
 .PP
 Serialize the \fBNeighborSearch\fP model\&. 
 .PP
-Definition at line 155 of file ns_model\&.hpp\&.
-.SS "virtual void Train (arma::mat && referenceSet, const size_t, const double, const double)\fC [virtual]\fP"
+Definition at line 161 of file ns_model\&.hpp\&.
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t, const double, const double)\fC [virtual]\fP"
 
 .PP
 Train the model with the given options\&. For \fBNSWrapper\fP, we ignore the extra parameters\&. 
@@ -194,7 +194,7 @@ Reimplemented in \fBSpillNSWrapper< SortPolicy >\fP, and \fBLeafSizeNSWrapper< S
 .PP
 The instantiated \fBNeighborSearch\fP object that we are wrapping\&. 
 .PP
-Definition at line 170 of file ns_model\&.hpp\&.
+Definition at line 176 of file ns_model\&.hpp\&.
 
 .SH "Author"
 .PP 

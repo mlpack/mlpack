@@ -89,12 +89,13 @@ Program Listing for File kde_model.hpp
      virtual KDEMode Mode() const = 0;
      virtual KDEMode& Mode() = 0;
    
-     virtual void Train(arma::mat&& referenceSet) = 0;
+     virtual void Train(util::Timers& timers, arma::mat&& referenceSet) = 0;
    
-     virtual void Evaluate(arma::mat&& querySet,
+     virtual void Evaluate(util::Timers& timers,
+                           arma::mat&& querySet,
                            arma::vec& estimates) = 0;
    
-     virtual void Evaluate(arma::vec& estimates) = 0;
+     virtual void Evaluate(util::Timers& timers, arma::vec& estimates) = 0;
    };
    
    template<typename KernelType,
@@ -143,12 +144,13 @@ Program Listing for File kde_model.hpp
      virtual KDEMode Mode() const { return kde.Mode(); }
      virtual KDEMode& Mode() { return kde.Mode(); }
    
-     virtual void Train(arma::mat&& referenceSet);
+     virtual void Train(util::Timers& timers, arma::mat&& referenceSet);
    
-     virtual void Evaluate(arma::mat&& querySet,
+     virtual void Evaluate(util::Timers& timers,
+                           arma::mat&& querySet,
                            arma::vec& estimates);
    
-     virtual void Evaluate(arma::vec& estimates);
+     virtual void Evaluate(util::Timers& timers, arma::vec& estimates);
    
      template<typename Archive>
      void serialize(Archive& ar, const uint32_t /* version */)
@@ -280,11 +282,13 @@ Program Listing for File kde_model.hpp
    
      void InitializeModel();
    
-     void BuildModel(arma::mat&& referenceSet);
+     void BuildModel(util::Timers& timers, arma::mat&& referenceSet);
    
-     void Evaluate(arma::mat&& querySet, arma::vec& estimations);
+     void Evaluate(util::Timers& timers,
+                   arma::mat&& querySet,
+                   arma::vec& estimations);
    
-     void Evaluate(arma::vec& estimations);
+     void Evaluate(util::Timers& timers, arma::vec& estimations);
    
    
     private:

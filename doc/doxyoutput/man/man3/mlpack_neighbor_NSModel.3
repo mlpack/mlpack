@@ -1,4 +1,4 @@
-.TH "NSModel< SortPolicy >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "NSModel< SortPolicy >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -35,7 +35,7 @@ NSModel< SortPolicy > \- The \fBNSModel\fP class provides an easy way to seriali
 .br
 .RI "Clean memory, if necessary\&. "
 .ti -1c
-.RI "void \fBBuildModel\fP (arma::mat &&referenceSet, const \fBNeighborSearchMode\fP searchMode, const double epsilon=0)"
+.RI "void \fBBuildModel\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const \fBNeighborSearchMode\fP searchMode, const double epsilon=0)"
 .br
 .RI "Build the reference tree\&. "
 .ti -1c
@@ -83,11 +83,11 @@ NSModel< SortPolicy > \- The \fBNSModel\fP class provides an easy way to seriali
 .RI "double & \fBRho\fP ()"
 .br
 .ti -1c
-.RI "void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
 .br
 .RI "Perform neighbor search\&. The query set will be reordered\&. "
 .ti -1c
-.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
 .br
 .RI "Perform monochromatic neighbor search\&. "
 .ti -1c
@@ -137,7 +137,7 @@ This class is meant to be used by the command-line mlpack_knn and mlpack_kfn pro
 .PP
 
 .PP
-Definition at line 333 of file ns_model\&.hpp\&.
+Definition at line 343 of file ns_model\&.hpp\&.
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBTreeTypes\fP"
@@ -178,7 +178,7 @@ Enum type to identify each accepted tree type\&.
 .TP
 \fB\fIOCTREE \fP\fP
 .PP
-Definition at line 337 of file ns_model\&.hpp\&.
+Definition at line 347 of file ns_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBNSModel\fP (\fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, bool randomBasis = \fCfalse\fP)"
@@ -222,7 +222,7 @@ Take ownership of the given \fBNSModel\fP\&.
 Clean memory, if necessary\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "void BuildModel (arma::mat && referenceSet, const \fBNeighborSearchMode\fP searchMode, const double epsilon = \fC0\fP)"
+.SS "void BuildModel (\fButil::Timers\fP & timers, arma::mat && referenceSet, const \fBNeighborSearchMode\fP searchMode, const double epsilon = \fC0\fP)"
 
 .PP
 Build the reference tree\&. 
@@ -245,11 +245,11 @@ Initialize the model type\&. (This does not perform any training\&.)
 .PP
 Expose LeafSize\&. 
 .PP
-Definition at line 429 of file ns_model\&.hpp\&.
+Definition at line 439 of file ns_model\&.hpp\&.
 .SS "size_t& LeafSize ()\fC [inline]\fP"
 
 .PP
-Definition at line 430 of file ns_model\&.hpp\&.
+Definition at line 440 of file ns_model\&.hpp\&.
 .SS "\fBNSModel\fP& operator= (const \fBNSModel\fP< SortPolicy > & other)"
 
 .PP
@@ -277,11 +277,11 @@ Take ownership of the given \fBNSModel\fP\&.
 .PP
 Expose randomBasis\&. 
 .PP
-Definition at line 449 of file ns_model\&.hpp\&.
+Definition at line 459 of file ns_model\&.hpp\&.
 .SS "bool& RandomBasis ()\fC [inline]\fP"
 
 .PP
-Definition at line 450 of file ns_model\&.hpp\&.
+Definition at line 460 of file ns_model\&.hpp\&.
 .PP
 References NSWrapperBase::Search()\&.
 .SS "double Rho () const\fC [inline]\fP"
@@ -289,18 +289,18 @@ References NSWrapperBase::Search()\&.
 .PP
 Expose Rho\&. 
 .PP
-Definition at line 437 of file ns_model\&.hpp\&.
+Definition at line 447 of file ns_model\&.hpp\&.
 .SS "double& Rho ()\fC [inline]\fP"
 
 .PP
-Definition at line 438 of file ns_model\&.hpp\&.
+Definition at line 448 of file ns_model\&.hpp\&.
 .PP
 References NSWrapperBase::Epsilon()\&.
-.SS "void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
 
 .PP
 Perform neighbor search\&. The query set will be reordered\&. 
-.SS "void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
 
 .PP
 Perform monochromatic neighbor search\&. 
@@ -319,11 +319,11 @@ Serialize the neighbor search model\&.
 .PP
 Expose Tau\&. 
 .PP
-Definition at line 433 of file ns_model\&.hpp\&.
+Definition at line 443 of file ns_model\&.hpp\&.
 .SS "double& Tau ()\fC [inline]\fP"
 
 .PP
-Definition at line 434 of file ns_model\&.hpp\&.
+Definition at line 444 of file ns_model\&.hpp\&.
 .SS "std::string TreeName () const"
 
 .PP
@@ -333,11 +333,11 @@ Return a string representation of the current tree type\&.
 .PP
 Expose treeType\&. 
 .PP
-Definition at line 445 of file ns_model\&.hpp\&.
+Definition at line 455 of file ns_model\&.hpp\&.
 .SS "\fBTreeTypes\fP& TreeType ()\fC [inline]\fP"
 
 .PP
-Definition at line 446 of file ns_model\&.hpp\&.
+Definition at line 456 of file ns_model\&.hpp\&.
 
 .SH "Author"
 .PP 

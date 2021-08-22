@@ -36,8 +36,6 @@ Includes
 --------
 
 
-- ``boost/dynamic_bitset.hpp``
-
 - ``dbscan_impl.hpp``
 
 - ``mlpack/core.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core.hpp`)

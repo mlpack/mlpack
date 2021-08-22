@@ -3,16 +3,18 @@
   <compounddef id="namespacemlpack_1_1util" kind="namespace" language="C++">
     <compoundname>mlpack::util</compoundname>
     <innerclass refid="structmlpack_1_1util_1_1BindingDetails" prot="public">mlpack::util::BindingDetails</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1BindingName" prot="public">mlpack::util::BindingName</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1Example" prot="public">mlpack::util::Example</innerclass>
     <innerclass refid="structmlpack_1_1util_1_1IsStdVector" prot="public">mlpack::util::IsStdVector</innerclass>
     <innerclass refid="structmlpack_1_1util_1_1IsStdVector_3_01std_1_1vector_3_01T_00_01A_01_4_01_4" prot="public">mlpack::util::IsStdVector&lt; std::vector&lt; T, A &gt; &gt;</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1LongDescription" prot="public">mlpack::util::LongDescription</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1NullOutStream" prot="public">mlpack::util::NullOutStream</innerclass>
     <innerclass refid="structmlpack_1_1util_1_1ParamData" prot="public">mlpack::util::ParamData</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1Params" prot="public">mlpack::util::Params</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1PrefixedOutStream" prot="public">mlpack::util::PrefixedOutStream</innerclass>
-    <innerclass refid="classmlpack_1_1util_1_1ProgramName" prot="public">mlpack::util::ProgramName</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1SeeAlso" prot="public">mlpack::util::SeeAlso</innerclass>
     <innerclass refid="classmlpack_1_1util_1_1ShortDescription" prot="public">mlpack::util::ShortDescription</innerclass>
+    <innerclass refid="classmlpack_1_1util_1_1Timers" prot="public">mlpack::util::Timers</innerclass>
       <sectiondef kind="func">
       <memberdef kind="function" id="namespacemlpack_1_1util_1ad3edb223b2cb9147f26f1f7e6cd84874" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -325,11 +327,15 @@
         <location file="/home/aakash/mlpack/src/mlpack/core/util/hyphenate_string.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/hyphenate_string.hpp" bodystart="82" bodyend="85"/>
         <references refid="namespacemlpack_1_1util_1a7b8929840f4891a96df1108873e1a1f9" compoundref="hyphenate__string_8hpp" startline="27" endline="73">HyphenateString</references>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1ab244b3b942d525edebe5d0e08b056bf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1a15d3dd71420e35891f2383141e55a17d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void mlpack::util::ReportIgnoredParam</definition>
-        <argsstring>(const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;constraints, const std::string &amp;paramName)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;constraints, const std::string &amp;paramName)</argsstring>
         <name>ReportIgnoredParam</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;</type>
           <declname>constraints</declname>
@@ -342,6 +348,13 @@
 <para>Report that a parameter is ignored, if each of the constraints given are satisfied. </para>        </briefdescription>
         <detaileddescription>
 <para>The constraints should be a set of string/bool pairs. If all of the constraints are true, and the given parameter in &apos;paramName&apos; is passed, then a warning will be issued noting that the parameter is ignored. The warning will go to Log::Warn.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>constraints</parametername>
 </parameternamelist>
@@ -359,7 +372,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="186" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="197" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1util_1a267aad01fc4c11f1a97cdb0710b89af4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -397,13 +410,17 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="206" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="218" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1ae19bc258d5d2bc0f4c5ac52da8d2992e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1a6d1c576544a52b021a857c40b3b1d841" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void mlpack::util::RequireAtLeastOnePassed</definition>
-        <argsstring>(const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;)</argsstring>
         <name>RequireAtLeastOnePassed</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::vector&lt; std::string &gt; &amp;</type>
           <declname>constraints</declname>
@@ -424,6 +441,13 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 <para>This uses the correct binding type name for each parameter (i.e. &apos;<ndash/>parameter&apos; for CLI bindings, &apos;parameter&apos; for Python bindings).</para><para>This can be used with a set of only one constraint and the output is still sensible.</para><para>If you use a custom error message, be aware that the given output will be similar to, for example:</para><para><programlisting><codeline><highlight class="normal">Should<sp/>pass<sp/>one<sp/>of<sp/>&apos;--codes_file<sp/>(-c)&apos;,<sp/>&apos;--dictionary_file<sp/>(-d)&apos;,<sp/>or</highlight></codeline>
 <codeline><highlight class="normal">&apos;--output_model_file<sp/>(-M)&apos;;<sp/>&lt;custom<sp/>error<sp/>message&gt;!</highlight></codeline>
 </programlisting></para><para>so when you write your custom error message, be sure that the sentence makes sense. The custom error message should not have a capitalized first character and no ending punctuation (a &apos;!&apos; will be added by this function).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>constraints</parametername>
 </parameternamelist>
@@ -448,13 +472,17 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="83" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="86" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1a37ad0ecd07b5b006bf8135c2880779dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1a504ee55c910ffb18c1e12e2b067b1e8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void mlpack::util::RequireNoneOrAllPassed</definition>
-        <argsstring>(const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;)</argsstring>
         <name>RequireNoneOrAllPassed</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::vector&lt; std::string &gt; &amp;</type>
           <declname>constraints</declname>
@@ -475,6 +503,13 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 <para>This uses the correct binding type name for each parameter (i.e. &apos;<ndash/>parameter&apos; for CLI bindings, &apos;parameter&apos; for Python bindings).</para><para>If you use a custom error message, be aware that the given output will be similar to, for example:</para><para><programlisting><codeline><highlight class="normal">Must<sp/>pass<sp/>none<sp/>or<sp/>all<sp/>of<sp/>&apos;--codes_file<sp/>(-c)&apos;,<sp/>&apos;--dictionary_file<sp/>(-d)&apos;,<sp/>and</highlight></codeline>
 <codeline><highlight class="normal">&apos;--output_model_file<sp/>(-M)&apos;;<sp/>&lt;custom<sp/>error<sp/>message&gt;!</highlight></codeline>
 </programlisting></para><para>so when you write your custom error message, be sure that the sentence makes sense. The custom error message should not have a capitalized first character and no ending punctuation (a &apos;!&apos; will be added by this function).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>constraints</parametername>
 </parameternamelist>
@@ -499,13 +534,17 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="113" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="118" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1aa885d1e461234b74a7afaeffb9fa65e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1a015ed435ccbb64bf7e4408a100fa095d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void mlpack::util::RequireOnlyOnePassed</definition>
-        <argsstring>(const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;, const bool allowNone=false)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::vector&lt; std::string &gt; &amp;constraints, const bool fatal=true, const std::string &amp;customErrorMessage=&quot;&quot;, const bool allowNone=false)</argsstring>
         <name>RequireOnlyOnePassed</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::vector&lt; std::string &gt; &amp;</type>
           <declname>constraints</declname>
@@ -531,6 +570,13 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 <para>This uses the correct binding type name for each parameter (i.e. &apos;<ndash/>parameter&apos; for CLI bindings, &apos;parameter&apos; for Python bindings).</para><para>If you use a custom error message, be aware that the given output will be similar to, for example:</para><para><programlisting><codeline><highlight class="normal">Must<sp/>specify<sp/>one<sp/>of<sp/>&apos;--reference_file<sp/>(-r)&apos;<sp/>or<sp/>&apos;--input_model_file<sp/>(-m)&apos;;</highlight></codeline>
 <codeline><highlight class="normal">&lt;custom<sp/>error<sp/>message<sp/>here&gt;!</highlight></codeline>
 </programlisting></para><para>so when you write your custom error message, be sure that the sentence makes sense. The custom error message should not have a capitalized first character and no ending punctuation (a &apos;!&apos; will be added by this function).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>constraints</parametername>
 </parameternamelist>
@@ -562,9 +608,9 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="49" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="50" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1a103bcfe2b3a7641fe3f3c59b2436bb63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1adb04a1f1e20036f06efea1ad226fc116" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename T</type>
@@ -572,8 +618,12 @@ optimizer&quot;. Be sure that when you write the reason, the full message makes 
         </templateparamlist>
         <type>void</type>
         <definition>void mlpack::util::RequireParamInSet</definition>
-        <argsstring>(const std::string &amp;paramName, const std::vector&lt; T &gt; &amp;set, const bool fatal, const std::string &amp;errorMessage)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::string &amp;paramName, const std::vector&lt; T &gt; &amp;set, const bool fatal, const std::string &amp;errorMessage)</argsstring>
         <name>RequireParamInSet</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::string &amp;</type>
           <declname>paramName</declname>
@@ -606,6 +656,13 @@ weak learner type&quot;.</para><para><parameterlist kind="templateparam"><parame
 </parameterlist>
 <parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>paramName</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -636,9 +693,9 @@ weak learner type&quot;.</para><para><parameterlist kind="templateparam"><parame
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="142" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="149" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1ae93b13d8041246b4d1d697d7f00155ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacemlpack_1_1util_1af6914a72a7b265d07fba2137a8b85451" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename T</type>
@@ -646,8 +703,12 @@ weak learner type&quot;.</para><para><parameterlist kind="templateparam"><parame
         </templateparamlist>
         <type>void</type>
         <definition>void mlpack::util::RequireParamValue</definition>
-        <argsstring>(const std::string &amp;paramName, const std::function&lt; bool(T)&gt; &amp;conditional, const bool fatal, const std::string &amp;errorMessage)</argsstring>
+        <argsstring>(util::Params &amp;params, const std::string &amp;paramName, const std::function&lt; bool(T)&gt; &amp;conditional, const bool fatal, const std::string &amp;errorMessage)</argsstring>
         <name>RequireParamValue</name>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
         <param>
           <type>const std::string &amp;</type>
           <declname>paramName</declname>
@@ -679,6 +740,13 @@ positive&quot;. Be sure that when you write the error message, the message makes
 </parameterlist>
 <parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of parameters to check. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>paramName</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -709,49 +777,7 @@ positive&quot;. Be sure that when you write the error message, the message makes
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="171" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacemlpack_1_1util_1a997283ede9320ae143e5cf3314efe0a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>void</type>
-        <definition>void mlpack::util::SetInputParam</definition>
-        <argsstring>(const std::string &amp;name, T &amp;&amp;value)</argsstring>
-        <name>SetInputParam</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>name</declname>
-        </param>
-        <param>
-          <type>T &amp;&amp;</type>
-          <declname>value</declname>
-        </param>
-        <briefdescription>
-<para>Utility function that is used in binding tests for setting a parameter and marking it as passed; it uses copy semantics for lvalues and move semantics for rvalues. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>name</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of parameter to set. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>value</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Value to set parameter to. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/test_helper.hpp" line="29" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/test_helper.hpp" bodystart="29" bodyend="34"/>
-        <references refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59">IO::SetPassed</references>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_checks.hpp" line="180" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1_1util_1a17299c3035aca77759743f241cefd4c7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>std::string</type>

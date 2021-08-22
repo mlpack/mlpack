@@ -212,7 +212,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp" line="346" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp" bodystart="346" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1BRNN_1afbdfd26eb0c7649cfc9d69cc9cfc7889" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; mergeLayer</definition>
         <argsstring></argsstring>
         <name>mergeLayer</name>
@@ -225,7 +225,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp" line="336" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp" bodystart="336" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1BRNN_1a43c5e6acad4960c5af9bbaef2d6c7534" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; mergeOutput</definition>
         <argsstring></argsstring>
         <name>mergeOutput</name>
@@ -552,7 +552,7 @@
         <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
         <name>Add</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
           <declname>layer</declname>
         </param>
         <briefdescription>

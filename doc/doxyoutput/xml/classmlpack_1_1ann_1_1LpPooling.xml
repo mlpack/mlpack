@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="278" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="278" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="296" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="296" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -38,7 +38,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="290" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="290" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="308" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="308" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1af65dfb764f1f675c93f027fa5fb27f3d" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="254" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="272" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="293" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="311" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="311" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1acff45188c35aab01df4b868ccb60380a" prot="private" static="no" mutable="no">
         <type>arma::cube</type>
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="287" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="287" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="305" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="305" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="266" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="284" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="284" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a492e653a89ab30e8bfe15bd81f06f1a6" prot="private" static="no" mutable="no">
         <type>arma::cube</type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="284" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="284" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="302" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="302" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a31d1d11207207222fa86f463515dd5dd" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -116,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="263" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="281" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="281" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="257" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="275" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a5edf789e292d666badc50933288c030c" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="245" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="245" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="263" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a56f93caaa26d703cfb801a4c74f839bd" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -155,7 +155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="242" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="260" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a5a73c7ce68a2f805a16e3c6a5e05114a" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -168,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="239" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="257" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -181,7 +181,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="272" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="290" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="290" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -194,7 +194,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="296" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="296" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="314" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="314" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" static="no" mutable="no">
         <type>arma::cube</type>
@@ -207,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="281" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="281" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="299" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="299" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="269" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="269" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="287" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="287" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -233,7 +233,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="260" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="278" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="278" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="275" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="293" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1a01f3c104377154bf5ac87fdbc99b87db" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -259,7 +259,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="251" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="269" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="269" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1LpPooling_1aa221493625d4568210be89fee84c909f" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -272,7 +272,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="248" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="248" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="266" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -883,7 +883,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="162" bodyend="186"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="162" bodyend="204"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1LpPooling_1a1d3b1cbbb2c33d437bb800031a8fec5e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -928,7 +928,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="195" bodyend="236"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="213" bodyend="254"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -950,7 +950,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="32" bodyend="297"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/lp_pooling.hpp" bodystart="32" bodyend="315"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1LpPooling_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::LpPooling</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1LpPooling_1acc8b6b6879b002e34f544046de374ce8" prot="private" virt="non-virtual"><scope>mlpack::ann::LpPooling</scope><name>batchSize</name></member>

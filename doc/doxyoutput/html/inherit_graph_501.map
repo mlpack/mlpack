@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classmlpack_1_1neighbor_1_1RAWrapperBase.html" title="RAWrapperBase is a base wrapper class for holding all RASearch types supported by RAModel..." alt="" coords="5,13,125,39"/>
-<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1RAWrapper.html" title="RAWrapper is a wrapper class for most RASearch types. " alt="" coords="173,13,343,39"/>
-<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1LeafSizeRAWrapper.html" title="LeafSizeRAWrapper wraps any RASearch type that needs to be able to take the leaf size into account wh..." alt="" coords="391,5,540,47"/>
-</map>

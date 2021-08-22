@@ -36,8 +36,6 @@ Includes
 --------
 
 
-- ``boost/utility.hpp``
-
 - ``mean_shift_impl.hpp``
 
 - ``mlpack/core/kernels/gaussian_kernel.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_kernels_gaussian_kernel.hpp`)

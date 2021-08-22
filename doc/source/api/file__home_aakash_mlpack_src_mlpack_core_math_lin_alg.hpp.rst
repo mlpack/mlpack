@@ -72,9 +72,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1af20ca29adeac02601e8f4386bda3588e`
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1a33495d8fdb79a9b5783d683cf11b0d6b`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a532da68daa876aaa1060fbe54eaa3722`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1a33495d8fdb79a9b5783d683cf11b0d6b`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a27732f0088e81d179a8e6c92c4f9c4b8`
 
@@ -84,9 +84,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1acf1d819071707267cdce9c78abd32e2e`
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1a76535efa4f447182fed1a2ad789d5340`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a2e46372873806bdfef7d596dcc78a5ea`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1a76535efa4f447182fed1a2ad789d5340`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a630a16e49385717a8fef7d25d0093c37`
 

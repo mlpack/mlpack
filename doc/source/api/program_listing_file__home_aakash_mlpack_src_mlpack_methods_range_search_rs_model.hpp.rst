@@ -41,16 +41,19 @@ Program Listing for File rs_model.hpp
      virtual bool Naive() const = 0;
      virtual bool& Naive() = 0;
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize) = 0;
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const math::Range& range,
                          std::vector<std::vector<size_t>>& neighbors,
                          std::vector<std::vector<double>>& distances,
                          const size_t leafSize) = 0;
    
-     virtual void Search(const math::Range& range,
+     virtual void Search(util::Timers& timers,
+                         const math::Range& range,
                          std::vector<std::vector<size_t>>& neighbors,
                          std::vector<std::vector<double>>& distances) = 0;
    };
@@ -79,16 +82,19 @@ Program Listing for File rs_model.hpp
      bool Naive() const { return rs.Naive(); }
      bool& Naive() { return rs.Naive(); }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t /* leafSize */);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const math::Range& range,
                          std::vector<std::vector<size_t>>& neighbors,
                          std::vector<std::vector<double>>& distances,
                          const size_t /* leafSize */);
    
-     virtual void Search(const math::Range& range,
+     virtual void Search(util::Timers& timers,
+                         const math::Range& range,
                          std::vector<std::vector<size_t>>& neighbors,
                          std::vector<std::vector<double>>& distances);
    
@@ -123,10 +129,12 @@ Program Listing for File rs_model.hpp
        return new LeafSizeRSWrapper(*this);
      }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const math::Range& range,
                          std::vector<std::vector<size_t>>& neighbors,
                          std::vector<std::vector<double>>& distances,
@@ -198,17 +206,20 @@ Program Listing for File rs_model.hpp
    
      void InitializeModel(const bool naive, const bool singleMode);
    
-     void BuildModel(arma::mat&& referenceSet,
+     void BuildModel(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize,
                      const bool naive,
                      const bool singleMode);
    
-     void Search(arma::mat&& querySet,
+     void Search(util::Timers& timers,
+                 arma::mat&& querySet,
                  const math::Range& range,
                  std::vector<std::vector<size_t>>& neighbors,
                  std::vector<std::vector<double>>& distances);
    
-     void Search(const math::Range& range,
+     void Search(util::Timers& timers,
+                 const math::Range& range,
                  std::vector<std::vector<size_t>>& neighbors,
                  std::vector<std::vector<double>>& distances);
    

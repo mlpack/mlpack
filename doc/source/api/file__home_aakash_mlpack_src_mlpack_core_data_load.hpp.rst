@@ -80,12 +80,6 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacemlpack_1_1data_1a7bfd894be870a3409cc7d3b10b08d689`
-
-- :ref:`exhale_function_namespacemlpack_1_1data_1aa05aba27ed8693c1c4ed538240a549b1`
-
-- :ref:`exhale_function_namespacemlpack_1_1data_1adb0c6adf83024427e47a03bd7fbfb885`
-
 - :ref:`exhale_function_namespacemlpack_1_1data_1adf6afb44303645116a32d1ed168e0ff1`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1ac5679a4dc8c6129e3895a1089855d25d`
@@ -95,6 +89,12 @@ Functions
 - :ref:`exhale_function_namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1ac0441d5f7e76f0fcdeec487d4a9732ac`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1a7bfd894be870a3409cc7d3b10b08d689`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1aa05aba27ed8693c1c4ed538240a549b1`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1adb0c6adf83024427e47a03bd7fbfb885`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1a01155770d761c5cf686a666f3622caa5`
 

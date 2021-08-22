@@ -1,4 +1,4 @@
-.TH "/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "/home/aakash/mlpack/src/mlpack/tests/test_function_tools.hpp" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,9 +10,15 @@
 
 .in +1c
 .ti -1c
+.RI "template<typename MatType > void \fBLoadBostonHousingDataset\fP (MatType &trainData, MatType &testData, arma::rowvec &trainResponses, arma::rowvec &testResponses, \fBdata::DatasetInfo\fP &info)"
+.br
+.ti -1c
 .RI "void \fBLogisticRegressionTestData\fP (arma::mat &data, arma::mat &testData, arma::mat &shuffledData, arma::Row< size_t > &responses, arma::Row< size_t > &testResponses, arma::Row< size_t > &shuffledResponses)"
 .br
 .RI "Create the data for the a logistic regression test\&. "
+.ti -1c
+.RI "double \fBRMSE\fP (const arma::Row< double > &predictions, const arma::Row< double > &trueResponses)"
+.br
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -30,6 +36,12 @@ mlpack is free software; you may redistribute it and/or modify it under the term
 Definition in file \fBtest_function_tools\&.hpp\fP\&.
 .SH "Function Documentation"
 .PP 
+.SS "void LoadBostonHousingDataset (MatType & trainData, MatType & testData, arma::rowvec & trainResponses, arma::rowvec & testResponses, \fBdata::DatasetInfo\fP & info)"
+
+.PP
+Definition at line 85 of file test_function_tools\&.hpp\&.
+.PP
+References mlpack::data::categorical, mlpack::data::Load(), DatasetMapper< PolicyType, InputType >::SetDimensionality(), mlpack::data::Split(), and DatasetMapper< PolicyType, InputType >::Type()\&.
 .SS "void LogisticRegressionTestData (arma::mat & data, arma::mat & testData, arma::mat & shuffledData, arma::Row< size_t > & responses, arma::Row< size_t > & testResponses, arma::Row< size_t > & shuffledResponses)\fC [inline]\fP"
 
 .PP
@@ -52,9 +64,13 @@ Create the data for the a logistic regression test\&.
 .PP
 
 .PP
-Definition at line 33 of file test_function_tools\&.hpp\&.
+Definition at line 34 of file test_function_tools\&.hpp\&.
 .PP
 References GaussianDistribution::Random()\&.
+.SS "double RMSE (const arma::Row< double > & predictions, const arma::Row< double > & trueResponses)\fC [inline]\fP"
+
+.PP
+Definition at line 108 of file test_function_tools\&.hpp\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for mlpack from the source code\&.

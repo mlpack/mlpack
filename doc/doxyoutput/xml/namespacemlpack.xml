@@ -5,7 +5,6 @@
     <innerclass refid="classmlpack_1_1Backtrace" prot="public">mlpack::Backtrace</innerclass>
     <innerclass refid="classmlpack_1_1IO" prot="public">mlpack::IO</innerclass>
     <innerclass refid="classmlpack_1_1Timer" prot="public">mlpack::Timer</innerclass>
-    <innerclass refid="classmlpack_1_1Timers" prot="public">mlpack::Timers</innerclass>
     <innernamespace refid="namespacemlpack_1_1adaboost">mlpack::adaboost</innernamespace>
     <innernamespace refid="namespacemlpack_1_1amf">mlpack::amf</innernamespace>
     <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
@@ -17,6 +16,7 @@
     <innernamespace refid="namespacemlpack_1_1det">mlpack::det</innernamespace>
     <innernamespace refid="namespacemlpack_1_1distribution">mlpack::distribution</innernamespace>
     <innernamespace refid="namespacemlpack_1_1emst">mlpack::emst</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ensemble">mlpack::ensemble</innernamespace>
     <innernamespace refid="namespacemlpack_1_1fastmks">mlpack::fastmks</innernamespace>
     <innernamespace refid="namespacemlpack_1_1gmm">mlpack::gmm</innernamespace>
     <innernamespace refid="namespacemlpack_1_1hmm">mlpack::hmm</innernamespace>
@@ -169,7 +169,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" line="145" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" bodystart="145" bodyend="168"/>
         <references refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" compoundref="format_8hpp" startline="25">mlpack::data::binary</references>
-        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="176" endline="188">FilterFileName</references>
+        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="175" endline="187">FilterFileName</references>
         <referencedby refid="namespacemlpack_1a8c171c8ee3d09fb7f38f9a76b9a962b8" compoundref="serialization_8hpp" startline="172" endline="180">SerializeObjectAll</referencedby>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1a8c171c8ee3d09fb7f38f9a76b9a962b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -240,7 +240,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" bodystart="184" bodyend="203"/>
         <references refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" compoundref="format_8hpp" startline="25">mlpack::data::binary</references>
         <references refid="pointer__wrapper_8hpp_1a58a300268ba9c6215a8ab2075a4dc675" compoundref="pointer__wrapper_8hpp" startline="96">CEREAL_POINTER</references>
-        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="176" endline="188">FilterFileName</references>
+        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="175" endline="187">FilterFileName</references>
         <referencedby refid="namespacemlpack_1a005e4f612a7747ec26149ceb00fbb960" compoundref="serialization_8hpp" startline="206" endline="214">SerializePointerObjectAll</referencedby>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1a005e4f612a7747ec26149ceb00fbb960" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -353,7 +353,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" bodystart="26" bodyend="74"/>
         <references refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" compoundref="format_8hpp" startline="25">mlpack::data::binary</references>
-        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="176" endline="188">FilterFileName</references>
+        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="175" endline="187">FilterFileName</references>
         <referencedby refid="namespacemlpack_1a4f980f11d878f685a51f25a1e00aeef1" compoundref="serialization_8hpp" startline="78" endline="86">TestAllArmadilloSerialization</referencedby>
       </memberdef>
       <memberdef kind="function" id="namespacemlpack_1a7c2aa41ce56ddd03a2a2d8580b2433c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -384,7 +384,7 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" line="92" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/serialization.hpp" bodystart="92" bodyend="128"/>
         <references refid="namespacemlpack_1_1data_1a387137c43ed9616d39ba90e890d181eba4c41ae0ac8cc59e0caeaa4984dd5d469" compoundref="format_8hpp" startline="25">mlpack::data::binary</references>
-        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="176" endline="188">FilterFileName</references>
+        <references refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" compoundref="test__catch__tools_8hpp" startline="175" endline="187">FilterFileName</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

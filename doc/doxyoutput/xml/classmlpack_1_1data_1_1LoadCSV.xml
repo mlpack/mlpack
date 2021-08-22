@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="208" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="208" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="232" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="232" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="363" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="363" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="387" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="387" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a110d0f63b1860324c40bae0391908f88" prot="private" static="no" mutable="no">
         <type>std::string</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="366" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="366" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="390" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="390" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1ae80f820219e45772366a2a68de6a54c4" prot="private" static="no" mutable="no">
         <type>std::string</type>
@@ -56,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="368" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="368" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="392" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="392" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a1e4c98fa2374fe0817bef5ffed9487a7" prot="private" static="no" mutable="no">
         <type>std::ifstream</type>
@@ -69,7 +69,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="370" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="370" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="394" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="394" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a7e86b240221cec507fccdf3a928493cd" prot="private" static="no" mutable="no">
         <type>boost::spirit::qi::rule&lt; std::string::iterator, iter_type()&gt;</type>
@@ -82,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="361" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="361" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="385" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="385" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -156,7 +156,9 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="78" bodyend="138"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="78" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="78" bodyend="151"/>
+        <references refid="classmlpack_1_1data_1_1DatasetMapper_1a78eda6bfb9e9462afa0fc85e32abe1af">DatasetMapper&lt; PolicyType, InputType &gt;::Dimensionality</references>
+        <references refid="classmlpack_1_1data_1_1DatasetMapper_1ae0e1d3459cf5bee5e688beaadf9a4f04">DatasetMapper&lt; PolicyType, InputType &gt;::SetDimensionality</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -211,7 +213,8 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="151" bodyend="205"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="164" bodyend="229"/>
+        <references refid="classmlpack_1_1data_1_1DatasetMapper_1a78eda6bfb9e9462afa0fc85e32abe1af">DatasetMapper&lt; PolicyType, InputType &gt;::Dimensionality</references>
         <references refid="classmlpack_1_1data_1_1DatasetMapper_1ae0e1d3459cf5bee5e688beaadf9a4f04">DatasetMapper&lt; PolicyType, InputType &gt;::SetDimensionality</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1ac274f442f96c30aebefd561936c7afb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
@@ -283,7 +286,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="214" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="238" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1a6b849752362af972447db4d4e3d58553" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -327,7 +330,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="223" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="223" bodyend="284"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="247" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="247" bodyend="308"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1a8b14d2c399d70245bb1be82ed79a8190" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -371,14 +374,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
 <para>This is the parse rule for strings. When we get a string we have to pass it to the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>.</para>        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="293" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="293" bodyend="358"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="317" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="317" bodyend="382"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Load the csv file.This class use boost::spirit to implement the parser, please refer to following link <ulink url="http://theboostcpplibraries.com/boost.spirit">http://theboostcpplibraries.com/boost.spirit</ulink> for quick review. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="36" bodyend="371"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="36" bodyend="395"/>
     <listofallmembers>
       <member refid="classmlpack_1_1data_1_1LoadCSV_1af22c9cffeaba67ac7320ae30d24e09f0" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>CheckOpen</name></member>
       <member refid="classmlpack_1_1data_1_1LoadCSV_1a2c4878ae6c48931c656d19c93406deca" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>delimiterRule</name></member>

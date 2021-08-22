@@ -18,6 +18,7 @@
     <innerfile refid="mean__bias__error_8hpp">mean_bias_error.hpp</innerfile>
     <innerfile refid="mean__squared__error_8hpp">mean_squared_error.hpp</innerfile>
     <innerfile refid="mean__squared__logarithmic__error_8hpp">mean_squared_logarithmic_error.hpp</innerfile>
+    <innerfile refid="multilabel__softmargin__loss_8hpp">multilabel_softmargin_loss.hpp</innerfile>
     <innerfile refid="negative__log__likelihood_8hpp">negative_log_likelihood.hpp</innerfile>
     <innerfile refid="poisson__nll__loss_8hpp">poisson_nll_loss.hpp</innerfile>
     <innerfile refid="reconstruction__loss_8hpp">reconstruction_loss.hpp</innerfile>

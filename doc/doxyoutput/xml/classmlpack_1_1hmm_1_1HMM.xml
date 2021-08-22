@@ -1293,48 +1293,48 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="838">
+      <node id="852">
         <label>HMM&lt; distribution::RegressionDistribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="836" relation="template-instance">
+        <childnode refid="850" relation="template-instance">
           <edgelabel>&lt; distribution::RegressionDistribution &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="840">
+      <node id="854">
         <label>HMM&lt; mlpack::gmm::GMM &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="836" relation="template-instance">
+        <childnode refid="850" relation="template-instance">
           <edgelabel>&lt; mlpack::gmm::GMM &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="841">
+      <node id="855">
         <label>HMM&lt; mlpack::gmm::DiagonalGMM &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="836" relation="template-instance">
+        <childnode refid="850" relation="template-instance">
           <edgelabel>&lt; mlpack::gmm::DiagonalGMM &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="839">
+      <node id="853">
         <label>HMMRegression</label>
         <link refid="classmlpack_1_1hmm_1_1HMMRegression"/>
-        <childnode refid="838" relation="public-inheritance">
+        <childnode refid="852" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="837">
+      <node id="851">
         <label>HMM&lt; mlpack::distribution::GaussianDistribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="836" relation="template-instance">
+        <childnode refid="850" relation="template-instance">
           <edgelabel>&lt; mlpack::distribution::GaussianDistribution &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="836">
+      <node id="850">
         <label>HMM&lt; Distribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
       </node>
-      <node id="842">
+      <node id="856">
         <label>HMM&lt; mlpack::distribution::DiscreteDistribution &gt;</label>
         <link refid="classmlpack_1_1hmm_1_1HMM"/>
-        <childnode refid="836" relation="template-instance">
+        <childnode refid="850" relation="template-instance">
           <edgelabel>&lt; mlpack::distribution::DiscreteDistribution &gt;</edgelabel>
         </childnode>
       </node>

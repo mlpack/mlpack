@@ -20,39 +20,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="666">
+      <node id="678">
         <label>TrainForm&lt; MT, PT, WT, false, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4"/>
-        <childnode refid="667" relation="public-inheritance">
+        <childnode refid="679" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="668">
+      <node id="680">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
-      <node id="667">
+      <node id="679">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="668" relation="template-instance">
+        <childnode refid="680" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="669">
+      <node id="681">
         <label>TrainForm&lt; MT, PT, WT, false, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4"/>
-        <childnode refid="670" relation="public-inheritance">
+        <childnode refid="682" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="671">
+      <node id="683">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
-      <node id="670">
+      <node id="682">
         <label>TrainFormBase6&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="671" relation="template-instance">
+        <childnode refid="683" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>

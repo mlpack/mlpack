@@ -5,407 +5,414 @@
     <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
     <includes local="yes">random_binary_numeric_split_impl.hpp</includes>
     <includedby refid="decision__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</includedby>
+    <includedby refid="decision__tree__regressor_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree_regressor.hpp</includedby>
     <incdepgraph>
-      <node id="47374">
+      <node id="48841">
         <label>list</label>
       </node>
-      <node id="47371">
+      <node id="48838">
         <label>atomic</label>
       </node>
-      <node id="47361">
+      <node id="48828">
         <label>cereal/types/memory.hpp</label>
       </node>
-      <node id="47337">
+      <node id="48804">
         <label>mlpack/core/util/arma_traits.hpp</label>
         <link refid="arma__traits_8hpp"/>
       </node>
-      <node id="47373">
+      <node id="48840">
         <label>iomanip</label>
       </node>
-      <node id="47346">
+      <node id="48813">
         <label>mlpack/core/cereal/unordered_map.hpp</label>
         <link refid="unordered__map_8hpp"/>
-        <childnode refid="47347" relation="include">
+        <childnode refid="48814" relation="include">
         </childnode>
-        <childnode refid="47349" relation="include">
+        <childnode refid="48816" relation="include">
         </childnode>
       </node>
-      <node id="47329">
+      <node id="48796">
         <label>cstdint</label>
       </node>
-      <node id="47338">
+      <node id="48805">
         <label>cereal/archives/binary.hpp</label>
       </node>
-      <node id="47345">
+      <node id="48812">
         <label>cereal/types/tuple.hpp</label>
       </node>
-      <node id="47368">
+      <node id="48835">
         <label>arma_config.hpp</label>
       </node>
-      <node id="47358">
+      <node id="48825">
         <label>boost/variant/variant_fwd.hpp</label>
       </node>
-      <node id="47325">
+      <node id="48792">
         <label>cmath</label>
       </node>
-      <node id="47344">
+      <node id="48811">
         <label>cereal/types/string.hpp</label>
       </node>
-      <node id="47333">
+      <node id="48800">
         <label>stdexcept</label>
       </node>
-      <node id="47353">
+      <node id="48820">
         <label>mlpack/core/cereal/is_saving.hpp</label>
         <link refid="is__saving_8hpp"/>
-        <childnode refid="47338" relation="include">
+        <childnode refid="48805" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
       </node>
-      <node id="47377">
+      <node id="48844">
         <label>string</label>
       </node>
-      <node id="47365">
+      <node id="48832">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="47366" relation="include">
+        <childnode refid="48833" relation="include">
         </childnode>
-        <childnode refid="47332" relation="include">
+        <childnode refid="48799" relation="include">
         </childnode>
       </node>
-      <node id="47375">
+      <node id="48842">
         <label>map</label>
       </node>
-      <node id="47327">
+      <node id="48794">
         <label>cfloat</label>
       </node>
-      <node id="47357">
+      <node id="48824">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="47379">
+      <node id="48846">
         <label>mlpack/core/util/deprecated.hpp</label>
         <link refid="deprecated_8hpp"/>
       </node>
-      <node id="47341">
+      <node id="48808">
         <label>cereal/archives/xml.hpp</label>
       </node>
-      <node id="47364">
+      <node id="48831">
         <label>mlpack/core/data/has_serialize.hpp</label>
         <link refid="has__serialize_8hpp"/>
-        <childnode refid="47365" relation="include">
+        <childnode refid="48832" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47348" relation="include">
+        <childnode refid="48815" relation="include">
         </childnode>
-        <childnode refid="47366" relation="include">
+        <childnode refid="48833" relation="include">
         </childnode>
       </node>
-      <node id="47354">
+      <node id="48821">
         <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
       </node>
-      <node id="47352">
+      <node id="48819">
         <label>mlpack/core/cereal/is_loading.hpp</label>
         <link refid="is__loading_8hpp"/>
-        <childnode refid="47338" relation="include">
+        <childnode refid="48805" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
       </node>
-      <node id="47355">
+      <node id="48822">
         <label>mlpack/core/cereal/array_wrapper.hpp</label>
         <link refid="array__wrapper_8hpp"/>
-        <childnode refid="47338" relation="include">
+        <childnode refid="48805" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
       </node>
-      <node id="47343">
+      <node id="48810">
         <label>cereal/types/boost_variant.hpp</label>
       </node>
-      <node id="47363">
+      <node id="48830">
         <label>pointer_vector_wrapper.hpp</label>
         <link refid="pointer__vector__wrapper_8hpp"/>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47351" relation="include">
+        <childnode refid="48818" relation="include">
         </childnode>
-        <childnode refid="47360" relation="include">
+        <childnode refid="48827" relation="include">
         </childnode>
       </node>
-      <node id="47367">
+      <node id="48834">
         <label>mlpack/core/util/arma_config_check.hpp</label>
         <link refid="arma__config__check_8hpp"/>
-        <childnode refid="47368" relation="include">
+        <childnode refid="48835" relation="include">
         </childnode>
       </node>
-      <node id="47369">
+      <node id="48836">
         <label>mlpack/core/util/log.hpp</label>
       </node>
-      <node id="47324">
+      <node id="48791">
         <label>mlpack/prereqs.hpp</label>
         <link refid="prereqs_8hpp"/>
-        <childnode refid="47325" relation="include">
+        <childnode refid="48792" relation="include">
         </childnode>
-        <childnode refid="47326" relation="include">
+        <childnode refid="48793" relation="include">
         </childnode>
-        <childnode refid="47327" relation="include">
+        <childnode refid="48794" relation="include">
         </childnode>
-        <childnode refid="47328" relation="include">
+        <childnode refid="48795" relation="include">
         </childnode>
-        <childnode refid="47329" relation="include">
+        <childnode refid="48796" relation="include">
         </childnode>
-        <childnode refid="47330" relation="include">
+        <childnode refid="48797" relation="include">
         </childnode>
-        <childnode refid="47331" relation="include">
+        <childnode refid="48798" relation="include">
         </childnode>
-        <childnode refid="47332" relation="include">
+        <childnode refid="48799" relation="include">
         </childnode>
-        <childnode refid="47333" relation="include">
+        <childnode refid="48800" relation="include">
         </childnode>
-        <childnode refid="47334" relation="include">
+        <childnode refid="48801" relation="include">
         </childnode>
-        <childnode refid="47335" relation="include">
+        <childnode refid="48802" relation="include">
         </childnode>
-        <childnode refid="47336" relation="include">
+        <childnode refid="48803" relation="include">
         </childnode>
-        <childnode refid="47337" relation="include">
+        <childnode refid="48804" relation="include">
         </childnode>
-        <childnode refid="47338" relation="include">
+        <childnode refid="48805" relation="include">
         </childnode>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47342" relation="include">
+        <childnode refid="48809" relation="include">
         </childnode>
-        <childnode refid="47343" relation="include">
+        <childnode refid="48810" relation="include">
         </childnode>
-        <childnode refid="47344" relation="include">
+        <childnode refid="48811" relation="include">
         </childnode>
-        <childnode refid="47345" relation="include">
+        <childnode refid="48812" relation="include">
         </childnode>
-        <childnode refid="47346" relation="include">
+        <childnode refid="48813" relation="include">
         </childnode>
-        <childnode refid="47350" relation="include">
+        <childnode refid="48817" relation="include">
         </childnode>
-        <childnode refid="47351" relation="include">
+        <childnode refid="48818" relation="include">
         </childnode>
-        <childnode refid="47352" relation="include">
+        <childnode refid="48819" relation="include">
         </childnode>
-        <childnode refid="47353" relation="include">
+        <childnode refid="48820" relation="include">
         </childnode>
-        <childnode refid="47354" relation="include">
+        <childnode refid="48821" relation="include">
         </childnode>
-        <childnode refid="47355" relation="include">
+        <childnode refid="48822" relation="include">
         </childnode>
-        <childnode refid="47356" relation="include">
+        <childnode refid="48823" relation="include">
         </childnode>
-        <childnode refid="47362" relation="include">
+        <childnode refid="48829" relation="include">
         </childnode>
-        <childnode refid="47363" relation="include">
+        <childnode refid="48830" relation="include">
         </childnode>
-        <childnode refid="47360" relation="include">
+        <childnode refid="48827" relation="include">
         </childnode>
-        <childnode refid="47364" relation="include">
+        <childnode refid="48831" relation="include">
         </childnode>
-        <childnode refid="47367" relation="include">
+        <childnode refid="48834" relation="include">
         </childnode>
-        <childnode refid="47369" relation="include">
+        <childnode refid="48836" relation="include">
         </childnode>
-        <childnode refid="47370" relation="include">
+        <childnode refid="48837" relation="include">
         </childnode>
-        <childnode refid="47379" relation="include">
+        <childnode refid="48846" relation="include">
         </childnode>
-        <childnode refid="47380" relation="include">
+        <childnode refid="48847" relation="include">
         </childnode>
       </node>
-      <node id="47330">
+      <node id="48797">
         <label>cstdio</label>
       </node>
-      <node id="47334">
+      <node id="48801">
         <label>tuple</label>
       </node>
-      <node id="47339">
+      <node id="48806">
         <label>cereal/archives/json.hpp</label>
       </node>
-      <node id="47356">
+      <node id="48823">
         <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
         <link refid="pointer__variant__wrapper_8hpp"/>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47343" relation="include">
+        <childnode refid="48810" relation="include">
         </childnode>
-        <childnode refid="47357" relation="include">
+        <childnode refid="48824" relation="include">
         </childnode>
-        <childnode refid="47358" relation="include">
+        <childnode refid="48825" relation="include">
         </childnode>
-        <childnode refid="47359" relation="include">
+        <childnode refid="48826" relation="include">
         </childnode>
-        <childnode refid="47360" relation="include">
+        <childnode refid="48827" relation="include">
         </childnode>
       </node>
-      <node id="47323">
+      <node id="48790">
         <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/random_binary_numeric_split.hpp</label>
         <link refid="random__binary__numeric__split_8hpp"/>
-        <childnode refid="47324" relation="include">
+        <childnode refid="48791" relation="include">
         </childnode>
-        <childnode refid="47381" relation="include">
+        <childnode refid="48848" relation="include">
         </childnode>
       </node>
-      <node id="47335">
+      <node id="48802">
         <label>utility</label>
       </node>
-      <node id="47359">
+      <node id="48826">
         <label>boost/variant/static_visitor.hpp</label>
       </node>
-      <node id="47350">
+      <node id="48817">
         <label>cereal/types/utility.hpp</label>
       </node>
-      <node id="47347">
+      <node id="48814">
         <label>pair_associative_container.hpp</label>
         <link refid="pair__associative__container_8hpp"/>
-        <childnode refid="47348" relation="include">
+        <childnode refid="48815" relation="include">
         </childnode>
       </node>
-      <node id="47370">
+      <node id="48837">
         <label>mlpack/core/util/timers.hpp</label>
         <link refid="timers_8hpp"/>
-        <childnode refid="47371" relation="include">
+        <childnode refid="48838" relation="include">
         </childnode>
-        <childnode refid="47372" relation="include">
+        <childnode refid="48839" relation="include">
         </childnode>
-        <childnode refid="47373" relation="include">
+        <childnode refid="48840" relation="include">
         </childnode>
-        <childnode refid="47374" relation="include">
+        <childnode refid="48841" relation="include">
         </childnode>
-        <childnode refid="47375" relation="include">
+        <childnode refid="48842" relation="include">
         </childnode>
-        <childnode refid="47376" relation="include">
+        <childnode refid="48843" relation="include">
         </childnode>
-        <childnode refid="47377" relation="include">
+        <childnode refid="48844" relation="include">
         </childnode>
-        <childnode refid="47378" relation="include">
+        <childnode refid="48845" relation="include">
         </childnode>
       </node>
-      <node id="47348">
+      <node id="48815">
         <label>cereal/cereal.hpp</label>
       </node>
-      <node id="47362">
+      <node id="48829">
         <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
         <link refid="pointer__vector__variant__wrapper_8hpp"/>
-        <childnode refid="47360" relation="include">
+        <childnode refid="48827" relation="include">
         </childnode>
-        <childnode refid="47356" relation="include">
+        <childnode refid="48823" relation="include">
         </childnode>
-        <childnode refid="47363" relation="include">
+        <childnode refid="48830" relation="include">
         </childnode>
       </node>
-      <node id="47331">
+      <node id="48798">
         <label>cstdlib</label>
       </node>
-      <node id="47381">
+      <node id="48848">
         <label>random_binary_numeric_split_impl.hpp</label>
       </node>
-      <node id="47326">
+      <node id="48793">
         <label>cctype</label>
       </node>
-      <node id="47349">
+      <node id="48816">
         <label>unordered_map</label>
       </node>
-      <node id="47328">
+      <node id="48795">
         <label>climits</label>
       </node>
-      <node id="47376">
+      <node id="48843">
         <label>mutex</label>
       </node>
-      <node id="47372">
+      <node id="48839">
         <label>chrono</label>
       </node>
-      <node id="47380">
+      <node id="48847">
         <label>mlpack/core/util/size_checks.hpp</label>
         <link refid="size__checks_8hpp"/>
       </node>
-      <node id="47378">
+      <node id="48845">
         <label>thread</label>
       </node>
-      <node id="47366">
+      <node id="48833">
         <label>type_traits</label>
       </node>
-      <node id="47342">
+      <node id="48809">
         <label>cereal/types/array.hpp</label>
       </node>
-      <node id="47336">
+      <node id="48803">
         <label>mlpack/core/arma_extend/arma_extend.hpp</label>
       </node>
-      <node id="47360">
+      <node id="48827">
         <label>pointer_wrapper.hpp</label>
         <link refid="pointer__wrapper_8hpp"/>
-        <childnode refid="47338" relation="include">
+        <childnode refid="48805" relation="include">
         </childnode>
-        <childnode refid="47339" relation="include">
+        <childnode refid="48806" relation="include">
         </childnode>
-        <childnode refid="47340" relation="include">
+        <childnode refid="48807" relation="include">
         </childnode>
-        <childnode refid="47341" relation="include">
+        <childnode refid="48808" relation="include">
         </childnode>
-        <childnode refid="47361" relation="include">
+        <childnode refid="48828" relation="include">
         </childnode>
       </node>
-      <node id="47332">
+      <node id="48799">
         <label>cstring</label>
       </node>
-      <node id="47351">
+      <node id="48818">
         <label>cereal/types/vector.hpp</label>
       </node>
-      <node id="47340">
+      <node id="48807">
         <label>cereal/archives/portable_binary.hpp</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="47383">
+      <node id="48850">
         <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp</label>
         <link refid="decision__tree_8hpp"/>
-        <childnode refid="47384" relation="include">
+        <childnode refid="48851" relation="include">
         </childnode>
-        <childnode refid="47385" relation="include">
+        <childnode refid="48852" relation="include">
         </childnode>
       </node>
-      <node id="47384">
+      <node id="48851">
         <label>/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp</label>
         <link refid="adaboost_8hpp"/>
       </node>
-      <node id="47385">
+      <node id="48852">
         <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
         <link refid="random__forest_8hpp"/>
       </node>
-      <node id="47382">
+      <node id="48849">
         <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/random_binary_numeric_split.hpp</label>
         <link refid="random__binary__numeric__split_8hpp"/>
-        <childnode refid="47383" relation="include">
+        <childnode refid="48850" relation="include">
         </childnode>
+        <childnode refid="48853" relation="include">
+        </childnode>
+      </node>
+      <node id="48853">
+        <label>/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree_regressor.hpp</label>
+        <link refid="decision__tree__regressor_8hpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit" prot="public">mlpack::tree::RandomBinaryNumericSplit</innerclass>
@@ -434,39 +441,52 @@ A tree splitter that finds a random binary numeric split.</para><para>mlpack is 
 <codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>extra<sp/>info<sp/>needed<sp/>for<sp/>split.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32" refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref><sp/>{<sp/>};</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WeightVecType&gt;</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a63046e033bd4b8da5aa301c62209f9e4" kindref="member">SplitIfBetter</ref>(</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bestGain,</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>data,</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>WeightVecType&amp;<sp/>weights,</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minimumLeafSize,</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minimumGainSplit,</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>classProbabilities,</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/>aux,</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>splitIfBetterGain<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="98" refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a8fde744efa29599636ccab609fc9b4f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a8fde744efa29599636ccab609fc9b4f3" kindref="member">NumChildren</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/></highlight><highlight class="comment">/*<sp/>classProbabilities<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>aux<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>2;</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a8cb83c22dcb77a93d1b617305db0adca" kindref="member">CalculateDirection</ref>(</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ElemType&amp;<sp/>point,</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>classProbabilities,</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>aux<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="116"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="118"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="120"><highlight class="normal"></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;random_binary_numeric_split_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WeightVecType&gt;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a7d8b5143608f1c91e5cbde886ce164dd" kindref="member">SplitIfBetter</ref>(</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bestGain,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numClasses,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>WeightVecType&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minimumLeafSize,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minimumGainSplit,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>splitInfo,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/>aux,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>splitIfBetterGain<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WeightVecType&gt;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a7d8b5143608f1c91e5cbde886ce164dd" kindref="member">SplitIfBetter</ref>(</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>bestGain,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::rowvec&amp;<sp/>responses,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>WeightVecType&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minimumLeafSize,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minimumGainSplit,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>splitInfo,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/>aux,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>FitnessFunction&amp;<sp/>fitnessFunction,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>splitIfBetterGain<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a822dda54d3f80cda15f57c1bcdc45cbc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a822dda54d3f80cda15f57c1bcdc45cbc" kindref="member">NumChildren</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/></highlight><highlight class="comment">/*<sp/>splitInfo<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>aux<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>2;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ElemType&gt;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1ac9d96402128b43c686e4160a55debf09" kindref="member">CalculateDirection</ref>(</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ElemType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>splitInfo,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kindref="compound">AuxiliarySplitInfo</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>aux<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;random_binary_numeric_split_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
     <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/random_binary_numeric_split.hpp"/>
   </compounddef>

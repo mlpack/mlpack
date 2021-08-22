@@ -13,6 +13,7 @@
     <innerfile refid="nulloutstream_8hpp">nulloutstream.hpp</innerfile>
     <innerfile refid="param__checks_8hpp">param_checks.hpp</innerfile>
     <innerfile refid="param__data_8hpp">param_data.hpp</innerfile>
+    <innerfile refid="params_8hpp">params.hpp</innerfile>
     <innerfile refid="prefixedoutstream_8hpp">prefixedoutstream.hpp</innerfile>
     <innerfile refid="program__doc_8hpp">program_doc.hpp</innerfile>
     <innerfile refid="sfinae__utility_8hpp">sfinae_utility.hpp</innerfile>

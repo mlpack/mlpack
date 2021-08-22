@@ -376,7 +376,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/dists/gaussian_distribution.hpp" line="126" column="1"/>
-        <referencedby refid="test__function__tools_8hpp_1a4fca855ff4c9772ee30ed0a171812953" compoundref="test__function__tools_8hpp" startline="33" endline="81">LogisticRegressionTestData</referencedby>
+        <referencedby refid="test__function__tools_8hpp_1a4fca855ff4c9772ee30ed0a171812953" compoundref="test__function__tools_8hpp" startline="34" endline="82">LogisticRegressionTestData</referencedby>
         <referencedby refid="classmlpack_1_1distribution_1_1GaussianDistribution_1aabd4dbf56bd3d719aede447516d68296" compoundref="gaussian__distribution_8hpp" startline="108" endline="118">GaussianDistribution::LogProbability</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1distribution_1_1GaussianDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">

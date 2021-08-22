@@ -52,6 +52,8 @@ Includes
 
 - ``batch_norm.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_batch_norm.hpp`)
 
+- ``bicubic_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bicubic_interpolation.hpp`)
+
 - ``bilinear_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bilinear_interpolation.hpp`)
 
 - ``c_relu.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_c_relu.hpp`)
@@ -124,6 +126,8 @@ Includes
 
 - ``multiply_merge.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multiply_merge.hpp`)
 
+- ``nearest_interpolation.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_nearest_interpolation.hpp`)
+
 - ``noisylinear.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_noisylinear.hpp`)
 
 - ``padding.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_padding.hpp`)
@@ -139,6 +143,8 @@ Includes
 - ``recurrent_attention.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_recurrent_attention.hpp`)
 
 - ``reinforce_normal.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reinforce_normal.hpp`)
+
+- ``relu6.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_relu6.hpp`)
 
 - ``reparametrization.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reparametrization.hpp`)
 

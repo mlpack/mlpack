@@ -1,4 +1,4 @@
-.TH "RSWrapper< TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "RSWrapper< TreeType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -39,11 +39,11 @@ Inherited by \fBLeafSizeRSWrapper< TreeType >\fP\&.
 .br
 .RI "Modify whether naive search is being used\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t)"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t)"
 .br
 .RI "Perform bichromatic range search (i\&.e\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
 .br
 .RI "Perform monochromatic range search (i\&.e\&. "
 .ti -1c
@@ -59,7 +59,7 @@ Inherited by \fBLeafSizeRSWrapper< TreeType >\fP\&.
 .br
 .RI "Modify whether single-tree search is being used\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t)"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t)"
 .br
 .RI "Train the model (build the reference tree if needed)\&. "
 .in -1c
@@ -86,13 +86,13 @@ Inherited by \fBLeafSizeRSWrapper< TreeType >\fP\&.
 class mlpack::range::RSWrapper< TreeType >"
 \fBRSWrapper\fP is a wrapper class for most \fBRangeSearch\fP types\&. 
 .PP
-Definition at line 86 of file rs_model\&.hpp\&.
+Definition at line 89 of file rs_model\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "typedef \fBRangeSearch\fP<\fBmetric::EuclideanDistance\fP, arma::mat, TreeType> \fBRSType\fP\fC [protected]\fP"
 
 .PP
-Definition at line 143 of file rs_model\&.hpp\&.
+Definition at line 149 of file rs_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBRSWrapper\fP (const bool singleMode, const bool naive)\fC [inline]\fP"
@@ -100,13 +100,13 @@ Definition at line 143 of file rs_model\&.hpp\&.
 .PP
 Create the \fBRSWrapper\fP object\&. 
 .PP
-Definition at line 90 of file rs_model\&.hpp\&.
+Definition at line 93 of file rs_model\&.hpp\&.
 .SS "virtual ~\fBRSWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
 Destruct the \fBRSWrapper\fP (nothing to do)\&. 
 .PP
-Definition at line 101 of file rs_model\&.hpp\&.
+Definition at line 104 of file rs_model\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "virtual \fBRSWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
@@ -118,7 +118,7 @@ Implements \fBRSWrapperBase\fP\&.
 .PP
 Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
 .PP
-Definition at line 98 of file rs_model\&.hpp\&.
+Definition at line 101 of file rs_model\&.hpp\&.
 .SS "const arma::mat& Dataset () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -126,7 +126,7 @@ Get the dataset\&.
 .PP
 Implements \fBRSWrapperBase\fP\&.
 .PP
-Definition at line 104 of file rs_model\&.hpp\&.
+Definition at line 107 of file rs_model\&.hpp\&.
 .SS "bool Naive () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -134,7 +134,7 @@ Get whether naive search is being used\&.
 .PP
 Implements \fBRSWrapperBase\fP\&.
 .PP
-Definition at line 112 of file rs_model\&.hpp\&.
+Definition at line 115 of file rs_model\&.hpp\&.
 .SS "bool& Naive ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -142,10 +142,10 @@ Modify whether naive search is being used\&.
 .PP
 Implements \fBRSWrapperBase\fP\&.
 .PP
-Definition at line 114 of file rs_model\&.hpp\&.
+Definition at line 117 of file rs_model\&.hpp\&.
 .PP
 References RSWrapperBase::Search(), and RSWrapperBase::Train()\&.
-.SS "virtual void Search (arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t)\fC [virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t)\fC [virtual]\fP"
 
 .PP
 Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&. This ignores the leaf size\&. 
@@ -153,7 +153,7 @@ Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&
 Implements \fBRSWrapperBase\fP\&.
 .PP
 Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
-.SS "virtual void Search (const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [virtual]\fP"
 
 .PP
 Perform monochromatic range search (i\&.e\&. a search with the reference set as the query set)\&. 
@@ -164,7 +164,7 @@ Implements \fBRSWrapperBase\fP\&.
 .PP
 Serialize the \fBRangeSearch\fP model\&. 
 .PP
-Definition at line 137 of file rs_model\&.hpp\&.
+Definition at line 143 of file rs_model\&.hpp\&.
 .SS "bool SingleMode () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -172,7 +172,7 @@ Get whether single-tree search is being used\&.
 .PP
 Implements \fBRSWrapperBase\fP\&.
 .PP
-Definition at line 107 of file rs_model\&.hpp\&.
+Definition at line 110 of file rs_model\&.hpp\&.
 .SS "bool& SingleMode ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -180,8 +180,8 @@ Modify whether single-tree search is being used\&.
 .PP
 Implements \fBRSWrapperBase\fP\&.
 .PP
-Definition at line 109 of file rs_model\&.hpp\&.
-.SS "virtual void Train (arma::mat && referenceSet, const size_t)\fC [virtual]\fP"
+Definition at line 112 of file rs_model\&.hpp\&.
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t)\fC [virtual]\fP"
 
 .PP
 Train the model (build the reference tree if needed)\&. This ignores the leaf size\&. 
@@ -196,7 +196,7 @@ Reimplemented in \fBLeafSizeRSWrapper< TreeType >\fP\&.
 .PP
 The instantiated \fBRangeSearch\fP object that we are wrapping\&. 
 .PP
-Definition at line 146 of file rs_model\&.hpp\&.
+Definition at line 152 of file rs_model\&.hpp\&.
 
 .SH "Author"
 .PP 

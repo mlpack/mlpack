@@ -76,9 +76,9 @@ Functions
 
 - :ref:`exhale_function_namespacemlpack_1a48f8ce6e4565473110b4f55040b74b2f`
 
-- :ref:`exhale_function_namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf`
-
 - :ref:`exhale_function_namespacemlpack_1a7c2aa41ce56ddd03a2a2d8580b2433c2`
+
+- :ref:`exhale_function_namespacemlpack_1a615dd99e3b326f33e92e48f84d3f86cf`
 
 
 Full File Listing

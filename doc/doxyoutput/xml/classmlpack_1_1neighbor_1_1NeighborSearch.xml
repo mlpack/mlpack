@@ -976,28 +976,28 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1078">
+      <node id="1090">
         <label>NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
       </node>
-      <node id="1080">
+      <node id="1092">
         <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1078" relation="template-instance">
+        <childnode refid="1090" relation="template-instance">
           <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1079">
+      <node id="1091">
         <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1078" relation="template-instance">
+        <childnode refid="1090" relation="template-instance">
           <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1081">
+      <node id="1093">
         <label>NeighborSearch&lt; neighbor::NearestNeighborSort, metric::LMetric&lt; TPower, true &gt; &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1078" relation="template-instance">
+        <childnode refid="1090" relation="template-instance">
           <edgelabel>&lt; neighbor::NearestNeighborSort, metric::LMetric&lt; TPower, true &gt; &gt;</edgelabel>
         </childnode>
       </node>

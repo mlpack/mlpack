@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="266" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="266" bodyend="280"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="274" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="274" bodyend="288"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1ac0de56010f449839feb1a03bc66ca453" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type></type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="283" bodyend="283"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="291" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="291" bodyend="291"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a09080a653d528fcd34bb630ea566badb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1SpillNSWrapper" kindref="compound">SpillNSWrapper</ref> *</type>
@@ -56,16 +56,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="286" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="286" bodyend="286"/>
-        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9e7389351073f295e1aee942dbd7942a">NSWrapperBase::Search</references>
-        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a870763190dedf5ec0d9a2118f742a517">NSWrapperBase::Train</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="294" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="294" bodyend="294"/>
+        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a77e0c8a26bf09774799738767d39e898">NSWrapperBase::Search</references>
+        <references refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a17c2adbcf179c81dd6337d0424b945b8">NSWrapperBase::Train</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a7f3908cf84625e816aac3b8ae78d302f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a426eb7af072a5176fff19e1ec42b4318" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize, const double rho)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize, const double rho)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1a1f033e50f5a14937123de77cb439fcb5">Search</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1a9e5c7f49611693baf982d577abcdffc4">Search</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -96,7 +100,7 @@
 <para>search with a different query set) using the given parameters. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="296" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="305" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -121,14 +125,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="305" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="305" bodyend="308"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="315" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="315" bodyend="318"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a0bfff11e794dd6c4c7323cd204c67378" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1SpillNSWrapper_1aadb567979423035ec7e671b2f48dbd6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize, const double tau, const double rho)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t leafSize, const double tau, const double rho)</argsstring>
         <name>Train</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1ae4fcf39ad7ed7dca39fe8bd00fd76082">Train</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1NSWrapper_1af9d87167b758e59c7cc44492904d9acb">Train</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -151,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="289" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="297" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -159,84 +167,84 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1136">
+      <node id="1148">
         <label>NSWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapperBase"/>
       </node>
-      <node id="1137">
+      <node id="1149">
         <label>NSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1136" relation="public-inheritance">
+        <childnode refid="1148" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1134">
+      <node id="1146">
         <label>SpillNSWrapper&lt; SortPolicy &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1SpillNSWrapper"/>
-        <childnode refid="1135" relation="public-inheritance">
+        <childnode refid="1147" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1135">
+      <node id="1147">
         <label>NSWrapper&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1136" relation="public-inheritance">
+        <childnode refid="1148" relation="public-inheritance">
         </childnode>
-        <childnode refid="1137" relation="template-instance">
+        <childnode refid="1149" relation="template-instance">
           <edgelabel>&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</edgelabel>
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1142">
+      <node id="1154">
         <label>NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
       </node>
-      <node id="1141">
+      <node id="1153">
         <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1142" relation="template-instance">
+        <childnode refid="1154" relation="template-instance">
           <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1140">
+      <node id="1152">
         <label>NSWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapperBase"/>
       </node>
-      <node id="1143">
+      <node id="1155">
         <label>NSWrapper&lt; SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1140" relation="public-inheritance">
+        <childnode refid="1152" relation="public-inheritance">
         </childnode>
-        <childnode refid="1144" relation="usage">
+        <childnode refid="1156" relation="usage">
           <edgelabel>ns</edgelabel>
         </childnode>
       </node>
-      <node id="1138">
+      <node id="1150">
         <label>SpillNSWrapper&lt; SortPolicy &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1SpillNSWrapper"/>
-        <childnode refid="1139" relation="public-inheritance">
+        <childnode refid="1151" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1144">
+      <node id="1156">
         <label>NeighborSearch&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearch"/>
-        <childnode refid="1142" relation="template-instance">
+        <childnode refid="1154" relation="template-instance">
           <edgelabel>&lt; SortPolicy, metric::EuclideanDistance, arma::mat, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1139">
+      <node id="1151">
         <label>NSWrapper&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NSWrapper"/>
-        <childnode refid="1140" relation="public-inheritance">
+        <childnode refid="1152" relation="public-inheritance">
         </childnode>
-        <childnode refid="1141" relation="usage">
+        <childnode refid="1153" relation="usage">
           <edgelabel>ns</edgelabel>
         </childnode>
-        <childnode refid="1143" relation="template-instance">
+        <childnode refid="1155" relation="template-instance">
           <edgelabel>&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="253" bodyend="320"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" line="271" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp" bodystart="261" bodyend="330"/>
     <listofallmembers>
       <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a09080a653d528fcd34bb630ea566badb" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Clone</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Dataset</name></member>
@@ -246,13 +254,13 @@
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1ad2fc06b46e6469a058f3a27bcc1ba9ef" prot="protected" virt="non-virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>NSType</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aa5e9531452fb70b839ae680037add615" prot="public" virt="non-virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>NSWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1afe3cd9a0f215a7de10b6d31cbfc33dca" prot="public" virt="non-virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>NSWrapperBase</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a7f3908cf84625e816aac3b8ae78d302f" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aeb3fa1fab8680898b6326556ea81a55b" prot="public" virt="virtual" ambiguityscope="NSWrapper&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;::"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a426eb7af072a5176fff19e1ec42b4318" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" prot="public" virt="virtual" ambiguityscope="NSWrapper&lt; SortPolicy, tree::SPTree, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistDualTreeTraverser, tree::SPTree&lt; metric::EuclideanDistance, NeighborSearchStat&lt; SortPolicy &gt;, arma::mat &gt;::template DefeatistSingleTreeTraverser &gt;::"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a23cdc4b734a3dc41722aaded92244fd4" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6071cc412821cb4ce4364fbc2a0a8533" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>SearchMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a85c6919690f25dd0cf0bd93c9e1110e1" prot="public" virt="non-virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>SpillNSWrapper</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a0bfff11e794dd6c4c7323cd204c67378" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1aadb567979423035ec7e671b2f48dbd6b" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>Train</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a33da04d4db6bb80d7354d3a3839bb408" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>~NSWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a62d0554213b6a374ac784bd040c4377d" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>~NSWrapperBase</name></member>
       <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1ac0de56010f449839feb1a03bc66ca453" prot="public" virt="virtual"><scope>mlpack::neighbor::SpillNSWrapper</scope><name>~SpillNSWrapper</name></member>

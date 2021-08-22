@@ -55,16 +55,19 @@ Program Listing for File ra_model.hpp
      virtual bool Naive() const = 0;
      virtual bool& Naive() = 0;
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize) = 0;
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
                          const size_t leafSize) = 0;
    
-     virtual void Search(const size_t k,
+     virtual void Search(util::Timers& timers,
+                         const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances) = 0;
    };
@@ -108,16 +111,19 @@ Program Listing for File ra_model.hpp
      bool Naive() const { return ra.Naive(); }
      bool& Naive() { return ra.Naive(); }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t /* leafSize */);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
                          const size_t /* leafSize */);
    
-     virtual void Search(const size_t k,
+     virtual void Search(util::Timers& timers,
+                         const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances);
    
@@ -155,10 +161,12 @@ Program Listing for File ra_model.hpp
        return new LeafSizeRAWrapper(*this);
      }
    
-     virtual void Train(arma::mat&& referenceSet,
+     virtual void Train(util::Timers& timers,
+                        arma::mat&& referenceSet,
                         const size_t leafSize);
    
-     virtual void Search(arma::mat&& querySet,
+     virtual void Search(util::Timers& timers,
+                         arma::mat&& querySet,
                          const size_t k,
                          arma::Mat<size_t>& neighbors,
                          arma::mat& distances,
@@ -250,17 +258,20 @@ Program Listing for File ra_model.hpp
    
      void InitializeModel(const bool naive, const bool singleMode);
    
-     void BuildModel(arma::mat&& referenceSet,
+     void BuildModel(util::Timers& timers,
+                     arma::mat&& referenceSet,
                      const size_t leafSize,
                      const bool naive,
                      const bool singleMode);
    
-     void Search(arma::mat&& querySet,
+     void Search(util::Timers& timers,
+                 arma::mat&& querySet,
                  const size_t k,
                  arma::Mat<size_t>& neighbors,
                  arma::mat& distances);
    
-     void Search(const size_t k,
+     void Search(util::Timers& timers,
+                 const size_t k,
                  arma::Mat<size_t>& neighbors,
                  arma::mat& distances);
    

@@ -325,9 +325,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="108" bodyend="108"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1acac458c2ea9b4b4f1d48bd9cff986bae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -406,9 +406,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="113" bodyend="113"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1ae2f246d60c5d8fbebd3218063fe3d752" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -539,9 +539,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="90" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="90" bodyend="90"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a8affdbc5f4db5e3f62e0e56a1e7de599" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -568,9 +568,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="103" bodyend="103"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1af6b273aba48a984b2847aa1593e09477" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -597,9 +597,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="84" bodyend="85"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a44fc92866e2a5ac3c9bbaebac71b8a62" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -626,9 +626,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp" bodystart="79" bodyend="79"/>
-        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="243" endline="354">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="243" endline="354">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
-        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="248" endline="368">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="n__step__q__learning__worker_8hpp" startline="244" endline="355">NStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__q__learning__worker_8hpp" startline="244" endline="355">OneStepQLearningWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1OneStepSarsaWorker_1ad3920ee0951fcd4ce236584e19db8256" compoundref="one__step__sarsa__worker_8hpp" startline="249" endline="369">OneStepSarsaWorker&lt; EnvironmentType, NetworkType, UpdaterType, PolicyType &gt;::Step</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1TrainingConfig_1a8ff4385395b639358c1e392696a7469f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>

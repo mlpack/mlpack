@@ -1,4 +1,4 @@
-.TH "NStepQLearningWorker< EnvironmentType, NetworkType, UpdaterType, PolicyType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "NStepQLearningWorker< EnvironmentType, NetworkType, UpdaterType, PolicyType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -85,15 +85,15 @@ Definition at line 179 of file async_learning\&.hpp\&.
 .SS "using \fBActionType\fP =  typename EnvironmentType::Action"
 
 .PP
-Definition at line 39 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 40 of file n_step_q_learning_worker\&.hpp\&.
 .SS "using \fBStateType\fP =  typename EnvironmentType::State"
 
 .PP
-Definition at line 38 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 39 of file n_step_q_learning_worker\&.hpp\&.
 .SS "using \fBTransitionType\fP =  std::tuple<\fBStateType\fP, \fBActionType\fP, double, \fBStateType\fP>"
 
 .PP
-Definition at line 40 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 41 of file n_step_q_learning_worker\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBNStepQLearningWorker\fP (const UpdaterType & updater, const EnvironmentType & environment, const \fBTrainingConfig\fP & config, bool deterministic)\fC [inline]\fP"
@@ -114,7 +114,7 @@ Construct N-step Q-Learning worker with the given parameters and environment\&.
 .PP
 
 .PP
-Definition at line 51 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 52 of file n_step_q_learning_worker\&.hpp\&.
 .SS "\fBNStepQLearningWorker\fP (const \fBNStepQLearningWorker\fP< EnvironmentType, NetworkType, UpdaterType, PolicyType > & other)\fC [inline]\fP"
 
 .PP
@@ -127,7 +127,7 @@ Copy another \fBNStepQLearningWorker\fP\&.
 .PP
 
 .PP
-Definition at line 71 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 72 of file n_step_q_learning_worker\&.hpp\&.
 .SS "\fBNStepQLearningWorker\fP (\fBNStepQLearningWorker\fP< EnvironmentType, NetworkType, UpdaterType, PolicyType > && other)\fC [inline]\fP"
 
 .PP
@@ -140,13 +140,13 @@ Take ownership of another \fBNStepQLearningWorker\fP\&.
 .PP
 
 .PP
-Definition at line 101 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 102 of file n_step_q_learning_worker\&.hpp\&.
 .SS "~\fBNStepQLearningWorker\fP ()\fC [inline]\fP"
 
 .PP
 Clean memory\&. 
 .PP
-Definition at line 203 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 204 of file n_step_q_learning_worker\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "void Initialize (NetworkType & learningNetwork)\fC [inline]\fP"
@@ -161,7 +161,7 @@ Initialize the worker\&.
 .PP
 
 .PP
-Definition at line 214 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 215 of file n_step_q_learning_worker\&.hpp\&.
 .SS "\fBNStepQLearningWorker\fP& operator= (const \fBNStepQLearningWorker\fP< EnvironmentType, NetworkType, UpdaterType, PolicyType > & other)\fC [inline]\fP"
 
 .PP
@@ -174,7 +174,7 @@ Copy another \fBNStepQLearningWorker\fP\&.
 .PP
 
 .PP
-Definition at line 131 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 132 of file n_step_q_learning_worker\&.hpp\&.
 .SS "\fBNStepQLearningWorker\fP& operator= (\fBNStepQLearningWorker\fP< EnvironmentType, NetworkType, UpdaterType, PolicyType > && other)\fC [inline]\fP"
 
 .PP
@@ -187,7 +187,7 @@ Take ownership of another \fBNStepQLearningWorker\fP\&.
 .PP
 
 .PP
-Definition at line 168 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 169 of file n_step_q_learning_worker\&.hpp\&.
 .SS "bool Step (NetworkType & learningNetwork, NetworkType & targetNetwork, size_t & totalSteps, PolicyType & policy, double & totalReward)\fC [inline]\fP"
 
 .PP
@@ -213,7 +213,7 @@ Indicate whether current episode ends after this step\&.
 .PP
 
 .PP
-Definition at line 243 of file n_step_q_learning_worker\&.hpp\&.
+Definition at line 244 of file n_step_q_learning_worker\&.hpp\&.
 .PP
 References TrainingConfig::Discount(), TrainingConfig::GradientLimit(), TrainingConfig::StepLimit(), TrainingConfig::StepSize(), TrainingConfig::TargetNetworkSyncInterval(), and TrainingConfig::UpdateInterval()\&.
 

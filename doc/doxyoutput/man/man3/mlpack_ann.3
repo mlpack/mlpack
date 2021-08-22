@@ -1,4 +1,4 @@
-.TH "mlpack::ann" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "mlpack::ann" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -70,6 +70,10 @@ mlpack::ann \- Artificial Neural Network\&.
 .br
 .RI "\fBBiasSetVisitor\fP updates the module bias parameters given the parameters set\&. "
 .ti -1c
+.RI "class \fBBicubicInterpolation\fP"
+.br
+.RI "Definition and Implementation of the Bicubic Interpolation Layer\&. "
+.ti -1c
 .RI "class \fBBilinearInterpolation\fP"
 .br
 .RI "Definition and Implementation of the Bilinear Interpolation Layer\&. "
@@ -85,6 +89,10 @@ mlpack::ann \- Artificial Neural Network\&.
 .RI "class \fBCELU\fP"
 .br
 .RI "The \fBCELU\fP activation function, defined by\&. "
+.ti -1c
+.RI "class \fBChannelShuffle\fP"
+.br
+.RI "Definition and implementation of the Channel Shuffle Layer\&. "
 .ti -1c
 .RI "class \fBConcat\fP"
 .br
@@ -434,6 +442,9 @@ mlpack::ann \- Artificial Neural Network\&.
 .br
 .RI "Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions\&. "
 .ti -1c
+.RI "class \fBMultiLabelSoftMarginLoss\fP"
+.br
+.ti -1c
 .RI "class \fBMultiplyConstant\fP"
 .br
 .RI "Implementation of the multiply constant layer\&. "
@@ -449,6 +460,10 @@ mlpack::ann \- Artificial Neural Network\&.
 .RI "class \fBNaiveConvolution\fP"
 .br
 .RI "Computes the two-dimensional convolution\&. "
+.ti -1c
+.RI "class \fBNearestInterpolation\fP"
+.br
+.RI "Definition and Implementation of the Nearest Interpolation Layer\&. "
 .ti -1c
 .RI "class \fBNegativeLogLikelihood\fP"
 .br
@@ -565,6 +580,9 @@ mlpack::ann \- Artificial Neural Network\&.
 .RI "class \fBReinforceNormal\fP"
 .br
 .RI "Implementation of the reinforce normal layer\&. "
+.ti -1c
+.RI "class \fBReLU6\fP"
+.br
 .ti -1c
 .RI "class \fBReparametrization\fP"
 .br
@@ -771,7 +789,7 @@ mlpack::ann \- Artificial Neural Network\&.
 .br
 .RI "The L2 Regularizer\&. "
 .ti -1c
-.RI "template<typename\&.\&.\&. CustomLayers> using \fBLayerTypes\fP = boost::variant< \fBAdaptiveMaxPooling\fP< arma::mat, arma::mat > *, \fBAdaptiveMeanPooling\fP< arma::mat, arma::mat > *, \fBAdd\fP< arma::mat, arma::mat > *, \fBAddMerge\fP< arma::mat, arma::mat > *, \fBAlphaDropout\fP< arma::mat, arma::mat > *, \fBAtrousConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBLogisticFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBIdentityFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBTanhFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBSoftplusFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBRectifierFunction\fP, arma::mat, arma::mat > *, \fBBatchNorm\fP< arma::mat, arma::mat > *, \fBBilinearInterpolation\fP< arma::mat, arma::mat > *, \fBCELU\fP< arma::mat, arma::mat > *, \fBConcat\fP< arma::mat, arma::mat > *, \fBConcatenate\fP< arma::mat, arma::mat > *, \fBConcatPerformance\fP< \fBNegativeLogLikelihood\fP< arma::mat, arma::mat >, arma::mat, arma::mat > *, \fBConstant\fP< arma::mat, arma::mat > *, \fBConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBCReLU\fP< arma::mat, arma::mat > *, \fBDropConnect\fP< arma::mat, arma::mat > *, \fBDropout\fP< arma::mat, arma::mat > *, \fBELU\fP< arma::mat, arma::mat > *, \fBFastLSTM\fP< arma::mat, arma::mat > *, \fBFlexibleReLU\fP< arma::mat, arma::mat > *, \fBGRU\fP< arma::mat, arma::mat > *, \fBHardTanH\fP< arma::mat, arma::mat > *, \fBJoin\fP< arma::mat, arma::mat > *, \fBLayerNorm\fP< arma::mat, arma::mat > *, \fBLeakyReLU\fP< arma::mat, arma::mat > *, \fBLinear\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLinearNoBias\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLogSoftMax\fP< arma::mat, arma::mat > *, \fBLookup\fP< arma::mat, arma::mat > *, \fBLSTM\fP< arma::mat, arma::mat > *, \fBMaxPooling\fP< arma::mat, arma::mat > *, \fBMeanPooling\fP< arma::mat, arma::mat > *, \fBMiniBatchDiscrimination\fP< arma::mat, arma::mat > *, \fBMultiplyConstant\fP< arma::mat, arma::mat > *, \fBMultiplyMerge\fP< arma::mat, arma::mat > *, \fBNegativeLogLikelihood\fP< arma::mat, arma::mat > *, \fBNoisyLinear\fP< arma::mat, arma::mat > *, \fBPadding\fP< arma::mat, arma::mat > *, \fBPReLU\fP< arma::mat, arma::mat > *, \fBSoftmax\fP< arma::mat, arma::mat > *, \fBSpatialDropout\fP< arma::mat, arma::mat > *, \fBTransposedConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBWeightNorm\fP< arma::mat, arma::mat > *, \fBMoreTypes\fP, CustomLayers *\&.\&.\&. >"
+.RI "template<typename\&.\&.\&. CustomLayers> using \fBLayerTypes\fP = boost::variant< \fBAdaptiveMaxPooling\fP< arma::mat, arma::mat > *, \fBAdaptiveMeanPooling\fP< arma::mat, arma::mat > *, \fBAdd\fP< arma::mat, arma::mat > *, \fBAddMerge\fP< arma::mat, arma::mat > *, \fBAlphaDropout\fP< arma::mat, arma::mat > *, \fBAtrousConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBLogisticFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBIdentityFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBTanhFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBSoftplusFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBRectifierFunction\fP, arma::mat, arma::mat > *, \fBBatchNorm\fP< arma::mat, arma::mat > *, \fBBilinearInterpolation\fP< arma::mat, arma::mat > *, \fBCELU\fP< arma::mat, arma::mat > *, \fBConcat\fP< arma::mat, arma::mat > *, \fBConcatenate\fP< arma::mat, arma::mat > *, \fBConcatPerformance\fP< \fBNegativeLogLikelihood\fP< arma::mat, arma::mat >, arma::mat, arma::mat > *, \fBConstant\fP< arma::mat, arma::mat > *, \fBConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBCReLU\fP< arma::mat, arma::mat > *, \fBDropConnect\fP< arma::mat, arma::mat > *, \fBDropout\fP< arma::mat, arma::mat > *, \fBELU\fP< arma::mat, arma::mat > *, \fBFastLSTM\fP< arma::mat, arma::mat > *, \fBGRU\fP< arma::mat, arma::mat > *, \fBHardTanH\fP< arma::mat, arma::mat > *, \fBJoin\fP< arma::mat, arma::mat > *, \fBLayerNorm\fP< arma::mat, arma::mat > *, \fBLeakyReLU\fP< arma::mat, arma::mat > *, \fBLinear\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLinearNoBias\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLogSoftMax\fP< arma::mat, arma::mat > *, \fBLookup\fP< arma::mat, arma::mat > *, \fBLSTM\fP< arma::mat, arma::mat > *, \fBMaxPooling\fP< arma::mat, arma::mat > *, \fBMeanPooling\fP< arma::mat, arma::mat > *, \fBMiniBatchDiscrimination\fP< arma::mat, arma::mat > *, \fBMultiplyConstant\fP< arma::mat, arma::mat > *, \fBMultiplyMerge\fP< arma::mat, arma::mat > *, \fBNegativeLogLikelihood\fP< arma::mat, arma::mat > *, \fBNoisyLinear\fP< arma::mat, arma::mat > *, \fBPadding\fP< arma::mat, arma::mat > *, \fBPReLU\fP< arma::mat, arma::mat > *, \fBSequential\fP< arma::mat, arma::mat, false > *, \fBSequential\fP< arma::mat, arma::mat, true > *, \fBSoftmax\fP< arma::mat, arma::mat > *, \fBTransposedConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBWeightNorm\fP< arma::mat, arma::mat > *, \fBMoreTypes\fP, CustomLayers *\&.\&.\&. >"
 .br
 .ti -1c
 .RI "template<class ActivationFunction  = LiSHTFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBLiSHTFunctionLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
@@ -782,7 +800,7 @@ mlpack::ann \- Artificial Neural Network\&.
 .br
 .RI "Standard Mish-Layer using the Mish activation function\&. "
 .ti -1c
-.RI "using \fBMoreTypes\fP = boost::variant< \fBLinear3D\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLpPooling\fP< arma::mat, arma::mat > *, \fBPixelShuffle\fP< arma::mat, arma::mat > *, \fBGlimpse\fP< arma::mat, arma::mat > *, \fBHighway\fP< arma::mat, arma::mat > *, \fBMultiheadAttention\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBRecurrent\fP< arma::mat, arma::mat > *, \fBRecurrentAttention\fP< arma::mat, arma::mat > *, \fBReinforceNormal\fP< arma::mat, arma::mat > *, \fBReparametrization\fP< arma::mat, arma::mat > *, \fBSelect\fP< arma::mat, arma::mat > *, \fBSequential\fP< arma::mat, arma::mat, false > *, \fBSequential\fP< arma::mat, arma::mat, true > *, \fBSubview\fP< arma::mat, arma::mat > *, \fBVRClassReward\fP< arma::mat, arma::mat > *, \fBVirtualBatchNorm\fP< arma::mat, arma::mat > *, \fBRBF\fP< arma::mat, arma::mat, \fBGaussianFunction\fP > *, \fBBaseLayer\fP< \fBGaussianFunction\fP, arma::mat, arma::mat > *, \fBPositionalEncoding\fP< arma::mat, arma::mat > *, \fBISRLU\fP< arma::mat, arma::mat > *>"
+.RI "using \fBMoreTypes\fP = boost::variant< \fBFlexibleReLU\fP< arma::mat, arma::mat > *, \fBLinear3D\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBLpPooling\fP< arma::mat, arma::mat > *, \fBPixelShuffle\fP< arma::mat, arma::mat > *, \fBChannelShuffle\fP< arma::mat, arma::mat > *, \fBGlimpse\fP< arma::mat, arma::mat > *, \fBHighway\fP< arma::mat, arma::mat > *, \fBMultiheadAttention\fP< arma::mat, arma::mat, \fBNoRegularizer\fP > *, \fBRecurrent\fP< arma::mat, arma::mat > *, \fBRecurrentAttention\fP< arma::mat, arma::mat > *, \fBReinforceNormal\fP< arma::mat, arma::mat > *, \fBReLU6\fP< arma::mat, arma::mat > *, \fBReparametrization\fP< arma::mat, arma::mat > *, \fBSelect\fP< arma::mat, arma::mat > *, \fBSpatialDropout\fP< arma::mat, arma::mat > *, \fBSubview\fP< arma::mat, arma::mat > *, \fBVRClassReward\fP< arma::mat, arma::mat > *, \fBVirtualBatchNorm\fP< arma::mat, arma::mat > *, \fBRBF\fP< arma::mat, arma::mat, \fBGaussianFunction\fP > *, \fBBaseLayer\fP< \fBGaussianFunction\fP, arma::mat, arma::mat > *, \fBPositionalEncoding\fP< arma::mat, arma::mat > *, \fBISRLU\fP< arma::mat, arma::mat > *, \fBBicubicInterpolation\fP< arma::mat, arma::mat > *, \fBNearestInterpolation\fP< arma::mat, arma::mat > *>"
 .br
 .ti -1c
 .RI "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBReLULayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
@@ -968,10 +986,10 @@ Definition at line 62 of file lregularizer\&.hpp\&.
 The L2 Regularizer\&. 
 .PP
 Definition at line 67 of file lregularizer\&.hpp\&.
-.SS "using \fBLayerTypes\fP =  boost::variant< \fBAdaptiveMaxPooling\fP<arma::mat, arma::mat>*, \fBAdaptiveMeanPooling\fP<arma::mat, arma::mat>*, \fBAdd\fP<arma::mat, arma::mat>*, \fBAddMerge\fP<arma::mat, arma::mat>*, \fBAlphaDropout\fP<arma::mat, arma::mat>*, \fBAtrousConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBLogisticFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBIdentityFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBTanhFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBSoftplusFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBRectifierFunction\fP, arma::mat, arma::mat>*, \fBBatchNorm\fP<arma::mat, arma::mat>*, \fBBilinearInterpolation\fP<arma::mat, arma::mat>*, \fBCELU\fP<arma::mat, arma::mat>*, \fBConcat\fP<arma::mat, arma::mat>*, \fBConcatenate\fP<arma::mat, arma::mat>*, \fBConcatPerformance\fP<\fBNegativeLogLikelihood\fP<arma::mat, arma::mat>, arma::mat, arma::mat>*, \fBConstant\fP<arma::mat, arma::mat>*, \fBConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBCReLU\fP<arma::mat, arma::mat>*, \fBDropConnect\fP<arma::mat, arma::mat>*, \fBDropout\fP<arma::mat, arma::mat>*, \fBELU\fP<arma::mat, arma::mat>*, \fBFastLSTM\fP<arma::mat, arma::mat>*, \fBFlexibleReLU\fP<arma::mat, arma::mat>*, \fBGRU\fP<arma::mat, arma::mat>*, \fBHardTanH\fP<arma::mat, arma::mat>*, \fBJoin\fP<arma::mat, arma::mat>*, \fBLayerNorm\fP<arma::mat, arma::mat>*, \fBLeakyReLU\fP<arma::mat, arma::mat>*, \fBLinear\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLinearNoBias\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLogSoftMax\fP<arma::mat, arma::mat>*, \fBLookup\fP<arma::mat, arma::mat>*, \fBLSTM\fP<arma::mat, arma::mat>*, \fBMaxPooling\fP<arma::mat, arma::mat>*, \fBMeanPooling\fP<arma::mat, arma::mat>*, \fBMiniBatchDiscrimination\fP<arma::mat, arma::mat>*, \fBMultiplyConstant\fP<arma::mat, arma::mat>*, \fBMultiplyMerge\fP<arma::mat, arma::mat>*, \fBNegativeLogLikelihood\fP<arma::mat, arma::mat>*, \fBNoisyLinear\fP<arma::mat, arma::mat>*, \fBPadding\fP<arma::mat, arma::mat>*, \fBPReLU\fP<arma::mat, arma::mat>*, \fBSoftmax\fP<arma::mat, arma::mat>*, \fBSpatialDropout\fP<arma::mat, arma::mat>*, \fBTransposedConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBWeightNorm\fP<arma::mat, arma::mat>*, \fBMoreTypes\fP, CustomLayers*\&.\&.\&. >"
+.SS "using \fBLayerTypes\fP =  boost::variant< \fBAdaptiveMaxPooling\fP<arma::mat, arma::mat>*, \fBAdaptiveMeanPooling\fP<arma::mat, arma::mat>*, \fBAdd\fP<arma::mat, arma::mat>*, \fBAddMerge\fP<arma::mat, arma::mat>*, \fBAlphaDropout\fP<arma::mat, arma::mat>*, \fBAtrousConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBLogisticFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBIdentityFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBTanhFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBSoftplusFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBRectifierFunction\fP, arma::mat, arma::mat>*, \fBBatchNorm\fP<arma::mat, arma::mat>*, \fBBilinearInterpolation\fP<arma::mat, arma::mat>*, \fBCELU\fP<arma::mat, arma::mat>*, \fBConcat\fP<arma::mat, arma::mat>*, \fBConcatenate\fP<arma::mat, arma::mat>*, \fBConcatPerformance\fP<\fBNegativeLogLikelihood\fP<arma::mat, arma::mat>, arma::mat, arma::mat>*, \fBConstant\fP<arma::mat, arma::mat>*, \fBConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBCReLU\fP<arma::mat, arma::mat>*, \fBDropConnect\fP<arma::mat, arma::mat>*, \fBDropout\fP<arma::mat, arma::mat>*, \fBELU\fP<arma::mat, arma::mat>*, \fBFastLSTM\fP<arma::mat, arma::mat>*, \fBGRU\fP<arma::mat, arma::mat>*, \fBHardTanH\fP<arma::mat, arma::mat>*, \fBJoin\fP<arma::mat, arma::mat>*, \fBLayerNorm\fP<arma::mat, arma::mat>*, \fBLeakyReLU\fP<arma::mat, arma::mat>*, \fBLinear\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLinearNoBias\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLogSoftMax\fP<arma::mat, arma::mat>*, \fBLookup\fP<arma::mat, arma::mat>*, \fBLSTM\fP<arma::mat, arma::mat>*, \fBMaxPooling\fP<arma::mat, arma::mat>*, \fBMeanPooling\fP<arma::mat, arma::mat>*, \fBMiniBatchDiscrimination\fP<arma::mat, arma::mat>*, \fBMultiplyConstant\fP<arma::mat, arma::mat>*, \fBMultiplyMerge\fP<arma::mat, arma::mat>*, \fBNegativeLogLikelihood\fP<arma::mat, arma::mat>*, \fBNoisyLinear\fP<arma::mat, arma::mat>*, \fBPadding\fP<arma::mat, arma::mat>*, \fBPReLU\fP<arma::mat, arma::mat>*, \fBSequential\fP<arma::mat, arma::mat, false>*, \fBSequential\fP<arma::mat, arma::mat, true>*, \fBSoftmax\fP<arma::mat, arma::mat>*, \fBTransposedConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBWeightNorm\fP<arma::mat, arma::mat>*, \fBMoreTypes\fP, CustomLayers*\&.\&.\&. >"
 
 .PP
-Definition at line 306 of file layer_types\&.hpp\&.
+Definition at line 315 of file layer_types\&.hpp\&.
 .SS "using \fBLiSHTFunctionLayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
 
 .PP
@@ -984,10 +1002,10 @@ Definition at line 240 of file base_layer\&.hpp\&.
 Standard Mish-Layer using the Mish activation function\&. 
 .PP
 Definition at line 229 of file base_layer\&.hpp\&.
-.SS "using \fBMoreTypes\fP =  boost::variant< \fBLinear3D\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLpPooling\fP<arma::mat, arma::mat>*, \fBPixelShuffle\fP<arma::mat, arma::mat>*, \fBGlimpse\fP<arma::mat, arma::mat>*, \fBHighway\fP<arma::mat, arma::mat>*, \fBMultiheadAttention\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBRecurrent\fP<arma::mat, arma::mat>*, \fBRecurrentAttention\fP<arma::mat, arma::mat>*, \fBReinforceNormal\fP<arma::mat, arma::mat>*, \fBReparametrization\fP<arma::mat, arma::mat>*, \fBSelect\fP<arma::mat, arma::mat>*, \fBSequential\fP<arma::mat, arma::mat, false>*, \fBSequential\fP<arma::mat, arma::mat, true>*, \fBSubview\fP<arma::mat, arma::mat>*, \fBVRClassReward\fP<arma::mat, arma::mat>*, \fBVirtualBatchNorm\fP<arma::mat, arma::mat>*, \fBRBF\fP<arma::mat, arma::mat, \fBGaussianFunction\fP>*, \fBBaseLayer\fP<\fBGaussianFunction\fP, arma::mat, arma::mat>*, \fBPositionalEncoding\fP<arma::mat, arma::mat>*, \fBISRLU\fP<arma::mat, arma::mat>* >"
+.SS "using \fBMoreTypes\fP =  boost::variant< \fBFlexibleReLU\fP<arma::mat, arma::mat>*, \fBLinear3D\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBLpPooling\fP<arma::mat, arma::mat>*, \fBPixelShuffle\fP<arma::mat, arma::mat>*, \fBChannelShuffle\fP<arma::mat, arma::mat>*, \fBGlimpse\fP<arma::mat, arma::mat>*, \fBHighway\fP<arma::mat, arma::mat>*, \fBMultiheadAttention\fP<arma::mat, arma::mat, \fBNoRegularizer\fP>*, \fBRecurrent\fP<arma::mat, arma::mat>*, \fBRecurrentAttention\fP<arma::mat, arma::mat>*, \fBReinforceNormal\fP<arma::mat, arma::mat>*, \fBReLU6\fP<arma::mat, arma::mat>*, \fBReparametrization\fP<arma::mat, arma::mat>*, \fBSelect\fP<arma::mat, arma::mat>*, \fBSpatialDropout\fP<arma::mat, arma::mat>*, \fBSubview\fP<arma::mat, arma::mat>*, \fBVRClassReward\fP<arma::mat, arma::mat>*, \fBVirtualBatchNorm\fP<arma::mat, arma::mat>*, \fBRBF\fP<arma::mat, arma::mat, \fBGaussianFunction\fP>*, \fBBaseLayer\fP<\fBGaussianFunction\fP, arma::mat, arma::mat>*, \fBPositionalEncoding\fP<arma::mat, arma::mat>*, \fBISRLU\fP<arma::mat, arma::mat>*, \fBBicubicInterpolation\fP<arma::mat, arma::mat>*, \fBNearestInterpolation\fP<arma::mat, arma::mat>* >"
 
 .PP
-Definition at line 244 of file layer_types\&.hpp\&.
+Definition at line 253 of file layer_types\&.hpp\&.
 .SS "using \fBReLULayer\fP =  \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
 
 .PP
@@ -997,7 +1015,7 @@ Definition at line 174 of file base_layer\&.hpp\&.
 .SS "using \fBResidual\fP =  \fBSequential\fP< InputDataType, OutputDataType, true, CustomLayers\&.\&.\&.>"
 
 .PP
-Definition at line 261 of file sequential\&.hpp\&.
+Definition at line 259 of file sequential\&.hpp\&.
 .SS "using \fBSELU\fP =  \fBELU\fP<arma::mat, arma::mat>"
 
 .PP

@@ -29,75 +29,63 @@ Program Listing for File io.hpp
    #include "version.hpp"
    
    #include "param_data.hpp"
+   #include "params.hpp"
    
    #include <mlpack/core/data/load.hpp>
    #include <mlpack/core/data/save.hpp>
    
+   // TODO: this entire set of code is related to the bindings and maybe should go
+   // into src/mlpack/bindings/util/.
    namespace mlpack {
    
+   // TODO: completely go through this documentation and clean it up
    class IO
    {
     public:
-     static void Add(util::ParamData&& d);
+     static void AddParameter(const std::string& bindingName, util::ParamData&& d);
    
-     static bool HasParam(const std::string& identifier);
+     static void AddFunction(const std::string& type,
+                             const std::string& name,
+                             void (*func)(util::ParamData&, const void*, void*));
    
-     template<typename T>
-     static T& GetParam(const std::string& identifier);
+     static void AddBindingName(const std::string& bindingName,
+                                const std::string& name);
    
-     template<typename T>
-     static std::string GetPrintableParam(const std::string& identifier);
+     static void AddShortDescription(const std::string& bindingName,
+                                     const std::string& shortDescription);
    
-     template<typename T>
-     static T& GetRawParam(const std::string& identifier);
+     static void AddLongDescription(
+         const std::string& bindingName,
+         const std::function<std::string()>& longDescription);
    
-     template<typename T>
-     static void CheckInputMatrix(const T& matrix, const std::string& identifier);
+     static void AddExample(const std::string& bindingName,
+                            const std::function<std::string()>& example);
    
-     static void MakeInPlaceCopy(const std::string& outputParamName,
-                                 const std::string& inputParamName);
+     static void AddSeeAlso(const std::string& bindingName,
+                            const std::string& description,
+                            const std::string& link);
+   
+     static util::Params Parameters(const std::string& bindingName);
    
      static IO& GetSingleton();
    
-     static std::map<std::string, util::ParamData>& Parameters();
-     static std::map<char, std::string>& Aliases();
-   
-     static std::string ProgramName();
-   
-     static void SetPassed(const std::string& name);
-   
-     static void StoreSettings(const std::string& name);
-   
-     static void RestoreSettings(const std::string& name, const bool fatal = true);
-   
-     static void ClearSettings();
-   
-     static void CheckInputMatrices();
+     static util::Timers& GetTimers();
    
     private:
-     std::map<char, std::string> aliases;
-     std::map<std::string, util::ParamData> parameters;
-   
-    public:
+     std::mutex mapMutex;
+     std::map<std::string, std::map<char, std::string>> aliases;
+     std::map<std::string, std::map<std::string, util::ParamData>> parameters;
      typedef std::map<std::string, std::map<std::string,
          void (*)(util::ParamData&, const void*, void*)>> FunctionMapType;
      FunctionMapType functionMap;
    
-    private:
-     std::map<std::string, std::tuple<std::map<std::string, util::ParamData>,
-         std::map<char, std::string>, FunctionMapType>> storageMap;
+     std::mutex docMutex;
+     std::map<std::string, util::BindingDetails> docs;
    
-    public:
-     bool didParse;
-   
-     std::string programName;
-   
-     Timers timer;
+     util::Timers timer;
    
      friend class Timer;
    
-     util::BindingDetails doc;
-    private:
      IO();
    
      IO(const IO& other);

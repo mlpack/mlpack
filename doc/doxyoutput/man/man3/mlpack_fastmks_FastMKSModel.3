@@ -1,4 +1,4 @@
-.TH "FastMKSModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "FastMKSModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -35,7 +35,7 @@ FastMKSModel \- A utility struct to contain all the possible \fBFastMKS\fP model
 .br
 .RI "Clean memory\&. "
 .ti -1c
-.RI "template<typename TKernelType > void \fBBuildModel\fP (arma::mat &&referenceData, TKernelType &kernel, const bool singleMode, const bool naive, const double base)"
+.RI "template<typename TKernelType > void \fBBuildModel\fP (\fButil::Timers\fP &timers, arma::mat &&referenceData, TKernelType &kernel, const bool singleMode, const bool naive, const double base)"
 .br
 .RI "Build the model on the given reference set\&. "
 .ti -1c
@@ -63,11 +63,11 @@ FastMKSModel \- A utility struct to contain all the possible \fBFastMKS\fP model
 .br
 .RI "Move assignment operator\&. "
 .ti -1c
-.RI "void \fBSearch\fP (const arma::mat &querySet, const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels, const double base)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, const arma::mat &querySet, const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels, const double base)"
 .br
 .RI "Search with a different query set\&. "
 .ti -1c
-.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels)"
 .br
 .RI "Search with the reference set as the query set\&. "
 .ti -1c
@@ -135,7 +135,7 @@ Move constructor\&.
 Clean memory\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "void BuildModel (arma::mat && referenceData, TKernelType & kernel, const bool singleMode, const bool naive, const double base)"
+.SS "void BuildModel (\fButil::Timers\fP & timers, arma::mat && referenceData, TKernelType & kernel, const bool singleMode, const bool naive, const double base)"
 
 .PP
 Build the model on the given reference set\&. Make sure kernelType is equal to the correct entry in KernelTypes for the given KernelType class! 
@@ -144,13 +144,13 @@ Build the model on the given reference set\&. Make sure kernelType is equal to t
 .PP
 Get the kernel type\&. 
 .PP
-Definition at line 93 of file fastmks_model\&.hpp\&.
+Definition at line 94 of file fastmks_model\&.hpp\&.
 .SS "int& KernelType ()\fC [inline]\fP"
 
 .PP
 Modify the kernel type\&. 
 .PP
-Definition at line 95 of file fastmks_model\&.hpp\&.
+Definition at line 96 of file fastmks_model\&.hpp\&.
 .PP
 References FastMKSModel::Search(), and FastMKSModel::serialize()\&.
 .SS "bool Naive () const"
@@ -169,7 +169,7 @@ Copy assignment operator\&.
 
 .PP
 Move assignment operator\&. 
-.SS "void Search (const arma::mat & querySet, const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels, const double base)"
+.SS "void Search (\fButil::Timers\fP & timers, const arma::mat & querySet, const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels, const double base)"
 
 .PP
 Search with a different query set\&. 
@@ -190,7 +190,7 @@ Search with a different query set\&.
 
 .PP
 Referenced by FastMKSModel::KernelType()\&.
-.SS "void Search (const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels)"
+.SS "void Search (\fButil::Timers\fP & timers, const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels)"
 
 .PP
 Search with the reference set as the query set\&. 

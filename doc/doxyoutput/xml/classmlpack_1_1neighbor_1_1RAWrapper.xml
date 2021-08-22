@@ -24,7 +24,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="194" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="194" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-attrib">
@@ -39,7 +39,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="197" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="197" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="203" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -62,7 +62,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="114" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="114" bodyend="118"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="117" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a00e8f2feab29adf7a6156c5a90e6252d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type></type>
@@ -75,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="121" bodyend="121"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="124" bodyend="124"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a500ecd077d5cc5fdbf6ceb095d8de9e1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>double</type>
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="146" bodyend="146"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="149" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="149" bodyend="149"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1acbb0e4747a3a307bee88bad71e5eeaf1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>double &amp;</type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="148" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="148" bodyend="148"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="151" bodyend="151"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a792e0cada1f67fd770b5bb101dc6c9ed" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1RAWrapper" kindref="compound">RAWrapper</ref> *</type>
@@ -118,7 +118,7 @@
 <para>This correctly handles polymorphism. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="125" bodyend="125"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="128" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>const arma::mat &amp;</type>
@@ -132,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="128" bodyend="128"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="131" bodyend="131"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a17ec6e467897eb8aee3b519e0758e77d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="136" bodyend="136"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="139" bodyend="139"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1aca2eb648feb965d3bcb0b0b73f8b2b0f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="138" bodyend="138"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="141" bodyend="141"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -174,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="161" bodyend="161"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="164" bodyend="164"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -188,9 +188,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="163" bodyend="163"/>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766">RAWrapperBase::Search</references>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">RAWrapperBase::Train</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="166" bodyend="166"/>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db">RAWrapperBase::Search</references>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a">RAWrapperBase::Train</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1aa9dd91d6b96e1d0b343c3cec27372036" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -204,7 +204,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="141" bodyend="141"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="144" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="144" bodyend="144"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a9f6d54dd0424f827becc2e2e9969b1bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -218,15 +218,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="143" bodyend="143"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="146" bodyend="146"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1ad43293b5ec532712b022897bedc15f44" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a58c353341f9f44a1897505d6c467e666" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766">Search</reimplements>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089">Search</reimplementedby>
+        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db">Search</reimplements>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568">Search</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -252,14 +256,18 @@
 <para>search with a separate query set). For <ref refid="classmlpack_1_1neighbor_1_1RAWrapper" kindref="compound">RAWrapper</ref>, we ignore the leaf size. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="171" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="175" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1aeb3fa1fab8680898b6326556ea81a55b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <argsstring>(util::Timers &amp;timers, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a98ca743413f49d02f39ecb99184443d4">Search</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a07e26aa53e77ad631a36858d49c900c3">Search</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const size_t</type>
           <declname>k</declname>
@@ -278,7 +286,7 @@
 <para>search where the reference set is used as the query set). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="179" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="184" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -303,7 +311,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="185" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="185" bodyend="188"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="191" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="191" bodyend="194"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -317,7 +325,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="156" bodyend="156"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="159" bodyend="159"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>bool &amp;</type>
@@ -331,7 +339,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="158" bodyend="158"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="161" bodyend="161"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a3a2580f686a9de3078e499b1280e2a9f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>size_t</type>
@@ -345,7 +353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="131" bodyend="131"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="134" bodyend="134"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1ae78a7b8e9c96a2dbf646a27efee047b1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>size_t &amp;</type>
@@ -359,7 +367,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="133" bodyend="133"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="136" bodyend="136"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a4a4b0fafde4cc4c856a53025dc8c4c21" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>double</type>
@@ -373,7 +381,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="151" bodyend="151"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="154" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="154" bodyend="154"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1ad522d61ed716a322376adea25ebdbc90" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type>double &amp;</type>
@@ -387,15 +395,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="153" bodyend="153"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="156" bodyend="156"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1aab4ee663331b914daad05f6f7c22ee9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapper_1a7bc2562f0ea045f22c787ae220649379" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t)</argsstring>
         <name>Train</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">Train</reimplements>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d">Train</reimplementedby>
+        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a">Train</reimplements>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6">Train</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -409,7 +421,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="166" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="169" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -417,50 +429,50 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1124">
+      <node id="1136">
         <label>RAWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapperBase"/>
       </node>
-      <node id="1125">
+      <node id="1137">
         <label>LeafSizeRAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper"/>
-        <childnode refid="1123" relation="public-inheritance">
+        <childnode refid="1135" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1123">
+      <node id="1135">
         <label>RAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapper"/>
-        <childnode refid="1124" relation="public-inheritance">
+        <childnode refid="1136" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1127">
+      <node id="1139">
         <label>RAWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapperBase"/>
       </node>
-      <node id="1129">
+      <node id="1141">
         <label>RASearch&lt; SortPolicy, MetricType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
       </node>
-      <node id="1128">
+      <node id="1140">
         <label>RASearch&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
-        <childnode refid="1129" relation="template-instance">
+        <childnode refid="1141" relation="template-instance">
           <edgelabel>&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1126">
+      <node id="1138">
         <label>RAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapper"/>
-        <childnode refid="1127" relation="public-inheritance">
+        <childnode refid="1139" relation="public-inheritance">
         </childnode>
-        <childnode refid="1128" relation="usage">
+        <childnode refid="1140" relation="usage">
           <edgelabel>ra</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="109" bodyend="198"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="112" bodyend="204"/>
     <listofallmembers>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a500ecd077d5cc5fdbf6ceb095d8de9e1" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Alpha</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1acbb0e4747a3a307bee88bad71e5eeaf1" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Alpha</name></member>
@@ -476,8 +488,8 @@
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a33445e59b0dcf448bca4d6d73cd5a903" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>RAWrapperBase</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aa9dd91d6b96e1d0b343c3cec27372036" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>SampleAtLeaves</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a9f6d54dd0424f827becc2e2e9969b1bb" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>SampleAtLeaves</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad43293b5ec532712b022897bedc15f44" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aeb3fa1fab8680898b6326556ea81a55b" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a58c353341f9f44a1897505d6c467e666" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>SingleMode</name></member>
@@ -485,7 +497,7 @@
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ae78a7b8e9c96a2dbf646a27efee047b1" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>SingleSampleLimit</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a4a4b0fafde4cc4c856a53025dc8c4c21" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Tau</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad522d61ed716a322376adea25ebdbc90" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Tau</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aab4ee663331b914daad05f6f7c22ee9b" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7bc2562f0ea045f22c787ae220649379" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>Train</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a00e8f2feab29adf7a6156c5a90e6252d" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>~RAWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapper</scope><name>~RAWrapperBase</name></member>
     </listofallmembers>

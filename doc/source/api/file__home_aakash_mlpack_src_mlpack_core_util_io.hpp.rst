@@ -56,6 +56,8 @@ Includes
 
 - ``param_data.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_param_data.hpp`)
 
+- ``params.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_params.hpp`)
+
 - ``program_doc.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_program_doc.hpp`)
 
 - ``string`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_data_string_encoding_policies_bag_of_words_encoding_policy.hpp`)
@@ -71,6 +73,8 @@ Included By
 
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_core.hpp`
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_radical_radical.hpp`
 
 
 

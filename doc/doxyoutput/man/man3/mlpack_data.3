@@ -1,4 +1,4 @@
-.TH "mlpack::data" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "mlpack::data" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -659,6 +659,8 @@ Boolean value indicating success or failure of load\&.
 .RE
 .PP
 
+.PP
+Referenced by LoadBostonHousingDataset()\&.
 .SS "bool mlpack::data::Load (const std::string & filename, arma::SpMat< eT > & matrix, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP)"
 
 .PP
@@ -804,7 +806,7 @@ If the file extension is not one of those types, an error will be given\&. This 
 .PP
 If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
 .PP
-The \fBDatasetMapper\fP object passed to this function will be re-created, so any mappings from previous loads will be lost\&.
+If the given \fCinfo\fP has already been used with a different \fC\fBdata::Load()\fP\fP call where the dataset has the same dimensionality, then the mappings and dimension types inside of \fCinfo\fP will be \fIre-used\fP\&. If the given \fCinfo\fP is a new \fC\fBDatasetMapper\fP\fP object (e\&.g\&. its dimensionality is 0), then new mappings will be created\&. If the given \fCinfo\fP has a different dimensionality of data than what is present in \fCfilename\fP, an exception will be thrown\&.
 .PP
 \fBParameters:\fP
 .RS 4
@@ -997,7 +999,7 @@ The supported types of files are the same as found in Armadillo:
 .IP "\(bu" 2
 CSV (arma::csv_ascii), denoted by \&.csv, or optionally \&.txt
 .IP "\(bu" 2
-ASCII (arma::raw_ascii), denoted by \&.json
+ASCII (arma::raw_ascii), denoted by \&.txt
 .IP "\(bu" 2
 Armadillo ASCII (arma::arma_ascii), also denoted by \&.txt
 .IP "\(bu" 2
@@ -1193,7 +1195,7 @@ Definition at line 255 of file split_data\&.hpp\&.
 .PP
 References SplitHelper()\&.
 .PP
-Referenced by Split()\&.
+Referenced by LoadBostonHousingDataset(), and Split()\&.
 .SS "void mlpack::data::Split (const arma::Mat< T > & input, arma::Mat< T > & trainData, arma::Mat< T > & testData, const double testRatio, const bool shuffleData = \fCtrue\fP)"
 
 .PP

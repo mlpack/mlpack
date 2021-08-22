@@ -6,40 +6,40 @@
     <includes local="no">boost/variant.hpp</includes>
     <includes local="yes">gradient_update_visitor_impl.hpp</includes>
     <incdepgraph>
-      <node id="42479">
+      <node id="43680">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="42480" relation="include">
+        <childnode refid="43681" relation="include">
         </childnode>
-        <childnode refid="42481" relation="include">
+        <childnode refid="43682" relation="include">
         </childnode>
       </node>
-      <node id="42482">
+      <node id="43683">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="42483">
+      <node id="43684">
         <label>gradient_update_visitor_impl.hpp</label>
       </node>
-      <node id="42477">
+      <node id="43678">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_update_visitor.hpp</label>
         <link refid="gradient__update__visitor_8hpp"/>
-        <childnode refid="42478" relation="include">
+        <childnode refid="43679" relation="include">
         </childnode>
-        <childnode refid="42482" relation="include">
+        <childnode refid="43683" relation="include">
         </childnode>
-        <childnode refid="42483" relation="include">
+        <childnode refid="43684" relation="include">
         </childnode>
       </node>
-      <node id="42478">
+      <node id="43679">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="42479" relation="include">
+        <childnode refid="43680" relation="include">
         </childnode>
       </node>
-      <node id="42480">
+      <node id="43681">
         <label>type_traits</label>
       </node>
-      <node id="42481">
+      <node id="43682">
         <label>cstring</label>
       </node>
     </incdepgraph>
@@ -71,7 +71,7 @@ This file provides an abstraction for the Gradient() function for different laye
 <codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1GradientUpdateVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1GradientUpdateVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1GradientUpdateVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/>gradient;</highlight></codeline>

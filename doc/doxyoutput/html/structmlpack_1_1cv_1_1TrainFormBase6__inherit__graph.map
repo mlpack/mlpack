@@ -1,8 +1,0 @@
-<map id="TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;" name="TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;">
-<area shape="rect" id="node2" href="$structmlpack_1_1cv_1_1TrainFormBase6.html" title="TrainFormBase6\&lt; PT,\l WT, const MT &amp;, const\l PT &amp;, const size_t, const WT &amp;\&gt;" alt="" coords="383,13,604,69"/>
-<area shape="rect" id="node4" href="$structmlpack_1_1cv_1_1TrainFormBase6.html" title="TrainFormBase6\&lt; PT,\l WT, const MT &amp;, const\l data::DatasetInfo &amp;,\l const PT &amp;, const WT &amp;\&gt;" alt="" coords="404,94,583,165"/>
-<area shape="rect" id="node6" href="$structmlpack_1_1cv_1_1TrainFormBase6.html" title="TrainFormBase6\&lt; PT,\l void, const MT &amp;, const\l data::DatasetInfo &amp;, const\l PT &amp;, const size_t \&gt;" alt="" coords="403,189,583,259"/>
-<area shape="rect" id="node3" href="$structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4.html" title="TrainForm\&lt; MT, PT,\l WT, false, true \&gt;" alt="" coords="653,21,795,62"/>
-<area shape="rect" id="node5" href="$structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4.html" title="TrainForm\&lt; MT, PT,\l WT, true, false \&gt;" alt="" coords="653,109,795,150"/>
-<area shape="rect" id="node7" href="$structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4.html" title="TrainForm\&lt; MT, PT,\l void, true, true \&gt;" alt="" coords="653,203,795,245"/>
-</map>

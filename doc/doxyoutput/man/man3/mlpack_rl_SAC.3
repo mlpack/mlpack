@@ -1,4 +1,4 @@
-.TH "SAC< EnvironmentType, QNetworkType, PolicyNetworkType, UpdaterType, ReplayType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "SAC< EnvironmentType, QNetworkType, PolicyNetworkType, UpdaterType, ReplayType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -119,7 +119,7 @@ For more details, see the following:
 .PP
 
 .PP
-Definition at line 63 of file sac\&.hpp\&.
+Definition at line 64 of file sac\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "using \fBActionType\fP =  typename EnvironmentType::Action"
@@ -127,13 +127,13 @@ Definition at line 63 of file sac\&.hpp\&.
 .PP
 Convenient typedef for action\&. 
 .PP
-Definition at line 70 of file sac\&.hpp\&.
+Definition at line 71 of file sac\&.hpp\&.
 .SS "using \fBStateType\fP =  typename EnvironmentType::State"
 
 .PP
 Convenient typedef for state\&. 
 .PP
-Definition at line 67 of file sac\&.hpp\&.
+Definition at line 68 of file sac\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBSAC\fP (\fBTrainingConfig\fP & config, QNetworkType & learningQ1Network, PolicyNetworkType & policyNetwork, ReplayType & replayMethod, UpdaterType qNetworkUpdater = \fCUpdaterType()\fP, UpdaterType policyNetworkUpdater = \fCUpdaterType()\fP, EnvironmentType environment = \fCEnvironmentType()\fP)"
@@ -170,19 +170,19 @@ Clean memory\&.
 .PP
 Get the action of the agent\&. 
 .PP
-Definition at line 136 of file sac\&.hpp\&.
+Definition at line 137 of file sac\&.hpp\&.
 .SS "bool& Deterministic ()\fC [inline]\fP"
 
 .PP
 Modify the training mode / test mode indicator\&. 
 .PP
-Definition at line 139 of file sac\&.hpp\&.
+Definition at line 140 of file sac\&.hpp\&.
 .SS "const bool& Deterministic () const\fC [inline]\fP"
 
 .PP
 Get the indicator of training mode / test mode\&. 
 .PP
-Definition at line 141 of file sac\&.hpp\&.
+Definition at line 142 of file sac\&.hpp\&.
 .SS "double Episode ()"
 
 .PP
@@ -214,25 +214,25 @@ Softly update the learning Q network parameters to the target Q network paramete
 .PP
 Modify the state of the agent\&. 
 .PP
-Definition at line 131 of file sac\&.hpp\&.
+Definition at line 132 of file sac\&.hpp\&.
 .SS "const \fBStateType\fP& State () const\fC [inline]\fP"
 
 .PP
 Get the state of the agent\&. 
 .PP
-Definition at line 133 of file sac\&.hpp\&.
+Definition at line 134 of file sac\&.hpp\&.
 .SS "size_t& TotalSteps ()\fC [inline]\fP"
 
 .PP
 Modify total steps from beginning\&. 
 .PP
-Definition at line 126 of file sac\&.hpp\&.
+Definition at line 127 of file sac\&.hpp\&.
 .SS "const size_t& TotalSteps () const\fC [inline]\fP"
 
 .PP
 Get total steps from beginning\&. 
 .PP
-Definition at line 128 of file sac\&.hpp\&.
+Definition at line 129 of file sac\&.hpp\&.
 .SS "void Update ()"
 
 .PP

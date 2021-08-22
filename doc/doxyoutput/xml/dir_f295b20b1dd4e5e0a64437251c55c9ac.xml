@@ -6,11 +6,15 @@
     <innerfile refid="all__dimension__select_8hpp">all_dimension_select.hpp</innerfile>
     <innerfile refid="best__binary__numeric__split_8hpp">best_binary_numeric_split.hpp</innerfile>
     <innerfile refid="decision__tree_8hpp">decision_tree.hpp</innerfile>
+    <innerfile refid="decision__tree__regressor_8hpp">decision_tree_regressor.hpp</innerfile>
     <innerfile refid="gini__gain_8hpp">gini_gain.hpp</innerfile>
     <innerfile refid="decision__tree_2information__gain_8hpp">information_gain.hpp</innerfile>
+    <innerfile refid="mad__gain_8hpp">mad_gain.hpp</innerfile>
+    <innerfile refid="mse__gain_8hpp">mse_gain.hpp</innerfile>
     <innerfile refid="multiple__random__dimension__select_8hpp">multiple_random_dimension_select.hpp</innerfile>
     <innerfile refid="random__binary__numeric__split_8hpp">random_binary_numeric_split.hpp</innerfile>
     <innerfile refid="random__dimension__select_8hpp">random_dimension_select.hpp</innerfile>
+    <innerfile refid="utils_8hpp">utils.hpp</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

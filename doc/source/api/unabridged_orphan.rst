@@ -551,6 +551,16 @@ Directories
 .. toctree::
    :maxdepth: 5
 
+   dir__home_aakash_mlpack_src_mlpack_methods_xgboost.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   dir__home_aakash_mlpack_src_mlpack_methods_xgboost_loss_functions.rst
+
+.. toctree::
+   :maxdepth: 5
+
    dir__home_aakash_mlpack_src_mlpack_tests.rst
 
 .. toctree::
@@ -760,6 +770,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bicubic_interpolation.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bilinear_interpolation.hpp.rst
 
 .. toctree::
@@ -891,6 +906,11 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_cf_cf_model.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_methods_ann_layer_channel_shuffle.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -1071,6 +1091,11 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_methods_decision_tree_decision_tree_regressor.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2055,7 +2080,17 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_aakash_mlpack_src_mlpack_methods_decision_tree_mad_gain.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_aakash_mlpack_src_mlpack_core_metrics_mahalanobis_distance.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_tests_main_tests_main_test_fixture.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2230,12 +2265,22 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_aakash_mlpack_src_mlpack_methods_decision_tree_mse_gain.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_aakash_mlpack_src_mlpack_methods_ann_activation_functions_multi_quadratic_function.hpp.rst
 
 .. toctree::
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multihead_attention.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_multilabel_softmargin_loss.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2296,6 +2341,11 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_nca_nca_softmax_error_function.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_methods_ann_layer_nearest_interpolation.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2526,6 +2576,11 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_ann_layer_parametric_relu.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_core_util_params.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -2990,6 +3045,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_aakash_mlpack_src_mlpack_methods_ann_layer_relu6.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reparametrization.hpp.rst
 
 .. toctree::
@@ -3300,6 +3360,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_aakash_mlpack_src_mlpack_methods_xgboost_loss_functions_sse_loss.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_aakash_mlpack_src_mlpack_core_data_scaler_methods_standard_scaler.hpp.rst
 
 .. toctree::
@@ -3401,11 +3466,6 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_tests_test_function_tools.hpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_aakash_mlpack_src_mlpack_tests_main_tests_test_helper.hpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -3541,6 +3601,11 @@ Files
    :maxdepth: 5
 
    file__home_aakash_mlpack_src_mlpack_methods_cf_normalization_user_mean_normalization.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_aakash_mlpack_src_mlpack_methods_decision_tree_utils.hpp.rst
 
 .. toctree::
    :maxdepth: 5

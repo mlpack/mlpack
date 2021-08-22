@@ -65,7 +65,7 @@
         <argsstring>(MoreTypes layer) const</argsstring>
         <name>operator()</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <type><ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref></type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -128,24 +128,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="415">
+      <node id="427">
         <label>ResetCellVisitor</label>
         <link refid="classmlpack_1_1ann_1_1ResetCellVisitor"/>
-        <childnode refid="416" relation="public-inheritance">
+        <childnode refid="428" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="416">
+      <node id="428">
         <label>static_visitor&lt; void &gt;</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="417">
+      <node id="429">
         <label>ResetCellVisitor</label>
         <link refid="classmlpack_1_1ann_1_1ResetCellVisitor"/>
-        <childnode refid="418" relation="public-inheritance">
+        <childnode refid="430" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="418">
+      <node id="430">
         <label>static_visitor&lt; void &gt;</label>
       </node>
     </collaborationgraph>

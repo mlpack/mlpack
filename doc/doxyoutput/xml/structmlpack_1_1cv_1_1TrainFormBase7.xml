@@ -102,20 +102,20 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="705">
+      <node id="717">
         <label>TrainFormBase7&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
-        <childnode refid="704" relation="template-instance">
+        <childnode refid="716" relation="template-instance">
           <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp;&gt;</edgelabel>
         </childnode>
       </node>
-      <node id="706">
+      <node id="718">
         <label>TrainForm&lt; MT, PT, WT, true, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4"/>
-        <childnode refid="705" relation="public-inheritance">
+        <childnode refid="717" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="704">
+      <node id="716">
         <label>TrainFormBase7&lt; PT, WT, T1, T2, T3, T4, T5 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
       </node>

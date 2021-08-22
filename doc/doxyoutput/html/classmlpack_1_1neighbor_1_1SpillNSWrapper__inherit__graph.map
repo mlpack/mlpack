@@ -1,5 +1,0 @@
-<map id="SpillNSWrapper&lt; SortPolicy &gt;" name="SpillNSWrapper&lt; SortPolicy &gt;">
-<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper\&lt; SortPolicy,\l tree::SPTree, tree::\lSPTree\&lt; metric::EuclideanDistance,\l NeighborSearchStat\&lt; SortPolicy\l \&gt;, arma::mat \&gt;::template DefeatistDualTree\lTraverser, tree::SPTree\&lt; metric::EuclideanDistance,\l NeighborSearchStat\&lt; SortPolicy \&gt;, arma::mat\l \&gt;::template DefeatistSingleTreeTraverser \&gt;" alt="" coords="753,15,1081,144"/>
-<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1NSWrapperBase.html" title="NSWrapperBase is a base wrapper class for holding all NeighborSearch types supported by NSModel..." alt="" coords="5,23,125,50"/>
-<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper is a wrapper class for most NeighborSearch types. " alt="" coords="175,83,391,139"/>
-</map>

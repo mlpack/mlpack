@@ -17,24 +17,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1321">
+      <node id="1333">
         <label>true_type</label>
       </node>
-      <node id="1320">
+      <node id="1332">
         <label>SigCheck&lt; U, U &gt;</label>
         <link refid="structmlpack_1_1sfinae_1_1SigCheck"/>
-        <childnode refid="1321" relation="public-inheritance">
+        <childnode refid="1333" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1323">
+      <node id="1335">
         <label>true_type</label>
       </node>
-      <node id="1322">
+      <node id="1334">
         <label>SigCheck&lt; U, U &gt;</label>
         <link refid="structmlpack_1_1sfinae_1_1SigCheck"/>
-        <childnode refid="1323" relation="public-inheritance">
+        <childnode refid="1335" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

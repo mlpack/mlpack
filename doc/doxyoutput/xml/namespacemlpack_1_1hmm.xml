@@ -67,12 +67,12 @@
           </detaileddescription>
         </enumvalue>
         <briefdescription>
-        </briefdescription>
+<para>HMMType, to be stored on disk. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>This is of type char, which is one byte. (I&apos;m not sure what will happen on systems where one byte is not eight bits.) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" bodystart="22" bodyend="28"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" bodystart="22" bodyend="28"/>
       </memberdef>
       <memberdef kind="enum" id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16c" prot="public" static="no">
         <name>HMMType</name>
@@ -135,12 +135,12 @@
           </detaileddescription>
         </enumvalue>
         <briefdescription>
-<para>HMMType, to be stored on disk. </para>        </briefdescription>
+        </briefdescription>
         <detaileddescription>
-<para>This is of type char, which is one byte. (I&apos;m not sure what will happen on systems where one byte is not eight bits.) </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" bodystart="22" bodyend="28"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" bodystart="23" bodyend="29"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">

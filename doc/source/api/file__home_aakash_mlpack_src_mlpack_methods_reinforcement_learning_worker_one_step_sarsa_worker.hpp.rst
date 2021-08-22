@@ -36,6 +36,8 @@ Includes
 --------
 
 
+- ``ensmallen.hpp``
+
 - ``mlpack/methods/reinforcement_learning/training_config.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_reinforcement_learning_training_config.hpp`)
 
 

@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="170" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="169" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1meanshift_1_1MeanShift_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="167" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="167" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="166" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1meanshift_1_1MeanShift_1a3f67c53b80389c5f53961936edba04c9" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
 <para>Points with distance to current centroid less than radius will be used to calculate new centroid. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="164" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="163" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -109,7 +109,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="65" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="64" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ae6c156618ab407e37eb42f6843e46005" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -188,7 +188,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="89" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="88" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a18e16a5764b4b09cd46402c5ac40e711" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -225,7 +225,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="75" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="74" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const KernelType &amp;</type>
@@ -238,7 +238,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="106" bodyend="106"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="105" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>KernelType &amp;</type>
@@ -251,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="108" bodyend="108"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="107" bodyend="107"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -264,7 +264,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="96" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="96" bodyend="96"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="95" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -277,7 +277,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="98" bodyend="98"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="97" bodyend="97"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -290,7 +290,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="101" bodyend="101"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="100" bodyend="100"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ae12840857c3632026e7c513e0f19e52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -307,7 +307,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="103" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="102" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -369,7 +369,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="139" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="138" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ab026297de5f55cef7c8ca1eaf05f2c9d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -428,7 +428,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="154" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="153" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a0ecaac2048406a662d00ceed10a3450a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -486,7 +486,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="124" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="123" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -523,7 +523,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="51" bodyend="171"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="50" bodyend="170"/>
     <listofallmembers>
       <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a905a0b35f8c4f4144797e8e71bbab138" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>CalculateCentroid</name></member>
       <member refid="classmlpack_1_1meanshift_1_1MeanShift_1ab026297de5f55cef7c8ca1eaf05f2c9d" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>CalculateCentroid</name></member>

@@ -86,9 +86,9 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../../src/mlpack \
-			 ../guide \
-			 ../tutorials \
-			 ../policies \
+                         ../guide \
+                         ../tutorials \
+                         ../policies \
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.txt
@@ -96,14 +96,14 @@ RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = *bindings* \
-			 *parameter_type.hpp \
-			 *rectangle_tree.hpp \
-			 *kill_empty_clusters.hpp \
-			 *allow_empty_clusters.hpp \
-			 *range.hpp \
-			 *regression_distribution.hpp \
-			 *log.hpp \
-			 */build/* \
+                         *parameter_type.hpp \
+                         *rectangle_tree.hpp \
+                         *kill_empty_clusters.hpp \
+                         *allow_empty_clusters.hpp \
+                         *range.hpp \
+                         *regression_distribution.hpp \
+                         *log.hpp \
+                         */build/* \
                          */test/* \
                          */arma_extend/* \
                          */boost_backport/* \
@@ -117,9 +117,9 @@ EXCLUDE_PATTERNS       = *bindings* \
                          *CLI11.hpp \
                          */tests/catch.hpp \
                          */boost/serialization/* \
-			 */parse_command_line.hpp \
-			 */mlpack_main.hpp \
-			 *param.hpp \
+                         */parse_command_line.hpp \
+                         */mlpack_main.hpp \
+                         *param.hpp \
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -147,7 +147,7 @@ IGNORE_PREFIX          =
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
 #---------------------------------------------------------------------------
-GENERATE_HTML          = YES
+GENERATE_HTML          = NO
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
@@ -171,7 +171,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath TeX/AMSsymbols
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex

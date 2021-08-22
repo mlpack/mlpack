@@ -6,40 +6,40 @@
     <includes local="no">boost/variant.hpp</includes>
     <includes local="yes">reward_set_visitor_impl.hpp</includes>
     <incdepgraph>
-      <node id="43839">
+      <node id="45096">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="43840" relation="include">
+        <childnode refid="45097" relation="include">
         </childnode>
-        <childnode refid="43841" relation="include">
+        <childnode refid="45098" relation="include">
         </childnode>
       </node>
-      <node id="43842">
+      <node id="45099">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="43837">
+      <node id="45094">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp</label>
         <link refid="reward__set__visitor_8hpp"/>
-        <childnode refid="43838" relation="include">
+        <childnode refid="45095" relation="include">
         </childnode>
-        <childnode refid="43842" relation="include">
+        <childnode refid="45099" relation="include">
         </childnode>
-        <childnode refid="43843" relation="include">
+        <childnode refid="45100" relation="include">
         </childnode>
       </node>
-      <node id="43838">
+      <node id="45095">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="43839" relation="include">
+        <childnode refid="45096" relation="include">
         </childnode>
       </node>
-      <node id="43840">
+      <node id="45097">
         <label>type_traits</label>
       </node>
-      <node id="43843">
+      <node id="45100">
         <label>reward_set_visitor_impl.hpp</label>
       </node>
-      <node id="43841">
+      <node id="45098">
         <label>cstring</label>
       </node>
     </incdepgraph>
@@ -71,7 +71,7 @@ This file provides an abstraction for the Reward() function for different layers
 <codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>reward;</highlight></codeline>

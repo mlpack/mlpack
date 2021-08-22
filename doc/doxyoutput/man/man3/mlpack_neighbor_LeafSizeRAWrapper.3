@@ -1,4 +1,4 @@
-.TH "LeafSizeRAWrapper< TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "LeafSizeRAWrapper< TreeType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -25,7 +25,7 @@ Inherits \fBRAWrapper< TreeType >\fP\&.
 .br
 .RI "Return a copy of the \fBLeafSizeRAWrapper\fP\&. "
 .ti -1c
-.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize)"
+.RI "virtual void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize)"
 .br
 .RI "Perform bichromatic search (e\&.g\&. "
 .ti -1c
@@ -33,7 +33,7 @@ Inherits \fBRAWrapper< TreeType >\fP\&.
 .br
 .RI "Serialize the \fBRASearch\fP model\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize)"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t leafSize)"
 .br
 .RI "Train a model with the given parameters\&. This overload uses leafSize\&. "
 .in -1c
@@ -48,7 +48,7 @@ class mlpack::neighbor::LeafSizeRAWrapper< TreeType >"
 
 The implementations of \fBTrain()\fP and bichromatic \fBSearch()\fP take this leaf size into account\&. 
 .PP
-Definition at line 208 of file ra_model\&.hpp\&.
+Definition at line 214 of file ra_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBLeafSizeRAWrapper\fP (const bool singleMode, const bool naive)\fC [inline]\fP"
@@ -56,13 +56,13 @@ Definition at line 208 of file ra_model\&.hpp\&.
 .PP
 Construct the \fBLeafSizeRAWrapper\fP by delegating to the \fBRAWrapper\fP constructor\&. 
 .PP
-Definition at line 213 of file ra_model\&.hpp\&.
+Definition at line 219 of file ra_model\&.hpp\&.
 .SS "virtual ~\fBLeafSizeRAWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
 Delete the \fBLeafSizeRAWrapper\fP\&. 
 .PP
-Definition at line 220 of file ra_model\&.hpp\&.
+Definition at line 226 of file ra_model\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "virtual \fBLeafSizeRAWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
@@ -72,10 +72,10 @@ Return a copy of the \fBLeafSizeRAWrapper\fP\&.
 .PP
 Reimplemented from \fBRAWrapper< TreeType >\fP\&.
 .PP
-Definition at line 223 of file ra_model\&.hpp\&.
+Definition at line 229 of file ra_model\&.hpp\&.
 .PP
 References RAWrapperBase::Search(), and RAWrapperBase::Train()\&.
-.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize)\fC [virtual]\fP"
+.SS "virtual void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize)\fC [virtual]\fP"
 
 .PP
 Perform bichromatic search (e\&.g\&. search with a separate query set)\&. This overload takes the leaf size into account to build the query tree\&. 
@@ -86,8 +86,8 @@ Reimplemented from \fBRAWrapper< TreeType >\fP\&.
 .PP
 Serialize the \fBRASearch\fP model\&. 
 .PP
-Definition at line 242 of file ra_model\&.hpp\&.
-.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize)\fC [virtual]\fP"
+Definition at line 250 of file ra_model\&.hpp\&.
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t leafSize)\fC [virtual]\fP"
 
 .PP
 Train a model with the given parameters\&. This overload uses leafSize\&. 

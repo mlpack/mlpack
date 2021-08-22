@@ -816,14 +816,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="545">
+      <node id="557">
         <label>CFType&lt; DecompositionPolicy, NormalizationPolicy &gt;</label>
         <link refid="classmlpack_1_1cf_1_1CFType"/>
-        <childnode refid="544" relation="template-instance">
+        <childnode refid="556" relation="template-instance">
           <edgelabel>&lt; DecompositionPolicy, NormalizationPolicy &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="544">
+      <node id="556">
         <label>CFType&lt; DecompositionPolicy, NormalizationType &gt;</label>
         <link refid="classmlpack_1_1cf_1_1CFType"/>
       </node>

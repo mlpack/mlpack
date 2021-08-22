@@ -35,11 +35,24 @@ Program Listing for File random_binary_numeric_split.hpp
          const WeightVecType& weights,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
-         arma::vec& classProbabilities,
+         arma::vec& splitInfo,
          AuxiliarySplitInfo& aux,
          const bool splitIfBetterGain = false);
    
-     static size_t NumChildren(const arma::vec& /* classProbabilities */,
+     template<bool UseWeights, typename VecType, typename WeightVecType>
+     static double SplitIfBetter(
+         const double bestGain,
+         const VecType& data,
+         const arma::rowvec& responses,
+         const WeightVecType& weights,
+         const size_t minimumLeafSize,
+         const double minimumGainSplit,
+         double& splitInfo,
+         AuxiliarySplitInfo& aux,
+         FitnessFunction& fitnessFunction,
+         const bool splitIfBetterGain = false);
+   
+     static size_t NumChildren(const double& /* splitInfo */,
                                const AuxiliarySplitInfo& /* aux */)
      {
        return 2;
@@ -48,7 +61,7 @@ Program Listing for File random_binary_numeric_split.hpp
      template<typename ElemType>
      static size_t CalculateDirection(
          const ElemType& point,
-         const arma::vec& classProbabilities,
+         const double& splitInfo,
          const AuxiliarySplitInfo& /* aux */);
    };
    

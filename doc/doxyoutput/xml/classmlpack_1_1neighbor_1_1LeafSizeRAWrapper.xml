@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="213" bodyend="217"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="219" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="219" bodyend="223"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a8143e6a42aa8db8a769546687e2bc21f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
         <type></type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="220" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="220" bodyend="220"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="226" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="226" bodyend="226"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type><ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper" kindref="compound">LeafSizeRAWrapper</ref> *</type>
@@ -58,16 +58,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="223" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="223" bodyend="226"/>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766">RAWrapperBase::Search</references>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">RAWrapperBase::Train</references>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="229" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="229" bodyend="232"/>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db">RAWrapperBase::Search</references>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a">RAWrapperBase::Train</references>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize)</argsstring>
         <name>Search</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad43293b5ec532712b022897bedc15f44">Search</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapper_1a58c353341f9f44a1897505d6c467e666">Search</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -94,7 +98,7 @@
 <para>search with a separate query set). This overload takes the leaf size into account to build the query tree. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="234" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="241" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -119,14 +123,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="242" bodyend="245"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="250" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="250" bodyend="253"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize)</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t leafSize)</argsstring>
         <name>Train</name>
-        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapper_1aab4ee663331b914daad05f6f7c22ee9b">Train</reimplements>
+        <reimplements refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7bc2562f0ea045f22c787ae220649379">Train</reimplements>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -141,64 +149,64 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="229" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="235" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para><ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper" kindref="compound">LeafSizeRAWrapper</ref> wraps any <ref refid="classmlpack_1_1neighbor_1_1RASearch" kindref="compound">RASearch</ref> type that needs to be able to take the leaf size into account when building trees. </para>    </briefdescription>
     <detaileddescription>
-<para>The implementations of <ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d" kindref="member">Train()</ref> and bichromatic <ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089" kindref="member">Search()</ref> take this leaf size into account. </para>    </detaileddescription>
+<para>The implementations of <ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6" kindref="member">Train()</ref> and bichromatic <ref refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568" kindref="member">Search()</ref> take this leaf size into account. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1066">
+      <node id="1078">
         <label>RAWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapperBase"/>
       </node>
-      <node id="1064">
+      <node id="1076">
         <label>LeafSizeRAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper"/>
-        <childnode refid="1065" relation="public-inheritance">
+        <childnode refid="1077" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1065">
+      <node id="1077">
         <label>RAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapper"/>
-        <childnode refid="1066" relation="public-inheritance">
+        <childnode refid="1078" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1069">
+      <node id="1081">
         <label>RAWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapperBase"/>
       </node>
-      <node id="1067">
+      <node id="1079">
         <label>LeafSizeRAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper"/>
-        <childnode refid="1068" relation="public-inheritance">
+        <childnode refid="1080" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1071">
+      <node id="1083">
         <label>RASearch&lt; SortPolicy, MetricType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
       </node>
-      <node id="1070">
+      <node id="1082">
         <label>RASearch&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
-        <childnode refid="1071" relation="template-instance">
+        <childnode refid="1083" relation="template-instance">
           <edgelabel>&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1068">
+      <node id="1080">
         <label>RAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapper"/>
-        <childnode refid="1069" relation="public-inheritance">
+        <childnode refid="1081" relation="public-inheritance">
         </childnode>
-        <childnode refid="1070" relation="usage">
+        <childnode refid="1082" relation="usage">
           <edgelabel>ra</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="209" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="208" bodyend="249"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="214" bodyend="257"/>
     <listofallmembers>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a500ecd077d5cc5fdbf6ceb095d8de9e1" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Alpha</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1acbb0e4747a3a307bee88bad71e5eeaf1" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Alpha</name></member>
@@ -215,8 +223,8 @@
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a33445e59b0dcf448bca4d6d73cd5a903" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>RAWrapperBase</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aa9dd91d6b96e1d0b343c3cec27372036" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>SampleAtLeaves</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a9f6d54dd0424f827becc2e2e9969b1bb" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>SampleAtLeaves</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aeb3fa1fab8680898b6326556ea81a55b" prot="public" virt="virtual" ambiguityscope="mlpack::neighbor::RAWrapper::"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" prot="public" virt="virtual" ambiguityscope="mlpack::neighbor::RAWrapper::"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>serialize</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>SingleMode</name></member>
@@ -224,7 +232,7 @@
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ae78a7b8e9c96a2dbf646a27efee047b1" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>SingleSampleLimit</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a4a4b0fafde4cc4c856a53025dc8c4c21" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Tau</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad522d61ed716a322376adea25ebdbc90" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Tau</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>Train</name></member>
       <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a8143e6a42aa8db8a769546687e2bc21f" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>~LeafSizeRAWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a00e8f2feab29adf7a6156c5a90e6252d" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>~RAWrapper</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" prot="public" virt="virtual"><scope>mlpack::neighbor::LeafSizeRAWrapper</scope><name>~RAWrapperBase</name></member>

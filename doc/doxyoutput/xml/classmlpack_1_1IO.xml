@@ -3,91 +3,63 @@
   <compounddef id="classmlpack_1_1IO" kind="class" language="C++" prot="public">
     <compoundname>mlpack::IO</compoundname>
     <includes refid="io_8hpp" local="no">io.hpp</includes>
-      <sectiondef kind="public-type">
-      <memberdef kind="typedef" id="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="public" static="no">
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="private" static="no">
         <type>std::map&lt; std::string, std::map&lt; std::string, void(*)(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;, const void *, void *)&gt; &gt;</type>
         <definition>typedef std::map&lt;std::string, std::map&lt;std::string, void (*)(util::ParamData&amp;, const void*, void*)&gt; &gt; FunctionMapType</definition>
         <argsstring></argsstring>
         <name>FunctionMapType</name>
         <briefdescription>
-<para>Map for functions and types. </para>        </briefdescription>
+<para>Map of functions. </para>        </briefdescription>
         <detaileddescription>
-<para>Use as functionMap[&quot;typename&quot;][&quot;functionName&quot;]. </para>        </detaileddescription>
+<para>Note that this is not specific to a binding, so we only have one. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="312" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="312" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="283" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="283" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classmlpack_1_1IO_1a7d026933df7a8c24cae539dab626d3e2" prot="private" static="no" mutable="no">
-        <type>std::map&lt; char, std::string &gt;</type>
-        <definition>std::map&lt;char, std::string&gt; aliases</definition>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a3a2fa8f4dfaa2264d433c6892ae24daa" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::map&lt; char, std::string &gt; &gt;</type>
+        <definition>std::map&lt;std::string, std::map&lt;char, std::string&gt; &gt; aliases</definition>
         <argsstring></argsstring>
         <name>aliases</name>
         <briefdescription>
-<para>Convenience map from alias values to names. </para>        </briefdescription>
+<para>Map from alias values to names, for each binding name. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="304" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="304" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="277" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="277" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1a9f6e568d2db09a7405644497b6b2d59f" prot="private" static="no" mutable="no">
-        <type>std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt;</type>
-        <definition>std::map&lt;std::string, util::ParamData&gt; parameters</definition>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a9fbcdf361106804abc3267f59864e21e" prot="private" static="no" mutable="no">
+        <type>std::mutex</type>
+        <definition>std::mutex docMutex</definition>
         <argsstring></argsstring>
-        <name>parameters</name>
+        <name>docMutex</name>
         <briefdescription>
-<para>Map of parameters. </para>        </briefdescription>
+<para>Ensure only one thread can modify the docs map at a time. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="306" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="306" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="287" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="287" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1a633a07bb688dd5a1fba5338c8efc6929" prot="private" static="no" mutable="no">
-        <type>std::map&lt; std::string, std::tuple&lt; std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt;, std::map&lt; char, std::string &gt;, <ref refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" kindref="member">FunctionMapType</ref> &gt; &gt;</type>
-        <definition>std::map&lt;std::string, std::tuple&lt;std::map&lt;std::string, util::ParamData&gt;, std::map&lt;char, std::string&gt;, FunctionMapType&gt; &gt; storageMap</definition>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1adcb6663560b527e40867c3e7cae4bc72" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref> &gt;</type>
+        <definition>std::map&lt;std::string, util::BindingDetails&gt; docs</definition>
         <argsstring></argsstring>
-        <name>storageMap</name>
+        <name>docs</name>
         <briefdescription>
-<para>Storage map for parameters. </para>        </briefdescription>
+<para>Map of binding details. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="318" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="318" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="289" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="289" bodyend="-1"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classmlpack_1_1IO_1aba5a4e3036cfa1d1c55012097b0b50cc" prot="public" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool didParse</definition>
-        <argsstring></argsstring>
-        <name>didParse</name>
-        <briefdescription>
-<para>True, if <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> was used to parse command line options. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="322" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="322" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1aa22e2ce779d7df54dde6a4d7458ef1a0" prot="public" static="no" mutable="no">
-        <type><ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref></type>
-        <definition>util::BindingDetails doc</definition>
-        <argsstring></argsstring>
-        <name>doc</name>
-        <briefdescription>
-<para>Holds the bindingDetails objects. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="335" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="335" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="public" static="no" mutable="no">
-        <type><ref refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" kindref="member">FunctionMapType</ref></type>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="private" static="no" mutable="no">
+        <type>FunctionMapType</type>
         <definition>FunctionMapType functionMap</definition>
         <argsstring></argsstring>
         <name>functionMap</name>
@@ -97,24 +69,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="313" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="313" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="284" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="284" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
-        <type>std::string</type>
-        <definition>std::string programName</definition>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a0f4192a96789b551cb018d3758d0c153" prot="private" static="no" mutable="no">
+        <type>std::mutex</type>
+        <definition>std::mutex mapMutex</definition>
         <argsstring></argsstring>
-        <name>programName</name>
+        <name>mapMutex</name>
         <briefdescription>
-<para>Holds the name of the program for <ndash/>version. </para>        </briefdescription>
+<para>Ensure only one thread can call Add() at a time to modify the map. </para>        </briefdescription>
         <detaileddescription>
-<para>This is the true program name (argv[0]) not what is given in BindingDetails. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="326" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="326" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="275" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="275" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classmlpack_1_1IO_1aca4a039cfb9a63fbe2d98febc7ae337b" prot="public" static="no" mutable="no">
-        <type><ref refid="classmlpack_1_1Timers" kindref="compound">Timers</ref></type>
-        <definition>Timers timer</definition>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a8fcad76d2361609e775ad8b94d2237de" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt; &gt;</type>
+        <definition>std::map&lt;std::string, std::map&lt;std::string, util::ParamData&gt; &gt; parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+<para>Map of parameters, for each binding name. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="279" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a5a812b3a26e70902629a6a21bf9ea461" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref></type>
+        <definition>util::Timers timer</definition>
         <argsstring></argsstring>
         <name>timer</name>
         <briefdescription>
@@ -123,11 +108,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="329" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="329" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="292" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="292" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
-      <memberdef kind="friend" id="classmlpack_1_1IO_1a50de43af5bed41f30c071d8cce0e81bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="friend" id="classmlpack_1_1IO_1a50de43af5bed41f30c071d8cce0e81bc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>friend class</type>
         <definition>friend class Timer</definition>
         <argsstring></argsstring>
@@ -138,15 +123,174 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="332" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="332" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="295" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="295" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="classmlpack_1_1IO_1adc908d81414046d89563fd0571d55cac" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1IO_1af3a4055c2193c7f6f2cccb7526595f71" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>static void Add</definition>
-        <argsstring>(util::ParamData &amp;&amp;d)</argsstring>
-        <name>Add</name>
+        <definition>static void AddBindingName</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;name)</argsstring>
+        <name>AddBindingName</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Add a user-friendly name for a binding. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding to add the user-friendly name for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User-friendly name. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="206" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a6840dd958a2382348b999520c68ae320" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AddExample</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::function&lt; std::string()&gt; &amp;example)</argsstring>
+        <name>AddExample</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; std::string()&gt; &amp;</type>
+          <declname>example</declname>
+        </param>
+        <briefdescription>
+<para>Add an example for a binding. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding to add the example for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>example</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function that returns the example. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="234" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1abdfdc734325dd9b75088a3bb32286b55" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AddFunction</definition>
+        <argsstring>(const std::string &amp;type, const std::string &amp;name, void(*func)(util::ParamData &amp;, const void *, void *))</argsstring>
+        <name>AddFunction</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>void(*)(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;, const void *, void *)</type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Add a function to the function map. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type that this function should be called for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to call. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="196" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a0eb6aa5bde78005330215c17ed064d0f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AddLongDescription</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::function&lt; std::string()&gt; &amp;longDescription)</argsstring>
+        <name>AddLongDescription</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; std::string()&gt; &amp;</type>
+          <declname>longDescription</declname>
+        </param>
+        <briefdescription>
+<para>Add a long description for a binding. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding to add the description for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>longDescription</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function that returns the long description. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="224" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a4530109919250336fd0cb15b92a993f5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AddParameter</definition>
+        <argsstring>(const std::string &amp;bindingName, util::ParamData &amp;&amp;d)</argsstring>
+        <name>AddParameter</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
         <param>
           <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;&amp;</type>
           <declname>d</declname>
@@ -155,6 +299,13 @@
 <para>Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i.e. </para>        </briefdescription>
         <detaileddescription>
 <para>PARAM_INT()).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bindingName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the binding that this parameter is associated with. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
 <parameternamelist>
 <parametername>d</parametername>
 </parameternamelist>
@@ -165,177 +316,90 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="181" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="187" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a5be18c0eeb63369cb449da84dc3ea7ed" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::map&lt; char, std::string &gt; &amp;</type>
-        <definition>static std::map&lt;char, std::string&gt;&amp; Aliases</definition>
-        <argsstring>()</argsstring>
-        <name>Aliases</name>
-        <briefdescription>
-<para>Return a modifiable list of aliases that <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> knows about. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="259" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1IO_1a0de4c2c634b45c52102590c259e22aef" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>static void CheckInputMatrices</definition>
-        <argsstring>()</argsstring>
-        <name>CheckInputMatrices</name>
-        <briefdescription>
-<para>Checks all input matrices for NaN and inf values, exits if found any. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="300" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a13e26de32fbf867cff10d99e6660a1ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>void</type>
-        <definition>static void CheckInputMatrix</definition>
-        <argsstring>(const T &amp;matrix, const std::string &amp;identifier)</argsstring>
-        <name>CheckInputMatrix</name>
+        <definition>static void AddSeeAlso</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;description, const std::string &amp;link)</argsstring>
+        <name>AddSeeAlso</name>
         <param>
-          <type>const T &amp;</type>
-          <declname>matrix</declname>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
         </param>
         <param>
           <type>const std::string &amp;</type>
-          <declname>identifier</declname>
+          <declname>description</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>link</declname>
         </param>
         <briefdescription>
-<para>Utility function for <ref refid="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" kindref="member">CheckInputMatrices()</ref>. </para>        </briefdescription>
+<para>Add a SeeAlso for a binding. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>matrix</parametername>
+<parametername>bindingName</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Matrix to check. </para></parameterdescription>
+<para>Name of the binding to add the example for. </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>identifier</parametername>
+<parametername>description</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Name of the parameter in question. </para></parameterdescription>
+<para>Description of the SeeAlso. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>link</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Link of the SeeAlso. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="229" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="244" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a311c68c417bf994e4bf952dcce4a874d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1IO_1ad41d1032071c4eaa56d3b24287eaa7b3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>static void ClearSettings</definition>
-        <argsstring>()</argsstring>
-        <name>ClearSettings</name>
-        <briefdescription>
-<para>Clear all of the settings, removing all parameters and function mappings. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="295" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>T &amp;</type>
-        <definition>static T&amp; GetParam</definition>
-        <argsstring>(const std::string &amp;identifier)</argsstring>
-        <name>GetParam</name>
+        <definition>static void AddShortDescription</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;shortDescription)</argsstring>
+        <name>AddShortDescription</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>identifier</declname>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>shortDescription</declname>
         </param>
         <briefdescription>
-<para>Get the value of type T found while parsing. </para>        </briefdescription>
+<para>Add a short description for a binding. </para>        </briefdescription>
         <detaileddescription>
-<para>You can set the value using this reference safely.</para><para><parameterlist kind="param"><parameteritem>
+<para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>identifier</parametername>
+<parametername>bindingName</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The name of the parameter in question. </para></parameterdescription>
+<para>Name of the binding to add the description for. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shortDescription</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description to use. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="197" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a9273a321ef422a2aa57ee98f5b169632" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>std::string</type>
-        <definition>static std::string GetPrintableParam</definition>
-        <argsstring>(const std::string &amp;identifier)</argsstring>
-        <name>GetPrintableParam</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>identifier</declname>
-        </param>
-        <briefdescription>
-<para>Cast the given parameter of the given type to a short, printable std::string, for use in status messages. </para>        </briefdescription>
-        <detaileddescription>
-<para>Ideally the message returned here should be only a handful of characters, and certainly no longer than one line.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>identifier</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The name of the parameter in question. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="208" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1aa3080f329734511912ebe72f9ed30656" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename T</type>
-          </param>
-        </templateparamlist>
-        <type>T &amp;</type>
-        <definition>static T&amp; GetRawParam</definition>
-        <argsstring>(const std::string &amp;identifier)</argsstring>
-        <name>GetRawParam</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>identifier</declname>
-        </param>
-        <briefdescription>
-<para>Get the raw value of the parameter before any processing that <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> might normally do. </para>        </briefdescription>
-        <detaileddescription>
-<para>So, e.g., for command-line programs, this does not perform any data loading or manipulation like <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> does. So if you want to access a matrix or model (or similar) parameter before it is loaded, this is the method to use.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>identifier</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The name of the parameter in question. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="220" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="215" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1IO_1aacf8da2c1644e932b3cbd46703a3d889" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
@@ -349,182 +413,37 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="254" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="266" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>static bool HasParam</definition>
-        <argsstring>(const std::string &amp;identifier)</argsstring>
-        <name>HasParam</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>identifier</declname>
-        </param>
-        <briefdescription>
-<para>See if the specified flag was found while parsing. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>identifier</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The name of the parameter in question. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="188" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a0a4e362b05cd037fc620e27877f3bf4f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>static void MakeInPlaceCopy</definition>
-        <argsstring>(const std::string &amp;outputParamName, const std::string &amp;inputParamName)</argsstring>
-        <name>MakeInPlaceCopy</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>outputParamName</declname>
-        </param>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>inputParamName</declname>
-        </param>
-        <briefdescription>
-<para>Given two (matrix) parameters, ensure that the first is an in-place copy of the second. </para>        </briefdescription>
-        <detaileddescription>
-<para>This will generally do nothing (as the bindings already do this automatically), except for command-line bindings, where we need to ensure that the output filename is the same as the input filename.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>outputParamName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of output (matrix) parameter. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>inputParamName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of input (matrix) parameter. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="240" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt; &amp;</type>
-        <definition>static std::map&lt;std::string, util::ParamData&gt;&amp; Parameters</definition>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+        <definition>static util::Timers&amp; GetTimers</definition>
         <argsstring>()</argsstring>
+        <name>GetTimers</name>
+        <briefdescription>
+<para>Retrieve the global Timers object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="271" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a0a0bb69397ce0d79f68095a9eef90607" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1util_1_1Params" kindref="compound">util::Params</ref></type>
+        <definition>static util::Params Parameters</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
         <name>Parameters</name>
-        <briefdescription>
-<para>Return a modifiable list of parameters that <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> knows about. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="257" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a1025ff079f4aa3baecf036ab0bc32be5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::string</type>
-        <definition>static std::string ProgramName</definition>
-        <argsstring>()</argsstring>
-        <name>ProgramName</name>
-        <briefdescription>
-<para>Get the program name as set by the BINDING_NAME() macro. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="262" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>static void RestoreSettings</definition>
-        <argsstring>(const std::string &amp;name, const bool fatal=true)</argsstring>
-        <name>RestoreSettings</name>
         <param>
           <type>const std::string &amp;</type>
-          <declname>name</declname>
-        </param>
-        <param>
-          <type>const bool</type>
-          <declname>fatal</declname>
-          <defval>true</defval>
+          <declname>bindingName</declname>
         </param>
         <briefdescription>
-<para>Restore all of the parameters and function mappings of the given name, if they exist. </para>        </briefdescription>
+<para>Return a new Params object initialized with all the parameters of the binding <computeroutput>bindingName</computeroutput>. </para>        </briefdescription>
         <detaileddescription>
-<para>A std::invalid_argument exception will be thrown if fatal is true and no settings with the given name have been stored (with <ref refid="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" kindref="member">StoreSettings()</ref>).</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>name</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of settings to restore. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>fatal</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Whether to throw an exception on an unknown name. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
+<para>This is intended to be called at the beginning of the run of a binding. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="290" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>static void SetPassed</definition>
-        <argsstring>(const std::string &amp;name)</argsstring>
-        <name>SetPassed</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>name</declname>
-        </param>
-        <briefdescription>
-<para>Mark a particular parameter as passed. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>name</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of the parameter. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="269" column="1"/>
-        <referencedby refid="namespacemlpack_1_1util_1a997283ede9320ae143e5cf3314efe0a4" compoundref="test__helper_8hpp" startline="29" endline="34">mlpack::util::SetInputParam</referencedby>
-      </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>static void StoreSettings</definition>
-        <argsstring>(const std::string &amp;name)</argsstring>
-        <name>StoreSettings</name>
-        <param>
-          <type>const std::string &amp;</type>
-          <declname>name</declname>
-        </param>
-        <briefdescription>
-<para>Take all parameters and function mappings and store them, under the given name. </para>        </briefdescription>
-        <detaileddescription>
-<para>This can later be restored with <ref refid="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" kindref="member">RestoreSettings()</ref>. If settings have already been saved under the given name, they will be overwritten. This also clears the current parameters and function map.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>name</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name of settings to save. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="279" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="253" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -539,7 +458,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="340" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="300" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1IO_1ab97f38cc7c806a9ca1ac423f65e9b00c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -556,7 +475,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="343" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="303" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1IO_1a137c8f8039ba21a200513a45af990409" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
@@ -573,13 +492,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="345" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="305" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Parses the command line for parameters and holds user-specified parameters. </para>    </briefdescription>
     <detaileddescription>
-<para>The <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> class is a subsystem by which parameters for machine learning methods can be specified and accessed. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy. There are only three methods in <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> that a user should need: IO::ParseCommandLine(), <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam()</ref>, and <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">IO::HasParam()</ref> (in addition to the PARAM_*() macros).</para><sect1 id="classmlpack_1_1IO_1addparam">
+<para>The <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> class is a subsystem by which parameters for machine learning methods can be specified and accessed. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy. There are only three methods in <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> that a user should need: IO::ParseCommandLine(), IO::GetParam(), and IO::HasParam() (in addition to the PARAM_*() macros).</para><sect1 id="classmlpack_1_1IO_1addparam">
 <title>Adding parameters to a program</title>
 <para><programlisting><codeline><highlight class="normal">$<sp/>./executable<sp/>--bar=5</highlight></codeline>
 </programlisting></para><para><simplesect kind="note"><para>The = is optional; a space can also be used.</para></simplesect>
@@ -648,7 +567,7 @@ The flag (boolean) type automatically defaults to false; it is specified merely 
 </programlisting></para><para><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> provides <ndash/>help and <ndash/>info options which give nicely formatted documentation of each option; the documentation is generated from the DESC arguments in the PARAM_*() macros.</para></sect1>
 <sect1 id="classmlpack_1_1IO_1getparam">
 <title>Getting parameters with IO</title>
-<para>When the parameters have been defined, the next important thing is how to access them. For this, the <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">HasParam()</ref> and <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> methods are used. For instance, to see if the user passed the flag (boolean) &quot;naive&quot;:</para><para><programlisting><codeline><highlight class="normal">if<sp/>(IO::HasParam(&quot;naive&quot;))</highlight></codeline>
+<para>When the parameters have been defined, the next important thing is how to access them. For this, the HasParam() and GetParam() methods are used. For instance, to see if the user passed the flag (boolean) &quot;naive&quot;:</para><para><programlisting><codeline><highlight class="normal">if<sp/>(IO::HasParam(&quot;naive&quot;))</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>Log::Info<sp/>&lt;&lt;<sp/>&quot;Naive<sp/>has<sp/>been<sp/>passed!&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
@@ -656,56 +575,29 @@ The flag (boolean) type automatically defaults to false; it is specified merely 
 </programlisting></para><para><simplesect kind="note"><para>Options should only be defined in files which define <computeroutput>main()</computeroutput> (that is, main bindings). If options are defined elsewhere, they may be spuriously included into other bindings and confuse users. Similarly, if your binding has options which you did not define, it is probably because the option is defined somewhere else and included in your binding.</para></simplesect>
 <xrefsect id="bug_1_bug000001"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para></xrefdescription></xrefsect></para></sect1>
     </detaileddescription>
-    <collaborationgraph>
-      <node id="897">
-        <label>IO</label>
-        <link refid="classmlpack_1_1IO"/>
-        <childnode refid="898" relation="usage">
-          <edgelabel>doc</edgelabel>
-        </childnode>
-        <childnode refid="899" relation="usage">
-          <edgelabel>timer</edgelabel>
-        </childnode>
-      </node>
-      <node id="899">
-        <label>Timers</label>
-        <link refid="classmlpack_1_1Timers"/>
-      </node>
-      <node id="898">
-        <label>BindingDetails</label>
-        <link refid="structmlpack_1_1util_1_1BindingDetails"/>
-      </node>
-    </collaborationgraph>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="172" bodyend="346"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="177" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="176" bodyend="306"/>
     <listofallmembers>
-      <member refid="classmlpack_1_1IO_1adc908d81414046d89563fd0571d55cac" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Add</name></member>
-      <member refid="classmlpack_1_1IO_1a7d026933df7a8c24cae539dab626d3e2" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>aliases</name></member>
-      <member refid="classmlpack_1_1IO_1a5be18c0eeb63369cb449da84dc3ea7ed" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Aliases</name></member>
-      <member refid="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>CheckInputMatrices</name></member>
-      <member refid="classmlpack_1_1IO_1a13e26de32fbf867cff10d99e6660a1ce" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>CheckInputMatrix</name></member>
-      <member refid="classmlpack_1_1IO_1a311c68c417bf994e4bf952dcce4a874d" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>ClearSettings</name></member>
-      <member refid="classmlpack_1_1IO_1aba5a4e3036cfa1d1c55012097b0b50cc" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>didParse</name></member>
-      <member refid="classmlpack_1_1IO_1aa22e2ce779d7df54dde6a4d7458ef1a0" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>doc</name></member>
-      <member refid="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>functionMap</name></member>
-      <member refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>FunctionMapType</name></member>
-      <member refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetParam</name></member>
-      <member refid="classmlpack_1_1IO_1a9273a321ef422a2aa57ee98f5b169632" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetPrintableParam</name></member>
-      <member refid="classmlpack_1_1IO_1aa3080f329734511912ebe72f9ed30656" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetRawParam</name></member>
+      <member refid="classmlpack_1_1IO_1af3a4055c2193c7f6f2cccb7526595f71" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddBindingName</name></member>
+      <member refid="classmlpack_1_1IO_1a6840dd958a2382348b999520c68ae320" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddExample</name></member>
+      <member refid="classmlpack_1_1IO_1abdfdc734325dd9b75088a3bb32286b55" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddFunction</name></member>
+      <member refid="classmlpack_1_1IO_1a0eb6aa5bde78005330215c17ed064d0f" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddLongDescription</name></member>
+      <member refid="classmlpack_1_1IO_1a4530109919250336fd0cb15b92a993f5" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddParameter</name></member>
+      <member refid="classmlpack_1_1IO_1a0de4c2c634b45c52102590c259e22aef" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddSeeAlso</name></member>
+      <member refid="classmlpack_1_1IO_1ad41d1032071c4eaa56d3b24287eaa7b3" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>AddShortDescription</name></member>
+      <member refid="classmlpack_1_1IO_1a3a2fa8f4dfaa2264d433c6892ae24daa" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>aliases</name></member>
+      <member refid="classmlpack_1_1IO_1a9fbcdf361106804abc3267f59864e21e" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>docMutex</name></member>
+      <member refid="classmlpack_1_1IO_1adcb6663560b527e40867c3e7cae4bc72" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>docs</name></member>
+      <member refid="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>functionMap</name></member>
+      <member refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>FunctionMapType</name></member>
       <member refid="classmlpack_1_1IO_1aacf8da2c1644e932b3cbd46703a3d889" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetSingleton</name></member>
-      <member refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>HasParam</name></member>
+      <member refid="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetTimers</name></member>
       <member refid="classmlpack_1_1IO_1aa0f040401c8ee59c4cbac0b887b86766" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>IO</name></member>
       <member refid="classmlpack_1_1IO_1ab97f38cc7c806a9ca1ac423f65e9b00c" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>IO</name></member>
-      <member refid="classmlpack_1_1IO_1a0a4e362b05cd037fc620e27877f3bf4f" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>MakeInPlaceCopy</name></member>
+      <member refid="classmlpack_1_1IO_1a0f4192a96789b551cb018d3758d0c153" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>mapMutex</name></member>
       <member refid="classmlpack_1_1IO_1a137c8f8039ba21a200513a45af990409" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>operator=</name></member>
-      <member refid="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Parameters</name></member>
-      <member refid="classmlpack_1_1IO_1a9f6e568d2db09a7405644497b6b2d59f" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>parameters</name></member>
-      <member refid="classmlpack_1_1IO_1a1025ff079f4aa3baecf036ab0bc32be5" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>ProgramName</name></member>
-      <member refid="classmlpack_1_1IO_1a24d855d329269931b59bdf1b36706a88" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>programName</name></member>
-      <member refid="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>RestoreSettings</name></member>
-      <member refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>SetPassed</name></member>
-      <member refid="classmlpack_1_1IO_1a633a07bb688dd5a1fba5338c8efc6929" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>storageMap</name></member>
-      <member refid="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>StoreSettings</name></member>
-      <member refid="classmlpack_1_1IO_1aca4a039cfb9a63fbe2d98febc7ae337b" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>timer</name></member>
+      <member refid="classmlpack_1_1IO_1a0a0bb69397ce0d79f68095a9eef90607" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1IO_1a8fcad76d2361609e775ad8b94d2237de" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>parameters</name></member>
+      <member refid="classmlpack_1_1IO_1a5a812b3a26e70902629a6a21bf9ea461" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>timer</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

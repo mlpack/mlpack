@@ -98,7 +98,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="183" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a7d86f6aaf67a7fc1096bee9c4b873fb1" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; feedbackModule</definition>
         <argsstring></argsstring>
         <name>feedbackModule</name>
@@ -163,7 +163,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="180" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="180" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a4c72241012da889223be7b69b060a2c2" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; initialModule</definition>
         <argsstring></argsstring>
         <name>initialModule</name>
@@ -176,7 +176,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="193" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="193" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a59992c6b93f242a456732cf9e6457df6" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; inputModule</definition>
         <argsstring></argsstring>
         <name>inputModule</name>
@@ -189,7 +189,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="162" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="162" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1ae89bd22b4cab093f31d9418e34ba9c9a" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; mergeModule</definition>
         <argsstring></argsstring>
         <name>mergeModule</name>
@@ -202,7 +202,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="202" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="202" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -280,7 +280,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="223" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="223" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a8d2b156aeb5339cf597bcd85b9d7a0ea" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; recurrentModule</definition>
         <argsstring></argsstring>
         <name>recurrentModule</name>
@@ -306,7 +306,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="171" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a589d6c6c080ab8cc355f6cebac9d0ed9" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; startModule</definition>
         <argsstring></argsstring>
         <name>startModule</name>
@@ -319,7 +319,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" line="159" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp" bodystart="159" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Recurrent_1a06ae86deb085081745783349f600d0ea" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; transferModule</definition>
         <argsstring></argsstring>
         <name>transferModule</name>
@@ -659,7 +659,7 @@
         <referencedby refid="classmlpack_1_1ann_1_1Recurrent_1aae052295a422d4030c3eacfc1255b1b6" compoundref="recurrent_8hpp" startline="140" endline="140">Recurrent&lt; InputDataType, OutputDataType, CustomLayers &gt;::Rho</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Recurrent_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>
@@ -784,7 +784,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="153" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="158" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1Recurrent_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Recurrent</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1Recurrent_1a8bc49e0436f58eba80dd7c8ee78dda06" prot="private" virt="non-virtual"><scope>mlpack::ann::Recurrent</scope><name>backwardStep</name></member>

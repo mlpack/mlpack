@@ -6,40 +6,40 @@
     <includes local="no">boost/variant.hpp</includes>
     <includes local="yes">run_set_visitor_impl.hpp</includes>
     <incdepgraph>
-      <node id="43845">
+      <node id="45102">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/run_set_visitor.hpp</label>
         <link refid="run__set__visitor_8hpp"/>
-        <childnode refid="43846" relation="include">
+        <childnode refid="45103" relation="include">
         </childnode>
-        <childnode refid="43850" relation="include">
+        <childnode refid="45107" relation="include">
         </childnode>
-        <childnode refid="43851" relation="include">
+        <childnode refid="45108" relation="include">
         </childnode>
       </node>
-      <node id="43847">
+      <node id="45104">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="43848" relation="include">
+        <childnode refid="45105" relation="include">
         </childnode>
-        <childnode refid="43849" relation="include">
+        <childnode refid="45106" relation="include">
         </childnode>
       </node>
-      <node id="43850">
+      <node id="45107">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="43851">
+      <node id="45108">
         <label>run_set_visitor_impl.hpp</label>
       </node>
-      <node id="43846">
+      <node id="45103">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="43847" relation="include">
+        <childnode refid="45104" relation="include">
         </childnode>
       </node>
-      <node id="43848">
+      <node id="45105">
         <label>type_traits</label>
       </node>
-      <node id="43849">
+      <node id="45106">
         <label>cstring</label>
       </node>
     </incdepgraph>
@@ -71,7 +71,7 @@ This file provides an abstraction for the Run() function for different layers an
 <codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RunSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RunSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1RunSetVisitor_1a26bb3385c630118c35f4799f1509abbc" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>run;</highlight></codeline>

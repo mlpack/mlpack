@@ -7,80 +7,80 @@
     <includedby refid="svd__complete__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</includedby>
     <includedby refid="svd__incomplete__method_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</includedby>
     <invincdepgraph>
-      <node id="23454">
+      <node id="23837">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
         <link refid="cf__model_8hpp"/>
       </node>
-      <node id="23456">
+      <node id="23839">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
         <link refid="regularized__svd__method_8hpp"/>
       </node>
-      <node id="23453">
+      <node id="23836">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
         <link refid="bias__svd__method_8hpp"/>
       </node>
-      <node id="23451">
+      <node id="23834">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
         <link refid="cf_8hpp"/>
-        <childnode refid="23452" relation="include">
+        <childnode refid="23835" relation="include">
         </childnode>
-        <childnode refid="23454" relation="include">
+        <childnode refid="23837" relation="include">
         </childnode>
-        <childnode refid="23455" relation="include">
+        <childnode refid="23838" relation="include">
         </childnode>
-        <childnode refid="23457" relation="include">
+        <childnode refid="23840" relation="include">
         </childnode>
       </node>
-      <node id="23457">
+      <node id="23840">
         <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
         <link refid="svdplusplus_8hpp"/>
-        <childnode refid="23458" relation="include">
+        <childnode refid="23841" relation="include">
         </childnode>
       </node>
-      <node id="23460">
+      <node id="23843">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp</label>
         <link refid="svd__incomplete__method_8hpp"/>
       </node>
-      <node id="23449">
+      <node id="23832">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp</label>
         <link refid="batch__svd__method_8hpp"/>
       </node>
-      <node id="23452">
+      <node id="23835">
         <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
         <link refid="bias__svd_8hpp"/>
-        <childnode refid="23453" relation="include">
+        <childnode refid="23836" relation="include">
         </childnode>
       </node>
-      <node id="23458">
+      <node id="23841">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
         <link refid="svdplusplus__method_8hpp"/>
       </node>
-      <node id="23455">
+      <node id="23838">
         <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
         <link refid="regularized__svd_8hpp"/>
-        <childnode refid="23456" relation="include">
+        <childnode refid="23839" relation="include">
         </childnode>
       </node>
-      <node id="23448">
+      <node id="23831">
         <label>/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp</label>
         <link refid="max__iteration__termination_8hpp"/>
-        <childnode refid="23449" relation="include">
+        <childnode refid="23832" relation="include">
         </childnode>
-        <childnode refid="23450" relation="include">
+        <childnode refid="23833" relation="include">
         </childnode>
-        <childnode refid="23459" relation="include">
+        <childnode refid="23842" relation="include">
         </childnode>
-        <childnode refid="23460" relation="include">
+        <childnode refid="23843" relation="include">
         </childnode>
       </node>
-      <node id="23459">
+      <node id="23842">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp</label>
         <link refid="svd__complete__method_8hpp"/>
       </node>
-      <node id="23450">
+      <node id="23833">
         <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/nmf_method.hpp</label>
         <link refid="nmf__method_8hpp"/>
-        <childnode refid="23451" relation="include">
+        <childnode refid="23834" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

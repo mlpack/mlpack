@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="124" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="123" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1dbscan_1_1DBSCAN_1a4904cc82627458fdf6672ccc0b2802c7" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -38,7 +38,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="117" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="116" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1dbscan_1_1DBSCAN_1a7eb1f15290007fced6eef0a08a2e2e0e" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="121" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="120" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1dbscan_1_1DBSCAN_1a20526b61d9872be9c50ba980aa5122c1" prot="private" static="no" mutable="no">
         <type>PointSelectionPolicy</type>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="130" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="129" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="129" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1dbscan_1_1DBSCAN_1a7a06f63d9a2fc0d3b362a0a871e0df7e" prot="private" static="no" mutable="no">
         <type>RangeSearchType</type>
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="127" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="126" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -151,7 +151,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="69" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="68" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1dbscan_1_1DBSCAN_1a224c059e24d3dcdab266b9743ec37404" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -200,7 +200,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="84" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="83" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1dbscan_1_1DBSCAN_1a0245b1f39300ec8133bc6cc9309523c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -249,7 +249,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="97" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="96" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1dbscan_1_1DBSCAN_1ac413cbc512ae367a3824f70b0b497f4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -309,7 +309,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="111" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="110" column="1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -359,7 +359,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="156" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="155" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1dbscan_1_1DBSCAN_1abbe7597876014bf4c7aec02ebcabac4d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -407,7 +407,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="143" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="142" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -438,7 +438,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="53" bodyend="158"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/dbscan/dbscan.hpp" bodystart="52" bodyend="157"/>
     <listofallmembers>
       <member refid="classmlpack_1_1dbscan_1_1DBSCAN_1aa818eefa253afead25aa554d4d73a8a7" prot="private" virt="non-virtual"><scope>mlpack::dbscan::DBSCAN</scope><name>BatchCluster</name></member>
       <member refid="classmlpack_1_1dbscan_1_1DBSCAN_1adecaf21e277aac3eead496cd1f3f394a" prot="private" virt="non-virtual"><scope>mlpack::dbscan::DBSCAN</scope><name>batchMode</name></member>

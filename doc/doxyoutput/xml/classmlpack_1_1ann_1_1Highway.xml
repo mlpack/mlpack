@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="257" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="257" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="255" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="255" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="215" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="213" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref></type>
@@ -56,10 +56,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="251" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="249" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="249" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a1eb74c839be978d5b3697b10eb249e1a" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; empty</definition>
         <argsstring></argsstring>
         <name>empty</name>
@@ -69,7 +69,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="209" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="209" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="207" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -82,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="218" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="218" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="216" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="216" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -95,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="245" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="245" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="243" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="243" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
         <type>InputDataType</type>
@@ -108,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="236" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="236" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="234" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="234" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -121,7 +121,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="194" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="194" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="192" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1add4a998726ba4284e097ba6c7b343c96" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -134,10 +134,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="197" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="197" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="195" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -147,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="203" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="201" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="201" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a18481f496bcf3c09de788fcc4c7e0a42" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="248" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="248" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="246" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="246" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a7c58ee8bc3e70cc89feb3dba2301e256" prot="private" static="no" mutable="no">
         <type>std::vector&lt; bool &gt;</type>
@@ -173,7 +173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="206" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="206" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="204" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1abd24d500081b1de00513cf2fc9cee83f" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor" kindref="compound">OutputHeightVisitor</ref></type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="263" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="263" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="261" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="261" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -199,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="239" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="237" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="237" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref></type>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="254" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="252" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="252" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1ad3606b38a6688053937ab6abe95cc44a" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1OutputWidthVisitor" kindref="compound">OutputWidthVisitor</ref></type>
@@ -225,7 +225,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="260" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="260" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="258" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="258" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -238,7 +238,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="200" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="198" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="198" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a26ba1fa1a5893597d114039e439c6fe6" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -251,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="224" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="224" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="222" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="222" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a384ed0559ce85583d16afe28ccb55a3d" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -264,7 +264,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="227" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="227" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="225" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="225" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a5aae947f7bbfda3ab3ffc3800d09cdde" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -277,7 +277,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="230" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="230" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="228" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="228" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a8ef47211efe67039eec178bd939660c8" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -290,7 +290,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="233" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="233" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="231" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="231" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1abc67d2c704a0e81943c9f0a9c2257138" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -303,7 +303,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="221" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="221" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="219" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="219" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -316,7 +316,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="212" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="212" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="210" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1Highway_1a02bed8590a9ddf520e58a060059518ec" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -329,7 +329,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="242" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="240" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="240" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -344,7 +344,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="64" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="62" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1aa7c8a60646f7301a33d9fed85047ef9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -381,7 +381,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="72" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="70" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1aeb0236003dcc6347c87b2afe09978858" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -394,7 +394,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="75" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="73" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -429,7 +429,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="124" bodyend="128"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="122" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="122" bodyend="126"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a503a807740e6c729be9efc89520db728" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -437,7 +437,7 @@
         <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
         <name>Add</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -454,7 +454,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="135" bodyend="139"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="133" bodyend="137"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -505,7 +505,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="102" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="100" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -518,7 +518,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="168" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="168" bodyend="168"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="166" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="166" bodyend="166"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -531,7 +531,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="170" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="170" bodyend="170"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="168" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="168" bodyend="168"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -572,7 +572,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="90" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="88" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -624,7 +624,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="114" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="112" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -637,7 +637,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="173" bodyend="173"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="171" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="171" bodyend="171"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -650,7 +650,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="175" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="175" bodyend="175"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="173" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="173" bodyend="173"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>InputDataType const  &amp;</type>
@@ -663,7 +663,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="158" bodyend="158"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="156" bodyend="156"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>InputDataType &amp;</type>
@@ -676,7 +676,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="160" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="160" bodyend="160"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="158" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="158" bodyend="158"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -689,7 +689,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="181" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="181" bodyend="184"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="179" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="179" bodyend="182"/>
         <references refid="classmlpack_1_1ann_1_1Highway_1a65cba07328997659bec80b9879b15a51">Highway&lt; InputDataType, OutputDataType, CustomLayers &gt;::serialize</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1adc2669016a821704c4c4aeb4651e9e87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -703,10 +703,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="178" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="178" bodyend="178"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="176" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="176" bodyend="176"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a4cb1e93bff99ccf1f8f974065a3b13c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>
@@ -716,7 +716,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="142" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="142" bodyend="150"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="140" bodyend="148"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -729,7 +729,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="163" bodyend="163"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="161" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="161" bodyend="161"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -742,7 +742,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="165" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="165" bodyend="165"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="163" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="163" bodyend="163"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -755,7 +755,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="153" bodyend="153"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="151" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="151" bodyend="151"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -768,7 +768,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="155" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="155" bodyend="155"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="153" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -781,7 +781,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="80" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="78" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1Highway_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -806,8 +806,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="190" column="1"/>
-        <referencedby refid="classmlpack_1_1ann_1_1Highway_1a13ab93f234244a68f6ade76287284447" compoundref="highway_8hpp" startline="181" endline="184">Highway&lt; InputDataType, OutputDataType, CustomLayers &gt;::InputShape</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="188" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1Highway_1a13ab93f234244a68f6ade76287284447" compoundref="highway_8hpp" startline="179" endline="182">Highway&lt; InputDataType, OutputDataType, CustomLayers &gt;::InputShape</referencedby>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -836,7 +836,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="60" bodyend="264"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" line="59" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp" bodystart="58" bodyend="262"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1Highway_1a8b5234495846c00f6b2c8296ca6bc718" prot="public" virt="non-virtual"><scope>mlpack::ann::Highway</scope><name>Add</name></member>
       <member refid="classmlpack_1_1ann_1_1Highway_1a503a807740e6c729be9efc89520db728" prot="public" virt="non-virtual"><scope>mlpack::ann::Highway</scope><name>Add</name></member>

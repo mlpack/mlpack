@@ -1655,7 +1655,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="184" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="184" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="189" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="189" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a8c8c651bbe5b8997c23cceb68ef09144" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>aH</name></member>
       <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a0c1ebfe867e7763f681c7d0c82bd33f0" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>aW</name></member>

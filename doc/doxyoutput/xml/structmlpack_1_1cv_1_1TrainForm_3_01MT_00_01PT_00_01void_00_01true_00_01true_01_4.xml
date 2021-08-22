@@ -17,39 +17,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="654">
+      <node id="666">
         <label>TrainForm&lt; MT, PT, void, true, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4"/>
-        <childnode refid="655" relation="public-inheritance">
+        <childnode refid="667" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="655">
+      <node id="667">
         <label>TrainFormBase6&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="656" relation="template-instance">
+        <childnode refid="668" relation="template-instance">
           <edgelabel>&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="656">
+      <node id="668">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="657">
+      <node id="669">
         <label>TrainForm&lt; MT, PT, void, true, true &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4"/>
-        <childnode refid="658" relation="public-inheritance">
+        <childnode refid="670" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="658">
+      <node id="670">
         <label>TrainFormBase6&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
-        <childnode refid="659" relation="template-instance">
+        <childnode refid="671" relation="template-instance">
           <edgelabel>&lt; PT, void, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="659">
+      <node id="671">
         <label>TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;</label>
         <link refid="structmlpack_1_1cv_1_1TrainFormBase6"/>
       </node>

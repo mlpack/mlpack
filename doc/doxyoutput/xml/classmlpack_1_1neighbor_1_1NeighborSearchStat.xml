@@ -247,20 +247,20 @@
     <detaileddescription>
 <para>For neighbor searches, each node only needs to store a bound on neighbor distances. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1089">
+      <node id="1101">
         <label>DualTreeKMeansStatistic</label>
         <link refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic"/>
-        <childnode refid="1088" relation="public-inheritance">
+        <childnode refid="1100" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1087">
+      <node id="1099">
         <label>NeighborSearchStat&lt; SortPolicy &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
       </node>
-      <node id="1088">
+      <node id="1100">
         <label>NeighborSearchStat&lt; neighbor::NearestNeighborSort &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1NeighborSearchStat"/>
-        <childnode refid="1087" relation="template-instance">
+        <childnode refid="1099" relation="template-instance">
           <edgelabel>&lt; neighbor::NearestNeighborSort &gt;</edgelabel>
         </childnode>
       </node>

@@ -156,7 +156,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp" line="422" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp" bodystart="422" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RNN_1af8e080a320fdd3f532283b8305bd2391" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;CustomLayers...&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -512,7 +512,7 @@
         <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer)</argsstring>
         <name>Add</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -1407,14 +1407,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="427">
+      <node id="439">
         <label>RNN&lt; OutputLayerType, InitializationRuleType, CustomLayers &gt;</label>
         <link refid="classmlpack_1_1ann_1_1RNN"/>
       </node>
-      <node id="428">
+      <node id="440">
         <label>RNN&lt; OutputLayerType, InitializationRuleType, CustomLayers... &gt;</label>
         <link refid="classmlpack_1_1ann_1_1RNN"/>
-        <childnode refid="427" relation="template-instance">
+        <childnode refid="439" relation="template-instance">
           <edgelabel>&lt; OutputLayerType, InitializationRuleType, CustomLayers... &gt;</edgelabel>
         </childnode>
       </node>

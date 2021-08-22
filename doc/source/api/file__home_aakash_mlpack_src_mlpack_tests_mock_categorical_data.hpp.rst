@@ -53,6 +53,8 @@ Functions
 
 - :ref:`exhale_function_mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6`
 
+- :ref:`exhale_function_mock__categorical__data_8hpp_1ae4e74e2b4630092d7822ceb0fbe232c1`
+
 
 Full File Listing
 -----------------

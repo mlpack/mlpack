@@ -6,25 +6,25 @@
     <includedby refid="precision_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</includedby>
     <includedby refid="recall_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</includedby>
     <invincdepgraph>
-      <node id="5242">
+      <node id="5343">
         <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/recall.hpp</label>
         <link refid="recall_8hpp"/>
       </node>
-      <node id="5240">
+      <node id="5341">
         <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/f1.hpp</label>
         <link refid="f1_8hpp"/>
       </node>
-      <node id="5239">
+      <node id="5340">
         <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/average_strategy.hpp</label>
         <link refid="average__strategy_8hpp"/>
-        <childnode refid="5240" relation="include">
+        <childnode refid="5341" relation="include">
         </childnode>
-        <childnode refid="5241" relation="include">
+        <childnode refid="5342" relation="include">
         </childnode>
-        <childnode refid="5242" relation="include">
+        <childnode refid="5343" relation="include">
         </childnode>
       </node>
-      <node id="5241">
+      <node id="5342">
         <label>/home/aakash/mlpack/src/mlpack/core/cv/metrics/precision.hpp</label>
         <link refid="precision_8hpp"/>
       </node>

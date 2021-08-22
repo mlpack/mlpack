@@ -1,4 +1,4 @@
-.TH "LoadCSV" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "LoadCSV" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -57,6 +57,8 @@ Peek at the file to determine the number of rows and columns in the matrix, assu
 
 .PP
 Definition at line 78 of file load_csv\&.hpp\&.
+.PP
+References DatasetMapper< PolicyType, InputType >::Dimensionality(), and DatasetMapper< PolicyType, InputType >::SetDimensionality()\&.
 .SS "void GetTransposeMatrixSize (size_t & rows, size_t & cols, \fBDatasetMapper\fP< MapPolicy > & info)\fC [inline]\fP"
 
 .PP
@@ -73,9 +75,9 @@ Peek at the file to determine the number of rows and columns in the matrix, assu
 .PP
 
 .PP
-Definition at line 151 of file load_csv\&.hpp\&.
+Definition at line 164 of file load_csv\&.hpp\&.
 .PP
-References DatasetMapper< PolicyType, InputType >::SetDimensionality()\&.
+References DatasetMapper< PolicyType, InputType >::Dimensionality(), and DatasetMapper< PolicyType, InputType >::SetDimensionality()\&.
 .SS "void Load (arma::Mat< T > & inout, \fBDatasetMapper\fP< PolicyType > & infoSet, const bool transpose = \fCtrue\fP)\fC [inline]\fP"
 
 .PP

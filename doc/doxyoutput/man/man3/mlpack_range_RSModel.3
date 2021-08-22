@@ -1,4 +1,4 @@
-.TH "RSModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "RSModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -34,7 +34,7 @@ RSModel \- The \fBRSModel\fP class provides an abstraction for the \fBRangeSearc
 .br
 .RI "Clean memory, if necessary\&. "
 .ti -1c
-.RI "void \fBBuildModel\fP (arma::mat &&referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
+.RI "void \fBBuildModel\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
 .br
 .RI "Build the reference tree on the given dataset with the given parameters\&. "
 .ti -1c
@@ -78,11 +78,11 @@ RSModel \- The \fBRSModel\fP class provides an abstraction for the \fBRangeSearc
 .br
 .RI "Modify whether a random basis is used (don't do this after the model has been built)\&. "
 .ti -1c
-.RI "void \fBSearch\fP (arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
 .br
 .RI "Perform range search\&. "
 .ti -1c
-.RI "void \fBSearch\fP (const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.RI "void \fBSearch\fP (\fButil::Timers\fP &timers, const math::Range &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
 .br
 .RI "Perform monochromatic range search, with the reference set as the query set\&. "
 .ti -1c
@@ -112,7 +112,7 @@ The \fBRSModel\fP class provides an abstraction for the \fBRangeSearch\fP class,
 
 This class is written for the sake of the \fCrange_search\fP binding, but is not necessarily restricted to that usage\&. 
 .PP
-Definition at line 206 of file rs_model\&.hpp\&.
+Definition at line 214 of file rs_model\&.hpp\&.
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBTreeTypes\fP"
@@ -149,7 +149,7 @@ Definition at line 206 of file rs_model\&.hpp\&.
 .TP
 \fB\fIOCTREE \fP\fP
 .PP
-Definition at line 209 of file rs_model\&.hpp\&.
+Definition at line 217 of file rs_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBRSModel\fP (const \fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, const bool randomBasis = \fCfalse\fP)"
@@ -193,7 +193,7 @@ Take ownership of the given \fBRSModel\fP\&.
 Clean memory, if necessary\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "void BuildModel (arma::mat && referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
+.SS "void BuildModel (\fButil::Timers\fP & timers, arma::mat && referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
 
 .PP
 Build the reference tree on the given dataset with the given parameters\&. This takes possession of the reference set to avoid a copy\&.
@@ -215,7 +215,7 @@ Build the reference tree on the given dataset with the given parameters\&. This 
 .PP
 Expose the dataset\&. 
 .PP
-Definition at line 275 of file rs_model\&.hpp\&.
+Definition at line 283 of file rs_model\&.hpp\&.
 .SS "void InitializeModel (const bool naive, const bool singleMode)"
 
 .PP
@@ -225,25 +225,25 @@ Allocate the memory for the range search model\&.
 .PP
 Get the leaf size (applicable to everything but the cover tree)\&. 
 .PP
-Definition at line 288 of file rs_model\&.hpp\&.
+Definition at line 296 of file rs_model\&.hpp\&.
 .SS "size_t& LeafSize ()\fC [inline]\fP"
 
 .PP
 Modify the leaf size (applicable to everything but the cover tree)\&. 
 .PP
-Definition at line 290 of file rs_model\&.hpp\&.
+Definition at line 298 of file rs_model\&.hpp\&.
 .SS "bool Naive () const\fC [inline]\fP"
 
 .PP
 Get whether the model is in naive search mode\&. 
 .PP
-Definition at line 283 of file rs_model\&.hpp\&.
+Definition at line 291 of file rs_model\&.hpp\&.
 .SS "bool& Naive ()\fC [inline]\fP"
 
 .PP
 Modify whether the model is in naive search mode\&. 
 .PP
-Definition at line 285 of file rs_model\&.hpp\&.
+Definition at line 293 of file rs_model\&.hpp\&.
 .SS "\fBRSModel\fP& operator= (const \fBRSModel\fP & other)"
 
 .PP
@@ -271,16 +271,16 @@ Take ownership of the given \fBRSModel\fP's data\&.
 .PP
 Get whether a random basis is used\&. 
 .PP
-Definition at line 298 of file rs_model\&.hpp\&.
+Definition at line 306 of file rs_model\&.hpp\&.
 .SS "bool& RandomBasis ()\fC [inline]\fP"
 
 .PP
 Modify whether a random basis is used (don't do this after the model has been built)\&. 
 .PP
-Definition at line 301 of file rs_model\&.hpp\&.
+Definition at line 309 of file rs_model\&.hpp\&.
 .PP
 References RSWrapperBase::Search()\&.
-.SS "void Search (arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, arma::mat && querySet, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
 
 .PP
 Perform range search\&. This takes possession of the query set, so the query set will not be usable after the search\&. For more information on the output format, see \fBRangeSearch<>::Search()\fP\&.
@@ -297,7 +297,7 @@ Perform range search\&. This takes possession of the query set, so the query set
 .RE
 .PP
 
-.SS "void Search (const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
+.SS "void Search (\fButil::Timers\fP & timers, const math::Range & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
 
 .PP
 Perform monochromatic range search, with the reference set as the query set\&. For more information on the output format, see \fBRangeSearch<>::Search()\fP\&.
@@ -321,25 +321,25 @@ Serialize the range search model\&.
 .PP
 Get whether the model is in single-tree search mode\&. 
 .PP
-Definition at line 278 of file rs_model\&.hpp\&.
+Definition at line 286 of file rs_model\&.hpp\&.
 .SS "bool& SingleMode ()\fC [inline]\fP"
 
 .PP
 Modify whether the model is in single-tree search mode\&. 
 .PP
-Definition at line 280 of file rs_model\&.hpp\&.
+Definition at line 288 of file rs_model\&.hpp\&.
 .SS "\fBTreeTypes\fP TreeType () const\fC [inline]\fP"
 
 .PP
 Get the type of tree\&. 
 .PP
-Definition at line 293 of file rs_model\&.hpp\&.
+Definition at line 301 of file rs_model\&.hpp\&.
 .SS "\fBTreeTypes\fP& TreeType ()\fC [inline]\fP"
 
 .PP
 Modify the type of tree (don't do this after the model has been built)\&. 
 .PP
-Definition at line 295 of file rs_model\&.hpp\&.
+Definition at line 303 of file rs_model\&.hpp\&.
 
 .SH "Author"
 .PP 

@@ -1,4 +1,4 @@
-.TH "Radical" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Radical" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -27,11 +27,11 @@ Radical \- An implementation of RADICAL, an algorithm for independent component 
 .br
 .RI "Make replicates of each data point (the number of replicates is set in either the constructor or with \fBReplicates()\fP) and perturb data with Gaussian noise with standard deviation noiseStdDev\&. "
 .ti -1c
-.RI "void \fBDoRadical\fP (const arma::mat &matX, arma::mat &matY, arma::mat &matW)"
+.RI "void \fBDoRadical\fP (const arma::mat &matX, arma::mat &matY, arma::mat &matW, \fButil::Timers\fP &timers=\fBIO::GetTimers\fP())"
 .br
 .RI "Run RADICAL\&. "
 .ti -1c
-.RI "double \fBDoRadical2D\fP (const arma::mat &matX)"
+.RI "double \fBDoRadical2D\fP (const arma::mat &matX, \fButil::Timers\fP &timers=\fBIO::GetTimers\fP())"
 .br
 .RI "Two-dimensional version of RADICAL\&. "
 .ti -1c
@@ -85,7 +85,7 @@ For more details, see the following paper:
 .PP
  
 .PP
-Definition at line 43 of file radical\&.hpp\&.
+Definition at line 44 of file radical\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBRadical\fP (const double noiseStdDev = \fC0\&.175\fP, const size_t replicates = \fC30\fP, const size_t angles = \fC150\fP, const size_t sweeps = \fC0\fP, const size_t m = \fC0\fP)"
@@ -114,18 +114,18 @@ Set the parameters to RADICAL\&.
 .PP
 Get the number of angles considered during brute-force search\&. 
 .PP
-Definition at line 105 of file radical\&.hpp\&.
+Definition at line 111 of file radical\&.hpp\&.
 .SS "size_t& Angles ()\fC [inline]\fP"
 
 .PP
 Modify the number of angles considered during brute-force search\&. 
 .PP
-Definition at line 107 of file radical\&.hpp\&.
+Definition at line 113 of file radical\&.hpp\&.
 .SS "void CopyAndPerturb (arma::mat & xNew, const arma::mat & x) const"
 
 .PP
 Make replicates of each data point (the number of replicates is set in either the constructor or with \fBReplicates()\fP) and perturb data with Gaussian noise with standard deviation noiseStdDev\&. 
-.SS "void DoRadical (const arma::mat & matX, arma::mat & matY, arma::mat & matW)"
+.SS "void DoRadical (const arma::mat & matX, arma::mat & matY, arma::mat & matW, \fButil::Timers\fP & timers = \fC\fBIO::GetTimers\fP()\fP)"
 
 .PP
 Run RADICAL\&. 
@@ -137,10 +137,12 @@ Run RADICAL\&.
 \fImatY\fP Estimated independent components - a matrix where each column is a point and each row is an estimated independent component\&. 
 .br
 \fImatW\fP Estimated unmixing matrix, where matY = matW * matX\&. 
+.br
+\fItimers\fP Optional Timers struct for storing timing information\&. 
 .RE
 .PP
 
-.SS "double DoRadical2D (const arma::mat & matX)"
+.SS "double DoRadical2D (const arma::mat & matX, \fButil::Timers\fP & timers = \fC\fBIO::GetTimers\fP()\fP)"
 
 .PP
 Two-dimensional version of RADICAL\&. 
@@ -149,37 +151,37 @@ Two-dimensional version of RADICAL\&.
 .PP
 Get the standard deviation of the additive Gaussian noise\&. 
 .PP
-Definition at line 95 of file radical\&.hpp\&.
+Definition at line 101 of file radical\&.hpp\&.
 .SS "double& NoiseStdDev ()\fC [inline]\fP"
 
 .PP
 Modify the standard deviation of the additive Gaussian noise\&. 
 .PP
-Definition at line 97 of file radical\&.hpp\&.
+Definition at line 103 of file radical\&.hpp\&.
 .SS "size_t Replicates () const\fC [inline]\fP"
 
 .PP
 Get the number of Gaussian-perturbed replicates used per point\&. 
 .PP
-Definition at line 100 of file radical\&.hpp\&.
+Definition at line 106 of file radical\&.hpp\&.
 .SS "size_t& Replicates ()\fC [inline]\fP"
 
 .PP
 Modify the number of Gaussian-perturbed replicates used per point\&. 
 .PP
-Definition at line 102 of file radical\&.hpp\&.
+Definition at line 108 of file radical\&.hpp\&.
 .SS "size_t Sweeps () const\fC [inline]\fP"
 
 .PP
 Get the number of sweeps\&. 
 .PP
-Definition at line 110 of file radical\&.hpp\&.
+Definition at line 116 of file radical\&.hpp\&.
 .SS "size_t& Sweeps ()\fC [inline]\fP"
 
 .PP
 Modify the number of sweeps\&. 
 .PP
-Definition at line 112 of file radical\&.hpp\&.
+Definition at line 118 of file radical\&.hpp\&.
 .PP
 References mlpack::radical::WhitenFeatureMajorMatrix()\&.
 .SS "double Vasicek (arma::vec & x) const"

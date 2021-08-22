@@ -40,6 +40,12 @@ Includes
 
 
 
+Included By
+-----------
+
+
+- :ref:`file__home_aakash_mlpack_src_mlpack_tests_test_function_tools.hpp`
+
 
 
 
@@ -56,14 +62,6 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacemlpack_1_1data_1a38ad55a3d28296d823078fe7d0ced9b2`
-
-- :ref:`exhale_function_namespacemlpack_1_1data_1a744850e5ad47df5e0af6f5845009a4d2`
-
-- :ref:`exhale_function_namespacemlpack_1_1data_1a91a5ecc1018b88a9cbe745e67d1e8672`
-
-- :ref:`exhale_function_namespacemlpack_1_1data_1af9b163f42a48fdc8993c2165f9089494`
-
 - :ref:`exhale_function_namespacemlpack_1_1data_1a7bca254ee313ff590e7d1bcada13d72a`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1a32f749a2ac526fd90ab112400fad6ef2`
@@ -71,6 +69,14 @@ Functions
 - :ref:`exhale_function_namespacemlpack_1_1data_1a0baaf8bcdf473761f7c59c9e1577d1f1`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1a0ac4c8b737e134361d49d5c1c3f9f6ba`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1a744850e5ad47df5e0af6f5845009a4d2`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1a38ad55a3d28296d823078fe7d0ced9b2`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1af9b163f42a48fdc8993c2165f9089494`
+
+- :ref:`exhale_function_namespacemlpack_1_1data_1a91a5ecc1018b88a9cbe745e67d1e8672`
 
 - :ref:`exhale_function_namespacemlpack_1_1data_1aa8ba4ec838f0ac7dd92c69b6c60dfb22`
 

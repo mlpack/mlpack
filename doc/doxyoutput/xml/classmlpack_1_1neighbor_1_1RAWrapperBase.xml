@@ -36,11 +36,11 @@
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1afeeb9495ce89199f8c68a11b1ed03c62">RAWrapperBase::FirstLeafExact</references>
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a76bdb2e751927f38210e7111c15cba08">RAWrapperBase::Naive</references>
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66a953e46f9ad0cfd8d6641816370614">RAWrapperBase::SampleAtLeaves</references>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766">RAWrapperBase::Search</references>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db">RAWrapperBase::Search</references>
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66d221dd25418821f76bb66bd9c98bce">RAWrapperBase::SingleMode</references>
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a9732af23ee467fcf80889261e2a29047">RAWrapperBase::SingleSampleLimit</references>
         <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae0bfd2fa9956cc64af4ded5d0a497c89">RAWrapperBase::Tau</references>
-        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c">RAWrapperBase::Train</references>
+        <references refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a">RAWrapperBase::Train</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a82b4d70edcf506e24a36702731bb1d8c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
         <type>double</type>
@@ -55,7 +55,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="65" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a500ecd077d5cc5fdbf6ceb095d8de9e1" compoundref="ra__model_8hpp" startline="353" endline="353">RAModel::Alpha</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a500ecd077d5cc5fdbf6ceb095d8de9e1" compoundref="ra__model_8hpp" startline="361" endline="361">RAModel::Alpha</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1abfdfae3b38039d282f10a63860afc650" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -101,7 +101,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="47" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1aff320b9a86b77a150e630c01d5888273" compoundref="ra__model_8hpp" startline="335" endline="335">RAModel::Dataset</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1aff320b9a86b77a150e630c01d5888273" compoundref="ra__model_8hpp" startline="343" endline="343">RAModel::Dataset</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1afeeb9495ce89199f8c68a11b1ed03c62" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
@@ -117,7 +117,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="55" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a17ec6e467897eb8aee3b519e0758e77d" compoundref="ra__model_8hpp" startline="363" endline="363">RAModel::FirstLeafExact</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a17ec6e467897eb8aee3b519e0758e77d" compoundref="ra__model_8hpp" startline="371" endline="371">RAModel::FirstLeafExact</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a26aaa27045003a709864f1df22779e27" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -147,7 +147,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="80" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" compoundref="ra__model_8hpp" startline="343" endline="343">RAModel::Naive</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" compoundref="ra__model_8hpp" startline="351" endline="351">RAModel::Naive</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1af7b975b8b5777ab38621d5d7ccd90aae" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -177,7 +177,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="60" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1aa9dd91d6b96e1d0b343c3cec27372036" compoundref="ra__model_8hpp" startline="358" endline="358">RAModel::SampleAtLeaves</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1aa9dd91d6b96e1d0b343c3cec27372036" compoundref="ra__model_8hpp" startline="366" endline="366">RAModel::SampleAtLeaves</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac33a833eb52f373a94f383370c4deb29" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -194,13 +194,17 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="62" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances, const size_t leafSize)=0</argsstring>
         <name>Search</name>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad43293b5ec532712b022897bedc15f44">Search</reimplementedby>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089">Search</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1a58c353341f9f44a1897505d6c467e666">Search</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568">Search</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>querySet</declname>
@@ -227,18 +231,22 @@
 <para>search with a separate query set). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="90" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" compoundref="ra__model_8hpp" startline="223" endline="226">LeafSizeRAWrapper&lt; TreeType &gt;::Clone</referencedby>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="ra__model_8hpp" startline="163" endline="163">RAWrapper&lt; TreeType &gt;::Naive</referencedby>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a8111114602e748b38c0875f82f323544" compoundref="ra__model_8hpp" startline="386" endline="386">RAModel::RandomBasis</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="91" column="1"/>
+        <referencedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" compoundref="ra__model_8hpp" startline="229" endline="232">LeafSizeRAWrapper&lt; TreeType &gt;::Clone</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="ra__model_8hpp" startline="166" endline="166">RAWrapper&lt; TreeType &gt;::Naive</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a8111114602e748b38c0875f82f323544" compoundref="ra__model_8hpp" startline="394" endline="394">RAModel::RandomBasis</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a98ca743413f49d02f39ecb99184443d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a07e26aa53e77ad631a36858d49c900c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Search</definition>
-        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)=0</argsstring>
         <name>Search</name>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1aeb3fa1fab8680898b6326556ea81a55b">Search</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a">Search</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>const size_t</type>
           <declname>k</declname>
@@ -257,7 +265,7 @@
 <para>a search with the reference set as the query set). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="98" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="100" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
         <type>bool</type>
@@ -272,7 +280,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="75" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a7477b3e8499a6158bbe177e7f30d4947" compoundref="ra__model_8hpp" startline="338" endline="338">RAModel::SingleMode</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a7477b3e8499a6158bbe177e7f30d4947" compoundref="ra__model_8hpp" startline="346" endline="346">RAModel::SingleMode</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -302,7 +310,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="50" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a3a2580f686a9de3078e499b1280e2a9f" compoundref="ra__model_8hpp" startline="368" endline="368">RAModel::SingleSampleLimit</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a3a2580f686a9de3078e499b1280e2a9f" compoundref="ra__model_8hpp" startline="376" endline="376">RAModel::SingleSampleLimit</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5f780bd465b98c024ff3659adbeffaf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -332,7 +340,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="70" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a4a4b0fafde4cc4c856a53025dc8c4c21" compoundref="ra__model_8hpp" startline="348" endline="348">RAModel::Tau</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAModel_1a4a4b0fafde4cc4c856a53025dc8c4c21" compoundref="ra__model_8hpp" startline="356" endline="356">RAModel::Tau</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1a7e51ae335f71878cff370a9525380bac" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
@@ -349,13 +357,17 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="72" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
         <definition>virtual void Train</definition>
-        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize)=0</argsstring>
+        <argsstring>(util::Timers &amp;timers, arma::mat &amp;&amp;referenceSet, const size_t leafSize)=0</argsstring>
         <name>Train</name>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1aab4ee663331b914daad05f6f7c22ee9b">Train</reimplementedby>
-        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d">Train</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7bc2562f0ea045f22c787ae220649379">Train</reimplementedby>
+        <reimplementedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6">Train</reimplementedby>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+        </param>
         <param>
           <type>arma::mat &amp;&amp;</type>
           <declname>referenceSet</declname>
@@ -371,8 +383,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="85" column="1"/>
-        <referencedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" compoundref="ra__model_8hpp" startline="223" endline="226">LeafSizeRAWrapper&lt; TreeType &gt;::Clone</referencedby>
-        <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="ra__model_8hpp" startline="163" endline="163">RAWrapper&lt; TreeType &gt;::Naive</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" compoundref="ra__model_8hpp" startline="229" endline="232">LeafSizeRAWrapper&lt; TreeType &gt;::Clone</referencedby>
+        <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" compoundref="ra__model_8hpp" startline="166" endline="166">RAWrapper&lt; TreeType &gt;::Naive</referencedby>
         <referencedby refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" compoundref="ra__model_8hpp" startline="44" endline="44">RAWrapperBase::~RAWrapperBase</referencedby>
       </memberdef>
       </sectiondef>
@@ -381,24 +393,24 @@
     <detaileddescription>
 <para>All <ref refid="classmlpack_1_1neighbor_1_1RASearch" kindref="compound">RASearch</ref> type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1130">
+      <node id="1142">
         <label>RAWrapperBase</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapperBase"/>
       </node>
-      <node id="1132">
+      <node id="1144">
         <label>LeafSizeRAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper"/>
-        <childnode refid="1131" relation="public-inheritance">
+        <childnode refid="1143" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1131">
+      <node id="1143">
         <label>RAWrapper&lt; TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RAWrapper"/>
-        <childnode refid="1130" relation="public-inheritance">
+        <childnode refid="1142" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="32" bodyend="101"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp" bodystart="32" bodyend="104"/>
     <listofallmembers>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a82b4d70edcf506e24a36702731bb1d8c" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Alpha</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1abfdfae3b38039d282f10a63860afc650" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Alpha</name></member>
@@ -411,15 +423,15 @@
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a33445e59b0dcf448bca4d6d73cd5a903" prot="public" virt="non-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>RAWrapperBase</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66a953e46f9ad0cfd8d6641816370614" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SampleAtLeaves</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac33a833eb52f373a94f383370c4deb29" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SampleAtLeaves</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Search</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a98ca743413f49d02f39ecb99184443d4" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a07e26aa53e77ad631a36858d49c900c3" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Search</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SingleMode</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a9732af23ee467fcf80889261e2a29047" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SingleSampleLimit</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5f780bd465b98c024ff3659adbeffaf1" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>SingleSampleLimit</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae0bfd2fa9956cc64af4ded5d0a497c89" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Tau</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a7e51ae335f71878cff370a9525380bac" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Tau</name></member>
-      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a" prot="public" virt="pure-virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>Train</name></member>
       <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0fc504cc59c425b26f3cadcdf45fe17d" prot="public" virt="virtual"><scope>mlpack::neighbor::RAWrapperBase</scope><name>~RAWrapperBase</name></member>
     </listofallmembers>
   </compounddef>

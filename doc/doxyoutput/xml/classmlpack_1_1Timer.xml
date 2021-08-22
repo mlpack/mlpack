@@ -54,6 +54,21 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="77" column="1"/>
+        <referencedby refid="classmlpack_1_1util_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" compoundref="timers_8hpp" startline="109" endline="109">Timers::Timers</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1Timer_1a3ec72df2c07ffd521a5dd6edf3e35b6d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::map&lt; std::string, std::chrono::microseconds &gt;</type>
+        <definition>static std::map&lt;std::string, std::chrono::microseconds&gt; GetAllTimers</definition>
+        <argsstring>()</argsstring>
+        <name>GetAllTimers</name>
+        <briefdescription>
+<para>Returns a copy of all the timers used via this interface. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="100" column="1"/>
+        <referencedby refid="classmlpack_1_1util_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" compoundref="timers_8hpp" startline="109" endline="109">Timers::Timers</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1Timer_1a6335c4606497b8c63b2280b647e0dda3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -93,6 +108,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="60" column="1"/>
+        <referencedby refid="classmlpack_1_1util_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" compoundref="timers_8hpp" startline="109" endline="109">Timers::Timers</referencedby>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1Timer_1ad5249f0e0368bf00dbd1bd6570160950" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -119,17 +135,19 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="70" column="1"/>
+        <referencedby refid="classmlpack_1_1util_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" compoundref="timers_8hpp" startline="109" endline="109">Timers::Timers</referencedby>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The timer class provides a way for mlpack methods to be timed. </para>    </briefdescription>
     <detaileddescription>
 <para>The three methods contained in this class allow a named timer to be started and stopped, and its value to be obtained. A named timer is specific to the thread it is running on, so if you start a timer in one thread, it cannot be stopped from a different thread. </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="46" bodyend="96"/>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/timers.hpp" bodystart="46" bodyend="101"/>
     <listofallmembers>
       <member refid="classmlpack_1_1Timer_1a2c8b89142749d77f82338da28267f37c" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>DisableTiming</name></member>
       <member refid="classmlpack_1_1Timer_1a41f8422720891efeaf30a43f6a7bbc7f" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>EnableTiming</name></member>
       <member refid="classmlpack_1_1Timer_1a12540cc60abafd8b9c2a796a9ba2ee16" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>Get</name></member>
+      <member refid="classmlpack_1_1Timer_1a3ec72df2c07ffd521a5dd6edf3e35b6d" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>GetAllTimers</name></member>
       <member refid="classmlpack_1_1Timer_1a6335c4606497b8c63b2280b647e0dda3" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>ResetAll</name></member>
       <member refid="classmlpack_1_1Timer_1aa052af5e185f178dcfd540b95d2b1d11" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>Start</name></member>
       <member refid="classmlpack_1_1Timer_1ad5249f0e0368bf00dbd1bd6570160950" prot="public" virt="non-virtual"><scope>mlpack::Timer</scope><name>Stop</name></member>

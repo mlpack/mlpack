@@ -1,4 +1,4 @@
-.TH "KDEWrapper< KernelType, TreeType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "KDEWrapper< KernelType, TreeType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -33,11 +33,11 @@ Inherits \fBKDEWrapperBase\fP\&.
 .br
 .RI "Create a new \fBKDEWrapper\fP that is the same as this one\&. "
 .ti -1c
-.RI "virtual void \fBEvaluate\fP (arma::mat &&querySet, arma::vec &estimates)"
+.RI "virtual void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::mat &&querySet, arma::vec &estimates)"
 .br
 .RI "Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. "
 .ti -1c
-.RI "virtual void \fBEvaluate\fP (arma::vec &estimates)"
+.RI "virtual void \fBEvaluate\fP (\fButil::Timers\fP &timers, arma::vec &estimates)"
 .br
 .RI "Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. "
 .ti -1c
@@ -85,7 +85,7 @@ Inherits \fBKDEWrapperBase\fP\&.
 .br
 .RI "Serialize the \fBKDE\fP model\&. "
 .ti -1c
-.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet)"
+.RI "virtual void \fBTrain\fP (\fButil::Timers\fP &timers, arma::mat &&referenceSet)"
 .br
 .RI "Train the model (build the tree)\&. "
 .in -1c
@@ -114,13 +114,13 @@ class mlpack::kde::KDEWrapper< KernelType, TreeType >"
 
 It can be extended with new child classes if new functionality for certain types is needed\&. 
 .PP
-Definition at line 138 of file kde_model\&.hpp\&.
+Definition at line 139 of file kde_model\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "typedef \fBKDE\fP<KernelType, \fBmetric::EuclideanDistance\fP, arma::mat, TreeType> \fBKDEType\fP\fC [protected]\fP"
 
 .PP
-Definition at line 217 of file kde_model\&.hpp\&.
+Definition at line 219 of file kde_model\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBKDEWrapper\fP (const double relError, const double absError, const KernelType & kernel)\fC [inline]\fP"
@@ -128,13 +128,13 @@ Definition at line 217 of file kde_model\&.hpp\&.
 .PP
 Create the \fBKDEWrapper\fP object, initializing the internally-held \fBKDE\fP object\&. 
 .PP
-Definition at line 142 of file kde_model\&.hpp\&.
+Definition at line 143 of file kde_model\&.hpp\&.
 .SS "virtual ~\fBKDEWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
 Destruct the \fBKDEWrapper\fP (nothing to do)\&. 
 .PP
-Definition at line 155 of file kde_model\&.hpp\&.
+Definition at line 156 of file kde_model\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "virtual void AbsoluteError (const double eps)\fC [inline]\fP, \fC [virtual]\fP"
@@ -144,7 +144,7 @@ Modify the absolute error tolerance\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 164 of file kde_model\&.hpp\&.
+Definition at line 165 of file kde_model\&.hpp\&.
 .SS "virtual void Bandwidth (const double bw)\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -152,7 +152,7 @@ Modify the bandwidth of the kernel\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 158 of file kde_model\&.hpp\&.
+Definition at line 159 of file kde_model\&.hpp\&.
 .SS "virtual \fBKDEWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -160,14 +160,14 @@ Create a new \fBKDEWrapper\fP that is the same as this one\&. This function will
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 152 of file kde_model\&.hpp\&.
-.SS "virtual void Evaluate (arma::mat && querySet, arma::vec & estimates)\fC [virtual]\fP"
+Definition at line 153 of file kde_model\&.hpp\&.
+.SS "virtual void Evaluate (\fButil::Timers\fP & timers, arma::mat && querySet, arma::vec & estimates)\fC [virtual]\fP"
 
 .PP
 Perform bichromatic \fBKDE\fP (i\&.e\&. \fBKDE\fP with a separate query set)\&. 
 .PP
 Implements \fBKDEWrapperBase\fP\&.
-.SS "virtual void Evaluate (arma::vec & estimates)\fC [virtual]\fP"
+.SS "virtual void Evaluate (\fButil::Timers\fP & timers, arma::vec & estimates)\fC [virtual]\fP"
 
 .PP
 Perform monochromatic \fBKDE\fP (i\&.e\&. with the reference set as the query set)\&. 
@@ -180,7 +180,7 @@ Modify the Monte Carlo break coefficient\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 189 of file kde_model\&.hpp\&.
+Definition at line 190 of file kde_model\&.hpp\&.
 .SS "virtual void MCEntryCoef (const double e)\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -188,7 +188,7 @@ Modify the Monte Carlo entry coefficient\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 186 of file kde_model\&.hpp\&.
+Definition at line 187 of file kde_model\&.hpp\&.
 .SS "virtual size_t MCInitialSampleSize () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -196,7 +196,7 @@ Get the Monte Carlo sample size\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 175 of file kde_model\&.hpp\&.
+Definition at line 176 of file kde_model\&.hpp\&.
 .SS "virtual size_t& MCInitialSampleSize ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -204,7 +204,7 @@ Modify the Monte Carlo sample size\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 180 of file kde_model\&.hpp\&.
+Definition at line 181 of file kde_model\&.hpp\&.
 .SS "virtual void MCProb (const double mcProb)\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -212,7 +212,7 @@ Modify the Monte Carlo probability\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 172 of file kde_model\&.hpp\&.
+Definition at line 173 of file kde_model\&.hpp\&.
 .SS "virtual \fBKDEMode\fP Mode () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -220,7 +220,7 @@ Get the search mode\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 192 of file kde_model\&.hpp\&.
+Definition at line 193 of file kde_model\&.hpp\&.
 .SS "virtual \fBKDEMode\fP& Mode ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -228,7 +228,7 @@ Modify the search mode\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 194 of file kde_model\&.hpp\&.
+Definition at line 195 of file kde_model\&.hpp\&.
 .SS "virtual bool MonteCarlo () const\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -236,7 +236,7 @@ Get whether Monte Carlo search is being used\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 167 of file kde_model\&.hpp\&.
+Definition at line 168 of file kde_model\&.hpp\&.
 .SS "virtual bool& MonteCarlo ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -244,7 +244,7 @@ Modify whether Monte Carlo search is being used\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 169 of file kde_model\&.hpp\&.
+Definition at line 170 of file kde_model\&.hpp\&.
 .SS "virtual void RelativeError (const double eps)\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
@@ -252,14 +252,14 @@ Modify the relative error tolerance\&.
 .PP
 Implements \fBKDEWrapperBase\fP\&.
 .PP
-Definition at line 161 of file kde_model\&.hpp\&.
+Definition at line 162 of file kde_model\&.hpp\&.
 .SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
 
 .PP
 Serialize the \fBKDE\fP model\&. 
 .PP
-Definition at line 208 of file kde_model\&.hpp\&.
-.SS "virtual void Train (arma::mat && referenceSet)\fC [virtual]\fP"
+Definition at line 210 of file kde_model\&.hpp\&.
+.SS "virtual void Train (\fButil::Timers\fP & timers, arma::mat && referenceSet)\fC [virtual]\fP"
 
 .PP
 Train the model (build the tree)\&. 
@@ -272,7 +272,7 @@ Implements \fBKDEWrapperBase\fP\&.
 .PP
 The instantiated \fBKDE\fP object that we are wrapping\&. 
 .PP
-Definition at line 220 of file kde_model\&.hpp\&.
+Definition at line 222 of file kde_model\&.hpp\&.
 
 .SH "Author"
 .PP 

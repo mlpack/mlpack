@@ -1,4 +1,4 @@
-.TH "PathCacher" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "PathCacher" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -79,17 +79,17 @@ This class is responsible for caching the path to each node of the tree\&.
 
 Its instance is provided to \fBEnumerateTree()\fP utility ONCE and it caches the paths to all the leafs and then easily (and quickly) retrieves these paths for each test entry\&. 
 .PP
-Definition at line 80 of file dt_utils\&.hpp\&.
+Definition at line 81 of file dt_utils\&.hpp\&.
 .SH "Member Typedef Documentation"
 .PP 
 .SS "typedef std::vector<std::pair<int, std::string> > \fBPathCacheType\fP\fC [protected]\fP"
 
 .PP
-Definition at line 136 of file dt_utils\&.hpp\&.
+Definition at line 137 of file dt_utils\&.hpp\&.
 .SS "typedef std::list<std::pair<bool, int> > \fBPathType\fP\fC [protected]\fP"
 
 .PP
-Definition at line 135 of file dt_utils\&.hpp\&.
+Definition at line 136 of file dt_utils\&.hpp\&.
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBPathFormat\fP"
@@ -109,7 +109,7 @@ Print the direction, then the tag of the node\&.
 \fB\fIFormatID_LR \fP\fP
 Print the tag of the node, then the direction\&. 
 .PP
-Definition at line 86 of file dt_utils\&.hpp\&.
+Definition at line 87 of file dt_utils\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBPathCacher\fP (\fBPathFormat\fP fmt, \fBDTree\fP< MatType, int > * tree)"
@@ -142,7 +142,7 @@ Leave the given node\&.
 .PP
 Get the number of nodes in the path cache\&. 
 .PP
-Definition at line 132 of file dt_utils\&.hpp\&.
+Definition at line 133 of file dt_utils\&.hpp\&.
 .PP
 References PathCacher::pathCache\&.
 .SS "int ParentOf (int tag) const\fC [inline]\fP"
@@ -158,15 +158,15 @@ Return the constructed path for a given tag\&.
 .SS "\fBPathFormat\fP format\fC [protected]\fP"
 
 .PP
-Definition at line 139 of file dt_utils\&.hpp\&.
+Definition at line 140 of file dt_utils\&.hpp\&.
 .SS "\fBPathType\fP path\fC [protected]\fP"
 
 .PP
-Definition at line 138 of file dt_utils\&.hpp\&.
+Definition at line 139 of file dt_utils\&.hpp\&.
 .SS "\fBPathCacheType\fP pathCache\fC [protected]\fP"
 
 .PP
-Definition at line 140 of file dt_utils\&.hpp\&.
+Definition at line 141 of file dt_utils\&.hpp\&.
 .PP
 Referenced by PathCacher::NumNodes()\&.
 

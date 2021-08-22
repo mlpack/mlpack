@@ -51,7 +51,7 @@
     <member refid="structcereal_1_1save__visitor_1ac6ad85740cee791e6f711c836fea607d" kind="function"><name>operator()</name></member>
   </compound>
   <compound refid="structInitHMMModel" kind="struct"><name>InitHMMModel</name>
-    <member refid="structInitHMMModel_1a3b7981fd17dd8132c10744e7d088c347" kind="function"><name>Apply</name></member>
+    <member refid="structInitHMMModel_1a9deb0e37cbf9023b2ba8d91c2e08424c" kind="function"><name>Apply</name></member>
     <member refid="structInitHMMModel_1a457b36f139f6a11e38f793ffb1276b38" kind="function"><name>Create</name></member>
     <member refid="structInitHMMModel_1ada660c2630ff663ac9002121e1e28b5e" kind="function"><name>Create</name></member>
     <member refid="structInitHMMModel_1ad22d3a4f18404743629ee3157b071f90" kind="function"><name>Create</name></member>
@@ -129,6 +129,16 @@
     <member refid="classLayerNameVisitor_1a6bb446bf320c905d75ddd2644e613bda" kind="function"><name>LayerString</name></member>
     <member refid="classLayerNameVisitor_1a5b17c31f0df22e777430e82a6d61666a" kind="function"><name>operator()</name></member>
     <member refid="classLayerNameVisitor_1a7ac25ef2c2798323872be99b6cfcf6d6" kind="function"><name>operator()</name></member>
+  </compound>
+  <compound refid="classMainTestFixture" kind="class"><name>MainTestFixture</name>
+    <member refid="classMainTestFixture_1ac0652c2bfba3bb1d554a47617923e1f4" kind="variable"><name>params</name></member>
+    <member refid="classMainTestFixture_1a79e2c8bdacac3a4f2f1933f0f8decf00" kind="variable"><name>paramsClean</name></member>
+    <member refid="classMainTestFixture_1a8b0901671e304631752ca864289b1517" kind="variable"><name>timers</name></member>
+    <member refid="classMainTestFixture_1acb1ec1facf586a2802eb4ae6c3c192ba" kind="function"><name>MainTestFixture</name></member>
+    <member refid="classMainTestFixture_1a14cc5cdd8bbb22e96a8759e51ed22d6e" kind="function"><name>~MainTestFixture</name></member>
+    <member refid="classMainTestFixture_1a444067d1e8832ff9d5c90d5d73045e5d" kind="function"><name>CleanMemory</name></member>
+    <member refid="classMainTestFixture_1a5d7ee05af21036c948466f92646c3285" kind="function"><name>ResetSettings</name></member>
+    <member refid="classMainTestFixture_1a0e2221ee28b44aa3b0e8b97706048d02" kind="function"><name>SetInputParam</name></member>
   </compound>
   <compound refid="classmlpack_1_1adaboost_1_1AdaBoost" kind="class"><name>mlpack::adaboost::AdaBoost</name>
     <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a930b209a98d9b9035d6a937fa01c2261" kind="variable"><name>alpha</name></member>
@@ -772,6 +782,44 @@
     <member refid="classmlpack_1_1ann_1_1BiasSetVisitor_1a3789d0f8994cfd4bcbe27565aa7e9bd4" kind="function"><name>LayerSize</name></member>
     <member refid="classmlpack_1_1ann_1_1BiasSetVisitor_1a13c6676b3678eb98b8b918e364647576" kind="function"><name>LayerSize</name></member>
   </compound>
+  <compound refid="classmlpack_1_1ann_1_1BicubicInterpolation" kind="class"><name>mlpack::ann::BicubicInterpolation</name>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a89515672ea25fdeac27882c6321359b5" kind="typedef"><name>ElemType</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a20f4c4490bc8ecbdd1ffcb79acce6035" kind="variable"><name>alpha</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1acc8b6b6879b002e34f544046de374ce8" kind="variable"><name>batchSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a820c167ceaaa9759b0ca2695d22db55c" kind="variable"><name>depth</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a439dd0f7a6ee37b12bd7da77bc3d0f16" kind="variable"><name>inColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1ad6a1c35304d52ef8b60af47316c6be03" kind="variable"><name>inRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a7ecb2307440bdcf12972d680dbbf91d2" kind="variable"><name>outColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1ad0cfe0bd19643f619beff1528885eec4" kind="variable"><name>outRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a01827f0de7715c4480dd12b4aa12e886" kind="variable"><name>weights</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1aeefa8f2b6abd568c9b6572da38da3f76" kind="function"><name>BicubicInterpolation</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a5c22f7e8996b2ea54d8901335b2e57bd" kind="function"><name>BicubicInterpolation</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a21679485637bdec3078ec74d71572980" kind="function"><name>Alpha</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1acbb0e4747a3a307bee88bad71e5eeaf1" kind="function"><name>Alpha</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a633ef28f24c29c3438a9205786e817a3" kind="function"><name>Backward</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a797f7edb44dd081e5e2b3cc316eef6bd" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1ad6601342d560219ce951d554e69e5e87" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a461f849bc638c15bec262dc9c3a58abe" kind="function"><name>Forward</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a17d4856b19f81c5bc6b20cff58713934" kind="function"><name>GetKernalWeight</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a3866c02efcb03b37b6df7bb8299c889b" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a1df27f614ba64eb812606a2971005a5e" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1aacd90229a50c3271523c62556287d0d6" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a0ba6062be684978ed809bd7abe917789" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a13ab93f234244a68f6ade76287284447" kind="function"><name>InputShape</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a913067c139b71a0e8ca5f1c28244becf" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a3057ecd053b3a1e5e744efeabc33fec3" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1ad414d1f042fe0df8c4ccbbfcb1e3a482" kind="function"><name>OutColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a0430a9583e828be9d8b325221cfdf01b" kind="function"><name>OutColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a0ee21c2a36e5abad1e7a9d5dd00849f9" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a0e4acfe53c207e4b3fba11525be06458" kind="function"><name>OutRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a5061d94d050e5c78e8374801db4c2a9b" kind="function"><name>OutRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1aa530552c7ef915c952fbacc77b965c90" kind="function"><name>Parameters</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a9c5c5900772a689d5a6b59778ec67120" kind="function"><name>Parameters</name></member>
+    <member refid="classmlpack_1_1ann_1_1BicubicInterpolation_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
+  </compound>
   <compound refid="classmlpack_1_1ann_1_1BilinearInterpolation" kind="class"><name>mlpack::ann::BilinearInterpolation</name>
     <member refid="classmlpack_1_1ann_1_1BilinearInterpolation_1acc8b6b6879b002e34f544046de374ce8" kind="variable"><name>batchSize</name></member>
     <member refid="classmlpack_1_1ann_1_1BilinearInterpolation_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
@@ -882,6 +930,33 @@
     <member refid="classmlpack_1_1ann_1_1CELU_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
     <member refid="classmlpack_1_1ann_1_1CELU_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1ann_1_1CELU_1a2b2aec754d2ebd0decd527a4ac196b90" kind="function"><name>WeightSize</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1ann_1_1ChannelShuffle" kind="class"><name>mlpack::ann::ChannelShuffle</name>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1acc8b6b6879b002e34f544046de374ce8" kind="variable"><name>batchSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a820c167ceaaa9759b0ca2695d22db55c" kind="variable"><name>depth</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1aa4133e1a7ad1391c6f0e1e0625ab15d6" kind="variable"><name>groupCount</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a439dd0f7a6ee37b12bd7da77bc3d0f16" kind="variable"><name>inColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1ad6a1c35304d52ef8b60af47316c6be03" kind="variable"><name>inRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a1718e720f5f9dfe5a3dd5a856b74177c" kind="function"><name>ChannelShuffle</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a6709f36b0fe76eda265c1372f3bc1208" kind="function"><name>ChannelShuffle</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a633ef28f24c29c3438a9205786e817a3" kind="function"><name>Backward</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a797f7edb44dd081e5e2b3cc316eef6bd" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1ad6601342d560219ce951d554e69e5e87" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a461f849bc638c15bec262dc9c3a58abe" kind="function"><name>Forward</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a3866c02efcb03b37b6df7bb8299c889b" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a1df27f614ba64eb812606a2971005a5e" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1aacd90229a50c3271523c62556287d0d6" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a0ba6062be684978ed809bd7abe917789" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a963684fcc6673f2ea93d8bf3ce3a937d" kind="function"><name>InGroupCount</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a05b81a25b24e862fa635179831e2b497" kind="function"><name>InGroupCount</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a13ab93f234244a68f6ade76287284447" kind="function"><name>InputShape</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a913067c139b71a0e8ca5f1c28244becf" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a3057ecd053b3a1e5e744efeabc33fec3" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a0ee21c2a36e5abad1e7a9d5dd00849f9" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ChannelShuffle_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
   </compound>
   <compound refid="classmlpack_1_1ann_1_1Concat" kind="class"><name>mlpack::ann::Concat</name>
     <member refid="classmlpack_1_1ann_1_1Concat_1aa90a418bba2e33a96611a197cdd5f496" kind="variable"><name>axis</name></member>
@@ -2576,6 +2651,22 @@
     <member refid="classmlpack_1_1ann_1_1MultiheadAttention_1a02b04b97b89fd1512b0b4af39630dae4" kind="function"><name>TgtSeqLen</name></member>
     <member refid="classmlpack_1_1ann_1_1MultiheadAttention_1a7a2704698a50d9e00dfb083f3a863579" kind="function"><name>WeightSize</name></member>
   </compound>
+  <compound refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss" kind="class"><name>mlpack::ann::MultiLabelSoftMarginLoss</name>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a7bf85ac7ffd2aadf6222185c94394f5d" kind="variable"><name>classWeights</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a6bcc6fd50c7eaf4ae545e76dd28d826a" kind="variable"><name>reduction</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a7ae0563b06d8eb47dac4d5f02ab2c448" kind="variable"><name>weighted</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1aad79db60eea3cd81fbc74dd9c26231fc" kind="function"><name>MultiLabelSoftMarginLoss</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a7a5e88245fe9cf5644f846902393e97a" kind="function"><name>Backward</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a95e8569643615f7d7c891a14e645dd18" kind="function"><name>ClassWeights</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1aadd0058f2483572dad4936be586d1ca9" kind="function"><name>ClassWeights</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1aad9536a75d4ecfe220d313adc47f38fa" kind="function"><name>Forward</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a8bae962cc603d1cab8d80ec78f8d505d" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1afb1123035456ff8aa73e7f7c08e6acbc" kind="function"><name>Reduction</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1ace5e97393cf08c81177ad0929d1c3496" kind="function"><name>Reduction</name></member>
+    <member refid="classmlpack_1_1ann_1_1MultiLabelSoftMarginLoss_1af0dd9205158ccf7bcfcd8ff81f79c927" kind="function"><name>serialize</name></member>
+  </compound>
   <compound refid="classmlpack_1_1ann_1_1MultiplyConstant" kind="class"><name>mlpack::ann::MultiplyConstant</name>
     <member refid="classmlpack_1_1ann_1_1MultiplyConstant_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
     <member refid="classmlpack_1_1ann_1_1MultiplyConstant_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
@@ -2644,6 +2735,36 @@
     <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1ae2b55592952b28666d36015a4e42f9d6" kind="function"><name>Convolution</name></member>
     <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1ac2914aeee931814235a0e237aad5e6d1" kind="function"><name>Convolution</name></member>
     <member refid="classmlpack_1_1ann_1_1NaiveConvolution_1a3afb255b85fb9c65054493f44104178f" kind="function"><name>Convolution</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1ann_1_1NearestInterpolation" kind="class"><name>mlpack::ann::NearestInterpolation</name>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1acc8b6b6879b002e34f544046de374ce8" kind="variable"><name>batchSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a820c167ceaaa9759b0ca2695d22db55c" kind="variable"><name>depth</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a439dd0f7a6ee37b12bd7da77bc3d0f16" kind="variable"><name>inColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1ad6a1c35304d52ef8b60af47316c6be03" kind="variable"><name>inRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a7ecb2307440bdcf12972d680dbbf91d2" kind="variable"><name>outColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1ad0cfe0bd19643f619beff1528885eec4" kind="variable"><name>outRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1acc43af8ecfe005967d2f67dd2900341a" kind="function"><name>NearestInterpolation</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a37106c672d4ed6eafb7468ce01ca6705" kind="function"><name>NearestInterpolation</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a633ef28f24c29c3438a9205786e817a3" kind="function"><name>Backward</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a797f7edb44dd081e5e2b3cc316eef6bd" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1ad6601342d560219ce951d554e69e5e87" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a461f849bc638c15bec262dc9c3a58abe" kind="function"><name>Forward</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a3866c02efcb03b37b6df7bb8299c889b" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a1df27f614ba64eb812606a2971005a5e" kind="function"><name>InColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1aacd90229a50c3271523c62556287d0d6" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a0ba6062be684978ed809bd7abe917789" kind="function"><name>InDepth</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a13ab93f234244a68f6ade76287284447" kind="function"><name>InputShape</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a913067c139b71a0e8ca5f1c28244becf" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a3057ecd053b3a1e5e744efeabc33fec3" kind="function"><name>InRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1ad414d1f042fe0df8c4ccbbfcb1e3a482" kind="function"><name>OutColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a0430a9583e828be9d8b325221cfdf01b" kind="function"><name>OutColSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a0ee21c2a36e5abad1e7a9d5dd00849f9" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a0e4acfe53c207e4b3fba11525be06458" kind="function"><name>OutRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a5061d94d050e5c78e8374801db4c2a9b" kind="function"><name>OutRowSize</name></member>
+    <member refid="classmlpack_1_1ann_1_1NearestInterpolation_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
   </compound>
   <compound refid="classmlpack_1_1ann_1_1NegativeLogLikelihood" kind="class"><name>mlpack::ann::NegativeLogLikelihood</name>
     <member refid="classmlpack_1_1ann_1_1NegativeLogLikelihood_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
@@ -3206,6 +3327,19 @@
     <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a4ef4c95e2db3015b48ea9b9ad5693a5c" kind="function"><name>Reward</name></member>
     <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1ann_1_1ReinforceNormal_1a4ad89e6cbbfff6c8be147a82219bb502" kind="function"><name>StandardDeviation</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1ann_1_1ReLU6" kind="class"><name>mlpack::ann::ReLU6</name>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a94a1c23fb1e8ea69218123e216f406a8" kind="variable"><name>delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a77fc4c7d9e92ac78bf2c4239477f54bc" kind="variable"><name>outputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a3152117500cb73e5cd0c244a3c87750d" kind="function"><name>ReLU6</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1aef8c56f1f8624bd006afec8b3bcda9d6" kind="function"><name>Backward</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a797f7edb44dd081e5e2b3cc316eef6bd" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1ad6601342d560219ce951d554e69e5e87" kind="function"><name>Delta</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a09440df0a90bdcc766e56e097d91205b" kind="function"><name>Forward</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a0ee21c2a36e5abad1e7a9d5dd00849f9" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a21d5f745f02c709625a4ee0907f004a5" kind="function"><name>OutputParameter</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
+    <member refid="classmlpack_1_1ann_1_1ReLU6_1a7a2704698a50d9e00dfb083f3a863579" kind="function"><name>WeightSize</name></member>
   </compound>
   <compound refid="classmlpack_1_1ann_1_1Reparametrization" kind="class"><name>mlpack::ann::Reparametrization</name>
     <member refid="classmlpack_1_1ann_1_1Reparametrization_1a9424343761f8c4f4c1afe8f5b6bf471b" kind="variable"><name>beta</name></member>
@@ -5175,6 +5309,19 @@
     <member refid="classmlpack_1_1emst_1_1UnionFind_1a16caadf3734b274989d7610aa480808d" kind="function"><name>Find</name></member>
     <member refid="classmlpack_1_1emst_1_1UnionFind_1a26dbea2d789bab0faff47b52ab884ea0" kind="function"><name>Union</name></member>
   </compound>
+  <compound refid="classmlpack_1_1ensemble_1_1SSELoss" kind="class"><name>mlpack::ensemble::SSELoss</name>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1adeedc97114c5a704906c8e26bdbd2451" kind="variable"><name>alpha</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a4780b1e2fd1fdbfd58ecbba022bfbd90" kind="variable"><name>gradients</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a69c6d44d5ef0648d5244aeff573bf36f" kind="variable"><name>hessians</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a01c828218289eff2af40b9cdf043393f" kind="variable"><name>lambda</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a217efd14c185f276d5c0e21255fc1a9b" kind="function"><name>SSELoss</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1abb7b45d12ae094f13c5d0c5d31419e1b" kind="function"><name>SSELoss</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1ad9d4c26532e98076df23e80092f7f0d6" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a3382eff3b51d0f826c65f5933691220c" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1aab2bf5767203be94314119677fb92056" kind="function"><name>InitialPrediction</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a4ee8e1a55d1d6b7a34cb0555c60c4358" kind="function"><name>OutputLeafValue</name></member>
+    <member refid="classmlpack_1_1ensemble_1_1SSELoss_1a9b466a93cd55a9b5b2b06a27c5390299" kind="function"><name>ApplyL1</name></member>
+  </compound>
   <compound refid="classmlpack_1_1fastmks_1_1FastMKS" kind="class"><name>mlpack::fastmks::FastMKS</name>
     <member refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" kind="typedef"><name>Tree</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a25f2752ae2dd3aa1e6b36257252e9c63" kind="typedef"><name>Candidate</name></member>
@@ -5237,19 +5384,19 @@
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1ae4060d2c27f69eea2438f25bc24eeddb" kind="function"><name>FastMKSModel</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af44dc1dc47f204f5163feaae0da6d0c8" kind="function"><name>FastMKSModel</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a901e6c34f535118d384a4ae938a44f90" kind="function"><name>~FastMKSModel</name></member>
-    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" kind="function"><name>BuildModel</name></member>
+    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1045389d4f00d0c9a4b48ba693329ba2" kind="function"><name>BuildModel</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaefce8a6d9804780c3ba76387743bfa1" kind="function"><name>KernelType</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" kind="function"><name>KernelType</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af7d397adca3f411b4e2d2f977b280ce6" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" kind="function"><name>operator=</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7efa63563a3b3934e96ab230902a744f" kind="function"><name>operator=</name></member>
-    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af21ed3dd588e5375f7fb5b69819b60bb" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a90131b92865dbbfe1bcdc3f20eb8811c" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaf97f4c4da301a2f08b865d0103fc632" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1adadacd63ddeadf138d834b1fdc632773" kind="function"><name>SingleMode</name></member>
-    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a6fe4c483a11bb3c80db7ca5171044707" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a20049744e4fe31e12f916130c8398c34" kind="function"><name>Search</name></member>
   </compound>
   <compound refid="classmlpack_1_1fastmks_1_1FastMKSRules" kind="class"><name>mlpack::fastmks::FastMKSRules</name>
     <member refid="classmlpack_1_1fastmks_1_1FastMKSRules_1ab5f079db10d0a6813eefeb1115e894cb" kind="typedef"><name>TraversalInfoType</name></member>
@@ -5465,7 +5612,7 @@
     <member refid="classmlpack_1_1hmm_1_1HMMModel_1ad1de8c5e86d191107b69aa94d5e3454a" kind="function"><name>GMMHMM</name></member>
     <member refid="classmlpack_1_1hmm_1_1HMMModel_1acd95a7ce40a4c99a45a784b1927c948b" kind="function"><name>operator=</name></member>
     <member refid="classmlpack_1_1hmm_1_1HMMModel_1a7a1ad87855c1fc4132b2b1092154fc54" kind="function"><name>operator=</name></member>
-    <member refid="classmlpack_1_1hmm_1_1HMMModel_1a894b9bd55c11b70c9cfbf6e078bb89d8" kind="function"><name>PerformAction</name></member>
+    <member refid="classmlpack_1_1hmm_1_1HMMModel_1a93824092833d757849480c8f83670035" kind="function"><name>PerformAction</name></member>
     <member refid="classmlpack_1_1hmm_1_1HMMModel_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1hmm_1_1HMMModel_1addcc3610a14299b695cf108a2be94a95" kind="function"><name>Type</name></member>
   </compound>
@@ -5589,31 +5736,24 @@
   </compound>
   <compound refid="classmlpack_1_1IO" kind="class"><name>mlpack::IO</name>
     <member refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" kind="typedef"><name>FunctionMapType</name></member>
-    <member refid="classmlpack_1_1IO_1a7d026933df7a8c24cae539dab626d3e2" kind="variable"><name>aliases</name></member>
-    <member refid="classmlpack_1_1IO_1a9f6e568d2db09a7405644497b6b2d59f" kind="variable"><name>parameters</name></member>
-    <member refid="classmlpack_1_1IO_1a633a07bb688dd5a1fba5338c8efc6929" kind="variable"><name>storageMap</name></member>
-    <member refid="classmlpack_1_1IO_1aba5a4e3036cfa1d1c55012097b0b50cc" kind="variable"><name>didParse</name></member>
-    <member refid="classmlpack_1_1IO_1aa22e2ce779d7df54dde6a4d7458ef1a0" kind="variable"><name>doc</name></member>
+    <member refid="classmlpack_1_1IO_1a3a2fa8f4dfaa2264d433c6892ae24daa" kind="variable"><name>aliases</name></member>
+    <member refid="classmlpack_1_1IO_1a9fbcdf361106804abc3267f59864e21e" kind="variable"><name>docMutex</name></member>
+    <member refid="classmlpack_1_1IO_1adcb6663560b527e40867c3e7cae4bc72" kind="variable"><name>docs</name></member>
     <member refid="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" kind="variable"><name>functionMap</name></member>
-    <member refid="classmlpack_1_1IO_1a24d855d329269931b59bdf1b36706a88" kind="variable"><name>programName</name></member>
-    <member refid="classmlpack_1_1IO_1aca4a039cfb9a63fbe2d98febc7ae337b" kind="variable"><name>timer</name></member>
+    <member refid="classmlpack_1_1IO_1a0f4192a96789b551cb018d3758d0c153" kind="variable"><name>mapMutex</name></member>
+    <member refid="classmlpack_1_1IO_1a8fcad76d2361609e775ad8b94d2237de" kind="variable"><name>parameters</name></member>
+    <member refid="classmlpack_1_1IO_1a5a812b3a26e70902629a6a21bf9ea461" kind="variable"><name>timer</name></member>
     <member refid="classmlpack_1_1IO_1a50de43af5bed41f30c071d8cce0e81bc" kind="friend"><name>Timer</name></member>
-    <member refid="classmlpack_1_1IO_1adc908d81414046d89563fd0571d55cac" kind="function"><name>Add</name></member>
-    <member refid="classmlpack_1_1IO_1a5be18c0eeb63369cb449da84dc3ea7ed" kind="function"><name>Aliases</name></member>
-    <member refid="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" kind="function"><name>CheckInputMatrices</name></member>
-    <member refid="classmlpack_1_1IO_1a13e26de32fbf867cff10d99e6660a1ce" kind="function"><name>CheckInputMatrix</name></member>
-    <member refid="classmlpack_1_1IO_1a311c68c417bf994e4bf952dcce4a874d" kind="function"><name>ClearSettings</name></member>
-    <member refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kind="function"><name>GetParam</name></member>
-    <member refid="classmlpack_1_1IO_1a9273a321ef422a2aa57ee98f5b169632" kind="function"><name>GetPrintableParam</name></member>
-    <member refid="classmlpack_1_1IO_1aa3080f329734511912ebe72f9ed30656" kind="function"><name>GetRawParam</name></member>
+    <member refid="classmlpack_1_1IO_1af3a4055c2193c7f6f2cccb7526595f71" kind="function"><name>AddBindingName</name></member>
+    <member refid="classmlpack_1_1IO_1a6840dd958a2382348b999520c68ae320" kind="function"><name>AddExample</name></member>
+    <member refid="classmlpack_1_1IO_1abdfdc734325dd9b75088a3bb32286b55" kind="function"><name>AddFunction</name></member>
+    <member refid="classmlpack_1_1IO_1a0eb6aa5bde78005330215c17ed064d0f" kind="function"><name>AddLongDescription</name></member>
+    <member refid="classmlpack_1_1IO_1a4530109919250336fd0cb15b92a993f5" kind="function"><name>AddParameter</name></member>
+    <member refid="classmlpack_1_1IO_1a0de4c2c634b45c52102590c259e22aef" kind="function"><name>AddSeeAlso</name></member>
+    <member refid="classmlpack_1_1IO_1ad41d1032071c4eaa56d3b24287eaa7b3" kind="function"><name>AddShortDescription</name></member>
     <member refid="classmlpack_1_1IO_1aacf8da2c1644e932b3cbd46703a3d889" kind="function"><name>GetSingleton</name></member>
-    <member refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kind="function"><name>HasParam</name></member>
-    <member refid="classmlpack_1_1IO_1a0a4e362b05cd037fc620e27877f3bf4f" kind="function"><name>MakeInPlaceCopy</name></member>
-    <member refid="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad" kind="function"><name>Parameters</name></member>
-    <member refid="classmlpack_1_1IO_1a1025ff079f4aa3baecf036ab0bc32be5" kind="function"><name>ProgramName</name></member>
-    <member refid="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" kind="function"><name>RestoreSettings</name></member>
-    <member refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kind="function"><name>SetPassed</name></member>
-    <member refid="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" kind="function"><name>StoreSettings</name></member>
+    <member refid="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" kind="function"><name>GetTimers</name></member>
+    <member refid="classmlpack_1_1IO_1a0a0bb69397ce0d79f68095a9eef90607" kind="function"><name>Parameters</name></member>
     <member refid="classmlpack_1_1IO_1aa0f040401c8ee59c4cbac0b887b86766" kind="function"><name>IO</name></member>
     <member refid="classmlpack_1_1IO_1ab97f38cc7c806a9ca1ac423f65e9b00c" kind="function"><name>IO</name></member>
     <member refid="classmlpack_1_1IO_1a137c8f8039ba21a200513a45af990409" kind="function"><name>operator=</name></member>
@@ -5726,9 +5866,9 @@
     <member refid="classmlpack_1_1kde_1_1KDEModel_1a483f08ac8e9153c13d41e251c99d60b7" kind="function"><name>AbsoluteError</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEModel_1ae9cbd816179d6c36036139ccc8fea8c8" kind="function"><name>Bandwidth</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEModel_1a7895968fbbc5b94d25fffbc285a8c5cd" kind="function"><name>Bandwidth</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEModel_1a746b74589783efc0ac89f108ee92cca3" kind="function"><name>BuildModel</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEModel_1af7194c84540dfed2a4aabf1c03acef47" kind="function"><name>Evaluate</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEModel_1a995ae5cd93b97b9b96f4fb9b87c427c9" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEModel_1aae862a34d4eddf91808db13789d4e08b" kind="function"><name>BuildModel</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEModel_1a5a31c87ddb2d9857e11eeff4a3dcae6e" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEModel_1afdd0a7b8367158be7ac0db2828ac8517" kind="function"><name>Evaluate</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEModel_1a555a4a9bdced7a608634c924677c71fd" kind="function"><name>InitializeModel</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEModel_1a0f08fc745756dd035dcf6b42dddd4ed5" kind="function"><name>KernelType</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEModel_1ad94d196c8fc2a42899de31332737dbf9" kind="function"><name>KernelType</name></member>
@@ -5817,8 +5957,8 @@
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a0b9d34d8e38ac36cd2ca2118466d0953" kind="function"><name>AbsoluteError</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a3d47a1b167a794ee6c4d646ee46254b6" kind="function"><name>Bandwidth</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a0ba337bbc529b82831c60d60b9441d08" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a52a2ccd4d4e143187436097916dae748" kind="function"><name>Evaluate</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1aecea217fc025d169adadd10f78a77fa5" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a6eff728391ad985b8554546d822a18b4" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a31a166bb678b6f3448a2ecd8bb631ace" kind="function"><name>Evaluate</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a4bbcfabadfb5b781249c7ea4125677ac" kind="function"><name>MCBreakCoef</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a04a0caefbe404092e3d18baabd3baef7" kind="function"><name>MCEntryCoef</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a615951cec49961d82ea4497a3073b7b8" kind="function"><name>MCInitialSampleSize</name></member>
@@ -5830,7 +5970,7 @@
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1aa9f25dddb2e9608e47417d6808adfb2f" kind="function"><name>MonteCarlo</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a50e2786ac18e3f69fb4e164b68920390" kind="function"><name>RelativeError</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1ac9780b7b68f55a2fb2df95768aec1bd4" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapper_1acd008691a985e0877019a2ca9a546ba1" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1kde_1_1KDEWrapperBase" kind="class"><name>mlpack::kde::KDEWrapperBase</name>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ac1313101961cb19928ea3946dedc6ad9" kind="function"><name>KDEWrapperBase</name></member>
@@ -5838,8 +5978,8 @@
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1c0162417e08001b37ce9aaacc761773" kind="function"><name>AbsoluteError</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1ebaea5971fb978c1e23657dc8c55a17" kind="function"><name>Bandwidth</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae7622cb6081c01a9346b9845c916be0a" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7815883137a47fda73c3ac1f608eef0a" kind="function"><name>Evaluate</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae9574287052493ece978538a96a8fb98" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae3681802259154e350b7910aa47670c7" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad73a61ec48b31ca42f501aac5bb65a98" kind="function"><name>Evaluate</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad7e08030744c69b2c47446d9d846487c" kind="function"><name>MCBreakCoef</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a2e9a7a651dd745d46880139cc0e7b720" kind="function"><name>MCEntryCoef</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1aa17a084342c0caafda4d046545e5993b" kind="function"><name>MCInitialSampleSize</name></member>
@@ -5850,7 +5990,7 @@
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7e1172b47c3d2775ceb49bed772c44cf" kind="function"><name>MonteCarlo</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad5ee40ede39f0233b7f01e74d3c1e1c0" kind="function"><name>MonteCarlo</name></member>
     <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1aef3e830b36580b39b0ddb75ea89f4d8a" kind="function"><name>RelativeError</name></member>
-    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1af72c25a0ebac1dc4d40f76b9a2f5e149" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a56b67a76ab2b7453e12d863b926061cd" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1kde_1_1KernelNormalizer" kind="class"><name>mlpack::kde::KernelNormalizer</name>
     <member refid="classmlpack_1_1kde_1_1KernelNormalizer_1ada604a5f03ec2fe77cd1fc3aa5fbab2d" kind="function"><name>HAS_MEM_FUNC</name></member>
@@ -6590,17 +6730,17 @@
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a6482ab61b862e190cc140e01510dfc13" kind="function"><name>LeafSizeNSWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a2f174f3ce09e29ae6ee6ecc2f22c0a7a" kind="function"><name>~LeafSizeNSWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a1ada05f817cfde693b0ce9cb758f8e4d" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a4aef4b9e215d07dbc33e97f5ff574ab2" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a634675a41e944aef3847ddd6b385570b" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1af1b6a13a041581bdb250c303a2736c7c" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_1a54098b5e4f618049ad776a55e7b1ef59" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper" kind="class"><name>mlpack::neighbor::LeafSizeRAWrapper</name>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a5d81fdfb139dff3a3ae1d0927d0a54d0" kind="function"><name>LeafSizeRAWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a8143e6a42aa8db8a769546687e2bc21f" kind="function"><name>~LeafSizeRAWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6fb5273198ccf37addbdd3783ca4579e" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a2c53ba7b98b21fbdfc1aa186a3927089" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1aec1eefc960f0881e374dbcbd6b20d568" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a6804dc4af719ba3162ad5f15dbe5553d" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_1a795e90427302e4dacb6e7570a26c55d6" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1LSHSearch" kind="class"><name>mlpack::neighbor::LSHSearch</name>
     <member refid="classmlpack_1_1neighbor_1_1LSHSearch_1a25f2752ae2dd3aa1e6b36257252e9c63" kind="typedef"><name>Candidate</name></member>
@@ -6792,7 +6932,7 @@
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6377c3a4b61de368dedff9fa95304359" kind="function"><name>NSModel</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a8eba8cadae0d4294becc60ec69cf158d" kind="function"><name>NSModel</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a25d5032163e2f4db1c2330d689df8434" kind="function"><name>~NSModel</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSModel_1aa5cbba6575bb949e63ace34052516eb6" kind="function"><name>BuildModel</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSModel_1a69bf91e73fafd7d8ecd2e52a0f83b022" kind="function"><name>BuildModel</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1aff320b9a86b77a150e630c01d5888273" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1af6d960193bb5db37e51416e12bf720de" kind="function"><name>Epsilon</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1ab6a080993b32456443eced5df2f8b9b9" kind="function"><name>Epsilon</name></member>
@@ -6805,8 +6945,8 @@
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a8111114602e748b38c0875f82f323544" kind="function"><name>RandomBasis</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a309719b378c0bb1962982a8162e58e84" kind="function"><name>Rho</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a10001faac75d91c05a3c0bfd711b901a" kind="function"><name>Rho</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSModel_1af621a93ffd3ff29728b4f4d2380ccfd5" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSModel_1a619c7d4931e628a0c199159c57b34cbd" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSModel_1ae3c1f70a13bbab4c7e217bd1a39a1a6b" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSModel_1ad0c89bf9e4a4b75a1292795e8657e069" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a23cdc4b734a3dc41722aaded92244fd4" kind="function"><name>SearchMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a6071cc412821cb4ce4364fbc2a0a8533" kind="function"><name>SearchMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSModel_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
@@ -6825,12 +6965,12 @@
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aff320b9a86b77a150e630c01d5888273" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1af6d960193bb5db37e51416e12bf720de" kind="function"><name>Epsilon</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1ab6a080993b32456443eced5df2f8b9b9" kind="function"><name>Epsilon</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a1f033e50f5a14937123de77cb439fcb5" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1aeb3fa1fab8680898b6326556ea81a55b" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a9e5c7f49611693baf982d577abcdffc4" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a23cdc4b734a3dc41722aaded92244fd4" kind="function"><name>SearchMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a6071cc412821cb4ce4364fbc2a0a8533" kind="function"><name>SearchMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1ae4fcf39ad7ed7dca39fe8bd00fd76082" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapper_1af9d87167b758e59c7cc44492904d9acb" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1NSWrapperBase" kind="class"><name>mlpack::neighbor::NSWrapperBase</name>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1afe3cd9a0f215a7de10b6d31cbfc33dca" kind="function"><name>NSWrapperBase</name></member>
@@ -6839,11 +6979,11 @@
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9bd0afbec99b28bbc273e297ec9fe352" kind="function"><name>Epsilon</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a68739e281bac3db475e5423fbbca8081" kind="function"><name>Epsilon</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a9e7389351073f295e1aee942dbd7942a" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a98ca743413f49d02f39ecb99184443d4" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a77e0c8a26bf09774799738767d39e898" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a07e26aa53e77ad631a36858d49c900c3" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1ac565d27ec3cd6370688baf14efed6556" kind="function"><name>SearchMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1ad405b5a3c8c8a828941afefd3826b49d" kind="function"><name>SearchMode</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a870763190dedf5ec0d9a2118f742a517" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1NSWrapperBase_1a17c2adbcf179c81dd6337d0424b945b8" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1QDAFN" kind="class"><name>mlpack::neighbor::QDAFN</name>
     <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a61978cc8e3b1498d6a2b48bf75b09e24" kind="variable"><name>candidateSet</name></member>
@@ -6885,7 +7025,7 @@
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a86741564b1d28a800d1c52993f36b8b6" kind="function"><name>~RAModel</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a500ecd077d5cc5fdbf6ceb095d8de9e1" kind="function"><name>Alpha</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1acbb0e4747a3a307bee88bad71e5eeaf1" kind="function"><name>Alpha</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAModel_1a394d212c5373090724aaea3ba24b482e" kind="function"><name>BuildModel</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAModel_1af1d54669ea759a3308ff5e0a6fbde91e" kind="function"><name>BuildModel</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1aff320b9a86b77a150e630c01d5888273" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a17ec6e467897eb8aee3b519e0758e77d" kind="function"><name>FirstLeafExact</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1aca2eb648feb965d3bcb0b0b73f8b2b0f" kind="function"><name>FirstLeafExact</name></member>
@@ -6900,8 +7040,8 @@
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a8111114602e748b38c0875f82f323544" kind="function"><name>RandomBasis</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1aa9dd91d6b96e1d0b343c3cec27372036" kind="function"><name>SampleAtLeaves</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a9f6d54dd0424f827becc2e2e9969b1bb" kind="function"><name>SampleAtLeaves</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAModel_1af621a93ffd3ff29728b4f4d2380ccfd5" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAModel_1a619c7d4931e628a0c199159c57b34cbd" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAModel_1ae3c1f70a13bbab4c7e217bd1a39a1a6b" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAModel_1ad0c89bf9e4a4b75a1292795e8657e069" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1a7477b3e8499a6158bbe177e7f30d4947" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAModel_1adadacd63ddeadf138d834b1fdc632773" kind="function"><name>SingleMode</name></member>
@@ -7026,8 +7166,8 @@
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1af7d397adca3f411b4e2d2f977b280ce6" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aa9dd91d6b96e1d0b343c3cec27372036" kind="function"><name>SampleAtLeaves</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a9f6d54dd0424f827becc2e2e9969b1bb" kind="function"><name>SampleAtLeaves</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad43293b5ec532712b022897bedc15f44" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aeb3fa1fab8680898b6326556ea81a55b" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a58c353341f9f44a1897505d6c467e666" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a6c6cf8fe51983b2f1597f70753ca2d1a" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7477b3e8499a6158bbe177e7f30d4947" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1adadacd63ddeadf138d834b1fdc632773" kind="function"><name>SingleMode</name></member>
@@ -7035,7 +7175,7 @@
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ae78a7b8e9c96a2dbf646a27efee047b1" kind="function"><name>SingleSampleLimit</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a4a4b0fafde4cc4c856a53025dc8c4c21" kind="function"><name>Tau</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1ad522d61ed716a322376adea25ebdbc90" kind="function"><name>Tau</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1aab4ee663331b914daad05f6f7c22ee9b" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapper_1a7bc2562f0ea045f22c787ae220649379" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1RAWrapperBase" kind="class"><name>mlpack::neighbor::RAWrapperBase</name>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a33445e59b0dcf448bca4d6d73cd5a903" kind="function"><name>RAWrapperBase</name></member>
@@ -7050,23 +7190,23 @@
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1af7b975b8b5777ab38621d5d7ccd90aae" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66a953e46f9ad0cfd8d6641816370614" kind="function"><name>SampleAtLeaves</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac33a833eb52f373a94f383370c4deb29" kind="function"><name>SampleAtLeaves</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ac54eb02407917fdaa1725b77fd65c766" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a98ca743413f49d02f39ecb99184443d4" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a0bb7815368137d2d77482fa77e3a86db" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a07e26aa53e77ad631a36858d49c900c3" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a9732af23ee467fcf80889261e2a29047" kind="function"><name>SingleSampleLimit</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a5f780bd465b98c024ff3659adbeffaf1" kind="function"><name>SingleSampleLimit</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae0bfd2fa9956cc64af4ded5d0a497c89" kind="function"><name>Tau</name></member>
     <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1a7e51ae335f71878cff370a9525380bac" kind="function"><name>Tau</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1RAWrapperBase_1ae741766424a9f00e5214981ab126248a" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1neighbor_1_1SpillNSWrapper" kind="class"><name>mlpack::neighbor::SpillNSWrapper</name>
     <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a85c6919690f25dd0cf0bd93c9e1110e1" kind="function"><name>SpillNSWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1ac0de56010f449839feb1a03bc66ca453" kind="function"><name>~SpillNSWrapper</name></member>
     <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a09080a653d528fcd34bb630ea566badb" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a7f3908cf84625e816aac3b8ae78d302f" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a426eb7af072a5176fff19e1ec42b4318" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1a0bfff11e794dd6c4c7323cd204c67378" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1neighbor_1_1SpillNSWrapper_1aadb567979423035ec7e671b2f48dbd6b" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1nn_1_1SparseAutoencoder" kind="class"><name>mlpack::nn::SparseAutoencoder</name>
     <member refid="classmlpack_1_1nn_1_1SparseAutoencoder_1a9424343761f8c4f4c1afe8f5b6bf471b" kind="variable"><name>beta</name></member>
@@ -7203,8 +7343,8 @@
     <member refid="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" kind="function"><name>Angles</name></member>
     <member refid="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" kind="function"><name>Angles</name></member>
     <member refid="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" kind="function"><name>CopyAndPerturb</name></member>
-    <member refid="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" kind="function"><name>DoRadical</name></member>
-    <member refid="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" kind="function"><name>DoRadical2D</name></member>
+    <member refid="classmlpack_1_1radical_1_1Radical_1a4580d33ff67f6254591793d10661d272" kind="function"><name>DoRadical</name></member>
+    <member refid="classmlpack_1_1radical_1_1Radical_1aa1c90493e64961bf2625ff23ab97c3a9" kind="function"><name>DoRadical2D</name></member>
     <member refid="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" kind="function"><name>NoiseStdDev</name></member>
     <member refid="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" kind="function"><name>NoiseStdDev</name></member>
     <member refid="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" kind="function"><name>Replicates</name></member>
@@ -7217,9 +7357,9 @@
     <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1afb741816b0eaa685220eb4cbbe56339d" kind="function"><name>LeafSizeRSWrapper</name></member>
     <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1aa157df925f299caba9e5dc7e68e388bc" kind="function"><name>~LeafSizeRSWrapper</name></member>
     <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1adaf440057041622abd2d1d527b627d25" kind="function"><name>Clone</name></member>
-    <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a0b90d9dc1269d8b8f186e6053b12fbe3" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a863be19262db8f10b498f47a53c5ab22" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
-    <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a6804dc4af719ba3162ad5f15dbe5553d" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1range_1_1LeafSizeRSWrapper_1a795e90427302e4dacb6e7570a26c55d6" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1range_1_1RangeSearch" kind="class"><name>mlpack::range::RangeSearch</name>
     <member refid="classmlpack_1_1range_1_1RangeSearch_1a5cbbe0e3dd87208f402ebd5a35dcd608" kind="typedef"><name>Tree</name></member>
@@ -7316,7 +7456,7 @@
     <member refid="classmlpack_1_1range_1_1RSModel_1a8ed1e3cec17df0626ac2a5034df3b537" kind="function"><name>RSModel</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a178ee2403468f92eadfe0d269e858aeb" kind="function"><name>RSModel</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a5f50179749aa6dfe66e789d6049c49ab" kind="function"><name>~RSModel</name></member>
-    <member refid="classmlpack_1_1range_1_1RSModel_1a394d212c5373090724aaea3ba24b482e" kind="function"><name>BuildModel</name></member>
+    <member refid="classmlpack_1_1range_1_1RSModel_1af1d54669ea759a3308ff5e0a6fbde91e" kind="function"><name>BuildModel</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1aff320b9a86b77a150e630c01d5888273" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a7f40b35e0dbe4860397eeeda65197d64" kind="function"><name>InitializeModel</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1ab81b93ebb200783ca4c5747f31889fa0" kind="function"><name>LeafSize</name></member>
@@ -7327,8 +7467,8 @@
     <member refid="classmlpack_1_1range_1_1RSModel_1a6ac7e5a1e637c462fb01537fb14b2d40" kind="function"><name>operator=</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1ae3053ad1e3b42eb1ae4105aecd060cf6" kind="function"><name>RandomBasis</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a8111114602e748b38c0875f82f323544" kind="function"><name>RandomBasis</name></member>
-    <member refid="classmlpack_1_1range_1_1RSModel_1a24f05d38662b2832148f426ebc930a30" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1range_1_1RSModel_1a3868480bcd41a740550657144b5f7018" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSModel_1a51aaa455230d1d9320e00e178a2ca203" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSModel_1ac46c4e1cedf6c94c99c5f2e2dbf0070c" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1a7477b3e8499a6158bbe177e7f30d4947" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1range_1_1RSModel_1adadacd63ddeadf138d834b1fdc632773" kind="function"><name>SingleMode</name></member>
@@ -7346,12 +7486,12 @@
     <member refid="classmlpack_1_1range_1_1RSWrapper_1aff320b9a86b77a150e630c01d5888273" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapper_1a343230e7d7344e3f7d5f5f2eb89cf2c5" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapper_1af7d397adca3f411b4e2d2f977b280ce6" kind="function"><name>Naive</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapper_1a8113f151289737cd35dd9eaf38e32eb8" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapper_1af3b8f6601dfb1c6fff4d3fc554eea5c4" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapper_1a3ce85c22fdd511fb13381ed1639651b1" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapper_1a818a7bef7f7145419ff0535641db747b" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapper_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapper_1a7477b3e8499a6158bbe177e7f30d4947" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapper_1adadacd63ddeadf138d834b1fdc632773" kind="function"><name>SingleMode</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapper_1aab4ee663331b914daad05f6f7c22ee9b" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapper_1a7bc2562f0ea045f22c787ae220649379" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1range_1_1RSWrapperBase" kind="class"><name>mlpack::range::RSWrapperBase</name>
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a3f8141df2cfd91fd784febc7a67b6fbb" kind="function"><name>RSWrapperBase</name></member>
@@ -7360,11 +7500,11 @@
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e" kind="function"><name>Dataset</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08" kind="function"><name>Naive</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1af7b975b8b5777ab38621d5d7ccd90aae" kind="function"><name>Naive</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a2b6da2dcc42f52a690dade0749453fdc" kind="function"><name>Search</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a6dbe6c455e8b22c78913c91fb8f7f5cf" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a268ab91f4980bf9e2e6c13bbf06aa649" kind="function"><name>Search</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1ad47ab5c92d7e0d88baf7433f4d2dd1d3" kind="function"><name>Search</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce" kind="function"><name>SingleMode</name></member>
     <member refid="classmlpack_1_1range_1_1RSWrapperBase_1a5e231427eaa7eeb695cfd1b324858dfb" kind="function"><name>SingleMode</name></member>
-    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1aed03cfde627d1e971acb1d36d9abd29c" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1range_1_1RSWrapperBase_1ae741766424a9f00e5214981ab126248a" kind="function"><name>Train</name></member>
   </compound>
   <compound refid="classmlpack_1_1regression_1_1BayesianLinearRegression" kind="class"><name>mlpack::regression::BayesianLinearRegression</name>
     <member refid="classmlpack_1_1regression_1_1BayesianLinearRegression_1a20f4c4490bc8ecbdd1ffcb79acce6035" kind="variable"><name>alpha</name></member>
@@ -8535,31 +8675,16 @@
     <member refid="classmlpack_1_1Timer_1a2c8b89142749d77f82338da28267f37c" kind="function"><name>DisableTiming</name></member>
     <member refid="classmlpack_1_1Timer_1a41f8422720891efeaf30a43f6a7bbc7f" kind="function"><name>EnableTiming</name></member>
     <member refid="classmlpack_1_1Timer_1a12540cc60abafd8b9c2a796a9ba2ee16" kind="function"><name>Get</name></member>
+    <member refid="classmlpack_1_1Timer_1a3ec72df2c07ffd521a5dd6edf3e35b6d" kind="function"><name>GetAllTimers</name></member>
     <member refid="classmlpack_1_1Timer_1a6335c4606497b8c63b2280b647e0dda3" kind="function"><name>ResetAll</name></member>
     <member refid="classmlpack_1_1Timer_1aa052af5e185f178dcfd540b95d2b1d11" kind="function"><name>Start</name></member>
     <member refid="classmlpack_1_1Timer_1ad5249f0e0368bf00dbd1bd6570160950" kind="function"><name>Stop</name></member>
   </compound>
-  <compound refid="classmlpack_1_1Timers" kind="class"><name>mlpack::Timers</name>
-    <member refid="classmlpack_1_1Timers_1a844d73cf5e9a445a5794486cd1d4f84e" kind="variable"><name>enabled</name></member>
-    <member refid="classmlpack_1_1Timers_1aee3cef16972b747ab2b966bbe71dda7a" kind="variable"><name>timers</name></member>
-    <member refid="classmlpack_1_1Timers_1ace7c6722d6db149cafd87d9a42c52f83" kind="variable"><name>timersMutex</name></member>
-    <member refid="classmlpack_1_1Timers_1a990855c65dc45d9c0cd9f2ad26e99e4c" kind="variable"><name>timerStartTime</name></member>
-    <member refid="classmlpack_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" kind="function"><name>Timers</name></member>
-    <member refid="classmlpack_1_1Timers_1aa3cc415a3ec6ca7701bbe063fb2d0bd7" kind="function"><name>Enabled</name></member>
-    <member refid="classmlpack_1_1Timers_1a93235b4e93d1b61b95fba2db144145f6" kind="function"><name>Enabled</name></member>
-    <member refid="classmlpack_1_1Timers_1a9d077721f6811724906de9eb5d50857d" kind="function"><name>GetAllTimers</name></member>
-    <member refid="classmlpack_1_1Timers_1abee29197294057d68793ee6cbd6eb64e" kind="function"><name>GetState</name></member>
-    <member refid="classmlpack_1_1Timers_1aebb641bd9122477aa9a61e72b373e8cf" kind="function"><name>GetTimer</name></member>
-    <member refid="classmlpack_1_1Timers_1add57a3f90480a934a9791e95cf587784" kind="function"><name>PrintTimer</name></member>
-    <member refid="classmlpack_1_1Timers_1a372de693ad40b3f42839c8ec6ac845f4" kind="function"><name>Reset</name></member>
-    <member refid="classmlpack_1_1Timers_1aecdbec86306efca51ab08ac2a42bbbf5" kind="function"><name>StartTimer</name></member>
-    <member refid="classmlpack_1_1Timers_1a48757b28836456b14aa2f1c31dacbd71" kind="function"><name>StopAllTimers</name></member>
-    <member refid="classmlpack_1_1Timers_1a7a63f768cade147188d0198906624309" kind="function"><name>StopTimer</name></member>
-  </compound>
   <compound refid="classmlpack_1_1tree_1_1AllCategoricalSplit" kind="class"><name>mlpack::tree::AllCategoricalSplit</name>
-    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1a8cb83c22dcb77a93d1b617305db0adca" kind="function"><name>CalculateDirection</name></member>
-    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1a9cf4fc7c5bae6d771a1446eed9c50753" kind="function"><name>NumChildren</name></member>
-    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1a4ec03020c015e3f81f6131197781e166" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1ac9d96402128b43c686e4160a55debf09" kind="function"><name>CalculateDirection</name></member>
+    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1a281899f91503d9067df3d8a14a2bc724" kind="function"><name>NumChildren</name></member>
+    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1a470b146733a941e58ee49f2dcec0480c" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1ac8cce79ce66f6a922c46d87d4cd9c443" kind="function"><name>SplitIfBetter</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1_1AuxiliarySplitInfo" kind="class"><name>mlpack::tree::AllCategoricalSplit::AuxiliarySplitInfo</name>
   </compound>
@@ -8582,9 +8707,11 @@
     <member refid="classmlpack_1_1tree_1_1AxisParallelProjVector_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit" kind="class"><name>mlpack::tree::BestBinaryNumericSplit</name>
-    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a8cb83c22dcb77a93d1b617305db0adca" kind="function"><name>CalculateDirection</name></member>
-    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a8fde744efa29599636ccab609fc9b4f3" kind="function"><name>NumChildren</name></member>
-    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a44b63edd3a8983be4dc31122d4a6dca1" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1ac9d96402128b43c686e4160a55debf09" kind="function"><name>CalculateDirection</name></member>
+    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a822dda54d3f80cda15f57c1bcdc45cbc" kind="function"><name>NumChildren</name></member>
+    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a97602530721faeb6f8e9077992889686" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a88ca342950299e5e4d0a02bbfaa82530" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1a808fe167e131da7ebf244da9763ed62c" kind="function"><name>SplitIfBetter</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo" kind="class"><name>mlpack::tree::BestBinaryNumericSplit::AuxiliarySplitInfo</name>
   </compound>
@@ -8953,6 +9080,44 @@
     <member refid="classmlpack_1_1tree_1_1DecisionTree_1a9252d7287c3db6e33590918d372f404e" kind="function"><name>Train</name></member>
     <member refid="classmlpack_1_1tree_1_1DecisionTree_1a2b6ceacf0054d7c421512056a59d5409" kind="function"><name>Train</name></member>
   </compound>
+  <compound refid="classmlpack_1_1tree_1_1DecisionTreeRegressor" kind="class"><name>mlpack::tree::DecisionTreeRegressor</name>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1ac6a633f57efba5e2893f58ee9ad549d1" kind="typedef"><name>CategoricalSplit</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a883756287d5ce0957ad6f806571f2815" kind="typedef"><name>DimensionSelection</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1aaa2e2873f405118872db87975cce0124" kind="typedef"><name>NumericSplit</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a494cccd2e7139520d893747b11a7aab3" kind="typedef"><name>CategoricalAuxiliarySplitInfo</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1acb5a60716e91f30f215e742e00a4668b" kind="typedef"><name>NumericAuxiliarySplitInfo</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a94cf732d31adf2756ad88b56450a7f10" kind="variable"><name>children</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1aab279e9a2206bbfd676833d26c84fb53" kind="variable"><name>dimensionType</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a351b01278d3022d478536e0a84a1808e" kind="variable"><name>splitDimension</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a6f6c1db14b96f87c4114f8478e0a9730" kind="variable"><name>splitPointOrPrediction</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a15bb53184cdf20c0e6c3f47753d58ad8" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1acb9ec1b0e357e71045971bfcea6c1f96" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a1fd8eda6bce78ec481b008d312388706" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a3c285e8df8d13814a83d35b77dbb63e7" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a2399f2f395c28b18a88aa5f6290ad850" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1af1b710ae2ac38d468ca7ca4afd66ed2c" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a485cf4026b8c77b3f298eb7435132311" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1ab162b858710be4de9e635def1c8a55e8" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a73147715b313cef1317a69204e1d6d6f" kind="function"><name>DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1af9b7ab7ff7947edfbf30fb98078db97a" kind="function"><name>~DecisionTreeRegressor</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a9a3cc06b52728325bd6402f7175f28e5" kind="function"><name>CalculateDirection</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a36c02e9125fded7b9438b69692acae64" kind="function"><name>Child</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1ae26eada7b2779a0f219912966bb4d304" kind="function"><name>Child</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a1f7ec083be66d58a3e02e12956bf005e" kind="function"><name>NumChildren</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a40ececd28e766ba410c354a5c09011b5" kind="function"><name>NumLeaves</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a3ed67eba128e980710b8fdd693ad260b" kind="function"><name>operator=</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a4452b0a623c5b25df331c4cb4f1404a9" kind="function"><name>operator=</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a0542b54740bc0c270124f81e70c55538" kind="function"><name>Predict</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1ae1b2ec56dad6d2c73b245484d3a07302" kind="function"><name>Predict</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a65cba07328997659bec80b9879b15a51" kind="function"><name>serialize</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a92f55f07c1a09552ef79c8d8b9484af5" kind="function"><name>SplitDimension</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a4776535da84d2b01e57e3fa8b4b431fd" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1add1b0a14e1870882ede232059a7b51ad" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a32467c7f376336aee8d030c6905e6411" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1aa32233b03162f404d456e5ff953deede" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1a512109e47ea6fe370a289fe495d7cfcb" kind="function"><name>Train</name></member>
+    <member refid="classmlpack_1_1tree_1_1DecisionTreeRegressor_1aa81e63d206fcb1bbe509da790c1f065b" kind="function"><name>Train</name></member>
+  </compound>
   <compound refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kind="class"><name>mlpack::tree::DiscreteHilbertValue</name>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1EmptyStatistic" kind="class"><name>mlpack::tree::EmptyStatistic</name>
@@ -9005,6 +9170,9 @@
     <member refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1ab381f1601c6a3b0bd886aeba34de89b9" kind="function"><name>GreedySingleTreeTraverser</name></member>
     <member refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" kind="function"><name>NumPrunes</name></member>
     <member refid="classmlpack_1_1tree_1_1GreedySingleTreeTraverser_1a794b07d567369c4b56e958a21c27531b" kind="function"><name>Traverse</name></member>
+  </compound>
+  <compound refid="structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms" kind="struct"><name>mlpack::tree::HasOptimizedBinarySplitForms</name>
+    <member refid="structmlpack_1_1tree_1_1HasOptimizedBinarySplitForms_1a11ddd051208250c32dc4985abcafa86d" kind="variable"><name>value</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1HilbertRTreeAuxiliaryInformation" kind="class"><name>mlpack::tree::HilbertRTreeAuxiliaryInformation</name>
     <member refid="classmlpack_1_1tree_1_1HilbertRTreeAuxiliaryInformation_1a9c50fecd9c0085e7f7ac7f770fa739ae" kind="typedef"><name>ElemType</name></member>
@@ -9186,6 +9354,11 @@
   <compound refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340" kind="struct"><name>mlpack::tree::IsSpillTree&lt; tree::SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</name>
     <member refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340_1a11ddd051208250c32dc4985abcafa86d" kind="variable"><name>value</name></member>
   </compound>
+  <compound refid="classmlpack_1_1tree_1_1MADGain" kind="class"><name>mlpack::tree::MADGain</name>
+    <member refid="classmlpack_1_1tree_1_1MADGain_1a9e1a620d80bbf1954d4992087beef770" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1tree_1_1MADGain_1a0f8e7e7ea64f3efcbf5f55538787131f" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1tree_1_1MADGain_1aadf4412a8ad5184d943efd9ab72ec2ae" kind="function"><name>OutputLeafValue</name></member>
+  </compound>
   <compound refid="classmlpack_1_1tree_1_1MeanSpaceSplit" kind="class"><name>mlpack::tree::MeanSpaceSplit</name>
     <member refid="classmlpack_1_1tree_1_1MeanSpaceSplit_1a055fe300d8af558a4d1d1097373740ed" kind="function"><name>SplitSpace</name></member>
   </compound>
@@ -9227,6 +9400,20 @@
   </compound>
   <compound refid="structmlpack_1_1tree_1_1MinimalSplitsNumberSweep_1_1SweepCost" kind="struct"><name>mlpack::tree::MinimalSplitsNumberSweep::SweepCost</name>
     <member refid="structmlpack_1_1tree_1_1MinimalSplitsNumberSweep_1_1SweepCost_1a1e546bd1d4fb5c153cbdf2b1bb66171e" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1tree_1_1MSEGain" kind="class"><name>mlpack::tree::MSEGain</name>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1acde92bd85ce79ed3d22895101f2be78a" kind="variable"><name>leftMean</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1ae925e2eeef5a6ac15c757ac00d27258a" kind="variable"><name>leftSize</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a4f9692ef2053f21f7bb0c96f8a945eee" kind="variable"><name>leftSumSquares</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a619d2f56bc60184a033caad27dc72180" kind="variable"><name>rightMean</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a669a588b56fd744279743f1051747cf1" kind="variable"><name>rightSize</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1acb86e396d0e9f18ecdb7d97181509a71" kind="variable"><name>totalSumSquares</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a9e1a620d80bbf1954d4992087beef770" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a0f8e7e7ea64f3efcbf5f55538787131f" kind="function"><name>Evaluate</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1a481ad578f1a22f10df2c91c7a4d75626" kind="function"><name>BinaryGains</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1af4087549965bae17d7551eb71988b0cd" kind="function"><name>BinaryScanInitialize</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1afa4f784ca7de457bb50629233cab1cc1" kind="function"><name>BinaryStep</name></member>
+    <member refid="classmlpack_1_1tree_1_1MSEGain_1aadf4412a8ad5184d943efd9ab72ec2ae" kind="function"><name>OutputLeafValue</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect" kind="class"><name>mlpack::tree::MultipleRandomDimensionSelect</name>
     <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a503c829cc0dc5c82c3ceafc938d3ffb6" kind="variable"><name>dimensions</name></member>
@@ -9378,9 +9565,10 @@
     <member refid="structmlpack_1_1tree_1_1QueueFrame_1aa987143b3965542c77c85c8212abedbe" kind="variable"><name>traversalInfo</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit" kind="class"><name>mlpack::tree::RandomBinaryNumericSplit</name>
-    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a8cb83c22dcb77a93d1b617305db0adca" kind="function"><name>CalculateDirection</name></member>
-    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a8fde744efa29599636ccab609fc9b4f3" kind="function"><name>NumChildren</name></member>
-    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a63046e033bd4b8da5aa301c62209f9e4" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1ac9d96402128b43c686e4160a55debf09" kind="function"><name>CalculateDirection</name></member>
+    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a822dda54d3f80cda15f57c1bcdc45cbc" kind="function"><name>NumChildren</name></member>
+    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a7d8b5143608f1c91e5cbde886ce164dd" kind="function"><name>SplitIfBetter</name></member>
+    <member refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1a69dbe0aa5222b730b28df9ec95ddd489" kind="function"><name>SplitIfBetter</name></member>
   </compound>
   <compound refid="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kind="class"><name>mlpack::tree::RandomBinaryNumericSplit::AuxiliarySplitInfo</name>
   </compound>
@@ -9842,12 +10030,15 @@
   <compound refid="structmlpack_1_1util_1_1BindingDetails" kind="struct"><name>mlpack::util::BindingDetails</name>
     <member refid="structmlpack_1_1util_1_1BindingDetails_1acf4d20054a17220a36a6418e0cdff11a" kind="variable"><name>example</name></member>
     <member refid="structmlpack_1_1util_1_1BindingDetails_1ababf20afc82683b024c91a20c8c62e17" kind="variable"><name>longDescription</name></member>
-    <member refid="structmlpack_1_1util_1_1BindingDetails_1a24d855d329269931b59bdf1b36706a88" kind="variable"><name>programName</name></member>
+    <member refid="structmlpack_1_1util_1_1BindingDetails_1a9b45b3e13bd9167aab02e17e08916231" kind="variable"><name>name</name></member>
     <member refid="structmlpack_1_1util_1_1BindingDetails_1afe5093e1898efe46d8079526cfe632a9" kind="variable"><name>seeAlso</name></member>
     <member refid="structmlpack_1_1util_1_1BindingDetails_1ac20a505628c4d6eeebb65be874e3abe2" kind="variable"><name>shortDescription</name></member>
   </compound>
+  <compound refid="classmlpack_1_1util_1_1BindingName" kind="class"><name>mlpack::util::BindingName</name>
+    <member refid="classmlpack_1_1util_1_1BindingName_1a385ddab68079741f978f95937e2a0543" kind="function"><name>BindingName</name></member>
+  </compound>
   <compound refid="classmlpack_1_1util_1_1Example" kind="class"><name>mlpack::util::Example</name>
-    <member refid="classmlpack_1_1util_1_1Example_1aa314083ea98c26124b30b91c9f5582bd" kind="function"><name>Example</name></member>
+    <member refid="classmlpack_1_1util_1_1Example_1a46dca9939120a37c75c78027072e5153" kind="function"><name>Example</name></member>
   </compound>
   <compound refid="structmlpack_1_1util_1_1IsStdVector" kind="struct"><name>mlpack::util::IsStdVector</name>
     <member refid="structmlpack_1_1util_1_1IsStdVector_1a11ddd051208250c32dc4985abcafa86d" kind="variable"><name>value</name></member>
@@ -9856,7 +10047,7 @@
     <member refid="structmlpack_1_1util_1_1IsStdVector_3_01std_1_1vector_3_01T_00_01A_01_4_01_4_1a11ddd051208250c32dc4985abcafa86d" kind="variable"><name>value</name></member>
   </compound>
   <compound refid="classmlpack_1_1util_1_1LongDescription" kind="class"><name>mlpack::util::LongDescription</name>
-    <member refid="classmlpack_1_1util_1_1LongDescription_1a9934b2a482aaea19f987f8fbb33c7681" kind="function"><name>LongDescription</name></member>
+    <member refid="classmlpack_1_1util_1_1LongDescription_1a743dee03a0f4da759eda45cbea00edd4" kind="function"><name>LongDescription</name></member>
   </compound>
   <compound refid="classmlpack_1_1util_1_1NullOutStream" kind="class"><name>mlpack::util::NullOutStream</name>
     <member refid="classmlpack_1_1util_1_1NullOutStream_1a198ca0f91124f6e611d20acfdfb40d6f" kind="function"><name>NullOutStream</name></member>
@@ -9888,11 +10079,32 @@
     <member refid="structmlpack_1_1util_1_1ParamData_1a992c70a16169035bc9e2e8f9953d91ed" kind="variable"><name>loaded</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" kind="variable"><name>name</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a203e71e5671737f2e7d33147dd19f391" kind="variable"><name>noTranspose</name></member>
-    <member refid="structmlpack_1_1util_1_1ParamData_1aea39f2c5cb5ec83de4d1f81b1a74f0cc" kind="variable"><name>persistent</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" kind="variable"><name>required</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a87a03c93b016f6878e3a0609835b426e" kind="variable"><name>tname</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" kind="variable"><name>value</name></member>
     <member refid="structmlpack_1_1util_1_1ParamData_1a5afa034ef66e23047379bcba2eb70b8d" kind="variable"><name>wasPassed</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1util_1_1Params" kind="class"><name>mlpack::util::Params</name>
+    <member refid="classmlpack_1_1util_1_1Params_1a8ecd4f66e6842c568efe9e323ce9745c" kind="typedef"><name>FunctionMapType</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a7d026933df7a8c24cae539dab626d3e2" kind="variable"><name>aliases</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a250d0a0c5a3eadb764f6498549572acb" kind="variable"><name>bindingName</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a1b9b3bb0eeb7b57a44348c1ca73b909c" kind="variable"><name>doc</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a9eb66c28181b1a276b55dd2b0f144833" kind="variable"><name>parameters</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a1a6b843f1c06bc4c23630d76510b491e" kind="variable"><name>functionMap</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a7e4303d8c32c15ef1e1a40adac254323" kind="function"><name>Params</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a7974597e9d3c848fd265d9445f7cf8cb" kind="function"><name>Params</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a3dd61d20ebd7e7a1b9cf829d94609ced" kind="function"><name>Aliases</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a2a70eb961042913e55fed5f56bc4148c" kind="function"><name>BindingName</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a76ffae0e264d712e20cd277b165c8c0c" kind="function"><name>CheckInputMatrices</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a9a4822201aa6bb2a66444d41fce7f466" kind="function"><name>Doc</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a7b47f18dc8a4ffbf9d712dc3d35b69ad" kind="function"><name>Get</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1aa2ee44c32ea4f351f293a3fd19ee23c6" kind="function"><name>GetPrintable</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a3aaca68c5856b8fe14468480717f7e1b" kind="function"><name>GetRaw</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a4ab9a8cd454500d9396ece8eb5ab44ee" kind="function"><name>Has</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a5811d313f00718a745f900f18eb3ee1f" kind="function"><name>MakeInPlaceCopy</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1ab87b975a22dfd3cde9dc4e88dac30064" kind="function"><name>Parameters</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1aed4960f3815d48e71deddac7c90bf641" kind="function"><name>SetPassed</name></member>
+    <member refid="classmlpack_1_1util_1_1Params_1a2d5e048cb0fcfc2926b17d86722b1954" kind="function"><name>CheckInputMatrix</name></member>
   </compound>
   <compound refid="classmlpack_1_1util_1_1PrefixedOutStream" kind="class"><name>mlpack::util::PrefixedOutStream</name>
     <member refid="classmlpack_1_1util_1_1PrefixedOutStream_1abb536618767706a6154fb1f159122eb2" kind="variable"><name>backtrace</name></member>
@@ -9924,17 +10136,30 @@
     <member refid="classmlpack_1_1util_1_1PrefixedOutStream_1a143260116f20938b1569cf2807be6981" kind="function"><name>BaseLogic</name></member>
     <member refid="classmlpack_1_1util_1_1PrefixedOutStream_1ad19055878e012d88a5dd4b6557abcff9" kind="function"><name>PrefixIfNeeded</name></member>
   </compound>
-  <compound refid="classmlpack_1_1util_1_1ProgramName" kind="class"><name>mlpack::util::ProgramName</name>
-    <member refid="classmlpack_1_1util_1_1ProgramName_1ae9799839096792e9fe742e17f46a12c6" kind="function"><name>ProgramName</name></member>
-  </compound>
   <compound refid="classmlpack_1_1util_1_1SeeAlso" kind="class"><name>mlpack::util::SeeAlso</name>
-    <member refid="classmlpack_1_1util_1_1SeeAlso_1abe010a87003e0458f341fc5ea272b6cf" kind="function"><name>SeeAlso</name></member>
+    <member refid="classmlpack_1_1util_1_1SeeAlso_1ace833f067d33bfd5527153d4e3078238" kind="function"><name>SeeAlso</name></member>
   </compound>
   <compound refid="classmlpack_1_1util_1_1ShortDescription" kind="class"><name>mlpack::util::ShortDescription</name>
-    <member refid="classmlpack_1_1util_1_1ShortDescription_1a545261b4da43cf273ee7e3022069095a" kind="function"><name>ShortDescription</name></member>
+    <member refid="classmlpack_1_1util_1_1ShortDescription_1acb162983166a9b224364a9b0faf812f5" kind="function"><name>ShortDescription</name></member>
+  </compound>
+  <compound refid="classmlpack_1_1util_1_1Timers" kind="class"><name>mlpack::util::Timers</name>
+    <member refid="classmlpack_1_1util_1_1Timers_1a844d73cf5e9a445a5794486cd1d4f84e" kind="variable"><name>enabled</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1aee3cef16972b747ab2b966bbe71dda7a" kind="variable"><name>timers</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1ace7c6722d6db149cafd87d9a42c52f83" kind="variable"><name>timersMutex</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a990855c65dc45d9c0cd9f2ad26e99e4c" kind="variable"><name>timerStartTime</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1add1af1e23f16430f39b982c0e8babe3f" kind="function"><name>Timers</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1aa3cc415a3ec6ca7701bbe063fb2d0bd7" kind="function"><name>Enabled</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a93235b4e93d1b61b95fba2db144145f6" kind="function"><name>Enabled</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a81e1c581d7a84a16c69c7b3fa3fe5db1" kind="function"><name>Get</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a9d077721f6811724906de9eb5d50857d" kind="function"><name>GetAllTimers</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a372de693ad40b3f42839c8ec6ac845f4" kind="function"><name>Reset</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a3d31d257960e6378a6f8fb8aa5a8eced" kind="function"><name>Start</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a68d46e751e80023df2595254466288b4" kind="function"><name>Stop</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a48757b28836456b14aa2f1c31dacbd71" kind="function"><name>StopAllTimers</name></member>
+    <member refid="classmlpack_1_1util_1_1Timers_1a75068693c40ef65eaf4bed1f903f1f47" kind="function"><name>Print</name></member>
   </compound>
   <compound refid="structTrainHMMModel" kind="struct"><name>TrainHMMModel</name>
-    <member refid="structTrainHMMModel_1a513815d8b32a9a55939317f8bfc48321" kind="function"><name>Apply</name></member>
+    <member refid="structTrainHMMModel_1aecf54e4d97cab7806b40b7775ff479ca" kind="function"><name>Apply</name></member>
   </compound>
   <compound refid="namespacecereal" kind="namespace"><name>cereal</name>
     <member refid="namespacecereal_1a679144f687ff95c7111ff96bccc573b3" kind="function"><name>CEREAL_LOAD_FUNCTION_NAME</name></member>
@@ -9988,10 +10213,10 @@
     <member refid="namespacemlpack_1_1ann_1a41e9b25c5b33b7de07a0eac6c46dc085" kind="typedef"><name>IdentityLayer</name></member>
     <member refid="namespacemlpack_1_1ann_1a137169a12d6f400a718d7383f3365112" kind="typedef"><name>L1Regularizer</name></member>
     <member refid="namespacemlpack_1_1ann_1ac3b4459576bd0564e145e049ee1549ce" kind="typedef"><name>L2Regularizer</name></member>
-    <member refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kind="typedef"><name>LayerTypes</name></member>
+    <member refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kind="typedef"><name>LayerTypes</name></member>
     <member refid="namespacemlpack_1_1ann_1aebe38e4259931f33c44701ba75d6240d" kind="typedef"><name>LiSHTFunctionLayer</name></member>
     <member refid="namespacemlpack_1_1ann_1a52aa33cac06fc8dbf5eefcb4e1858fea" kind="typedef"><name>MishFunctionLayer</name></member>
-    <member refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kind="typedef"><name>MoreTypes</name></member>
+    <member refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kind="typedef"><name>MoreTypes</name></member>
     <member refid="namespacemlpack_1_1ann_1a06b6e29ab52ee62d0bccbf108d64d1a2" kind="typedef"><name>ReLULayer</name></member>
     <member refid="namespacemlpack_1_1ann_1ac4f089366ec4066e82d7c4ecae664a46" kind="typedef"><name>Residual</name></member>
     <member refid="namespacemlpack_1_1ann_1ac08f9682be904369ec09e68b43b09fad" kind="typedef"><name>SELU</name></member>
@@ -10120,11 +10345,13 @@
   <compound refid="namespacemlpack_1_1det" kind="namespace"><name>mlpack::det</name>
     <member refid="namespacemlpack_1_1det_1a0671a10d605707a02c14efa54a2e16f0" kind="function"><name>PrintLeafMembership</name></member>
     <member refid="namespacemlpack_1_1det_1ac64804c6c73b842b3eb69d9a64fb12e3" kind="function"><name>PrintVariableImportance</name></member>
-    <member refid="namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c" kind="function"><name>Trainer</name></member>
+    <member refid="namespacemlpack_1_1det_1aea896dfbe00d9361ef2b2ade9ce94973" kind="function"><name>Trainer</name></member>
   </compound>
   <compound refid="namespacemlpack_1_1distribution" kind="namespace"><name>mlpack::distribution</name>
   </compound>
   <compound refid="namespacemlpack_1_1emst" kind="namespace"><name>mlpack::emst</name>
+  </compound>
+  <compound refid="namespacemlpack_1_1ensemble" kind="namespace"><name>mlpack::ensemble</name>
   </compound>
   <compound refid="namespacemlpack_1_1fastmks" kind="namespace"><name>mlpack::fastmks</name>
   </compound>
@@ -10328,6 +10555,7 @@
     <member refid="namespacemlpack_1_1tree_1a23057f6f52ed3b029f53aacbc1fcec85" kind="variable"><name>MAX_OVERLAP</name></member>
     <member refid="namespacemlpack_1_1tree_1aebb06bf0ada277e56a77d80cd1985dbe" kind="function"><name>Bootstrap</name></member>
     <member refid="namespacemlpack_1_1tree_1abab37b0038f14ab4dcdf83c60468e923" kind="function"><name>EnumerateTree</name></member>
+    <member refid="namespacemlpack_1_1tree_1a5a0616a02855490670d1d895a6195ac7" kind="function"><name>HAS_MEM_FUNC</name></member>
   </compound>
   <compound refid="namespacemlpack_1_1tree_1_1enumerate" kind="namespace"><name>mlpack::tree::enumerate</name>
     <member refid="namespacemlpack_1_1tree_1_1enumerate_1a3dd4930ca0f3b9f5779a4efe7e4703ad" kind="function"><name>EnumerateTreeImpl</name></member>
@@ -10346,14 +10574,13 @@
     <member refid="namespacemlpack_1_1util_1a5463728499ca94746d779a6863df5c20" kind="function"><name>GetVersion</name></member>
     <member refid="namespacemlpack_1_1util_1a7b8929840f4891a96df1108873e1a1f9" kind="function"><name>HyphenateString</name></member>
     <member refid="namespacemlpack_1_1util_1a0617e4b19f760fef6d14bbacd7545049" kind="function"><name>HyphenateString</name></member>
-    <member refid="namespacemlpack_1_1util_1ab244b3b942d525edebe5d0e08b056bf1" kind="function"><name>ReportIgnoredParam</name></member>
+    <member refid="namespacemlpack_1_1util_1a15d3dd71420e35891f2383141e55a17d" kind="function"><name>ReportIgnoredParam</name></member>
     <member refid="namespacemlpack_1_1util_1a267aad01fc4c11f1a97cdb0710b89af4" kind="function"><name>ReportIgnoredParam</name></member>
-    <member refid="namespacemlpack_1_1util_1ae19bc258d5d2bc0f4c5ac52da8d2992e" kind="function"><name>RequireAtLeastOnePassed</name></member>
-    <member refid="namespacemlpack_1_1util_1a37ad0ecd07b5b006bf8135c2880779dd" kind="function"><name>RequireNoneOrAllPassed</name></member>
-    <member refid="namespacemlpack_1_1util_1aa885d1e461234b74a7afaeffb9fa65e0" kind="function"><name>RequireOnlyOnePassed</name></member>
-    <member refid="namespacemlpack_1_1util_1a103bcfe2b3a7641fe3f3c59b2436bb63" kind="function"><name>RequireParamInSet</name></member>
-    <member refid="namespacemlpack_1_1util_1ae93b13d8041246b4d1d697d7f00155ca" kind="function"><name>RequireParamValue</name></member>
-    <member refid="namespacemlpack_1_1util_1a997283ede9320ae143e5cf3314efe0a4" kind="function"><name>SetInputParam</name></member>
+    <member refid="namespacemlpack_1_1util_1a6d1c576544a52b021a857c40b3b1d841" kind="function"><name>RequireAtLeastOnePassed</name></member>
+    <member refid="namespacemlpack_1_1util_1a504ee55c910ffb18c1e12e2b067b1e8f" kind="function"><name>RequireNoneOrAllPassed</name></member>
+    <member refid="namespacemlpack_1_1util_1a015ed435ccbb64bf7e4408a100fa095d" kind="function"><name>RequireOnlyOnePassed</name></member>
+    <member refid="namespacemlpack_1_1util_1adb04a1f1e20036f06efea1ad226fc116" kind="function"><name>RequireParamInSet</name></member>
+    <member refid="namespacemlpack_1_1util_1af6914a72a7b265d07fba2137a8b85451" kind="function"><name>RequireParamValue</name></member>
     <member refid="namespacemlpack_1_1util_1a17299c3035aca77759743f241cefd4c7" kind="function"><name>ToLower</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
@@ -10783,6 +11010,8 @@
   <compound refid="param__data_8hpp" kind="file"><name>param_data.hpp</name>
     <member refid="param__data_8hpp_1ac909d914008cce49fa42ddd10b9b36c5" kind="define"><name>TYPENAME</name></member>
   </compound>
+  <compound refid="params_8hpp" kind="file"><name>params.hpp</name>
+  </compound>
   <compound refid="prefixedoutstream_8hpp" kind="file"><name>prefixedoutstream.hpp</name>
   </compound>
   <compound refid="program__doc_8hpp" kind="file"><name>program_doc.hpp</name>
@@ -10964,11 +11193,15 @@
   </compound>
   <compound refid="batch__norm_8hpp" kind="file"><name>batch_norm.hpp</name>
   </compound>
+  <compound refid="bicubic__interpolation_8hpp" kind="file"><name>bicubic_interpolation.hpp</name>
+  </compound>
   <compound refid="bilinear__interpolation_8hpp" kind="file"><name>bilinear_interpolation.hpp</name>
   </compound>
   <compound refid="c__relu_8hpp" kind="file"><name>c_relu.hpp</name>
   </compound>
   <compound refid="celu_8hpp" kind="file"><name>celu.hpp</name>
+  </compound>
+  <compound refid="channel__shuffle_8hpp" kind="file"><name>channel_shuffle.hpp</name>
   </compound>
   <compound refid="concat_8hpp" kind="file"><name>concat.hpp</name>
   </compound>
@@ -11042,6 +11275,8 @@
   </compound>
   <compound refid="multiply__merge_8hpp" kind="file"><name>multiply_merge.hpp</name>
   </compound>
+  <compound refid="nearest__interpolation_8hpp" kind="file"><name>nearest_interpolation.hpp</name>
+  </compound>
   <compound refid="noisylinear_8hpp" kind="file"><name>noisylinear.hpp</name>
   </compound>
   <compound refid="padding_8hpp" kind="file"><name>padding.hpp</name>
@@ -11059,6 +11294,8 @@
   <compound refid="recurrent__attention_8hpp" kind="file"><name>recurrent_attention.hpp</name>
   </compound>
   <compound refid="reinforce__normal_8hpp" kind="file"><name>reinforce_normal.hpp</name>
+  </compound>
+  <compound refid="relu6_8hpp" kind="file"><name>relu6.hpp</name>
   </compound>
   <compound refid="reparametrization_8hpp" kind="file"><name>reparametrization.hpp</name>
   </compound>
@@ -11117,6 +11354,8 @@
   <compound refid="mean__squared__error_8hpp" kind="file"><name>mean_squared_error.hpp</name>
   </compound>
   <compound refid="mean__squared__logarithmic__error_8hpp" kind="file"><name>mean_squared_logarithmic_error.hpp</name>
+  </compound>
+  <compound refid="multilabel__softmargin__loss_8hpp" kind="file"><name>multilabel_softmargin_loss.hpp</name>
   </compound>
   <compound refid="negative__log__likelihood_8hpp" kind="file"><name>negative_log_likelihood.hpp</name>
   </compound>
@@ -11278,17 +11517,27 @@
   </compound>
   <compound refid="decision__tree_8hpp" kind="file"><name>decision_tree.hpp</name>
   </compound>
+  <compound refid="decision__tree__regressor_8hpp" kind="file"><name>decision_tree_regressor.hpp</name>
+  </compound>
   <compound refid="gini__gain_8hpp" kind="file"><name>gini_gain.hpp</name>
   </compound>
   <compound refid="decision__tree_2information__gain_8hpp" kind="file"><name>information_gain.hpp</name>
   </compound>
   <compound refid="hoeffding__trees_2information__gain_8hpp" kind="file"><name>information_gain.hpp</name>
   </compound>
+  <compound refid="mad__gain_8hpp" kind="file"><name>mad_gain.hpp</name>
+  </compound>
+  <compound refid="mse__gain_8hpp" kind="file"><name>mse_gain.hpp</name>
+  </compound>
   <compound refid="multiple__random__dimension__select_8hpp" kind="file"><name>multiple_random_dimension_select.hpp</name>
   </compound>
   <compound refid="random__binary__numeric__split_8hpp" kind="file"><name>random_binary_numeric_split.hpp</name>
   </compound>
   <compound refid="random__dimension__select_8hpp" kind="file"><name>random_dimension_select.hpp</name>
+  </compound>
+  <compound refid="utils_8hpp" kind="file"><name>utils.hpp</name>
+    <member refid="utils_8hpp_1adc8ddbc780db03bed571d6037f5c43bb" kind="function"><name>Sum</name></member>
+    <member refid="utils_8hpp_1a35e413f3a13582a02d7b51fa3fb7fc8f" kind="function"><name>WeightedSum</name></member>
   </compound>
   <compound refid="dt__utils_8hpp" kind="file"><name>dt_utils.hpp</name>
   </compound>
@@ -11572,6 +11821,8 @@
   </compound>
   <compound refid="svdplusplus__function_8hpp" kind="file"><name>svdplusplus_function.hpp</name>
   </compound>
+  <compound refid="sse__loss_8hpp" kind="file"><name>sse_loss.hpp</name>
+  </compound>
   <compound refid="prereqs_8hpp" kind="file"><name>prereqs.hpp</name>
     <member refid="prereqs_8hpp_1a525335710b53cb064ca56b936120431e" kind="define"><name>_USE_MATH_DEFINES</name></member>
     <member refid="prereqs_8hpp_1a5cfc0a80bcb9c742a4dd13252e8e70b2" kind="define"><name>BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS</name></member>
@@ -11595,16 +11846,19 @@
   </compound>
   <compound refid="hmm__test__utils_8hpp" kind="file"><name>hmm_test_utils.hpp</name>
   </compound>
+  <compound refid="main__test__fixture_8hpp" kind="file"><name>main_test_fixture.hpp</name>
+    <member refid="main__test__fixture_8hpp_1a06c49141318e550eb6a46f6828e4fa21" kind="define"><name>BINDING_TEST_FIXTURE</name></member>
+    <member refid="main__test__fixture_8hpp_1ad202b4a5b5ed6985c8a368ed2dfe9eb2" kind="define"><name>RUN_BINDING</name></member>
+  </compound>
   <compound refid="range__search__utils_8hpp" kind="file"><name>range_search_utils.hpp</name>
     <member refid="range__search__utils_8hpp_1a8c20314a21117877d9660a084c83a039" kind="function"><name>CheckMatrices</name></member>
     <member refid="range__search__utils_8hpp_1a3adc3e063b86994ba106c7871438c402" kind="function"><name>CheckMatrices</name></member>
     <member refid="range__search__utils_8hpp_1a22e8b75c2153dee033c40446de6f9579" kind="function"><name>ModelToString</name></member>
     <member refid="range__search__utils_8hpp_1af6f5b481a584d67f7621e7339fddc137" kind="function"><name>ReadData</name></member>
   </compound>
-  <compound refid="test__helper_8hpp" kind="file"><name>test_helper.hpp</name>
-  </compound>
   <compound refid="mock__categorical__data_8hpp" kind="file"><name>mock_categorical_data.hpp</name>
     <member refid="mock__categorical__data_8hpp_1a93686590f9141a5c16d2cb8ff0eadde6" kind="function"><name>MockCategoricalData</name></member>
+    <member refid="mock__categorical__data_8hpp_1ae4e74e2b4630092d7822ceb0fbe232c1" kind="function"><name>MockCategoricalData</name></member>
   </compound>
   <compound refid="src_2mlpack_2tests_2README_8md" kind="file"><name>README.md</name>
   </compound>
@@ -11624,7 +11878,9 @@
     <member refid="test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a" kind="function"><name>FilterFileName</name></member>
   </compound>
   <compound refid="test__function__tools_8hpp" kind="file"><name>test_function_tools.hpp</name>
+    <member refid="test__function__tools_8hpp_1af3fc11802c7a2b757836cbf80a027155" kind="function"><name>LoadBostonHousingDataset</name></member>
     <member refid="test__function__tools_8hpp_1a4fca855ff4c9772ee30ed0a171812953" kind="function"><name>LogisticRegressionTestData</name></member>
+    <member refid="test__function__tools_8hpp_1a0bb90d590a15bd57bafd7578ce621932" kind="function"><name>RMSE</name></member>
   </compound>
   <compound refid="md__home_aakash_mlpack_src_mlpack_tests_README" kind="page"><name>md__home_aakash_mlpack_src_mlpack_tests_README</name>
   </compound>
@@ -11780,6 +12036,8 @@
   </compound>
   <compound refid="dir_108dc4f74c6c9629904c71a4ea9deaa7" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions</name>
   </compound>
+  <compound refid="dir_e411125ee3f5c9cbf9302d7b11ee6225" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/xgboost/loss_functions</name>
+  </compound>
   <compound refid="dir_390ed077ccb355ad25c9ee120c185888" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/lsh</name>
   </compound>
   <compound refid="dir_9b9b1e5031378e19eee8e87fed05a7c8" kind="dir"><name>/home/aakash/mlpack/src/mlpack/tests/main_tests</name>
@@ -11794,11 +12052,11 @@
   </compound>
   <compound refid="dir_3cfbf900288ec2fe8dd2c2c8482f216e" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods</name>
   </compound>
+  <compound refid="dir_4efb564a11712fe6ab1802c27ccee872" kind="dir"><name>/home/aakash/mlpack/src/mlpack/core/metrics</name>
+  </compound>
   <compound refid="dir_eecf06612edb6375565d9346b54b75c8" kind="dir"><name>/home/aakash/mlpack/src/mlpack/core/cv/metrics</name>
   </compound>
   <compound refid="dir_fad15b871161a97195139f0577b4ae8d" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/ann/gan/metrics</name>
-  </compound>
-  <compound refid="dir_4efb564a11712fe6ab1802c27ccee872" kind="dir"><name>/home/aakash/mlpack/src/mlpack/core/metrics</name>
   </compound>
   <compound refid="dir_44a936ef30fc126706c6284a2fc0c990" kind="dir"><name>/home/aakash/mlpack/src/mlpack</name>
   </compound>
@@ -11886,13 +12144,15 @@
   </compound>
   <compound refid="dir_d2d4272c0c3066ecaa6136c65bce4822" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/amf/update_rules</name>
   </compound>
-  <compound refid="dir_e173a4984165953811b5143e3b27486f" kind="dir"><name>/home/aakash/mlpack/src/mlpack/core/util</name>
-  </compound>
   <compound refid="dir_13a231355eb622cbab9275b263aa86cd" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/ann/util</name>
+  </compound>
+  <compound refid="dir_e173a4984165953811b5143e3b27486f" kind="dir"><name>/home/aakash/mlpack/src/mlpack/core/util</name>
   </compound>
   <compound refid="dir_b555923761b25372c22bbdf14676b4b4" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/ann/visitor</name>
   </compound>
   <compound refid="dir_5df47b3ad4bfc3bf34b635d9f5eba851" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker</name>
+  </compound>
+  <compound refid="dir_637617be3500e25a9dda4621aecfa323" kind="dir"><name>/home/aakash/mlpack/src/mlpack/methods/xgboost</name>
   </compound>
   <compound refid="indexpage" kind="page"><name>index</name>
   </compound>

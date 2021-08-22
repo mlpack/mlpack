@@ -119,7 +119,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="244" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1a08c95ac2d2ff0dfca03ce519c1e700f1" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes forgetGateModule</definition>
         <argsstring></argsstring>
         <name>forgetGateModule</name>
@@ -184,7 +184,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="238" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="238" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1a3400a38c8f8fc45084d52c88184c14fa" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes hiddenStateModule</definition>
         <argsstring></argsstring>
         <name>hiddenStateModule</name>
@@ -197,7 +197,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="199" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="199" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1afa8ddd72a720c05c9eabf61c1e6ad534" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes input2GateModule</definition>
         <argsstring></argsstring>
         <name>input2GateModule</name>
@@ -210,7 +210,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="187" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="187" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1a47eb5e92d382bec4dd218846c0a0b29d" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes inputGateModule</definition>
         <argsstring></argsstring>
         <name>inputGateModule</name>
@@ -236,7 +236,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="172" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="172" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1a3e8fe5d26eb4292120dcd0ecb21cd2b6" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -262,7 +262,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="226" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="226" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1af481d411363f7c63cb292fdb5eb870f4" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes output2GateModule</definition>
         <argsstring></argsstring>
         <name>output2GateModule</name>
@@ -275,7 +275,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="190" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="190" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1GRU_1a40c5edcfc013d07fb31ad06c8585285c" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes outputHidden2GateModule</definition>
         <argsstring></argsstring>
         <name>outputHidden2GateModule</name>
@@ -667,7 +667,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" line="153" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp" bodystart="153" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1GRU_1a50c707b4f7c009339d8d661539baf38f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>

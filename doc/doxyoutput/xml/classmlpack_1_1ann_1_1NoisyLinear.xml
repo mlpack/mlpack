@@ -729,7 +729,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="103" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="108" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1NoisyLinear_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::NoisyLinear</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1NoisyLinear_1a5de0a618cebbf6bf64bfba543e9e7d90" prot="private" virt="non-virtual"><scope>mlpack::ann::NoisyLinear</scope><name>bias</name></member>

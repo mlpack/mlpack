@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="39" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="40" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" prot="public" static="no">
         <type>typename EnvironmentType::State</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="38" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="38" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="39" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a810951afc4d825b2409bf5378e871dc5" prot="public" static="no">
         <type>std::tuple&lt; <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref>, <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref>, double, <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &gt;</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="40" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="41" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="378" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="378" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="379" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="379" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="381" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="381" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="382" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="382" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" static="no" mutable="no">
         <type>EnvironmentType</type>
@@ -96,7 +96,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="375" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="375" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="376" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="376" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ace58f274fcc6facd3df86200b4b88a40" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="387" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="387" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="388" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="388" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ab54407124b57a3ab58fb83a5b26fec57" prot="private" static="no" mutable="no">
         <type>NetworkType</type>
@@ -122,7 +122,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="396" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="396" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="397" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="397" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a82f9ca74a4fbbda806e90cf6b64140d4" prot="private" static="no" mutable="no">
         <type>std::vector&lt; <ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1a810951afc4d825b2409bf5378e871dc5" kindref="member">TransitionType</ref> &gt;</type>
@@ -135,7 +135,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="390" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="390" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="391" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="391" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7bb80215f019a25dfed5e30892012ef6" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -148,7 +148,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="393" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="393" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="394" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="394" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref></type>
@@ -161,7 +161,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="399" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="399" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="400" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="400" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a2a30a0fc4077aef1e55c562ac2586c65" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -174,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="384" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="384" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="385" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="385" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" static="no" mutable="no">
         <type>UpdaterType</type>
@@ -187,7 +187,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="369" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="369" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="370" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="370" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -247,7 +247,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="51" bodyend="64"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="52" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1afe4d1c5b3fee4c0291044180f6ced66f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -272,7 +272,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="71" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="71" bodyend="94"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="72" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="72" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a24d36c163a368e04fd6df657e0bec023" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -297,7 +297,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="101" bodyend="124"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="102" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1acdb590ece8e681e2a51b765c3c379cdb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -310,7 +310,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="203" bodyend="208"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="204" bodyend="209"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1acf86e5b1010bd1f15be7b3fab93dfd75" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -335,7 +335,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="214" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="214" bodyend="230"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="215" bodyend="231"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a55a2bb2bc1015fd5bc079b0c1e3e65a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
@@ -360,7 +360,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="131" bodyend="161"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="132" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="132" bodyend="162"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1a42109fefb4743f4a4346c2955f4b016e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classmlpack_1_1rl_1_1NStepQLearningWorker" kindref="compound">NStepQLearningWorker</ref> &amp;</type>
@@ -385,7 +385,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="168" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="168" bodyend="198"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="169" bodyend="199"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1rl_1_1NStepQLearningWorker_1ad3920ee0951fcd4ce236584e19db8256" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -455,7 +455,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="243" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="243" bodyend="354"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="244" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="244" bodyend="355"/>
         <references refid="classmlpack_1_1rl_1_1TrainingConfig_1aa6ad347e43fbd017a857577c98b2c60a" compoundref="training__config_8hpp" startline="108" endline="108">TrainingConfig::Discount</references>
         <references refid="classmlpack_1_1rl_1_1TrainingConfig_1a47c21c74b98a88391e1d4acb707fb930" compoundref="training__config_8hpp" startline="113" endline="113">TrainingConfig::GradientLimit</references>
         <references refid="classmlpack_1_1rl_1_1TrainingConfig_1ac5d0f7fbe2c8d6222464e0d828073051" compoundref="training__config_8hpp" startline="90" endline="90">TrainingConfig::StepLimit</references>
@@ -476,7 +476,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="360" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="360" bodyend="366"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" line="361" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp" bodystart="361" bodyend="367"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

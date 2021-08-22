@@ -1,4 +1,4 @@
-.TH "InitHMMModel" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "InitHMMModel" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,7 +10,7 @@ InitHMMModel
 
 .in +1c
 .ti -1c
-.RI "template<typename HMMType > static void \fBApply\fP (HMMType &hmm, vector< mat > *trainSeq)"
+.RI "template<typename HMMType > static void \fBApply\fP (util::Params &, HMMType &hmm, vector< mat > *trainSeq)"
 .br
 .ti -1c
 .RI "static void \fBCreate\fP (HMM< DiscreteDistribution > &hmm, vector< mat > &trainSeq, size_t states, double tolerance=1e\-05)"
@@ -46,7 +46,7 @@ InitHMMModel
 Definition at line 21 of file hmm_test_utils\&.hpp\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "static void Apply (HMMType & hmm, vector< mat > * trainSeq)\fC [inline]\fP, \fC [static]\fP"
+.SS "static void Apply (util::Params &, HMMType & hmm, vector< mat > * trainSeq)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
 Definition at line 24 of file hmm_test_utils\&.hpp\&.
@@ -57,45 +57,45 @@ References Create(), and RandomInitialize()\&.
 .PP
 Helper function to create discrete HMM\&. 
 .PP
-Definition at line 37 of file hmm_test_utils\&.hpp\&.
+Definition at line 39 of file hmm_test_utils\&.hpp\&.
 .PP
 Referenced by Apply()\&.
 .SS "static void Create (HMM< GaussianDistribution > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
-Definition at line 58 of file hmm_test_utils\&.hpp\&.
+Definition at line 60 of file hmm_test_utils\&.hpp\&.
 .SS "static void Create (HMM< GMM > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
-Definition at line 82 of file hmm_test_utils\&.hpp\&.
+Definition at line 84 of file hmm_test_utils\&.hpp\&.
 .SS "static void Create (HMM< DiagonalGMM > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
 Helper function to create Diagonal GMM HMM\&. 
 .PP
-Definition at line 109 of file hmm_test_utils\&.hpp\&.
+Definition at line 111 of file hmm_test_utils\&.hpp\&.
 .SS "static void RandomInitialize (vector< DiscreteDistribution > & e)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
 Helper function for discrete emission distributions\&. 
 .PP
-Definition at line 136 of file hmm_test_utils\&.hpp\&.
+Definition at line 138 of file hmm_test_utils\&.hpp\&.
 .PP
 Referenced by Apply()\&.
 .SS "static void RandomInitialize (vector< GaussianDistribution > & e)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
-Definition at line 145 of file hmm_test_utils\&.hpp\&.
+Definition at line 147 of file hmm_test_utils\&.hpp\&.
 .SS "static void RandomInitialize (vector< GMM > & e)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
-Definition at line 157 of file hmm_test_utils\&.hpp\&.
+Definition at line 159 of file hmm_test_utils\&.hpp\&.
 .SS "static void RandomInitialize (vector< DiagonalGMM > & e)\fC [inline]\fP, \fC [static]\fP"
 
 .PP
 Helper function for diagonal GMM emission distributions\&. 
 .PP
-Definition at line 180 of file hmm_test_utils\&.hpp\&.
+Definition at line 182 of file hmm_test_utils\&.hpp\&.
 
 .SH "Author"
 .PP 

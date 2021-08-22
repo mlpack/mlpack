@@ -13,22 +13,22 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="885">
+      <node id="899">
         <label>false_type</label>
       </node>
-      <node id="884">
+      <node id="898">
         <label>IsPreFixedArg&lt; T &gt;::Implementation&lt; typename &gt;</label>
-        <childnode refid="885" relation="public-inheritance">
+        <childnode refid="899" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="887">
+      <node id="901">
         <label>false_type</label>
       </node>
-      <node id="886">
+      <node id="900">
         <label>IsPreFixedArg&lt; T &gt;::Implementation&lt; typename &gt;</label>
-        <childnode refid="887" relation="public-inheritance">
+        <childnode refid="901" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

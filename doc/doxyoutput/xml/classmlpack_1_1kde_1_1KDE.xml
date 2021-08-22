@@ -1104,14 +1104,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="901">
+      <node id="913">
         <label>KDE&lt; KernelType, metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1kde_1_1KDE"/>
-        <childnode refid="900" relation="template-instance">
+        <childnode refid="912" relation="template-instance">
           <edgelabel>&lt; KernelType, metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="900">
+      <node id="912">
         <label>KDE&lt; KernelType, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
         <link refid="classmlpack_1_1kde_1_1KDE"/>
       </node>

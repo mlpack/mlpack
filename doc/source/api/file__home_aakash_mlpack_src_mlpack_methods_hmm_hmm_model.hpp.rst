@@ -38,6 +38,8 @@ Includes
 
 - ``hmm.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_hmm_hmm.hpp`)
 
+- ``mlpack/core/util/params.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core_util_params.hpp`)
+
 - ``mlpack/methods/gmm/diagonal_gmm.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_gmm_diagonal_gmm.hpp`)
 
 - ``mlpack/methods/gmm/gmm.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_gmm_gmm.hpp`)

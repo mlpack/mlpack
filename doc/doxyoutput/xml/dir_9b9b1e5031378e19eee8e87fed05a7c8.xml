@@ -3,8 +3,8 @@
   <compounddef id="dir_9b9b1e5031378e19eee8e87fed05a7c8" kind="dir">
     <compoundname>/home/aakash/mlpack/src/mlpack/tests/main_tests</compoundname>
     <innerfile refid="hmm__test__utils_8hpp">hmm_test_utils.hpp</innerfile>
+    <innerfile refid="main__test__fixture_8hpp">main_test_fixture.hpp</innerfile>
     <innerfile refid="range__search__utils_8hpp">range_search_utils.hpp</innerfile>
-    <innerfile refid="test__helper_8hpp">test_helper.hpp</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

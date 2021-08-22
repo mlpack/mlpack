@@ -66,8 +66,6 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacemlpack_1_1math_1a9fd573f30f3cd68f82f51ba57506d169`
-
 - :ref:`exhale_function_namespacemlpack_1_1math_1a3d51da0ee510a507855d587b91645a2e`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1ae867d408a4e6bd4f6c6efa6ad46f699d`
@@ -75,6 +73,8 @@ Functions
 - :ref:`exhale_function_namespacemlpack_1_1math_1a4e6818ee1202660968eeda80040b5d0e`
 
 - :ref:`exhale_function_namespacemlpack_1_1math_1a522c0905bf5015a7eebac8fdddb6452b`
+
+- :ref:`exhale_function_namespacemlpack_1_1math_1a9fd573f30f3cd68f82f51ba57506d169`
 
 
 Full File Listing

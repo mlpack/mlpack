@@ -15,6 +15,7 @@ Program Listing for File sac.hpp
    #define MLPACK_METHODS_RL_SAC_HPP
    
    #include <mlpack/prereqs.hpp>
+   #include <ensmallen.hpp>
    
    #include "replay/random_replay.hpp"
    #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>

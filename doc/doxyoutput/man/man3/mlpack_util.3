@@ -1,4 +1,4 @@
-.TH "mlpack::util" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "mlpack::util" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,6 +13,9 @@ mlpack::util
 .RI "struct \fBBindingDetails\fP"
 .br
 .RI "This structure holds all of the information about bindings documentation\&. "
+.ti -1c
+.RI "class \fBBindingName\fP"
+.br
 .ti -1c
 .RI "class \fBExample\fP"
 .br
@@ -36,17 +39,21 @@ mlpack::util
 .br
 .RI "This structure holds all of the information about a single parameter, including its value (which is set when ParseCommandLine() is called)\&. "
 .ti -1c
+.RI "class \fBParams\fP"
+.br
+.RI "The \fBParams\fP class holds all information about the parameters passed to a specific binding\&. "
+.ti -1c
 .RI "class \fBPrefixedOutStream\fP"
 .br
 .RI "Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr\&. "
-.ti -1c
-.RI "class \fBProgramName\fP"
-.br
 .ti -1c
 .RI "class \fBSeeAlso\fP"
 .br
 .ti -1c
 .RI "class \fBShortDescription\fP"
+.br
+.ti -1c
+.RI "class \fBTimers\fP"
 .br
 .in -1c
 .SS "Functions"
@@ -81,7 +88,7 @@ mlpack::util
 .br
 .RI "Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. "
 .ti -1c
-.RI "void \fBReportIgnoredParam\fP (const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
+.RI "void \fBReportIgnoredParam\fP (\fButil::Params\fP &params, const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
 .br
 .RI "Report that a parameter is ignored, if each of the constraints given are satisfied\&. "
 .ti -1c
@@ -89,29 +96,25 @@ mlpack::util
 .br
 .RI "If the given parameter is passed, report that it is ignored, supplying a custom reason\&. "
 .ti -1c
-.RI "void \fBRequireAtLeastOnePassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
+.RI "void \fBRequireAtLeastOnePassed\fP (\fButil::Params\fP &params, const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
 .br
 .RI "Require that at least one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
 .ti -1c
-.RI "void \fBRequireNoneOrAllPassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
+.RI "void \fBRequireNoneOrAllPassed\fP (\fButil::Params\fP &params, const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='')"
 .br
 .RI "Require that either none or all of the given parameters in the constraints set were passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
 .ti -1c
-.RI "void \fBRequireOnlyOnePassed\fP (const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='', const bool allowNone=false)"
+.RI "void \fBRequireOnlyOnePassed\fP (\fButil::Params\fP &params, const std::vector< std::string > &constraints, const bool fatal=true, const std::string &customErrorMessage='', const bool allowNone=false)"
 .br
 .RI "Require that only one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. "
 .ti -1c
-.RI "template<typename T > void \fBRequireParamInSet\fP (const std::string &paramName, const std::vector< T > &set, const bool fatal, const std::string &errorMessage)"
+.RI "template<typename T > void \fBRequireParamInSet\fP (\fButil::Params\fP &params, const std::string &paramName, const std::vector< T > &set, const bool fatal, const std::string &errorMessage)"
 .br
 .RI "Require that a given parameter is in a set of allowable parameters\&. "
 .ti -1c
-.RI "template<typename T > void \fBRequireParamValue\fP (const std::string &paramName, const std::function< bool(T)> &conditional, const bool fatal, const std::string &errorMessage)"
+.RI "template<typename T > void \fBRequireParamValue\fP (\fButil::Params\fP &params, const std::string &paramName, const std::function< bool(T)> &conditional, const bool fatal, const std::string &errorMessage)"
 .br
 .RI "Require that a given parameter satisfies the given conditional function\&. "
-.ti -1c
-.RI "template<typename T > void \fBSetInputParam\fP (const std::string &name, T &&value)"
-.br
-.RI "Utility function that is used in binding tests for setting a parameter and marking it as passed; it uses copy semantics for lvalues and move semantics for rvalues\&. "
 .ti -1c
 .RI "std::string \fBToLower\fP (const std::string &input)"
 .br
@@ -214,13 +217,15 @@ Hyphenate a string or split it onto multiple 80-character lines, with some amoun
 Definition at line 82 of file hyphenate_string\&.hpp\&.
 .PP
 References HyphenateString()\&.
-.SS "void mlpack::util::ReportIgnoredParam (const std::vector< std::pair< std::string, bool >> & constraints, const std::string & paramName)"
+.SS "void mlpack::util::ReportIgnoredParam (\fButil::Params\fP & params, const std::vector< std::pair< std::string, bool >> & constraints, const std::string & paramName)"
 
 .PP
 Report that a parameter is ignored, if each of the constraints given are satisfied\&. The constraints should be a set of string/bool pairs\&. If all of the constraints are true, and the given parameter in 'paramName' is passed, then a warning will be issued noting that the parameter is ignored\&. The warning will go to Log::Warn\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIconstraints\fP Set of constraints\&. 
 .br
 \fIparamName\fP Name of parameter to check\&. 
@@ -249,7 +254,7 @@ optimizer'\&. Be sure that when you write the reason, the full message makes sen
 .RE
 .PP
 
-.SS "void mlpack::util::RequireAtLeastOnePassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
+.SS "void mlpack::util::RequireAtLeastOnePassed (\fButil::Params\fP & params, const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
 
 .PP
 Require that at least one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
@@ -269,6 +274,8 @@ so when you write your custom error message, be sure that the sentence makes sen
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIconstraints\fP Set of parameters from which only one should be passed\&. 
 .br
 \fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
@@ -277,7 +284,7 @@ so when you write your custom error message, be sure that the sentence makes sen
 .RE
 .PP
 
-.SS "void mlpack::util::RequireNoneOrAllPassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
+.SS "void mlpack::util::RequireNoneOrAllPassed (\fButil::Params\fP & params, const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP)"
 
 .PP
 Require that either none or all of the given parameters in the constraints set were passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
@@ -295,6 +302,8 @@ so when you write your custom error message, be sure that the sentence makes sen
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIconstraints\fP Set of parameters of which none or all should be passed\&. 
 .br
 \fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
@@ -303,7 +312,7 @@ so when you write your custom error message, be sure that the sentence makes sen
 .RE
 .PP
 
-.SS "void mlpack::util::RequireOnlyOnePassed (const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP, const bool allowNone = \fCfalse\fP)"
+.SS "void mlpack::util::RequireOnlyOnePassed (\fButil::Params\fP & params, const std::vector< std::string > & constraints, const bool fatal = \fCtrue\fP, const std::string & customErrorMessage = \fC''\fP, const bool allowNone = \fCfalse\fP)"
 
 .PP
 Require that only one of the given parameters in the constraints set was passed to the \fBIO\fP object; otherwise, issue a warning or fatal error, optionally with the given custom error message\&. This uses the correct binding type name for each parameter (i\&.e\&. '--parameter' for CLI bindings, 'parameter' for Python bindings)\&.
@@ -321,6 +330,8 @@ so when you write your custom error message, be sure that the sentence makes sen
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIconstraints\fP Set of parameters from which only one should be passed\&. 
 .br
 \fIfatal\fP If true, output goes to Log::Fatal instead of Log::Warn and an exception is thrown\&. 
@@ -331,7 +342,7 @@ so when you write your custom error message, be sure that the sentence makes sen
 .RE
 .PP
 
-.SS "void mlpack::util::RequireParamInSet (const std::string & paramName, const std::vector< T > & set, const bool fatal, const std::string & errorMessage)"
+.SS "void mlpack::util::RequireParamInSet (\fButil::Params\fP & params, const std::string & paramName, const std::vector< T > & set, const bool fatal, const std::string & errorMessage)"
 
 .PP
 Require that a given parameter is in a set of allowable parameters\&. This is probably most useful with T = std::string\&. If fatal is true, then an exception is thrown\&. An error message is not optional and must be specified\&. The error message does \fInot\fP need to specify the values in the set; this function will already output them\&. So, for example, the output may be similar to:
@@ -353,6 +364,8 @@ weak learner type'\&.
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIparamName\fP Name of parameter to check\&. 
 .br
 \fIset\fP Set of valid values for parameter\&. 
@@ -363,7 +376,7 @@ weak learner type'\&.
 .RE
 .PP
 
-.SS "void mlpack::util::RequireParamValue (const std::string & paramName, const std::function< bool(T)> & conditional, const bool fatal, const std::string & errorMessage)"
+.SS "void mlpack::util::RequireParamValue (\fButil::Params\fP & params, const std::string & paramName, const std::function< bool(T)> & conditional, const bool fatal, const std::string & errorMessage)"
 
 .PP
 Require that a given parameter satisfies the given conditional function\&. This is useful for, e\&.g\&., checking that a given parameter is greater than 0\&. If fatal is true, then an exception is thrown\&. An error message is not optional and must be specified\&. The error message should specify, in clear terms, what the value of the parameter \fIshould\fP be\&. So, for example, the output may be similar to:
@@ -384,6 +397,8 @@ positive'\&. Be sure that when you write the error message, the message makes se
 .PP
 \fBParameters:\fP
 .RS 4
+\fIparams\fP Set of parameters to check\&. 
+.br
 \fIparamName\fP Name of parameter to check\&. 
 .br
 \fIconditional\fP Function to use to check parameter value; should return 'true' if the parameter value is okay\&. 
@@ -394,23 +409,6 @@ positive'\&. Be sure that when you write the error message, the message makes se
 .RE
 .PP
 
-.SS "void mlpack::util::SetInputParam (const std::string & name, T && value)"
-
-.PP
-Utility function that is used in binding tests for setting a parameter and marking it as passed; it uses copy semantics for lvalues and move semantics for rvalues\&. 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIname\fP Name of parameter to set\&. 
-.br
-\fIvalue\fP Value to set parameter to\&. 
-.RE
-.PP
-
-.PP
-Definition at line 29 of file test_helper\&.hpp\&.
-.PP
-References IO::SetPassed()\&.
 .SS "std::string mlpack::util::ToLower (const std::string & input)\fC [inline]\fP"
 
 .PP

@@ -7,6 +7,6 @@
 <para>Mean shift clustering. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="23" column="1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="22" column="1"/>
   </compounddef>
 </doxygen>

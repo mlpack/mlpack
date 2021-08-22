@@ -1072,14 +1072,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1114">
+      <node id="1126">
         <label>RASearch&lt; SortPolicy, MetricType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
       </node>
-      <node id="1115">
+      <node id="1127">
         <label>RASearch&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1neighbor_1_1RASearch"/>
-        <childnode refid="1114" relation="template-instance">
+        <childnode refid="1126" relation="template-instance">
           <edgelabel>&lt; NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>

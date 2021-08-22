@@ -178,14 +178,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1038">
+      <node id="1050">
         <label>LMetric&lt; TPower, true &gt;</label>
         <link refid="classmlpack_1_1metric_1_1LMetric"/>
-        <childnode refid="1037" relation="template-instance">
+        <childnode refid="1049" relation="template-instance">
           <edgelabel>&lt; TPower, true &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="1037">
+      <node id="1049">
         <label>LMetric&lt; TPower, TTakeRoot &gt;</label>
         <link refid="classmlpack_1_1metric_1_1LMetric"/>
       </node>

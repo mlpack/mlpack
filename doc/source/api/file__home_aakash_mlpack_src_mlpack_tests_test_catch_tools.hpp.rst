@@ -36,8 +36,6 @@ Includes
 --------
 
 
-- ``boost/version.hpp``
-
 - ``catch.hpp``
 
 - ``mlpack/core.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_core.hpp`)
@@ -59,17 +57,17 @@ Functions
 
 - :ref:`exhale_function_test__catch__tools_8hpp_1aa71d85f71e7317a73a775fd88de2041c`
 
+- :ref:`exhale_function_test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84`
+
 - :ref:`exhale_function_test__catch__tools_8hpp_1a55e4e6a1b90fa29f377545ada95d9c13`
 
 - :ref:`exhale_function_test__catch__tools_8hpp_1afe966f828dc9f987f9f46f348947a729`
 
-- :ref:`exhale_function_test__catch__tools_8hpp_1a069c1790abc5e691ac7bae18caab5c84`
+- :ref:`exhale_function_test__catch__tools_8hpp_1ab8511b32e7ccb9f8b0c09b92f810908f`
 
 - :ref:`exhale_function_test__catch__tools_8hpp_1ab286653ce1d929749c5595d969c9405d`
 
 - :ref:`exhale_function_test__catch__tools_8hpp_1a91052523ffe67c0b11c6731ad14689e1`
-
-- :ref:`exhale_function_test__catch__tools_8hpp_1ab8511b32e7ccb9f8b0c09b92f810908f`
 
 - :ref:`exhale_function_test__catch__tools_8hpp_1a2bef90617ddbfbbfc128fed05612d17a`
 

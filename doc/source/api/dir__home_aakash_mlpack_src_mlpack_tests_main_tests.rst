@@ -16,7 +16,7 @@ Files
 -----
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_hmm_test_utils.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_main_test_fixture.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_range_search_utils.hpp`
-- :ref:`file__home_aakash_mlpack_src_mlpack_tests_main_tests_test_helper.hpp`
 
 

@@ -52,6 +52,8 @@ Included By
 
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_layer_traits.hpp`
 
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_decision_tree_best_binary_numeric_split.hpp`
+
 
 
 

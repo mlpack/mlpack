@@ -528,21 +528,21 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="47">
+      <node id="49">
         <label>AdaBoost&lt; mlpack::perceptron::Perceptron&lt;&gt; &gt;</label>
         <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
-        <childnode refid="46" relation="template-instance">
+        <childnode refid="48" relation="template-instance">
           <edgelabel>&lt; mlpack::perceptron::Perceptron&lt;&gt; &gt;</edgelabel>
         </childnode>
       </node>
-      <node id="46">
+      <node id="48">
         <label>AdaBoost&lt; WeakLearnerType, MatType &gt;</label>
         <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
       </node>
-      <node id="48">
+      <node id="50">
         <label>AdaBoost&lt; mlpack::tree::DecisionTree &gt;</label>
         <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
-        <childnode refid="46" relation="template-instance">
+        <childnode refid="48" relation="template-instance">
           <edgelabel>&lt; mlpack::tree::DecisionTree &gt;</edgelabel>
         </childnode>
       </node>

@@ -1,4 +1,4 @@
-.TH "Concat< InputDataType, OutputDataType, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Concat< InputDataType, OutputDataType, CustomLayers >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -131,7 +131,7 @@ The \fBConcat\fP class works as a feed-forward fully connected network container
 .PP
 
 .PP
-Definition at line 45 of file concat\&.hpp\&.
+Definition at line 43 of file concat\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBConcat\fP (const bool model = \fCfalse\fP, const bool run = \fCtrue\fP)"
@@ -173,13 +173,13 @@ Destroy the layers held by the model\&.
 .SS "void \fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
 
 .PP
-Definition at line 147 of file concat\&.hpp\&.
+Definition at line 145 of file concat\&.hpp\&.
 .PP
 Referenced by DuelingDQN< OutputLayerType, InitType, CompleteNetworkType, FeatureNetworkType, AdvantageNetworkType, ValueNetworkType >::DuelingDQN()\&.
 .SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
 
 .PP
-Definition at line 154 of file concat\&.hpp\&.
+Definition at line 152 of file concat\&.hpp\&.
 .SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
 
 .PP
@@ -217,19 +217,19 @@ This is the overload of \fBBackward()\fP that runs only a specific layer with th
 .PP
 Get the axis of concatenation\&. 
 .PP
-Definition at line 197 of file concat\&.hpp\&.
+Definition at line 195 of file concat\&.hpp\&.
 .SS "arma::mat const& Delta () const\fC [inline]\fP"
 
 .PP
 Get the delta\&.e\&. 
 .PP
-Definition at line 187 of file concat\&.hpp\&.
+Definition at line 185 of file concat\&.hpp\&.
 .SS "arma::mat& Delta ()\fC [inline]\fP"
 
 .PP
 Modify the delta\&. 
 .PP
-Definition at line 189 of file concat\&.hpp\&.
+Definition at line 187 of file concat\&.hpp\&.
 .SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
 
 .PP
@@ -252,65 +252,65 @@ Ordinary feed forward pass of a neural network, evaluating the function f(x) by 
 .PP
 Get the gradient\&. 
 .PP
-Definition at line 192 of file concat\&.hpp\&.
+Definition at line 190 of file concat\&.hpp\&.
 .SS "arma::mat& Gradient ()\fC [inline]\fP"
 
 .PP
 Modify the gradient\&. 
 .PP
-Definition at line 194 of file concat\&.hpp\&.
+Definition at line 192 of file concat\&.hpp\&.
 .SS "arma::mat const& InputParameter () const\fC [inline]\fP"
 
 .PP
-Definition at line 177 of file concat\&.hpp\&.
+Definition at line 175 of file concat\&.hpp\&.
 .SS "arma::mat& InputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the input parameter\&. 
 .PP
-Definition at line 179 of file concat\&.hpp\&.
+Definition at line 177 of file concat\&.hpp\&.
 .SS "std::vector<\fBLayerTypes\fP<CustomLayers\&.\&.\&.> >& Model ()\fC [inline]\fP"
 
 .PP
 Return the model modules\&. 
 .PP
-Definition at line 157 of file concat\&.hpp\&.
+Definition at line 155 of file concat\&.hpp\&.
 .SS "arma::mat const& OutputParameter () const\fC [inline]\fP"
 
 .PP
 Get the output parameter\&. 
 .PP
-Definition at line 182 of file concat\&.hpp\&.
+Definition at line 180 of file concat\&.hpp\&.
 .SS "arma::mat& OutputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the output parameter\&. 
 .PP
-Definition at line 184 of file concat\&.hpp\&.
+Definition at line 182 of file concat\&.hpp\&.
 .SS "const arma::mat& Parameters () const\fC [inline]\fP"
 
 .PP
 Return the initial point for the optimization\&. 
 .PP
-Definition at line 168 of file concat\&.hpp\&.
+Definition at line 166 of file concat\&.hpp\&.
 .SS "arma::mat& Parameters ()\fC [inline]\fP"
 
 .PP
 Modify the initial point for the optimization\&. 
 .PP
-Definition at line 170 of file concat\&.hpp\&.
+Definition at line 168 of file concat\&.hpp\&.
 .SS "bool Run () const\fC [inline]\fP"
 
 .PP
 Get the value of run parameter\&. 
 .PP
-Definition at line 173 of file concat\&.hpp\&.
+Definition at line 171 of file concat\&.hpp\&.
 .SS "bool& Run ()\fC [inline]\fP"
 
 .PP
 Modify the value of run parameter\&. 
 .PP
-Definition at line 175 of file concat\&.hpp\&.
+Definition at line 173 of file concat\&.hpp\&.
 .SS "void serialize (Archive & ar, const uint32_t)"
 
 .PP
@@ -322,7 +322,7 @@ Referenced by Concat< InputDataType, OutputDataType, CustomLayers >::WeightSize(
 .PP
 Get the size of the weight matrix\&. 
 .PP
-Definition at line 200 of file concat\&.hpp\&.
+Definition at line 198 of file concat\&.hpp\&.
 .PP
 References Concat< InputDataType, OutputDataType, CustomLayers >::serialize()\&.
 

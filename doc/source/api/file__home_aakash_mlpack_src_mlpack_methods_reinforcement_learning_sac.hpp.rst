@@ -36,6 +36,8 @@ Includes
 --------
 
 
+- ``ensmallen.hpp``
+
 - ``mlpack/methods/ann/activation_functions/tanh_function.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_activation_functions_tanh_function.hpp`)
 
 - ``mlpack/methods/ann/loss_functions/mean_squared_error.hpp`` (:ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_loss_functions_mean_squared_error.hpp`)

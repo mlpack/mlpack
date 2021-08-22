@@ -17,6 +17,7 @@ Program Listing for File hmm_model.hpp
    #include "hmm.hpp"
    #include <mlpack/methods/gmm/gmm.hpp>
    #include <mlpack/methods/gmm/diagonal_gmm.hpp>
+   #include <mlpack/core/util/params.hpp>
    
    namespace mlpack {
    namespace hmm {
@@ -148,16 +149,16 @@ Program Listing for File hmm_model.hpp
    
      template<typename ActionType,
               typename ExtraInfoType>
-     void PerformAction(ExtraInfoType* x)
+     void PerformAction(util::Params& params, ExtraInfoType* x)
      {
        if (type == HMMType::DiscreteHMM)
-         ActionType::Apply(*discreteHMM, x);
+         ActionType::Apply(params, *discreteHMM, x);
        else if (type == HMMType::GaussianHMM)
-         ActionType::Apply(*gaussianHMM, x);
+         ActionType::Apply(params, *gaussianHMM, x);
        else if (type == HMMType::GaussianMixtureModelHMM)
-         ActionType::Apply(*gmmHMM, x);
+         ActionType::Apply(params, *gmmHMM, x);
        else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-         ActionType::Apply(*diagGMMHMM, x);
+         ActionType::Apply(params, *diagGMMHMM, x);
      }
    
      template<typename Archive>

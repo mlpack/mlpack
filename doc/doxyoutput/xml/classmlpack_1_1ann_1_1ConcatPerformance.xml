@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="103" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="101" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1ConcatPerformance_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="97" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1ConcatPerformance_1ad557109a3691cbbf8f69d91e26b483c2" prot="private" static="no" mutable="no">
         <type>OutputLayerType</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="100" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="98" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="98" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1ConcatPerformance_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="106" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="104" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="104" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -108,7 +108,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="48" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="46" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1ab9c66259e32d4da09478464dc742c984" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -160,7 +160,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="72" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="70" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -173,7 +173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="82" bodyend="82"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="80" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="80" bodyend="80"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="84" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="84" bodyend="84"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="82" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="82" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1a0eefbc800c9645b1dc415fba4169c417" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="58" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="56" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1adc2669016a821704c4c4aeb4651e9e87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -225,7 +225,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="87" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="87" bodyend="87"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="85" bodyend="85"/>
         <references refid="classmlpack_1_1ann_1_1ConcatPerformance_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb">ConcatPerformance&lt; OutputLayerType, InputDataType, OutputDataType &gt;::serialize</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -239,7 +239,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="77" bodyend="77"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="75" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="75" bodyend="75"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -252,7 +252,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="79" bodyend="79"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="77" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="77" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1ConcatPerformance_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -276,8 +276,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="93" column="1"/>
-        <referencedby refid="classmlpack_1_1ann_1_1ConcatPerformance_1adc2669016a821704c4c4aeb4651e9e87" compoundref="concat__performance_8hpp" startline="87" endline="87">ConcatPerformance&lt; OutputLayerType, InputDataType, OutputDataType &gt;::InSize</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="91" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1ConcatPerformance_1adc2669016a821704c4c4aeb4651e9e87" compoundref="concat__performance_8hpp" startline="85" endline="85">ConcatPerformance&lt; OutputLayerType, InputDataType, OutputDataType &gt;::InSize</referencedby>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -299,7 +299,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="40" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="39" bodyend="107"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" line="38" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp" bodystart="37" bodyend="105"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1ConcatPerformance_1ab9c66259e32d4da09478464dc742c984" prot="public" virt="non-virtual"><scope>mlpack::ann::ConcatPerformance</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1ConcatPerformance_1ac233d7c30da79cff9862f48ad979ad47" prot="public" virt="non-virtual"><scope>mlpack::ann::ConcatPerformance</scope><name>ConcatPerformance</name></member>

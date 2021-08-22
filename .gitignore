@@ -11,3 +11,6 @@ Testing/
 *.swp
 *.swo
 *~
+doc/build/*
+doc/doxyoutput/*
+doc/source/api/*

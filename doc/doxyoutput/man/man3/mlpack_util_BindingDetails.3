@@ -1,4 +1,4 @@
-.TH "BindingDetails" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "BindingDetails" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -19,9 +19,9 @@ BindingDetails \- This structure holds all of the information about bindings doc
 .br
 .RI "Long string containing documentation on what it is\&. "
 .ti -1c
-.RI "std::string \fBprogramName\fP"
+.RI "std::string \fBname\fP"
 .br
-.RI "Name of the binding\&. "
+.RI "User-friendly name of the binding\&. "
 .ti -1c
 .RI "std::vector< std::pair< std::string, std::string > > \fBseeAlso\fP"
 .br
@@ -50,10 +50,10 @@ Definition at line 35 of file binding_details\&.hpp\&.
 Long string containing documentation on what it is\&. No newline characters are necessary; this is taken care of by \fBIO\fP later\&. 
 .PP
 Definition at line 33 of file binding_details\&.hpp\&.
-.SS "std::string programName"
+.SS "std::string name"
 
 .PP
-Name of the binding\&. 
+User-friendly name of the binding\&. 
 .PP
 Definition at line 27 of file binding_details\&.hpp\&.
 .SS "std::vector<std::pair<std::string, std::string> > seeAlso"

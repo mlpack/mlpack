@@ -23,9 +23,11 @@ Files
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_atrous_convolution.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_base_layer.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_batch_norm.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bicubic_interpolation.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_bilinear_interpolation.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_c_relu.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_celu.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_channel_shuffle.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_concat.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_concat_performance.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_concatenate.hpp`
@@ -62,6 +64,7 @@ Files
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multihead_attention.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multiply_constant.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_multiply_merge.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_nearest_interpolation.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_noisylinear.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_padding.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_parametric_relu.hpp`
@@ -71,6 +74,7 @@ Files
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_recurrent.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_recurrent_attention.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reinforce_normal.hpp`
+- :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_relu6.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_reparametrization.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_select.hpp`
 - :ref:`file__home_aakash_mlpack_src_mlpack_methods_ann_layer_sequential.hpp`

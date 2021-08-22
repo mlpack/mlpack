@@ -215,7 +215,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="190" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="190" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1WeightNorm_1a4cd2dfda55f546eb6b54084d5d362fba" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; wrappedLayer</definition>
         <argsstring></argsstring>
         <name>wrappedLayer</name>
@@ -235,9 +235,9 @@
         <argsstring>(LayerTypes&lt; CustomLayers... &gt; layer=LayerTypes&lt; CustomLayers... &gt;())</argsstring>
         <name>WeightNorm</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+          <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
           <declname>layer</declname>
-          <defval><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;()</defval>
+          <defval><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;()</defval>
         </param>
         <briefdescription>
 <para>Create the <ref refid="classmlpack_1_1ann_1_1WeightNorm" kindref="compound">WeightNorm</ref> layer object. </para>        </briefdescription>
@@ -466,7 +466,7 @@
         <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp" bodystart="125" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1WeightNorm_1a9a889774509f2391dfd9b68e7c6a67aa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; const  &amp;</type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; const  &amp;</type>
         <definition>LayerTypes&lt;CustomLayers...&gt; const&amp; Layer</definition>
         <argsstring>()</argsstring>
         <name>Layer</name>
@@ -624,7 +624,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="211" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="211" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="216" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="216" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1WeightNorm_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1WeightNorm_1ad2c492e7b11d259725e10cd6aff49ee1" prot="private" virt="non-virtual"><scope>mlpack::ann::WeightNorm</scope><name>biasWeightSize</name></member>

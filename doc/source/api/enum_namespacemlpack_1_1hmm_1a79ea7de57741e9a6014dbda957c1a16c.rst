@@ -3,7 +3,7 @@
 Enum HMMType
 ============
 
-- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_hmm_hmm_util.hpp`
+- Defined in :ref:`file__home_aakash_mlpack_src_mlpack_methods_hmm_hmm_model.hpp`
 
 
 Enum Documentation

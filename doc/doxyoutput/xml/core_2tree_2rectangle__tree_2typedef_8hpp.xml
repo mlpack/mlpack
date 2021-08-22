@@ -4,13 +4,13 @@
     <compoundname>typedef.hpp</compoundname>
     <includes local="yes">rectangle_tree.hpp</includes>
     <incdepgraph>
-      <node id="15496">
+      <node id="15681">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/typedef.hpp</label>
         <link refid="core_2tree_2rectangle__tree_2typedef_8hpp"/>
-        <childnode refid="15497" relation="include">
+        <childnode refid="15682" relation="include">
         </childnode>
       </node>
-      <node id="15497">
+      <node id="15682">
         <label>rectangle_tree.hpp</label>
       </node>
     </incdepgraph>

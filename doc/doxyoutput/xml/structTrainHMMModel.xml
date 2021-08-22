@@ -4,7 +4,7 @@
     <compoundname>TrainHMMModel</compoundname>
     <includes refid="hmm__test__utils_8hpp" local="no">hmm_test_utils.hpp</includes>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="structTrainHMMModel_1a513815d8b32a9a55939317f8bfc48321" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="structTrainHMMModel_1aecf54e4d97cab7806b40b7775ff479ca" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename HMMType</type>
@@ -12,8 +12,11 @@
         </templateparamlist>
         <type>void</type>
         <definition>static void Apply</definition>
-        <argsstring>(HMMType &amp;hmm, vector&lt; arma::mat &gt; *trainSeq)</argsstring>
+        <argsstring>(util::Params &amp;, HMMType &amp;hmm, vector&lt; arma::mat &gt; *trainSeq)</argsstring>
         <name>Apply</name>
+        <param>
+          <type>util::Params &amp;</type>
+        </param>
         <param>
           <type>HMMType &amp;</type>
           <declname>hmm</declname>
@@ -28,16 +31,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="205" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="205" bodyend="209"/>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="207" bodyend="213"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="202" bodyend="210"/>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" line="205" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp" bodystart="204" bodyend="214"/>
     <listofallmembers>
-      <member refid="structTrainHMMModel_1a513815d8b32a9a55939317f8bfc48321" prot="public" virt="non-virtual"><scope>TrainHMMModel</scope><name>Apply</name></member>
+      <member refid="structTrainHMMModel_1aecf54e4d97cab7806b40b7775ff479ca" prot="public" virt="non-virtual"><scope>TrainHMMModel</scope><name>Apply</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

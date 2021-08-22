@@ -4,13 +4,13 @@
     <compoundname>hamerly_kmeans.hpp</compoundname>
     <includes local="yes">hamerly_kmeans_impl.hpp</includes>
     <incdepgraph>
-      <node id="50630">
+      <node id="52115">
         <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/hamerly_kmeans.hpp</label>
         <link refid="hamerly__kmeans_8hpp"/>
-        <childnode refid="50631" relation="include">
+        <childnode refid="52116" relation="include">
         </childnode>
       </node>
-      <node id="50631">
+      <node id="52116">
         <label>hamerly_kmeans_impl.hpp</label>
       </node>
     </incdepgraph>

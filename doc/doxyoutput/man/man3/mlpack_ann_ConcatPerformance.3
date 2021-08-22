@@ -1,4 +1,4 @@
-.TH "ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -65,7 +65,7 @@ The class works as a feed-forward fully connected network container which plugs 
 .PP
 
 .PP
-Definition at line 39 of file concat_performance\&.hpp\&.
+Definition at line 37 of file concat_performance\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBConcatPerformance\fP (const size_t inSize = \fC0\fP, OutputLayerType && outputLayer = \fCOutputLayerType()\fP)"
@@ -103,13 +103,13 @@ Ordinary feed backward pass of a neural network\&. The negative log likelihood l
 .PP
 Get the delta\&. 
 .PP
-Definition at line 82 of file concat_performance\&.hpp\&.
+Definition at line 80 of file concat_performance\&.hpp\&.
 .SS "OutputDataType& Delta ()\fC [inline]\fP"
 
 .PP
 Modify the delta\&. 
 .PP
-Definition at line 84 of file concat_performance\&.hpp\&.
+Definition at line 82 of file concat_performance\&.hpp\&.
 .SS "double Forward (const arma::Mat< eT > & input, arma::Mat< eT > & target)"
 
 .SS "size_t InSize () const\fC [inline]\fP"
@@ -117,7 +117,7 @@ Definition at line 84 of file concat_performance\&.hpp\&.
 .PP
 Get the number of inputs\&. 
 .PP
-Definition at line 87 of file concat_performance\&.hpp\&.
+Definition at line 85 of file concat_performance\&.hpp\&.
 .PP
 References ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::serialize()\&.
 .SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
@@ -125,13 +125,13 @@ References ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::
 .PP
 Get the output parameter\&. 
 .PP
-Definition at line 77 of file concat_performance\&.hpp\&.
+Definition at line 75 of file concat_performance\&.hpp\&.
 .SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the output parameter\&. 
 .PP
-Definition at line 79 of file concat_performance\&.hpp\&.
+Definition at line 77 of file concat_performance\&.hpp\&.
 .SS "void serialize (Archive &, const uint32_t)"
 
 .PP

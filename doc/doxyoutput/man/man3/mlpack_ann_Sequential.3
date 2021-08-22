@@ -1,4 +1,4 @@
-.TH "Sequential< InputDataType, OutputDataType, Residual, CustomLayers >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "Sequential< InputDataType, OutputDataType, Residual, CustomLayers >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -140,7 +140,7 @@ Note: This class should at least have two layers for a call to its \fBGradient()
 .PP
 
 .PP
-Definition at line 141 of file layer_types\&.hpp\&.
+Definition at line 146 of file layer_types\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBSequential\fP (const bool model = \fCtrue\fP)"
@@ -180,13 +180,13 @@ Destroy the \fBSequential\fP object\&.
 .SS "void \fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
 
 .PP
-Definition at line 143 of file sequential\&.hpp\&.
+Definition at line 141 of file sequential\&.hpp\&.
 .PP
 Referenced by DuelingDQN< OutputLayerType, InitType, CompleteNetworkType, FeatureNetworkType, AdvantageNetworkType, ValueNetworkType >::DuelingDQN()\&.
 .SS "void \fBAdd\fP (\fBLayerTypes\fP< CustomLayers\&.\&.\&. > layer)\fC [inline]\fP"
 
 .PP
-Definition at line 150 of file sequential\&.hpp\&.
+Definition at line 148 of file sequential\&.hpp\&.
 .SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
 
 .PP
@@ -207,13 +207,13 @@ Ordinary feed backward pass of a neural network, using 3rd-order tensors as inpu
 .PP
 Get the delta\&. 
 .PP
-Definition at line 179 of file sequential\&.hpp\&.
+Definition at line 177 of file sequential\&.hpp\&.
 .SS "arma::mat& Delta ()\fC [inline]\fP"
 
 .PP
 Modify the delta\&. 
 .PP
-Definition at line 181 of file sequential\&.hpp\&.
+Definition at line 179 of file sequential\&.hpp\&.
 .SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
 
 .PP
@@ -234,13 +234,13 @@ Ordinary feed forward pass of a neural network, evaluating the function f(x) by 
 .PP
 Get the gradient\&. 
 .PP
-Definition at line 184 of file sequential\&.hpp\&.
+Definition at line 182 of file sequential\&.hpp\&.
 .SS "arma::mat& Gradient ()\fC [inline]\fP"
 
 .PP
 Modify the gradient\&. 
 .PP
-Definition at line 186 of file sequential\&.hpp\&.
+Definition at line 184 of file sequential\&.hpp\&.
 .PP
 References Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::InputShape(), and Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::serialize()\&.
 .SS "arma::mat const& InputParameter () const\fC [inline]\fP"
@@ -248,13 +248,13 @@ References Sequential< InputDataType, OutputDataType, Residual, CustomLayers >::
 .PP
 Get the input parameter\&. 
 .PP
-Definition at line 169 of file sequential\&.hpp\&.
+Definition at line 167 of file sequential\&.hpp\&.
 .SS "arma::mat& InputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the input parameter\&. 
 .PP
-Definition at line 171 of file sequential\&.hpp\&.
+Definition at line 169 of file sequential\&.hpp\&.
 .SS "size_t InputShape () const"
 
 .PP
@@ -264,7 +264,7 @@ Referenced by Sequential< InputDataType, OutputDataType, Residual, CustomLayers 
 .PP
 Return the model modules\&. 
 .PP
-Definition at line 153 of file sequential\&.hpp\&.
+Definition at line 151 of file sequential\&.hpp\&.
 .SS "\fBSequential\fP& operator= (const \fBSequential\fP< InputDataType, OutputDataType, \fBResidual\fP, CustomLayers > & layer)"
 
 .PP
@@ -274,25 +274,25 @@ Copy assignment operator\&.
 .PP
 Get the output parameter\&. 
 .PP
-Definition at line 174 of file sequential\&.hpp\&.
+Definition at line 172 of file sequential\&.hpp\&.
 .SS "arma::mat& OutputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the output parameter\&. 
 .PP
-Definition at line 176 of file sequential\&.hpp\&.
+Definition at line 174 of file sequential\&.hpp\&.
 .SS "const arma::mat& Parameters () const\fC [inline]\fP"
 
 .PP
 Return the initial point for the optimization\&. 
 .PP
-Definition at line 164 of file sequential\&.hpp\&.
+Definition at line 162 of file sequential\&.hpp\&.
 .SS "arma::mat& Parameters ()\fC [inline]\fP"
 
 .PP
 Modify the initial point for the optimization\&. 
 .PP
-Definition at line 166 of file sequential\&.hpp\&.
+Definition at line 164 of file sequential\&.hpp\&.
 .SS "void serialize (Archive & ar, const uint32_t)"
 
 .PP

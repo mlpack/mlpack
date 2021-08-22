@@ -1,4 +1,4 @@
-.TH "mlpack::tree" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "mlpack::tree" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -68,6 +68,10 @@ mlpack::tree \- Trees and tree-building procedures\&.
 .br
 .RI "This class implements a generic decision tree learner\&. "
 .ti -1c
+.RI "class \fBDecisionTreeRegressor\fP"
+.br
+.RI "This class implements a generic decision tree learner\&. "
+.ti -1c
 .RI "class \fBDiscreteHilbertValue\fP"
 .br
 .RI "The \fBDiscreteHilbertValue\fP class stores Hilbert values for all of the points in a \fBRectangleTree\fP node, and calculates Hilbert values for new points\&. "
@@ -92,6 +96,9 @@ mlpack::tree \- Trees and tree-building procedures\&.
 .br
 .ti -1c
 .RI "class \fBGreedySingleTreeTraverser\fP"
+.br
+.ti -1c
+.RI "struct \fBHasOptimizedBinarySplitForms\fP"
 .br
 .ti -1c
 .RI "class \fBHilbertRTreeAuxiliaryInformation\fP"
@@ -138,6 +145,10 @@ mlpack::tree \- Trees and tree-building procedures\&.
 .RI "struct \fBIsSpillTree< tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType > >\fP"
 .br
 .ti -1c
+.RI "class \fBMADGain\fP"
+.br
+.RI "The MAD (Mean absolute deviation) gain, is a measure of set purity based on the deviation of dependent values present in the node\&. "
+.ti -1c
 .RI "class \fBMeanSpaceSplit\fP"
 .br
 .ti -1c
@@ -159,6 +170,10 @@ mlpack::tree \- Trees and tree-building procedures\&.
 .RI "class \fBMinimalSplitsNumberSweep\fP"
 .br
 .RI "The \fBMinimalSplitsNumberSweep\fP class finds a partition along which we can split a node according to the number of required splits of the node\&. "
+.ti -1c
+.RI "class \fBMSEGain\fP"
+.br
+.RI "The MSE (Mean squared error) gain, is a measure of set purity based on the variance of response values present in the node\&. "
 .ti -1c
 .RI "class \fBMultipleRandomDimensionSelect\fP"
 .br
@@ -442,6 +457,9 @@ mlpack::tree \- Trees and tree-building procedures\&.
 .RI "template<class TreeType , class Walker > void \fBEnumerateTree\fP (TreeType *tree, Walker &walker)"
 .br
 .RI "Traverses all nodes of the tree, including the inner ones\&. "
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (BinaryGains, HasBinaryGains)"
+.br
 .in -1c
 .SS "Variables"
 
@@ -505,7 +523,7 @@ Definition at line 23 of file cosine_tree\&.hpp\&.
 .PP
 Convenience typedef for decision stumps (single level decision trees)\&. 
 .PP
-Definition at line 589 of file decision_tree\&.hpp\&.
+Definition at line 585 of file decision_tree\&.hpp\&.
 .SS "using \fBDiscreteHilbertRTreeAuxiliaryInformation\fP =  \fBHilbertRTreeAuxiliaryInformation\fP<TreeType, \fBDiscreteHilbertValue\fP>"
 
 .PP
@@ -592,7 +610,7 @@ Definition at line 151 of file hyperplane\&.hpp\&.
 .PP
 Convenience typedef for ID3 decision stumps (single level decision trees made with the ID3 algorithm)\&. 
 .PP
-Definition at line 599 of file decision_tree\&.hpp\&.
+Definition at line 595 of file decision_tree\&.hpp\&.
 .SS "using \fBKDTree\fP =  \fBBinarySpaceTree\fP<MetricType, StatisticType, MatType, \fBbound::HRectBound\fP, \fBMidpointSplit\fP>"
 
 .PP
@@ -1108,6 +1126,8 @@ Enter(TreeType* node, TreeType* parent); Leave(TreeType* node, TreeType* parent)
 Definition at line 56 of file enumerate_tree\&.hpp\&.
 .PP
 References mlpack::tree::enumerate::EnumerateTreeImpl()\&.
+.SS "mlpack::tree::HAS_MEM_FUNC (BinaryGains, HasBinaryGains)"
+
 .SH "Variable Documentation"
 .PP 
 .SS "const double MAX_OVERLAP = 0\&.2"

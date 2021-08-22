@@ -1,4 +1,4 @@
-.TH "mlpack::hmm" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "mlpack::hmm" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -27,11 +27,11 @@ mlpack::hmm \- Hidden Markov Models\&.
 
 .in +1c
 .ti -1c
-.RI "enum \fBHMMType\fP : char { \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP, \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP }"
-.br
-.ti -1c
 .RI "enum \fBHMMType\fP : char { \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP, \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP }
 .RI "HMMType, to be stored on disk\&. ""
+.br
+.ti -1c
+.RI "enum \fBHMMType\fP : char { \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP, \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiagonalGaussianMixtureModelHMM\fP }"
 .br
 .in -1c
 .SS "Functions"
@@ -53,29 +53,6 @@ Hidden Markov Models\&.
 
 .SH "Enumeration Type Documentation"
 .PP 
-.SS "enum \fBHMMType\fP : char"
-
-.PP
-\fBEnumerator\fP
-.in +1c
-.TP
-\fB\fIDiscreteHMM \fP\fP
-.TP
-\fB\fIGaussianHMM \fP\fP
-.TP
-\fB\fIGaussianMixtureModelHMM \fP\fP
-.TP
-\fB\fIDiagonalGaussianMixtureModelHMM \fP\fP
-.TP
-\fB\fIDiscreteHMM \fP\fP
-.TP
-\fB\fIGaussianHMM \fP\fP
-.TP
-\fB\fIGaussianMixtureModelHMM \fP\fP
-.TP
-\fB\fIDiagonalGaussianMixtureModelHMM \fP\fP
-.PP
-Definition at line 22 of file hmm_model\&.hpp\&.
 .SS "enum \fBHMMType\fP : char"
 
 .PP
@@ -101,6 +78,29 @@ HMMType, to be stored on disk\&. This is of type char, which is one byte\&. (I'm
 \fB\fIDiagonalGaussianMixtureModelHMM \fP\fP
 .PP
 Definition at line 22 of file hmm_util\&.hpp\&.
+.SS "enum \fBHMMType\fP : char"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.TP
+\fB\fIDiagonalGaussianMixtureModelHMM \fP\fP
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.TP
+\fB\fIDiagonalGaussianMixtureModelHMM \fP\fP
+.PP
+Definition at line 23 of file hmm_model\&.hpp\&.
 .SH "Function Documentation"
 .PP 
 .SS "void mlpack::hmm::LoadHMMAndPerformAction (const std::string & modelFile, ExtraInfoType * x = \fCNULL\fP)"

@@ -9,160 +9,160 @@
     <includedby refid="sequential_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp</includedby>
     <includedby refid="highway_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp</includedby>
     <incdepgraph>
-      <node id="43049">
+      <node id="44274">
         <label>mlpack/core/util/sfinae_utility.hpp</label>
         <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="43050" relation="include">
+        <childnode refid="44275" relation="include">
         </childnode>
-        <childnode refid="43051" relation="include">
+        <childnode refid="44276" relation="include">
         </childnode>
       </node>
-      <node id="43052">
+      <node id="44277">
         <label>boost/variant.hpp</label>
       </node>
-      <node id="43047">
+      <node id="44272">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp</label>
         <link refid="output__height__visitor_8hpp"/>
-        <childnode refid="43048" relation="include">
+        <childnode refid="44273" relation="include">
         </childnode>
-        <childnode refid="43052" relation="include">
+        <childnode refid="44277" relation="include">
         </childnode>
-        <childnode refid="43053" relation="include">
+        <childnode refid="44278" relation="include">
         </childnode>
       </node>
-      <node id="43048">
+      <node id="44273">
         <label>mlpack/methods/ann/layer/layer_traits.hpp</label>
         <link refid="layer__traits_8hpp"/>
-        <childnode refid="43049" relation="include">
+        <childnode refid="44274" relation="include">
         </childnode>
       </node>
-      <node id="43050">
+      <node id="44275">
         <label>type_traits</label>
       </node>
-      <node id="43053">
+      <node id="44278">
         <label>output_height_visitor_impl.hpp</label>
       </node>
-      <node id="43051">
+      <node id="44276">
         <label>cstring</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="43067">
+      <node id="44292">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp</label>
         <link refid="gru_8hpp"/>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
-      <node id="43060">
+      <node id="44285">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp</label>
         <link refid="sequential_8hpp"/>
-        <childnode refid="43061" relation="include">
+        <childnode refid="44286" relation="include">
         </childnode>
-        <childnode refid="43067" relation="include">
+        <childnode refid="44292" relation="include">
         </childnode>
-        <childnode refid="43068" relation="include">
+        <childnode refid="44293" relation="include">
         </childnode>
-        <childnode refid="43069" relation="include">
+        <childnode refid="44294" relation="include">
         </childnode>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
-      <node id="43062">
+      <node id="44287">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
         <link refid="layer_8hpp"/>
-        <childnode refid="43063" relation="include">
+        <childnode refid="44288" relation="include">
         </childnode>
-        <childnode refid="43055" relation="include">
+        <childnode refid="44280" relation="include">
         </childnode>
-        <childnode refid="43064" relation="include">
+        <childnode refid="44289" relation="include">
         </childnode>
-        <childnode refid="43065" relation="include">
+        <childnode refid="44290" relation="include">
         </childnode>
-        <childnode refid="43057" relation="include">
+        <childnode refid="44282" relation="include">
         </childnode>
-        <childnode refid="43058" relation="include">
+        <childnode refid="44283" relation="include">
         </childnode>
-        <childnode refid="43059" relation="include">
+        <childnode refid="44284" relation="include">
         </childnode>
-        <childnode refid="43066" relation="include">
+        <childnode refid="44291" relation="include">
         </childnode>
       </node>
-      <node id="43069">
+      <node id="44294">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
         <link refid="recurrent_8hpp"/>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
-      <node id="43065">
+      <node id="44290">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
         <link refid="rnn_8hpp"/>
       </node>
-      <node id="43057">
+      <node id="44282">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
         <link refid="categorical__dqn_8hpp"/>
       </node>
-      <node id="43054">
+      <node id="44279">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp</label>
         <link refid="output__height__visitor_8hpp"/>
-        <childnode refid="43055" relation="include">
+        <childnode refid="44280" relation="include">
         </childnode>
-        <childnode refid="43060" relation="include">
+        <childnode refid="44285" relation="include">
         </childnode>
-        <childnode refid="43070" relation="include">
+        <childnode refid="44295" relation="include">
         </childnode>
       </node>
-      <node id="43063">
+      <node id="44288">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
         <link refid="brnn_8hpp"/>
       </node>
-      <node id="43064">
+      <node id="44289">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
         <link refid="layer__names_8hpp"/>
       </node>
-      <node id="43066">
+      <node id="44291">
         <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
         <link refid="custom__layer_8hpp"/>
       </node>
-      <node id="43068">
+      <node id="44293">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp</label>
         <link refid="recurrent__attention_8hpp"/>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
-      <node id="43055">
+      <node id="44280">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
         <link refid="ffn_8hpp"/>
-        <childnode refid="43056" relation="include">
+        <childnode refid="44281" relation="include">
         </childnode>
-        <childnode refid="43057" relation="include">
+        <childnode refid="44282" relation="include">
         </childnode>
-        <childnode refid="43058" relation="include">
+        <childnode refid="44283" relation="include">
         </childnode>
-        <childnode refid="43059" relation="include">
+        <childnode refid="44284" relation="include">
         </childnode>
       </node>
-      <node id="43058">
+      <node id="44283">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
         <link refid="dueling__dqn_8hpp"/>
       </node>
-      <node id="43061">
+      <node id="44286">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp</label>
         <link refid="dropconnect_8hpp"/>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
-      <node id="43056">
+      <node id="44281">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
         <link refid="gan_8hpp"/>
       </node>
-      <node id="43059">
+      <node id="44284">
         <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
         <link refid="simple__dqn_8hpp"/>
       </node>
-      <node id="43070">
+      <node id="44295">
         <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp</label>
         <link refid="highway_8hpp"/>
-        <childnode refid="43062" relation="include">
+        <childnode refid="44287" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -192,7 +192,7 @@ This file provides an abstraction for the OutputHeight() function for different 
 <codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(LayerType*<sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1OutputHeightVisitor_1aeb8947a28d511a7a4ce42a1fc63f79ee" kindref="member">operator()</ref>(<ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref><sp/>layer)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>

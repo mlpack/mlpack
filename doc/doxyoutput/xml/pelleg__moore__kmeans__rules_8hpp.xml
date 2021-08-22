@@ -4,13 +4,13 @@
     <compoundname>pelleg_moore_kmeans_rules.hpp</compoundname>
     <includes local="yes">pelleg_moore_kmeans_rules_impl.hpp</includes>
     <incdepgraph>
-      <node id="51059">
+      <node id="52544">
         <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/pelleg_moore_kmeans_rules.hpp</label>
         <link refid="pelleg__moore__kmeans__rules_8hpp"/>
-        <childnode refid="51060" relation="include">
+        <childnode refid="52545" relation="include">
         </childnode>
       </node>
-      <node id="51060">
+      <node id="52545">
         <label>pelleg_moore_kmeans_rules_impl.hpp</label>
       </node>
     </incdepgraph>

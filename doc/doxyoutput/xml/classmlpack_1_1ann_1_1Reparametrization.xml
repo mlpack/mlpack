@@ -581,7 +581,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="128" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="133" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1Reparametrization_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Backward</name></member>
       <member refid="classmlpack_1_1ann_1_1Reparametrization_1ad1b9206255af52171cb88dfb7c326576" prot="public" virt="non-virtual"><scope>mlpack::ann::Reparametrization</scope><name>Beta</name></member>

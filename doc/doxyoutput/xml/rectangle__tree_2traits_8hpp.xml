@@ -4,13 +4,13 @@
     <compoundname>traits.hpp</compoundname>
     <includes refid="tree__traits_8hpp" local="no">mlpack/core/tree/tree_traits.hpp</includes>
     <incdepgraph>
-      <node id="15248">
+      <node id="15433">
         <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/traits.hpp</label>
         <link refid="rectangle__tree_2traits_8hpp"/>
-        <childnode refid="15249" relation="include">
+        <childnode refid="15434" relation="include">
         </childnode>
       </node>
-      <node id="15249">
+      <node id="15434">
         <label>mlpack/core/tree/tree_traits.hpp</label>
         <link refid="tree__traits_8hpp"/>
       </node>

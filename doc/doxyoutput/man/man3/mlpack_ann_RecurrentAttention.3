@@ -1,4 +1,4 @@
-.TH "RecurrentAttention< InputDataType, OutputDataType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "RecurrentAttention< InputDataType, OutputDataType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -118,7 +118,7 @@ For more information, see the following paper\&.
 .PP
 
 .PP
-Definition at line 199 of file layer_types\&.hpp\&.
+Definition at line 204 of file layer_types\&.hpp\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBRecurrentAttention\fP ()"
@@ -164,25 +164,25 @@ Ordinary feed backward pass of a neural network, calculating the function f(x) b
 .PP
 Get the delta\&. 
 .PP
-Definition at line 134 of file recurrent_attention\&.hpp\&.
+Definition at line 133 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType& Delta ()\fC [inline]\fP"
 
 .PP
 Modify the delta\&. 
 .PP
-Definition at line 136 of file recurrent_attention\&.hpp\&.
+Definition at line 135 of file recurrent_attention\&.hpp\&.
 .SS "bool Deterministic () const\fC [inline]\fP"
 
 .PP
 The value of the deterministic parameter\&. 
 .PP
-Definition at line 119 of file recurrent_attention\&.hpp\&.
+Definition at line 118 of file recurrent_attention\&.hpp\&.
 .SS "bool& Deterministic ()\fC [inline]\fP"
 
 .PP
 Modify the value of the deterministic parameter\&. 
 .PP
-Definition at line 121 of file recurrent_attention\&.hpp\&.
+Definition at line 120 of file recurrent_attention\&.hpp\&.
 .SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
 
 .PP
@@ -203,55 +203,55 @@ Ordinary feed forward pass of a neural network, evaluating the function f(x) by 
 .PP
 Get the gradient\&. 
 .PP
-Definition at line 139 of file recurrent_attention\&.hpp\&.
+Definition at line 138 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType& Gradient ()\fC [inline]\fP"
 
 .PP
 Modify the gradient\&. 
 .PP
-Definition at line 141 of file recurrent_attention\&.hpp\&.
+Definition at line 140 of file recurrent_attention\&.hpp\&.
 .SS "std::vector<\fBLayerTypes\fP<> >& Model ()\fC [inline]\fP"
 
 .PP
 Get the model modules\&. 
 .PP
-Definition at line 116 of file recurrent_attention\&.hpp\&.
+Definition at line 115 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
 
 .PP
 Get the output parameter\&. 
 .PP
-Definition at line 129 of file recurrent_attention\&.hpp\&.
+Definition at line 128 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
 
 .PP
 Modify the output parameter\&. 
 .PP
-Definition at line 131 of file recurrent_attention\&.hpp\&.
+Definition at line 130 of file recurrent_attention\&.hpp\&.
 .SS "size_t OutSize () const\fC [inline]\fP"
 
 .PP
 Get the module output size\&. 
 .PP
-Definition at line 144 of file recurrent_attention\&.hpp\&.
+Definition at line 143 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType const& Parameters () const\fC [inline]\fP"
 
 .PP
 Get the parameters\&. 
 .PP
-Definition at line 124 of file recurrent_attention\&.hpp\&.
+Definition at line 123 of file recurrent_attention\&.hpp\&.
 .SS "OutputDataType& Parameters ()\fC [inline]\fP"
 
 .PP
 Modify the parameters\&. 
 .PP
-Definition at line 126 of file recurrent_attention\&.hpp\&.
+Definition at line 125 of file recurrent_attention\&.hpp\&.
 .SS "size_t const& Rho () const\fC [inline]\fP"
 
 .PP
 Get the number of steps to backpropagate through time\&. 
 .PP
-Definition at line 147 of file recurrent_attention\&.hpp\&.
+Definition at line 146 of file recurrent_attention\&.hpp\&.
 .PP
 References RecurrentAttention< InputDataType, OutputDataType >::serialize()\&.
 .SS "void serialize (Archive & ar, const uint32_t)"

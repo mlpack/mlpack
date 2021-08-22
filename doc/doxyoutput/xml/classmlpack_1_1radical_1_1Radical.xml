@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="123" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="129" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="129" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1acbb22bd27c91d82b3596a33bc60f9efb" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="135" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="141" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a007b64e06504c20a853be59118f2182a" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="130" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="136" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1ac8e50bd49d185abe8b6730aa4dd232d0" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="117" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="117" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="123" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a69326f6bf5f671b5e26f48e67c3a5c23" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="133" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="139" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1adab2153f4c654d429d6a6d74bfab6e94" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="120" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="126" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1radical_1_1Radical_1a321b321d4971797c24fc100d5b8a7f0d" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="127" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="127" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="133" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -169,7 +169,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="59" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="60" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="105" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="105" bodyend="105"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="111" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="111" bodyend="111"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -195,7 +195,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="107" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="107" bodyend="107"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="113" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="113" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -216,12 +216,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="89" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="94" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a4580d33ff67f6254591793d10661d272" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void DoRadical</definition>
-        <argsstring>(const arma::mat &amp;matX, arma::mat &amp;matY, arma::mat &amp;matW)</argsstring>
+        <argsstring>(const arma::mat &amp;matX, arma::mat &amp;matY, arma::mat &amp;matW, util::Timers &amp;timers=IO::GetTimers())</argsstring>
         <name>DoRadical</name>
         <param>
           <type>const arma::mat &amp;</type>
@@ -234,6 +234,11 @@
         <param>
           <type>arma::mat &amp;</type>
           <declname>matW</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+          <defval><ref refid="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" kindref="member">IO::GetTimers</ref>()</defval>
         </param>
         <briefdescription>
 <para>Run RADICAL. </para>        </briefdescription>
@@ -259,20 +264,32 @@
 <parameterdescription>
 <para>Estimated unmixing matrix, where matY = matW * matX. </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>timers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional Timers struct for storing timing information. </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="74" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="76" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1aa1c90493e64961bf2625ff23ab97c3a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
         <definition>double DoRadical2D</definition>
-        <argsstring>(const arma::mat &amp;matX)</argsstring>
+        <argsstring>(const arma::mat &amp;matX, util::Timers &amp;timers=IO::GetTimers())</argsstring>
         <name>DoRadical2D</name>
         <param>
           <type>const arma::mat &amp;</type>
           <declname>matX</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1util_1_1Timers" kindref="compound">util::Timers</ref> &amp;</type>
+          <declname>timers</declname>
+          <defval><ref refid="classmlpack_1_1IO_1a0fd9a1c1a63621fed017fd2f40ca8907" kindref="member">IO::GetTimers</ref>()</defval>
         </param>
         <briefdescription>
 <para>Two-dimensional version of RADICAL. </para>        </briefdescription>
@@ -280,7 +297,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="92" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="97" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -293,7 +310,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="95" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="95" bodyend="95"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="101" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="101" bodyend="101"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double &amp;</type>
@@ -306,7 +323,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="97" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="97" bodyend="97"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="103" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="103" bodyend="103"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1ad4f53c19fa4b6763aa0f920a18fb1f34" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -319,7 +336,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="100" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="100" bodyend="100"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="106" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="106" bodyend="106"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a5b6329881e39be3d3902098a9572deb8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -332,7 +349,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="102" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="102" bodyend="102"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="108" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="108" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1ae5e316ddee04b98e1bb8b8782e97d3fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -345,7 +362,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="110" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="110" bodyend="110"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="116" bodyend="116"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1aa40e2b2449cfd865e3e30a41ce78ea4f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t &amp;</type>
@@ -358,7 +375,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="112" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="112" bodyend="112"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="118" bodyend="118"/>
         <references refid="namespacemlpack_1_1radical_1ad2cb37f7f394d92d8fa93e154713b841">mlpack::radical::WhitenFeatureMajorMatrix</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1radical_1_1Radical_1a5ab92b41fcbca46d43c3ba20e5a67fe8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
@@ -384,7 +401,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="82" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="87" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -399,15 +416,15 @@
 <codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{2003}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting> </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="43" bodyend="136"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" bodystart="44" bodyend="142"/>
     <listofallmembers>
       <member refid="classmlpack_1_1radical_1_1Radical_1a80a8ed2f032afa3e9b62508c1c0eaf9f" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>angles</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1a61d18904b3f7428d59df5a19828d98aa" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Angles</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1af3b681df04bc377802e85603be73f7ef" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>Angles</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1acbb22bd27c91d82b3596a33bc60f9efb" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>candidate</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1a7f2351a13fb0f79e6362096dd2adf52e" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>CopyAndPerturb</name></member>
-      <member refid="classmlpack_1_1radical_1_1Radical_1a41cca4ead245c15bad562202c8e451ed" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical</name></member>
-      <member refid="classmlpack_1_1radical_1_1Radical_1a504d54d5d7cfc34b8e8aa767d235a4f1" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical2D</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1a4580d33ff67f6254591793d10661d272" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical</name></member>
+      <member refid="classmlpack_1_1radical_1_1Radical_1aa1c90493e64961bf2625ff23ab97c3a9" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>DoRadical2D</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1a007b64e06504c20a853be59118f2182a" prot="private" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>m</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1aa8f8c7112304789e7bcc9742ebe4525e" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>NoiseStdDev</name></member>
       <member refid="classmlpack_1_1radical_1_1Radical_1add6b0213843af262328d1c0f848d89f3" prot="public" virt="non-virtual"><scope>mlpack::radical::Radical</scope><name>NoiseStdDev</name></member>

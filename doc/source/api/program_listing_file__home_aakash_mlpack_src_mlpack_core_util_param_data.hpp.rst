@@ -46,7 +46,6 @@ Program Listing for File param_data.hpp
      bool required;
      bool input;
      bool loaded;
-     bool persistent;
      boost::any value;
      std::string cppType;
    };

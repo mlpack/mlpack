@@ -53,9 +53,9 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_range__search__utils_8hpp_1a8c20314a21117877d9660a084c83a039`
-
 - :ref:`exhale_function_range__search__utils_8hpp_1a3adc3e063b86994ba106c7871438c402`
+
+- :ref:`exhale_function_range__search__utils_8hpp_1a8c20314a21117877d9660a084c83a039`
 
 - :ref:`exhale_function_range__search__utils_8hpp_1a22e8b75c2153dee033c40446de6f9579`
 

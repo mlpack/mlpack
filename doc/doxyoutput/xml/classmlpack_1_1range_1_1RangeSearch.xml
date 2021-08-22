@@ -817,14 +817,14 @@
 </parameterlist>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1177">
+      <node id="1189">
         <label>RangeSearch&lt; MetricType, MatType, TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RangeSearch"/>
       </node>
-      <node id="1178">
+      <node id="1190">
         <label>RangeSearch&lt; metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
         <link refid="classmlpack_1_1range_1_1RangeSearch"/>
-        <childnode refid="1177" relation="template-instance">
+        <childnode refid="1189" relation="template-instance">
           <edgelabel>&lt; metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
         </childnode>
       </node>

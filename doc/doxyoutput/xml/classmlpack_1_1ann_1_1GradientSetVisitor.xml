@@ -83,7 +83,7 @@
         <argsstring>(MoreTypes layer) const</argsstring>
         <name>operator()</name>
         <param>
-          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <type><ref refid="namespacemlpack_1_1ann_1ad134e44d3c36af22599a8c67d4c1f844" kindref="member">MoreTypes</ref></type>
           <declname>layer</declname>
         </param>
         <briefdescription>
@@ -209,24 +209,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="215">
+      <node id="221">
         <label>GradientSetVisitor</label>
         <link refid="classmlpack_1_1ann_1_1GradientSetVisitor"/>
-        <childnode refid="216" relation="public-inheritance">
+        <childnode refid="222" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="216">
+      <node id="222">
         <label>static_visitor&lt; size_t &gt;</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="217">
+      <node id="223">
         <label>GradientSetVisitor</label>
         <link refid="classmlpack_1_1ann_1_1GradientSetVisitor"/>
-        <childnode refid="218" relation="public-inheritance">
+        <childnode refid="224" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="218">
+      <node id="224">
         <label>static_visitor&lt; size_t &gt;</label>
       </node>
     </collaborationgraph>

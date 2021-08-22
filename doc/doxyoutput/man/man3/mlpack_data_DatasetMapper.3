@@ -1,4 +1,4 @@
-.TH "DatasetMapper< PolicyType, InputType >" 3 "Thu Jun 24 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.TH "DatasetMapper< PolicyType, InputType >" 3 "Sun Aug 22 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -113,6 +113,8 @@ Create the \fBDatasetMapper\fP object with the given policy and dimensionality\&
 
 .PP
 Get the dimensionality of the \fBDatasetMapper\fP object (that is, how many dimensions it has information for)\&. If this object was created by a call to \fBmlpack::data::Load()\fP, then the dimensionality will be the same as the number of rows (dimensions) in the dataset\&. 
+.PP
+Referenced by LoadCSV::GetMatrixSize(), and LoadCSV::GetTransposeMatrixSize()\&.
 .SS "void MapFirstPass (const InputType & input, const size_t dimension)"
 
 .PP
@@ -186,13 +188,13 @@ Set the dimensionality of an existing \fBDatasetMapper\fP object\&. This resets 
 .PP
 
 .PP
-Referenced by LoadCSV::GetTransposeMatrixSize()\&.
+Referenced by LoadCSV::GetMatrixSize(), LoadCSV::GetTransposeMatrixSize(), and LoadBostonHousingDataset()\&.
 .SS "\fBDatatype\fP Type (const size_t dimension) const"
 
 .PP
 Return the type of a given dimension (numeric or categorical)\&. 
 .PP
-Referenced by MockCategoricalData()\&.
+Referenced by LoadBostonHousingDataset(), and MockCategoricalData()\&.
 .SS "\fBDatatype\fP& Type (const size_t dimension)"
 
 .PP

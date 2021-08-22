@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="240" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="240" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="239" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="239" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a05b44209bee6b65f212409e0faa34dea" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -38,10 +38,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="237" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="237" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="236" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="236" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a898f1ddbe36120ec684d63551c07e9f5" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes actionModule</definition>
         <argsstring></argsstring>
         <name>actionModule</name>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="189" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="189" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="188" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="188" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1ab6aa078db10e2dc41f5abd00384a0afa" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="252" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="252" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="251" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a8bc49e0436f58eba80dd7c8ee78dda06" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="198" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="198" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="197" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="197" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="225" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="225" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="224" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="224" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a48fa7f67b4a442fe10b64e7b505d3db9" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1DeltaVisitor" kindref="compound">DeltaVisitor</ref></type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="213" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="213" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="212" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="212" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -116,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="201" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="201" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="200" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1ab16ba99930400e56db424fe824d722f3" prot="private" static="no" mutable="no">
         <type>std::vector&lt; arma::mat &gt;</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="219" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="219" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="218" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="218" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a7d65c45db85b6a1ee1d5ee41b677ad04" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="195" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="195" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="194" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="194" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -155,7 +155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="228" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="228" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="227" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="227" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a1bc07757cd7084ace85a2c46a6949772" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -168,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="246" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="246" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="245" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="245" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a067aa5e896c71ce497cb3337046725f4" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -181,7 +181,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="255" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="255" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="254" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="254" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a31593d177a9da798796542a77a36c5f4" prot="private" static="no" mutable="no">
         <type>std::vector&lt; arma::mat &gt;</type>
@@ -194,10 +194,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="222" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="222" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="221" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="221" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a3e8fe5d26eb4292120dcd0ecb21cd2b6" prot="private" static="no" mutable="no">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt; network</definition>
         <argsstring></argsstring>
         <name>network</name>
@@ -207,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="207" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="207" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="206" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="206" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="231" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="231" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="230" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="230" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a7f09046b5ba5aad2923f8a3e6cd8445f" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1OutputParameterVisitor" kindref="compound">OutputParameterVisitor</ref></type>
@@ -233,7 +233,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="216" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="216" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="215" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="215" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="183" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="183" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="182" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1ad612ddb7d79f1d97b9e0e503cbe5f1c0" prot="private" static="no" mutable="no">
         <type>OutputDataType</type>
@@ -259,7 +259,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="204" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="203" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="203" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a99e2b48ea4d8b96c9dd8cd5d151f739f" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -272,7 +272,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="234" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="234" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="233" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="233" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1af66d8a7f7a2a8b54158e3702f429ae9f" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1ResetVisitor" kindref="compound">ResetVisitor</ref></type>
@@ -285,7 +285,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="249" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="249" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="248" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="248" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1aaac91b832561e064446f57082ce2a813" prot="private" static="no" mutable="no">
         <type>size_t</type>
@@ -298,7 +298,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="192" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="192" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="191" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="191" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a98ce579e96ee400d3218c12789faf73b" prot="private" static="no" mutable="no">
         <type>arma::mat</type>
@@ -311,10 +311,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="243" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="243" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="242" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="242" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1af51a4b218b865409357a02298105c636" prot="private" static="no" mutable="no">
-        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref></type>
+        <type><ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref></type>
         <definition>LayerTypes rnnModule</definition>
         <argsstring></argsstring>
         <name>rnnModule</name>
@@ -324,7 +324,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="186" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="186" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="185" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="185" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classmlpack_1_1ann_1_1RecurrentAttention_1a625937d2a4a808227ad16ea09908d8cd" prot="private" static="no" mutable="no">
         <type><ref refid="classmlpack_1_1ann_1_1WeightSizeVisitor" kindref="compound">WeightSizeVisitor</ref></type>
@@ -337,7 +337,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="210" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="210" bodyend="-1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="209" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="209" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -352,7 +352,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="63" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="62" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a8cc232af21a0e198cc6dc88366d86f02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -418,7 +418,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="74" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="73" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -469,7 +469,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="99" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="98" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -482,7 +482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="134" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="134" bodyend="134"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="133" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="133" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -495,7 +495,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="136" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="136" bodyend="136"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="135" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="135" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -508,7 +508,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="119" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="119" bodyend="119"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="118" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="118" bodyend="118"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool &amp;</type>
@@ -521,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="121" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="121" bodyend="121"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="120" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="120" bodyend="120"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -562,7 +562,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="87" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="86" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1acb03ff976cc8ebe5bd829ff21f4a4258" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -589,7 +589,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="111" column="1"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="110" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -602,7 +602,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="139" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="139" bodyend="139"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="138" bodyend="138"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -615,10 +615,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="141" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="141" bodyend="141"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="140" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="140" bodyend="140"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a50c707b4f7c009339d8d661539baf38f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
+        <type>std::vector&lt; <ref refid="namespacemlpack_1_1ann_1a01323f6c8650c443c84a7e67016f7337" kindref="member">LayerTypes</ref>&lt;&gt; &gt; &amp;</type>
         <definition>std::vector&lt;LayerTypes&lt;&gt; &gt;&amp; Model</definition>
         <argsstring>()</argsstring>
         <name>Model</name>
@@ -628,7 +628,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="116" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="116" bodyend="116"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="115" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="115" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -641,7 +641,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="129" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="129" bodyend="129"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="128" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -654,7 +654,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="131" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="131" bodyend="131"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="130" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="130" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a366243e673681001c6080d84ea644f6a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -667,7 +667,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="144" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="144" bodyend="144"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="143" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="143" bodyend="143"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType const  &amp;</type>
@@ -680,7 +680,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="124" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="124" bodyend="124"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="123" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="123" bodyend="123"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>OutputDataType &amp;</type>
@@ -693,7 +693,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="126" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="126" bodyend="126"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="125" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="125" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1aae052295a422d4030c3eacfc1255b1b6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t const  &amp;</type>
@@ -706,7 +706,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="147" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="147" bodyend="147"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="146" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="146" bodyend="146"/>
         <references refid="classmlpack_1_1ann_1_1RecurrentAttention_1a65cba07328997659bec80b9879b15a51">RecurrentAttention&lt; InputDataType, OutputDataType &gt;::serialize</references>
       </memberdef>
       <memberdef kind="function" id="classmlpack_1_1ann_1_1RecurrentAttention_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -732,8 +732,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="153" column="1"/>
-        <referencedby refid="classmlpack_1_1ann_1_1RecurrentAttention_1aae052295a422d4030c3eacfc1255b1b6" compoundref="recurrent__attention_8hpp" startline="147" endline="147">RecurrentAttention&lt; InputDataType, OutputDataType &gt;::Rho</referencedby>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="152" column="1"/>
+        <referencedby refid="classmlpack_1_1ann_1_1RecurrentAttention_1aae052295a422d4030c3eacfc1255b1b6" compoundref="recurrent__attention_8hpp" startline="146" endline="146">RecurrentAttention&lt; InputDataType, OutputDataType &gt;::Rho</referencedby>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -748,7 +748,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="157" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="157" bodyend="180"/>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" line="156" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp" bodystart="156" bodyend="179"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -778,7 +778,7 @@
 </parameteritem>
 </parameterlist>
 </para>    </detaileddescription>
-    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="199" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="199" bodyend="-1"/>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" line="204" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp" bodystart="204" bodyend="-1"/>
     <listofallmembers>
       <member refid="classmlpack_1_1ann_1_1RecurrentAttention_1aba93f8d08a9b09171e354125df0ec271" prot="private" virt="non-virtual"><scope>mlpack::ann::RecurrentAttention</scope><name>actionDelta</name></member>
       <member refid="classmlpack_1_1ann_1_1RecurrentAttention_1a05b44209bee6b65f212409e0faa34dea" prot="private" virt="non-virtual"><scope>mlpack::ann::RecurrentAttention</scope><name>actionError</name></member>

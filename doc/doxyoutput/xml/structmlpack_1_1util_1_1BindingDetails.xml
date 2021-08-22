@@ -30,13 +30,13 @@
         </inbodydescription>
         <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="33" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1a9b45b3e13bd9167aab02e17e08916231" prot="public" static="no" mutable="no">
         <type>std::string</type>
-        <definition>std::string programName</definition>
+        <definition>std::string name</definition>
         <argsstring></argsstring>
-        <name>programName</name>
+        <name>name</name>
         <briefdescription>
-<para>Name of the binding. </para>        </briefdescription>
+<para>User-friendly name of the binding. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
@@ -78,7 +78,7 @@
     <listofallmembers>
       <member refid="structmlpack_1_1util_1_1BindingDetails_1acf4d20054a17220a36a6418e0cdff11a" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>example</name></member>
       <member refid="structmlpack_1_1util_1_1BindingDetails_1ababf20afc82683b024c91a20c8c62e17" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>longDescription</name></member>
-      <member refid="structmlpack_1_1util_1_1BindingDetails_1a24d855d329269931b59bdf1b36706a88" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>programName</name></member>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1a9b45b3e13bd9167aab02e17e08916231" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>name</name></member>
       <member refid="structmlpack_1_1util_1_1BindingDetails_1afe5093e1898efe46d8079526cfe632a9" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>seeAlso</name></member>
       <member refid="structmlpack_1_1util_1_1BindingDetails_1ac20a505628c4d6eeebb65be874e3abe2" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>shortDescription</name></member>
     </listofallmembers>

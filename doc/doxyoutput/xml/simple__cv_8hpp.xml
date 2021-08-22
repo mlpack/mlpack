@@ -6,925 +6,940 @@
     <includes refid="cv__base_8hpp" local="no">mlpack/core/cv/cv_base.hpp</includes>
     <includes local="yes">simple_cv_impl.hpp</includes>
     <incdepgraph>
-      <node id="6201">
+      <node id="6316">
         <label>list</label>
       </node>
-      <node id="6228">
+      <node id="6345">
         <label>save_impl.hpp</label>
       </node>
-      <node id="6198">
+      <node id="6313">
         <label>atomic</label>
       </node>
-      <node id="6220">
+      <node id="6337">
         <label>dataset_mapper_impl.hpp</label>
       </node>
-      <node id="6226">
+      <node id="6343">
         <label>load_image_impl.hpp</label>
       </node>
-      <node id="6189">
+      <node id="6304">
         <label>cereal/types/memory.hpp</label>
       </node>
-      <node id="6165">
+      <node id="6280">
         <label>mlpack/core/util/arma_traits.hpp</label>
         <link refid="arma__traits_8hpp"/>
       </node>
-      <node id="6200">
+      <node id="6315">
         <label>iomanip</label>
       </node>
-      <node id="6278">
+      <node id="6395">
         <label>simple_cv_impl.hpp</label>
       </node>
-      <node id="6258">
+      <node id="6375">
         <label>mlpack/core/kernels/linear_kernel.hpp</label>
         <link refid="linear__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
       </node>
-      <node id="6253">
+      <node id="6370">
         <label>mlpack/core/data/confusion_matrix.hpp</label>
         <link refid="confusion__matrix_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6254" relation="include">
+        <childnode refid="6371" relation="include">
         </childnode>
       </node>
-      <node id="6268">
+      <node id="6385">
         <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
         <link refid="laplacian__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
       </node>
-      <node id="6235">
+      <node id="6352">
         <label>float.h</label>
       </node>
-      <node id="6264">
+      <node id="6381">
         <label>lmetric_impl.hpp</label>
       </node>
-      <node id="6174">
+      <node id="6289">
         <label>mlpack/core/cereal/unordered_map.hpp</label>
         <link refid="unordered__map_8hpp"/>
-        <childnode refid="6175" relation="include">
+        <childnode refid="6290" relation="include">
         </childnode>
-        <childnode refid="6177" relation="include">
+        <childnode refid="6292" relation="include">
         </childnode>
       </node>
-      <node id="6157">
+      <node id="6272">
         <label>cstdint</label>
       </node>
-      <node id="6266">
+      <node id="6383">
         <label>epanechnikov_kernel_impl.hpp</label>
       </node>
-      <node id="6257">
+      <node id="6374">
         <label>mlpack/core/kernels/kernel_traits.hpp</label>
         <link refid="kernel__traits_8hpp"/>
       </node>
-      <node id="6166">
+      <node id="6281">
         <label>cereal/archives/binary.hpp</label>
       </node>
-      <node id="6173">
+      <node id="6288">
         <label>cereal/types/tuple.hpp</label>
       </node>
-      <node id="6251">
+      <node id="6368">
         <label>mlpack/core/dists/gamma_distribution.hpp</label>
         <link refid="gamma__distribution_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6236" relation="include">
+        <childnode refid="6353" relation="include">
         </childnode>
       </node>
-      <node id="6215">
+      <node id="6332">
         <label>mlpack/core/data/load.hpp</label>
         <link refid="load_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6196" relation="include">
+        <childnode refid="6311" relation="include">
         </childnode>
-        <childnode refid="6204" relation="include">
+        <childnode refid="6319" relation="include">
         </childnode>
-        <childnode refid="6216" relation="include">
+        <childnode refid="6333" relation="include">
         </childnode>
-        <childnode refid="6217" relation="include">
+        <childnode refid="6334" relation="include">
         </childnode>
-        <childnode refid="6221" relation="include">
+        <childnode refid="6338" relation="include">
         </childnode>
-        <childnode refid="6224" relation="include">
+        <childnode refid="6341" relation="include">
         </childnode>
-        <childnode refid="6225" relation="include">
+        <childnode refid="6342" relation="include">
         </childnode>
-        <childnode refid="6226" relation="include">
+        <childnode refid="6343" relation="include">
         </childnode>
       </node>
-      <node id="6212">
+      <node id="6327">
         <label>program_doc.hpp</label>
         <link refid="program__doc_8hpp"/>
       </node>
-      <node id="6233">
+      <node id="6350">
         <label>stdlib.h</label>
       </node>
-      <node id="6237">
+      <node id="6354">
         <label>mlpack/mlpack_export.hpp</label>
       </node>
-      <node id="6195">
+      <node id="6310">
         <label>arma_config.hpp</label>
       </node>
-      <node id="6272">
+      <node id="6389">
         <label>mlpack/core/kernels/spherical_kernel.hpp</label>
         <link refid="spherical__kernel_8hpp"/>
-        <childnode refid="6273" relation="include">
-        </childnode>
-        <childnode refid="6152" relation="include">
-        </childnode>
-      </node>
-      <node id="6241">
-        <label>lin_alg_impl.hpp</label>
-      </node>
-      <node id="6267">
-        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
-        <link refid="hyperbolic__tangent__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-      </node>
-      <node id="6151">
-        <label>mlpack/core.hpp</label>
-        <link refid="core_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6165" relation="include">
-        </childnode>
-        <childnode refid="6196" relation="include">
-        </childnode>
-        <childnode refid="6208" relation="include">
-        </childnode>
-        <childnode refid="6206" relation="include">
-        </childnode>
-        <childnode refid="6215" relation="include">
-        </childnode>
-        <childnode refid="6227" relation="include">
-        </childnode>
-        <childnode refid="6230" relation="include">
-        </childnode>
-        <childnode refid="6232" relation="include">
-        </childnode>
-        <childnode refid="6236" relation="include">
-        </childnode>
-        <childnode refid="6239" relation="include">
-        </childnode>
-        <childnode refid="6240" relation="include">
-        </childnode>
-        <childnode refid="6242" relation="include">
-        </childnode>
-        <childnode refid="6243" relation="include">
-        </childnode>
-        <childnode refid="6244" relation="include">
-        </childnode>
-        <childnode refid="6245" relation="include">
-        </childnode>
-        <childnode refid="6247" relation="include">
-        </childnode>
-        <childnode refid="6248" relation="include">
-        </childnode>
-        <childnode refid="6249" relation="include">
-        </childnode>
-        <childnode refid="6250" relation="include">
-        </childnode>
-        <childnode refid="6251" relation="include">
-        </childnode>
-        <childnode refid="6252" relation="include">
-        </childnode>
-        <childnode refid="6253" relation="include">
-        </childnode>
-        <childnode refid="6255" relation="include">
-        </childnode>
-        <childnode refid="6257" relation="include">
-        </childnode>
-        <childnode refid="6258" relation="include">
-        </childnode>
-        <childnode refid="6259" relation="include">
-        </childnode>
-        <childnode refid="6260" relation="include">
-        </childnode>
-        <childnode refid="6262" relation="include">
-        </childnode>
-        <childnode refid="6265" relation="include">
+        <childnode refid="6390" relation="include">
         </childnode>
         <childnode refid="6267" relation="include">
         </childnode>
+      </node>
+      <node id="6330">
+        <label>params.hpp</label>
+        <link refid="params_8hpp"/>
+        <childnode refid="6329" relation="include">
+        </childnode>
+        <childnode refid="6326" relation="include">
+        </childnode>
+        <childnode refid="6331" relation="include">
+        </childnode>
+      </node>
+      <node id="6358">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="6384">
+        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
+        <link refid="hyperbolic__tangent__kernel_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+      </node>
+      <node id="6266">
+        <label>mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6280" relation="include">
+        </childnode>
+        <childnode refid="6311" relation="include">
+        </childnode>
+        <childnode refid="6323" relation="include">
+        </childnode>
+        <childnode refid="6321" relation="include">
+        </childnode>
+        <childnode refid="6332" relation="include">
+        </childnode>
+        <childnode refid="6344" relation="include">
+        </childnode>
+        <childnode refid="6347" relation="include">
+        </childnode>
+        <childnode refid="6349" relation="include">
+        </childnode>
+        <childnode refid="6353" relation="include">
+        </childnode>
+        <childnode refid="6356" relation="include">
+        </childnode>
+        <childnode refid="6357" relation="include">
+        </childnode>
+        <childnode refid="6359" relation="include">
+        </childnode>
+        <childnode refid="6360" relation="include">
+        </childnode>
+        <childnode refid="6361" relation="include">
+        </childnode>
+        <childnode refid="6362" relation="include">
+        </childnode>
+        <childnode refid="6364" relation="include">
+        </childnode>
+        <childnode refid="6365" relation="include">
+        </childnode>
+        <childnode refid="6366" relation="include">
+        </childnode>
+        <childnode refid="6367" relation="include">
+        </childnode>
+        <childnode refid="6368" relation="include">
+        </childnode>
+        <childnode refid="6369" relation="include">
+        </childnode>
+        <childnode refid="6370" relation="include">
+        </childnode>
+        <childnode refid="6372" relation="include">
+        </childnode>
+        <childnode refid="6374" relation="include">
+        </childnode>
+        <childnode refid="6375" relation="include">
+        </childnode>
+        <childnode refid="6376" relation="include">
+        </childnode>
+        <childnode refid="6377" relation="include">
+        </childnode>
+        <childnode refid="6379" relation="include">
+        </childnode>
+        <childnode refid="6382" relation="include">
+        </childnode>
+        <childnode refid="6384" relation="include">
+        </childnode>
+        <childnode refid="6385" relation="include">
+        </childnode>
+        <childnode refid="6386" relation="include">
+        </childnode>
+        <childnode refid="6389" relation="include">
+        </childnode>
+        <childnode refid="6391" relation="include">
+        </childnode>
+        <childnode refid="6392" relation="include">
+        </childnode>
+      </node>
+      <node id="6346">
+        <label>io_impl.hpp</label>
+      </node>
+      <node id="6301">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="6372">
+        <label>mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6266" relation="include">
+        </childnode>
+        <childnode refid="6373" relation="include">
+        </childnode>
+      </node>
+      <node id="6268">
+        <label>cmath</label>
+      </node>
+      <node id="6287">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="6276">
+        <label>stdexcept</label>
+      </node>
+      <node id="6296">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="6281" relation="include">
+        </childnode>
+        <childnode refid="6283" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6282" relation="include">
+        </childnode>
+      </node>
+      <node id="6359">
+        <label>mlpack/core/math/range.hpp</label>
+      </node>
+      <node id="6378">
+        <label>cosine_distance_impl.hpp</label>
+      </node>
+      <node id="6336">
+        <label>mlpack/core/data/map_policies/datatype.hpp</label>
+        <link refid="datatype_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+      </node>
+      <node id="6319">
+        <label>string</label>
+      </node>
+      <node id="6308">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="6265" relation="include">
+        </childnode>
+        <childnode refid="6275" relation="include">
+        </childnode>
+      </node>
+      <node id="6377">
+        <label>mlpack/core/kernels/cosine_distance.hpp</label>
+        <link refid="cosine__distance_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6374" relation="include">
+        </childnode>
+        <childnode refid="6378" relation="include">
+        </childnode>
+      </node>
+      <node id="6317">
+        <label>map</label>
+      </node>
+      <node id="6357">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6358" relation="include">
+        </childnode>
+      </node>
+      <node id="6270">
+        <label>cfloat</label>
+      </node>
+      <node id="6326">
+        <label>binding_details.hpp</label>
+        <link refid="binding__details_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6327" relation="include">
+        </childnode>
+      </node>
+      <node id="6300">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="6367">
+        <label>mlpack/core/dists/laplace_distribution.hpp</label>
+        <link refid="laplace__distribution_8hpp"/>
+      </node>
+      <node id="6321">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="6284">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="6307">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="6308" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6291" relation="include">
+        </childnode>
+        <childnode refid="6265" relation="include">
+        </childnode>
+      </node>
+      <node id="6297">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="6364">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="6382">
+        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
+        <link refid="epanechnikov__kernel_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6374" relation="include">
+        </childnode>
+        <childnode refid="6383" relation="include">
+        </childnode>
+      </node>
+      <node id="6369">
+        <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
+        <link refid="diagonal__gaussian__distribution_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+      </node>
+      <node id="6295">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="6281" relation="include">
+        </childnode>
+        <childnode refid="6283" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6282" relation="include">
+        </childnode>
+      </node>
+      <node id="6298">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="6281" relation="include">
+        </childnode>
+        <childnode refid="6283" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6282" relation="include">
+        </childnode>
+      </node>
+      <node id="6393">
+        <label>mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="6264" relation="include">
+        </childnode>
+        <childnode refid="6394" relation="include">
+        </childnode>
+      </node>
+      <node id="6356">
+        <label>mlpack/core/math/random_basis.hpp</label>
+        <link refid="random__basis_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+      </node>
+      <node id="6325">
+        <label>boost/any.hpp</label>
+      </node>
+      <node id="6286">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="6306">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="6282" relation="include">
+        </childnode>
+        <childnode refid="6283" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6294" relation="include">
+        </childnode>
+        <childnode refid="6303" relation="include">
+        </childnode>
+      </node>
+      <node id="6309">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="6310" relation="include">
+        </childnode>
+      </node>
+      <node id="6311">
+        <label>mlpack/core/util/log.hpp</label>
+      </node>
+      <node id="6267">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
         <childnode refid="6268" relation="include">
         </childnode>
         <childnode refid="6269" relation="include">
         </childnode>
+        <childnode refid="6270" relation="include">
+        </childnode>
+        <childnode refid="6271" relation="include">
+        </childnode>
         <childnode refid="6272" relation="include">
+        </childnode>
+        <childnode refid="6273" relation="include">
         </childnode>
         <childnode refid="6274" relation="include">
         </childnode>
         <childnode refid="6275" relation="include">
         </childnode>
-      </node>
-      <node id="6229">
-        <label>io_impl.hpp</label>
-      </node>
-      <node id="6186">
-        <label>boost/variant/variant_fwd.hpp</label>
-      </node>
-      <node id="6255">
-        <label>mlpack/core/data/one_hot_encoding.hpp</label>
-        <link refid="one__hot__encoding_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6151" relation="include">
-        </childnode>
-        <childnode refid="6256" relation="include">
-        </childnode>
-      </node>
-      <node id="6153">
-        <label>cmath</label>
-      </node>
-      <node id="6172">
-        <label>cereal/types/string.hpp</label>
-      </node>
-      <node id="6161">
-        <label>stdexcept</label>
-      </node>
-      <node id="6181">
-        <label>mlpack/core/cereal/is_saving.hpp</label>
-        <link refid="is__saving_8hpp"/>
-        <childnode refid="6166" relation="include">
-        </childnode>
-        <childnode refid="6168" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6167" relation="include">
-        </childnode>
-      </node>
-      <node id="6242">
-        <label>mlpack/core/math/range.hpp</label>
-      </node>
-      <node id="6261">
-        <label>cosine_distance_impl.hpp</label>
-      </node>
-      <node id="6219">
-        <label>mlpack/core/data/map_policies/datatype.hpp</label>
-        <link refid="datatype_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-      </node>
-      <node id="6204">
-        <label>string</label>
-      </node>
-      <node id="6193">
-        <label>mlpack/core/util/sfinae_utility.hpp</label>
-        <link refid="sfinae__utility_8hpp"/>
-        <childnode refid="6150" relation="include">
-        </childnode>
-        <childnode refid="6160" relation="include">
-        </childnode>
-      </node>
-      <node id="6260">
-        <label>mlpack/core/kernels/cosine_distance.hpp</label>
-        <link refid="cosine__distance_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6257" relation="include">
-        </childnode>
-        <childnode refid="6261" relation="include">
-        </childnode>
-      </node>
-      <node id="6202">
-        <label>map</label>
-      </node>
-      <node id="6240">
-        <label>mlpack/core/math/lin_alg.hpp</label>
-        <link refid="lin__alg_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6241" relation="include">
-        </childnode>
-      </node>
-      <node id="6155">
-        <label>cfloat</label>
-      </node>
-      <node id="6211">
-        <label>binding_details.hpp</label>
-        <link refid="binding__details_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6212" relation="include">
-        </childnode>
-      </node>
-      <node id="6185">
-        <label>boost/variant.hpp</label>
-      </node>
-      <node id="6250">
-        <label>mlpack/core/dists/laplace_distribution.hpp</label>
-        <link refid="laplace__distribution_8hpp"/>
-      </node>
-      <node id="6206">
-        <label>mlpack/core/util/deprecated.hpp</label>
-        <link refid="deprecated_8hpp"/>
-      </node>
-      <node id="6169">
-        <label>cereal/archives/xml.hpp</label>
-      </node>
-      <node id="6192">
-        <label>mlpack/core/data/has_serialize.hpp</label>
-        <link refid="has__serialize_8hpp"/>
-        <childnode refid="6193" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6176" relation="include">
-        </childnode>
-        <childnode refid="6150" relation="include">
-        </childnode>
-      </node>
-      <node id="6182">
-        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
-      </node>
-      <node id="6247">
-        <label>mlpack/core/math/make_alias.hpp</label>
-        <link refid="make__alias_8hpp"/>
-      </node>
-      <node id="6265">
-        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
-        <link refid="epanechnikov__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6257" relation="include">
-        </childnode>
-        <childnode refid="6266" relation="include">
-        </childnode>
-      </node>
-      <node id="6252">
-        <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
-        <link refid="diagonal__gaussian__distribution_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-      </node>
-      <node id="6180">
-        <label>mlpack/core/cereal/is_loading.hpp</label>
-        <link refid="is__loading_8hpp"/>
-        <childnode refid="6166" relation="include">
-        </childnode>
-        <childnode refid="6168" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6167" relation="include">
-        </childnode>
-      </node>
-      <node id="6183">
-        <label>mlpack/core/cereal/array_wrapper.hpp</label>
-        <link refid="array__wrapper_8hpp"/>
-        <childnode refid="6166" relation="include">
-        </childnode>
-        <childnode refid="6168" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6167" relation="include">
-        </childnode>
-      </node>
-      <node id="6276">
-        <label>mlpack/core/cv/cv_base.hpp</label>
-        <link refid="cv__base_8hpp"/>
-        <childnode refid="6149" relation="include">
+        <childnode refid="6276" relation="include">
         </childnode>
         <childnode refid="6277" relation="include">
         </childnode>
-      </node>
-      <node id="6239">
-        <label>mlpack/core/math/random_basis.hpp</label>
-        <link refid="random__basis_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6278" relation="include">
+        </childnode>
+        <childnode refid="6279" relation="include">
+        </childnode>
+        <childnode refid="6280" relation="include">
+        </childnode>
+        <childnode refid="6281" relation="include">
+        </childnode>
+        <childnode refid="6282" relation="include">
+        </childnode>
+        <childnode refid="6283" relation="include">
+        </childnode>
+        <childnode refid="6284" relation="include">
+        </childnode>
+        <childnode refid="6285" relation="include">
+        </childnode>
+        <childnode refid="6286" relation="include">
+        </childnode>
+        <childnode refid="6287" relation="include">
+        </childnode>
+        <childnode refid="6288" relation="include">
+        </childnode>
+        <childnode refid="6289" relation="include">
+        </childnode>
+        <childnode refid="6293" relation="include">
+        </childnode>
+        <childnode refid="6294" relation="include">
+        </childnode>
+        <childnode refid="6295" relation="include">
+        </childnode>
+        <childnode refid="6296" relation="include">
+        </childnode>
+        <childnode refid="6297" relation="include">
+        </childnode>
+        <childnode refid="6298" relation="include">
+        </childnode>
+        <childnode refid="6299" relation="include">
+        </childnode>
+        <childnode refid="6305" relation="include">
+        </childnode>
+        <childnode refid="6306" relation="include">
+        </childnode>
+        <childnode refid="6303" relation="include">
+        </childnode>
+        <childnode refid="6307" relation="include">
+        </childnode>
+        <childnode refid="6309" relation="include">
+        </childnode>
+        <childnode refid="6311" relation="include">
+        </childnode>
+        <childnode refid="6312" relation="include">
+        </childnode>
+        <childnode refid="6321" relation="include">
+        </childnode>
+        <childnode refid="6322" relation="include">
         </childnode>
       </node>
-      <node id="6210">
-        <label>boost/any.hpp</label>
-      </node>
-      <node id="6171">
-        <label>cereal/types/boost_variant.hpp</label>
-      </node>
-      <node id="6191">
-        <label>pointer_vector_wrapper.hpp</label>
-        <link refid="pointer__vector__wrapper_8hpp"/>
-        <childnode refid="6167" relation="include">
-        </childnode>
-        <childnode refid="6168" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6179" relation="include">
-        </childnode>
-        <childnode refid="6188" relation="include">
-        </childnode>
-      </node>
-      <node id="6194">
-        <label>mlpack/core/util/arma_config_check.hpp</label>
-        <link refid="arma__config__check_8hpp"/>
-        <childnode refid="6195" relation="include">
-        </childnode>
-      </node>
-      <node id="6196">
-        <label>mlpack/core/util/log.hpp</label>
-      </node>
-      <node id="6152">
-        <label>mlpack/prereqs.hpp</label>
-        <link refid="prereqs_8hpp"/>
-        <childnode refid="6153" relation="include">
-        </childnode>
-        <childnode refid="6154" relation="include">
-        </childnode>
-        <childnode refid="6155" relation="include">
-        </childnode>
-        <childnode refid="6156" relation="include">
-        </childnode>
-        <childnode refid="6157" relation="include">
-        </childnode>
-        <childnode refid="6158" relation="include">
-        </childnode>
-        <childnode refid="6159" relation="include">
-        </childnode>
-        <childnode refid="6160" relation="include">
-        </childnode>
-        <childnode refid="6161" relation="include">
-        </childnode>
-        <childnode refid="6162" relation="include">
-        </childnode>
-        <childnode refid="6163" relation="include">
-        </childnode>
-        <childnode refid="6164" relation="include">
-        </childnode>
-        <childnode refid="6165" relation="include">
-        </childnode>
-        <childnode refid="6166" relation="include">
-        </childnode>
-        <childnode refid="6167" relation="include">
-        </childnode>
-        <childnode refid="6168" relation="include">
-        </childnode>
-        <childnode refid="6169" relation="include">
-        </childnode>
-        <childnode refid="6170" relation="include">
-        </childnode>
-        <childnode refid="6171" relation="include">
-        </childnode>
-        <childnode refid="6172" relation="include">
-        </childnode>
-        <childnode refid="6173" relation="include">
-        </childnode>
-        <childnode refid="6174" relation="include">
-        </childnode>
-        <childnode refid="6178" relation="include">
-        </childnode>
-        <childnode refid="6179" relation="include">
-        </childnode>
-        <childnode refid="6180" relation="include">
-        </childnode>
-        <childnode refid="6181" relation="include">
-        </childnode>
-        <childnode refid="6182" relation="include">
-        </childnode>
-        <childnode refid="6183" relation="include">
-        </childnode>
-        <childnode refid="6184" relation="include">
-        </childnode>
-        <childnode refid="6190" relation="include">
-        </childnode>
-        <childnode refid="6191" relation="include">
-        </childnode>
-        <childnode refid="6188" relation="include">
-        </childnode>
-        <childnode refid="6192" relation="include">
-        </childnode>
-        <childnode refid="6194" relation="include">
-        </childnode>
-        <childnode refid="6196" relation="include">
-        </childnode>
-        <childnode refid="6197" relation="include">
-        </childnode>
-        <childnode refid="6206" relation="include">
-        </childnode>
-        <childnode refid="6207" relation="include">
-        </childnode>
-      </node>
-      <node id="6231">
+      <node id="6348">
         <label>normalize_labels_impl.hpp</label>
       </node>
-      <node id="6256">
+      <node id="6373">
         <label>one_hot_encoding_impl.hpp</label>
       </node>
-      <node id="6238">
+      <node id="6355">
         <label>random</label>
       </node>
-      <node id="6262">
+      <node id="6379">
         <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
         <link refid="gaussian__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6263" relation="include">
+        <childnode refid="6380" relation="include">
         </childnode>
-        <childnode refid="6257" relation="include">
+        <childnode refid="6374" relation="include">
         </childnode>
       </node>
-      <node id="6218">
+      <node id="6335">
         <label>map_policies/increment_policy.hpp</label>
         <link refid="increment__policy_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6177" relation="include">
+        <childnode refid="6292" relation="include">
         </childnode>
-        <childnode refid="6219" relation="include">
+        <childnode refid="6336" relation="include">
         </childnode>
       </node>
-      <node id="6158">
+      <node id="6273">
         <label>cstdio</label>
       </node>
-      <node id="6222">
+      <node id="6339">
         <label>extension.hpp</label>
         <link refid="extension_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
       </node>
-      <node id="6162">
+      <node id="6277">
         <label>tuple</label>
       </node>
-      <node id="6167">
+      <node id="6282">
         <label>cereal/archives/json.hpp</label>
       </node>
-      <node id="6184">
+      <node id="6299">
         <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
         <link refid="pointer__variant__wrapper_8hpp"/>
-        <childnode refid="6167" relation="include">
+        <childnode refid="6282" relation="include">
         </childnode>
-        <childnode refid="6168" relation="include">
+        <childnode refid="6283" relation="include">
         </childnode>
-        <childnode refid="6169" relation="include">
+        <childnode refid="6284" relation="include">
         </childnode>
-        <childnode refid="6171" relation="include">
+        <childnode refid="6286" relation="include">
         </childnode>
-        <childnode refid="6185" relation="include">
+        <childnode refid="6300" relation="include">
         </childnode>
-        <childnode refid="6186" relation="include">
+        <childnode refid="6301" relation="include">
         </childnode>
-        <childnode refid="6187" relation="include">
+        <childnode refid="6302" relation="include">
         </childnode>
-        <childnode refid="6188" relation="include">
+        <childnode refid="6303" relation="include">
         </childnode>
       </node>
-      <node id="6223">
+      <node id="6340">
         <label>image_info_impl.hpp</label>
       </node>
-      <node id="6270">
+      <node id="6387">
         <label>vector</label>
       </node>
-      <node id="6225">
+      <node id="6342">
         <label>load_vec_impl.hpp</label>
       </node>
-      <node id="6213">
+      <node id="6328">
         <label>version.hpp</label>
         <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
-        <childnode refid="6204" relation="include">
+        <childnode refid="6319" relation="include">
         </childnode>
       </node>
-      <node id="6232">
+      <node id="6349">
         <label>mlpack/core/math/clamp.hpp</label>
         <link refid="clamp_8hpp"/>
-        <childnode refid="6233" relation="include">
+        <childnode refid="6350" relation="include">
         </childnode>
-        <childnode refid="6234" relation="include">
+        <childnode refid="6351" relation="include">
         </childnode>
-        <childnode refid="6235" relation="include">
+        <childnode refid="6352" relation="include">
         </childnode>
       </node>
-      <node id="6236">
+      <node id="6353">
         <label>mlpack/core/math/random.hpp</label>
         <link refid="random_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6237" relation="include">
+        <childnode refid="6354" relation="include">
         </childnode>
-        <childnode refid="6238" relation="include">
+        <childnode refid="6355" relation="include">
         </childnode>
       </node>
-      <node id="6163">
+      <node id="6278">
         <label>utility</label>
       </node>
-      <node id="6187">
+      <node id="6302">
         <label>boost/variant/static_visitor.hpp</label>
       </node>
-      <node id="6224">
+      <node id="6341">
         <label>load_model_impl.hpp</label>
       </node>
-      <node id="6178">
+      <node id="6293">
         <label>cereal/types/utility.hpp</label>
       </node>
-      <node id="6175">
+      <node id="6290">
         <label>pair_associative_container.hpp</label>
         <link refid="pair__associative__container_8hpp"/>
-        <childnode refid="6176" relation="include">
+        <childnode refid="6291" relation="include">
+        </childnode>
+      </node>
+      <node id="6386">
+        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
+        <link refid="pspectrum__string__kernel_8hpp"/>
+        <childnode refid="6317" relation="include">
+        </childnode>
+        <childnode refid="6319" relation="include">
+        </childnode>
+        <childnode refid="6387" relation="include">
+        </childnode>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6311" relation="include">
+        </childnode>
+        <childnode refid="6388" relation="include">
+        </childnode>
+      </node>
+      <node id="6361">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+      </node>
+      <node id="6347">
+        <label>mlpack/core/data/normalize_labels.hpp</label>
+        <link refid="normalize__labels_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6348" relation="include">
+        </childnode>
+      </node>
+      <node id="6312">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="6313" relation="include">
+        </childnode>
+        <childnode refid="6314" relation="include">
+        </childnode>
+        <childnode refid="6315" relation="include">
+        </childnode>
+        <childnode refid="6316" relation="include">
+        </childnode>
+        <childnode refid="6317" relation="include">
+        </childnode>
+        <childnode refid="6318" relation="include">
+        </childnode>
+        <childnode refid="6319" relation="include">
+        </childnode>
+        <childnode refid="6320" relation="include">
+        </childnode>
+      </node>
+      <node id="6291">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="6305">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="6303" relation="include">
+        </childnode>
+        <childnode refid="6299" relation="include">
+        </childnode>
+        <childnode refid="6306" relation="include">
+        </childnode>
+      </node>
+      <node id="6351">
+        <label>math.h</label>
+      </node>
+      <node id="6329">
+        <label>param_data.hpp</label>
+        <link refid="param__data_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6325" relation="include">
+        </childnode>
+      </node>
+      <node id="6274">
+        <label>cstdlib</label>
+      </node>
+      <node id="6365">
+        <label>mlpack/core/dists/discrete_distribution.hpp</label>
+        <link refid="discrete__distribution_8hpp"/>
+        <childnode refid="6267" relation="include">
+        </childnode>
+        <childnode refid="6311" relation="include">
+        </childnode>
+        <childnode refid="6353" relation="include">
         </childnode>
       </node>
       <node id="6269">
-        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
-        <link refid="pspectrum__string__kernel_8hpp"/>
-        <childnode refid="6202" relation="include">
-        </childnode>
-        <childnode refid="6204" relation="include">
-        </childnode>
-        <childnode refid="6270" relation="include">
-        </childnode>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6196" relation="include">
-        </childnode>
-        <childnode refid="6271" relation="include">
-        </childnode>
-      </node>
-      <node id="6244">
-        <label>mlpack/core/math/shuffle_data.hpp</label>
-        <link refid="shuffle__data_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-      </node>
-      <node id="6230">
-        <label>mlpack/core/data/normalize_labels.hpp</label>
-        <link refid="normalize__labels_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6231" relation="include">
-        </childnode>
-      </node>
-      <node id="6197">
-        <label>mlpack/core/util/timers.hpp</label>
-        <link refid="timers_8hpp"/>
-        <childnode refid="6198" relation="include">
-        </childnode>
-        <childnode refid="6199" relation="include">
-        </childnode>
-        <childnode refid="6200" relation="include">
-        </childnode>
-        <childnode refid="6201" relation="include">
-        </childnode>
-        <childnode refid="6202" relation="include">
-        </childnode>
-        <childnode refid="6203" relation="include">
-        </childnode>
-        <childnode refid="6204" relation="include">
-        </childnode>
-        <childnode refid="6205" relation="include">
-        </childnode>
-      </node>
-      <node id="6176">
-        <label>cereal/cereal.hpp</label>
-      </node>
-      <node id="6190">
-        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
-        <link refid="pointer__vector__variant__wrapper_8hpp"/>
-        <childnode refid="6188" relation="include">
-        </childnode>
-        <childnode refid="6184" relation="include">
-        </childnode>
-        <childnode refid="6191" relation="include">
-        </childnode>
-      </node>
-      <node id="6234">
-        <label>math.h</label>
-      </node>
-      <node id="6214">
-        <label>param_data.hpp</label>
-        <link refid="param__data_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6210" relation="include">
-        </childnode>
-      </node>
-      <node id="6159">
-        <label>cstdlib</label>
-      </node>
-      <node id="6248">
-        <label>mlpack/core/dists/discrete_distribution.hpp</label>
-        <link refid="discrete__distribution_8hpp"/>
-        <childnode refid="6152" relation="include">
-        </childnode>
-        <childnode refid="6196" relation="include">
-        </childnode>
-        <childnode refid="6236" relation="include">
-        </childnode>
-      </node>
-      <node id="6154">
         <label>cctype</label>
       </node>
-      <node id="6209">
+      <node id="6324">
         <label>iostream</label>
       </node>
-      <node id="6259">
+      <node id="6376">
         <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
         <link refid="polynomial__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
       </node>
-      <node id="6254">
+      <node id="6371">
         <label>confusion_matrix_impl.hpp</label>
       </node>
-      <node id="6177">
+      <node id="6292">
         <label>unordered_map</label>
       </node>
-      <node id="6221">
+      <node id="6338">
         <label>image_info.hpp</label>
         <link refid="image__info_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6222" relation="include">
+        <childnode refid="6339" relation="include">
         </childnode>
-        <childnode refid="6223" relation="include">
+        <childnode refid="6340" relation="include">
         </childnode>
       </node>
-      <node id="6156">
+      <node id="6271">
         <label>climits</label>
       </node>
-      <node id="6217">
+      <node id="6334">
         <label>dataset_mapper.hpp</label>
         <link refid="dataset__mapper_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6177" relation="include">
+        <childnode refid="6292" relation="include">
         </childnode>
-        <childnode refid="6218" relation="include">
+        <childnode refid="6335" relation="include">
         </childnode>
-        <childnode refid="6220" relation="include">
+        <childnode refid="6337" relation="include">
         </childnode>
       </node>
-      <node id="6245">
+      <node id="6362">
         <label>mlpack/core/math/ccov.hpp</label>
         <link refid="ccov_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6246" relation="include">
+        <childnode refid="6363" relation="include">
         </childnode>
       </node>
-      <node id="6203">
+      <node id="6318">
         <label>mutex</label>
       </node>
-      <node id="6227">
+      <node id="6344">
         <label>mlpack/core/data/save.hpp</label>
         <link refid="save_8hpp"/>
-        <childnode refid="6196" relation="include">
+        <childnode refid="6311" relation="include">
         </childnode>
-        <childnode refid="6164" relation="include">
+        <childnode refid="6279" relation="include">
         </childnode>
-        <childnode refid="6204" relation="include">
+        <childnode refid="6319" relation="include">
         </childnode>
-        <childnode refid="6216" relation="include">
+        <childnode refid="6333" relation="include">
         </childnode>
-        <childnode refid="6221" relation="include">
+        <childnode refid="6338" relation="include">
         </childnode>
-        <childnode refid="6228" relation="include">
+        <childnode refid="6345" relation="include">
         </childnode>
       </node>
-      <node id="6199">
+      <node id="6314">
         <label>chrono</label>
       </node>
-      <node id="6207">
+      <node id="6322">
         <label>mlpack/core/util/size_checks.hpp</label>
         <link refid="size__checks_8hpp"/>
       </node>
-      <node id="6246">
+      <node id="6363">
         <label>ccov_impl.hpp</label>
       </node>
-      <node id="6273">
+      <node id="6390">
         <label>boost/math/special_functions/gamma.hpp</label>
       </node>
-      <node id="6277">
+      <node id="6394">
         <label>cv_base_impl.hpp</label>
       </node>
-      <node id="6205">
+      <node id="6320">
         <label>thread</label>
       </node>
-      <node id="6275">
+      <node id="6392">
         <label>mlpack/core/kernels/cauchy_kernel.hpp</label>
         <link refid="cauchy__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6263" relation="include">
+        <childnode refid="6380" relation="include">
         </childnode>
-        <childnode refid="6257" relation="include">
+        <childnode refid="6374" relation="include">
         </childnode>
       </node>
-      <node id="6149">
+      <node id="6331">
+        <label>params_impl.hpp</label>
+      </node>
+      <node id="6264">
         <label>mlpack/core/cv/meta_info_extractor.hpp</label>
         <link refid="meta__info__extractor_8hpp"/>
-        <childnode refid="6150" relation="include">
+        <childnode refid="6265" relation="include">
         </childnode>
-        <childnode refid="6151" relation="include">
+        <childnode refid="6266" relation="include">
         </childnode>
-        <childnode refid="6193" relation="include">
+        <childnode refid="6308" relation="include">
         </childnode>
       </node>
-      <node id="6150">
+      <node id="6265">
         <label>type_traits</label>
       </node>
-      <node id="6148">
+      <node id="6263">
         <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
         <link refid="simple__cv_8hpp"/>
-        <childnode refid="6149" relation="include">
+        <childnode refid="6264" relation="include">
         </childnode>
-        <childnode refid="6276" relation="include">
+        <childnode refid="6393" relation="include">
         </childnode>
-        <childnode refid="6278" relation="include">
+        <childnode refid="6395" relation="include">
         </childnode>
       </node>
-      <node id="6170">
+      <node id="6285">
         <label>cereal/types/array.hpp</label>
       </node>
-      <node id="6271">
+      <node id="6388">
         <label>pspectrum_string_kernel_impl.hpp</label>
       </node>
-      <node id="6164">
+      <node id="6279">
         <label>mlpack/core/arma_extend/arma_extend.hpp</label>
       </node>
-      <node id="6188">
+      <node id="6303">
         <label>pointer_wrapper.hpp</label>
         <link refid="pointer__wrapper_8hpp"/>
-        <childnode refid="6166" relation="include">
+        <childnode refid="6281" relation="include">
         </childnode>
-        <childnode refid="6167" relation="include">
+        <childnode refid="6282" relation="include">
         </childnode>
-        <childnode refid="6168" relation="include">
+        <childnode refid="6283" relation="include">
         </childnode>
-        <childnode refid="6169" relation="include">
+        <childnode refid="6284" relation="include">
         </childnode>
-        <childnode refid="6189" relation="include">
+        <childnode refid="6304" relation="include">
         </childnode>
       </node>
-      <node id="6243">
+      <node id="6360">
         <label>mlpack/core/math/round.hpp</label>
         <link refid="round_8hpp"/>
       </node>
-      <node id="6274">
+      <node id="6391">
         <label>mlpack/core/kernels/triangular_kernel.hpp</label>
         <link refid="triangular__kernel_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6263" relation="include">
+        <childnode refid="6380" relation="include">
         </childnode>
       </node>
-      <node id="6160">
+      <node id="6275">
         <label>cstring</label>
       </node>
-      <node id="6179">
+      <node id="6294">
         <label>cereal/types/vector.hpp</label>
       </node>
-      <node id="6208">
+      <node id="6323">
         <label>mlpack/core/util/io.hpp</label>
         <link refid="io_8hpp"/>
-        <childnode refid="6209" relation="include">
+        <childnode refid="6324" relation="include">
         </childnode>
-        <childnode refid="6201" relation="include">
+        <childnode refid="6316" relation="include">
         </childnode>
-        <childnode refid="6202" relation="include">
+        <childnode refid="6317" relation="include">
         </childnode>
-        <childnode refid="6204" relation="include">
+        <childnode refid="6319" relation="include">
         </childnode>
-        <childnode refid="6210" relation="include">
+        <childnode refid="6325" relation="include">
         </childnode>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6197" relation="include">
+        <childnode refid="6312" relation="include">
         </childnode>
-        <childnode refid="6211" relation="include">
+        <childnode refid="6326" relation="include">
         </childnode>
-        <childnode refid="6212" relation="include">
+        <childnode refid="6327" relation="include">
         </childnode>
-        <childnode refid="6213" relation="include">
+        <childnode refid="6328" relation="include">
         </childnode>
-        <childnode refid="6214" relation="include">
+        <childnode refid="6329" relation="include">
         </childnode>
-        <childnode refid="6215" relation="include">
+        <childnode refid="6330" relation="include">
         </childnode>
-        <childnode refid="6227" relation="include">
+        <childnode refid="6332" relation="include">
         </childnode>
-        <childnode refid="6229" relation="include">
+        <childnode refid="6344" relation="include">
+        </childnode>
+        <childnode refid="6346" relation="include">
         </childnode>
       </node>
-      <node id="6168">
+      <node id="6283">
         <label>cereal/archives/portable_binary.hpp</label>
       </node>
-      <node id="6249">
+      <node id="6366">
         <label>mlpack/core/dists/gaussian_distribution.hpp</label>
         <link refid="gaussian__distribution_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
       </node>
-      <node id="6263">
+      <node id="6380">
         <label>mlpack/core/metrics/lmetric.hpp</label>
         <link refid="lmetric_8hpp"/>
-        <childnode refid="6152" relation="include">
+        <childnode refid="6267" relation="include">
         </childnode>
-        <childnode refid="6264" relation="include">
+        <childnode refid="6381" relation="include">
         </childnode>
       </node>
-      <node id="6216">
+      <node id="6333">
         <label>format.hpp</label>
         <link refid="format_8hpp"/>
       </node>
