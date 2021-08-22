@@ -12,7 +12,7 @@
  *
  * As the implementation is inspired from Armadillo it
  * is necessary to add two different licenses. One for
- * Armadillo and other for mlpack.
+ * Armadillo and another for mlpack.
  *
  * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.5.x/include/armadillo_bits/diskio_meat.hpp
  *
@@ -56,7 +56,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * Load the csv file.This class contains fucntions
+ * Load the csv file. This class contains functions
  * to load numeric and categorical data.
  */
 class LoadCSV
@@ -71,7 +71,7 @@ class LoadCSV
 
   /**
   * Construct the LoadCSV object on the given file.  This will construct the
-  * rules necessary for loading and attempt to open the file. This will also
+  * rules necessary for loading and will attempt to open the file. This will also
   * initialize the delimiter character for parsing.
   *
   * @param file path of the dataset
@@ -97,12 +97,12 @@ class LoadCSV
     CheckOpen();
   }
 
-  // Fucntions for Numeric Parser
+  // Functions for Numeric Parser
 
   /**
   * Returns a bool value showing whether data was loaded successfully or not.
   *
-  * Parses a csv file and loads the data into a given matrix. In the first pass,
+  * Parses a csv file and loads the data into the given matrix. In the first pass,
   * the function will determine the number of cols and rows in the given file.
   * Once the rows and cols are fixed we initialize the matrix with zeros. In 
   * the second pass, the function converts each value to required datatype
@@ -115,9 +115,9 @@ class LoadCSV
   bool LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f);
 
   /**
-  * Convert the given string token to assigned datatype and assign
+  * Converts the given string token to assigned datatype and assigns
   * this value to the given address. The address here will be a
-  * matrix location.
+  * matrix location eg. matrix(row, col).
   * 
   * Token is always read as a string, if the given token is +/-INF or NAN
   * it converts them to infinity and NAN using numeric_limits.
@@ -182,11 +182,11 @@ class LoadCSV
   */
   template<typename T, typename MapPolicy>
   void InitializeTransposeMapper(size_t& rows, size_t& cols,
-                              DatasetMapper<MapPolicy>& info);
+                                 DatasetMapper<MapPolicy>& info);
 
   /**
-   * Caluculate number of columns in each row
-   * and assign the value to the col. This fucntion
+   * Calculate number of columns in each row
+   * and assign the value to the col. This function
    * will work for categorical data.
    *
    * @param lineStream a single row of data
@@ -212,12 +212,10 @@ class LoadCSV
     bool load_okay = f.good();
 
     f.clear();
-
     const std::fstream::pos_type pos1 = f.tellg();
 
     size_t f_n_rows = 0;
     size_t f_n_cols = 0;
-
     std::string lineString;
     std::stringstream lineStream;
     std::string token;
@@ -231,7 +229,6 @@ class LoadCSV
 
       lineStream.clear();
       lineStream.str(lineString);
-
       size_t line_n_cols = 0;
 
       // Get number of columns based on the type of data

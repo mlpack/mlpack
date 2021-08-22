@@ -141,7 +141,6 @@ bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 inline void LoadCSV::NumericMatSize(std::stringstream& lineStream, size_t& col, const char delim)
 {
   std::string token;
-
   while (lineStream.good())
   {
     std::getline(lineStream, token, delim);

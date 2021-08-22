@@ -42,7 +42,6 @@ inline void LoadCSV::CategoricalMatSize(std::stringstream& lineStream, size_t& c
       while (token[token.size() - 1] != '"')
         std::getline(lineStream, token, delim);
     }
-
     ++col;
   }
 }
@@ -109,7 +108,6 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
         if (token[0] == '"' && token[token.size() - 1] != '"')
         {
           std::string tok = token;
-
           while (token[token.size() - 1] != '"')
           {
             tok += delim;
