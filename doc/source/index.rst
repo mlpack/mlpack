@@ -10,10 +10,6 @@ Welcome to mlpack's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. toctree::
-   :maxdepth: 2
-
-   about
    api/library_root
    
 
