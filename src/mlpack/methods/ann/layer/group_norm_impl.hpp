@@ -43,7 +43,7 @@ GroupNorm<InputDataType, OutputDataType>::GroupNorm(
     Log::Fatal << "Total input units must be divisible by groupCount!" << std::endl;
   }
 
-  weights.set_size(size * 2 + 1, 1);
+  weights.set_size(size + size, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -134,7 +134,7 @@ void GroupNorm<InputDataType, OutputDataType>::serialize(
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size(size * 2 + 1, 1);
+    weights.set_size(size + size, 1);
     loading = true;
   }
 
