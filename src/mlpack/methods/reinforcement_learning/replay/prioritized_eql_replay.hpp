@@ -336,10 +336,13 @@ class PrioritizedReplay
               arma::mat& gradients)
   {
     arma::vec tdError(target.n_cols);
+    arma::vec preference = arma::normalise(arma::abs(arma::randn(rewardSize)), 1);
+    arma::cube targetCube(target.memptr(), rewardSize, actionSize, extendedSize);
+    arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize, actionSize, extendedSize);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      tdError(i) = nextActionValues(sampledActions[i].action, i) -
-          target(sampledActions[i].action, i);
+      tdError(i) = nextActionValCube.slice(i).col(sampledActions[i].action) -
+          targetCube.slice(i).col(sampledActions[i].action);
     }
     tdError = arma::abs(tdError);
     UpdatePriorities(sampledIndices, tdError);
