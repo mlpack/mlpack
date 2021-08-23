@@ -132,7 +132,7 @@ arma::uvec EQL<
   }();
 
   // Perform batch dot product between extWeights and actionValues
-  // followed by storing the max index.
+  // followed by storing the index of max elements.
   return arma::index_max(arma::reshape(
       arma::sum(extWeights % actionValues),
       actionSize, inputSize));
