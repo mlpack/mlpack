@@ -62,12 +62,10 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
   cols = 0;
 
   std::string line;
-  while (std::getline(inFile, line))
+  while (inFile.good())
   {
     ++cols;
-    // Remove whitespaces from either side
-    trim(line);
-
+    
     if (cols == 1)
     {
       // Extract the number of dimensions.
@@ -86,6 +84,18 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
         << rows;
         throw std::invalid_argument(oss.str());
       }
+    }
+
+     std::getline(inFile, line);
+    // Remove whitespaces from either side
+     trim(line);
+
+    // If it's an empty line decrease
+    // cols and break
+    if (line.size() == 0)
+    {
+      --cols;
+      continue;
     }
 
     // If we need to do a first pass for the DatasetMapper, do it.
