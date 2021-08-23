@@ -132,8 +132,9 @@ arma::uvec EQL<
   }();
 
   // Batch multiply extWeights and actionValues and take the max index.
-  return arma::index_max(arma::reshape(arma::sum(extWeights % actionValues),
-                                       actionSize, extendedSize));
+  return arma::index_max(arma::reshape(
+      arma::sum(extWeights % actionValues),
+      actionSize, extendedSize));
 };
 
 template <
