@@ -204,10 +204,10 @@ double FFNEQL<InitializationRuleType, CustomLayers...>::Backward(
     WeightsType& weightSpace)
 {
   // Each preference vector is repeated batchSize * actionSize
-  // number of times. Shape: (rewardSize, extendedSize * actionSize).
+  // number of times. Shape: (rewardSize, inputSize * actionSize).
   const arma::mat extWeights = [&]()
   {
-    arma::mat retval(rewardSize, extendedSize * actionSize);
+    arma::mat retval(rewardSize, inputSize * actionSize);
     size_t colIdx {}, start {};
     size_t gap = batchSize * actionSize;
 

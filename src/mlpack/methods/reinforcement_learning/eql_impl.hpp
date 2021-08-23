@@ -109,13 +109,13 @@ arma::uvec EQL<
   size_t numWeights = weightSpace.n_cols;
   size_t actionSize = EnvironmentType::Action::size;
   size_t batchSize = actionValues.n_cols / (numWeights * actionSize);
-  size_t extendedSize = numWeights * batchSize;
+  size_t inputSize = batchSize * numWeights
 
   // Each preference vector is repeated batchSize * actionSize
-  // number of times. Shape: (rewardSize, extendedSize * actionSize).
+  // number of times. Shape: (rewardSize, inputSize * actionSize).
   const arma::mat extWeights = [&]()
   {
-    arma::mat retval(rewardSize, extendedSize * actionSize);
+    arma::mat retval(rewardSize, inputSize * actionSize);
     size_t colIdx = 0, start = 0;
     const size_t gap = batchSize * actionSize;
 
@@ -131,10 +131,11 @@ arma::uvec EQL<
     return retval;
   }();
 
-  // Batch multiply extWeights and actionValues and take the max index.
+  // Perform batch dot product between extWeights and actionValues
+  // followed by storing the max index.
   return arma::index_max(arma::reshape(
       arma::sum(extWeights % actionValues),
-      actionSize, extendedSize));
+      actionSize, inputSize));
 };
 
 template <
@@ -169,11 +170,14 @@ void EQL<
   replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
       sampledNextStatePref, weightSpace, isTerminal);
 
-  size_t batchSize = sampledStates.n_cols;
-  size_t extendedSize = numWeights * batchSize;
+  size_t batchSize = sampledStates.n_cols;.
+  // Count of total state-preference pairs.
+  size_t inputSize = batchSize * numWeights
   size_t actionSize = sampledActions.n_rows;
 
-  arma::mat nextActionValues(rewardSize, extendedSize * actionSize);
+  // For each state-preference pair, the network outputs
+  // actionSize number of reward vectors.
+  arma::mat nextActionValues(rewardSize, inputSize * actionSize);
   targetNetwork.Predict(sampledNextStatePref, nextActionValues);
 
   arma::uvec bestActions{};
@@ -189,21 +193,25 @@ void EQL<
     bestActions = BestAction(nextActionValues);
   }
 
-  arma::mat target(rewardSize, extendedSize * actionSize);
+  arma::mat target(rewardSize, inputSize * actionSize);
   learningNetwork.Forward(sampledStatePref, target);
 
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
-  arma::cube targetCube(target.memptr(), rewardSize, actionSize, extendedSize);
-  arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize, actionSize, extendedSize);
+  // Each slice of the cube holds the action vectors of a state-preference pair.
+  arma::cube targetCube(target.memptr(), rewardSize, actionSize, inputSize,
+                        false, true);
+  arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize,
+                               actionSize, inputSize, false, true);
 
-  for (size_t i = 0; i < extendedSize; ++i)
+  // Iterate over state-preference indexes (spIdx).
+  for (size_t spIdx = 0; spIdx < inputSize; ++spIdx)
   {
     // The multi-objective Bellman filter (H) applied over nextActionValue.
-    const arma::vec& hQ = nextActionValCube.slice(i).col(bestAction(i));
+    const arma::vec& hQ = nextActionValCube.slice(spIdx).col(bestAction(spIdx));
 
-    targetCube.slice(i).col(sampledActions(i).action) =
-        sampledRewardLists(i) + discount * hQ * (1 - isTerminal(i));
+    targetCube.slice(spIdx).col(sampledActions(spIdx).action) =
+        sampledRewardLists(spIdx) + discount * hQ * (1 - isTerminal(spIdx));
   }
 
   // Learn from experience.

@@ -251,7 +251,7 @@ class PrioritizedReplay
 
     const arma::mat batchWeights = [&]()
     {
-      arma::mat retval(rewardSize, extendedSize);
+      arma::mat retval(rewardSize, inputSize);
       size_t colIdx = 0, start = 0;
 
       while (colIdx < numWeights)
@@ -267,7 +267,7 @@ class PrioritizedReplay
     }();
 
     // Each input is a unique combination of weights and states.
-    // Shape: (stateSize + rewardSize, extendedSize).
+    // Shape: (stateSize + rewardSize, inputSize).
     sampledStatePref = arma::join_cols(
         arma::repmat(states.cols(sampledIndices), 1, batchSize), batchWeights);
 
@@ -337,8 +337,10 @@ class PrioritizedReplay
   {
     arma::vec tdError(target.n_cols);
     arma::vec preference = arma::normalise(arma::abs(arma::randn(rewardSize)), 1);
-    arma::cube targetCube(target.memptr(), rewardSize, actionSize, extendedSize);
-    arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize, actionSize, extendedSize);
+    arma::cube targetCube(target.memptr(), rewardSize, actionSize, inputSize,
+                          false, true);
+    arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize,
+                                 actionSize, inputSize, false, true);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
       tdError(i) = nextActionValCube.slice(i).col(sampledActions[i].action) -
