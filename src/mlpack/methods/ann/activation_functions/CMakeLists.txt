@@ -22,6 +22,7 @@ set(SOURCES
   hard_swish_function.hpp
   tanh_exponential_function.hpp
   silu_function.hpp
+  square_nonlinearity_function.hpp
 )
 
 # Add directory name to sources.
