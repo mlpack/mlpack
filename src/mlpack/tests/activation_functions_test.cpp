@@ -35,6 +35,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/sqaure_nonlinearity_function.hpp>
 
 #include "catch.hpp"
 
@@ -1378,4 +1379,20 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 
   CheckFlattenTSwishActivationCorrect(input, desiredActivation);
   CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
+}
+
+/**
+ * Basic test of the Square NonLinearity function.
+ */
+TEST_CASE("SqaureNonLinearityFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Calculated using custom Pytorch functions
+  const arma::colvec desiredActivations("-1 1 1 1 0.75 -0.75 1 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
+
+  CheckActivationCorrect<SquareNonLinearityFunction>(activationData,
+                                        desiredActivations);
+  CheckDerivativeCorrect<SquareNonLinearityFunction>(desiredActivations,
+                                        desiredDerivatives);
 }
