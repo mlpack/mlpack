@@ -90,7 +90,7 @@ BINDING_EXAMPLE(
     "could call "
     "\n\n" +
     PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"));
+    "test_labels", "test_labels", "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");

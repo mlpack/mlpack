@@ -43,18 +43,17 @@ BINDING_LONG_DESC(
     " parameters, respectively. The labels should be in the range of [0,"
     "num_classes -1].Optionally if" +
     PRINT_PARAM_STRING("labels") + "is not specified, the labels are assumed"
-                                   " to be the last dimension of the training"
-                                   "dataset."
-                                   "\n\n"
-                                   "When a model is trained, the " +
+    " to be the last dimension of the training dataset."
+    "\n\n"
+    "When a model is trained, the " +
     PRINT_PARAM_STRING("output_model") + " "
     "output parameter may be used to save the trained model. A model may be"
     "loaded for predictions with the" +
-    PRINT_PARAM_STRING("input_model") +
-    "parameter. The "PRINT_PARAM_STRING("input_model") + "parameter may not be"
-                                                        "specified when the " +
+    PRINT_PARAM_STRING("input_model") +"parameter. " 
+    "The " + PRINT_PARAM_STRING("input_model") + "parameter may not be"
+    "specified when the " +
     PRINT_PARAM_STRING("training ") + "parameter"
-                                      "is specified. The " +
+    "is specified. The " +
     PRINT_PARAM_STRING("minimum_leaf_size") +
     "parameter specifies the minimum number of training points that must fall"
     "into each leaf for it to be split. The " +
@@ -92,10 +91,9 @@ BINDING_EXAMPLE(
     PRINT_DATASET("test_labels") + " using that model, while saving the "
                                    "predictions for each point to " +
     PRINT_DATASET("predictions") + ", one "
-                                   "could call "
-                                   "\n\n" +
-
-    PRINT_CALL("extra_trees", "input_model", "et_model", "test", "test_set",
+    "could call "
+    "\n\n" +
+     PRINT_CALL("extra_trees", "input_model", "et_model", "test", "test_set",
                "test_labels", "test_labels", "predictions", "predictions"));
 
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
@@ -106,9 +104,8 @@ BINDING_SEE_ALSO("Extra Trees on Wikipedia",
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 PARAM_MATRIX_IN("test", "Test dataset to produce predictions for.", "T");
-PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is"
-                             "desired.",
-              "L");
+PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is" 
+"desired.", "L");
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 PARAM_MATRIX_IN("test", "Test dataset to produce predictions for.", "T");
@@ -117,33 +114,29 @@ PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is"
               "L");
 
 PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model"
-                                      "on the training set will be predicted (verbose must also be specified).",
-           "a");
+"on the training set will be predicted (verbose must also be specified).","a");
 
 PARAM_INT_IN("num_trees", "Number of trees in the extra trees.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf"
-                                  "node.",
-             "n", 1);
+"node.","n", 1);
 PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
              "D", 0);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each"
                                   "point in the test set.",
                  "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test"
-                              "set.",
-               "p");
+"set.","p");
 
 PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain needed to make a split"
-                                      "when building a tree.",
-                "g", 0);
+"when building a tree.","g", 0);
 PARAM_INT_IN("subspace_dim", "Dimensionality of random subspace to use for"
-                             "each split.  '0' will autoselect the square root of data dimensionality.",
-             "d", 0);
+"each split.  '0' will autoselect the square root of data dimensionality.",
+"d", 0);
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("warm_start", "If true and passed along with `training` and "
-                         "`input_model` then trains more trees on top of existing model.",
-           "w");
+"`input_model` then trains more trees on top of existing model.",
+"w");
 class ExtraTreesModel
 {
     public:
@@ -162,11 +155,9 @@ class ExtraTreesModel
 };
 
 PARAM_MODEL_IN(ExtraTreesModel, "input_model", "Pre-trained extra trees "
-                                               "algorithm to use for classification.",
-               "m");
+"algorithm to use for classification.","m");
 PARAM_MODEL_OUT(ExtraTreesModel, "output_model", "Model to save trained "
-                                                 "extra trees to.",
-                "M");
+"extra trees to.", "M");
 static void mlpackMain()
 {
     // Check for incompatible input parameters.
@@ -242,7 +233,8 @@ static void mlpackMain()
             (size_t)IO::GetParam<int>("minimum_leaf_size");
         const size_t maxDepth = (size_t)IO::GetParam<int>("maximum_depth");
         const double minimumGainSplit = IO::GetParam<double>("minimum_gain_split");
-        const size_t randomDims = (IO::GetParam<int>("subspace_dim") == 0) ? (size_t)std::sqrt(data.n_rows) : (size_t)IO::GetParam<int>("subspace_dim");
+        const size_t randomDims = (IO::GetParam<int>("subspace_dim") == 0) ? 
+        (size_t)std::sqrt(data.n_rows) : (size_t)IO::GetParam<int>("subspace_dim");
         MultipleRandomDimensionSelect mrds(randomDims);
 
         Log::Info << "Training extra trees with " << numTrees << " trees..."
