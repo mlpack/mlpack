@@ -1438,6 +1438,6 @@ TEST_CASE("SQNLFunctionTest", "[ActivationFunctionsTest]")
 
   const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
 
-  CheckSQNLActivationCorrect<SquareNonLinearityFunction>(activationData, desiredActivations);
+  CheckSQNLActivationCorrect(activationData, desiredActivations);
   CheckSQNLDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
