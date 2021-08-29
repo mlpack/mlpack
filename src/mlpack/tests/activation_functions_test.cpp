@@ -752,6 +752,54 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
+ * Implementation of the SQNL activation function test. The function is
+ * implemented as SQNL layer in the file sqnl.hpp
+ *
+ * @param input Input data used for evaluating the SQNL activation function.
+ * @param target Target data used to evaluate the SQNL activation.
+ */
+void CheckSQNLActivationCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SQNL<> sqnl;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  sqnl.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the SQNL activation function derivative test.
+ * The derivative function is implemented as SQNL layer in the file
+ * sqnl.hpp
+ *
+ * @param input Input data used for evaluating the SQNL activation
+ * function.
+ * @param target Target data used to evaluate the SQNL activation.
+ */
+void CheckSQNLDerivativeCorrect(const arma::colvec input,
+                                      const arma::colvec target)
+{
+  SQNL<> sqnl;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  sqnl.Backward(input, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
@@ -1378,4 +1426,18 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 
   CheckFlattenTSwishActivationCorrect(input, desiredActivation);
   CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
+}
+
+/**
+ * Basic test of the Square NonLinearity (SQNL) function.
+ */
+TEST_CASE("SQNLFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Calculated using custom Pytorch functions
+  const arma::colvec desiredActivations("-1 1 1 1 0.75 -0.75 1 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
+
+  CheckSQNLActivationCorrect<SquareNonLinearityFunction>(activationData, desiredActivations);
+  CheckSQNLDerivativeCorrect(desiredActivations, desiredDerivatives);
 }

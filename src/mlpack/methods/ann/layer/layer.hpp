@@ -79,5 +79,5 @@
 #include "virtual_batch_norm.hpp"
 #include "vr_class_reward.hpp"
 #include "weight_norm.hpp"
-
+#include "sqnl.hpp"
 #endif
