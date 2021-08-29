@@ -1434,7 +1434,7 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 TEST_CASE("SQNLFunctionTest", "[ActivationFunctionsTest]")
 {
   // Calculated using custom Pytorch functions
-  const arma::colvec desiredActivations("-1 1 1 1 0.75 -0.75 1 0");
+  const arma::colvec desiredActivations("-1 1 1 -1 0.75 -0.75 1 0");
 
   const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
 
