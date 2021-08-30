@@ -59,9 +59,6 @@ BINDING_SEE_ALSO("https://en.wikipedia.org/wiki/Exponential_smoothing");
 
 
 // Parameters for program.
-PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
-PARAM_ROW_IN("labels", "Labels to be predicted.", "l");
-PARAM_ROW_OUT("output", "Vector to save the predictions to.", "o");
 
 
 static void mlpackMain()
