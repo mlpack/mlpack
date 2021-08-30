@@ -110,7 +110,7 @@ if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
 endif ()
 
 # Include modules in the CMake directory.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -425,7 +425,7 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src/)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
