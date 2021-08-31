@@ -417,6 +417,17 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /**
+   * Return the name of the given layer of type SQNL as a string.
+   *
+   * @param * Given layer of type SQNL.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(SQNL<>* /*layer*/) const
+  {
+    return "sqnl";
+  }
+
+  /**
    * Return the name of the layer of specified type as a string.
    *
    * @param * Given layer of any type.
