@@ -126,7 +126,6 @@ class ISRLU
 
   //! ISRLU Hyperparameter (alpha > 0).
   double alpha;
-
 }; // class ISRLU
 
 } // namespace ann

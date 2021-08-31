@@ -833,10 +833,10 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
           0.0521, 0.0313, 0.0188, 0.0113, 0.0068, 0.0042, 0.0026, 0.0018, 0.0014
       }
   };
-  
-  //100 pre-calculated emission probabilities each for 10 states
+
+  // 100 pre-calculated emission probabilities each for 10 states.
   std::vector<arma::vec> emissionProb = {
-    { -2.7301e+03, 1.7874e+00, -1.9428e+00, -3.6365e+00, -4.0397e-01, 
+    { -2.7301e+03, 1.7874e+00, -1.9428e+00, -3.6365e+00, -4.0397e-01,
             -1.5115e-01, -1.0328e+00, -1.1071e+00, 5.2876e-01, -1.0643e-01 },
     { -2.3684e+03, 1.8059e+00, -2.2058e+00, -4.0514e+00, -5.0935e-01,
             -2.1126e-01, -1.1962e+00, -1.2567e+00, 4.1247e-01, -3.0199e-01 },
@@ -1037,7 +1037,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
     { -1.5426e+05, -5.8691e-01, -2.8121e-01, -1.2660e+00, -4.9111e-01,
             -1.8141e-01, -5.7387e-02, -8.0842e-01, -2.9317e-01, 6.1601e-01 },
   };
-  
+
   const double loglikelihoodRef = -2734.43;
 
   // Test log-likelihood calculation for the whole data.
@@ -1079,10 +1079,11 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   {
     double loglikelihood = 0;
     arma::vec forwardLogProb;
-    for (size_t t = 0; t<emissionProb.size(); ++t)
+    for (size_t t = 0; t < emissionProb.size(); ++t)
     {
       loglikelihood = hmm.EmissionLogLikelihood(emissionProb.at(t),
-                                                loglikelihood, forwardLogProb);
+                                                loglikelihood,
+                                                forwardLogProb);
     }
     REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-1));
   }

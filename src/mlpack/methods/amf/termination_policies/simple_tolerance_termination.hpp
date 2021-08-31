@@ -79,7 +79,7 @@ class SimpleToleranceTermination
 
     WH = W * H;
 
-    // compute residue
+    // Compute residue.
     residueOld = residue;
     size_t n = V->n_rows;
     size_t m = V->n_cols;
@@ -99,48 +99,51 @@ class SimpleToleranceTermination
             }
         }
     }
-    residue = sum / count;
+
+    residue = sum;
+    if (count > 0)
+      residue /= count;
     residue = sqrt(residue);
 
-    // increment iteration count
+    // Increment iteration count.
     iteration++;
     Log::Info << "Iteration " << iteration << "; residue "
         << ((residueOld - residue) / residueOld) << ".\n";
 
-    // if residue tolerance is not satisfied
+    // If residue tolerance is not satisfied.
     if ((residueOld - residue) / residueOld < tolerance && iteration > 4)
     {
-      // check if this is a first of successive drops
+      // Check if this is a first of successive drops.
       if (reverseStepCount == 0 && isCopy == false)
       {
-        // store a copy of W and H matrix
+        // Store a copy of W and H matrix.
         isCopy = true;
         this->W = W;
         this->H = H;
-        // store residue values
+        // Store residue values.
         c_index = residue;
         c_indexOld = residueOld;
       }
-      // increase successive drop count
+      // Increase successive drop count.
       reverseStepCount++;
     }
-    // if tolerance is satisfied
+    // If tolerance is satisfied.
     else
     {
-      // initialize successive drop count
+      // Initialize successive drop count.
       reverseStepCount = 0;
-      // if residue is droped below minimum scrap stored values
+      // If residue is droped below minimum scrap stored values.
       if (residue <= c_indexOld && isCopy == true)
       {
         isCopy = false;
       }
     }
 
-    // check if termination criterion is met
+    // Check if termination criterion is met.
     if (reverseStepCount == reverseStepTolerance || iteration > maxIterations)
     {
-      // if stored values are present replace them with current value as they
-      // represent the minimum residue point
+      // If stored values are present replace them with current value as they
+      // represent the minimum residue point.
       if (isCopy)
       {
         W = this->W;
@@ -149,49 +152,50 @@ class SimpleToleranceTermination
       }
       return true;
     }
-    else return false;
+
+    return false;
   }
 
-  //! Get current value of residue
+  //! Get current value of residue.
   const double& Index() const { return residue; }
 
-  //! Get current iteration count
+  //! Get current iteration count.
   const size_t& Iteration() const { return iteration; }
 
-  //! Access upper limit of iteration count
+  //! Access upper limit of iteration count.
   const size_t& MaxIterations() const { return maxIterations; }
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Access tolerance value
+  //! Access tolerance value.
   const double& Tolerance() const { return tolerance; }
   double& Tolerance() { return tolerance; }
 
  private:
-  //! tolerance
+  //! Locally-stored tolerance.
   double tolerance;
-  //! iteration threshold
+  //! Locally-stored iteration threshold.
   size_t maxIterations;
 
-  //! pointer to matrix being factorized
+  //! Pointer to matrix being factorized.
   const MatType* V;
 
-  //! current iteration count
+  //! Current iteration count.
   size_t iteration;
 
-  //! residue values
+  //! Locally-stored residue values.
   double residueOld;
   double residue;
 
-  //! tolerance on successive residue drops
+  //! Tolerance on successive residue drops.
   size_t reverseStepTolerance;
-  //! successive residue drops
+  //! Successive residue drops.
   size_t reverseStepCount;
 
-  //! indicates whether a copy of information is available which corresponds to
-  //! minimum residue point
+  //! Indicates whether a copy of information is available which corresponds to
+  //! minimum residue point.
   bool isCopy;
 
-  //! variables to store information of minimum residue poi
+  //! Variables to store information of minimum residue poi.
   arma::mat W;
   arma::mat H;
   double c_indexOld;

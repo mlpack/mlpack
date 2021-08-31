@@ -20,12 +20,12 @@ namespace bindings {
 namespace cli {
 
 /* Prints the descriptions of the current hierarchy. */
-void PrintHelp(const std::string& param)
+void PrintHelp(util::Params& params, const std::string& param)
 {
   std::string usedParam = param;
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-  const std::map<char, std::string>& aliases = IO::Aliases();
-  util::BindingDetails& bindingDetails = IO::GetSingleton().doc;
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
+  const std::map<char, std::string>& aliases = params.Aliases();
+  const util::BindingDetails& bindingDetails = params.Doc();
   // If we pass a single param, alias it if necessary.
   if (usedParam.length() == 1 && aliases.count(usedParam[0]))
     usedParam = aliases.at(usedParam[0]);
@@ -39,7 +39,7 @@ void PrintHelp(const std::string& param)
 
     // Figure out the name of the type.
     std::string printableType;
-    IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
+    params.functionMap[data.tname]["StringTypeParam"](data, NULL,
         (void*) &printableType);
     std::string type = " [" + printableType + "]";
 
@@ -63,9 +63,9 @@ void PrintHelp(const std::string& param)
   }
 
   // Print out the descriptions.
-  if (bindingDetails.programName != "")
+  if (bindingDetails.name != "")
   {
-    std::cout << bindingDetails.programName << std::endl << std::endl;
+    std::cout << bindingDetails.name << std::endl << std::endl;
     std::cout << "  " << util::HyphenateString(bindingDetails.longDescription(),
         2) << std::endl << std::endl;
     for (size_t j = 0; j < bindingDetails.example.size(); ++j)
@@ -85,8 +85,8 @@ void PrintHelp(const std::string& param)
     {
       util::ParamData& data = iter.second;
       const std::string key;
-      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
-          NULL, (void*) &key);
+      params.functionMap[data.tname]["MapParameterName"](data, NULL,
+          (void*) &key);
 
       std::string desc = data.desc;
       std::string alias = (iter.second.alias != '\0') ?
@@ -125,15 +125,15 @@ void PrintHelp(const std::string& param)
                         data.cppType == "std::vector<std::string>"))
       {
         std::string defaultValue;
-        IO::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
-            NULL, (void*) &defaultValue);
+        params.functionMap[data.tname]["DefaultParam"](data, NULL,
+            (void*) &defaultValue);
         desc += "  Default value " + defaultValue + ".";
       }
 
       // Now, print the descriptions.
       std::string printableType;
-      IO::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
-          NULL, (void*) &printableType);
+      params.functionMap[data.tname]["StringTypeParam"](data, NULL,
+          (void*) &printableType);
       std::string type = " [" + printableType + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
 

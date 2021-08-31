@@ -26,20 +26,20 @@ namespace r {
 template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**
@@ -48,19 +48,19 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**
@@ -69,18 +69,18 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**
@@ -89,8 +89,8 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   /**
    * This gives us code like:

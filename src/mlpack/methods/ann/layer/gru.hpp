@@ -156,7 +156,7 @@ class GRU
   size_t OutSize() const { return outSize; }
 
   //! Get the shape of the input.
-  size_t InputShape() const 
+  size_t InputShape() const
   {
     return inSize;
   }

@@ -1,5 +1,21 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+
+  * Added Decision Tree Regressor (#2905). It can be used using the class
+    `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
+
+  * Added dict-style inspection of mlpack models in python bindings (#2868).
+
+  * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
+    class `mlpack::tree::ExtraTrees`, but only through C++.
+
+  * Add Flatten T Swish activation function (`flatten-t-swish.hpp`)
+
+  * Added warm start feature to Random Forest (#2881); this feature is
+    accessible from mlpack's bindings to different languages.
+
   * Added Pixel Shuffle layer (#2563).
 
   * Add "check_input_matrices" option to python bindings that checks
@@ -36,6 +52,27 @@
 
   * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
     `LARS` so parameters for training can be modified (#2861).
+
+  * Remove unused `ElemType` template parameter from `DecisionTree` and
+    `RandomForest` (#2874).
+
+  * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
+    `OFF` (#2884).
+
+  * The `mlpack_test` target is no longer built as part of `make all`.  Use
+    `make mlpack_test` to build the tests.
+
+  * Fixes to `HoeffdingTree`: ensure that training still works when empty
+    constructor is used (#2964).
+
+  * Fix Julia model serialization bug (#2970).
+
+  * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
+
+  * Add `probabilities` option to softmax regression binding, to get class
+    probabilities for test points (#3001).
+
+  * Fix thread safety issues in mlpack bindings to other languages (#2995).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

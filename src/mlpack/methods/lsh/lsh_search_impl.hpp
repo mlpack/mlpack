@@ -903,8 +903,6 @@ void LSHSearch<SortPolicy, MatType>::Search(
 
   size_t avgIndicesReturned = 0;
 
-  Timer::Start("computing_neighbors");
-
   // Parallelization to process more than one query at a time.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
@@ -929,8 +927,6 @@ void LSHSearch<SortPolicy, MatType>::Search(
     // candidates.
     BaseCase(i, refIndices, k, querySet, resultingNeighbors, distances);
   }
-
-  Timer::Stop("computing_neighbors");
 
   distanceEvaluations += avgIndicesReturned;
   avgIndicesReturned /= querySet.n_cols;
@@ -969,8 +965,6 @@ Search(const size_t k,
 
   size_t avgIndicesReturned = 0;
 
-  Timer::Start("computing_neighbors");
-
   // Parallelization to process more than one query at a time.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
@@ -995,8 +989,6 @@ Search(const size_t k,
     // candidates.
     BaseCase(i, refIndices, k, resultingNeighbors, distances);
   }
-
-  Timer::Stop("computing_neighbors");
 
   distanceEvaluations += avgIndicesReturned;
   avgIndicesReturned /= referenceSet.n_cols;

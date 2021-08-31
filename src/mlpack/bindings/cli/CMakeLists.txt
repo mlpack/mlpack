@@ -18,6 +18,7 @@ set(SOURCES
   get_printable_param_value_impl.hpp
   in_place_copy.hpp
   map_parameter_name.hpp
+  mlpack_main.hpp
   output_param.hpp
   output_param_impl.hpp
   parameter_type.hpp
@@ -50,11 +51,21 @@ if (BUILD_CLI_EXECUTABLES)
   add_executable(mlpack_${name}
     ${name}_main.cpp
   )
-  target_link_libraries(mlpack_${name}
-    mlpack
-    ${ARMADILLO_LIBRARIES}
-    ${COMPILER_SUPPORT_LIBRARIES}
-  )
+  # Build mlpack CLI binding binaries statically.
+  if(NOT BUILD_SHARED_LIBS)
+    target_link_libraries(mlpack_${name} -static
+      mlpack
+      ${ARMADILLO_LIBRARIES}
+      ${COMPILER_SUPPORT_LIBRARIES}
+    )
+  else()
+    # Build mlpack CLI binding binaries dynamically.
+    target_link_libraries(mlpack_${name}
+      mlpack
+      ${ARMADILLO_LIBRARIES}
+      ${COMPILER_SUPPORT_LIBRARIES}
+    )
+  endif()
   # Make sure that we set BINDING_TYPE to cli so the command-line program is
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS

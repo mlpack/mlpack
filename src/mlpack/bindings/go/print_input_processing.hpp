@@ -29,10 +29,10 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -54,8 +54,8 @@ void PrintInputProcessing(
    *
    *  // Detect if the parameter was passed; set if so.
    *  if param.Name != nil {
-   *     setParam<d.cppType>("paramName", param.Name)
-   *     setPassed("paramName")
+   *     setParam<d.cppType>(params, "paramName", param.Name)
+   *     setPassed(params, "paramName")
    *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
@@ -95,11 +95,12 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the io.
     std::cout << " {" << std::endl;
-    std::cout << prefix << prefix << "setParam" << GetType<T>(d) << "(\""
-              << d.name << "\", param." << goParamName << ")" << std::endl;
+    std::cout << prefix << prefix << "setParam" << GetType<T>(d) << "(params, "
+              << "\"" << d.name << "\", param." << goParamName << ")"
+              << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << prefix << "setPassed(\""
+    std::cout << prefix << prefix << "setPassed(params, \""
               << d.name << "\")" << std::endl;
 
     // If this parameter is "verbose", then enable verbose output.
@@ -112,12 +113,13 @@ void PrintInputProcessing(
   {
     goParamName = util::CamelCase(goParamName, true);
     // Print function call to set the given parameter into the io.
-    std::cout << prefix << "setParam" << GetType<T>(d) << "(\""
+    std::cout << prefix << "setParam" << GetType<T>(d) << "(params, \""
               << d.name << "\", " << goParamName << ")"
               << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
+    std::cout << prefix << "setPassed(params, \"" << d.name << "\")"
+              << std::endl;
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
@@ -129,7 +131,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -147,8 +149,8 @@ void PrintInputProcessing(
    *
    *  // Detect if the parameter was passed; set if so.
    *  if param.Name != nil {
-   *     gonumToArma<type>("paramName", param.Name)
-   *     setPassed("paramName")
+   *     gonumToArma<type>(params, "paramName", param.Name)
+   *     setPassed(params, "paramName")
    *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
@@ -160,11 +162,11 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArma" << GetType<T>(d)
-              << "(\"" << d.name << "\", param." << goParamName
+              << "(params, \"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << prefix << "setPassed(\"" << d.name << "\")"
+    std::cout << prefix << prefix << "setPassed(params, \"" << d.name << "\")"
               << std::endl;
     std::cout << prefix << "}" << std::endl; // Closing brace.
   }
@@ -173,11 +175,12 @@ void PrintInputProcessing(
     goParamName = util::CamelCase(goParamName, true);
     // Print function call to set the given parameter into the io.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
-              << "(\"" << d.name << "\", " << goParamName
+              << "(params, \"" << d.name << "\", " << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
+    std::cout << prefix << "setPassed(params, \"" << d.name << "\")"
+              << std::endl;
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
@@ -189,8 +192,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -208,8 +211,8 @@ void PrintInputProcessing(
    *
    *  // Detect if the parameter was passed; set if so.
    *  if param.Name != nil {
-   *     gonumToArmaMatWithInfo<type>("paramName", param.Name)
-   *     setPassed("paramName")
+   *     gonumToArmaMatWithInfo<type>(params, "paramName", param.Name)
+   *     setPassed(params, "paramName")
    *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
@@ -221,11 +224,11 @@ void PrintInputProcessing(
 
     // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArmaMatWithInfo"
-              << "(\"" << d.name << "\", param." << goParamName
+              << "(params, \"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << prefix << "setPassed(\"" << d.name << "\")"
+    std::cout << prefix << prefix << "setPassed(params, \"" << d.name << "\")"
               << std::endl;
     std::cout << prefix << "}" << std::endl; // Closing brace.
   }
@@ -234,11 +237,12 @@ void PrintInputProcessing(
     goParamName = util::CamelCase(goParamName, true);
     // Print function call to set the given parameter into the io.
     std::cout << prefix << "gonumToArmaMatWithInfo"
-              << "(\"" << d.name << "\", " << goParamName
+              << "(params, \"" << d.name << "\", " << goParamName
               << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
+    std::cout << prefix << "setPassed(params, \"" << d.name << "\")"
+              << std::endl;
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
@@ -250,8 +254,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // First, get the correct classparamName if needed.
   std::string goStrippedType, strippedType, printedType, defaultsType;
@@ -273,8 +277,8 @@ void PrintInputProcessing(
    *
    *  // Detect if the parameter was passed; set if so.
    *  if param.Name != nil {
-   *     set<ModelType>("paramName", param.Name)
-   *     setPassed("paramName")
+   *     set<ModelType>(params, "paramName", param.Name)
+   *     setPassed(params, "paramName")
    *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
@@ -284,11 +288,11 @@ void PrintInputProcessing(
     std::cout << prefix << "if param." << goParamName << " != nil {"
               << std::endl;
     // Print function call to set the given parameter into the io.
-    std::cout << prefix << prefix << "set" << strippedType << "(\""
+    std::cout << prefix << prefix << "set" << strippedType << "(params, \""
               << d.name << "\", param." << goParamName << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << prefix << "setPassed(\"" << d.name << "\")"
+    std::cout << prefix << prefix << "setPassed(params, \"" << d.name << "\")"
               << std::endl;
     std::cout << prefix << "}" << std::endl; // Closing brace.
   }
@@ -296,11 +300,12 @@ void PrintInputProcessing(
   {
     goParamName = util::CamelCase(goParamName, true);
     // Print function call to set the given parameter into the io.
-    std::cout << prefix << "set" << strippedType << "(\"" << d.name
+    std::cout << prefix << "set" << strippedType << "(params, \"" << d.name
               << "\", " << goParamName << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
-    std::cout << prefix << "setPassed(\"" << d.name << "\")" << std::endl;
+    std::cout << prefix << "setPassed(params, \"" << d.name << "\")"
+              << std::endl;
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }

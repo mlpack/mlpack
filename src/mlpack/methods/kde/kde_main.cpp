@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME kde
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 
@@ -23,7 +29,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Kernel Density Estimation");
+BINDING_USER_NAME("Kernel Density Estimation");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -192,69 +198,72 @@ PARAM_COL_OUT("predictions", "Vector to store density predictions.",
 
 // Maybe, in the future, it could be interesting to implement different metrics.
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Get some parameters.
-  const double bandwidth = IO::GetParam<double>("bandwidth");
-  const std::string kernelStr = IO::GetParam<std::string>("kernel");
-  const std::string treeStr = IO::GetParam<std::string>("tree");
-  const std::string modeStr = IO::GetParam<std::string>("algorithm");
-  const double relError = IO::GetParam<double>("rel_error");
-  const double absError = IO::GetParam<double>("abs_error");
-  const bool monteCarlo = IO::GetParam<bool>("monte_carlo");
-  const double mcProb = IO::GetParam<double>("mc_probability");
-  const int initialSampleSize = IO::GetParam<int>("initial_sample_size");
-  const double mcEntryCoef = IO::GetParam<double>("mc_entry_coef");
-  const double mcBreakCoef = IO::GetParam<double>("mc_break_coef");
+  const double bandwidth = params.Get<double>("bandwidth");
+  const std::string kernelStr = params.Get<std::string>("kernel");
+  const std::string treeStr = params.Get<std::string>("tree");
+  const std::string modeStr = params.Get<std::string>("algorithm");
+  const double relError = params.Get<double>("rel_error");
+  const double absError = params.Get<double>("abs_error");
+  const bool monteCarlo = params.Get<bool>("monte_carlo");
+  const double mcProb = params.Get<double>("mc_probability");
+  const int initialSampleSize = params.Get<int>("initial_sample_size");
+  const double mcEntryCoef = params.Get<double>("mc_entry_coef");
+  const double mcBreakCoef = params.Get<double>("mc_break_coef");
 
   // Initialize results vector.
   arma::vec estimations;
 
   // You can only specify reference data or a pre-trained model.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
-  ReportIgnoredParam({{ "input_model", true }}, "tree");
-  ReportIgnoredParam({{ "input_model", true }}, "kernel");
+  RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
+  ReportIgnoredParam(params, {{ "input_model", true }}, "tree");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "kernel");
 
   // Monte Carlo parameters only make sense if it is activated.
-  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_probability");
-  ReportIgnoredParam({{ "monte_carlo", false }}, "initial_sample_size");
-  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_entry_coef");
-  ReportIgnoredParam({{ "monte_carlo", false }}, "mc_break_coef");
+  ReportIgnoredParam(params, {{ "monte_carlo", false }}, "mc_probability");
+  ReportIgnoredParam(params, {{ "monte_carlo", false }}, "initial_sample_size");
+  ReportIgnoredParam(params, {{ "monte_carlo", false }}, "mc_entry_coef");
+  ReportIgnoredParam(params, {{ "monte_carlo", false }}, "mc_break_coef");
   if (monteCarlo && kernelStr != "gaussian")
   {
-    ReportIgnoredParam("monte_carlo",
+    ReportIgnoredParam(params, "monte_carlo",
                        "Monte Carlo only works with Gaussian kernel");
   }
 
   // Requirements for parameter values.
-  RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov",
+  RequireParamInSet<string>(params, "kernel", { "gaussian", "epanechnikov",
       "laplacian", "spherical", "triangular" }, true, "unknown kernel type");
-  RequireParamInSet<string>("tree", { "kd-tree", "ball-tree", "cover-tree",
-      "octree", "r-tree"}, true, "unknown tree type");
-  RequireParamInSet<string>("algorithm", { "dual-tree", "single-tree"},
+  RequireParamInSet<string>(params, "tree", { "kd-tree", "ball-tree",
+      "cover-tree", "octree", "r-tree"}, true, "unknown tree type");
+  RequireParamInSet<string>(params, "algorithm", { "dual-tree", "single-tree"},
       true, "unknown algorithm");
-  RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
+  RequireParamValue<double>(params, "rel_error",
+      [](double x){ return x >= 0 && x <= 1; },
       true, "relative error must be between 0 and 1");
-  RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
+  RequireParamValue<double>(params, "abs_error",
+      [](double x){ return x >= 0; },
       true, "absolute error must be equal to or greater than 0");
-  RequireParamValue<double>("mc_probability",
-      [](double x){return x >= 0 && x < 1;}, true,
+  RequireParamValue<double>(params, "mc_probability",
+      [](double x){ return x >= 0 && x < 1; }, true,
       "Monte Carlo probability must be greater than or equal to 0 or less "
       "than 1");
-  RequireParamValue<int>("initial_sample_size", [](int x){return x > 0;},
+  RequireParamValue<int>(params, "initial_sample_size",
+      [](int x){ return x > 0; },
       true, "initial sample size must be greater than 0");
-  RequireParamValue<double>("mc_entry_coef", [](double x){return x >= 1;},
+  RequireParamValue<double>(params, "mc_entry_coef", [](double x){return x >= 1;},
       true, "Monte Carlo entry coefficient must be greater than or equal to 1");
-  RequireParamValue<double>("mc_break_coef",
-      [](double x){return x > 0 && x <= 1;}, true,
+  RequireParamValue<double>(params, "mc_break_coef",
+      [](double x){ return x > 0 && x <= 1; }, true,
       "Monte Carlo break coefficient must be greater than 0 and less than "
       "or equal to 1");
 
   KDEModel* kde;
 
-  if (IO::HasParam("reference"))
+  if (params.Has("reference"))
   {
-    arma::mat reference = std::move(IO::GetParam<arma::mat>("reference"));
+    arma::mat reference = std::move(params.Get<arma::mat>("reference"));
 
     kde = new KDEModel();
 
@@ -283,7 +292,7 @@ static void mlpackMain()
       kde->TreeType() = KDEModel::R_TREE;
 
     // Build model.
-    kde->BuildModel(std::move(reference));
+    kde->BuildModel(timers, std::move(reference));
 
     // Set Mode.
     if (modeStr == "dual-tree")
@@ -294,7 +303,7 @@ static void mlpackMain()
   else
   {
     // Load model.
-    kde = IO::GetParam<KDEModel*>("input_model");
+    kde = params.Get<KDEModel*>("input_model");
   }
 
   // Set model parameters.
@@ -308,20 +317,20 @@ static void mlpackMain()
   kde->MCBreakCoefficient(mcBreakCoef);
 
   // Evaluation.
-  if (IO::HasParam("query"))
+  if (params.Has("query"))
   {
-    arma::mat query = std::move(IO::GetParam<arma::mat>("query"));
-    kde->Evaluate(std::move(query), estimations);
+    arma::mat query = std::move(params.Get<arma::mat>("query"));
+    kde->Evaluate(timers, std::move(query), estimations);
   }
   else
   {
-    kde->Evaluate(estimations);
+    kde->Evaluate(timers, estimations);
   }
 
   // Output predictions if needed.
-  if (IO::HasParam("predictions"))
-    IO::GetParam<arma::vec>("predictions") = std::move(estimations);
+  if (params.Has("predictions"))
+    params.Get<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  IO::GetParam<KDEModel*>("output_model") = kde;
+  params.Get<KDEModel*>("output_model") = kde;
 }

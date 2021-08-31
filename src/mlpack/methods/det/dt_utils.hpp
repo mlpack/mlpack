@@ -69,7 +69,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const size_t maxLeafSize = 10,
                                  const size_t minLeafSize = 5,
                                  const std::string unprunedTreeOutput = "",
-                                 const bool skipPruning = false);
+                                 const bool skipPruning = false,
+                                 util::Timers& timers = IO::GetTimers());
 
 /**
  * This class is responsible for caching the path to each node of the tree. Its

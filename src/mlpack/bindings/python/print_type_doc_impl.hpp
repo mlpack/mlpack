@@ -24,11 +24,11 @@ namespace python {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<util::IsStdVector<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // A flag type.
   if (std::is_same<T, bool>::value)
@@ -150,14 +150,18 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return "An mlpack model pointer.  This type can be pickled to or from disk, "
       "and internally holds a pointer to C++ memory containing the mlpack "
-      "model.  Note that this means that the mlpack model itself cannot be "
-      "easily inspected in Python; however, the pickled model can be loaded "
-      "in C++ and inspected there.";
+      "model.  This model pointer has 2 methods with which the parameters "
+      "of the model can be inspected as well as changed through Python.  "
+      "The `get_cpp_params()` method returns a python ordered dictionary that "
+      "contains all the parameters of the model.  These parameters can "
+      "be inspected and changed.  To set new parameters for a model, "
+      "pass the modified dictionary (without deleting any keys) to the "
+      "`set_cpp_params()` method.";
 }
 
 } // namespace python

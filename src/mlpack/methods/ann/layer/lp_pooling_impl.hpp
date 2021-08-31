@@ -46,7 +46,6 @@ LpPooling<InputDataType, OutputDataType>::LpPooling(
     outputWidth(0),
     outputHeight(0),
     reset(false),
-    offset(0),
     batchSize(0)
 {
   // Nothing to do here.
@@ -68,8 +67,6 @@ void LpPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::floor((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 0;
   }
   else
   {
@@ -77,8 +74,6 @@ void LpPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::ceil((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 1;
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,

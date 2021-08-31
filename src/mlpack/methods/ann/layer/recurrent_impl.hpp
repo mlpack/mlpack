@@ -128,9 +128,12 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() const
+size_t
+Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() const
 {
-  const size_t inputShapeStartModule = boost::apply_visitor(InShapeVisitor(), startModule);
+  const size_t inputShapeStartModule = boost::apply_visitor(InShapeVisitor(),
+      startModule);
+
   // Return the input shape of the first module that we have.
   if (inputShapeStartModule != 0)
   {
@@ -140,34 +143,34 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   else
   {
     // Return input shape of the second module that we have.
-    const size_t inputShapeInputModule = boost::apply_visitor(InShapeVisitor(), inputModule);
+    const size_t inputShapeInputModule = boost::apply_visitor(InShapeVisitor(),
+        inputModule);
     if (inputShapeInputModule != 0)
     {
       return inputShapeInputModule;
-    // If the input shape of second module is 0.
     }
-    else
+    else // If the input shape of second module is 0.
     {
       // Return input shape of the third module that we have.
-      const size_t inputShapeFeedbackModule = boost::apply_visitor(InShapeVisitor(), 
-                                                                   feedbackModule);
+      const size_t inputShapeFeedbackModule = boost::apply_visitor(
+          InShapeVisitor(), feedbackModule);
       if (inputShapeFeedbackModule != 0)
       {
         return inputShapeFeedbackModule;
-      // If the input shape of the third module is 0.
       }
-      else
+      else // If the input shape of the third module is 0.
       {
         // Return the shape of the fourth module that we have.
-        const size_t inputShapeTransferModule = boost::apply_visitor(InShapeVisitor(),
-                                                                     transferModule);
+        const size_t inputShapeTransferModule = boost::apply_visitor(
+            InShapeVisitor(), transferModule);
         if (inputShapeTransferModule != 0)
         {
           return inputShapeTransferModule;
         }
-        // If the input shape of the fourth module is 0.
-        else
+        else // If the input shape of the fourth module is 0.
+        {
           return 0;
+        }
       }
     }
   }

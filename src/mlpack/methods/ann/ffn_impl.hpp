@@ -111,8 +111,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network,
+                                                              predictors.n_rows,
                                                               "FFN<>::Train()");
 
   ResetData(std::move(predictors), std::move(responses));
@@ -120,9 +120,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("ffn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -137,8 +135,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network,
+                                                              predictors.n_rows,
                                                               "FFN<>::Train()");
 
   ResetData(std::move(predictors), std::move(responses));
@@ -148,9 +146,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("ffn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -227,9 +223,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "FFN<>::Predict()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "FFN<>::Predict()");
 
   if (parameter.is_empty())
     ResetParameters();
@@ -264,9 +259,8 @@ template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const PredictorsType& predictors, const ResponsesType& responses)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "FFN<>::Evaluate()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "FFN<>::Evaluate()");
 
   if (parameter.is_empty())
     ResetParameters();
