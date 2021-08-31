@@ -147,6 +147,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
   if (!typeCheck)
     throw std::runtime_error("data::Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
+  util::CheckSameSizes(input, inputLabel, "data::Split()");
   size_t trainIdx = 0;
   size_t testIdx = 0;
   size_t trainSize = 0;
@@ -261,6 +262,7 @@ void Split(const arma::Mat<T>& input,
            const double testRatio,
            const bool shuffleData = true)
 {
+  util::CheckSameSizes(input, inputLabel, "data::Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -455,6 +457,7 @@ void Split(const FieldType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
+  util::CheckSameSizes(input, inputLabel, "data::Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
