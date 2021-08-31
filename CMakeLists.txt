@@ -19,7 +19,7 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 # Set minimum library version required by mlpack.
-set(ARMADILLO_VERSION "9.800.6")
+set(ARMADILLO_VERSION "9.800")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")

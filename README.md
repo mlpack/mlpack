@@ -99,7 +99,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo      >= 9.800.6
+      Armadillo      >= 9.800
       Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.6
       ensmallen      >= 2.10.0

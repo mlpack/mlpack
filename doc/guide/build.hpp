@@ -95,7 +95,7 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 9.800.6 (with LAPACK support)
+ - Armadillo >= 9.800 (with LAPACK support)
  - Boost (math_c99, spirit) >= 1.58
  - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
