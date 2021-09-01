@@ -11,8 +11,13 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME persistence_model
+
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "persistence.hpp"
 
 using namespace mlpack;
@@ -21,7 +26,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Persistence Model");
+BINDING_USER_NAME("Persistence Model");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -68,20 +73,21 @@ PARAM_ROW_IN("labels", "Labels to be predicted.", "l");
 PARAM_ROW_OUT("output", "Vector to save the predictions to.", "o");
 
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Load input dataset.
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(params.Get<arma::mat>("input"));
 
   // Issue a warning if the user did not specify an output file.
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no output will be saved");
 
   arma::rowvec predictions;
 
   // Making the predictions.
-  if(IO::HasParam("labels"))
+  if(params.Has("labels"))
   {
-    arma::rowvec labels = std::move(IO::GetParam<arma::mat>("labels"));
+    arma::rowvec labels = std::move(params.Get<arma::mat>("labels"));
 
     // Sanity check.
     Log::Fatal << "The size of dataset " << dataset.n_rows << " is not equal "
@@ -101,8 +107,8 @@ static void mlpackMain()
   }
 
   // Save predictions, if desired.
-  if(IO::HasParam("output"))
+  if(params.Has("output"))
   {
-    IO::GetParam<arma::rowvec>("output") = std::move(predictions);
+    params.Get<arma::rowvec>("output") = std::move(predictions);
   }
 }
