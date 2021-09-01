@@ -58,6 +58,12 @@ T digamma(T x)
   if (x == 0)
     throw std::runtime_error("Evaluation of fucntion at pole");
 
+  if (x < 1)
+  {
+    result -= 1/x;
+    x += 1;
+  }
+
   // Direct formula to calculate digamma
   result += std::log(x) - (1 / (2 * x));
 
