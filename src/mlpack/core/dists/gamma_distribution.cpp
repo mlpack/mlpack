@@ -102,7 +102,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
                               const double tol)
 {
   // Use boost's definitions of digamma and tgamma, and std::log.
-  using boost::math::digamma;
+  // using boost::math::digamma;
   using boost::math::trigamma;
   using std::log;
 
@@ -138,7 +138,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + log(aEst) - digamma(aEst);
+      double nominator = meanLogx - logMeanx + log(aEst) - math::digamma(aEst);
       double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
 
       // Protect against division by 0.

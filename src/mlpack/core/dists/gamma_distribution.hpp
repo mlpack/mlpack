@@ -21,6 +21,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/digamma.hpp>
 
 namespace mlpack {
 namespace distribution {
