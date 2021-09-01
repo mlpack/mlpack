@@ -66,7 +66,7 @@ class PersistenceModel
    * @param input Input data.
    * @param predictions To store the predictions made on input data.
    */
-  void Predict(const arma::mat& input, arma::rowvec& predictions);
+  inline void Predict(const arma::mat& input, arma::rowvec& predictions);
 
   /**
    * This overload can be used to make predicions on test dataset.
@@ -79,8 +79,8 @@ class PersistenceModel
    * @param test Test data.
    * @param presictions To store the predictions made on test data.
    */
-  void Predict(const arma::mat& train, const arma::mat& test,
-               arma::rowvec& predictions);
+  inline void Predict(const arma::mat& train, const arma::mat& test,
+                      arma::rowvec& predictions);
 
 }; // class PersistenceModel
 
