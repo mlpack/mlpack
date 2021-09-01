@@ -18,7 +18,11 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
-# Set minimum library version required by mlpack.
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
 set(ARMADILLO_VERSION "9.800")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
