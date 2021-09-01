@@ -54,7 +54,7 @@ FileType GuessFileType(std::istream& f);
  * @return The detected file type.  arma::file_type_unknown if unknown.
  */
 FileType AutoDetect(std::fstream& stream,
-                     	const std::string& filename);
+                    const std::string& filename);
 
 /**
  * Return the type based only on the extension.

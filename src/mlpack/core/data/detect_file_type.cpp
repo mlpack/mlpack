@@ -35,7 +35,7 @@ std::string GetStringType(const FileType& type)
     case FileType::ArmaBinary:  return "Armadillo binary formatted data";
     case FileType::PGMBinary:   return "PGM data";
     case FileType::HDF5Binary:  return "HDF5 data";
-    default:                     return "";
+    default:                    return "";
   }
 }
 

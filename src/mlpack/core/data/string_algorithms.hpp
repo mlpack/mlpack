@@ -13,8 +13,8 @@
 #ifndef MLPACK_CORE_DATA_STRING_ALGORITHMS_HPP
 #define MLPACK_CORE_DATA_STRING_ALGORITHMS_HPP
 
-namespace mlpack{
-namespace data{
+namespace mlpack {
+namespace data {
 
 /**
  * A simple trim fucntion to strip off whitespaces 
@@ -97,6 +97,4 @@ inline void trim_if(std::string &str, std::function<bool(char)> func)
 }  // namespace data
 }  // namespace mlpack
 
-#endif
-
-  
+#endif 

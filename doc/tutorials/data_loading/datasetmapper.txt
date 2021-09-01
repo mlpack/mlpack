@@ -19,7 +19,7 @@ mapped to numeric features. A simple example can be
 9,3,True,3
 ```
 
-The above dataset will be respresented as
+The above dataset will be represented as
 
 ```
 7,5,0,3
@@ -30,8 +30,16 @@ The above dataset will be respresented as
 
 Here Mappings are
 
-- True mapped to 0
-- False mapped to 1
+- `True` mapped to `0`
+- `False` mapped to `1`
+
+```
+**Note** DatasetMapper converts non-numeric values in the order
+in which it encounters them in dataset. Therefore there is a chance that
+`True` might get mapped to `0` if it encounters `True` before `False`.
+This `0` and `1` are not to be confused with C++ bool notations. These
+are mapping created by `mpack::DatasetMapper`.
+```
 
 DatasetMapper provides an easy API to load such data and stores all the
 necessary information of the dataset.
@@ -52,14 +60,15 @@ A list of all sections
        
 @section load Loading data 
 
-To use \b DatasetMapper we have to call a specific overload of Load fucntion.
+To use \b DatasetMapper we have to call a specific overload of `data::Load()`
+fucntion.
 
 @code
 using namespace mlpack;
 
 arma::mat data;
 data::DatasetMapper info;
-mlpack::data::Load("dataset.csv", data, info);
+data::Load("dataset.csv", data, info);
 @endcode
 
 Dataset
@@ -70,15 +79,18 @@ Dataset
 9, 3, True, 3
 ```
 
-@section dimensions Dimentionality
+@section dimensions Dimensionality
 
-There are two ways to initialize a DatasetMapper object. First is to initialize
-the object and set each property yourself and second is to pass the object to
-Load() in which case mlpack will populate the object. If we use the later option
-then the dimentionality will be same as the number of rows in the dataset.
+There are two ways to initialize a DatasetMapper object.
+
+* First is to initialize the object and set each property yourself.
+
+* Second is to pass the object to Load() in which case mlpack will populate
+the object. If we use the latter option then the dimensionality will be same
+as what's in the data file.
 
 @code
-std::cout << info.Dimentionality();
+std::cout << info.Dimensionality();
 @endcode
 
 @code
@@ -88,15 +100,16 @@ std::cout << info.Dimentionality();
 @section type Type of each Dimension
 
 Each dimension can be of either of the two types
-  - numeric
-  - categorical
+  - data::Datatype::numeric
+  - data::Datatype::categorical
 
-\b Type(size_t dimension) takes an argument dimension which is basically the row
+\c `Type(size_t dimension)` takes an argument dimension which is the row
 number for which you want to know the type
 
-This will return either 0 or 1.
-  - 0 represents numeric
-  - 1 represents categorical
+This will return an enum `data::Datatype`, which is casted to
+`size_t` when we print them using `std::cout`
+  - 0 represents `data::Datatype::numeric`
+  - 1 represents `data::Datatype::categorical`
  
 @code
 std::cout << info.Type(0) << "\n";
@@ -114,8 +127,9 @@ std::cout << info.Type(3) << "\n";
 
 @section numofmappings Number of Mappings
 
-If the type is categorical each unique token will be mapped to an integer starting
-with 0.
+If the type of a dimention is `data::Datatype::categorical`, then during the
+loading, each unique token in that dimension will be mapped to an integer
+starting with 0.
 
 \b NumMappings(size_t dimension) takes dimension as an argument and returns the number of
 mappings in that dimension, if the dimension is number or there are no mappings then it

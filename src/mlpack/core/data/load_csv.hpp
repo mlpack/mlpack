@@ -214,8 +214,8 @@ class LoadCSV
     f.clear();
     const std::fstream::pos_type pos1 = f.tellg();
 
-    size_t f_n_rows = 0;
-    size_t f_n_cols = 0;
+    size_t fnRows = 0;
+    size_t fnCols = 0;
     std::string lineString;
     std::stringstream lineStream;
     std::string token;
@@ -241,16 +241,16 @@ class LoadCSV
       // row, then the highest number of cols will be
       // considered as the size of the matrix. Missing
       // elements will be filled as 0
-      if (f_n_cols < line_n_cols)
-        f_n_cols = line_n_cols;
+      if (fnCols < line_n_cols)
+        fnCols = line_n_cols;
 
-      ++f_n_rows;
+      ++fnRows;
     }
 
     f.clear();
     f.seekg(pos1);
 
-    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
+    std::pair<size_t, size_t> mat_size(fnRows, fnCols);
 
     return mat_size;
   }
