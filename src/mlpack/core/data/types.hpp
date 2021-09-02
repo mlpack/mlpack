@@ -2,12 +2,12 @@
  * @file core/data/types.hpp
  * @author Gopi M. Tatiraju
  * 
- * This file contains utilitiy fucntions related to types of data.
+ * This file contains utilitiy functions related to types of data.
  * We have adapted all the standard types which are available in armadillo.
  * 
  * This file also contains functions to convery external file types to mlpack
  * file types. In future if we the user of mlpack needs support of an external
- * linear algebra library like armadillo, all fucntions related to handling the
+ * linear algebra library like armadillo, all functions related to handling the
  * types goes here.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

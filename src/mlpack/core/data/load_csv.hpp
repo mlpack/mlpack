@@ -130,7 +130,7 @@ class LoadCSV
 
   /**
    * Caluculate number of columns in each row
-   * and assign the value to the col. This fucntion
+   * and assign the value to the col. This function
    * will work only for numeric data.
    *
    * @param lineStream a single row of data
@@ -199,7 +199,7 @@ class LoadCSV
   // Functions common to both numeric & categorical parser
 
   /**
-   * Get the size of the matrix. Based on isNumeric the fucntion can be used
+   * Get the size of the matrix. Based on isNumeric the function can be used
    * for both numeric_parse and categorical_parse.
    *
    * @param f fstream stream to open the data file

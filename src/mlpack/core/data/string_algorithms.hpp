@@ -17,7 +17,7 @@ namespace mlpack {
 namespace data {
 
 /**
- * A simple trim fucntion to strip off whitespaces 
+ * A simple trim function to strip off whitespaces 
  * from both the side of string. If input is a string
  * with all spaces then str will be empty string.
  *
@@ -55,7 +55,7 @@ inline void trim(std::string& str)
  * be trimmed off.
  *
  * @param str string to be trimmed
- * @param func fucntion to determine the characters which should be trimmed
+ * @param func function to determine the characters which should be trimmed
  */
 inline void trim_if(std::string &str, std::function<bool(char)> func)
 {
