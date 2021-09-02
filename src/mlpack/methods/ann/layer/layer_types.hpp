@@ -252,7 +252,8 @@ using MoreTypes = boost::variant<
         ISRLU<arma::mat, arma::mat>*,
         BicubicInterpolation<arma::mat, arma::mat>*,
         NearestInterpolation<arma::mat, arma::mat>*,
-        GroupNorm<arma::mat, arma::mat>*
+        GroupNorm<arma::mat, arma::mat>*,
+        SQNL<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>

@@ -74,10 +74,10 @@
 #include "softmax.hpp"
 #include "softmin.hpp"
 #include "spatial_dropout.hpp"
+#include "sqnl.hpp"
 #include "subview.hpp"
 #include "transposed_convolution.hpp"
 #include "virtual_batch_norm.hpp"
 #include "vr_class_reward.hpp"
 #include "weight_norm.hpp"
-#include "sqnl.hpp"
 #endif

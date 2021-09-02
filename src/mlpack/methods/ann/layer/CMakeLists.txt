@@ -119,6 +119,8 @@ set(SOURCES
   softmax.hpp
   spatial_dropout.hpp
   spatial_dropout_impl.hpp
+  sqnl.hpp
+  sqnl_impl.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp
@@ -136,8 +138,6 @@ set(SOURCES
   softshrink_impl.hpp
   softmin.hpp
   softmin_impl.hpp
-  sqnl.hpp
-  sqnl_impl.hpp
 )
 
 # Add directory name to sources.

@@ -798,7 +798,6 @@ void CheckSQNLDerivativeCorrect(const arma::colvec input,
   }
 }
 
-
 /**
  * Basic test of the tanh function.
  */
@@ -1433,9 +1432,10 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("SQNLFunctionTest", "[ActivationFunctionsTest]")
 {
-  // Calculated using custom Pytorch functions
+  // Calculated using custom functions
   const arma::colvec desiredActivations("-1 1 1 -1 0.75 -0.75 1 0");
 
+  // Calculated using custom functions
   const arma::colvec desiredDerivatives("0 0 0 0 0.5 0.5 0 1");
 
   CheckSQNLActivationCorrect(activationData, desiredActivations);

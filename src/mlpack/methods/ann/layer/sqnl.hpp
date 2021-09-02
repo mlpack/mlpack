@@ -3,21 +3,21 @@
  * @author Shaikh Yusuf Niaz
  *
  * Definition of Square NonLinearity (SQNL) function as described by
- * Wuraola, Adedamola and Patel, Nitish
+ * Wuraola, Adedamola and Patel, Nitish.
  *
  * For more information, read the following paper.
  *
- *@code
- *@INPROCEEDINGS{8489043,
- * author={Wuraola, Adedamola and Patel, Nitish},
- * booktitle={2018 International Joint Conference on Neural Networks (IJCNN)}, 
- * title={SQNL: A New Computationally Efficient Activation Function}, 
- * year={2018},
- * volume={},
- * number={},
- * pages={1-7},
- * doi={10.1109/IJCNN.2018.8489043}}
- *@endcode
+ * @code
+ * @INPROCEEDINGS{8489043,
+ *  author={Wuraola, Adedamola and Patel, Nitish},
+ *  booktitle={2018 International Joint Conference on Neural Networks (IJCNN)}, 
+ *  title={SQNL: A New Computationally Efficient Activation Function}, 
+ *  year={2018},
+ *  volume={},
+ *  number={},
+ *  pages={1-7},
+ *  doi={10.1109/IJCNN.2018.8489043}}
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -65,7 +65,6 @@ class SQNL
  public:
   /**
    * Create the SQNL object 
-   *
    */
   SQNL();
 
@@ -108,7 +107,7 @@ class SQNL
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.
