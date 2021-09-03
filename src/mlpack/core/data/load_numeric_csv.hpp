@@ -64,7 +64,7 @@ bool LoadCSV::ConvertToken(eT& val,
 
   char* endptr = nullptr;
 
-  // Convert the token into ccorrect type.
+  // Convert the token into correct type.
   // If we have a eT as unsigned int,
   // it will convert all negative numbers to 0
   if (std::is_floating_point<eT>::value)
@@ -85,6 +85,10 @@ bool LoadCSV::ConvertToken(eT& val,
       val = eT(std::strtoull(str, &endptr, 10));
     }
   }
+  // None of the above conditions were executed
+  // So conversion failed
+  else
+    return false;
 
   if (str == endptr)
     return false;
