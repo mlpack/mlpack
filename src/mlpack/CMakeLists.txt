@@ -113,7 +113,7 @@ install(TARGETS mlpack
 add_dependencies(mlpack mlpack_headers)
 
 # Extract the version number.
-file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/core/util/version.hpp"
   VERSION_HPP_CONTENTS)
 string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
   MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")

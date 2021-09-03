@@ -95,7 +95,7 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 8.400.0 (with LAPACK support)
+ - Armadillo >= 9.800 (with LAPACK support)
  - Boost (math_c99, spirit) >= 1.58
  - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
@@ -294,7 +294,7 @@ Now similarly you can run all the binding related tests using:
 ./bin/mlpack_test "[BindingTests]"
 @endcode
 
-To run a single test, you can explicitly provide the name of the test; for example, 
+To run a single test, you can explicitly provide the name of the test; for example,
 to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
 
 @code
