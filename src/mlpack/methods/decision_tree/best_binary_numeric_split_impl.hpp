@@ -15,6 +15,7 @@
 namespace mlpack {
 namespace tree {
 
+// Overload used for classification.
 template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
@@ -25,8 +26,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    arma::Col<typename VecType::elem_type>& classProbabilities,
-    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
+    arma::vec& splitInfo,
+    AuxiliarySplitInfo& /* aux */)
 {
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -151,12 +152,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Corner case: is this the best possible split?
     if (gain >= 0.0)
     {
-      // We can take a shortcut: no split will be better than this, so just take
-      // this one.
-      classProbabilities.set_size(1);
-      // The actual split value will be halfway between the value at index - 1
-      // and index.
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+      // We can take a shortcut: no split will be better than this, so just
+      // take this one. The actual split value will be halfway between the
+      // value at index - 1 and index.
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
       return gain;
@@ -165,8 +165,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     {
       // We still have a better split.
       bestFoundGain = gain;
-      classProbabilities.set_size(1);
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+      splitInfo.set_size(1);
+      splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
     }
@@ -185,14 +185,298 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   return bestFoundGain;
 }
 
+// Overload used for regression.
+template<typename FitnessFunction>
+template<bool UseWeights, typename VecType, typename ResponsesType,
+         typename WeightVecType>
+typename std::enable_if<
+    !HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
+    double>::type
+BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
+    const double bestGain,
+    const VecType& data,
+    const ResponsesType& responses,
+    const WeightVecType& weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    double& splitInfo,
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction& fitnessFunction)
+{
+  typedef typename ResponsesType::elem_type RType;
+  typedef typename WeightVecType::elem_type WType;
+
+  // First sanity check: if we don't have enough points, we can't split.
+  if (data.n_elem < (minimumLeafSize * 2))
+    return DBL_MAX;
+  if (bestGain == 0.0)
+    return DBL_MAX; // It can't be outperformed.
+
+  // Next, sort the data.
+  arma::uvec sortedIndices = arma::sort_index(data);
+  arma::Row<RType> sortedResponses(responses.n_elem);
+  arma::Row<WType> sortedWeights;
+  for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+    sortedResponses[i] = responses[sortedIndices[i]];
+
+  // Sanity check: if the first element is the same as the last, we can't split
+  // in this dimension.
+  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
+    return DBL_MAX;
+
+  // Only initialize if we are using weights.
+  if (UseWeights)
+  {
+    sortedWeights.set_size(sortedResponses.n_elem);
+    // The weights must keep the same order as the responses.
+    for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+      sortedWeights[i] = weights[sortedIndices[i]];
+  }
+
+  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
+  bool improved = false;
+  // Force a minimum leaf size of 1 (empty children don't make sense).
+  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+
+  WType totalWeight = 0.0;
+  WType totalLeftWeight = 0.0;
+  WType totalRightWeight = 0.0;
+
+  if (UseWeights)
+  {
+    totalWeight = arma::accu(sortedWeights);
+    bestFoundGain *= totalWeight;
+
+    for (size_t i = 0; i < minimum - 1; ++i)
+      totalLeftWeight += sortedWeights[i];
+
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+      totalRightWeight += sortedWeights[i];
+  }
+  else
+  {
+    bestFoundGain *= data.n_elem;
+  }
+
+  // Loop through all possible split points, choosing the best one.
+  for (size_t index = minimum; index < data.n_elem - minimum + 1; ++index)
+  {
+    if (UseWeights)
+    {
+      totalLeftWeight += sortedWeights[index - 1];
+      totalRightWeight -= sortedWeights[index - 1];
+    }
+    // Make sure that the value has changed.
+    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+      continue;
+
+    // Calculate the gain for the left and right child.
+    const double leftGain = fitnessFunction.template
+        Evaluate<UseWeights>(sortedResponses, sortedWeights, 0, index);
+    const double rightGain = fitnessFunction.template
+        Evaluate<UseWeights>(sortedResponses, sortedWeights, index,
+            responses.n_elem);
+
+    double gain;
+    if (UseWeights)
+    {
+      gain = totalLeftWeight * leftGain + totalRightWeight * rightGain;
+    }
+    else
+    {
+      // Calculate the gain at this split point.
+      gain = double(index) * leftGain +
+          double(sortedResponses.n_elem - index) * rightGain;
+    }
+
+    // Corner case: is this the best possible split?
+    if (gain >= 0.0)
+    {
+      // We can take a shortcut: no split will be better than this, so just
+      // take this one. The actual split value will be halfway between the
+      // value at index - 1 and index.
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+
+      return gain;
+    }
+     if (gain > bestFoundGain)
+    {
+      // We still have a better split.
+      bestFoundGain = gain;
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+      improved = true;
+    }
+  }
+
+  // If we didn't improve, return the original gain exactly as we got it
+  // (without introducing floating point errors).
+  if (!improved)
+    return DBL_MAX;
+
+  if (UseWeights)
+    bestFoundGain /= totalWeight;
+  else
+    bestFoundGain /= data.n_elem;
+
+  return bestFoundGain;
+}
+
+// Optimized version for any fitness function that implements
+// BinaryScanInitialize(), BinaryStep() and BinaryGains() functions.
+template<typename FitnessFunction>
+template<bool UseWeights, typename VecType, typename ResponsesType,
+         typename WeightVecType>
+typename std::enable_if<
+    HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
+    double>::type
+BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
+    const double bestGain,
+    const VecType& data,
+    const ResponsesType& responses,
+    const WeightVecType& weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    double& splitInfo,
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction& fitnessFunction)
+{
+  typedef typename ResponsesType::elem_type RType;
+  typedef typename WeightVecType::elem_type WType;
+
+  // First sanity check: if we don't have enough points, we can't split.
+  if (data.n_elem < (minimumLeafSize * 2))
+    return DBL_MAX;
+  if (bestGain == 0.0)
+    return DBL_MAX; // It can't be outperformed.
+
+  // Next, sort the data.
+  arma::uvec sortedIndices = arma::sort_index(data);
+  arma::Row<RType> sortedResponses(responses.n_elem);
+  arma::Row<WType> sortedWeights;
+  for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+    sortedResponses[i] = responses[sortedIndices[i]];
+
+  // Sanity check: if the first element is the same as the last, we can't split
+  // in this dimension.
+  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
+    return DBL_MAX;
+
+  // Only initialize if we are using weights.
+  if (UseWeights)
+  {
+    sortedWeights.set_size(sortedResponses.n_elem);
+    // The weights must keep the same order as the responses.
+    for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+      sortedWeights[i] = weights[sortedIndices[i]];
+  }
+
+  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
+  bool improved = false;
+  // Force a minimum leaf size of 1 (empty children don't make sense).
+  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+
+  WType totalWeight = 0.0;
+  WType leftChildWeight = 0.0;
+  WType rightChildWeight = 0.0;
+
+  if (UseWeights)
+  {
+    totalWeight = arma::accu(sortedWeights);
+    bestFoundGain *= totalWeight;
+
+    for (size_t i = 0; i < minimum - 1; ++i)
+      leftChildWeight += sortedWeights[i];
+
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+      rightChildWeight += sortedWeights[i];
+  }
+  else
+  {
+    bestFoundGain *= data.n_elem;
+  }
+
+  // Initialize and precompute various statistics to efficiently compute gain
+  // values for all possible splits.
+  fitnessFunction.template BinaryScanInitialize<UseWeights>(sortedResponses,
+      sortedWeights, minimum);
+
+  // Loop through all possible split points, choosing the best one.
+  for (size_t index = minimum; index < data.n_elem - minimum + 1; ++index)
+  {
+    if (UseWeights)
+    {
+      leftChildWeight += sortedWeights[index - 1];
+      rightChildWeight -= sortedWeights[index - 1];
+    }
+
+    // Steps through the current index and updates the cached data.
+    fitnessFunction.template BinaryStep<UseWeights>(sortedResponses,
+        sortedWeights, index - 1);
+
+    // Make sure that the value has changed.
+    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+      continue;
+
+    // Calculate the gain for the left and right child.
+    std::tuple<double, double> binaryGains = fitnessFunction.BinaryGains();
+    const double leftGain = std::get<0>(binaryGains);
+    const double rightGain = std::get<1>(binaryGains);
+
+    double gain;
+    if (UseWeights)
+    {
+      gain = leftChildWeight * leftGain + rightChildWeight * rightGain;
+    }
+    else
+    {
+      // Calculate the gain at this split point.
+      gain = double(index) * leftGain +
+          double(sortedResponses.n_elem - index) * rightGain;
+    }
+
+    // Corner case: is this the best possible split?
+    if (gain >= 0.0)
+    {
+      // We can take a shortcut: no split will be better than this, so just
+      // take this one. The actual split value will be halfway between the
+      // value at index - 1 and index.
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+
+      return gain;
+    }
+    if (gain > bestFoundGain)
+    {
+      // We still have a better split.
+      bestFoundGain = gain;
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+      improved = true;
+    }
+  }
+  // If we didn't improve, return the original gain exactly as we got it
+  // (without introducing floating point errors).
+  if (!improved)
+    return DBL_MAX;
+
+  if (UseWeights)
+    bestFoundGain /= totalWeight;
+  else
+    bestFoundGain /= data.n_elem;
+
+  return bestFoundGain;
+}
+
 template<typename FitnessFunction>
 template<typename ElemType>
 size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::Col<ElemType>& classProbabilities,
-    const AuxiliarySplitInfo<ElemType>& /* aux */)
+    const double& splitInfo,
+    const AuxiliarySplitInfo& /* aux */)
 {
-  if (point <= classProbabilities[0])
+  if (point <= splitInfo)
     return 0; // Go left.
   else
     return 1; // Go right.

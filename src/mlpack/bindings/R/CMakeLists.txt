@@ -208,6 +208,7 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/print_input_processing.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/print_output_processing.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/print_serialize_util.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack_main.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/R_option.hpp"
   )
 
@@ -284,6 +285,11 @@ if (BUILD_R_BINDINGS)
        DESTINATION
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
 
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure"
+       DESTINATION
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
+
   # Do the actual build.
   add_custom_target(r_build ALL)
 
@@ -310,8 +316,8 @@ if (BUILD_R_BINDINGS)
   # Installation script for the packagae.
   install(CODE
       "execute_process(
-         COMMAND R CMD INSTALL mlpack_${PACKAGE_VERSION}.tar.gz
-         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}"
+         COMMAND ${R_EXECUTABLE} CMD INSTALL mlpack_${PACKAGE_VERSION}.tar.gz
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
   )
 
   add_dependencies(R r_build)

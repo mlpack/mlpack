@@ -38,13 +38,21 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 // unique identifier inside of the PARAM() module.
 #define JOIN(x, y) JOIN_AGAIN(x, y)
 #define JOIN_AGAIN(x, y) x ## y
+#define STRINGIFY(x) STRINGIFY_AGAIN(x)
+#define STRINGIFY_AGAIN(x) #x
 
 /** @endcond */
 
 /**
- * Specify the program name of a binding.  Only one instance of this macro
- * should be present in your program!  Therefore, use it in the main.cpp
- * (or corresponding binding) in your program.
+ * Define the function to be called for a given binding.  BINDING_NAME should be
+ * set before calling this.
+ */
+#define BINDING_FUNCTION(...) BINDING_NAME(__VA_ARGS__)
+
+/**
+ * Specify the user-friendly name of a binding.  Only one instance of this macro
+ * should be present per binding.  BINDING_NAME should be set before calling
+ * this.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
@@ -52,11 +60,13 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
  * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
- * @param NAME Short string representing the name of the program.
+ * @param NAME User-friendly name.
  */
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME);
+// TODO: use __COUNTER__ here and elsewhere!
+#define BINDING_USER_NAME(NAME) static \
+    mlpack::util::BindingName \
+    io_bindingname_dummy_object = mlpack::util::BindingName( \
+        STRINGIFY(BINDING_NAME), NAME);
 
 /**
  * Specify the short description of a binding.  Only one instance of this macro
@@ -76,7 +86,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #define BINDING_SHORT_DESC(SHORT_DESC) static \
     mlpack::util::ShortDescription \
     io_programshort_desc_dummy_object = mlpack::util::ShortDescription( \
-    SHORT_DESC);
+        STRINGIFY(BINDING_NAME), SHORT_DESC);
 
 /**
  * Specify the long description of a binding.  Only one instance of this macro
@@ -98,7 +108,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #define BINDING_LONG_DESC(LONG_DESC) static \
     mlpack::util::LongDescription \
     io_programlong_desc_dummy_object = mlpack::util::LongDescription( \
-    []() { return std::string(LONG_DESC); });
+        STRINGIFY(BINDING_NAME), []() { return std::string(LONG_DESC); });
 
 /**
  * Specify the example of a binding.  Mutiple instance of this macro can be
@@ -122,13 +132,13 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       mlpack::util::Example \
       JOIN(io_programexample_dummy_object_, __COUNTER__) = \
       mlpack::util::Example( \
-      []() { return(std::string(EXAMPLE)); });
+          STRINGIFY(BINDING_NAME), []() { return(std::string(EXAMPLE)); });
 #else
   #define BINDING_EXAMPLE(EXAMPLE) static \
       mlpack::util::Example \
       JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
       mlpack::util::Example( \
-      []() { return(std::string(EXAMPLE)); });
+          STRINGIFY(BINDING_NAME), []() { return(std::string(EXAMPLE)); });
 #endif
 
 /**
@@ -158,12 +168,12 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::util::SeeAlso \
       JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
-      mlpack::util::SeeAlso(DESCRIPTION, LINK);
+      mlpack::util::SeeAlso(STRINGIFY(BINDING_NAME), DESCRIPTION, LINK);
 #else
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::util::SeeAlso \
       JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
-      mlpack::util::SeeAlso(DESCRIPTION, LINK);
+      mlpack::util::SeeAlso(STRINGIFY(BINDING_NAME), DESCRIPTION, LINK);
 #endif
 
 /**
@@ -175,8 +185,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -202,8 +212,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
 // Use a forward declaration of the class.
@@ -234,8 +244,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -261,8 +271,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -292,8 +302,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -321,8 +331,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -353,8 +363,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -928,8 +938,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -962,8 +972,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1002,8 +1012,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1015,7 +1025,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
-    PARAM_IN(TUPLE_TYPE, ID, DESC, ALIAS, TUPLE_TYPE(), false)
+    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
+        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
+        TUPLE_TYPE())
 
 /**
  * Define an input model.  From the command line, the user can specify the file
@@ -1115,8 +1127,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1140,8 +1152,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1165,8 +1177,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1192,8 +1204,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
+ * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
+ *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1207,11 +1219,44 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
 
 /**
- * Define an input parameter.  Don't use this function; use the other ones above
- * that call it.  Note that we are using the __LINE__ macro for naming these
- * actual parameters when __COUNTER__ does not exist, which is a bit of an ugly
- * hack... but this is the preprocessor, after all.  We don't have much choice
- * other than ugliness.
+ * Defining useful macros using PARAM macro defined later.
+ */
+#define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
+
+#define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);
+
+#define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::mat, ID, DESC, ALIAS, "arma::mat", REQ, IN, \
+        TRANS, arma::mat());
+
+#define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Mat<size_t>, ID, DESC, ALIAS, "arma::Mat<size_t>", \
+        REQ, IN, TRANS, arma::Mat<size_t>());
+
+#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::vec, ID, DESC, ALIAS, "arma::vec", REQ, IN, TRANS, \
+        arma::vec());
+
+#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Col<size_t>, ID, DESC, ALIAS, "arma::Col<size_t>", \
+        REQ, IN, TRANS, arma::Col<size_t>());
+
+#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::rowvec, ID, DESC, ALIAS, "arma::rowvec", REQ, IN, \
+    TRANS, arma::rowvec());
+
+#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Row<size_t>, ID, DESC, ALIAS, "arma::Row<size_t>", \
+    REQ, IN, TRANS, arma::Row<size_t>());
+
+/**
+ * Define the PARAM(), PARAM_MODEL() macro. Don't use this function;
+ * use the other ones above that call it.  Note that we are using the __LINE__
+ * macro for naming these actual parameters when __COUNTER__ does not exist,
+ * which is a bit of an ugly hack... but this is the preprocessor, after all.
+ * We don't have much choice other than ugliness.
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
@@ -1223,114 +1268,43 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
 
-  #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM_GLOBAL(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
-      JOIN(io_option_dummy_object_out_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
-
-  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::mat> \
-      JOIN(io_option_dummy_matrix_, __COUNTER__) \
-      (arma::mat(), ID, DESC, ALIAS, "arma::mat", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(io_option_dummy_umatrix_, __COUNTER__) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::vec> \
-      JOIN(io_option_dummy_col_, __COUNTER__) \
-      (arma::vec(), ID, DESC, ALIAS, "arma::vec", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(io_option_dummy_ucol_, __COUNTER__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::rowvec> \
-      JOIN(io_option_dummy_row_, __COUNTER__) \
-      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(io_option_dummy_urow_, __COUNTER__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", \
-      REQ, IN, !TRANS, testName);
+      JOIN(io_option_global_dummy_object_in_, __COUNTER__) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
 
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
       JOIN(io_option_dummy_model_, __COUNTER__) \
-      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
+      STRINGIFY(BINDING_NAME));
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
 
-  #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM_GLOBAL(T, ID, DESC,  ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_out_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
-
-  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::mat> \
-      JOIN(JOIN(io_option_dummy_object_matrix_, __LINE__), opt) \
-      (arma::mat(), ID, DESC, ALIAS, "arma::mat", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(JOIN(io_option_dummy_object_umatrix_, __LINE__), opt) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", REQ, IN, \
-      !TRANS, testName);
-
-  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::vec> \
-      JOIN(io_option_dummy_object_col_, __LINE__) \
-      (arma::vec(), ID, DESC, ALIAS, "arma::vec", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(io_option_dummy_object_ucol_, __LINE__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", REQ, IN, \
-      !TRANS, testName);
-
-  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::rowvec> \
-      JOIN(io_option_dummy_object_row_, __LINE__) \
-      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(io_option_dummy_object_urow_, __LINE__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", REQ, IN, \
-      !TRANS, testName);
+      JOIN(JOIN(io_option_global_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
       JOIN(JOIN(io_option_dummy_object_model_, __LINE__), opt) \
       (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
-      testName);
+      STRINGIFY(BINDING_NAME));
 #endif
 
 #endif

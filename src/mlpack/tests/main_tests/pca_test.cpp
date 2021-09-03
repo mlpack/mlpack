@@ -2,43 +2,26 @@
  * @file tests/main_tests/pca_test.cpp
  * @author Ryan Curtin
  *
- * Test mlpackMain() of pca_main.cpp.
+ * Test RUN_BINDING() of pca_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "PrincipalComponentAnalysis";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/pca/pca_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct PCATestFixture
-{
- public:
-  PCATestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~PCATestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(PCATestFixture);
 
 /**
  * Make sure that if we ask for a dataset in 3 dimensions back, we get it.
@@ -52,11 +35,11 @@ TEST_CASE_METHOD(PCATestFixture, "PCADimensionTest",
   SetInputParam("input", std::move(x));
   SetInputParam("new_dimensionality", (int) 3);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Now check that the output has 3 dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 5);
 }
 
 /**
@@ -73,11 +56,11 @@ TEST_CASE_METHOD(PCATestFixture, "PCAVarRetainTest",
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output has 5 dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 4);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 4);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 5);
 }
 
 /**
@@ -93,11 +76,11 @@ TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest",
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output has 1 dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 5);
 }
 
 /**
@@ -112,6 +95,6 @@ TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest",
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

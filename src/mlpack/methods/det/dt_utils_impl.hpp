@@ -112,12 +112,13 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool useVolumeReg,
                                  const size_t maxLeafSize,
                                  const size_t minLeafSize,
-                                 const bool skipPruning)
+                                 const bool skipPruning,
+                                 util::Timers& timers)
 {
   // Initialize the tree.
   DTree<MatType, TagType>* dtree = new DTree<MatType, TagType>(dataset);
 
-  Timer::Start("tree_growing");
+  timers.Start("tree_growing");
   // Prepare to grow the tree...
   arma::Col<size_t> oldFromNew(dataset.n_cols);
   for (size_t i = 0; i < oldFromNew.n_elem; ++i)
@@ -131,7 +132,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   double alpha = dtree->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
       minLeafSize);
 
-  Timer::Stop("tree_growing");
+  timers.Stop("tree_growing");
   Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the tree using full "
       << "dataset; minimum alpha: " << alpha << "." << std::endl;
 
@@ -144,7 +145,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     Log::Info << "Performing " << folds << "-fold cross validation." <<
       std::endl;
 
-  Timer::Start("pruning_sequence");
+  timers.Start("pruning_sequence");
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
   std::vector<std::pair<double, double> > prunedSequence;
@@ -169,7 +170,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                     dtree->SubtreeLeavesLogNegError());
   prunedSequence.push_back(treeSeq);
 
-  Timer::Stop("pruning_sequence");
+  timers.Stop("pruning_sequence");
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 
@@ -179,7 +180,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   arma::vec regularizationConstants(prunedSequence.size());
   regularizationConstants.fill(0.0);
 
-  Timer::Start("cross_validation");
+  timers.Start("cross_validation");
   // Go through each fold.  On the Visual Studio compiler, we have to use
   // intmax_t because size_t is not yet supported by their OpenMP
   // implementation. omp_size_t is the appropriate type according to the
@@ -261,7 +262,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     #pragma omp critical(DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
   }
-  Timer::Stop("cross_validation");
+  timers.Stop("cross_validation");
 
   double optimalAlpha = -1.0;
   long double cvBestError = -std::numeric_limits<long double>::max();

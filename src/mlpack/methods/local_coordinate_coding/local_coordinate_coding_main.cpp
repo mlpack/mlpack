@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME local_coordinate_coding
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "lcc.hpp"
@@ -24,7 +30,7 @@ using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("Local Coordinate Coding");
+BINDING_USER_NAME("Local Coordinate Coding");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -116,42 +122,42 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  if (IO::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
   // Check for parameter validity.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
-  if (IO::HasParam("training"))
-    RequireAtLeastOnePassed({ "atoms" }, true);
+  if (params.Has("training"))
+    RequireAtLeastOnePassed(params, { "atoms" }, true);
 
-  RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed(params, { "codes", "dictionary", "output_model" },
+      false, "no output will be saved");
 
-  ReportIgnoredParam({{ "test", false }}, "codes");
+  ReportIgnoredParam(params, {{ "test", false }}, "codes");
 
-  ReportIgnoredParam({{ "training", false }}, "atoms");
-  ReportIgnoredParam({{ "training", false }}, "lambda");
-  ReportIgnoredParam({{ "training", false }}, "initial_dictionary");
-  ReportIgnoredParam({{ "training", false }}, "max_iterations");
-  ReportIgnoredParam({{ "training", false }}, "normalize");
-  ReportIgnoredParam({{ "training", false }}, "tolerance");
+  ReportIgnoredParam(params, {{ "training", false }}, "atoms");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambda");
+  ReportIgnoredParam(params, {{ "training", false }}, "initial_dictionary");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
+  ReportIgnoredParam(params, {{ "training", false }}, "normalize");
+  ReportIgnoredParam(params, {{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
   LocalCoordinateCoding* lcc = NULL;
-  if (IO::HasParam("input_model"))
-    lcc = IO::GetParam<LocalCoordinateCoding*>("input_model");
+  if (params.Has("input_model"))
+    lcc = params.Get<LocalCoordinateCoding*>("input_model");
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    mat matX = std::move(IO::GetParam<mat>("training"));
+    mat matX = std::move(params.Get<mat>("training"));
 
     // Normalize each point if the user asked for it.
-    if (IO::HasParam("normalize"))
+    if (params.Has("normalize"))
     {
       Log::Info << "Normalizing data before coding..." << endl;
       for (size_t i = 0; i < matX.n_cols; ++i)
@@ -159,42 +165,44 @@ static void mlpackMain()
     }
 
     // Check if the parameters lie within the bounds.
-    RequireParamValue<int>("atoms", [&matX](int x)
+    RequireParamValue<int>(params, "atoms", [&matX](int x)
         { return (x > 0) && ((size_t) x < matX.n_cols); }, 1,
         "Number of atoms must lie between 1 and number of training points");
 
-    RequireParamValue<double>("lambda", [](double x) { return x >= 0; }, 1,
-        "The regularization parameter should be a non-negative real number");
+    RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0; },
+        1, "The regularization parameter should be a non-negative real number");
 
-    RequireParamValue<double>("tolerance", [](double x) { return x > 0; }, 1,
+    RequireParamValue<double>(params, "tolerance",
+        [](double x) { return x > 0; }, 1,
         "Tolerance should be a positive real number");
 
     lcc = new LocalCoordinateCoding(0, 0.0);
 
-    lcc->Lambda() = IO::GetParam<double>("lambda");
-    lcc->Atoms() = (size_t) IO::GetParam<int>("atoms");
-    lcc->MaxIterations() = (size_t) IO::GetParam<int>("max_iterations");
-    lcc->Tolerance() = IO::GetParam<double>("tolerance");
+    lcc->Lambda() = params.Get<double>("lambda");
+    lcc->Atoms() = (size_t) params.Get<int>("atoms");
+    lcc->MaxIterations() = (size_t) params.Get<int>("max_iterations");
+    lcc->Tolerance() = params.Get<double>("tolerance");
 
     // Inform the user if we are overwriting their model.
-    if (IO::HasParam("input_model"))
+    timers.Start("local_coordinate_coding");
+    if (params.Has("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << IO::GetPrintableParam<string>("input_model") << "' as initial "
+          << params.GetPrintable<string>("input_model") << "' as initial "
           << "dictionary for training." << endl;
       lcc->Train<NothingInitializer>(matX);
     }
-    else if (IO::HasParam("initial_dictionary"))
+    else if (params.Has("initial_dictionary"))
     {
       // Load initial dictionary directly into LCC object.
-      lcc->Dictionary() = std::move(IO::GetParam<mat>("initial_dictionary"));
+      lcc->Dictionary() = std::move(params.Get<mat>("initial_dictionary"));
 
       // Validate the size of the initial dictionary.
       if (lcc->Dictionary().n_cols != lcc->Atoms())
       {
         const size_t dictionarySize = lcc->Dictionary().n_cols;
         const size_t atoms = lcc->Atoms();
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete lcc;
         Log::Fatal << "The initial dictionary has " << dictionarySize
             << " atoms, but the number of atoms was specified to be "
@@ -204,7 +212,7 @@ static void mlpackMain()
       if (lcc->Dictionary().n_rows != matX.n_rows)
       {
         const size_t dictionaryDimension = lcc->Dictionary().n_rows;
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete lcc;
         Log::Fatal << "The initial dictionary has " << dictionaryDimension
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
@@ -219,26 +227,27 @@ static void mlpackMain()
       // Run with the default initialization.
       lcc->Train(matX);
     }
+    timers.Stop("local_coordinate_coding");
   }
 
   // Now, do we have any matrix to encode?
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    if (IO::GetParam<mat>("test").n_rows != lcc->Dictionary().n_rows)
+    if (params.Get<mat>("test").n_rows != lcc->Dictionary().n_rows)
     {
       const size_t dictionaryDimension = lcc->Dictionary().n_rows;
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete lcc;
       Log::Fatal << "Model was trained with a dimensionality of "
           << dictionaryDimension << ", but data in test file "
-          << IO::GetPrintableParam<mat>("test") << " has a dimensionality of "
-          << IO::GetParam<mat>("test").n_rows << "!" << endl;
+          << params.GetPrintable<mat>("test") << " has a dimensionality of "
+          << params.Get<mat>("test").n_rows << "!" << endl;
     }
 
-    mat matY = std::move(IO::GetParam<mat>("test"));
+    mat matY = std::move(params.Get<mat>("test"));
 
     // Normalize each point if the user asked for it.
-    if (IO::HasParam("normalize"))
+    if (params.Has("normalize"))
     {
       Log::Info << "Normalizing test data before coding..." << endl;
       for (size_t i = 0; i < matY.n_cols; ++i)
@@ -248,10 +257,10 @@ static void mlpackMain()
     mat codes;
     lcc->Encode(matY, codes);
 
-    IO::GetParam<mat>("codes") = std::move(codes);
+    params.Get<mat>("codes") = std::move(codes);
   }
 
   // Save the dictionary and the model.
-  IO::GetParam<mat>("dictionary") = lcc->Dictionary();
-  IO::GetParam<LocalCoordinateCoding*>("output_model") = lcc;
+  params.Get<mat>("dictionary") = lcc->Dictionary();
+  params.Get<LocalCoordinateCoding*>("output_model") = lcc;
 }

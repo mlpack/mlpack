@@ -39,15 +39,20 @@ namespace util {
  * sense.  The custom error message should not have a capitalized first
  * character and no ending punctuation (a '!' will be added by this function).
  *
+ * @param params Set of parameters to check.
  * @param constraints Set of parameters from which only one should be passed.
  * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
+ * @param allowNone If true, then no error message will be thrown if none of the
+ *     parameters in the constraints were passed.
  */
 void RequireOnlyOnePassed(
+    util::Params& params,
     const std::vector<std::string>& constraints,
     const bool fatal = true,
-    const std::string& customErrorMessage = "");
+    const std::string& customErrorMessage = "",
+    const bool allowNone = false);
 
 /**
  * Require that at least one of the given parameters in the constraints set was
@@ -72,12 +77,14 @@ void RequireOnlyOnePassed(
  * sense.  The custom error message should not have a capitalized first
  * character and no ending punctuation (a '!' will be added by this function).
  *
+ * @param params Set of parameters to check.
  * @param constraints Set of parameters from which only one should be passed.
  * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
  */
 void RequireAtLeastOnePassed(
+    util::Params& params,
     const std::vector<std::string>& constraints,
     const bool fatal = true,
     const std::string& customErrorMessage = "");
@@ -102,12 +109,14 @@ void RequireAtLeastOnePassed(
  * sense.  The custom error message should not have a capitalized first
  * character and no ending punctuation (a '!' will be added by this function).
  *
+ * @param params Set of parameters to check.
  * @param constraints Set of parameters of which none or all should be passed.
  * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
  */
 void RequireNoneOrAllPassed(
+    util::Params& params,
     const std::vector<std::string>& constraints,
     const bool fatal = true,
     const std::string& customErrorMessage = "");
@@ -130,13 +139,15 @@ void RequireNoneOrAllPassed(
  * weak learner type".
  *
  * @tparam T Type of parameter.
+ * @param params Set of parameters to check.
  * @param paramName Name of parameter to check.
  * @param set Set of valid values for parameter.
  * @param fatal If true, an exception is thrown and output goes to Log::Fatal.
  * @param errorMessage Error message to output.
  */
 template<typename T>
-void RequireParamInSet(const std::string& paramName,
+void RequireParamInSet(util::Params& params,
+                       const std::string& paramName,
                        const std::vector<T>& set,
                        const bool fatal,
                        const std::string& errorMessage);
@@ -158,6 +169,7 @@ void RequireParamInSet(const std::string& paramName,
  * sense.
  *
  * @tparam T Type of parameter to check.
+ * @param params Set of parameters to check.
  * @param paramName Name of parameter to check.
  * @param conditional Function to use to check parameter value; should return
  *      'true' if the parameter value is okay.
@@ -165,7 +177,8 @@ void RequireParamInSet(const std::string& paramName,
  * @param errorMessage Error message to output.
  */
 template<typename T>
-void RequireParamValue(const std::string& paramName,
+void RequireParamValue(util::Params& params,
+                       const std::string& paramName,
                        const std::function<bool(T)>& conditional,
                        const bool fatal,
                        const std::string& errorMessage);
@@ -177,10 +190,12 @@ void RequireParamValue(const std::string& paramName,
  * then a warning will be issued noting that the parameter is ignored.  The
  * warning will go to Log::Warn.
  *
+ * @param params Set of parameters to check.
  * @param constraints Set of constraints.
  * @param paramName Name of parameter to check.
  */
 void ReportIgnoredParam(
+    util::Params& params,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName);
 

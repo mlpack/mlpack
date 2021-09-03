@@ -1303,6 +1303,8 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
+  util::Timers timers;
+
   for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
@@ -1321,17 +1323,17 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 5, false, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, false);
       else if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 5, false, true);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, true);
       else if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 5, true, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, true, false);
 
       vector<vector<size_t>> neighbors;
       vector<vector<double>> distances;
 
-      models[i].Search(std::move(queryCopy), math::Range(0.25, 0.75), neighbors,
-          distances);
+      models[i].Search(timers, std::move(queryCopy), math::Range(0.25, 0.75),
+          neighbors, distances);
 
       REQUIRE(neighbors.size() == baselineNeighbors.size());
       REQUIRE(distances.size() == baselineDistances.size());
@@ -1389,6 +1391,8 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
+  util::Timers timers;
+
   for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
@@ -1405,16 +1409,16 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
       // We only have std::move() cosntructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 5, false, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, false);
       else if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 5, false, true);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, true);
       else if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 5, true, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, true, false);
 
       vector<vector<size_t>> neighbors;
       vector<vector<double>> distances;
 
-      models[i].Search(math::Range(0.25, 0.5), neighbors, distances);
+      models[i].Search(timers, math::Range(0.25, 0.5), neighbors, distances);
 
       REQUIRE(neighbors.size() == baselineNeighbors.size());
       REQUIRE(distances.size() == baselineDistances.size());

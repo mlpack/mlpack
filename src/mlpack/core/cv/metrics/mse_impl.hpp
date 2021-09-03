@@ -20,14 +20,8 @@ double MSE::Evaluate(MLAlgorithm& model,
                      const DataType& data,
                      const ResponsesType& responses)
 {
-  if (data.n_cols != responses.n_cols)
-  {
-    std::ostringstream oss;
-    oss << "MSE::Evaluate(): number of points (" << data.n_cols << ") "
-        << "does not match number of responses (" << responses.n_cols << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, (size_t) responses.n_cols, "MSE::Evaluate()",
+      "responses");
 
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);

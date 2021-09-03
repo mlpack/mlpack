@@ -24,13 +24,17 @@ Padding<InputDataType, OutputDataType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom) :
+    const size_t padHBottom,
+    const size_t inputWidth,
+    const size_t inputHeight) :
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
     nRows(0),
-    nCols(0)
+    nCols(0),
+    inputHeight(inputWidth),
+    inputWidth(inputHeight)
 {
   // Nothing to do here.
 }
@@ -42,10 +46,33 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  output = arma::zeros(nRows + padWLeft + padWRight,
-      nCols + padHTop + padHBottom);
-  output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
-      padHTop + nCols - 1) = input;
+
+  if (inputWidth == 0 || inputHeight == 0)
+  {
+    output = arma::zeros(nRows + padWLeft + padWRight,
+        nCols + padHTop + padHBottom);
+    output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+        padHTop + nCols - 1) = input;
+  }
+  else
+  {
+    inSize = input.n_elem / (inputWidth * inputHeight * nCols);
+    inputTemp = arma::Cube<eT>(const_cast<arma::Mat<eT>&>(input).memptr(),
+        inputWidth, inputHeight, inSize * nCols, false, false);
+    outputTemp = arma::zeros<arma::Cube<eT>>(inputWidth + padWLeft + padWRight,
+        inputHeight + padHTop + padHBottom, inSize * nCols);
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {
+      outputTemp.slice(i).submat(padWLeft, padHTop, padWLeft + inputWidth - 1,
+          padHTop + inputHeight - 1) = inputTemp.slice(i);
+    }
+
+    output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
+        nCols);
+  }
+
+  outputWidth = inputWidth + padWLeft + padWRight;
+  outputHeight = inputHeight + padHTop + padHBottom;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -68,6 +95,8 @@ void Padding<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(padHBottom));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
 }
 
 } // namespace ann

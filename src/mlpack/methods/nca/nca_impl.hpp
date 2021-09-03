@@ -39,11 +39,7 @@ void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
       (outputMatrix.n_cols != dataset.n_rows))
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
-  Timer::Start("nca_sgd_optimization");
-
   optimizer.Optimize(errorFunction, outputMatrix, callbacks...);
-
-  Timer::Stop("nca_sgd_optimization");
 }
 
 } // namespace nca

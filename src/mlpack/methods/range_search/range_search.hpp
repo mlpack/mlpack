@@ -22,7 +22,10 @@ namespace mlpack {
 namespace range /** Range-search routines. */ {
 
 //! Forward declaration.
-class TrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRSWrapper;
 
 /**
  * The RangeSearch class is a template class for performing range searches.  It
@@ -122,12 +125,18 @@ class RangeSearch
   RangeSearch(RangeSearch&& other);
 
   /**
-   * Copy the given RangeSearch model.
-   * Use std::move to pass in the model if the old copy is no longer needed.
-   *
+   * Deep copy the given RangeSearch model.
+   * 
    * @param other RangeSearch model to copy.
    */
-  RangeSearch& operator=(RangeSearch other);
+  RangeSearch& operator=(const RangeSearch& other);
+
+  /**
+   * Move the given RangeSearch model.
+   *
+   * @param other RangeSearch model to move.
+   */
+  RangeSearch& operator=(RangeSearch&& other);
 
   /**
    * Destroy the RangeSearch object.  If trees were created, they will be
@@ -310,7 +319,7 @@ class RangeSearch
   size_t scores;
 
   //! For access to mappings when building models.
-  friend class TrainVisitor;
+  friend class LeafSizeRSWrapper<TreeType>;
 };
 
 } // namespace range

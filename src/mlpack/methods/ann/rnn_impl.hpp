@@ -87,10 +87,10 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
     targetSize(std::move(network.targetSize)),
     reset(std::move(network.reset)),
     single(std::move(network.single)),
+    network(std::move(network.network)),
     parameter(std::move(network.parameter)),
     numFunctions(std::move(network.numFunctions)),
-    deterministic(std::move(network.deterministic)),
-    network(std::move(network.network))
+    deterministic(std::move(network.deterministic))
 {
   // Nothing to do here.
 }
@@ -149,9 +149,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Train()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Train()");
 
   numFunctions = responses.n_cols;
 
@@ -169,9 +168,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -197,9 +194,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube responses,
     CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Train()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Train()");
 
   numFunctions = responses.n_cols;
 
@@ -219,9 +215,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -233,9 +227,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Predict()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Predict()");
 
   ResetCells();
 

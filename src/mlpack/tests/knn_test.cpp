@@ -794,7 +794,8 @@ TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
 TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KNN tree(dataset);
 
@@ -865,7 +866,8 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 TEST_CASE("KNNDualBallTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KNN tree(dataset);
 
@@ -1064,6 +1066,7 @@ TEST_CASE("KNNModelTest", "[KNNTest]")
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results.
   typedef NSModel<NearestNeighborSort> KNNModel;
+  util::Timers timers;
 
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
@@ -1112,28 +1115,35 @@ TEST_CASE("KNNModelTest", "[KNNTest]")
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE);
+      }
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy),
             SINGLE_TREE_MODE);
+      }
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+      }
 
       arma::Mat<size_t> neighbors;
       arma::mat distances;
 
-      models[i].Search(std::move(queryCopy), 3, neighbors, distances);
+      models[i].Search(timers, std::move(queryCopy), 3, neighbors, distances);
 
-      REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
-      REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
-      REQUIRE(neighbors.n_elem ==baselineNeighbors.n_elem);
-      REQUIRE(distances.n_rows ==baselineDistances.n_rows);
-      REQUIRE(distances.n_cols ==baselineDistances.n_cols);
-      REQUIRE(distances.n_elem ==baselineDistances.n_elem);
+      REQUIRE(neighbors.n_rows == baselineNeighbors.n_rows);
+      REQUIRE(neighbors.n_cols == baselineNeighbors.n_cols);
+      REQUIRE(neighbors.n_elem == baselineNeighbors.n_elem);
+      REQUIRE(distances.n_rows == baselineDistances.n_rows);
+      REQUIRE(distances.n_cols == baselineDistances.n_cols);
+      REQUIRE(distances.n_elem == baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        REQUIRE(neighbors[k] ==baselineNeighbors[k]);
+        REQUIRE(neighbors[k] == baselineNeighbors[k]);
         if (std::abs(baselineDistances[k]) < 1e-5)
           REQUIRE(distances[k] == Approx(0.0).margin(1e-7));
         else
@@ -1148,6 +1158,7 @@ TEST_CASE("KNNModelMonochromaticTest", "[KNNTest]")
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results, in the case where the reference set is the same as the query set.
   typedef NSModel<NearestNeighborSort> KNNModel;
+  util::Timers timers;
 
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
@@ -1194,28 +1205,35 @@ TEST_CASE("KNNModelMonochromaticTest", "[KNNTest]")
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE);
+      }
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy),
             SINGLE_TREE_MODE);
+      }
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+      }
 
       arma::Mat<size_t> neighbors;
       arma::mat distances;
 
-      models[i].Search(3, neighbors, distances);
+      models[i].Search(timers, 3, neighbors, distances);
 
-      REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
-      REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
-      REQUIRE(neighbors.n_elem ==baselineNeighbors.n_elem);
-      REQUIRE(distances.n_rows ==baselineDistances.n_rows);
-      REQUIRE(distances.n_cols ==baselineDistances.n_cols);
-      REQUIRE(distances.n_elem ==baselineDistances.n_elem);
+      REQUIRE(neighbors.n_rows == baselineNeighbors.n_rows);
+      REQUIRE(neighbors.n_cols == baselineNeighbors.n_cols);
+      REQUIRE(neighbors.n_elem == baselineNeighbors.n_elem);
+      REQUIRE(distances.n_rows == baselineDistances.n_rows);
+      REQUIRE(distances.n_cols == baselineDistances.n_cols);
+      REQUIRE(distances.n_elem == baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        REQUIRE(neighbors[k] ==baselineNeighbors[k]);
+        REQUIRE(neighbors[k] == baselineNeighbors[k]);
         if (std::abs(baselineDistances[k]) < 1e-5)
           REQUIRE(distances[k] == Approx(0.0).margin(1e-7));
         else

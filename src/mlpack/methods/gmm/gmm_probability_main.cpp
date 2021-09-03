@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME gmm_probability
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
@@ -20,7 +26,7 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("GMM Probability Calculator");
+BINDING_USER_NAME("GMM Probability Calculator");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -61,14 +67,15 @@ PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
 
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
-  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no results will be saved");
 
   // Get the GMM and the points.
-  GMM* gmm = IO::GetParam<GMM*>("input_model");
+  GMM* gmm = params.Get<GMM*>("input_model");
 
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(params.Get<arma::mat>("input"));
 
   // Now calculate the probabilities.
   arma::rowvec probabilities(dataset.n_cols);
@@ -76,5 +83,5 @@ static void mlpackMain()
     probabilities[i] = gmm->Probability(dataset.unsafe_col(i));
 
   // And save the result.
-  IO::GetParam<arma::mat>("output") = std::move(probabilities);
+  params.Get<arma::mat>("output") = std::move(probabilities);
 }

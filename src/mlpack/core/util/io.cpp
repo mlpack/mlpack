@@ -19,13 +19,13 @@ using namespace mlpack::util;
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() : didParse(false)
+IO::IO()
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& /* other */) : didParse(false)
+IO::IO(const IO& /* other */)
 {
   return;
 }
@@ -33,7 +33,7 @@ IO::IO(const IO& /* other */) : didParse(false)
 // Private copy operator; don't want copies floating around.
 IO& IO::operator=(const IO& /* other */) { return *this; }
 
-void IO::Add(ParamData&& data)
+void IO::AddParameter(const std::string& bindingName, ParamData&& data)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -52,95 +52,121 @@ void IO::Add(ParamData&& data)
   #undef BASH_CLEAR
 
   // Define identifier and alias maps.
-  std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
-  std::map<char, std::string>& aliases = GetSingleton().aliases;
+  std::map<std::string, util::ParamData>& bindingParams =
+      GetSingleton().parameters[bindingName];
+  std::map<char, std::string>& bindingAliases =
+      GetSingleton().aliases[bindingName];
 
   // If found in current map, print fatal error and terminate the program, but
-  // only if the parameter is not consistent.
-  if (parameters.count(data.name) && !data.persistent)
+  // only if the parameter is not a global parameter.
+  if (bindingParams.count(data.name) && bindingName != "")
   {
-    outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
+    outstr << "Parameter '" << data.name << "' ('" << data.alias << "') "
            << "is defined multiple times with the same identifiers."
            << std::endl;
   }
-  if (data.alias != '\0' && aliases.count(data.alias) && !data.persistent)
+  else if (bindingParams.count(data.name) && bindingName == "")
   {
-    outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
+    // It already exists; no need to add it again.
+    return;
+  }
+
+  // Check for duplicate aliases.
+  if (data.alias != '\0' && bindingAliases.count(data.alias))
+  {
+    outstr << "Parameter '" << data.name << " ('" << data.alias << "') "
            << "is defined multiple times with the same alias." << std::endl;
   }
 
   // Add the alias, if necessary.
+  std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
   if (data.alias != '\0')
-    GetSingleton().aliases[data.alias] = data.name;
+    bindingAliases[data.alias] = data.name;
 
-  GetSingleton().parameters[data.name] = std::move(data);
+  bindingParams[data.name] = std::move(data);
 }
 
 /**
- * See if the specified flag was found while parsing.
+ * Add a function to the function map.
  *
- * @param identifier The name of the parameter in question.
+ * @param type Type that this function should be called for.
+ * @param name Name of the function.
+ * @param func Function to call.
  */
-bool IO::HasParam(const std::string& key)
+void IO::AddFunction(const std::string& type,
+                     const std::string& name,
+                     void (*func)(util::ParamData&, const void*, void*))
 {
-  std::string usedKey = key;
-  const std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
-
-  if (!parameters.count(key))
-  {
-    // Check any aliases, but only after we are sure the actual option as given
-    // does not exist.
-    if (key.length() == 1 && GetSingleton().aliases.count(key[0]))
-      usedKey = GetSingleton().aliases[key[0]];
-
-    if (!parameters.count(usedKey))
-    {
-      Log::Fatal << "Parameter '--" << key << "' does not exist in this "
-          << "program." << std::endl;
-    }
-  }
-  const std::string& checkKey = usedKey;
-
-  return (parameters.at(checkKey).wasPassed > 0);
+  std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
+  GetSingleton().functionMap[type][name] = func;
 }
 
 /**
- * Given two (matrix) parameters, ensure that the first is an in-place copy of
- * the second.  This will generally do nothing (as the bindings already do
- * this automatically), except for command-line bindings, where we need to
- * ensure that the output filename is the same as the input filename.
+ * Add a user-friendly name for a binding.
  *
- * @param outputParamName Name of output (matrix) parameter.
- * @param inputParamName Name of input (matrix) parameter.
+ * @param bindingName Name of the binding to add the user-friendly name for.
+ * @param name User-friendly name.
  */
-void IO::MakeInPlaceCopy(const std::string& outputParamName,
-                         const std::string& inputParamName)
+void IO::AddBindingName(const std::string& bindingName, const std::string& name)
 {
-  std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
+  std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
+  GetSingleton().docs[bindingName].name = name;
+}
 
-  if (!parameters.count(outputParamName))
-    Log::Fatal << "Unknown parameter '" << outputParamName << "'!" << std::endl;
-  if (!parameters.count(inputParamName))
-    Log::Fatal << "Unknown parameter '" << inputParamName << "'!" << std::endl;
+/**
+ * Add a short description for a binding.
+ *
+ * @param bindingName Name of the binding to add the description for.
+ * @param shortDescription Description to use.
+ */
+void IO::AddShortDescription(const std::string& bindingName,
+                             const std::string& shortDescription)
+{
+  std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+  GetSingleton().docs[bindingName].shortDescription = shortDescription;
+}
 
-  util::ParamData& output = parameters[outputParamName];
-  util::ParamData& input = parameters[inputParamName];
+/**
+ * Add a long description for a binding.
+ *
+ * @param bindingName Name of the binding to add the description for.
+ * @param longDescription Function that returns the long description.
+ */
+void IO::AddLongDescription(
+    const std::string& bindingName,
+    const std::function<std::string()>& longDescription)
+{
+  std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+  GetSingleton().docs[bindingName].longDescription = longDescription;
+}
 
-  if (output.cppType != input.cppType)
-  {
-    Log::Fatal << "Cannot call MakeInPlaceCopy() with different types ("
-        << output.cppType << " and " << input.cppType << ")!" << std::endl;
-  }
+/**
+ * Add an example for a binding.
+ *
+ * @param bindingName Name of the binding to add the example for.
+ * @param example Function that returns the example.
+ */
+void IO::AddExample(const std::string& bindingName,
+                    const std::function<std::string()>& example)
+{
+  std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+  GetSingleton().docs[bindingName].example.push_back(std::move(example));
+}
 
-  // Is there a function to do this?
-  if (IO::GetSingleton().functionMap[output.tname].count("InPlaceCopy") != 0)
-  {
-    IO::GetSingleton().functionMap[output.tname]["InPlaceCopy"](output, (void*)
-        &input, NULL);
-  }
+/**
+ * Add a SeeAlso for a binding.
+ *
+ * @param bindingName Name of the binding to add the example for.
+ * @param description Description of the SeeAlso.
+ * @param link Link of the SeeAlso.
+ */
+void IO::AddSeeAlso(const std::string& bindingName,
+                    const std::string& description,
+                    const std::string& link)
+{
+  std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+  GetSingleton().docs[bindingName].seeAlso.push_back(
+      std::make_pair(description, link));
 }
 
 // Returns the sole instance of this class.
@@ -150,120 +176,35 @@ IO& IO::GetSingleton()
   return singleton;
 }
 
-// Get the parameters that the IO object knows about.
-std::map<std::string, ParamData>& IO::Parameters()
+// Returns the sole instance of the timers.
+util::Timers& IO::GetTimers()
 {
-  return GetSingleton().parameters;
+  return GetSingleton().timer;
 }
 
-// Get the parameters that the IO object knows about.
-std::map<char, std::string>& IO::Aliases()
+/**
+ * Return a new Params object initialized with all the parameters of the
+ * binding `bindingName`.  This is intended to be called at the beginning of
+ * the run of a binding.
+ */
+util::Params IO::Parameters(const std::string& bindingName)
 {
-  return GetSingleton().aliases;
-}
+  // We don't need a mutex here, because we are only randomly accessing elements
+  // of the maps.
 
-// Get the program name as set by BINDING_NAME().
-std::string IO::ProgramName()
-{
-  return GetSingleton().doc.programName;
-}
+  std::map<char, std::string> resultAliases =
+      GetSingleton().aliases[bindingName];
+  // Merge in any persistent parameters (e.g. parameters in the "" binding map).
+  std::map<char, std::string> persistentAliases = GetSingleton().aliases[""];
+  resultAliases.insert(persistentAliases.begin(), persistentAliases.end());
 
-// Set a particular parameter as passed.
-void IO::SetPassed(const std::string& name)
-{
-  if (GetSingleton().parameters.count(name) == 0)
-  {
-    throw std::invalid_argument("IO::SetPassed(): parameter " + name +
-        " not known!");
-  }
+  std::map<std::string, util::ParamData> resultParams =
+      GetSingleton().parameters[bindingName];
+  // Merge in any persistent parameters (e.g. parameters in the "" binding map).
+  std::map<std::string, util::ParamData> persistentParams =
+      GetSingleton().parameters[""];
+  resultParams.insert(persistentParams.begin(), persistentParams.end());
 
-  // Set passed to true.
-  GetSingleton().parameters[name].wasPassed = true;
-}
-
-// Store settings.
-void IO::StoreSettings(const std::string& name)
-{
-  // Take all of the parameters and put them in the map.  Clear anything old
-  // first.
-  std::get<0>(GetSingleton().storageMap[name]) = GetSingleton().parameters;
-  std::get<1>(GetSingleton().storageMap[name]) = GetSingleton().aliases;
-  std::get<2>(GetSingleton().storageMap[name]) = GetSingleton().functionMap;
-
-  ClearSettings();
-}
-
-// Restore settings.
-void IO::RestoreSettings(const std::string& name, const bool fatal)
-{
-  if (GetSingleton().storageMap.count(name) == 0 && fatal)
-  {
-    throw std::invalid_argument("no settings stored under the name '" + name
-        + "'");
-  }
-  else if (GetSingleton().storageMap.count(name) == 0 && !fatal)
-  {
-    // Nothing to do, just clear what's there.
-    ClearSettings();
-  }
-  else
-  {
-    GetSingleton().parameters = std::get<0>(GetSingleton().storageMap[name]);
-    GetSingleton().aliases = std::get<1>(GetSingleton().storageMap[name]);
-    GetSingleton().functionMap = std::get<2>(GetSingleton().storageMap[name]);
-  }
-}
-
-// Clear settings.
-void IO::ClearSettings()
-{
-  // Check for any parameters we need to keep.
-  std::map<std::string, util::ParamData> persistent;
-  std::map<char, std::string> persistentAliases;
-  FunctionMapType persistentFunctions;
-
-  // For the function mappings we have to preserve, we have to collect the
-  // types.
-  std::vector<std::string> persistentTypes;
-
-  std::map<std::string, util::ParamData>::const_iterator it =
-      GetSingleton().parameters.begin();
-  while (it != GetSingleton().parameters.end())
-  {
-    // Is the parameter persistent?
-    if (it->second.persistent)
-    {
-      persistent[it->first] = it->second; // Save the parameter.
-      // Add to the list of types, if it hasn't already been added.
-      if (std::find(persistentTypes.begin(), persistentTypes.end(),
-          it->second.tname) == persistentTypes.end())
-        persistentTypes.push_back(it->second.tname);
-    }
-
-    ++it;
-  }
-
-  // Now check if there are any persistent aliases.
-  std::map<char, std::string>::const_iterator it2 =
-      GetSingleton().aliases.begin();
-  while (it2 != GetSingleton().aliases.end())
-  {
-    // Is this an alias to a persistent parameter?
-    if (persistent.count(it2->second) > 0)
-      persistentAliases[it2->first] = it2->second; // Save it.
-
-    ++it2;
-  }
-
-  for (size_t i = 0; i < persistentTypes.size(); ++i)
-  {
-    // Add to persistent function map.
-    persistentFunctions[persistentTypes[i]] =
-        GetSingleton().functionMap[persistentTypes[i]];
-  }
-
-  // Save only the persistent parameters.
-  GetSingleton().parameters = persistent;
-  GetSingleton().aliases = persistentAliases;
-  GetSingleton().functionMap = persistentFunctions;
+  return Params(resultAliases, resultParams, GetSingleton().functionMap,
+      bindingName, GetSingleton().docs[bindingName]);
 }

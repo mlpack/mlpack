@@ -874,19 +874,13 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
   }
 
   if (subtreeLeaves == 1)  // If we are a leaf...
-  {
     return std::exp(std::log(ratio) - logVolume);
-  }
-  else
-  {
-    // Return either of the two children - left or right, depending on the
-    // splitValue
-    return (query[splitDim] <= splitValue) ?
+
+  // Return either of the two children - left or right, depending on the
+  // splitValue.
+  return (query[splitDim] <= splitValue) ?
       left->ComputeValue(query) :
       right->ComputeValue(query);
-  }
-
-  return 0.0;
 }
 
 // Index the buckets for possible usage later.

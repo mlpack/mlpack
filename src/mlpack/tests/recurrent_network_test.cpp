@@ -435,7 +435,7 @@ TEST_CASE("SequenceClassificationBRNNTest", "[RecurrentNetworkTest]")
     for (size_t i = 0; i < labelsTemp.n_cols; ++i)
     {
       const int value = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
       labels.tube(0, i).fill(value);
     }
 
@@ -463,10 +463,10 @@ TEST_CASE("SequenceClassificationBRNNTest", "[RecurrentNetworkTest]")
     {
       const int predictionValue = arma::as_scalar(arma::find(
           arma::max(prediction.slice(rho - 1).col(i)) ==
-          prediction.slice(rho - 1).col(i), 1) + 1);
+          prediction.slice(rho - 1).col(i), 1));
 
       const int targetValue = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
 
       if (predictionValue == targetValue)
       {
@@ -510,7 +510,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
     for (size_t i = 0; i < labelsTemp.n_cols; ++i)
     {
       const int value = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
       labels.tube(0, i).fill(value);
     }
 
@@ -554,10 +554,10 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
     {
       const int predictionValue = arma::as_scalar(arma::find(
           arma::max(prediction.slice(rho - 1).col(i)) ==
-          prediction.slice(rho - 1).col(i), 1) + 1);
+          prediction.slice(rho - 1).col(i), 1));
 
       const int targetValue = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
 
       if (predictionValue == targetValue)
       {
@@ -728,7 +728,7 @@ TEST_CASE("RNNTrainReturnObjective", "[RecurrentNetworkTest]")
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
     labels.tube(0, i).fill(value);
   }
 
@@ -782,7 +782,7 @@ TEST_CASE("BRNNTrainReturnObjective", "[RecurrentNetworkTest]")
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
     labels.tube(0, i).fill(value);
   }
 
@@ -845,15 +845,15 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
   {
     const auto strLen = strlen(line);
     // Responses for NegativeLogLikelihood should be
-    // non-one-hot-encoded class IDs (from 1 to num_classes).
+    // non-one-hot-encoded class IDs (from 0 to num_classes - 1).
     MatType result(1, 1, strLen, arma::fill::zeros);
     // The response is the *next* letter in the sequence.
     for (size_t i = 0; i < strLen - 1; ++i)
     {
-      result.at(0, 0, i) = static_cast<arma::uword>(line[i + 1]) + 1.0;
+      result.at(0, 0, i) = static_cast<arma::uword>(line[i + 1]);
     }
     // The final response is empty, so we set it to class 0.
-    result.at(0, 0, strLen - 1) = 1.0;
+    result.at(0, 0, strLen - 1) = 0.0;
     return result;
   };
 
@@ -923,9 +923,9 @@ TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
   model.Add<LogSoftMax<> >();
 
   std::string expectedMsg = "RNN<>::Train(): ";
-              expectedMsg += "the first layer of the network expects ";
-              expectedMsg += std::to_string(3) + " elements, ";
-              expectedMsg += "but the input has " + std::to_string(1) + " dimensions! ";
+  expectedMsg += "the first layer of the network expects ";
+  expectedMsg += std::to_string(3) + " elements, ";
+  expectedMsg += "but the input has " + std::to_string(1) + " dimensions! ";
 
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
 

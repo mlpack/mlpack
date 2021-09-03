@@ -120,7 +120,25 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     weights = arma::sum(D);
 
     // Use the existing weak learner to train a new one with new weights.
+    // API requirement: there is a constructor with this signature:
+    //
+    //    WeakLearnerType(const WeakLearnerType&,
+    //                    MatType& data,
+    //                    LabelsType& labels,
+    //                    const size_t numClasses,
+    //                    WeightsType& weights)
+    //
+    // This trains the new WeakLearnerType using the hyperparameters from the
+    // given WeakLearnerType.
+
     WeakLearnerType w(other, tempData, labels, numClasses, weights);
+    // There is a bug with Adaboost!  It will not use the specified
+    // hyperparameters for the decision tree because they are not properly
+    // passed to the new weak learners!  (And: it's a hard bug, because the
+    // decision tree itself doesn't even store the hyperparameters it was
+    // trained with!)
+
+    // DecisionTree(DecisionTree&, MatType&, LabelsType&, size_t, WeightsType&, double = 0.0, double = 0.0, ...);
     w.Classify(tempData, predictedLabels);
 
     // Now from predictedLabels, build ht, the weak hypothesis
