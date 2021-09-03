@@ -230,9 +230,6 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Locally-stored number of channels.
   size_t channels;
 
-  //! Locally-stored cached output dimensions.
-  std::vector<size_t> outputDimensions;
-
   //! Locally-stored reset parameter used to initialize the module once.
   bool reset;
 

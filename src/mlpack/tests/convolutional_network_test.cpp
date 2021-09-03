@@ -73,6 +73,38 @@ TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
 }
 
 /**
+ * Build a trivial network with a MaxPooling layer, and make sure it
+ * successfully does the max-pool operation.
+ */
+TEST_CASE("MaxPoolingTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X(8, 3);
+  X.col(0) = arma::vec("1, 2, 3, 4, 5, 6, 7, 8");
+  X.col(1) = arma::vec("5, 7, 6, 8, 4, 3, 1, 2");
+  X.col(2) = arma::vec("3, 4, 1, -1, 5, 5, 5, 5");
+
+  // Create the network.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  model.Add<MaxPooling>(2, 2);
+
+  arma::mat results;
+  model.InputDimensions() = std::vector<size_t>({ 2, 4 });
+  model.Forward(X, results);
+
+  REQUIRE(results.n_rows == 3);
+  REQUIRE(results.n_cols == 3);
+  REQUIRE(results(0, 0) == 4);
+  REQUIRE(results(1, 0) == 6);
+  REQUIRE(results(2, 0) == 8);
+  REQUIRE(results(0, 1) == 8);
+  REQUIRE(results(1, 1) == 8);
+  REQUIRE(results(2, 1) == 4);
+  REQUIRE(results(0, 2) == 4);
+  REQUIRE(results(1, 2) == 5);
+  REQUIRE(results(2, 2) == 5);
+}
+
+/**
  * Train the vanilla network on a larger dataset.
  */
 TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
@@ -141,6 +173,8 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
     model.Add<ReLULayer<> >();
     model.Add<Linear>(2);
     model.Add<LogSoftMax>();
+
+    model.InputDimensions() = std::vector<size_t>({ 28, 28 });
 
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
