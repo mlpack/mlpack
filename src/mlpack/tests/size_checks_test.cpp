@@ -1,7 +1,7 @@
 /**
  * @file size_checks_test.cpp
  * @author Bisakh Mondal
- * 
+ *
  * Test file for Utility size_checks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

@@ -177,12 +177,11 @@ TEST_CASE("SplitLabeledDataResultMat", "[SplitDataTest]")
 
 TEST_CASE("SplitCheckSize", "[SplitDataTest]")
 {
-  arma::mat input(2,10);
-  input.randu();
+  arma::mat input = randu<arma::mat>(2, 10);
 
-  const Row<size_t> firstLabels = arma::linspace<Row<size_t>> (0, input.n_cols-1, input.n_cols);
+  const Row<size_t> firstLabels = arma::linspace<Row<size_t>> (0, input.n_cols - 1, input.n_cols);
 
-  const Row<size_t> secondLabels = arma::linspace<Row<size_t>> (0, input.n_cols, input.n_cols+1);
+  const Row<size_t> secondLabels = arma::linspace<Row<size_t>> (0, input.n_cols, input.n_cols + 1);
 
   REQUIRE_THROWS_AS(Split(input, secondLabels, 0.2), std::invalid_argument);
 
