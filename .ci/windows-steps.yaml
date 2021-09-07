@@ -27,7 +27,7 @@ steps:
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
     curl -O -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz -o armadillo-9.800.6.tar.xz
-    tar -xzvf armadillo-9.800.6.tar.xz
+    tar -xvf armadillo-9.800.6.tar.xz
 
     cd armadillo-9.800.6/ && cmake $(CMakeGenerator) \
     -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
