@@ -58,7 +58,8 @@ inline std::string PrintValue(const bool& value, bool quotes);
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Print a dataset type parameter.
@@ -76,7 +77,7 @@ inline std::string PrintModel(const std::string& model);
 inline std::string PrintType(util::ParamData& param);
 
 // Recursion base case.
-inline std::string PrintInputOptions();
+inline std::string PrintInputOptions(util::Params& p);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -84,15 +85,17 @@ inline std::string PrintInputOptions();
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& p,
+                              const std::string& paramName,
                               const T& value,
                               Args... args);
 
 // Recursion base case.
-inline std::string PrintOutputOptions();
+inline std::string PrintOutputOptions(util::Params& p);
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(util::Params& p,
+                               const std::string& paramName,
                                const T& value,
                                Args... args);
 
@@ -101,7 +104,14 @@ std::string PrintOutputOptions(const std::string& paramName,
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args);
+std::string ProgramCall(const std::string& programName,
+                        Args... args);
+
+/**
+ * Given a name of a binding, print an example call that uses all parameters
+ * (for Markdown documentation).
+ */
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Given the parameter name, determine what it would actually be when passed to

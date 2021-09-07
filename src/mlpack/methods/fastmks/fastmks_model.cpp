@@ -247,7 +247,8 @@ bool& FastMKSModel::SingleMode()
   throw std::runtime_error("invalid model type");
 }
 
-void FastMKSModel::Search(const arma::mat& querySet,
+void FastMKSModel::Search(util::Timers& timers,
+                          const arma::mat& querySet,
                           const size_t k,
                           arma::Mat<size_t>& indices,
                           arma::mat& kernels,
@@ -256,35 +257,37 @@ void FastMKSModel::Search(const arma::mat& querySet,
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      Search(*linear, querySet, k, indices, kernels, base);
+      Search(timers, *linear, querySet, k, indices, kernels, base);
       break;
     case POLYNOMIAL_KERNEL:
-      Search(*polynomial, querySet, k, indices, kernels, base);
+      Search(timers, *polynomial, querySet, k, indices, kernels, base);
       break;
     case COSINE_DISTANCE:
-      Search(*cosine, querySet, k, indices, kernels, base);
+      Search(timers, *cosine, querySet, k, indices, kernels, base);
       break;
     case GAUSSIAN_KERNEL:
-      Search(*gaussian, querySet, k, indices, kernels, base);
+      Search(timers, *gaussian, querySet, k, indices, kernels, base);
       break;
     case EPANECHNIKOV_KERNEL:
-      Search(*epan, querySet, k, indices, kernels, base);
+      Search(timers, *epan, querySet, k, indices, kernels, base);
       break;
     case TRIANGULAR_KERNEL:
-      Search(*triangular, querySet, k, indices, kernels, base);
+      Search(timers, *triangular, querySet, k, indices, kernels, base);
       break;
     case HYPTAN_KERNEL:
-      Search(*hyptan, querySet, k, indices, kernels, base);
+      Search(timers, *hyptan, querySet, k, indices, kernels, base);
       break;
     default:
       throw std::runtime_error("invalid model type");
   }
 }
 
-void FastMKSModel::Search(const size_t k,
+void FastMKSModel::Search(util::Timers& timers,
+                          const size_t k,
                           arma::Mat<size_t>& indices,
                           arma::mat& kernels)
 {
+  timers.Start("computing_products");
   switch (kernelType)
   {
     case LINEAR_KERNEL:
@@ -311,4 +314,5 @@ void FastMKSModel::Search(const size_t k,
     default:
       throw std::invalid_argument("invalid model type");
   }
+  timers.Stop("computing_products");
 }

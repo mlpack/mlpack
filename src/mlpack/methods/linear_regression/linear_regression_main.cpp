@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME linear_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_regression.hpp"
@@ -22,7 +28,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Simple Linear Regression and Prediction");
+BINDING_USER_NAME("Simple Linear Regression and Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -108,44 +114,44 @@ PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
-  const double lambda = IO::GetParam<double>("lambda");
+  const double lambda = params.Get<double>("lambda");
 
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
-  ReportIgnoredParam({{ "test", true }}, "output_predictions");
+  ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
   mat regressors;
   rowvec responses;
 
   LinearRegression* lr;
 
-  const bool computeModel = !IO::HasParam("input_model");
-  const bool computePrediction = IO::HasParam("test");
+  const bool computeModel = !params.Has("input_model");
+  const bool computePrediction = params.Has("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
   if (!computeModel)
   {
-    RequireAtLeastOnePassed({ "test" }, true, "test points must be specified "
-        "when an input model is given");
+    RequireAtLeastOnePassed(params, { "test" }, true, "test points must be "
+        "specified when an input model is given");
   }
 
-  ReportIgnoredParam({{ "input_model", true }}, "lambda");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "lambda");
 
-  RequireAtLeastOnePassed({ "output_model", "output_predictions" }, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "output_predictions" },
+      false, "no output will be saved");
 
   // An input file was given and we need to generate the model.
   if (computeModel)
   {
-    Timer::Start("load_regressors");
-    regressors = std::move(IO::GetParam<mat>("training"));
-    Timer::Stop("load_regressors");
+    timer.Start("load_regressors");
+    regressors = std::move(params.Get<mat>("training"));
+    timer.Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (!IO::HasParam("training_responses"))
+    if (!params.Has("training_responses"))
     {
       // The initial predictors for y, Nx1.
       if (regressors.n_rows < 2)
@@ -159,9 +165,9 @@ static void mlpackMain()
     else
     {
       // The initial predictors for y, Nx1.
-      Timer::Start("load_responses");
-      responses = IO::GetParam<rowvec>("training_responses");
-      Timer::Stop("load_responses");
+      timer.Start("load_responses");
+      responses = params.Get<rowvec>("training_responses");
+      timer.Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
       {
@@ -170,16 +176,16 @@ static void mlpackMain()
       }
     }
 
-    Timer::Start("regression");
+    timer.Start("regression");
     lr = new LinearRegression(regressors, responses, lambda);
-    Timer::Stop("regression");
+    timer.Stop("regression");
   }
   else
   {
     // A model file was passed in, so load it.
-    Timer::Start("load_model");
-    lr = IO::GetParam<LinearRegression*>("input_model");
-    Timer::Stop("load_model");
+    timer.Start("load_model");
+    lr = params.Get<LinearRegression*>("input_model");
+    timer.Stop("load_model");
   }
 
   // Did we want to predict, too?
@@ -188,13 +194,13 @@ static void mlpackMain()
     // Cache the output of GetPrintableParam before we std::move() the test
     // matrix.  Loading actually will happen during GetPrintableParam() since
     // that needs to load to print the size.
-    Timer::Start("load_test_points");
+    timer.Start("load_test_points");
     std::ostringstream oss;
-    oss << IO::GetPrintableParam<mat>("test");
+    oss << params.GetPrintable<mat>("test");
     std::string testOutput = oss.str();
-    Timer::Stop("load_test_points");
+    timer.Stop("load_test_points");
 
-    mat points = std::move(IO::GetParam<mat>("test"));
+    mat points = std::move(params.Get<mat>("test"));
 
     // Ensure that test file data has the right number of features.
     if ((lr->Parameters().n_elem - 1) != points.n_rows)
@@ -211,14 +217,14 @@ static void mlpackMain()
 
     // Perform the predictions using our model.
     rowvec predictions;
-    Timer::Start("prediction");
+    timer.Start("prediction");
     lr->Predict(points, predictions);
-    Timer::Stop("prediction");
+    timer.Stop("prediction");
 
     // Save predictions.
-    IO::GetParam<rowvec>("output_predictions") = std::move(predictions);
+    params.Get<rowvec>("output_predictions") = std::move(predictions);
   }
 
   // Save the model if needed.
-  IO::GetParam<LinearRegression*>("output_model") = lr;
+  params.Get<LinearRegression*>("output_model") = lr;
 }

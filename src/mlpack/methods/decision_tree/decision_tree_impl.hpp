@@ -690,9 +690,9 @@ double DecisionTree<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
+      numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
     else
-      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+      numChildren = NumericSplit::NumChildren(classProbabilities[0], *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -700,14 +700,14 @@ double DecisionTree<FitnessFunction,
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
       }
     }
 
@@ -855,7 +855,8 @@ double DecisionTree<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // We know that the split is numeric.
-    size_t numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+    size_t numChildren =
+        NumericSplit::NumChildren(classProbabilities[0], *this);
     splitDimension = bestDim;
     dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
 
@@ -865,7 +866,7 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), classProbabilities, *this);
+          data(bestDim, j), classProbabilities[0], *this);
     }
 
     // Calculate counts of children in each node.
@@ -1089,10 +1090,10 @@ size_t DecisionTree<FitnessFunction,
   if ((data::Datatype) dimensionTypeOrMajorityClass ==
       data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
 }
 
 // Get the number of classes in the tree.
@@ -1107,7 +1108,7 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::NumClasses() const
 {
-  // Recurse to the nearest child and return the number of elements in the
+  // Recurse to the nearest leaf and return the number of elements in the
   // probability vector.
   if (children.size() == 0)
     return classProbabilities.n_elem;

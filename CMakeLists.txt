@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3.2)
+cmake_minimum_required(VERSION 3.6)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
@@ -283,6 +283,13 @@ if (DOWNLOAD_DEPENDENCIES)
 else()
   find_package(Armadillo "${ARMADILLO_VERSION}")
   if (NOT ARMADILLO_FOUND)
+    if (NOT CMAKE_CROSSCOMPILING)
+      find_package(BLAS QUIET)
+      find_package(LAPACK QUIET)
+      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
+        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
+      endif()
+    endif()
     get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(Armadillo REQUIRED)
@@ -339,6 +346,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.77.0" "1.77"
   "1.76.0" "1.76"
   "1.75.0" "1.75"
   "1.74.0" "1.74"

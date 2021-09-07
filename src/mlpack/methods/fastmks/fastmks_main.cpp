@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME fastmks
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "fastmks.hpp"
@@ -25,7 +31,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("FastMKS (Fast Max-Kernel Search)");
+BINDING_USER_NAME("FastMKS (Fast Max-Kernel Search)");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -105,148 +111,155 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Validate command-line parameters.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
 
-  ReportIgnoredParam({{ "input_model", true }}, "kernel");
-  ReportIgnoredParam({{ "input_model", true }}, "bandwidth");
-  ReportIgnoredParam({{ "input_model", true }}, "degree");
-  ReportIgnoredParam({{ "input_model", true }}, "offset");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "kernel");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "bandwidth");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "degree");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "offset");
 
-  ReportIgnoredParam({{ "k", false }}, "indices");
-  ReportIgnoredParam({{ "k", false }}, "kernels");
-  ReportIgnoredParam({{ "k", false }}, "query");
+  ReportIgnoredParam(params, {{ "k", false }}, "indices");
+  ReportIgnoredParam(params, {{ "k", false }}, "kernels");
+  ReportIgnoredParam(params, {{ "k", false }}, "query");
 
-  if (IO::HasParam("k"))
+  if (params.Has("k"))
   {
-    RequireAtLeastOnePassed({ "indices", "kernels" }, false,
+    RequireAtLeastOnePassed(params, { "indices", "kernels" }, false,
         "no output will be saved");
   }
 
   // Check on kernel type.
-  RequireParamInSet<string>("kernel", { "linear", "polynomial", "cosine",
-      "gaussian", "triangular", "hyptan", "epanechnikov" }, true,
+  RequireParamInSet<string>(params, "kernel", { "linear", "polynomial",
+      "cosine", "gaussian", "triangular", "hyptan", "epanechnikov" }, true,
       "unknown kernel type");
 
   // Make sure number of maximum kernels is greater than 0.
-  if (IO::HasParam("k"))
+  if (params.Has("k"))
   {
-    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+    RequireParamValue<int>(params, "k", [](int x) { return x > 0; }, true,
         "number of maximum kernels must be greater than 0");
   }
 
-  if (IO::HasParam("base"))
+  if (params.Has("base"))
   {
-    RequireParamValue<double>("base", [](double x) { return x > 1.0; }, true,
-        "base must be greater than or equal to 1!");
+    RequireParamValue<double>(params, "base", [](double x) { return x > 1.0; },
+        true, "base must be greater than or equal to 1!");
   }
 
   // Naive mode overrides single mode.
-  ReportIgnoredParam({{ "naive", true }}, "single");
+  ReportIgnoredParam(params, {{ "naive", true }}, "single");
 
   FastMKSModel* model;
   arma::mat referenceData;
-  if (IO::HasParam("reference"))
+  if (params.Has("reference"))
   {
     model = new FastMKSModel();
-    referenceData = std::move(IO::GetParam<arma::mat>("reference"));
+    referenceData = std::move(params.Get<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data (" << referenceData.n_rows << " x "
         << referenceData.n_cols << ")." << endl;
 
     // For cover tree construction.
-    const double base = IO::GetParam<double>("base");
+    const double base = params.Get<double>("base");
 
     // Kernel parameters.
-    const string kernelType = IO::GetParam<string>("kernel");
-    const double degree = IO::GetParam<double>("degree");
-    const double offset = IO::GetParam<double>("offset");
-    const double bandwidth = IO::GetParam<double>("bandwidth");
-    const double scale = IO::GetParam<double>("scale");
+    const string kernelType = params.Get<string>("kernel");
+    const double degree = params.Get<double>("degree");
+    const double offset = params.Get<double>("offset");
+    const double bandwidth = params.Get<double>("bandwidth");
+    const double scale = params.Get<double>("scale");
 
     // Search preferences.
-    const bool naive = IO::HasParam("naive");
-    const bool single = IO::HasParam("single");
+    const bool naive = params.Has("naive");
+    const bool single = params.Has("single");
 
     if (kernelType == "linear")
     {
       LinearKernel lk;
       model->KernelType() = FastMKSModel::LINEAR_KERNEL;
-      model->BuildModel(std::move(referenceData), lk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), lk, single, naive,
+          base);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
       model->KernelType() = FastMKSModel::POLYNOMIAL_KERNEL;
-      model->BuildModel(std::move(referenceData), pk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), pk, single, naive,
+          base);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
       model->KernelType() = FastMKSModel::COSINE_DISTANCE;
-      model->BuildModel(std::move(referenceData), cd, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), cd, single, naive,
+          base);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
       model->KernelType() = FastMKSModel::GAUSSIAN_KERNEL;
-      model->BuildModel(std::move(referenceData), gk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), gk, single, naive,
+          base);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
       model->KernelType() = FastMKSModel::EPANECHNIKOV_KERNEL;
-      model->BuildModel(std::move(referenceData), ek, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), ek, single, naive,
+          base);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
       model->KernelType() = FastMKSModel::TRIANGULAR_KERNEL;
-      model->BuildModel(std::move(referenceData), tk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), tk, single, naive,
+          base);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
       model->KernelType() = FastMKSModel::HYPTAN_KERNEL;
-      model->BuildModel(std::move(referenceData), htk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), htk, single, naive,
+          base);
     }
   }
   else
   {
     // Load model from file, then do whatever is necessary.
-    model = IO::GetParam<FastMKSModel*>("input_model");
+    model = params.Get<FastMKSModel*>("input_model");
   }
 
   // Set search preferences.
-  model->Naive() = IO::HasParam("naive");
-  model->SingleMode() = IO::HasParam("single");
+  model->Naive() = params.Has("naive");
+  model->SingleMode() = params.Has("single");
 
   // Should we do search?
-  if (IO::HasParam("k"))
+  if (params.Has("k"))
   {
     arma::mat kernels;
     arma::Mat<size_t> indices;
 
-    if (IO::HasParam("query"))
+    if (params.Has("query"))
     {
-      const double base = IO::GetParam<double>("base");
+      const double base = params.Get<double>("base");
 
-      arma::mat queryData = std::move(IO::GetParam<arma::mat>("query"));
+      arma::mat queryData = std::move(params.Get<arma::mat>("query"));
 
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
 
       try
       {
-        model->Search(queryData, (size_t) IO::GetParam<int>("k"), indices,
+        model->Search(timers, queryData, (size_t) params.Get<int>("k"), indices,
             kernels, base);
       }
       catch (std::invalid_argument& e)
       {
         // Delete the memory, if needed.
-        if (IO::HasParam("reference"))
+        if (params.Has("reference"))
           delete model;
         throw;
       }
@@ -255,22 +268,22 @@ static void mlpackMain()
     {
       try
       {
-        model->Search((size_t) IO::GetParam<int>("k"), indices, kernels);
+        model->Search(timers, (size_t) params.Get<int>("k"), indices, kernels);
       }
       catch (std::invalid_argument& e)
       {
         // Delete the memory, if needed.
-        if (IO::HasParam("reference"))
+        if (params.Has("reference"))
           delete model;
         throw;
       }
     }
 
     // Save output.
-    IO::GetParam<arma::mat>("kernels") = std::move(kernels);
-    IO::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
+    params.Get<arma::mat>("kernels") = std::move(kernels);
+    params.Get<arma::Mat<size_t>>("indices") = std::move(indices);
   }
 
   // Save the model.
-  IO::GetParam<FastMKSModel*>("output_model") = model;
+  params.Get<FastMKSModel*>("output_model") = model;
 }

@@ -360,8 +360,9 @@ TEST_CASE("FastMKSModelWrongModelTest", "[FastMKSTest]")
   arma::mat data = arma::randu<arma::mat>(5, 5);
 
   FastMKSModel m(FastMKSModel::LINEAR_KERNEL);
-  REQUIRE_THROWS_AS(m.BuildModel(std::move(data), pk, false, false, 2.0),
-      std::invalid_argument);
+  util::Timers timers;
+  REQUIRE_THROWS_AS(m.BuildModel(timers, std::move(data), pk, false, false,
+      2.0), std::invalid_argument);
 }
 
 // Test the linear kernel mode of the FastMKSModel.
@@ -378,19 +379,20 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::LINEAR_KERNEL);
   FastMKSModel mNaive(FastMKSModel::LINEAR_KERNEL);
   FastMKSModel mSingle(FastMKSModel::LINEAR_KERNEL);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), lk, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), lk, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), lk, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), lk, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), lk, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), lk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -432,9 +434,9 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -487,19 +489,20 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::POLYNOMIAL_KERNEL);
   FastMKSModel mNaive(FastMKSModel::POLYNOMIAL_KERNEL);
   FastMKSModel mSingle(FastMKSModel::POLYNOMIAL_KERNEL);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), pk, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), pk, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), pk, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), pk, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), pk, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), pk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -541,9 +544,9 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -596,19 +599,20 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::COSINE_DISTANCE);
   FastMKSModel mNaive(FastMKSModel::COSINE_DISTANCE);
   FastMKSModel mSingle(FastMKSModel::COSINE_DISTANCE);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), ck, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), ck, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), ck, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), ck, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), ck, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), ck, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -650,9 +654,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -705,19 +709,20 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::GAUSSIAN_KERNEL);
   FastMKSModel mNaive(FastMKSModel::GAUSSIAN_KERNEL);
   FastMKSModel mSingle(FastMKSModel::GAUSSIAN_KERNEL);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), gk, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), gk, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), gk, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), gk, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), gk, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), gk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -759,9 +764,9 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -814,19 +819,20 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::EPANECHNIKOV_KERNEL);
   FastMKSModel mNaive(FastMKSModel::EPANECHNIKOV_KERNEL);
   FastMKSModel mSingle(FastMKSModel::EPANECHNIKOV_KERNEL);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), ek, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), ek, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), ek, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), ek, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), ek, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), ek, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -868,9 +874,9 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -923,19 +929,20 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
   FastMKSModel m(FastMKSModel::TRIANGULAR_KERNEL);
   FastMKSModel mNaive(FastMKSModel::TRIANGULAR_KERNEL);
   FastMKSModel mSingle(FastMKSModel::TRIANGULAR_KERNEL);
+  util::Timers timers;
 
-  m.BuildModel(std::move(referenceCopy1), tk, false, false, 2.0);
-  mNaive.BuildModel(std::move(referenceCopy2), tk, false, true, 2.0);
-  mSingle.BuildModel(std::move(referenceCopy3), tk, true, false, 2.0);
+  m.BuildModel(timers, std::move(referenceCopy1), tk, false, false, 2.0);
+  mNaive.BuildModel(timers, std::move(referenceCopy2), tk, false, true, 2.0);
+  mSingle.BuildModel(timers, std::move(referenceCopy3), tk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
   arma::mat kernels, mKernels, mNaiveKernels, mSingleKernels;
 
   f.Search(3, indices, kernels);
-  m.Search(3, mIndices, mKernels);
-  mNaive.Search(3, mNaiveIndices, mNaiveKernels);
-  mSingle.Search(3, mSingleIndices, mSingleKernels);
+  m.Search(timers, 3, mIndices, mKernels);
+  mNaive.Search(timers, 3, mNaiveIndices, mNaiveKernels);
+  mSingle.Search(timers, 3, mSingleIndices, mSingleKernels);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);
@@ -977,9 +984,9 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
   arma::mat querySet = arma::randu<arma::mat>(10, 50);
 
   f.Search(querySet, 3, indices, kernels);
-  m.Search(querySet, 3, mIndices, mKernels, 2.0);
-  mNaive.Search(querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
-  mSingle.Search(querySet, 3, mSingleIndices, mSingleKernels, 2.0);
+  m.Search(timers, querySet, 3, mIndices, mKernels, 2.0);
+  mNaive.Search(timers, querySet, 3, mNaiveIndices, mNaiveKernels, 2.0);
+  mSingle.Search(timers, querySet, 3, mSingleIndices, mSingleKernels, 2.0);
 
   REQUIRE(indices.n_cols == mIndices.n_cols);
   REQUIRE(indices.n_cols == mNaiveIndices.n_cols);

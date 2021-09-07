@@ -2,44 +2,26 @@
  * @file tests/main_tests/adaboost_test.cpp
  * @author Nikhil Goel
  *
- * Test mlpackMain() of adaboost_main.cpp.
+ * Test RUN_BINDING() of adaboost_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "AdaBoost";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/adaboost/adaboost_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct AdaBoostTestFixture
-{
- public:
-  AdaBoostTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~AdaBoostTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(AdaBoostTestFixture);
 
 /**
  * Check that number of output labels and number of input
@@ -67,11 +49,11 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
 
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of predicted labels is equal to the input test points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 }
 
 /**
@@ -101,10 +83,10 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostProbabilitiesTest",
 
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat probabilities;
-  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
+  probabilities = std::move(params.Get<arma::mat>("probabilities"));
 
   REQUIRE(probabilities.n_cols == testSize);
 
@@ -135,23 +117,21 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
 
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  AdaBoostModel* model = params.Get<AdaBoostModel*>("output_model");
+  ResetSettings();
 
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                IO::GetParam<AdaBoostModel*>("output_model"));
+  SetInputParam("input_model", model);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output and output using saved model are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -168,7 +148,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostItrTest",
   SetInputParam("iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -201,27 +181,25 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
 
   SetInputParam("test", testData);
 
-  mlpackMain();
-
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   trainData.shed_row(trainData.n_rows - 1);
 
-  // Now train Adaboost with labels provided.
+  // Now train AdaBoost with labels provided.
   SetInputParam("training", std::move(trainData));
   SetInputParam("test", std::move(testData));
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output and final output matrix are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
@@ -236,13 +214,13 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
 
   SetInputParam("training", std::move(trainData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   SetInputParam("input_model",
-                IO::GetParam<AdaBoostModel*>("output_model"));
+                params.Get<AdaBoostModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -264,10 +242,10 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputPredictionsTest",
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  CheckMatrices(IO::GetParam<arma::Row<size_t>>("output"),
-                IO::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(params.Get<arma::Row<size_t>>("output"),
+                params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -284,7 +262,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWeakLearnerTest",
   SetInputParam("weak_learner", std::string("decision tree"));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -310,26 +288,23 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
   SetInputParam("labels", labels);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  bindings::tests::CleanMemory();
-
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", trainData);
   SetInputParam("labels", labels);
   SetInputParam("test", testData);
   SetInputParam("weak_learner", std::string("perceptron"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> outputPerceptron;
-  outputPerceptron = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  outputPerceptron = std::move(params.Get<arma::Row<size_t>>("output"));
 
   REQUIRE(arma::accu(output != outputPerceptron) > 1);
 }
@@ -363,17 +338,18 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
   arma::Row<size_t> output;
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Iterations = 10
   SetInputParam("training", trainData);
@@ -381,16 +357,17 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Iterations = 100
   SetInputParam("training", trainData);
@@ -398,10 +375,10 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 100);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
@@ -439,43 +416,45 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
   SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.001);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
   arma::Row<size_t> output;
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // tolerance = 0.01
   SetInputParam("training", trainData);
   SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.01);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // tolerance = 0.1
   SetInputParam("training", trainData);
   SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate accuracy.
-  IO::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
+  params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);

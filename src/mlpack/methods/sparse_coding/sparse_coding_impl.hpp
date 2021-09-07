@@ -45,7 +45,6 @@ double SparseCoding::Train(
     const DictionaryInitializer& initializer)
 {
   // Now, train.
-  Timer::Start("sparse_coding");
 
   // Initialize the dictionary.
   initializer.Initialize(data, atoms, dictionary);
@@ -105,7 +104,6 @@ double SparseCoding::Train(
     }
   }
 
-  Timer::Stop("sparse_coding");
   return lastObjVal;
 }
 

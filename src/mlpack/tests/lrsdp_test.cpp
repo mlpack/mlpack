@@ -12,7 +12,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 
-#include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;

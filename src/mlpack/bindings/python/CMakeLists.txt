@@ -101,6 +101,7 @@ set(BINDING_SOURCES
   get_printable_param.hpp
   get_python_type.hpp
   import_decl.hpp
+  mlpack_main.hpp
   print_class_defn.hpp
   print_defn.hpp
   print_doc.hpp
@@ -132,7 +133,9 @@ set(CYTHON_SOURCES
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
+  mlpack/params.pxd
   mlpack/preprocess_json_params.py
+  mlpack/timers.pxd
 )
 
 set(TEST_SOURCES
