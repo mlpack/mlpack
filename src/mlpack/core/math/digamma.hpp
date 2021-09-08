@@ -19,19 +19,6 @@
 namespace mlpack {
 namespace math {
 
-// 18-digit precision
-template<typename T>
-T DigammaImpl_1_2(T x)
-{
-  static const float Y = 0.99558162689208984F;
-
-  static const T root1 = T(1569415565) / 1073741824uL;
-  static const T root2 = (T(381566830) / 1073741824uL) / 1073741824uL;
-  static const T root3 = 0.9016312093258695918615325266959189453125e-19;
-
-
-}
-
 /**
  * This function calculates and returns digamma(x).
  *
