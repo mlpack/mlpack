@@ -19,8 +19,21 @@
 namespace mlpack {
 namespace math {
 
+// 18-digit precision
+template<typename T>
+T DigammaImpl_1_2(T x)
+{
+  static const float Y = 0.99558162689208984F;
+
+  static const T root1 = T(1569415565) / 1073741824uL;
+  static const T root2 = (T(381566830) / 1073741824uL) / 1073741824uL;
+  static const T root3 = 0.9016312093258695918615325266959189453125e-19;
+
+
+}
+
 /**
- * This fucntion calculates and returns digamma(x).
+ * This function calculates and returns digamma(x).
  *
  * We have divided the implementation into two cases
  * 1. x > 0
@@ -38,8 +51,13 @@ T digamma(T x)
   T result = 0;
 
   // Check for negative arguments and use reflection
-  if (x <= -1)
+  if (x < 0)
   {
+    // digamma is not defined for negative integers
+    if (std::floor(x) == x)
+      throw std::runtime_error("Evaluation of function at pole");
+
+    /*
     // Reflect
     x = 1 - x;
     // Argument reduction for tan
@@ -51,12 +69,18 @@ T digamma(T x)
     // Check for evaluation at negative pole
     if (reminder == 0)
       throw std::runtime_error("Evaluation of function at pole");
+    */
 
-    result = M_PI / tan(M_PI * reminder); 
+    T y = 1 - x;
+
+    // Relfection formula of digamma
+    result = (std::log(y) - (1 / (2 * y))) - (M_PI / (tan(M_PI * x)));
+
+    return result;
   }
 
   if (x == 0)
-    throw std::runtime_error("Evaluation of fucntion at pole");
+    throw std::runtime_error("Evaluation of function at pole");
 
   if (x < 1)
   {
