@@ -9,7 +9,6 @@ set(SOURCES
   binding_details.hpp
   io.hpp
   io.cpp
-  io_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
