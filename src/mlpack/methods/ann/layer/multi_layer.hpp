@@ -156,7 +156,7 @@ class MultiLayer : public Layer<InputType, OutputType>
 
     // Propagate the input dimensions forward to the output.
     network.front()->InputDimensions() = this->inputDimensions;
-    inSize = this->inputDimensions[1];
+    inSize = this->inputDimensions[0];
     for (size_t i = 1; i < this->inputDimensions.size(); ++i)
       inSize *= this->inputDimensions[i];
     totalInputSize += inSize;
