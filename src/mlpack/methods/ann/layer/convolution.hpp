@@ -105,7 +105,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   /*
    * Set the weight and bias term.
    */
-  void SetWeights(const typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -201,13 +201,18 @@ class ConvolutionType : public Layer<InputType, OutputType>
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (maps * totalInMaps * kernelWidth * kernelHeight) + maps;
+    std::cout << "WeightSize(): kernelWidth " << kernelWidth << " kernelHeight "
+<< kernelHeight << " maps " << maps << " totalInMaps " << totalInMaps << "\n";
+    return (maps * totalInMaps * kernelWidth * kernelHeight) +
+        (maps * totalInMaps);
   }
 
   void ComputeOutputDimensions()
   {
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-        1);
+    // We must ensure that the output has at least 3 dimensions, since we will
+    // be adding some number of maps to the output.
+    this->outputDimensions = std::vector<size_t>(
+        std::max(this->inputDimensions.size(), size_t(3)), 1);
     this->outputDimensions[0] = ConvOutSize(this->inputDimensions[0],
         kernelWidth, strideWidth, padWLeft, padWRight);
     this->outputDimensions[1] = ConvOutSize(this->inputDimensions[1],
@@ -216,9 +221,12 @@ class ConvolutionType : public Layer<InputType, OutputType>
     // Compute and cache the total number of input maps.
     totalInMaps = 1;
     for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+    {
       totalInMaps *= this->inputDimensions[i];
+      this->outputDimensions[i] = this->inputDimensions[i];
+    }
 
-    this->outputDimensions[2] = maps;
+    this->outputDimensions[2] *= maps;
   }
 
   /**

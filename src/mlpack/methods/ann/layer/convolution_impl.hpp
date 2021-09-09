@@ -103,8 +103,6 @@ ConvolutionType<
     padHBottom(std::get<1>(padH)),
     padHTop(std::get<0>(padH))
 {
-  weights.set_size(WeightSize(), 1);
-
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   util::ToLower(paddingType, paddingTypeLow);
@@ -137,11 +135,15 @@ void ConvolutionType<
     GradientConvolutionRule,
     InputType,
     OutputType
->::SetWeights(const typename OutputType::elem_type* weightPtr)
+>::SetWeights(typename OutputType::elem_type* weightPtr)
 {
+  std::cout << "call SetWeights, " << weightPtr << "; kernelWidth " <<
+kernelWidth << " kernelHeight " << kernelHeight << " maps " << maps << " totalInMaps " << totalInMaps << "\n";
   weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
       kernelWidth, kernelHeight, maps * totalInMaps, false, false);
-  bias = OutputType(weightPtr + weight.n_elem, maps, 1, false, false);
+  bias = OutputType(weightPtr + weight.n_elem, maps * totalInMaps, 1, false,
+      false);
+  weights = OutputType(weightPtr, weight.n_elem + bias.n_elem, 1, false, false);
 }
 
 template<
@@ -175,10 +177,11 @@ void ConvolutionType<
     }
   }
 
-  output.set_size(this->outputDimensions[0] * this->outputDimensions[1] * maps,
-      batchSize);
+  output.set_size(this->outputDimensions[0] * this->outputDimensions[1] *
+      totalInMaps *  maps, batchSize);
   outputTemp = arma::Cube<typename OutputType::elem_type>(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1], maps * batchSize,
+      this->outputDimensions[0], this->outputDimensions[1],
+      maps * totalInMaps * batchSize,
       false, false);
   outputTemp.zeros();
 
@@ -233,7 +236,7 @@ void ConvolutionType<
 {
   arma::Cube<typename OutputType::elem_type> mappedError(
       ((OutputType&) gy).memptr(), this->outputDimensions[0],
-      this->outputDimensions[1], maps * batchSize, false, false);
+      this->outputDimensions[1], totalInMaps * maps * batchSize, false, false);
 
   g.set_size(this->inputDimensions[0] * this->inputDimensions[1] * totalInMaps,
       batchSize);
@@ -292,12 +295,11 @@ void ConvolutionType<
 {
   arma::Cube<typename OutputType::elem_type> mappedError(
       ((OutputType&) error).memptr(), this->outputDimensions[0],
-      this->outputDimensions[1], maps * batchSize, false, false);
+      this->outputDimensions[1], totalInMaps * maps * batchSize, false, false);
   arma::Cube<typename InputType::elem_type> inputTemp(
       ((InputType&) input).memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], maps * batchSize, false, false);
+      this->inputDimensions[1], totalInMaps * maps * batchSize, false, false);
 
-  gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<typename OutputType::elem_type>(gradient.memptr(),
       weight.n_rows, weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
