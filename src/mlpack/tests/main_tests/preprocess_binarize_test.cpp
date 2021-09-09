@@ -2,7 +2,7 @@
  * @file tests/main_tests/preprocess_binarize_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of preprocess_binarize_main.cpp.
+ * Test RUN_BINDING() of preprocess_binarize_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,33 +12,17 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "PreprocessBinarize";
-
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_binarize_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include "test_helper.hpp"
+#include "main_test_fixture.hpp"
+
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct PreprocessBinarizeTestFixture
-{
- public:
-  PreprocessBinarizeTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~PreprocessBinarizeTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(PreprocessBinarizeTestFixture);
 
 /**
  * Check that input and output have same dimensions.
@@ -58,11 +42,11 @@ TEST_CASE_METHOD(
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 2);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == inputSize);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 2);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == inputSize);
 }
 
 /**
@@ -79,7 +63,7 @@ TEST_CASE_METHOD(
   SetInputParam("dimension", (int) -2); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -97,7 +81,7 @@ TEST_CASE_METHOD(
   SetInputParam("dimension", (int) 6); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -114,10 +98,10 @@ TEST_CASE_METHOD(
   SetInputParam("threshold", (double) 5.0);
   SetInputParam("dimension", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat output;
-  output = std::move(IO::GetParam<arma::mat>("output"));
+  output = std::move(params.Get<arma::mat>("output"));
 
   // All values dimension should remain unchanged.
   REQUIRE(output(0, 0) == Approx(7.0).epsilon(1e-7));
@@ -147,10 +131,10 @@ TEST_CASE_METHOD(
   SetInputParam("input", std::move(inputData));
   SetInputParam("threshold", (double) 5.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat output;
-  output = std::move(IO::GetParam<arma::mat>("output"));
+  output = std::move(params.Get<arma::mat>("output"));
 
   // All values should be binarized according to the threshold.
   REQUIRE(output(0, 0) == Approx(1.0).epsilon(1e-7));

@@ -11,16 +11,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#define MARKDOWN_BINDING_NAME "${BINDING}"
-
 #include <mlpack/core.hpp>
 #include "generate_markdown.${BINDING}.hpp"
 #include "binding_info.hpp"
 #include "print_docs.hpp"
 #include "get_binding_name.hpp"
 
-static const std::string testName = "${BINDING}";
 #include <${PROGRAM_MAIN_FILE}>
 
 using namespace std;

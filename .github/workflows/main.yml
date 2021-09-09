@@ -41,7 +41,7 @@ jobs:
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
         - name: Cache R packages
-          if: runner.os != 'Windows'
+          if: runner.os != 'Windows' && runner.os != 'macOS'
           uses: actions/cache@v1
           with:
             path: ${{ env.R_LIBS_USER }}
@@ -52,7 +52,7 @@ jobs:
           run: |
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev
-            curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+            curl -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz | tar -xvJ && cd armadillo*
             cmake . && make && sudo make install && cd ..
 
         - name: Install R-bindings dependencies
@@ -120,7 +120,7 @@ jobs:
         run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
 
       - name: Cache R packages
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && runner.os != 'macOS'
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
@@ -129,6 +129,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          install.packages('remotes')
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}

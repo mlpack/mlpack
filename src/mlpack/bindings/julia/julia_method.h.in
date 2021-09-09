@@ -15,7 +15,7 @@ extern "C"
 {
 #endif
 
-bool ${PROGRAM_NAME}();
+bool BINDING_FUNCTION(void* params, void* timers);
 
 // This is just used to force Julia to load each .so in the order we need.
 void loadSymbols();

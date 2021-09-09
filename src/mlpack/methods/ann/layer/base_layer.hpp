@@ -29,7 +29,7 @@
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
-#include <mlpack/methods/ann/activation_functions/silu_function.hpp> 
+#include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -314,7 +314,7 @@ template <
     typename OutputDataType = arma::mat
 >
 using SILUFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType,OutputDataType
+    ActivationFunction, InputDataType, OutputDataType
 >;
 
 } // namespace ann

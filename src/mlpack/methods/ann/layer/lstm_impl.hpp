@@ -26,7 +26,7 @@ LSTM<InputDataType, OutputDataType>::LSTM()
 
 template<typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
-    const LSTM& layer) : 
+    const LSTM& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
@@ -45,7 +45,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
 
 template<typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
-    LSTM&& layer) : 
+    LSTM&& layer) :
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     rho(std::move(layer.rho)),
@@ -63,7 +63,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
 }
 
 template <typename InputDataType, typename OutputDataType>
-LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType>&
 LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
 {
   if (this != &layer)
@@ -82,11 +82,11 @@ LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
     rhoSize = layer.rho;
     bpttSteps = layer.bpttSteps;
   }
-  return *this; 
+  return *this;
 }
 
 template <typename InputDataType, typename OutputDataType>
-LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType>&
 LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
 {
   if (this != &layer)
@@ -105,7 +105,7 @@ LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
     rhoSize = std::move(layer.rho);
     bpttSteps = std::move(layer.bpttSteps);
   }
-  return *this; 
+  return *this;
 }
 
 template <typename InputDataType, typename OutputDataType>

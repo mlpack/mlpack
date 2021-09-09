@@ -29,6 +29,7 @@ add_executable(mlpack_test
   cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
+  decision_tree_regressor_test.cpp
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -128,6 +129,7 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
+  xgboost_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
@@ -154,8 +156,8 @@ add_executable(mlpack_test
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
-  main_tests/lmnn_test.cpp
   main_tests/linear_svm_test.cpp
+  main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lsh_test.cpp
@@ -172,10 +174,10 @@ add_executable(mlpack_test
   main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
-  main_tests/range_search_test.cpp
-  main_tests/test_helper.hpp
+  main_tests/main_test_fixture.hpp
 )
 
 if(NOT BUILD_SHARED_LIBS)

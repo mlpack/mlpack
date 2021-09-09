@@ -93,16 +93,17 @@ inline std::string PrintValue(const std::vector<T>& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  util::Params p = IO::Parameters(bindingName);
+  if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = p.Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
-      (void*) &defaultValue);
+  p.functionMap[d.tname]["DefaultParam"](d, NULL, (void*) &defaultValue);
 
   return defaultValue;
 }
@@ -126,22 +127,23 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Recursion base case.
  */
-std::string PrintInputOptions() { return ""; }
+std::string PrintInputOptions(util::Params& /* p */) { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& p,
+                              const std::string& paramName,
                               const T& value,
                               Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
     if (d.input)
     {
       // Print the input option.
@@ -160,7 +162,7 @@ std::string PrintInputOptions(const std::string& paramName,
   }
 
   // Continue recursion.
-  std::string rest = PrintInputOptions(args...);
+  std::string rest = PrintInputOptions(p, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -172,10 +174,15 @@ std::string PrintInputOptions(const std::string& paramName,
 /**
  * Recursion base case.
  */
-inline std::string PrintOutputOptions(const bool /* markdown */) { return ""; }
+inline std::string PrintOutputOptions(util::Params& /* p */,
+                                      const bool /* markdown */)
+{
+  return "";
+}
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const bool markdown,
+std::string PrintOutputOptions(util::Params& p,
+                               const bool markdown,
                                const std::string& paramName,
                                const T& value,
                                Args... args)
@@ -183,9 +190,9 @@ std::string PrintOutputOptions(const bool markdown,
   // See if this is part of the program.
   std::string result = "";
   std::string command_prefix = "R> ";
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
     if (!d.input)
     {
       // Print a new line for the output option.
@@ -205,7 +212,7 @@ std::string PrintOutputOptions(const bool markdown,
   }
 
   // Continue recursion.
-  std::string rest = PrintOutputOptions(markdown, args...);
+  std::string rest = PrintOutputOptions(p, markdown, args...);
   if (rest != "" && result != "")
     result += "\n";
   result += rest;
@@ -223,26 +230,27 @@ std::string ProgramCall(const bool markdown,
                         const std::string& programName,
                         Args... args)
 {
+  util::Params p = IO::Parameters(programName);
   std::ostringstream oss;
   if (markdown)
     oss << "R> ";
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
-  ossOutput << PrintOutputOptions(markdown, args...);
+  ossOutput << PrintOutputOptions(p, markdown, args...);
   if (ossOutput.str() != "")
     oss << "output <- ";
   oss << programName << "(";
 
   // Now process each input option.
-  oss << PrintInputOptions(args...);
+  oss << PrintInputOptions(p, args...);
   oss << ")";
 
   std::string call = oss.str();
   oss.str(""); // Reset it.
 
   // Now process each output option.
-  oss << PrintOutputOptions(markdown, args...);
+  oss << PrintOutputOptions(p, markdown, args...);
   if (markdown)
   {
     if (oss.str() == "")
@@ -262,14 +270,14 @@ std::string ProgramCall(const bool markdown,
  * Given the name of a binding, print a program call assuming that all options
  * are specified.  The programName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream oss;
   std::string command_prefix = "R> ";
   oss << command_prefix;
 
   // Determine if we have any output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = p.Parameters();
   bool hasOutput = false;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -289,8 +297,7 @@ inline std::string ProgramCall(const std::string& programName)
   bool first = true;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (!it->second.input || (it->second.persistent &&
-        it->second.name != "verbose"))
+    if (!it->second.input)
       continue;
 
     if (!first)
@@ -302,8 +309,8 @@ inline std::string ProgramCall(const std::string& programName)
     oss << it->second.name << "=";
 
     std::string value;
-    IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
-        it->second, NULL, (void*) &value);
+    p.functionMap[it->second.tname]["DefaultParam"]( it->second, NULL,
+        (void*) &value);
     oss << value;
   }
   oss << ")";
@@ -374,16 +381,20 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
-inline bool IgnoreCheck(const std::string& paramName)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+  util::Params p = IO::Parameters(bindingName);
+  return !p.Parameters()[paramName].input;
 }
 
-inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::vector<std::string>& constraints)
 {
+  util::Params p = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!p.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -391,16 +402,18 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 }
 
 inline bool IgnoreCheck(
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+  util::Params p = IO::Parameters(bindingName);
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!p.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !p.Parameters()[paramName].input;
 }
 
 } // namespace r

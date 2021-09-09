@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RL_Q_LEARNING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <ensmallen.hpp>
 
 #include "replay/random_replay.hpp"
 #include "replay/prioritized_replay.hpp"

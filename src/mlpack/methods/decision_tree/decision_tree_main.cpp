@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME decision_tree
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_tree.hpp"
 
@@ -21,7 +27,7 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("Decision tree");
+BINDING_USER_NAME("Decision tree");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -155,29 +161,30 @@ PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Check parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
-  ReportIgnoredParam({{ "test", false }}, "test_labels");
-  RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions" },
-      false, "no output will be saved");
-  ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
+  ReportIgnoredParam(params, {{ "test", false }}, "test_labels");
+  RequireAtLeastOnePassed(params, { "output_model", "probabilities",
+      "predictions" }, false, "no output will be saved");
+  ReportIgnoredParam(params, {{ "training", false }},
+      "print_training_accuracy");
 
-  ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
-  RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
-      "leaf size must be positive");
+  RequireParamValue<int>(params, "minimum_leaf_size",
+      [](int x) { return x > 0; }, true, "leaf size must be positive");
 
-  RequireParamValue<int>("maximum_depth", [](int x) { return x >= 0; }, true,
-      "maximum depth must not be negative");
+  RequireParamValue<int>(params, "maximum_depth",
+      [](int x) { return x >= 0; }, true, "maximum depth must not be negative");
 
-  RequireParamValue<double>("minimum_gain_split", [](double x)
-                         { return (x > 0.0 && x < 1.0); }, true,
-                         "gain split must be a fraction in range [0,1]");
+  RequireParamValue<double>(params, "minimum_gain_split",
+      [](double x) { return (x > 0.0 && x < 1.0); }, true,
+      "gain split must be a fraction in range [0,1]");
 
-  if (IO::HasParam("print_training_error"))
+  if (params.Has("print_training_error"))
   {
     Log::Warn << "The option " << PRINT_PARAM_STRING("print_training_error")
         << " is deprecated and will be removed in mlpack 4.0.0." << std::endl;
@@ -188,14 +195,14 @@ static void mlpackMain()
   arma::mat trainingSet;
   arma::Row<size_t> labels;
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
     model = new DecisionTreeModel();
-    model->info = std::move(std::get<0>(IO::GetParam<TupleType>("training")));
-    trainingSet = std::move(std::get<1>(IO::GetParam<TupleType>("training")));
-    if (IO::HasParam("labels"))
+    model->info = std::move(std::get<0>(params.Get<TupleType>("training")));
+    trainingSet = std::move(std::get<1>(params.Get<TupleType>("training")));
+    if (params.Has("labels"))
     {
-      labels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
+      labels = std::move(params.Get<arma::Row<size_t>>("labels"));
     }
     else
     {
@@ -210,18 +217,18 @@ static void mlpackMain()
     const size_t numClasses = arma::max(arma::max(labels)) + 1;
 
     // Now build the tree.
-    const size_t minLeafSize = (size_t) IO::GetParam<int>("minimum_leaf_size");
-    const size_t maxDepth = (size_t) IO::GetParam<int>("maximum_depth");
+    const size_t minLeafSize = (size_t) params.Get<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) params.Get<int>("maximum_depth");
     const double minimumGainSplit =
-                           (double) IO::GetParam<double>("minimum_gain_split");
+                           (double) params.Get<double>("minimum_gain_split");
 
     // Create decision tree with weighted labels.
-    if (IO::HasParam("weights"))
+    if (params.Has("weights"))
     {
       arma::Row<double> weights =
-          std::move(IO::GetParam<arma::Mat<double>>("weights"));
-      if (IO::HasParam("print_training_error") ||
-          IO::HasParam("print_training_accuracy"))
+          std::move(params.Get<arma::Mat<double>>("weights"));
+      if (params.Has("print_training_error") ||
+          params.Has("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, std::move(weights), minLeafSize, minimumGainSplit,
@@ -236,7 +243,7 @@ static void mlpackMain()
     }
     else
     {
-      if (IO::HasParam("print_training_error"))
+      if (params.Has("print_training_error"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, minLeafSize, minimumGainSplit, maxDepth);
@@ -250,8 +257,8 @@ static void mlpackMain()
     }
 
     // Do we need to print training error?
-    if (IO::HasParam("print_training_error") ||
-        IO::HasParam("print_training_accuracy"))
+    if (params.Has("print_training_error") ||
+        params.Has("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
       arma::mat probabilities;
@@ -271,14 +278,14 @@ static void mlpackMain()
   }
   else
   {
-    model = IO::GetParam<DecisionTreeModel*>("input_model");
+    model = params.Get<DecisionTreeModel*>("input_model");
   }
 
   // Do we need to get predictions?
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    std::get<0>(IO::GetRawParam<TupleType>("test")) = model->info;
-    arma::mat testPoints = std::get<1>(IO::GetParam<TupleType>("test"));
+    std::get<0>(params.GetRaw<TupleType>("test")) = model->info;
+    arma::mat testPoints = std::get<1>(params.Get<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::mat probabilities;
@@ -286,10 +293,10 @@ static void mlpackMain()
     model->tree.Classify(testPoints, predictions, probabilities);
 
     // Do we need to calculate accuracy?
-    if (IO::HasParam("test_labels"))
+    if (params.Has("test_labels"))
     {
       arma::Row<size_t> testLabels =
-          std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
       size_t correct = 0;
       for (size_t i = 0; i < testPoints.n_cols; ++i)
@@ -303,10 +310,10 @@ static void mlpackMain()
     }
 
     // Do we need to save outputs?
-    IO::GetParam<arma::Row<size_t>>("predictions") = predictions;
-    IO::GetParam<arma::mat>("probabilities") = probabilities;
+    params.Get<arma::Row<size_t>>("predictions") = predictions;
+    params.Get<arma::mat>("probabilities") = probabilities;
   }
 
   // Do we need to save the model?
-  IO::GetParam<DecisionTreeModel*>("output_model") = model;
+  params.Get<DecisionTreeModel*>("output_model") = model;
 }

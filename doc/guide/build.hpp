@@ -63,6 +63,10 @@ $ sudo make install
 If the \c cmake \c .. command fails, you are probably missing a dependency, so
 check the output and install any necessary libraries.  (See \ref build_dep.)
 
+@note If you are using RHEL7/CentOS 7, the default version of gcc is too old.
+One solution is to use \c devtoolset-8; more information is available at
+https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/ .
+
 On many Linux systems, mlpack will install by default to @c /usr/local/lib and
 you may need to set the @c LD_LIBRARY_PATH environment variable:
 
@@ -91,7 +95,7 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 8.400.0 (with LAPACK support)
+ - Armadillo >= 9.800 (with LAPACK support)
  - Boost (math_c99, spirit) >= 1.58
  - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
@@ -189,9 +193,6 @@ The full list of options mlpack allows:
        (default OFF)
  - DISABLE_DOWNLOADS=(ON/OFF): Disable downloads of dependencies during build
        (default OFF)
- - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
-       (default ON)
- - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
  - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
  - PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
  - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
@@ -293,7 +294,7 @@ Now similarly you can run all the binding related tests using:
 ./bin/mlpack_test "[BindingTests]"
 @endcode
 
-To run a single test, you can explicitly provide the name of the test; for example, 
+To run a single test, you can explicitly provide the name of the test; for example,
 to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
 
 @code
