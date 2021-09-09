@@ -106,12 +106,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestModelReuseTest",
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
-<<<<<<< HEAD
-  SetInputParam("input_model",
-                IO::GetParam<RandomForestModel *>("output_model"));
-=======
   SetInputParam("input_model", m);
->>>>>>> master
 
   RUN_BINDING();
 
