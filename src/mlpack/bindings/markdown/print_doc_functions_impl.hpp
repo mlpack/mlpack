@@ -245,7 +245,6 @@ inline std::string PrintTypeDocs()
   data.required = false;
   data.input = true;
   data.loaded = false;
-  data.persistent = false;
   data.value = ANY(int(0));
 
   std::string type = GetPrintableType<int>(data);
@@ -427,12 +426,14 @@ inline std::string PrintValue(const T& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+  util::Params p = IO::Parameters(bindingName);
+  if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = p.Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -444,23 +445,23 @@ inline std::string PrintDefault(const std::string& paramName)
   {
     if (BindingInfo::Language() == "cli")
     {
-      oss << cli::PrintDefault(paramName);
+      oss << cli::PrintDefault(bindingName, paramName);
     }
     else if (BindingInfo::Language() == "python")
     {
-      oss << python::PrintDefault(paramName);
+      oss << python::PrintDefault(bindingName, paramName);
     }
     else if (BindingInfo::Language() == "julia")
     {
-      oss << julia::PrintDefault(paramName);
+      oss << julia::PrintDefault(bindingName, paramName);
     }
     else if (BindingInfo::Language() == "go")
     {
-      oss << go::PrintDefault(paramName);
+      oss << go::PrintDefault(bindingName, paramName);
     }
     else if (BindingInfo::Language() == "r")
     {
-      oss << r::PrintDefault(paramName);
+      oss << r::PrintDefault(bindingName, paramName);
     }
     else
     {
@@ -594,45 +595,76 @@ std::string ProgramCall(const std::string& programName, Args... args)
 inline std::string ProgramCall(const std::string& programName)
 {
   std::string s = "```";
+  util::Params p = IO::Parameters(programName);
   if (BindingInfo::Language() == "cli")
   {
+    // Strip non-CLI options.
+    p.Parameters().erase("copy_all_inputs");
+    p.Parameters().erase("check_input_matrices");
+
     s += "bash\n";
     std::string import = PrintImport(GetBindingName(programName));
     if (import.size() > 0)
       s += "$ " + import + "\n";
-    s += cli::ProgramCall(programName);
+    s += cli::ProgramCall(p, programName);
   }
   else if (BindingInfo::Language() == "python")
   {
+    // Strip non-Python options.
+    p.Parameters().erase("help");
+    p.Parameters().erase("info");
+    p.Parameters().erase("version");
+
     s += "python\n";
     std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += ">>> " + import + "\n";
-    s += python::ProgramCall(programName);
+    s += python::ProgramCall(p, programName);
   }
   else if (BindingInfo::Language() == "julia")
   {
+    // Strip non-Julia options.
+    p.Parameters().erase("help");
+    p.Parameters().erase("info");
+    p.Parameters().erase("version");
+    p.Parameters().erase("copy_all_inputs");
+    p.Parameters().erase("check_input_matrices");
+
     s += "julia\n";
     std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += "julia> " + import + "\n";
-    s += julia::ProgramCall(programName);
+    s += julia::ProgramCall(p, programName);
   }
   else if (BindingInfo::Language() == "go")
   {
+    // Strip non-Go options.
+    p.Parameters().erase("help");
+    p.Parameters().erase("info");
+    p.Parameters().erase("version");
+    p.Parameters().erase("copy_all_inputs");
+    p.Parameters().erase("check_input_matrices");
+
     s += "go\n";
     std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += import + "\n";
-    s += go::ProgramCall(programName);
+    s += go::ProgramCall(p, programName);
   }
   else if (BindingInfo::Language() == "r")
   {
+    // Strip non-R options.
+    p.Parameters().erase("help");
+    p.Parameters().erase("info");
+    p.Parameters().erase("version");
+    p.Parameters().erase("copy_all_inputs");
+    p.Parameters().erase("check_input_matrices");
+
     s += "R\n";
     std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += "R> " + import + "\n";
-    s += r::ProgramCall(programName);
+    s += r::ProgramCall(p, programName);
   }
   else
   {
@@ -650,7 +682,8 @@ inline std::string ProgramCall(const std::string& programName)
  * that all of the PARAM_*() declarataions need to come before
  * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName)
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName)
 {
   // These functions always put a '' around the parameter, so we will skip that
   // bit.
@@ -658,7 +691,7 @@ inline std::string ParamString(const std::string& paramName)
   if (BindingInfo::Language() == "cli")
   {
     // The CLI bindings put a '' around the parameter, so skip that...
-    s = cli::ParamString(paramName);
+    s = cli::ParamString(bindingName, paramName);
   }
   else if (BindingInfo::Language() == "python")
   {
@@ -688,15 +721,14 @@ inline std::string ParamString(const std::string& paramName)
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(util::ParamData& d)
+inline std::string ParamType(util::Params& p, util::ParamData& d)
 {
   std::string output;
-  IO::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
-      &output);
+  p.functionMap[d.tname]["GetPrintableType"](d, NULL, &output);
   // We want to make this a link to the type documentation.
   std::string anchorType = output;
   bool result;
-  IO::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  p.functionMap[d.tname]["IsSerializable"](d, NULL, &result);
   if (result)
     anchorType = "model";
 
@@ -705,7 +737,7 @@ inline std::string ParamType(util::ParamData& d)
 }
 
 template<typename T>
-inline bool IgnoreCheck(const T& t)
+inline bool IgnoreCheck(const std::string& bindingName, const T& t)
 {
   if (BindingInfo::Language() == "cli")
   {
@@ -713,19 +745,19 @@ inline bool IgnoreCheck(const T& t)
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::IgnoreCheck(t);
+    return python::IgnoreCheck(bindingName, t);
   }
   else if (BindingInfo::Language() == "julia")
   {
-    return julia::IgnoreCheck(t);
+    return julia::IgnoreCheck(bindingName, t);
   }
   else if (BindingInfo::Language() == "go")
   {
-    return go::IgnoreCheck(t);
+    return go::IgnoreCheck(bindingName, t);
   }
   else if (BindingInfo::Language() == "r")
   {
-    return r::IgnoreCheck(t);
+    return r::IgnoreCheck(bindingName, t);
   }
   else
   {

@@ -23,9 +23,12 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void KDEWrapper<KernelType, TreeType>::Train(arma::mat&& referenceSet)
+void KDEWrapper<KernelType, TreeType>::Train(util::Timers& timers,
+                                             arma::mat&& referenceSet)
 {
+  timers.Start("tree_building");
   kde.Train(std::move(referenceSet));
+  timers.Stop("tree_building");
 }
 
 //! Perform bichromatic KDE (i.e. KDE with a separate query set).
@@ -33,14 +36,38 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void KDEWrapper<KernelType, TreeType>::Evaluate(arma::mat&& querySet,
+void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
+                                                arma::mat&& querySet,
                                                 arma::vec& estimates)
 {
   const size_t dimension = querySet.n_rows;
-  kde.Evaluate(std::move(querySet), estimates);
+  if (kde.Mode() == DUAL_TREE_MODE)
+  {
+    // Build the query tree separately, so that we can time it.
+    timers.Start("tree_building");
+    std::vector<size_t> oldFromNewQueries;
+    typename decltype(kde)::Tree* queryTree = BuildTree<
+        typename decltype(kde)::Tree>(std::move(querySet), oldFromNewQueries);
+    timers.Stop("tree_building");
+
+    timers.Start("computing_kde");
+    kde.Evaluate(queryTree, oldFromNewQueries, estimates);
+    timers.Stop("computing_kde");
+
+    delete queryTree;
+  }
+  else
+  {
+    timers.Start("computing_kde");
+    kde.Evaluate(std::move(querySet), estimates);
+    timers.Stop("computing_kde");
+  }
+
+  timers.Start("applying_normalizer");
   KernelNormalizer::ApplyNormalizer<KernelType>(kde.Kernel(),
                                                 dimension,
                                                 estimates);
+  timers.Stop("applying_normalizer");
 }
 
 //! Perform monochromatic KDE (i.e. with the reference set as the query set).
@@ -48,13 +75,19 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void KDEWrapper<KernelType, TreeType>::Evaluate(arma::vec& estimates)
+void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
+                                                arma::vec& estimates)
 {
+  timers.Start("computing_kde");
   kde.Evaluate(estimates);
+  timers.Stop("computing_kde");
+
+  timers.Start("applying_normalizer");
   const size_t dimension = kde.ReferenceTree()->Dataset().n_rows;
   KernelNormalizer::ApplyNormalizer<KernelType>(kde.Kernel(),
                                                 dimension,
                                                 estimates);
+  timers.Stop("applying_normalizer");
 }
 
 template<template<typename TreeMetricType,

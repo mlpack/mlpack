@@ -16,6 +16,8 @@ set(SOURCES
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  bicubic_interpolation.hpp
+  bicubic_interpolation_impl.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
   channel_shuffle.hpp
@@ -44,6 +46,8 @@ set(SOURCES
   flexible_relu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  group_norm.hpp
+  group_norm_impl.hpp
   gru.hpp
   gru_impl.hpp
   hard_tanh.hpp
@@ -85,6 +89,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  nearest_interpolation.hpp
+  nearest_interpolation_impl.hpp
   noisylinear.hpp
   noisylinear_impl.hpp
   parametric_relu.hpp

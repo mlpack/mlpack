@@ -39,14 +39,14 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  \<paramName\> := GetParam\<Type\>("paramName")
+   *  \<paramName\> := GetParam\<Type\>(params, "paramName")
    *
    */
 
   std::string name = d.name;
   name = util::CamelCase(name, true);
   std::cout << prefix << name << " := getParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")" << std::endl;
+            << "(params, \"" << d.name << "\")" << std::endl;
 }
 
 /**
@@ -66,7 +66,8 @@ void PrintOutputProcessing(
    * This gives us code like:
    *
    *  var \<paramName\>Ptr mlpackArma
-   *  \<paramName\> := \<paramName\>_ptr.ArmaToGonum_\<Type\>("paramName")
+   *  \<paramName\> := \<paramName\>_ptr.ArmaToGonum_\<Type\>(params,
+   *      "paramName")
    *
    */
   std::string name = d.name;
@@ -74,7 +75,7 @@ void PrintOutputProcessing(
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
   std::cout << prefix << name << " := " << name
             << "Ptr.armaToGonum" << GetType<T>(d)
-            << "(\""  << d.name << "\")" << std::endl;
+            << "(params, \""  << d.name << "\")" << std::endl;
 }
 /**
  * Print output processing for a matrix with info type.
@@ -92,14 +93,15 @@ void PrintOutputProcessing(
    * This gives us code like:
    *
    *  var \<paramName\>_ptr mlpackArma
-   *  \<paramName\> := \<paramName\>Ptr.ArmaToGonumWithInfo\<Type\>("paramName")
+   *  \<paramName\> := \<paramName\>Ptr.ArmaToGonumWithInfo\<Type\>(params,
+   *      "paramName")
    *
    */
   std::string name = d.name;
   name = util::CamelCase(name, true);
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
   std::cout << prefix << name << " := " << name << "Ptr.armaToGonumWith"
-            << "Info(\""  << d.name << "\")" << std::endl;
+            << "Info(params, \""  << d.name << "\")" << std::endl;
 }
 
 /**
@@ -122,14 +124,14 @@ void PrintOutputProcessing(
    * This gives us code like:
    *
    *  var modelOut \<Type\>
-   *  modelOut.get\<Type\>("paramName")
+   *  modelOut.get\<Type\>(params, "paramName")
    *
    */
   std::string name = d.name;
   name = util::CamelCase(name, true);
   std::cout << prefix << "var " << name << " " << goStrippedType << std::endl;
   std::cout << prefix << name << ".get" << strippedType
-            << "(\"" << d.name << "\")" << std::endl;
+            << "(params, \"" << d.name << "\")" << std::endl;
 }
 
 /**

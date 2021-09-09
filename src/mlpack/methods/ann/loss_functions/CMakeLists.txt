@@ -33,6 +33,8 @@ set(SOURCES
   mean_squared_error_impl.hpp
   mean_squared_logarithmic_error.hpp
   mean_squared_logarithmic_error_impl.hpp
+  multilabel_softmargin_loss.hpp
+  multilabel_softmargin_loss_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
   poisson_nll_loss.hpp

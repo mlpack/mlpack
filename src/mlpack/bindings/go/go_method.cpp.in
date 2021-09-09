@@ -8,14 +8,12 @@
 #include <${PROGRAM_MAIN_FILE}>
 #include <mlpack/bindings/go/mlpack/capi/io_util.hpp>
 
-static void ${GOPROGRAM_NAME}MlpackMain()
+extern "C" void mlpack${GOPROGRAM_NAME}(void* params, void* timers)
 {
-  mlpackMain();
-}
+  util::Params& p = *((util::Params*) params);
+  util::Timers& t = *((util::Timers*) timers);
 
-extern "C" void mlpack${GOPROGRAM_NAME}()
-{
-  ${GOPROGRAM_NAME}MlpackMain();
+  BINDING_FUNCTION(p, t);
 }
 
 // Any implementations of methods for dealing with model pointers will be put

@@ -12,6 +12,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME hmm_viterbi
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -29,7 +35,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Hidden Markov Model (HMM) Viterbi State Prediction");
+BINDING_USER_NAME("Hidden Markov Model (HMM) Viterbi State Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -75,10 +81,10 @@ PARAM_UMATRIX_OUT("output", "File to save predicted state sequence to.", "o");
 struct Viterbi
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, void* /* extraInfo */)
+  static void Apply(util::Params& params, HMMType& hmm, void* /* extraInfo */)
   {
     // Load observations.
-    mat dataSeq = std::move(IO::GetParam<arma::mat>("input"));
+    mat dataSeq = std::move(params.Get<arma::mat>("input"));
 
     // See if transposing the data could make it the right dimensionality.
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
@@ -100,13 +106,15 @@ struct Viterbi
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
-    IO::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
+    params.Get<arma::Mat<size_t>>("output") = std::move(sequence);
   }
 };
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
-  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no results will be saved");
 
-  IO::GetParam<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
+  params.Get<HMMModel*>("input_model")->PerformAction<Viterbi>(
+      params, (void*) NULL);
 }

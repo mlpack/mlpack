@@ -18,8 +18,12 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
-# Set minimum library version required by mlpack.
-set(ARMADILLO_VERSION "8.400.0")
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
+set(ARMADILLO_VERSION "9.800")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
@@ -110,7 +114,7 @@ if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
 endif ()
 
 # Include modules in the CMake directory.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -347,6 +351,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.77.0" "1.77"
   "1.76.0" "1.76"
   "1.75.0" "1.75"
   "1.74.0" "1.74"
@@ -425,7 +430,7 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src/)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)

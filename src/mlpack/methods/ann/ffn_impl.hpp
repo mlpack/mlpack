@@ -120,9 +120,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("ffn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -148,9 +146,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("ffn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;

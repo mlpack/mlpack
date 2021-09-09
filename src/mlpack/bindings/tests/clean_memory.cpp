@@ -12,6 +12,7 @@
 #include "clean_memory.hpp"
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -20,20 +21,20 @@ namespace tests {
 /**
  * Delete any pointers held by the IO object.
  */
-void CleanMemory()
+void CleanMemory(util::Params& params)
 {
   // If we are holding any pointers, then we "own" them.  But we may hold the
   // same pointer twice, so we have to be careful to not delete it multiple
   // times.
   std::unordered_map<void*, util::ParamData*> memoryAddresses;
-  auto it = IO::Parameters().begin();
-  while (it != IO::Parameters().end())
+  auto it = params.Parameters().begin();
+  while (it != params.Parameters().end())
   {
     util::ParamData& data = it->second;
 
     void* result;
-    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
-        NULL, (void*) &result);
+    params.functionMap[data.tname]["GetAllocatedMemory"](data, NULL,
+        (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
 
@@ -47,8 +48,7 @@ void CleanMemory()
   {
     util::ParamData& data = *(it2->second);
 
-    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
-        NULL, NULL);
+    params.functionMap[data.tname]["DeleteAllocatedMemory"](data, NULL, NULL);
 
     ++it2;
   }

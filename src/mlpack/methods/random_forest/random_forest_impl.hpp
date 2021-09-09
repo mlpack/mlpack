@@ -513,13 +513,10 @@ double RandomForest<
     arma::rowvec bootstrapWeights;
     if (UseBootstrap)
     {
-      Timer::Start("bootstrap");
       Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
           bootstrapLabels, bootstrapWeights);
-      Timer::Stop("bootstrap");
     }
 
-    Timer::Start("train_tree");
     if (UseWeights)
     {
       if (UseDatasetInfo)
@@ -566,8 +563,6 @@ double RandomForest<
                 dimensionSelector);
       }
     }
-
-    Timer::Stop("train_tree");
   }
 
   avgGain = totalGain / trees.size();

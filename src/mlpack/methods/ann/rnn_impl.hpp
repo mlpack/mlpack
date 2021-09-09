@@ -168,9 +168,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -217,9 +215,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("rnn_optimization");
   const double out = optimizer.Optimize(*this, parameter, callbacks...);
-  Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;

@@ -44,8 +44,6 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::vec& eigVal,
                                      arma::mat& eigvec)
 {
-  Timer::Start("pca");
-
   // Center the data into a temporary matrix.
   arma::mat centeredData;
   math::Center(data, centeredData);
@@ -55,8 +53,6 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
 
   decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
       data.n_rows);
-
-  Timer::Stop("pca");
 }
 
 /**
@@ -117,8 +113,6 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   arma::mat eigvec;
   arma::vec eigVal;
 
-  Timer::Start("pca");
-
   // Center the data into a temporary matrix.
   arma::mat centeredData;
   math::Center(data, centeredData);
@@ -135,8 +129,6 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
   double eigDim = std::min(newDimension - 1, (size_t) eigVal.n_elem - 1);
-
-  Timer::Stop("pca");
 
   // Calculate the total amount of variance retained.
   return (sum(eigVal.subvec(0, eigDim)) / sum(eigVal));

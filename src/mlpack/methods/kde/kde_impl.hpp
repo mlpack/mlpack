@@ -333,11 +333,9 @@ Train(MatType referenceSet)
   }
 
   this->ownsReferenceTree = true;
-  Timer::Start("building_reference_tree");
   this->oldFromNewReferences = new std::vector<size_t>;
   this->referenceTree = BuildTree<Tree>(std::move(referenceSet),
                                         *oldFromNewReferences);
-  Timer::Stop("building_reference_tree");
   this->trained = true;
 }
 
@@ -394,10 +392,8 @@ Evaluate(MatType querySet, arma::vec& estimations)
 {
   if (mode == DUAL_TREE_MODE)
   {
-    Timer::Start("building_query_tree");
     std::vector<size_t> oldFromNewQueries;
     Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
-    Timer::Stop("building_query_tree");
     try
     {
       this->Evaluate(queryTree, oldFromNewQueries, estimations);
@@ -439,8 +435,6 @@ Evaluate(MatType querySet, arma::vec& estimations)
                                   "referenceSet dimensions don't match");
     }
 
-    Timer::Start("computing_kde");
-
     // Evaluate.
     typedef KDERules<MetricType, KernelType, Tree> RuleType;
     RuleType rules = RuleType(referenceTree->Dataset(),
@@ -465,7 +459,6 @@ Evaluate(MatType querySet, arma::vec& estimations)
       traverser.Traverse(i, *referenceTree);
 
     estimations /= referenceTree->Dataset().n_cols;
-    Timer::Stop("computing_kde");
 
     Log::Info << rules.Scores() << " node combinations were scored."
               << std::endl;
@@ -530,14 +523,10 @@ Evaluate(Tree* queryTree,
   // Clean accumulated alpha if Monte Carlo estimations are available.
   if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
-    Timer::Start("cleaning_query_tree");
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
     cleanTraverser.Traverse(0, *queryTree);
-    Timer::Stop("cleaning_query_tree");
   }
-
-  Timer::Start("computing_kde");
 
   // Evaluate.
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
@@ -559,7 +548,6 @@ Evaluate(Tree* queryTree,
   DualTreeTraversalType<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
-  Timer::Stop("computing_kde");
 
   // Rearrange if necessary.
   RearrangeEstimations(oldFromNewQueries, estimations);
@@ -599,14 +587,10 @@ Evaluate(arma::vec& estimations)
   // Clean accumulated alpha if Monte Carlo estimations are available.
   if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
   {
-    Timer::Start("cleaning_query_tree");
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
     cleanTraverser.Traverse(0, *referenceTree);
-    Timer::Stop("cleaning_query_tree");
   }
-
-  Timer::Start("computing_kde");
 
   // Evaluate.
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
@@ -640,7 +624,6 @@ Evaluate(arma::vec& estimations)
   estimations /= referenceTree->Dataset().n_cols;
   // Rearrange if necessary.
   RearrangeEstimations(*oldFromNewReferences, estimations);
-  Timer::Stop("computing_kde");
 
   Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
   Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;

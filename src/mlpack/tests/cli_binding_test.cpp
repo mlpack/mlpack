@@ -22,42 +22,73 @@ using namespace mlpack::bindings;
 using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
+// If multiple binding types are used in the same test file, we may get the
+// wrong function map.  These functions are utilities to ensure that for these
+// tests, the function maps are accurate.
+
+template<typename N>
+void AddCLIMapFunctions(util::Params& p)
+{
+  p.functionMap[TYPENAME(N)]["DefaultParam"] = &cli::DefaultParam<N>;
+  p.functionMap[TYPENAME(N)]["OutputParam"] = &cli::OutputParam<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParam"] = &cli::GetPrintableParam<N>;
+  p.functionMap[TYPENAME(N)]["StringTypeParam"] = &cli::StringTypeParam<N>;
+  p.functionMap[TYPENAME(N)]["GetParam"] = &cli::GetParam<N>;
+  p.functionMap[TYPENAME(N)]["GetRawParam"] = &cli::GetRawParam<N>;
+  p.functionMap[TYPENAME(N)]["AddToCLI11"] = &cli::AddToCLI11<N>;
+  p.functionMap[TYPENAME(N)]["MapParameterName"] = &cli::MapParameterName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamName"] =
+      &cli::GetPrintableParamName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamValue"] =
+      &cli::GetPrintableParamValue<N>;
+  p.functionMap[TYPENAME(N)]["GetAllocatedMemory"] =
+      &cli::GetAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["DeleteAllocatedMemory"] =
+      &cli::DeleteAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["InPlaceCopy"] = &cli::InPlaceCopy<N>;
+}
+
 /**
  * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
  */
 TEST_CASE("CLIOptionTest", "[CLIOptionTest]")
 {
-  IO::ClearSettings();
   CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
-      false);
+      false, "CLIOptionTest");
 
   // Now check that it's in CLI.
-  REQUIRE(IO::Parameters().count("test") > 0);
-  REQUIRE(IO::Aliases().count('t') > 0);
-  REQUIRE(IO::Parameters()["test"].desc == "test2");
-  REQUIRE(IO::Parameters()["test"].name == "test");
-  REQUIRE(IO::Parameters()["test"].alias == 't');
-  REQUIRE(IO::Parameters()["test"].noTranspose == false);
-  REQUIRE(IO::Parameters()["test"].required == false);
-  REQUIRE(IO::Parameters()["test"].input == true);
-  REQUIRE(IO::Parameters()["test"].cppType == "double");
+  util::Params p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<double>(p);
+
+  REQUIRE(p.Parameters().count("test") > 0);
+  REQUIRE(p.Aliases().count('t') > 0);
+  REQUIRE(p.Parameters()["test"].desc == "test2");
+  REQUIRE(p.Parameters()["test"].name == "test");
+  REQUIRE(p.Parameters()["test"].alias == 't');
+  REQUIRE(p.Parameters()["test"].noTranspose == false);
+  REQUIRE(p.Parameters()["test"].required == false);
+  REQUIRE(p.Parameters()["test"].input == true);
+  REQUIRE(p.Parameters()["test"].cppType == "double");
 
   CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
-      true, true);
+      true, true, "CLIOptionTest");
 
   // Now check that it's in CLI.
-  REQUIRE(IO::Parameters().count("mat") > 0);
-  REQUIRE(IO::Aliases().count('m') > 0);
-  REQUIRE(IO::Parameters()["mat"].desc == "mat2");
-  REQUIRE(IO::Parameters()["mat"].name == "mat");
-  REQUIRE(IO::Parameters()["mat"].alias == 'm');
-  REQUIRE(IO::Parameters()["mat"].noTranspose == true);
-  REQUIRE(IO::Parameters()["mat"].required == true);
-  REQUIRE(IO::Parameters()["mat"].input == true);
-  REQUIRE(IO::Parameters()["mat"].cppType == "arma::mat");
+  p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<arma::mat>(p);
 
-  IO::ClearSettings();
+  REQUIRE(p.Parameters().count("mat") > 0);
+  REQUIRE(p.Aliases().count('m') > 0);
+  REQUIRE(p.Parameters()["mat"].desc == "mat2");
+  REQUIRE(p.Parameters()["mat"].name == "mat");
+  REQUIRE(p.Parameters()["mat"].alias == 'm');
+  REQUIRE(p.Parameters()["mat"].noTranspose == true);
+  REQUIRE(p.Parameters()["mat"].required == true);
+  REQUIRE(p.Parameters()["mat"].input == true);
+  REQUIRE(p.Parameters()["mat"].cppType == "arma::mat");
 }
 
 /**

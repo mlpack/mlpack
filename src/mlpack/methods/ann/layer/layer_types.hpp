@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
+#include <mlpack/methods/ann/layer/bicubic_interpolation.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/channel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
@@ -26,6 +27,7 @@
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/group_norm.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -40,6 +42,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/lp_pooling.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -245,7 +248,10 @@ using MoreTypes = boost::variant<
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
+        BicubicInterpolation<arma::mat, arma::mat>*,
+        NearestInterpolation<arma::mat, arma::mat>*,
+        GroupNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>

@@ -14,19 +14,30 @@
 
 #include "catch.hpp"
 
-namespace mlpack {
-namespace bindings {
-namespace python {
-
-std::string programName; // Needed for linking.
-
-} // namespace python
-} // namespace bindings
-} // namespace mlpack
-
 using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::python;
+
+// If multiple binding types are used in the same test file, we may get the
+// wrong function map.  These functions are utilities to ensure that for these
+// tests, the function maps are accurate.
+
+template<typename N>
+void AddPyMapFunctions(util::Params& p)
+{
+  p.functionMap[TYPENAME(N)]["GetParam"] = &python::GetParam<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParam"] =
+      &python::GetPrintableParam<N>;
+  p.functionMap[TYPENAME(N)]["DefaultParam"] = &python::DefaultParam<N>;
+  p.functionMap[TYPENAME(N)]["PrintClassDefn"] = &python::PrintClassDefn<N>;
+  p.functionMap[TYPENAME(N)]["PrintDefn"] = &python::PrintDefn<N>;
+  p.functionMap[TYPENAME(N)]["PrintDoc"] = &python::PrintDoc<N>;
+  p.functionMap[TYPENAME(N)]["PrintOutputProcessing"] =
+      &python::PrintOutputProcessing<N>;
+  p.functionMap[TYPENAME(N)]["PrintInputProcessing"] =
+      &python::PrintInputProcessing<N>;
+  p.functionMap[TYPENAME(N)]["ImportDecl"] = &python::ImportDecl<N>;
+}
 
 /**
  * Ensure that we can construct a PyOption object, and that it will add itself
@@ -34,38 +45,39 @@ using namespace mlpack::bindings::python;
  */
 TEST_CASE("PyOptionTest", "[PythonBindingsTest]")
 {
-  IO::ClearSettings();
-  programName = "test";
-  PyOption<double> po1(0.0, "test", "test2", "t", "double", false, true, false);
+  PyOption<double> po1(0.0, "test", "test2", "t", "double", false, true, false,
+      "PyOptionTest");
 
   // Now check that it's in IO.
-  IO::RestoreSettings(programName);
-  REQUIRE(IO::Parameters().count("test") > 0);
-  REQUIRE(IO::Aliases().count('t') > 0);
-  REQUIRE(IO::Parameters()["test"].desc == "test2");
-  REQUIRE(IO::Parameters()["test"].name == "test");
-  REQUIRE(IO::Parameters()["test"].alias == 't');
-  REQUIRE(IO::Parameters()["test"].noTranspose == false);
-  REQUIRE(IO::Parameters()["test"].required == false);
-  REQUIRE(IO::Parameters()["test"].input == true);
-  REQUIRE(IO::Parameters()["test"].cppType == "double");
+  util::Params p = IO::Parameters("PyOptionTest");
+  p.functionMap.clear();
+  AddPyMapFunctions<double>(p);
+  REQUIRE(p.Parameters().count("test") > 0);
+  REQUIRE(p.Aliases().count('t') > 0);
+  REQUIRE(p.Parameters()["test"].desc == "test2");
+  REQUIRE(p.Parameters()["test"].name == "test");
+  REQUIRE(p.Parameters()["test"].alias == 't');
+  REQUIRE(p.Parameters()["test"].noTranspose == false);
+  REQUIRE(p.Parameters()["test"].required == false);
+  REQUIRE(p.Parameters()["test"].input == true);
+  REQUIRE(p.Parameters()["test"].cppType == "double");
 
   PyOption<arma::mat> po2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
-      true, true);
+      true, true, "PyOptionTest");
 
   // Now check that it's in IO.
-  IO::RestoreSettings(programName);
-  REQUIRE(IO::Parameters().count("mat") > 0);
-  REQUIRE(IO::Aliases().count('m') > 0);
-  REQUIRE(IO::Parameters()["mat"].desc == "mat2");
-  REQUIRE(IO::Parameters()["mat"].name == "mat");
-  REQUIRE(IO::Parameters()["mat"].alias == 'm');
-  REQUIRE(IO::Parameters()["mat"].noTranspose == true);
-  REQUIRE(IO::Parameters()["mat"].required == true);
-  REQUIRE(IO::Parameters()["mat"].input == true);
-  REQUIRE(IO::Parameters()["mat"].cppType == "arma::mat");
-
-  IO::ClearSettings();
+  p = IO::Parameters("PyOptionTest");
+  p.functionMap.clear();
+  AddPyMapFunctions<arma::mat>(p);
+  REQUIRE(p.Parameters().count("mat") > 0);
+  REQUIRE(p.Aliases().count('m') > 0);
+  REQUIRE(p.Parameters()["mat"].desc == "mat2");
+  REQUIRE(p.Parameters()["mat"].name == "mat");
+  REQUIRE(p.Parameters()["mat"].alias == 'm');
+  REQUIRE(p.Parameters()["mat"].noTranspose == true);
+  REQUIRE(p.Parameters()["mat"].required == true);
+  REQUIRE(p.Parameters()["mat"].input == true);
+  REQUIRE(p.Parameters()["mat"].cppType == "arma::mat");
 }
 
 /**

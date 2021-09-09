@@ -2,45 +2,27 @@
  * @file tests/main_tests/linear_svm_test.cpp
  * @author Yashwant Singh Parihar
  *
- * Test mlpackMain() of logistic_regression_main.cpp
+ * Test RUN_BINDING() of logistic_regression_main.cpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-
-static const std::string testName = "LinearSVM";
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/linear_svm/linear_svm_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct LinearSVMTestFixture
-{
- public:
-  LinearSVMTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LinearSVMTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(LinearSVMTestFixture);
 
 /**
  * Ensure that trainingSet are necessarily passed when training.
@@ -56,7 +38,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNoTrainingData",
 
   // Training data is not provided. Should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -85,11 +67,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOutputDimensionTest",
   SetInputParam("test", std::move(testData));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output predictions of the test data.
   const arma::Row<size_t>& testLabels =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   REQUIRE(testLabels.n_rows == 1);
@@ -115,7 +97,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckLabelsSizeTest",
 
   // Labels with incorrect size. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -134,16 +116,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMLabelsRepresentationTest",
 
   // The first solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output.
   const arma::Row<size_t> testLabels1 =
-      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Now train by providing labels as extra parameter.
   arma::mat trainData2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
@@ -155,11 +136,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMLabelsRepresentationTest",
 
   // The second solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // get the output
   const arma::Row<size_t>& testLabels2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -188,29 +169,29 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMModelReuseTest",
   SetInputParam("test", testData);
 
   // First solution
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained from training.
-  LinearSVMModel* model =
-      IO::GetParam<LinearSVMModel*>("output_model");
+  LinearSVMModel* model = params.Get<LinearSVMModel*>("output_model");
+  params.Get<LinearSVMModel*>("output_model") = NULL;
+
   // Get the output.
-  const arma::Row<size_t>& testLabels1 =
-      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  arma::Row<size_t> testLabels1 =
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output.
   const arma::Row<size_t>& testLabels2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -237,7 +218,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData",
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -260,22 +241,21 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData2",
   SetInputParam("training", std::move(trainData));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained from training.
   LinearSVMModel* model =
-      IO::GetParam<LinearSVMModel*>("output_model");
+      params.Get<LinearSVMModel*>("output_model");
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
 
   // Test data dimensionality is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -299,7 +279,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeMaxIterationTest",
 
   // Maximum iterations is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -323,7 +303,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeLambdaTest",
 
   // Lambda is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -348,7 +328,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture,
 
   // Number of classes is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -372,7 +352,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeToleranceTest",
 
   // Tolerance is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -396,7 +376,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeDeltaTest",
 
   // Delta is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -420,7 +400,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeEpochsTest",
 
   // Epochs is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -444,7 +424,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMZeroNumberOfClassesTest",
   // Number of classes for optimizer is only one.
   // It should throw a invalid_argument error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -467,7 +447,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOptimizerTest",
   SetInputParam("optimizer", std::string("hello"));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -491,16 +471,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
 
   // First solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -508,11 +487,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
 
   // Second solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -538,16 +517,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
 
   // First solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -555,11 +533,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
 
   // Second solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -585,16 +563,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
 
   // First solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -602,11 +579,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
 
   // Second solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -631,16 +608,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
 
   // First solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -648,11 +624,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
 
   // Second solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -683,16 +659,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -705,11 +680,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -736,7 +711,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeStepSizeTest",
 
   // Step size for optimizer is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -765,16 +740,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -787,11 +761,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -823,16 +797,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -846,11 +819,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -882,16 +855,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -905,11 +877,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -935,16 +907,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
 
   // First solution.
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -956,11 +927,11 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
   #endif
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      params.Get<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);

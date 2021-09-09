@@ -119,8 +119,6 @@ template<
 void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
     arma::mat& results)
 {
-  Timer::Start("emst/mst_computation");
-
   totalDist = 0; // Reset distance.
 
   typedef DTBRules<MetricType, Tree> RuleType;
@@ -153,8 +151,6 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
           << std::endl;
     }
   }
-
-  Timer::Stop("emst/mst_computation");
 
   EmitResults(results);
 

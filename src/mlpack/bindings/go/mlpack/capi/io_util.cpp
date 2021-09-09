@@ -19,143 +19,201 @@ namespace mlpack {
 extern "C" {
 
 /**
+ * Get a new Params object for the given binding name.
+ */
+void* mlpackGetParams(const char* bindingName)
+{
+  util::Params* p = new util::Params(IO::Parameters(bindingName));
+  std::cout << "created params p " << p << "\n";
+  return (void*) p;
+}
+
+/**
+ * Get a new Timers object.
+ */
+void* mlpackGetTimers()
+{
+  util::Timers* t = new util::Timers();
+  return (void*) t;
+}
+
+/**
+ * Delete the given Params object.
+ */
+void mlpackCleanParams(void* params)
+{
+  util::Params* p = (util::Params*) params;
+  delete p;
+}
+
+/**
+ * Delete the given Timers object.
+ */
+void mlpackCleanTimers(void* timers)
+{
+  util::Timers* t = (util::Timers*) timers;
+  delete t;
+}
+
+/**
  * Set the double parameter to the given value.
  */
-void mlpackSetParamDouble(const char* identifier, double value)
+void mlpackSetParamDouble(void* params, const char* identifier, double value)
 {
-  util::SetParam(identifier, value);
+  util::Params& p = *((util::Params*) params);
+  util::SetParam(p, identifier, value);
 }
 
 /**
  * Set the int parameter to the given value.
  */
-void mlpackSetParamInt(const char* identifier, int value)
+void mlpackSetParamInt(void* params, const char* identifier, int value)
 {
-  util::SetParam(identifier, value);
+  util::Params& p = *((util::Params*) params);
+  util::SetParam(p, identifier, value);
 }
 
 /**
  * Set the float parameter to the given value.
  */
-void mlpackSetParamFloat(const char* identifier, float value)
+void mlpackSetParamFloat(void* params, const char* identifier, float value)
 {
-  util::SetParam(identifier, value);
+  util::Params& p = *((util::Params*) params);
+  util::SetParam(p, identifier, value);
 }
 
 /**
  * Set the bool parameter to the given value.
  */
-void mlpackSetParamBool(const char* identifier, bool value)
+void mlpackSetParamBool(void* params, const char* identifier, bool value)
 {
-  util::SetParam(identifier, value);
+  util::Params& p = *((util::Params*) params);
+  util::SetParam(p, identifier, value);
 }
 
 /**
  * Set the string parameter to the given value.
  */
-void mlpackSetParamString(const char* identifier, const char* value)
+void mlpackSetParamString(void* params,
+                          const char* identifier,
+                          const char* value)
 {
-  IO::GetParam<std::string>(identifier) = value;
+  util::Params& p = *((util::Params*) params);
+  p.Get<std::string>(identifier) = value;
 }
 
 /**
  * Set the int vector parameter to the given value.
  */
-void mlpackSetParamVectorInt(const char* identifier,
+void mlpackSetParamVectorInt(void* params,
+                             const char* identifier,
                              const long long* ints,
                              const size_t length)
 {
+  util::Params& p = *((util::Params*) params);
+
   // Create a std::vector<int> object; unfortunately this requires copying the
   // vector elements.
   std::vector<int> vec(length);
   for (size_t i = 0; i < length; ++i)
     vec[i] = ints[i];
 
-  IO::GetParam<std::vector<int>>(identifier) = std::move(vec);
-  IO::SetPassed(identifier);
+  p.Get<std::vector<int>>(identifier) = std::move(vec);
+  p.SetPassed(identifier);
 }
 
 /**
  * Call IO::SetParam<std::vector<std::string>>() to set the length.
  */
-void mlpackSetParamVectorStrLen(const char* identifier,
+void mlpackSetParamVectorStrLen(void* params,
+                                const char* identifier,
                                 const size_t length)
 {
-  IO::GetParam<std::vector<std::string>>(identifier).clear();
-  IO::GetParam<std::vector<std::string>>(identifier).resize(length);
-  IO::SetPassed(identifier);
+  util::Params& p = *((util::Params*) params);
+  p.Get<std::vector<std::string>>(identifier).clear();
+  p.Get<std::vector<std::string>>(identifier).resize(length);
+  p.SetPassed(identifier);
 }
 
 /**
  * Set the string vector parameter to the given value.
  */
-void mlpackSetParamVectorStr(const char* identifier,
+void mlpackSetParamVectorStr(void* params,
+                             const char* identifier,
                              const char* str,
                              const size_t element)
 {
-  IO::GetParam<std::vector<std::string>>(identifier)[element] =
-      std::string(str);
+  util::Params& p = *((util::Params*) params);
+  p.Get<std::vector<std::string>>(identifier)[element] = std::string(str);
 }
 
 /**
  * Set the parameter to the given value, given that the type is a pointer.
  */
-void mlpackSetParamPtr(const char* identifier,
-                       double* ptr)
+void mlpackSetParamPtr(void* params,
+                       const char* identifier,
+                       const double* ptr)
 {
-  util::SetParamPtr(identifier, ptr);
+  util::Params& p = *((util::Params*) params);
+  util::SetParamPtr(p, identifier, ptr);
 }
 
 /**
  * Check if IO has a specified parameter.
  */
-bool mlpackHasParam(const char* identifier)
+bool mlpackHasParam(void* params, const char* identifier)
 {
-  return IO::HasParam(identifier);
+  util::Params& p = *((util::Params*) params);
+  return p.Has(identifier);
 }
 
 /**
  * Get the string parameter associated with specified identifier.
  */
-const char* mlpackGetParamString(const char* identifier)
+const char* mlpackGetParamString(void* params, const char* identifier)
 {
-  return IO::GetParam<std::string>(identifier).c_str();
+  util::Params& p = *((util::Params*) params);
+  return p.Get<std::string>(identifier).c_str();
 }
 
 /**
  * Get the double parameter associated with specified identifier.
  */
-double mlpackGetParamDouble(const char* identifier)
+double mlpackGetParamDouble(void* params, const char* identifier)
 {
-  return IO::GetParam<double>(identifier);
+  util::Params& p = *((util::Params*) params);
+  return p.Get<double>(identifier);
 }
 
 /**
  * Get the int parameter associated with specified identifier.
  */
-int mlpackGetParamInt(const char* identifier)
+int mlpackGetParamInt(void* params, const char* identifier)
 {
-  return IO::GetParam<int>(identifier);
+  util::Params& p = *((util::Params*) params);
+  return p.Get<int>(identifier);
 }
 
 /**
  * Get the bool parameter associated with specified identifier.
  */
-bool mlpackGetParamBool(const char* identifier)
+bool mlpackGetParamBool(void* params, const char* identifier)
 {
-  return IO::GetParam<bool>(identifier);
+  util::Params& p = *((util::Params*) params);
+  return p.Get<bool>(identifier);
 }
 
 /**
  * Get the vector<int> parameter associated with specified identifier.
  */
-void* mlpackGetVecIntPtr(const char* identifier)
+void* mlpackGetVecIntPtr(void* params, const char* identifier)
 {
-  const size_t size = mlpackVecIntSize(identifier);
+  const size_t size = mlpackVecIntSize(params, identifier);
   long long* ints = new long long[size];
 
+  util::Params& p = *((util::Params*) params);
   for (size_t i = 0; i < size; i++)
-    ints[i] = IO::GetParam<std::vector<int>>(identifier)[i];
+    ints[i] = p.Get<std::vector<int>>(identifier)[i];
 
   return ints;
 }
@@ -163,41 +221,39 @@ void* mlpackGetVecIntPtr(const char* identifier)
 /**
  * Get the vector<string> parameter associated with specified identifier.
  */
-const char* mlpackGetVecStringPtr(const char* identifier, const size_t i)
+const char* mlpackGetVecStringPtr(void* params,
+                                  const char* identifier,
+                                  const size_t i)
 {
-  return IO::GetParam<std::vector<std::string>>(identifier)[i].c_str();
+  util::Params& p = *((util::Params*) params);
+  return p.Get<std::vector<std::string>>(identifier)[i].c_str();
 }
 
 /**
  * Get the vector<int> parameter's size.
  */
-int mlpackVecIntSize(const char* identifier)
+int mlpackVecIntSize(void* params, const char* identifier)
 {
-  return IO::GetParam<std::vector<int>>(identifier).size();
+  util::Params& p = *((util::Params*) params);
+  return p.Get<std::vector<int>>(identifier).size();
 }
 
 /**
  * Get the vector<string> parameter's size.
  */
-int mlpackVecStringSize(const char* identifier)
+int mlpackVecStringSize(void* params, const char* identifier)
 {
-  return IO::GetParam<std::vector<std::string>>(identifier).size();
+  util::Params& p = *((util::Params*) params);
+  return p.Get<std::vector<std::string>>(identifier).size();
 }
 
 /**
  * Set parameter as passed.
  */
-void mlpackSetPassed(const char* name)
+void mlpackSetPassed(void* params, const char* name)
 {
-  IO::SetPassed(name);
-}
-
-/**
- * Reset the status of all timers.
- */
-void mlpackResetTimers()
-{
-  IO::GetSingleton().timer.Reset();
+  util::Params& p = *((util::Params*) params);
+  p.SetPassed(name);
 }
 
 /**
@@ -230,22 +286,6 @@ void mlpackEnableVerbose()
 void mlpackDisableVerbose()
 {
   Log::Info.ignoreInput = true;
-}
-
-/**
- * Clear settings.
- */
-void mlpackClearSettings()
-{
-  IO::ClearSettings();
-}
-
-/**
- * Restore Settings.
- */
-void mlpackRestoreSettings(const char* name)
-{
-  IO::RestoreSettings(name);
 }
 
 } // extern C

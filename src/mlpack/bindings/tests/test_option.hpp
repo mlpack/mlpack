@@ -20,6 +20,7 @@
 #include "get_param.hpp"
 #include "get_allocated_memory.hpp"
 #include "delete_allocated_memory.hpp"
+#include "test_function_map.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -66,7 +67,7 @@ class TestOption
              const bool required = false,
              const bool input = true,
              const bool noTranspose = false,
-             const std::string& testName = "")
+             const std::string& bindingName = "")
   {
     // Create the ParamData object to give to IO.
     util::ParamData data;
@@ -75,36 +76,30 @@ class TestOption
     data.name = identifier;
     data.tname = TYPENAME(N);
     data.alias = alias[0];
-    data.wasPassed = false;
+    // If this is an output option, set it as passed.
+    data.wasPassed = !input;
     data.noTranspose = noTranspose;
     data.required = required;
     data.input = input;
     data.loaded = false;
     data.cppType = cppName;
     data.value = ANY(defaultValue);
-    data.persistent = false;
 
     const std::string tname = data.tname;
 
-    IO::RestoreSettings(testName, false);
+    // Set the function pointers in the test function map singleton.  We don't
+    // register them with IO::AddFunction(), because these will be restored as
+    // part of the test binding fixture; see
+    // `src/mlpack/tests/main_tests/main_test_fixture.hpp`.
+    TestFunctionMap::RegisterFunction(tname, "GetPrintableParam",
+        &GetPrintableParam<N>);
+    TestFunctionMap::RegisterFunction(tname, "GetParam", &GetParam<N>);
+    TestFunctionMap::RegisterFunction(tname, "GetAllocatedMemory",
+        &GetAllocatedMemory<N>);
+    TestFunctionMap::RegisterFunction(tname, "DeleteAllocatedMemory",
+        &DeleteAllocatedMemory<N>);
 
-    // Set some function pointers that we need.
-    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
-        &GetPrintableParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
-        &GetAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
-        &DeleteAllocatedMemory<N>;
-
-    IO::Add(std::move(data));
-
-    // If this is an output option, set it as passed.
-    if (!input)
-      IO::SetPassed(identifier);
-
-    IO::StoreSettings(testName);
-    IO::ClearSettings();
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 
