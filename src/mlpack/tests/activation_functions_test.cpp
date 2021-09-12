@@ -759,7 +759,7 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
  * @param target Target data used to evaluate the SQNL activation.
  */
 void CheckSQNLActivationCorrect(const arma::colvec input,
-                                      const arma::colvec target)
+                                const arma::colvec target)
 {
   SQNL<> sqnl;
 
@@ -782,7 +782,7 @@ void CheckSQNLActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the SQNL activation.
  */
 void CheckSQNLDerivativeCorrect(const arma::colvec input,
-                                      const arma::colvec target)
+                                const arma::colvec target)
 {
   SQNL<> sqnl;
 

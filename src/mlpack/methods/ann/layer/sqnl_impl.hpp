@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 SQNL<InputDataType, OutputDataType>::SQNL() 
 {
-  // Nothing to do here
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -35,13 +35,10 @@ void SQNL<InputDataType, OutputDataType>::Forward(
   { 
     if (0 <= input(i) && input(i) <= 2.0)
       output(i) = input(i) - std::pow(input(i),2)/4.0;
-
     else if (-2.0 <= input(i) && input(i) < 0)
       output(i) = input(i) + std::pow(input(i),2)/4.0;
-
     else if (input(i) < -2.0)
       output(i) = -1.0;
-      
     else {};
   }
 }
@@ -56,10 +53,8 @@ void SQNL<InputDataType, OutputDataType>::Backward(
   {
     if (2.0 < input(i) || input(i) < -2.0)
 	    derivative(i) = 0;
-
     else if (0 <= input(i) && input(i) <= 2.0)
 	    derivative(i) = 1 - input(i)/2.0;
-
     else 
 	    derivative(i) = 1 + input(i)/2.0;
   }
@@ -72,7 +67,7 @@ void SQNL<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {
-  // Nothing to do here
+  // Nothing to do here.
 }
 
 } // namespace ann

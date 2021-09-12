@@ -50,7 +50,6 @@ namespace ann /** Artificial Neural Network. */ {
  *   \end{cases}
  * @f}
  *
- *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
