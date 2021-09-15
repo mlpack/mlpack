@@ -201,14 +201,30 @@ class ConvolutionType : public Layer<InputType, OutputType>
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    std::cout << "WeightSize(): kernelWidth " << kernelWidth << " kernelHeight "
-<< kernelHeight << " maps " << maps << " totalInMaps " << totalInMaps << "\n";
     return (maps * totalInMaps * kernelWidth * kernelHeight) +
         (maps * totalInMaps);
   }
 
   void ComputeOutputDimensions()
   {
+    // First, we must make sure the padding sizes are up to date, which we can
+    // now do since inputDimensions is set correctly.
+    if (paddingType == "valid")
+    {
+      padWLeft = 0;
+      padWRight = 0;
+      padHTop = 0;
+      padHBottom = 0;
+    }
+    else if (paddingType == "same")
+    {
+      InitializeSamePadding();
+    }
+
+    padding = ann::Padding(padWLeft, padWRight, padHTop, padHBottom);
+    padding.InputDimensions() = this->inputDimensions;
+    padding.ComputeOutputDimensions();
+
     // We must ensure that the output has at least 3 dimensions, since we will
     // be adding some number of maps to the output.
     this->outputDimensions = std::vector<size_t>(
@@ -332,7 +348,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  arma::Cube<typename InputType::elem_type> inputPaddedTemp;
+  InputType inputPadded;
 
   //! Locally-stored transformed error parameter.
   arma::Cube<typename OutputType::elem_type> gTemp;
@@ -342,6 +358,9 @@ class ConvolutionType : public Layer<InputType, OutputType>
 
   //! Locally-stored padding layer.
   ann::Padding padding;
+
+  //! Type of padding.
+  std::string paddingType;
 
   //! Locally-cached number of input maps.
   size_t totalInMaps;
