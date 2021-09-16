@@ -60,7 +60,7 @@ steps:
     $(CMakeArgs) `
     -DBLAS_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
-    -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\include" `
+    -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
     -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
