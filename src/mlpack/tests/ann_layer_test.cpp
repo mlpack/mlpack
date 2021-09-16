@@ -3853,6 +3853,8 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   input(10) = 8;
   input(11) = 9;
   // Output-Size should be 2 x 2.
+  output.set_size(4, 1);
+
   // Square output.
   MaxPooling module1(2, 2, 2, 1);
   module1.InputDimensions() = std::vector<size_t>({ 3, 4 });
@@ -3872,6 +3874,8 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   input(3) = 3;
   input(6) = 3;
   // Output-Size should be 1 x 2.
+  output.set_size(2, 1);
+
   // Rectangular output.
   MaxPooling module2(3, 2, 3, 1);
   module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
@@ -3891,6 +3895,8 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   input(4) = 3;
   input(8) = 3;
   // Output-Size should be 3 x 3.
+  output.set_size(9, 1);
+
   // Square output.
   MaxPooling module3(2, 2, 1, 1);
   module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
@@ -3908,6 +3914,8 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   input(1) = 1;
   input(3) = 1;
   // Output-Size should be 2 x 2.
+  output.set_size(4, 1);
+
   // Square output.
   MaxPooling module4(2, 1, 1, 1);
   module4.InputDimensions() = std::vector<size_t>({ 2, 3 });
@@ -4408,6 +4416,7 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.ComputeOutputDimensions();
   arma::mat layerWeights(layer.WeightSize(), 1);
   layer.SetWeights(layerWeights.memptr());
+  output.set_size(layer.OutputSize(), 3);
 
   // Set weights to 1.0 and bias to 0.0.
   layer.Parameters().zeros();
