@@ -319,8 +319,6 @@ void PrintWrapperPY(const std::string& category,
         cout << " and y both cannot be not None!\")" << endl;
         cout << endl;
       }
-
-      cout << endl;
     }
     else
     {
