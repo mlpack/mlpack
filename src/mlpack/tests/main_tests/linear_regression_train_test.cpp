@@ -1,5 +1,5 @@
 /**
- * @file tests/main_tests/linear_regression_fit_test.cpp
+ * @file tests/main_tests/linear_regression_train_test.cpp
  * @author Nippun Sharma
  *
  * Test RUN_BINDING() of linear_regression_fit_main.cpp.
@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/linear_regression/linear_regression_fit_main.cpp>
+#include <mlpack/methods/linear_regression/linear_regression_train_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "main_test_fixture.hpp"
 

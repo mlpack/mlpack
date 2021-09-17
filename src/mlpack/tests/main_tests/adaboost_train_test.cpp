@@ -1,5 +1,5 @@
 /**
- * @file tests/main_tests/adaboost_fit_test.cpp
+ * @file tests/main_tests/adaboost_train_test.cpp
  * @author Nippun Sharma
  *
  * Test RUN_BINDING() of adaboost_fit_main.cpp.
@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/adaboost/adaboost_fit_main.cpp>
+#include <mlpack/methods/adaboost/adaboost_train_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
