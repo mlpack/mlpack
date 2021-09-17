@@ -355,7 +355,8 @@ macro (add_python_wrapper group_name)
           -DPROGRAM=$<TARGET_FILE:generate_py_wrapper_${group_name}>
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${group_name}.py
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
-
+    add_dependencies(python generate_py_wrapper_${name})
+    add_dependencies(generate_py_wrapper_${group_name} python_configured)
 endmacro ()
 
 # Add a test.
