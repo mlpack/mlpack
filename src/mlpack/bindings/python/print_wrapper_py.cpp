@@ -185,7 +185,7 @@ void PrintWrapperPY(const std::string& category,
   {
     // print method name.
     cout << string(indent, ' ') << "def " << GetMappedName(methodName);
-    cout << "(self," << endl;
+    cout << "(self, " << endl;
     int addIndent = 4 + GetMappedName(methodName).size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
 
