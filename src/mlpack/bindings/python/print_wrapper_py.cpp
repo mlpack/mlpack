@@ -27,13 +27,22 @@ void PrintWrapperPY(const std::string& category,
                     const std::string& validMethods)
 {
   map<string, Params> params;
-  set<string> serializable; // all serializable parameters.
-  map<string, bool> hyperParams; // if a parameter is hyperparameter.
-  map<string, bool> isBool; // if a parameter is a bool.
-  vector<string> methods = GetMethods(validMethods);
-  int indent = 0; // keeps track of indentation at each point.
 
-  for(auto i: methods)
+  // all serializable parameters.
+  set<string> serializable;
+
+  // if a parameter is hyperparameter.
+  map<string, bool> hyperParams;
+
+  // if a parameter is a bool.
+  map<string, bool> isBool;
+
+  vector<string> methods = GetMethods(validMethods);
+
+  // keeps track of indentation at each point.
+  int indent = 0;
+
+  for(string i: methods)
   {
     params[i] = IO::Parameters(groupName + "_" + i);
   }
@@ -41,14 +50,17 @@ void PrintWrapperPY(const std::string& category,
   if(category == "regression")
   {
     cout << "class BaseEstimator:" << endl;
-    cout << "  pass" << endl << endl;
+    cout << "  pass" << endl;
+    cout << endl;
   }
   else if(category == "classification")
   {
     cout << "class BaseEstimator:" << endl;
-    cout << "  pass" << endl << endl;
+    cout << "  pass" << endl;
+    cout << endl;
     cout << "class ClassifierMixin:" << endl;
-    cout << "  pass" << endl << endl;
+    cout << "  pass" << endl;
+    cout << endl;
   }
 
   // Import different mlpack programs that are to be wrapped.
@@ -60,13 +72,6 @@ void PrintWrapperPY(const std::string& category,
 
   // Try importing scikit-learn, only for classification and
   // regression.
-  if(category == "regression" || category == "classification")
-  {
-    cout << "import warnings" << endl;
-    cout << "warnings.filterwarnings(\"default\"";
-    cout << ", category=ImportWarning)" << endl;
-  }
-
   if(category == "regression")
   {
     cout << "try:" << endl;
@@ -75,25 +80,26 @@ void PrintWrapperPY(const std::string& category,
   else if(category == "classification")
   {
     cout << "try: " << endl;
-    cout << "  from sklearn.base import BaseEstimator, ClassifierMixin" << endl;
+    cout << "  from sklearn.base import BaseEstimator, ClassifierMixin";
+    cout << endl;
   }
 
   if(category == "regression" || category == "classification")
   {
     cout << "except:" << endl;
-    cout << "  warnings.warn(\"scikit learn not present:\\n";
-    cout << "  this mlpack method supports scikit utils, install scikit-learn\\n";
-    cout << "  if you wish to use them!\", category=ImportWarning)" << endl;
+    cout << "  pass" << endl;
     cout << endl;
   }
 
   // Check and store if every parameter is serializable,
   // a hyperparameter and boolean.
-  for(auto i=params.begin(); i!=params.end(); i++)
+  for(map<string, Params>::iterator i=params.begin();
+      i!=params.end(); i++)
   {
     map<string, ParamData> methodParams = i->second.Parameters();
 
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    for(map<string, ParamData>::iterator itr=methodParams.begin();
+        itr!=methodParams.end(); itr++)
     {
       // Checking for serializability.
       bool isSerial;
@@ -201,16 +207,19 @@ void PrintWrapperPY(const std::string& category,
 
     if(category == "regression" || category == "classification")
     {
-      for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+      for(map<string, ParamData>::iterator itr=methodParams.begin();
+          itr!=methodParams.end(); itr++)
       {
         // Throw error if there are more than one matrix input params,
         // or more than one vector input params.
         if(numMatrixInputs > 1)
           Log::Fatal << "More than one matrix input parameters for " <<
-              methodName << "(" << GetMappedName(methodName) << ") method!" << endl;
+              methodName << "(" << GetMappedName(methodName) << ") method!" <<
+              endl;
         if(numVectorInputs > 1)
           Log::Fatal << "More than one vector input parameters for " <<
-              methodName << "(" << GetMappedName(methodName) << ") method!" << endl;
+              methodName << "(" << GetMappedName(methodName) << ") method!" <<
+              endl;
 
         if(itr->second.input)
         {
@@ -323,7 +332,8 @@ void PrintWrapperPY(const std::string& category,
     else
     {
       // print input parameters.
-      for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+      for(map<string, ParamData>::iterator itr=methodParams.begin();
+          itr!=methodParams.end(); itr++)
       {
         string validName = GetValidName(itr->first);
 
@@ -347,7 +357,8 @@ void PrintWrapperPY(const std::string& category,
     int count = 0; // just for reference.
 
     // first pass through the parameters and print all required parameters.
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    for(map<string, ParamData>::iterator itr=methodParams.begin();
+        itr!=methodParams.end(); itr++)
     {
       if(itr->second.input && itr->second.required)
       {
@@ -368,7 +379,8 @@ void PrintWrapperPY(const std::string& category,
     }
 
     // Now print all non-required parameters.
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    for(map<string, ParamData>::iterator itr=methodParams.begin();
+        itr!=methodParams.end(); itr++)
     {
       if(itr->second.input && !itr->second.required)
       {
@@ -397,7 +409,8 @@ void PrintWrapperPY(const std::string& category,
     string returnString = string(indent, ' ') + "return ";
     bool outputsOnlySerial = true;
 
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    for(map<string, ParamData>::iterator itr=methodParams.begin();
+        itr!=methodParams.end(); itr++)
     {
       if(!itr->second.input)
       {
