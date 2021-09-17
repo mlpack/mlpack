@@ -73,10 +73,6 @@ func setParamPtr(p *params, identifier string, ptr unsafe.Pointer) {
   C.mlpackSetParamPtr(p.mem, C.CString(identifier), (*C.double)(ptr))
 }
 
-func resetTimers() {
-  C.mlpackResetTimers()
-}
-
 func enableTimers() {
   C.mlpackEnableTimers()
 }

@@ -149,11 +149,6 @@ int mlpackVecStringSize(void* params, const char* identifier);
 void mlpackSetPassed(void* params, const char* name);
 
 /**
- * Reset the status of all timers.
- */
-void mlpackResetTimers();
-
-/**
  * Enable timing.
  */
 void mlpackEnableTimers();
