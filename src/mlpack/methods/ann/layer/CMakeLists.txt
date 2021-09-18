@@ -46,6 +46,8 @@ set(SOURCES
   flexible_relu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  group_norm.hpp
+  group_norm_impl.hpp
   gru.hpp
   gru_impl.hpp
   hard_tanh.hpp
