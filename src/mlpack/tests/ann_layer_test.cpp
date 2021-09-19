@@ -582,6 +582,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<Linear3D>(outSize);
+      model->InputDimensions() = std::vector<size_t>{ 4, 2 };
     }
 
     ~GradientFunction()
@@ -726,9 +727,10 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   output.set_size(totalOutputDimensions, input.n_cols);
   module.Forward(input, output);
   REQUIRE(arma::accu(input) == arma::accu(output));
-  REQUIRE(output.n_rows == input.n_rows + 10);
+  REQUIRE(output.n_rows == (5 * 12)); // 2x5 --> 5x12
 
   // Test the Backward function.
+  delta.set_size(input.n_rows, input.n_cols);
   module.Backward(input, output, delta);
   CheckMatrices(delta, input);
 }
@@ -3857,7 +3859,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
 
   // Square output.
   MaxPooling module1(2, 2, 2, 1);
-  module1.InputDimensions() = std::vector<size_t>({ 3, 4 });
+  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   module1.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
@@ -3918,7 +3920,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
 
   // Square output.
   MaxPooling module4(2, 1, 1, 1);
-  module4.InputDimensions() = std::vector<size_t>({ 2, 3 });
+  module4.InputDimensions() = std::vector<size_t>({ 3, 2 });
   module4.ComputeOutputDimensions();
   module4.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().

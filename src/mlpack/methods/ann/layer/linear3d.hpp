@@ -111,16 +111,13 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 
-  size_t WeightSize() const { return outSize * (inSize + 1); }
+  size_t WeightSize() const { return outSize * (this->inputDimensions[0] + 1); }
 
   void ComputeOutputDimensions()
   {
     // The Linear3D layer shares weights for each row of the input, and
     // duplicates it across the columns.  Thus, we only change the number of
     // rows.
-    inSize = this->inputDimensions[0];
-    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
-      inSize *= this->inputDimensions[i];
     this->outputDimensions = this->inputDimensions;
     this->outputDimensions[0] = outSize;
   }
@@ -132,9 +129,6 @@ class Linear3DType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
 

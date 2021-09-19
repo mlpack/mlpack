@@ -21,7 +21,6 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType, typename RegularizerType>
 Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType() :
     Layer<InputType, OutputType>(),
-    inSize(0),
     outSize(0)
 {
   // Nothing to do here.
@@ -32,19 +31,18 @@ Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
     const size_t outSize,
     RegularizerType regularizer) :
     Layer<InputType, OutputType>(),
-    inSize(0),
     outSize(outSize),
     regularizer(regularizer)
-{
-  weights.set_size(outSize * inSize + outSize, 1);
-}
+{ }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 void Linear3DType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {
-  weights = OutputType(weightsPtr, outSize * inSize + outSize, 1, false, false);
-  weight = OutputType(weightsPtr, outSize, inSize, false, false);
+  weights = OutputType(weightsPtr, outSize * this->inputDimensions[0] + outSize,
+      1, false, false);
+  weight = OutputType(weightsPtr, outSize, this->inputDimensions[0], false,
+      false);
   bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
@@ -54,13 +52,11 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Forward(
 {
   typedef typename arma::Cube<typename InputType::elem_type> CubeType;
 
-  const size_t nPoints = input.n_rows / inSize;
+  const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  output.set_size(outSize * nPoints, batchSize);
-
-  const CubeType inputTemp(const_cast<InputType&>(input).memptr(), inSize,
-      nPoints, batchSize, false, false);
+  const CubeType inputTemp(const_cast<InputType&>(input).memptr(),
+      this->inputDimensions[0], nPoints, batchSize, false, false);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -92,8 +88,6 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Backward(
   const CubeType gyTemp(const_cast<InputType&>(gy).memptr(), outSize,
       nPoints, batchSize, false, false);
 
-  g.set_size(inSize * nPoints, batchSize);
-
   for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
     // Shape of weight : (outSize, inSize).
@@ -113,23 +107,21 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Gradient(
   if (error.n_rows % outSize != 0)
     Log::Fatal << "Propagated error matrix has invalid dimension!" << std::endl;
 
-  const size_t nPoints = input.n_rows / inSize;
+  const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  const CubeType inputTemp(const_cast<InputType&>(input).memptr(), inSize,
-      nPoints, batchSize, false, false);
+  const CubeType inputTemp(const_cast<InputType&>(input).memptr(),
+      this->inputDimensions[0], nPoints, batchSize, false, false);
   const CubeType errorTemp(const_cast<InputType&>(error).memptr(), outSize,
       nPoints, batchSize, false, false);
 
-  CubeType dW(outSize, inSize, batchSize);
+  CubeType dW(outSize, this->inputDimensions[0], batchSize);
   for (size_t i = 0; i < batchSize; ++i)
   {
     // Shape of errorTemp : (outSize, nPoints, batchSize).
     // Shape of inputTemp : (inSize, nPoints, batchSize).
     dW.slice(i) = errorTemp.slice(i) * inputTemp.slice(i).t();
   }
-
-  gradient.set_size(arma::size(weights));
 
   gradient.submat(0, 0, weight.n_elem - 1, 0)
       = arma::vectorise(arma::sum(dW, 2));
@@ -147,7 +139,6 @@ void Linear3DType<InputType, OutputType, RegularizerType>::serialize(
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(regularizer));
 }
