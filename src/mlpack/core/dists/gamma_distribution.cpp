@@ -138,7 +138,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + log(aEst) - math::digamma(aEst);
+      double nominator = meanLogx - logMeanx + log(aEst) - math::Digamma(aEst);
       double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
 
       // Protect against division by 0.
