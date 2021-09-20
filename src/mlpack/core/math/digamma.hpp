@@ -19,12 +19,48 @@
 namespace mlpack {
 namespace math {
 
+
+/**
+ * This function evaluates the polynomial based on the
+ * constants passed to the functions. This function
+ * evaluates the polynomial when x > 10.
+ *
+ * @param a Array of constants.
+ * @param x Input for which digamma will be calculated.
+ */
 template<typename T>
 T EvaluatePolyLarge(const T* a, const T& x)
 {
-  return 0;
+  T x2 = x * x;
+  T t[2];
+  
+  t[0] = a[7] * x2 + a[5];
+  t[0] *= x2;
+  t[0] += a[3];
+  t[0] *= x2;
+  t[0] += a[1];
+  t[0] *= x;
+  
+  t[1] = a[6] * x2 + a[4];
+  t[1] *= x2;
+  t[1] += a[2];
+  t[1] *= x2;
+  t[1] += a[0];
+  
+  return t[0] + t[1];
 }
 
+
+/**
+ * This function evaluates the polynomial based on the
+ * constants passed to the function. This gets executed
+ * when size of the array with contains constants is 7.
+ * This function evaluates the polynomial
+ * when x is in the interval [1, 2].
+ *
+ * @param a Array of constants.
+ * @param x Input for which digamma will be calculated.
+ */
 template<std::size_t N, typename T>
 typename std::enable_if<N == 7, T>::type
 EvaluatePoly_1_2(const T(&a)[N], const T& x)
@@ -46,6 +82,16 @@ EvaluatePoly_1_2(const T(&a)[N], const T& x)
   return t[0] + t[1];
 }
 
+/**
+ * This function evaluates the polynomial based on the
+ * constants passed to the fucntion. This gets executed
+ * when size of the array with contains constants is 6.
+ * This function is to evaluate the polynomial when x
+ * is in the interval [1, 2].
+ *
+ * @param a Array of constants.
+ * @param x Input for which digamma will be calculated.
+ */
 template<std::size_t N, typename T>
 typename std::enable_if<N == 6, T>::type
 EvaluatePoly_1_2(const T(&a)[N], const T& x)
@@ -69,7 +115,7 @@ EvaluatePoly_1_2(const T(&a)[N], const T& x)
  * This function calculates and returns Digamma(x)
  * when x is in the interval [1, 2].
  *
- * @param x Input for which we have to calculate digamma.
+ * @param x Input for which digamma will be calculated.
  */
 template<typename T>
 T Digamma_1_2(T x)
@@ -114,7 +160,7 @@ T Digamma_1_2(T x)
  * This function calculates and returns Digamma(x)
  * when x > 10.
  *
- * @param x Input for which we have to calculate digamma.
+ * @param x Input for which digamma will be calculated.
  */
 template<typename T>
 T DigammaLarge(T x)
@@ -149,11 +195,11 @@ T DigammaLarge(T x)
  *
  * For x < 0 we use reflection.
  *
- * For x > 2 we reduce itto the interval [1, 2].
+ * For x > 2 we reduce it to the interval [1, 2].
  *
  * For x < 1 we bring it to the interval [1, 2].
  *
- * @param x Input for which we have to calculate digamma. 
+ * @param x Input for which digamma will be calculated. 
  */
 template<typename T>
 T Digamma(T x)
@@ -208,7 +254,6 @@ T Digamma(T x)
 
   return result;
 }
-
 
 } // namespace math
 } // namespace mlpack
