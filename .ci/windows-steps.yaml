@@ -17,7 +17,8 @@ steps:
     ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
-    dir $(Agent.ToolsDirectory)
+    Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
+    dir $(Agent.ToolsDirectory)    
     tree $(Agent.ToolsDirectory)
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
