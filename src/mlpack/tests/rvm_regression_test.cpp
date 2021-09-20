@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
+//#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
+
 #include "serialization.hpp"
 
 using namespace mlpack::regression;
