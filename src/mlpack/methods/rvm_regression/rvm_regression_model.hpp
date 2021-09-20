@@ -121,7 +121,8 @@ public:
 };
 
 /**
- * GetValueVisitor returns the pointer which points to the CFType object.
+ * GetValueVisitor returns the pointer which points to the RVMRegression
+ * Type object.
  */
 class GetValueVisitor : public boost::static_visitor<void*>
 {
