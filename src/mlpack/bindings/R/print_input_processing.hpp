@@ -165,12 +165,18 @@ void PrintInputProcessing(
      *
      *     if (!identical(<param_name>, NA)) {
      *        SetParam<ModelType>Ptr(p, "<param_name>", <param_name>)
+     *        # Add to the list of input models we received.
+     *        inputModels <- append(inputModels, <param_name>)
      *     }
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
     MLPACK_COUT_STREAM << "    SetParam" << util::StripType(d.cppType)
         << "Ptr(p, \"" << d.name << "\", " << d.name << ")" << std::endl;
+    MLPACK_COUT_STREAM << "    # Add to the list of input models we received."
+        << std::endl;
+    MLPACK_COUT_STREAM << "    inputModels <- append(inputModels, " << d.name
+        << ")" << std::endl;
     MLPACK_COUT_STREAM << "  }" << std::endl; // Closing brace.
   }
   else

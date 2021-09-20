@@ -172,6 +172,11 @@ void PrintR(util::Params& params,
   cout << "  # Create parameters and timers objects." << endl;
   cout << "  p <- CreateParams(\"" << bindingName << "\")" << endl;
   cout << "  t <- CreateTimers()" << endl;
+  cout << "  # Initialize an empty list that will hold all input models the "
+       << "user gave us," << endl;
+  cout << "  # so that we don't accidentally create two XPtrs that point to the"
+       << "same model." << endl;
+  cout << "  inputModels <- vector()" << endl;
   cout << endl;
 
   // Handle each input argument's processing before calling the binding.
