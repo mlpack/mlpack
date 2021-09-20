@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME rvm_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/cosine_distance.hpp>
@@ -20,6 +26,9 @@
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 // #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+
+
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "rvm_regression_model.hpp"
 
@@ -31,7 +40,7 @@ using namespace mlpack::util;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_NAME("Relevance Vector Machine for regression");
+BINDING_USER_NAME("Relevance Vector Machine for regression");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -156,23 +165,23 @@ PARAM_DOUBLE_IN("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
     2.0);
 
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  bool center = IO::GetParam<bool>("center");
-  bool scale = IO::GetParam<bool>("scale");
+  bool center = params.Get<bool>("center");
+  bool scale = params.Get<bool>("scale");
 
   // Check parameters -- make sure everything given make sense.
-  RequireOnlyOnePassed({"input", "input_model"}, true, 
+  RequireOnlyOnePassed(params, {"input", "input_model"}, true, 
       "Pass eihter input data or input model");
 
   mat matX;
   rowvec responses;
-  if (IO::HasParam("input"))
+  if (params.Has("input"))
   {
-    RequireOnlyOnePassed({"responses"}, true, "if input data is specified, " 
-        "reponses must also be specified");
-    matX = std::move(IO::GetParam<arma::mat>("input"));
-    responses = std::move(IO::GetParam<arma::rowvec>("responses"));
+    RequireOnlyOnePassed(params, {"responses"}, true,
+        "if input data is specified, reponses must also be specified");
+    matX = std::move(params.Get<arma::mat>("input"));
+    responses = std::move(params.Get<arma::rowvec>("responses"));
 
     if (responses.n_elem != matX.n_cols)
     {
@@ -181,26 +190,26 @@ static void mlpackMain()
     }
   }
 
-  ReportIgnoredParam({{"input", false }}, "responses");
+  ReportIgnoredParam(params, {{"input", false }}, "responses");
 
-  RequireAtLeastOnePassed({"predictions", "output_model", "stds"}, false, 
-      "no result will be saved");
+  RequireAtLeastOnePassed(params, {"predictions", "output_model", "stds"},
+      false, "no result will be saved");
 
   // Ignore predictions unless test is specified.
-  ReportIgnoredParam({{"test", false}}, "predictions");
+  ReportIgnoredParam(params, {{"test", false}}, "predictions");
 
   // If kernel is passed, ensure it is valid.
   string kernelType;
-  if (IO::HasParam("kernel"))
+  if (params.Has("kernel"))
   {
     // Get the kernel type and make sure it is valid.
-    RequireParamInSet<string>("kernel",
+    RequireParamInSet<string>(params, "kernel",
 			      { "linear", "gaussian", "polynomial",
 				"hyptan", "laplacian", "epanechnikov",
 				"cosine", "spherical" },
 			      true, "unknown kernel type");
     
-    kernelType = IO::GetParam<string>("kernel");
+    kernelType = params.Get<string>("kernel");
   }
   else
   {
@@ -209,36 +218,36 @@ static void mlpackMain()
 
   RVMRegressionModel* estimator;
   
-  if (IO::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    estimator = IO::GetParam<RVMRegressionModel*>("input_model");
+    estimator = params.Get<RVMRegressionModel*>("input_model");
   }
   else 
   {
     // Create and train the RVM.
     estimator = new RVMRegressionModel(kernelType, center, scale,
-				       IO::GetParam<double>("bandwidth"),
-				       IO::GetParam<double>("offset"),
-				       IO::GetParam<double>("kernel_scale"),
-				       IO::GetParam<double>("degree"));
+				       params.Get<double>("bandwidth"),
+				       params.Get<double>("offset"),
+				       params.Get<double>("kernel_scale"),
+				       params.Get<double>("degree"));
     estimator->Train(matX, responses);
   }
   
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
-    mat testPoints = std::move(IO::GetParam<mat>("test"));
+    mat testPoints = std::move(params.Get<mat>("test"));
     rowvec predictions;
 
-    if (IO::HasParam("stds"))
+    if (params.Has("stds"))
     {
       Log::Info << "Uncertainties computed." << endl;
       rowvec std;
       estimator->Predict(testPoints, predictions, std);
 
       // Save the standard deviation of the test points (one per line).
-      IO::GetParam<mat>("stds") = std::move(std);
+      params.Get<mat>("stds") = std::move(std);
     }
     else
     {
@@ -246,9 +255,9 @@ static void mlpackMain()
     }
 
     // Save test predictions (one per line).
-    IO::GetParam<mat>("predictions") = std::move(predictions);
+    params.Get<mat>("predictions") = std::move(predictions);
   }
 
-  IO::GetParam<RVMRegressionModel*>("output_model") = estimator;
+  params.Get<RVMRegressionModel*>("output_model") = estimator;
 }
 

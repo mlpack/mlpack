@@ -61,7 +61,7 @@ TEST_CASE("OptionsMakeRVMDifferent", "[RVMRegressionTest]")
 
 // Check that Train() does not fail with two colinear vectors. Try it for ARD
 // regression, Linear RVM and Gaussian RVM.
-TEST_CASE("SingularMatixRVM", "[RVMRegressionTest]")
+TEST_CASE("SingularMatrixRVM", "[RVMRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
