@@ -510,7 +510,7 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
 
   // Create a Linear3D layer outside of a network, and then set its memory.
   Linear3D module(outSize);
-  module.InputDimensions() = std::vector<size_t>({ inSize });
+  module.InputDimensions() = std::vector<size_t>({ 4, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
   module.SetWeights(weights.memptr());
@@ -519,12 +519,15 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
 
   // Test the Forward function.
   input = arma::zeros(inSize * nPoints, batchSize);
+  output.set_size(outSize * nPoints, batchSize);
   module.Forward(input, output);
   REQUIRE(arma::accu(module.Bias())
       == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
 
   // Test the Backward function.
-  module.Backward(input, input, delta);
+  delta.set_size(input.n_rows, input.n_cols);
+  output.zeros();
+  module.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
 
@@ -545,7 +548,7 @@ TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
 
     // Create a Linear3D layer outside a network and initialize its memory.
     Linear3D module(outSize);
-    module.InputDimensions() = std::vector<size_t>({ inSize });
+    module.InputDimensions() = std::vector<size_t>({ inSize, nPoints });
     module.ComputeOutputDimensions();
     arma::mat weights(module.WeightSize(), 1);
     module.SetWeights(weights.memptr());
@@ -705,7 +708,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
   REQUIRE(0 == arma::accu(output));
 
   // Test the Backward function.
-  module.Backward(input, input, delta);
+  module.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
 
