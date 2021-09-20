@@ -33,7 +33,7 @@ bool LoadCSV::ConvertToken(eT& val,
 
   // Checks for +/-INF and NAN
   // Converts them to their equivalent representation
-  // from numeric_limits 
+  // from numeric_limits. 
   if ((N == 3) || (N == 4))
   {
     const bool neg = (str[0] == '-');
@@ -66,7 +66,7 @@ bool LoadCSV::ConvertToken(eT& val,
 
   // Convert the token into correct type.
   // If we have a eT as unsigned int,
-  // it will convert all negative numbers to 0
+  // it will convert all negative numbers to 0.
   if (std::is_floating_point<eT>::value)
   {
     val = eT(std::strtod(str, &endptr));
@@ -85,8 +85,8 @@ bool LoadCSV::ConvertToken(eT& val,
       val = eT(std::strtoull(str, &endptr, 10));
     }
   }
-  // None of the above conditions were executed
-  // So conversion failed
+  // If none of the above conditions was executed,
+  // then the conversion will fail.
   else
     return false;
 
@@ -111,7 +111,7 @@ bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 
   while (f.good())
   {
-    // Parse the file line by line
+    // Parse the file line by line.
     std::getline(f, lineString);
 
     if (lineString.size() == 0)
@@ -124,7 +124,7 @@ bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 
     while (lineStream.good())
     {
-      // Parse each line
+      // Parse each line.
       std::getline(lineStream, token, ',');
 
       // This will handle loading of both dense and sparse.

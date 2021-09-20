@@ -44,7 +44,7 @@ enum struct FileType
  * This function is used to convert mlpack file types to
  * their respective Armadillo file types.
  *
- * @param type mlpack::FileType
+ * @param type mlpack::FileType.
  */
 inline arma::file_type ToArmaFileType(const FileType& type);
 

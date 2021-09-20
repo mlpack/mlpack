@@ -21,7 +21,7 @@ namespace data {
  * from both the side of string. If input is a string
  * with all spaces then str will be empty string.
  *
- * @param str string to be trimmed
+ * @param str the string to be trimmed.
  */
 inline void trim(std::string& str)
 {
@@ -54,8 +54,8 @@ inline void trim(std::string& str)
  * used to determine which characters will
  * be trimmed off.
  *
- * @param str string to be trimmed
- * @param func function to determine the characters which should be trimmed
+ * @param str the string to be trimmed.
+ * @param func function to determine the characters which should be trimmed.
  */
 inline void trim_if(std::string &str, std::function<bool(char)> func)
 {
@@ -79,7 +79,7 @@ inline void trim_if(std::string &str, std::function<bool(char)> func)
 
   size_t endIndex = str.size() - 1;
 
-  for(int i = str.size() - 1; i >= 0; i--)
+  for (int i = str.size() - 1; i >= 0; i--)
   {
     bool match = func(str[i]);
     if (match)
