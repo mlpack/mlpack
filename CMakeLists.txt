@@ -14,7 +14,7 @@ option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(DOWNLOAD_DEPENDENCIES "Download of dependencies during build." OFF)
+option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
