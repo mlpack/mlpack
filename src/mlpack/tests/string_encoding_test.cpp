@@ -214,34 +214,35 @@ TEST_CASE("SplitByAnyOfTokenizerTest", "[StringEncodingTest]")
 /**
  * Test the SplitByAnyOf tokenizer in case of unicode characters.
  */
-// TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
-// {
-//   vector<string> expectedUtf8Tokens = {
-//     "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
-//     "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA",
-//     "\xE2\x93\x9C\xE2\x93\x9B\xE2\x93\x9F\xE2\x93\x90\xE2\x93\x92\xE2\x93\x9A",
-//     "MLPACK",
-//     "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
-//     "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA",
-//     "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80"
-//   };
+TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
+{
+  vector<string> expectedUtf8Tokens = {
+    "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
+    "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA",
+    "\xE2\x93\x9C\xE2\x93\x9B\xE2\x93\x9F\xE2\x93\x90\xE2\x93\x92\xE2\x93\x9A",
+    "MLPACK",
+    "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
+    "\xF0\x9F\x84\xB2\xF0\x9F\x84\xBA",
+    "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80"
+  };
 
-//   std::vector<STRING_VIEW> tokens;
-//   STRING_VIEW line(stringEncodingUtf8Input[2]);
-//   SplitByAnyOf tokenizer(" ,.");
-//   STRING_VIEW token = tokenizer(line);
+  std::vector<STRING_VIEW> tokens;
+  STRING_VIEW line(stringEncodingUtf8Input[2]);
+  SplitByAnyOf tokenizer(" ,.");
+  STRING_VIEW token = tokenizer(line);
 
-//   while (!token.empty())
-//   {
-//     tokens.push_back(token);
-//     token = tokenizer(line);
-//   }
+  while (!token.empty())
+  {
+    std::cout << "I am looping ....." << std::endl;
+    tokens.push_back(token);
+    token = tokenizer(line);
+  }
 
-//   REQUIRE(tokens.size() == expectedUtf8Tokens.size());
+  REQUIRE(tokens.size() == expectedUtf8Tokens.size());
 
-//   for (size_t i = 0; i < tokens.size(); ++i)
-//     REQUIRE(tokens[i] == expectedUtf8Tokens[i]);
-// }
+  for (size_t i = 0; i < tokens.size(); ++i)
+    REQUIRE(tokens[i] == expectedUtf8Tokens[i]);
+}
 
 /**
  * Test the CharExtract tokenizer.
