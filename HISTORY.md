@@ -74,6 +74,8 @@
 
   * Fix thread safety issues in mlpack bindings to other languages (#2995).
 
+  * Fix double-free of model pointers in R bindings (#3034).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
