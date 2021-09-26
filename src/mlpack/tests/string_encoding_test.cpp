@@ -233,7 +233,9 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
 
   while (!token.empty())
   {
-    std::cout << "I am looping ....." << std::endl;
+    // std::cout << "I am looping ....." << std::endl;
+    std::cout <<"THE string view token: " << token << std::endl;
+    std::cout <<"THE string view line: " << line << std::endl;
     tokens.push_back(token);
     token = tokenizer(line);
   }
