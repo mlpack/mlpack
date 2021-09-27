@@ -28,7 +28,8 @@ namespace math {
  * @param a Array of constants.
  * @param x Input for which digamma will be calculated.
  */
-template<typename T>
+template<std::size_t N, typename T>
+typename std::enable_if<N == 8, T>::type
 T EvaluatePolyLarge(const T* a, const T& x)
 {
   T x2 = x * x;
