@@ -21,6 +21,7 @@ set(SOURCES
   range_impl.hpp
   round.hpp
   shuffle_data.hpp
+  trigamma.hpp
   ccov.hpp
   ccov_impl.hpp
 )
