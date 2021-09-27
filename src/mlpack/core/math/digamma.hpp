@@ -30,7 +30,7 @@ namespace math {
  */
 template<std::size_t N, typename T>
 typename std::enable_if<N == 8, T>::type
-T EvaluatePolyLarge(const T* a, const T& x)
+T EvaluatePolyLarge(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
   T t[2];
