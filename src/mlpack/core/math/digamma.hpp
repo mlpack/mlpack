@@ -51,7 +51,6 @@ T EvaluatePolyLarge(const T(&a)[N], const T& x)
   return t[0] + t[1];
 }
 
-
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the function.
