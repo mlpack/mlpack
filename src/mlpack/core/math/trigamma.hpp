@@ -22,10 +22,8 @@ namespace math {
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the functions.
- * 
  * This function gets executed when the size of the array
  * of constants is 6.
- * 
  * This function is to evaluate the polynomial
  * when x >= 1.
  *
@@ -54,10 +52,8 @@ EvaluatePolyPrec(const T(&a)[N], const T& x)
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the functions.
- * 
  * This function gets executed when the size of the array
  * of constants is 7.
- * 
  * This function is to evaluate the polynomial
  * when x >= 1.
  *
@@ -88,9 +84,7 @@ EvaluatePolyPrec(const T(&a)[N], const T& x)
 /**
  * This function calculates and returns Trigamma(x)
  * when x > 1.
- * 
  * Implementation is divided into 3 parts
- * 
  * 1. 1 < x <= 2
  * 2. 2 < x <= 4
  * 3. x > 4
@@ -175,9 +169,7 @@ T TrigammaPrec(T x)
 
 /**
  * This function calculates and returns Trigamma(x).
- * 
  * For x < 0 we use reflection.
- * 
  * For 0 < x < 1 bring x to interval [1, INF].
  * 
  * @param x Input for which we have to calculate trigamma.

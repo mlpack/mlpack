@@ -23,7 +23,6 @@ namespace math {
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the function.
- *
  * This function evaluates the polynomial when x > 10.
  *
  * @param a Array of constants.
@@ -55,9 +54,7 @@ T EvaluatePolyLarge(const T* a, const T& x)
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the function.
- *
  * This gets executed when size of the array of constants is 7.
- *
  * This function evaluates the polynomial
  * when x is in the interval [1, 2].
  *
@@ -88,9 +85,7 @@ EvaluatePoly_1_2(const T(&a)[N], const T& x)
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the fucntion.
- *
  * This gets executed when size of the array of constants is 6.
- * 
  * This function is to evaluate the polynomial when x
  * is in the interval [1, 2].
  *
@@ -192,16 +187,11 @@ T DigammaLarge(T x)
 
 /**
  * This function calculates and returns digamma(x).
- *
  * We have divided the implementation as
  * 1. x > 10.
- *
  * 2. x in the interval [1, 2].
- *
  * For x < 0 we use reflection.
- *
  * For x > 2 we reduce it to the interval [1, 2].
- *
  * For x < 1 we bring it to the interval [1, 2].
  *
  * @param x Input for which digamma will be calculated. 

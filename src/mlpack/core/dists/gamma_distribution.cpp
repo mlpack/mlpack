@@ -99,8 +99,6 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
                               const arma::vec& meanxVec,
                               const double tol)
 {
-  // Use boost's definitions of digamma and tgamma, and std::log.
-  // using boost::math::digamma;
   using std::log;
 
   // Number of dimensions of gamma distribution.
