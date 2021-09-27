@@ -228,10 +228,34 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
 
   std::vector<STRING_VIEW> tokens;
   STRING_VIEW line(stringEncodingUtf8Input[2]);
+  std::cout <<"THE string view line: " << line << std::endl;
   SplitByAnyOf tokenizer(" ,.");
   STRING_VIEW token = tokenizer(line);
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"Line should be shorter now: " << line << std::endl;
+  tokens.push_back(token);
+  token = tokenizer(line); 
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"again Line should be shorter now: " << line << std::endl;
+  tokens.push_back(token);
+  token = tokenizer(line); 
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"again Line should be shorter now: " << line << std::endl;
+  tokens.push_back(token);
+  token = tokenizer(line); 
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"again Line should be shorter now: " << line << std::endl;
+  tokens.push_back(token);
+  token = tokenizer(line); 
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"again Line should be shorter now: " << line << std::endl;
+  tokens.push_back(token);
+  token = tokenizer(line); 
+  std::cout <<"THE string view token: " << token << std::endl;
+  std::cout <<"again Line should be shorter now: " << line << std::endl;
+  
 
-  while (!token.empty())
+/*  while (!token.empty())
   {
     // std::cout << "I am looping ....." << std::endl;
     std::cout <<"THE string view token: " << token << std::endl;
@@ -239,7 +263,7 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
     tokens.push_back(token);
     token = tokenizer(line);
   }
-
+*/
   REQUIRE(tokens.size() == expectedUtf8Tokens.size());
 
   for (size_t i = 0; i < tokens.size(); ++i)
