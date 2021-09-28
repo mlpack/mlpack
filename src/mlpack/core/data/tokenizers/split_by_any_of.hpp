@@ -54,6 +54,10 @@ class SplitByAnyOf
   STRING_VIEW operator()(STRING_VIEW& str) const
   {
     STRING_VIEW retval;
+    // std::basic_string_view does not have empty function.
+    // Therefore, we are assiging an empty string when reaching the last
+    // delimiter.
+    STRING_VIEW empty_string{""};
 
     while (retval.empty())
     {
@@ -61,6 +65,7 @@ class SplitByAnyOf
       if (pos == str.npos)
       {
         retval = str;
+        str.swap(empty_string);
         return retval;
       }
       retval = str.substr(0, pos);

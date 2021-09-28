@@ -109,41 +109,39 @@ TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
   CheckMatrices(output, expected.t());
 }
 
-// Failing
-
 /**
  * Test the dictionary encoding algorithm with unicode characters.
  */
-// TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
-// {
-//   using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
+TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
+{
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
-//   arma::mat output;
-//   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
-//   SplitByAnyOf tokenizer(" .,\"");
+  arma::mat output;
+  DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
+  SplitByAnyOf tokenizer(" .,\"");
 
-//   encoder.Encode(stringEncodingUtf8Input, output, tokenizer);
+  encoder.Encode(stringEncodingUtf8Input, output, tokenizer);
 
-//   const DictionaryType& dictionary = encoder.Dictionary();
+  const DictionaryType& dictionary = encoder.Dictionary();
 
-//   // Checking that each token has a unique label.
-//   std::unordered_map<size_t, size_t> keysCount;
+  // Checking that each token has a unique label.
+  std::unordered_map<size_t, size_t> keysCount;
 
-//   for (auto& keyValue : dictionary.Mapping())
-//   {
-//     keysCount[keyValue.second]++;
+  for (auto& keyValue : dictionary.Mapping())
+  {
+    keysCount[keyValue.second]++;
 
-//     REQUIRE(keysCount[keyValue.second] == 1);
-//   }
+    REQUIRE(keysCount[keyValue.second] == 1);
+  }
 
-//   arma::mat expected = {
-//     { 1, 2, 0, 0, 0 },
-//     { 3, 4, 1, 0, 0 },
-//     { 5, 2, 3, 5, 4 }
-//   };
+  arma::mat expected = {
+    { 1, 2, 0, 0, 0 },
+    { 3, 4, 1, 0, 0 },
+    { 5, 2, 3, 5, 4 }
+  };
 
-//   CheckMatrices(output, expected.t());
-// }
+  CheckMatrices(output, expected.t());
+}
 
 /**
  * Test the one pass modification of the dictionary encoding algorithm.
@@ -210,7 +208,6 @@ TEST_CASE("SplitByAnyOfTokenizerTest", "[StringEncodingTest]")
 }
 
 
-// Failing
 /**
  * Test the SplitByAnyOf tokenizer in case of unicode characters.
  */
@@ -228,42 +225,15 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
 
   std::vector<STRING_VIEW> tokens;
   STRING_VIEW line(stringEncodingUtf8Input[2]);
-  std::cout <<"THE string view line: " << line << std::endl;
   SplitByAnyOf tokenizer(" ,.");
   STRING_VIEW token = tokenizer(line);
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"Line should be shorter now: " << line << std::endl;
-  tokens.push_back(token);
-  token = tokenizer(line); 
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"again Line should be shorter now: " << line << std::endl;
-  tokens.push_back(token);
-  token = tokenizer(line); 
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"again Line should be shorter now: " << line << std::endl;
-  tokens.push_back(token);
-  token = tokenizer(line); 
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"again Line should be shorter now: " << line << std::endl;
-  tokens.push_back(token);
-  token = tokenizer(line); 
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"again Line should be shorter now: " << line << std::endl;
-  tokens.push_back(token);
-  token = tokenizer(line); 
-  std::cout <<"THE string view token: " << token << std::endl;
-  std::cout <<"again Line should be shorter now: " << line << std::endl;
   
-
-/*  while (!token.empty())
+  while (!token.empty())
   {
-    // std::cout << "I am looping ....." << std::endl;
-    std::cout <<"THE string view token: " << token << std::endl;
-    std::cout <<"THE string view line: " << line << std::endl;
     tokens.push_back(token);
     token = tokenizer(line);
   }
-*/
+
   REQUIRE(tokens.size() == expectedUtf8Tokens.size());
 
   for (size_t i = 0; i < tokens.size(); ++i)
