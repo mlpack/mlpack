@@ -201,8 +201,8 @@ class ConvolutionType : public Layer<InputType, OutputType>
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (maps * totalInMaps * kernelWidth * kernelHeight) +
-        (maps * totalInMaps);
+    return (maps * inMaps * higherInDimensions * kernelWidth * kernelHeight) +
+        (maps * inMaps);
   }
 
   void ComputeOutputDimensions()
@@ -234,15 +234,17 @@ class ConvolutionType : public Layer<InputType, OutputType>
     this->outputDimensions[1] = ConvOutSize(this->inputDimensions[1],
         kernelHeight, strideHeight, padHTop, padHBottom);
 
+    inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
+
     // Compute and cache the total number of input maps.
-    totalInMaps = 1;
-    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+    higherInDimensions = 1;
+    for (size_t i = 3; i < this->inputDimensions.size(); ++i)
     {
-      totalInMaps *= this->inputDimensions[i];
+      higherInDimensions *= this->inputDimensions[i];
       this->outputDimensions[i] = this->inputDimensions[i];
     }
 
-    this->outputDimensions[2] *= maps;
+    this->outputDimensions[2] = maps;
   }
 
   /**
@@ -363,7 +365,9 @@ class ConvolutionType : public Layer<InputType, OutputType>
   std::string paddingType;
 
   //! Locally-cached number of input maps.
-  size_t totalInMaps;
+  size_t inMaps;
+  //! Locally-cached higher-order input dimensions.
+  size_t higherInDimensions;
 }; // class Convolution
 
 // Standard Convolution layer.

@@ -4523,7 +4523,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
   Convolution module = Convolution(outSize,
       kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
       std::tuple<size_t, size_t>(10, 11), "none");
-  module.InputDimensions() = std::vector<size_t>({ 12, 13 });
+  module.InputDimensions() = std::vector<size_t>({ 12, 13, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
   module.SetWeights(weights.memptr());
@@ -4539,7 +4539,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
 
   REQUIRE(module.Weight().n_rows == kernelWidth);
   REQUIRE(module.Weight().n_cols == kernelHeight);
-  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Weight().n_slices == outSize);
   REQUIRE(module.Bias().n_rows == outSize);
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows
